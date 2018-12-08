@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (MshParameter par in parameters)
             {
-                PSPropertyExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                PSPropertyExpression expression = par.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> expandedExpressionList = expression.ResolveNames(target);
 
                 if (!expression.HasWildCardCharacters && expandedExpressionList.Count == 0)
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (MshParameter par in parameters)
             {
-                PSPropertyExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                PSPropertyExpression expression = par.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> expandedExpressionList = expression.ResolveNames(target);
 
                 foreach (PSPropertyExpression ex in expandedExpressionList)

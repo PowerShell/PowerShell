@@ -94,11 +94,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (parameters != null && parameters.groupByParameter != null)
             {
                 // get the expression to use
-                PSPropertyExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                PSPropertyExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
 
                 // set the label
                 string label = null;
-                object labelKey = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.LabelEntryKey);
+                object labelKey = parameters.groupByParameter.GetEntry(CalculatedPropertyDefinitionKeys.LabelEntryKey);
                 if (labelKey != AutomationNull.Value)
                 {
                     label = labelKey as string;

@@ -563,7 +563,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TraversalInfo level = currentLevel;
                 if (a.OriginatingParameter != null)
                 {
-                    object maxDepthKey = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.DepthEntryKey);
+                    object maxDepthKey = a.OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.DepthEntryKey);
                     if (maxDepthKey != AutomationNull.Value)
                     {
                         int parameterMaxDept = (int)maxDepthKey;

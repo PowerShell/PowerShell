@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.PowerShell.Commands.Internal.Format;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -6252,7 +6253,7 @@ namespace System.Management.Automation
                             case "Format-List":
                             case "Format-Wide":
                             case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, CalculatedPropertyDefinitionKeys.FormatStringEntryKey, CalculatedPropertyDefinitionKeys.LabelEntryKey);
                         }
 
                         return null;
@@ -6270,19 +6271,19 @@ namespace System.Management.Automation
                                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                                 return result;
                             case "Select-Object":
-                                return GetSpecialHashTableKeyMembers("Name", "Expression");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.NameEntryKey, CalculatedPropertyDefinitionKeys.ExpressionEntryKey);
                             case "Sort-Object":
-                                return GetSpecialHashTableKeyMembers("Expression", "Ascending", "Descending");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, CalculatedPropertyDefinitionKeys.AscendingEntryKey, CalculatedPropertyDefinitionKeys.DescendingEntryKey);
                             case "Group-Object":
-                                return GetSpecialHashTableKeyMembers("Expression");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.ExpressionEntryKey);
                             case "Format-Table":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label", "Width", "Alignment");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, CalculatedPropertyDefinitionKeys.FormatStringEntryKey, CalculatedPropertyDefinitionKeys.LabelEntryKey, CalculatedPropertyDefinitionKeys.WidthEntryKey, CalculatedPropertyDefinitionKeys.AlignmentEntryKey);
                             case "Format-List":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, CalculatedPropertyDefinitionKeys.FormatStringEntryKey, CalculatedPropertyDefinitionKeys.LabelEntryKey);
                             case "Format-Wide":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, CalculatedPropertyDefinitionKeys.FormatStringEntryKey);
                             case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers("Expression", "Depth");
+                                return GetSpecialHashTableKeyMembers(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, CalculatedPropertyDefinitionKeys.DepthEntryKey);
                         }
                     }
                 }

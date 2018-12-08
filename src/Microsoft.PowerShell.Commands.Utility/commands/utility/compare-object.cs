@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                         Diagnostics.Assert(mshParameter != null, "null mshParameter");
                         Hashtable hash = mshParameter.hash;
                         Diagnostics.Assert(hash != null, "null hash");
-                        object prop = hash[FormatParameterDefinitionKeys.ExpressionEntryKey];
+                        object prop = hash[CalculatedPropertyDefinitionKeys.ExpressionEntryKey];
                         Diagnostics.Assert(prop != null, "null prop");
                         string propName = prop.ToString();
                         PSNoteProperty propertyNote = new PSNoteProperty(

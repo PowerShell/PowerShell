@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // set the label of the column
                 if (a.OriginatingParameter != null)
                 {
-                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.LabelEntryKey);
+                    object key = a.OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.LabelEntryKey);
                     if (key != AutomationNull.Value)
                         ci.propertyName = (string)key;
                 }
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // set the width of the table
                 if (a.OriginatingParameter != null)
                 {
-                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.WidthEntryKey);
+                    object key = a.OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.WidthEntryKey);
 
                     if (key != AutomationNull.Value)
                         ci.width = (int)key;
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // set the alignment
                 if (a.OriginatingParameter != null)
                 {
-                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.AlignmentEntryKey);
+                    object key = a.OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.AlignmentEntryKey);
 
                     if (key != AutomationNull.Value)
                         ci.alignment = (int)key;
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 FieldFormattingDirective directive = null;
                 if (activeAssociationList[k].OriginatingParameter != null)
                 {
-                    directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                    directive = activeAssociationList[k].OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);

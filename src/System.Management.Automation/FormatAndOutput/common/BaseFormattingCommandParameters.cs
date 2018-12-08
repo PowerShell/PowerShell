@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
         }
 
-        internal ExpressionEntryDefinition(bool noGlobbing) : base(FormatParameterDefinitionKeys.ExpressionEntryKey,
+        internal ExpressionEntryDefinition(bool noGlobbing) : base(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, new string[] { CalculatedPropertyDefinitionKeys.ExpressionEntryKeyShort },
                                     new Type[] { typeof(string), typeof(ScriptBlock) }, true)
         {
             _noGlobbing = noGlobbing;
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             Hashtable hash = new Hashtable();
 
-            hash.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, val);
+            hash.Add(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, val);
             return hash;
         }
 
@@ -245,9 +245,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class AlignmentEntryDefinition : HashtableEntryDefinition
     {
-        internal AlignmentEntryDefinition() : base(FormatParameterDefinitionKeys.AlignmentEntryKey,
-                                    new Type[] { typeof(string) })
+        internal bool _forHtml;
+        internal AlignmentEntryDefinition(bool forHtml = false) : base(CalculatedPropertyDefinitionKeys.AlignmentEntryKey, new string[] { CalculatedPropertyDefinitionKeys.AlignmentEntryKeyShort },
+                                    new Type[] { typeof(string) }, false)
         {
+            _forHtml = forHtml;
         }
 
         internal override object Verify(object val,
@@ -266,17 +268,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (!string.IsNullOrEmpty(s))
             {
-                for (int k = 0; k < s_legalValues.Length; k++)
+                if (_forHtml)
                 {
-                    if (CommandParameterDefinition.FindPartialMatch(s, s_legalValues[k]))
+                    // For use with ConvertTo-Html, we do not constrain the value.
+                    return s;
+                } 
+                else
+                {
+                    for (int k = 0; k < s_legalValues.Length; k++)
                     {
-                        if (k == 0)
-                            return TextAlignment.Left;
+                        if (CommandParameterDefinition.FindPartialMatch(s, s_legalValues[k]))
+                        {
+                            if (k == 0)
+                                return TextAlignment.Left;
 
-                        if (k == 1)
-                            return TextAlignment.Center;
+                            if (k == 1)
+                                return TextAlignment.Center;
 
-                        return TextAlignment.Right;
+                            return TextAlignment.Right;
+                        }
                     }
                 }
             }
@@ -309,9 +319,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class WidthEntryDefinition : HashtableEntryDefinition
     {
-        internal WidthEntryDefinition() : base(FormatParameterDefinitionKeys.WidthEntryKey,
-                                    new Type[] { typeof(int) })
+        internal WidthEntryDefinition(bool forHtml = false) : base(CalculatedPropertyDefinitionKeys.WidthEntryKey, new string[] { CalculatedPropertyDefinitionKeys.WidthEntryKeyShort },
+                                    forHtml ? new Type[] { typeof(int), typeof(string) } : new Type[] { typeof(int) }, false)
         {
+            // Note: For HTML use (ConvertTo-Html), we also accept 'width' as a string, for backward compatibility.
         }
 
         internal override object Verify(object val,
@@ -323,9 +334,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // this should never happen
                 throw PSTraceSource.NewInvalidOperationException();
             }
-
-            // it's an int, just check range, no need to change it
-            VerifyRange((int)val, invocationContext);
+    
+            if (val is string)
+            {
+                // For ConvertTo-Html: if the width was passed as a string,
+                // don't validate it, for backward compatibility.
+            }
+            else 
+            {
+                // it's an int, just check range, no need to change it
+                VerifyRange((int)val, invocationContext);
+            }
             return null;
         }
 
@@ -344,15 +363,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class LabelEntryDefinition : HashtableEntryDefinition
     {
-        internal LabelEntryDefinition() : base(FormatParameterDefinitionKeys.LabelEntryKey, new string[] { NameEntryDefinition.NameEntryKey }, new Type[] { typeof(string) }, false)
+        // Note: This is basically the same as NameEntryDefinition (both support 'name' as well as 'label' and their short aliases), 
+        // except that the .KeyName property is 'label' here, not 'name.'
+        internal LabelEntryDefinition() : base(CalculatedPropertyDefinitionKeys.LabelEntryKey, new string[] { CalculatedPropertyDefinitionKeys.LabelEntryKeyShort, CalculatedPropertyDefinitionKeys.NameEntryKey, CalculatedPropertyDefinitionKeys.NameEntryKeyShort }, new Type[] { typeof(string) }, false)
         {
         }
     }
 
     internal class FormatStringDefinition : HashtableEntryDefinition
     {
-        internal FormatStringDefinition() : base(FormatParameterDefinitionKeys.FormatStringEntryKey,
-                                    new Type[] { typeof(string) })
+        internal FormatStringDefinition() : base(CalculatedPropertyDefinitionKeys.FormatStringEntryKey, new string[] { CalculatedPropertyDefinitionKeys.FormatStringEntryKeyShort },
+                                    new Type[] { typeof(string) }, false)
         {
         }
 
@@ -385,7 +406,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class BooleanEntryDefinition : HashtableEntryDefinition
     {
-        internal BooleanEntryDefinition(string entryKey) : base(entryKey, null)
+        internal BooleanEntryDefinition(string entryKey, string[] secondaryNames) : base(entryKey, secondaryNames, new Type[] { typeof(bool)}, false)
         {
         }
 
@@ -402,28 +423,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    /// <summary>
-    /// definitions for hash table keys
-    /// </summary>
-    internal static class FormatParameterDefinitionKeys
-    {
-        // common entries
-        internal const string ExpressionEntryKey = "expression";
-        internal const string FormatStringEntryKey = "formatString";
-
-        // specific to format-table
-        internal const string AlignmentEntryKey = "alignment";
-        internal const string WidthEntryKey = "width";
-
-        // specific to format-table,list and wide
-        internal const string LabelEntryKey = "label";
-
-        // specific to format-wide
-        // NONE
-
-        // specific to format-custom (no format string for it, just the name)
-        internal const string DepthEntryKey = "depth";
-    }
 
     internal class FormatGroupByParameterDefinition : CommandParameterDefinition
     {
@@ -471,10 +470,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class FormatObjectParameterDefinition : CommandParameterDefinition
     {
+        // For Format-Custom.
         protected override void SetEntries()
         {
             this.hashEntries.Add(new ExpressionEntryDefinition());
-            this.hashEntries.Add(new HashtableEntryDefinition(FormatParameterDefinitionKeys.DepthEntryKey, new Type[] { typeof(int) }));
+            this.hashEntries.Add(new HashtableEntryDefinition(CalculatedPropertyDefinitionKeys.DepthEntryKey, new string[] { CalculatedPropertyDefinitionKeys.DepthEntryKeyShort }, new Type[] { typeof(int) }, false));
         }
     }
     #endregion

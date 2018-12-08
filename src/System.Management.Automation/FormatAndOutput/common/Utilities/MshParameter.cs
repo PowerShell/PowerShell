@@ -29,19 +29,65 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
+    /// <summary>
+    /// Supported key names for hash tables defining calculated properties,
+    /// across all cmdlets.
+    /// </summary>
+    internal static class CalculatedPropertyDefinitionKeys
+    {
+        // Note: 
+        //  For each key definition below:
+        //    * Define the full key name as *EntryKey.
+        //    * Define the short alias name as *EntryKeyShort.
+        //      Be sure that short names are unique at least in a given
+        //      cmdlet's set of supported keys, but ideally across all cmdlets.
+        //    * Case is irrelevant.
+        // 
+        // You must pass both constants for a given key to constructors of HashtableEntryDefinition
+        // and its subclasses, via *separate arguments*; e.g.:
+        //   new HashtableEntryDefinition(ExpressionEntryKey, new string[] { ExpressionEntryKeyShort }, ...)
+        
+        // Shared by all cmdlets.
+        internal const string ExpressionEntryKey = "expression"; internal const string ExpressionEntryKeyShort = "e";
+        
+        // Shared by many cmdlets.
+        internal const string LabelEntryKey = "label"; internal const string LabelEntryKeyShort = "l";
+        internal const string NameEntryKey = "name"; internal const string NameEntryKeyShort = "n";
+
+        // Shared by the Format-* cmdlets (except Format-Hex)
+        internal const string FormatStringEntryKey = "formatString"; internal const string FormatStringEntryKeyShort = "f";
+
+        // For Format-Table and ConvertTo-Html.
+        internal const string AlignmentEntryKey = "alignment"; internal const string AlignmentEntryKeyShort = "a";
+        internal const string WidthEntryKey = "width"; internal const string WidthEntryKeyShort = "w";
+
+        // For Format-Custom.
+        internal const string DepthEntryKey = "depth"; internal const string DepthEntryKeyShort = "d";
+
+        // For Sort-Object.
+        internal const string AscendingEntryKey = "ascending"; internal const string AscendingEntryKeyShort = "asc";
+        internal const string DescendingEntryKey = "descending"; internal const string DescendingEntryKeyShort = "desc";
+
+    }
+
     internal class NameEntryDefinition : HashtableEntryDefinition
     {
-        internal const string NameEntryKey = "name";
-        internal NameEntryDefinition()
-            : base(NameEntryKey, new string[] { FormatParameterDefinitionKeys.LabelEntryKey }, new Type[] { typeof(string) }, false)
+        // Note: This is basically the same as LabelEntryDefinition (both support 'name' as well as 'label' and their short aliases), 
+        // except that the .KeyName property is 'name' here, not 'label'.
+        internal NameEntryDefinition()        
+            : base(CalculatedPropertyDefinitionKeys.NameEntryKey, new string[] { CalculatedPropertyDefinitionKeys.NameEntryKeyShort, CalculatedPropertyDefinitionKeys.LabelEntryKey, CalculatedPropertyDefinitionKeys.LabelEntryKeyShort }, new Type[] { typeof(string) }, false)
         {
         }
     }
 
     /// <summary>
-    /// metadata base class for hashtable entry definitions
-    /// it contains the key name and the allowable types
-    /// it also provides hooks for type expansion
+    /// Metadata base class for hashtable entry definitions
+    /// it contains the key name(s) and the allowable types
+    /// it also provides hooks for type expansion.
+    /// 
+    /// IMPORTANT: The name and secondaryNames arguments should be passed as
+    ///            CalculatedPropertyDefinitionKeys.*EntryKey and 
+    ///            CalculatedPropertyDefinitionKeys.*EntryKeyShort constants
     /// </summary>
     internal class HashtableEntryDefinition
     {
@@ -70,8 +116,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             throw PSTraceSource.NewNotSupportedException();
         }
 
-        internal bool IsKeyMatch(string key)
+        internal bool IsKeyMatch(string key, out bool isFullMatch)
         {
+            isFullMatch = false;
+
+            // First, look for exact matches.
+            if (string.Equals(key, this.KeyName, StringComparison.OrdinalIgnoreCase)) {
+                isFullMatch = true;    
+                return true;
+            }
+            if (this.SecondaryNames != null)
+            {
+                foreach (string secondaryKey in this.SecondaryNames)
+                {
+                    if (string.Equals(key, secondaryKey, StringComparison.OrdinalIgnoreCase))
+                    {
+                        isFullMatch = true;    
+                        return true;
+                    }
+                }
+            }
+
+            // If no exact match was found, look for a (potentially ambiguous) prefix match.
             if (CommandParameterDefinition.FindPartialMatch(key, this.KeyName))
             {
                 return true;
@@ -143,22 +209,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 PSTraceSource.NewArgumentNullException("keyName");
 
             HashtableEntryDefinition matchingEntry = null;
+            bool isFullMatch;
             for (int k = 0; k < this.hashEntries.Count; k++)
             {
-                if (this.hashEntries[k].IsKeyMatch(keyName))
+                if (this.hashEntries[k].IsKeyMatch(keyName, out isFullMatch))
                 {
-                    // we have a match
-                    if (matchingEntry == null)
+                    if (matchingEntry != null)
                     {
-                        // this is the first match, we save the entry
-                        // and we keep going for ambiguity check
-                        matchingEntry = this.hashEntries[k];
-                    }
-                    else
-                    {
-                        // we already had a match, we have an ambiguous key
+                        // The specified key is a prefix match for more than 
+                        // one supported key: we have an ambiguous key; throw an exception.
                         ProcessAmbiguousKey(invocationContext, keyName, matchingEntry, this.hashEntries[k]);
-                    }
+                    } else {
+                        // This is the first (and possibly full and therefore only) match.
+                        matchingEntry = this.hashEntries[k];
+                        // If it wasn't a full match, we keep going for ambiguity check.
+                        if (isFullMatch) { break; }
+                    }                    
                 }
             }
 

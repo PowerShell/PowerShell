@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 FieldFormattingDirective directive = null;
                 if (a.OriginatingParameter != null)
                 {
-                    directive = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                    directive = a.OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);

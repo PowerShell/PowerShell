@@ -409,9 +409,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessParameter(MshParameter p, PSObject inputObject, List<PSNoteProperty> result)
         {
-            string name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
+            string name = p.GetEntry(CalculatedPropertyDefinitionKeys.NameEntryKey) as string;
 
-            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            PSPropertyExpression ex = p.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
             List<PSPropertyExpressionResult> expressionResults = new List<PSPropertyExpressionResult>();
             foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
             {
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessExpandParameter(MshParameter p, PSObject inputObject,
             List<PSNoteProperty> matchedProperties)
         {
-            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            PSPropertyExpression ex = p.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
             List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject);
 
             if (expressionResults.Count == 0)

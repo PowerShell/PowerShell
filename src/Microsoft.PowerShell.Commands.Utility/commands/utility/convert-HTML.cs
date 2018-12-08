@@ -300,9 +300,9 @@ namespace Microsoft.PowerShell.Commands
             protected override void SetEntries()
             {
                 this.hashEntries.Add(new ExpressionEntryDefinition());
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, new Type[] { typeof(string) }));
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, new Type[] { typeof(string) }));
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, new Type[] { typeof(string) }));
+                this.hashEntries.Add(new LabelEntryDefinition());
+                this.hashEntries.Add(new AlignmentEntryDefinition(forHtml: true));
+                this.hashEntries.Add(new WidthEntryDefinition(forHtml: true));
             }
         }
 
@@ -335,13 +335,26 @@ namespace Microsoft.PowerShell.Commands
             {
                 string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
-                string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
-                PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+
+                // Accept the width both as a string and as an int.
+                string width;
+                int? widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
+                width = widthNum != null ? widthNum.Value.ToString() : p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
+                PSPropertyExpression ex = p.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> resolvedNames = ex.ResolveNames(_inputObject);
                 foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
-                    ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
+                    if (resolvedName.Script != null)
+                    {
+                        // script block
+                        ht.Add(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, resolvedName.Script);
+                    }
+                    else
+                    {
+                        // property name
+                        ht.Add(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
+                    }
                     resolvedNameProperty.Add(ht);
                 }
             }
@@ -562,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                PSPropertyExpression ex = p.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 Listtag.Append(ex.ToString());
             }
         }
@@ -572,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WritePropertyValue(StringBuilder Listtag, MshParameter p)
         {
-            PSPropertyExpression exValue = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            PSPropertyExpression exValue = p.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
 
             // get the value of the property
             List<PSPropertyExpressionResult> resultList = exValue.GetValues(_inputObject);

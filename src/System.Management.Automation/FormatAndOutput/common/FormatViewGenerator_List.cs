@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (a.OriginatingParameter != null)
                 {
-                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.LabelEntryKey);
+                    object key = a.OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.LabelEntryKey);
 
                     if (key != AutomationNull.Value)
                     {
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 FieldFormattingDirective directive = null;
                 if (a.OriginatingParameter != null)
                 {
-                    directive = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                    directive = a.OriginatingParameter.GetEntry(CalculatedPropertyDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
                 lvf.formatPropertyField.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);
                 lve.listViewFieldList.Add(lvf);

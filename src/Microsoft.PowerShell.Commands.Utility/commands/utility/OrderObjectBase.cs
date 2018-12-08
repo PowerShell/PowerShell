@@ -12,14 +12,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary>
-    /// Definitions for hash table keys.
-    /// </summary>
-    internal static class SortObjectParameterDefinitionKeys
-    {
-        internal const string AscendingEntryKey = "ascending";
-        internal const string DescendingEntryKey = "descending";
-    }
 
     /// <summary>
     /// </summary>
@@ -28,8 +20,8 @@ namespace Microsoft.PowerShell.Commands
         protected override void SetEntries()
         {
             this.hashEntries.Add(new ExpressionEntryDefinition(false));
-            this.hashEntries.Add(new BooleanEntryDefinition(SortObjectParameterDefinitionKeys.AscendingEntryKey));
-            this.hashEntries.Add(new BooleanEntryDefinition(SortObjectParameterDefinitionKeys.DescendingEntryKey));
+            this.hashEntries.Add(new BooleanEntryDefinition(CalculatedPropertyDefinitionKeys.AscendingEntryKey,  new string[] { CalculatedPropertyDefinitionKeys.AscendingEntryKeyShort }));
+            this.hashEntries.Add(new BooleanEntryDefinition(CalculatedPropertyDefinitionKeys.DescendingEntryKey, new string[] { CalculatedPropertyDefinitionKeys.DescendingEntryKeyShort }));
         }
     }
 
@@ -240,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (MshParameter unexpandedParameter in _unexpandedParameterList)
                     {
-                        PSPropertyExpression mshExpression = (PSPropertyExpression)unexpandedParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey);
+                        PSPropertyExpression mshExpression = (PSPropertyExpression)unexpandedParameter.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey);
                         if (!mshExpression.HasWildCardCharacters) // this special cases 1) script blocks and 2) wildcard-less strings
                         {
                             _mshParameterList.Add(unexpandedParameter);
@@ -269,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (MshParameter unexpandedParameter in unexpandedParameterList)
                 {
-                    PSPropertyExpression ex = (PSPropertyExpression)unexpandedParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey);
+                    PSPropertyExpression ex = (PSPropertyExpression)unexpandedParameter.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey);
                     if (!ex.HasWildCardCharacters) // this special cases 1) script blocks and 2) wildcard-less strings
                     {
                         expandedParameterList.Add(unexpandedParameter);
@@ -297,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             MshParameter expandedParameter = new MshParameter();
                             expandedParameter.hash = (Hashtable)unexpandedParameter.hash.Clone();
-                            expandedParameter.hash[FormatParameterDefinitionKeys.ExpressionEntryKey] = expandedExpression;
+                            expandedParameter.hash[CalculatedPropertyDefinitionKeys.ExpressionEntryKey] = expandedExpression;
 
                             expandedParameterList.Add(expandedParameter);
                         }
@@ -316,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (MshParameter unexpandedParameter in UnexpandedParametersWithWildCardPattern)
                 {
-                    PSPropertyExpression ex = (PSPropertyExpression)unexpandedParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey);
+                    PSPropertyExpression ex = (PSPropertyExpression)unexpandedParameter.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey);
 
                     SortedDictionary<string, PSPropertyExpression> expandedPropertyNames = new SortedDictionary<string, PSPropertyExpression>(StringComparer.OrdinalIgnoreCase);
                     if (inputObject == null)
@@ -333,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         MshParameter expandedParameter = new MshParameter();
                         expandedParameter.hash = (Hashtable)unexpandedParameter.hash.Clone();
-                        expandedParameter.hash[FormatParameterDefinitionKeys.ExpressionEntryKey] = expandedExpression;
+                        expandedParameter.hash[CalculatedPropertyDefinitionKeys.ExpressionEntryKey] = expandedExpression;
 
                         expandedParameterList.Add(expandedParameter);
                     }
@@ -414,9 +406,9 @@ namespace Microsoft.PowerShell.Commands
                 for (int k = 0; k < ascendingOverrides.Length; k++)
                 {
                     object ascendingVal = mshParameterList[k].GetEntry(
-                        SortObjectParameterDefinitionKeys.AscendingEntryKey);
+                        CalculatedPropertyDefinitionKeys.AscendingEntryKey);
                     object descendingVal = mshParameterList[k].GetEntry(
-                        SortObjectParameterDefinitionKeys.DescendingEntryKey);
+                        CalculatedPropertyDefinitionKeys.DescendingEntryKey);
                     bool isAscendingDefined = isOrderEntryKeyDefined(ascendingVal);
                     bool isDescendingDefined = isOrderEntryKeyDefined(descendingVal);
                     if (!isAscendingDefined && !isDescendingDefined)
@@ -564,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
             ref bool comparable)
         {
             // NOTE: we assume globbing was not allowed in input
-            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            PSPropertyExpression ex = p.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
 
             // get the values, but do not expand aliases
             List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject, false, true);
