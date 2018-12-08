@@ -341,7 +341,14 @@ namespace Microsoft.PowerShell.Commands
                 foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
-                    ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
+                    if (resolvedName.Script != null) // script block
+                    {
+                        ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.Script);
+                    }
+                    else // property name
+                    {
+                        ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
+                    }
                     resolvedNameProperty.Add(ht);
                 }
             }
