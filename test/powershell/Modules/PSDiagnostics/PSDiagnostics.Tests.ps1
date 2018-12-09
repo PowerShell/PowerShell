@@ -58,7 +58,7 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI","RequireAdminOnWindows" {
             $LogPropertyToSet.AutoBackup | Should -Be $WevtUtilOutput.Channel.Logging.AutoBackup
         }
 
-        it -Name "Should throw excpetion for invalid LogName." {
+        it -Name "Should throw excpetion for invalid LogName." -Skip:(-not $IsWindows) {
             {Set-LogProperties -LogDetails 'Foo' -Force } | Should -Throw -ErrorId 'ParameterArgumentTransformationError'
         }
     }
