@@ -731,8 +731,6 @@ namespace System.Management.Automation
 
             depth = GetDepthOfSerialization(source, depth);
 
-            //Depth available for each property is one less
-            --depth;
             Dbg.Assert(depth >= 0, "depth should be greater or equal to zero");
             if (source.GetSerializationMethod(null) == SerializationMethod.SpecificProperties)
             {
