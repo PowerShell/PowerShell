@@ -37,16 +37,18 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI","RequireAdminOnWindows" {
     }
 
     Context -Name "Test for Set-LogProperties cmdlet" {
-        BeforeAll {
+        BeforeAll  {
             $LogType = 'Analytic'
-            [XML]$WevtUtilBefore = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
-            $LogPropertyToSet    = [Microsoft.PowerShell.Diagnostics.LogDetails]::new($WevtUtilBefore.channel.Name,
-                                                                        $WevtUtilBefore.channel.Enabled -as [bool],
-                                                                        $LogType,
-                                                                        $WevtUtilBefore.channel.Logging.Retention -as [bool],
-                                                                        $WevtUtilBefore.channel.Logging.AutoBackup -as [bool],
-                                                                        $WevtUtilBefore.channel.Logging.MaxSize -as [int]
-                                                                        )
+            if($IsWindows){
+                [XML]$WevtUtilBefore = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
+                $LogPropertyToSet    = [Microsoft.PowerShell.Diagnostics.LogDetails]::new($WevtUtilBefore.channel.Name,
+                                                                            $WevtUtilBefore.channel.Enabled -as [bool],
+                                                                            $LogType,
+                                                                            $WevtUtilBefore.channel.Logging.Retention -as [bool],
+                                                                            $WevtUtilBefore.channel.Logging.AutoBackup -as [bool],
+                                                                            $WevtUtilBefore.channel.Logging.MaxSize -as [int]
+                                                                            )
+            }
         }
 
         it -Name "Should invert AutoBackup setting of $LogType logs for 'Microsoft-Windows-PowerShell'." -Skip:(-not $IsWindows) {
