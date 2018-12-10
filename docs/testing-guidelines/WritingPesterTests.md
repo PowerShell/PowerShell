@@ -252,7 +252,7 @@ Describe "Should not run these tests on non-Windows platforms" {
         }
     }
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        $PSDefaultParameterValues = $originalDefaultParameterValues
     }
     Context "Block 1" {
         It "This block 1 test 1" {
