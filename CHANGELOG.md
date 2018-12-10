@@ -49,7 +49,7 @@
 
 - Update folder path for storing optimization profile and add test to validate loaded assemblies and libraries on startup (#8406)
 - Fix an intermittent failure in macOS logging tests (#8385)
-- Created a csproj to pin test modules and updated `build.psm1` accordingly (#8350)
+- Created a `csproj` to pin test modules and updated `build.psm1` accordingly (#8350)
 - Update help content for `TabCompletion` tests only if it does not exist (#8355)
 - Skip `Enter-PSHostProcess` tests on `AppVeyor` due to `PSReadline` issue (#8317)
 
