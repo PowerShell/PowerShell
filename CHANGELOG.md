@@ -4,19 +4,17 @@
 
 ### Breaking Changes
 
-- Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318) [Breaking Change]
-- Debug parameter now sets debugpreference to continue (#8195) (Thanks @KirkMunro!)
+- Get-ExperimentalFeature no longer has -ListAvailable switch (#8318)
+- Debug parameter now sets DebugPreference to continue instead of inquire (#8195) (Thanks @KirkMunro!)
 
 ### Engine Updates and Fixes
 
-- Support 'Get-PSHostProcessInfo' and 'Enter-PSHostProcess' on Unix platforms (#8232)
-- Remove extra newlines from formatting which resulted in necessary double newlines (#8247)
-- Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318) [Breaking Change]
+- Remove extra newlines from formatting which resulted in unnecessary double newlines (#8247)
+- Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318)
 - Fix Export-ModuleMember bug for scriptblocks having no context (#8363)
-- Debug parameter now sets debugpreference to continue (#8195) (Thanks @KirkMunro!)
 - Fix race condition to access powershell.config.json (#8249) (Thanks @iSazonov!)
 - Add SkipCA and SkipCN check requirement to WinRM/OMI HTTPS connection (#8279)
-- Add fix for `Start-Job` initialization script should not be executed as trusted in system lockdown (#8284)
+- Add fix for `Start-Job` initialization script which should not be executed as trusted in system lockdown (#8284)
 
 ### General Cmdlet Updates and Fixes
 
@@ -24,15 +22,16 @@
 - Expose all cmdlets from PSDiagnostics if logman.exe is available (#8366)
 - Fix `Get-Help` for advanced functions with MAML help content (#8353)
 - Conditionally mark getter/setter implementations virtual in generated classes (#8303) (Thanks @IISResetMe!)
-- Fix for PSDrive creation with a UNC path with a trailing backslash or forward slash when combined with -Persist (#8305) (Thanks @kvprasoon!)
+- Fix for PSDrive creation with a UNC path with a trailing backslash or forward slash when combined with `-Persist` (#8305) (Thanks @kvprasoon!)
 - Remove `Persist` parameter from `New-PSDrive` on non-Windows platform (#8291) (Thanks @lukexjeremy!)
-- Fix GetLocationCommand output type parameter set and style issues (#8324) (Thanks @Meir017!)
 - Test-Path: Return $false when given an empty or $null -Path/-LiteralPath value (#8080) (Thanks @vexx32!)
 - Token calculation fix for Get-Help executed on ScriptBlock for comment help. (#8238) (Thanks @hubuk!)
+- Add Enable-ExperimentalFeature and Disable-ExperimentalFeature cmdlets (#8318)
+- Support 'Get-PSHostProcessInfo' and 'Enter-PSHostProcess' on Unix platforms (#8232)
 
 ### Code Cleanup
 
-- More changes and cleanup to reduce the startup time (#8396)
+- More changes and cleanup to reduce the startup time by 24% (#8396)
 - Update resgen, typegen to use .Net Core 2.1 (#8369) (Thanks @bergmeister!)
 - Change Newtonsoft deserializing bug comment to link to the new issue (#8377) (Thanks @louistio!)
 - Improve powershell startup time (#8341)
@@ -41,6 +40,7 @@
 - Remove old 'customPSSnapInType' parameter from PSSnapInInfo() (#8333) (Thanks @iSazonov!)
 - Cleanup '#if CORECLR' from some files (#8332) (Thanks @iSazonov!)
 - Cleanup assemblyinfo (#8190) (Thanks @iSazonov!)
+- Fix GetLocationCommand output type parameter set and style issues (#8324) (Thanks @Meir017!)
 
 ### Tools
 
@@ -58,24 +58,19 @@
 
 - Remove AmazonLinux Dockerfile (#8271) (Thanks @kiazhi!)
 - Make `install-powershell.sh` autodetect if it should use `wget` or `curl` (#8225) (Thanks @DarwinJS!)
-- Bump NJsonSchema from 9.12.7 to 9.13.1 (#8412)
+- Bump NJsonSchema from 9.12.2 to 9.13.1 (#8319) (#8328) (#8412) (#8371) (#8384)
 - Bump Microsoft.PowerShell.Native from 6.2.0-preview.2 to 6.2.0-preview.3 (#8411)
 - Update the name of the artifact to be unique per artifact (#8405)
 - Create unified release build for macOS and Linux packages (#8399)
 - Add Linux ARM64 build support (#8016) (Thanks @slide!)
 - Update the timeout of CI builds (#8398)
-- Bump NJsonSchema from 9.12.6 to 9.12.7 (#8384)
-- Bump PackageManagement from 1.2.3 to 1.2.4 in /src/Modules (#8383)
-- Bump NJsonSchema from 9.12.5 to 9.12.6 (#8371)
+- Bump PackageManagement from 1.2.2 to 1.2.4 in /src/Modules (#8320) (#8383)
 - Bump Newtonsoft.Json from 11.0.2 to 12.0.1 (#8348)
 - Enable pipeline to sync PSGallery modules to AzArtifacts feed (#8316)
 - Build Alpine `tar.gz` package in release builds (#8340)
 - Publish test package to AppVeyor daily build (#8273)
-- Bump NJsonSchema from 9.12.3 to 9.12.5 (#8328)
 - Bump Microsoft.CodeAnalysis.CSharp from 2.9.0 to 2.10.0 (#8294)
 - Bump PowerShellGet from 2.0.1 to 2.0.3 in /src/Modules (#8321)
-- Bump PackageManagement from 1.2.2 to 1.2.3 in /src/Modules (#8320)
-- Bump NJsonSchema from 9.12.2 to 9.12.3 (#8319)
 - Enable `Open Here` context menu on Windows to work with root of a drive (#8287)
 - Bump System.Data.SqlClient from 4.5.1 to 4.6.0 (#8266)
 
