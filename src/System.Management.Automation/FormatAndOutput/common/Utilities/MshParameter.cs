@@ -53,7 +53,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // For Sort-Object.
         internal const string AscendingEntryKey = "Ascending"; internal const string AscendingEntryKeyShort = "asc";
         internal const string DescendingEntryKey = "Descending"; internal const string DescendingEntryKeyShort = "desc";
-
     }
 
     /// <summary>
@@ -229,8 +228,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // This is the first (and possibly full and therefore only) match.
                         matchingEntry = this.hashEntries[k];
-                        // If it wasn't a full match, we keep going for ambiguity check.
-                        if (isFullMatch) break;
+                        // Unless it was a full match, we keep going for ambiguity check.
+                        if (isFullMatch)
+                        {
+                            break;
+                        }
                     }                    
                 }
             }

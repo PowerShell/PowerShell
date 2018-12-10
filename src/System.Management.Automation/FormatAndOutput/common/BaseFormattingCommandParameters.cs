@@ -248,7 +248,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class AlignmentEntryDefinition : HashtableEntryDefinition
     {
-        private bool _forHtml;
         internal AlignmentEntryDefinition(bool forHtml = false) : base(
             CalculatedPropertyDefinitionKeys.AlignmentEntryKey,
             new string[] { CalculatedPropertyDefinitionKeys.AlignmentEntryKeyShort },
@@ -321,6 +320,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private const string LeftAlign = "left";
         private const string CenterAlign = "center";
         private const string RightAlign = "right";
+
+        private bool _forHtml;
     }
 
     internal class WidthEntryDefinition : HashtableEntryDefinition
