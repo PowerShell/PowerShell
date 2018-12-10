@@ -283,16 +283,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _transitional = false;
 
         /// <summary>
-        /// Definitions for hash table keys.
-        /// </summary>
-        internal static class ConvertHTMLParameterDefinitionKeys
-        {
-            internal const string LabelEntryKey = "label";
-            internal const string AlignmentEntryKey = "alignment";
-            internal const string WidthEntryKey = "width";
-        }
-
-        /// <summary>
         /// This allows for @{e='foo';label='bar';alignment='center';width='20'}.
         /// </summary>
         internal class ConvertHTMLExpressionParameterDefinition : CommandParameterDefinition
@@ -333,13 +323,13 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (MshParameter p in _propertyMshParameterList)
             {
-                string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
-                string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
+                string label = p.GetEntry(CalculatedPropertyDefinitionKeys.LabelEntryKey) as string;
+                string alignment = p.GetEntry(CalculatedPropertyDefinitionKeys.AlignmentEntryKey) as string;
 
                 // Accept the width both as a string and as an int.
                 string width;
-                int? widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
-                width = widthNum != null ? widthNum.Value.ToString() : p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
+                int? widthNum = p.GetEntry(CalculatedPropertyDefinitionKeys.WidthEntryKey) as int?;
+                width = widthNum != null ? widthNum.Value.ToString() : p.GetEntry(CalculatedPropertyDefinitionKeys.WidthEntryKey) as string;
                 PSPropertyExpression ex = p.GetEntry(CalculatedPropertyDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> resolvedNames = ex.ResolveNames(_inputObject);
                 foreach (PSPropertyExpression resolvedName in resolvedNames)
@@ -369,15 +359,15 @@ namespace Microsoft.PowerShell.Commands
             Hashtable ht = new Hashtable();
             if (label != null)
             {
-                ht.Add(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, label);
+                ht.Add(CalculatedPropertyDefinitionKeys.LabelEntryKey, label);
             }
             if (alignment != null)
             {
-                ht.Add(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, alignment);
+                ht.Add(CalculatedPropertyDefinitionKeys.AlignmentEntryKey, alignment);
             }
             if (width != null)
             {
-                ht.Add(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, width);
+                ht.Add(CalculatedPropertyDefinitionKeys.WidthEntryKey, width);
             }
             return ht;
         }
@@ -515,14 +505,14 @@ namespace Microsoft.PowerShell.Commands
             foreach (MshParameter p in mshParams)
             {
                 COLTag.Append("<col");
-                string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
+                string width = p.GetEntry(CalculatedPropertyDefinitionKeys.WidthEntryKey) as string;
                 if (width != null)
                 {
                     COLTag.Append(" width = \"");
                     COLTag.Append(width);
                     COLTag.Append("\"");
                 }
-                string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
+                string alignment = p.GetEntry(CalculatedPropertyDefinitionKeys.AlignmentEntryKey) as string;
                 if (alignment != null)
                 {
                     COLTag.Append(" align = \"");
@@ -568,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
         private void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
             //for writing the property name
-            string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
+            string label = p.GetEntry(CalculatedPropertyDefinitionKeys.LabelEntryKey) as string;
             if (label != null)
             {
                 Listtag.Append(label);
