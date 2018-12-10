@@ -4186,36 +4186,18 @@ param(
 )
 
 begin {
-
-    try {
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('New-Item', [System.Management.Automation.CommandTypes]::Cmdlet)
-        $scriptCmd = {& $wrappedCmd -Type Directory @PSBoundParameters }
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline()
-        $steppablePipeline.Begin($PSCmdlet)
-    } catch {
-        throw
-    }
-
+    $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('New-Item', [System.Management.Automation.CommandTypes]::Cmdlet)
+    $scriptCmd = {& $wrappedCmd -Type Directory @PSBoundParameters }
+    $steppablePipeline = $scriptCmd.GetSteppablePipeline()
+    $steppablePipeline.Begin($PSCmdlet)
 }
 
 process {
-
-    try {
-        $steppablePipeline.Process($_)
-    } catch {
-        throw
-    }
-
+    $steppablePipeline.Process($_)
 }
 
 end {
-
-    try {
-        $steppablePipeline.End()
-    } catch {
-        throw
-    }
-
+    $steppablePipeline.End()
 }
 
 ";
@@ -4234,35 +4216,20 @@ param(
     [psobject]
     ${InputObject})
 
-begin
-{
-    try {
-        $PSBoundParameters['Stream'] = $true
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('Out-String',[System.Management.Automation.CommandTypes]::Cmdlet)
-        $scriptCmd = {& $wrappedCmd @PSBoundParameters }
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
-        $steppablePipeline.Begin($PSCmdlet)
-    } catch {
-        throw
-    }
+begin {
+    $PSBoundParameters['Stream'] = $true
+    $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('Out-String',[System.Management.Automation.CommandTypes]::Cmdlet)
+    $scriptCmd = {& $wrappedCmd @PSBoundParameters }
+    $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
+    $steppablePipeline.Begin($PSCmdlet)
 }
 
-process
-{
-    try {
-        $steppablePipeline.Process($_)
-    } catch {
-        throw
-    }
+process {
+    $steppablePipeline.Process($_)
 }
 
-end
-{
-    try {
-        $steppablePipeline.End()
-    } catch {
-        throw
-    }
+end {
+    $steppablePipeline.End()
 }
 <#
 .ForwardHelpTargetName Out-String
