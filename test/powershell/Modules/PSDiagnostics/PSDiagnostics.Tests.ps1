@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" {
+Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $LogType = 'Analytic'
         $LogSettingBak = Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType
@@ -15,7 +15,7 @@ Describe "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" {
         $Global:PSDefaultParameterValues = $OriginalDefaultParameterValues
     }
 
-    Context "Test for Enable-PSTrace and Disable-PSTrace cmdlet" {
+    Context "Test for Enable-PSTrace and Disable-PSTrace cmdlets." {
         it "Should enable $LogType logs for Microsoft-Windows-PowerShell." {
             [XML]$CurrentSetting = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
             if($CurrentSetting.Channel.Enabled -eq 'true'){
@@ -38,7 +38,7 @@ Describe "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" {
         }
     }
 
-    Context "Test for Get-LogProperties cmdlet" {
+    Context "Test for Get-LogProperties cmdlet." {
         it "Should return properties of $LogType logs for 'Microsoft-Windows-PowerShell'." {
             [XML]$ExpectedOutput = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
 
@@ -54,7 +54,7 @@ Describe "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" {
         }
     }
 
-    Context "Test for Set-LogProperties cmdlet" {
+    Context "Test for Set-LogProperties cmdlet." {
         BeforeAll {
             if ($IsWindows) {
                 [XML]$WevtUtilBefore = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
