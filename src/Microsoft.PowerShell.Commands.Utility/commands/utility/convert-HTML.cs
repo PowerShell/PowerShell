@@ -357,6 +357,7 @@ namespace Microsoft.PowerShell.Commands
                     resolvedNameProperty.Add(ht);
                 }
             }
+            
             _resolvedNameMshParameters = ProcessParameter(resolvedNameProperty.ToArray());
         }
 

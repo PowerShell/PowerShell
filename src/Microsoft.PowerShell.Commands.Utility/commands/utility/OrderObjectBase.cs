@@ -12,7 +12,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// </summary>
     internal class SortObjectExpressionParameterDefinition : CommandParameterDefinition

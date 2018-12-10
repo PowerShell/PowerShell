@@ -12,6 +12,51 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
+    /// Supported key names for hash tables defining calculated properties,
+    /// across all cmdlets.
+    /// </summary>
+    internal static class CalculatedPropertyDefinitionKeys
+    {
+        // Note: 
+        //  For each key definition below:
+        //    * Define the full key name as *EntryKey, using upper camel casing
+        //      (e.g., 'Expression', 'FormatString').
+        //      While case is ultimately irrelevant, the help topics use upper
+        //      camel casing to document the keys, and the tab-completion tests
+        //      expect it too. 
+        //    * Define the short alias name as *EntryKeyShort, in all-lowercase
+        //      (e.g., 'e')
+        //    * BE SURE THAT ALL NAMES ARE UNIQUE at least in a given
+        //      cmdlet's set of supported keys, but ideally across all cmdlets.
+        // 
+        // You must pass both constants for a given key to constructors of HashtableEntryDefinition
+        // and its subclasses, via *separate arguments*; e.g.:
+        //   new HashtableEntryDefinition(ExpressionEntryKey, new string[] { ExpressionEntryKeyShort }, ...)
+        
+        // Shared by all cmdlets.
+        internal const string ExpressionEntryKey = "Expression"; internal const string ExpressionEntryKeyShort = "e";
+        
+        // Shared by many cmdlets.
+        internal const string LabelEntryKey = "Label"; internal const string LabelEntryKeyShort = "l";
+        internal const string NameEntryKey = "Name"; internal const string NameEntryKeyShort = "n";
+
+        // Shared by the Format-* cmdlets (except Format-Hex)
+        internal const string FormatStringEntryKey = "FormatString"; internal const string FormatStringEntryKeyShort = "f";
+
+        // For Format-Table and ConvertTo-Html.
+        internal const string AlignmentEntryKey = "Alignment"; internal const string AlignmentEntryKeyShort = "a";
+        internal const string WidthEntryKey = "Width"; internal const string WidthEntryKeyShort = "w";
+
+        // For Format-Custom.
+        internal const string DepthEntryKey = "Depth"; internal const string DepthEntryKeyShort = "d";
+
+        // For Sort-Object.
+        internal const string AscendingEntryKey = "Ascending"; internal const string AscendingEntryKeyShort = "asc";
+        internal const string DescendingEntryKey = "Descending"; internal const string DescendingEntryKeyShort = "desc";
+
+    }
+
+    /// <summary>
     /// normalized parameter class to be constructed from the command line parameters
     /// using the metadata information provided by an instance of CommandParameterDefinition
     /// it's basically the hash table with the normalized values
@@ -29,47 +74,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    /// <summary>
-    /// Supported key names for hash tables defining calculated properties,
-    /// across all cmdlets.
-    /// </summary>
-    internal static class CalculatedPropertyDefinitionKeys
-    {
-        // Note: 
-        //  For each key definition below:
-        //    * Define the full key name as *EntryKey.
-        //    * Define the short alias name as *EntryKeyShort.
-        //      Be sure that short names are unique at least in a given
-        //      cmdlet's set of supported keys, but ideally across all cmdlets.
-        //    * Case is irrelevant.
-        // 
-        // You must pass both constants for a given key to constructors of HashtableEntryDefinition
-        // and its subclasses, via *separate arguments*; e.g.:
-        //   new HashtableEntryDefinition(ExpressionEntryKey, new string[] { ExpressionEntryKeyShort }, ...)
-        
-        // Shared by all cmdlets.
-        internal const string ExpressionEntryKey = "expression"; internal const string ExpressionEntryKeyShort = "e";
-        
-        // Shared by many cmdlets.
-        internal const string LabelEntryKey = "label"; internal const string LabelEntryKeyShort = "l";
-        internal const string NameEntryKey = "name"; internal const string NameEntryKeyShort = "n";
-
-        // Shared by the Format-* cmdlets (except Format-Hex)
-        internal const string FormatStringEntryKey = "formatString"; internal const string FormatStringEntryKeyShort = "f";
-
-        // For Format-Table and ConvertTo-Html.
-        internal const string AlignmentEntryKey = "alignment"; internal const string AlignmentEntryKeyShort = "a";
-        internal const string WidthEntryKey = "width"; internal const string WidthEntryKeyShort = "w";
-
-        // For Format-Custom.
-        internal const string DepthEntryKey = "depth"; internal const string DepthEntryKeyShort = "d";
-
-        // For Sort-Object.
-        internal const string AscendingEntryKey = "ascending"; internal const string AscendingEntryKeyShort = "asc";
-        internal const string DescendingEntryKey = "descending"; internal const string DescendingEntryKeyShort = "desc";
-
-    }
-
     internal class NameEntryDefinition : HashtableEntryDefinition
     {
         // Note: This is basically the same as LabelEntryDefinition (both support 'name' as well as 'label' and their short aliases), 
@@ -84,7 +88,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// Metadata base class for hashtable entry definitions
     /// it contains the key name(s) and the allowable types
     /// it also provides hooks for type expansion.
-    /// 
     /// IMPORTANT: The name and secondaryNames arguments should be passed as
     ///            CalculatedPropertyDefinitionKeys.*EntryKey and 
     ///            CalculatedPropertyDefinitionKeys.*EntryKeyShort constants
@@ -121,10 +124,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             isFullMatch = false;
 
             // First, look for exact matches.
-            if (string.Equals(key, this.KeyName, StringComparison.OrdinalIgnoreCase)) {
+            if (string.Equals(key, this.KeyName, StringComparison.OrdinalIgnoreCase))
+            {
                 isFullMatch = true;    
                 return true;
             }
+
             if (this.SecondaryNames != null)
             {
                 foreach (string secondaryKey in this.SecondaryNames)
@@ -219,11 +224,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         // The specified key is a prefix match for more than 
                         // one supported key: we have an ambiguous key; throw an exception.
                         ProcessAmbiguousKey(invocationContext, keyName, matchingEntry, this.hashEntries[k]);
-                    } else {
+                    }
+                    else
+                    {
                         // This is the first (and possibly full and therefore only) match.
                         matchingEntry = this.hashEntries[k];
                         // If it wasn't a full match, we keep going for ambiguity check.
-                        if (isFullMatch) { break; }
+                        if (isFullMatch) break;
                     }                    
                 }
             }
@@ -233,6 +240,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we found an unambiguous match
                 return matchingEntry;
             }
+
             // we did not have a match
             ProcessIllegalKey(invocationContext, keyName);
             return null;

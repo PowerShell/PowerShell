@@ -114,8 +114,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
         }
 
-        internal ExpressionEntryDefinition(bool noGlobbing) : base(CalculatedPropertyDefinitionKeys.ExpressionEntryKey, new string[] { CalculatedPropertyDefinitionKeys.ExpressionEntryKeyShort },
-                                    new Type[] { typeof(string), typeof(ScriptBlock) }, true)
+        internal ExpressionEntryDefinition(bool noGlobbing) : base(
+            CalculatedPropertyDefinitionKeys.ExpressionEntryKey,
+            new string[] { CalculatedPropertyDefinitionKeys.ExpressionEntryKeyShort },
+            new Type[] { typeof(string), typeof(ScriptBlock) }, 
+            true)
         {
             _noGlobbing = noGlobbing;
         }
@@ -245,9 +248,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class AlignmentEntryDefinition : HashtableEntryDefinition
     {
-        internal bool _forHtml;
-        internal AlignmentEntryDefinition(bool forHtml = false) : base(CalculatedPropertyDefinitionKeys.AlignmentEntryKey, new string[] { CalculatedPropertyDefinitionKeys.AlignmentEntryKeyShort },
-                                    new Type[] { typeof(string) }, false)
+        private bool _forHtml;
+        internal AlignmentEntryDefinition(bool forHtml = false) : base(
+            CalculatedPropertyDefinitionKeys.AlignmentEntryKey,
+            new string[] { CalculatedPropertyDefinitionKeys.AlignmentEntryKeyShort },
+            new Type[] { typeof(string) },
+            false)
         {
             _forHtml = forHtml;
         }
@@ -319,8 +325,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class WidthEntryDefinition : HashtableEntryDefinition
     {
-        internal WidthEntryDefinition(bool forHtml = false) : base(CalculatedPropertyDefinitionKeys.WidthEntryKey, new string[] { CalculatedPropertyDefinitionKeys.WidthEntryKeyShort },
-                                    forHtml ? new Type[] { typeof(int), typeof(string) } : new Type[] { typeof(int) }, false)
+        internal WidthEntryDefinition(bool forHtml = false) : base(
+            CalculatedPropertyDefinitionKeys.WidthEntryKey, 
+            new string[] { CalculatedPropertyDefinitionKeys.WidthEntryKeyShort },
+            forHtml ? new Type[] { typeof(int), typeof(string) } : new Type[] { typeof(int) }, 
+            false)
         {
             // Note: For HTML use (ConvertTo-Html), we also accept 'width' as a string, for backward compatibility.
         }
@@ -345,6 +354,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // it's an int, just check range, no need to change it
                 VerifyRange((int)val, invocationContext);
             }
+
             return null;
         }
 
@@ -365,15 +375,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         // Note: This is basically the same as NameEntryDefinition (both support 'name' as well as 'label' and their short aliases), 
         // except that the .KeyName property is 'label' here, not 'name.'
-        internal LabelEntryDefinition() : base(CalculatedPropertyDefinitionKeys.LabelEntryKey, new string[] { CalculatedPropertyDefinitionKeys.LabelEntryKeyShort, CalculatedPropertyDefinitionKeys.NameEntryKey, CalculatedPropertyDefinitionKeys.NameEntryKeyShort }, new Type[] { typeof(string) }, false)
+        internal LabelEntryDefinition() : base(
+            CalculatedPropertyDefinitionKeys.LabelEntryKey,
+            new string[] { CalculatedPropertyDefinitionKeys.LabelEntryKeyShort, CalculatedPropertyDefinitionKeys.NameEntryKey, CalculatedPropertyDefinitionKeys.NameEntryKeyShort },
+            new Type[] { typeof(string) },
+            false)
         {
         }
     }
 
     internal class FormatStringDefinition : HashtableEntryDefinition
     {
-        internal FormatStringDefinition() : base(CalculatedPropertyDefinitionKeys.FormatStringEntryKey, new string[] { CalculatedPropertyDefinitionKeys.FormatStringEntryKeyShort },
-                                    new Type[] { typeof(string) }, false)
+        internal FormatStringDefinition() : base(
+            CalculatedPropertyDefinitionKeys.FormatStringEntryKey,
+            new string[] { CalculatedPropertyDefinitionKeys.FormatStringEntryKeyShort },
+            new Type[] { typeof(string) },
+            false)
         {
         }
 
@@ -406,7 +423,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class BooleanEntryDefinition : HashtableEntryDefinition
     {
-        internal BooleanEntryDefinition(string entryKey, string[] secondaryNames) : base(entryKey, secondaryNames, new Type[] { typeof(bool)}, false)
+        internal BooleanEntryDefinition(string entryKey, string[] secondaryNames) : base(
+            entryKey,
+            secondaryNames,
+            new Type[] { typeof(bool) },
+            false)
         {
         }
 
@@ -422,7 +443,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return LanguagePrimitives.IsTrue(val);
         }
     }
-
 
     internal class FormatGroupByParameterDefinition : CommandParameterDefinition
     {
