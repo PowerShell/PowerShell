@@ -424,8 +424,17 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
-    internal sealed class ArgumentToModuleTransformationAttribute : ArgumentTransformationAttribute
+    /// <summary>
+    /// Attribute to transform to a module.
+    /// </summary>
+    public sealed class ArgumentToModuleTransformationAttribute : ArgumentTransformationAttribute
     {
+        /// <summary>
+        /// Transform the engineIntrinsics to a module.
+        /// </summary>
+        /// <param name="engineIntrinsics">EngineInstrinsics object.</param>
+        /// <param name="inputData">Value of the attribute.</param>
+        /// <returns>The object after transformation.</returns>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
             object argument = PSObject.Base(inputData);

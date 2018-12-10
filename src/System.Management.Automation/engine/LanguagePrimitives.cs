@@ -1888,15 +1888,28 @@ namespace System.Management.Automation
 
         #endregion public type conversion
 
-        internal class EnumMultipleTypeConverter : EnumSingleTypeConverter
+        /// <summary>
+        /// Convert multiple Enum types.
+        /// </summary>
+        public class EnumMultipleTypeConverter : EnumSingleTypeConverter
         {
+            /// <summary>
+            /// Convert from sourceValue to the specified type.
+            /// </summary>
+            /// <param name="sourceValue">value to be converted.</param>
+            /// <param name="destinationType">type to which sourceValue should be converted to.</param>
+            /// <param name="formatProvider">format provider for the conversion.</param>
+            /// <param name="ignoreCase">whether to ignore the case.</param>
             public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
                 return EnumSingleTypeConverter.BaseConvertFrom(sourceValue, destinationType, formatProvider, ignoreCase, true);
             }
         }
 
-        internal class EnumSingleTypeConverter : PSTypeConverter
+        /// <summary>
+        /// Convert single Enum type.
+        /// </summary>
+        public class EnumSingleTypeConverter : PSTypeConverter
         {
             private class EnumHashEntry
             {
@@ -1976,6 +1989,12 @@ namespace System.Management.Automation
                 }
             }
 
+            /// <summary>
+            /// Verify if conversion from sourceValue can be done to type destinationType.
+            /// </summary>
+            /// <param name="sourceValue">value to be converted.</param>
+            /// <param name="destinationType">type to which sourceValue should be converted to.</param>
+            /// <returns>Whether the sourceValue can be converted to destinationType.</param>
             public override bool CanConvertFrom(object sourceValue, Type destinationType)
             {
                 return sourceValue is string && destinationType.IsEnum;
@@ -2091,11 +2110,28 @@ namespace System.Management.Automation
                 return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, enumHashEntry.names);
             }
 
+            /// <summary>
+            /// Convert from sourceValue to the specified type.
+            /// </summary>
+            /// <param name="sourceValue">Value to be converted.</param>
+            /// <param name="destinationType">Type to which sourceValue should be converted to.</param>
+            /// <param name="formatProvider">Format provider for the conversion.</param>
+            /// <param name="ignoreCase">Whether to ignore the case.</param>
+            /// <returns>The converted object.</returns>
             public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
                 return EnumSingleTypeConverter.BaseConvertFrom(sourceValue, destinationType, formatProvider, ignoreCase, false);
             }
 
+            /// <summary>
+            /// Convert from sourceValue to the specified type.
+            /// </summary>
+            /// <param name="sourceValue">Value to be converted.</param>
+            /// <param name="destinationType">Type to which sourceValue should be converted to.</param>
+            /// <param name="formatProvider">Format provider for the conversion.</param>
+            /// <param name="ignoreCase">Whether to ignore the case.</param>
+            /// <param name="multipleValues">Whether to convert multiple values.</param>
+            /// <returns>The converted object.</returns>
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
@@ -2235,11 +2271,25 @@ namespace System.Management.Automation
                 return Enum.ToObject(destinationType, returnUInt64);
             }
 
+            /// <summary>
+            /// Verify if conversion from sourceValue to destinationType can be done. This is always false.
+            /// </summary>
+            /// <param name="sourceValue">Value to be converted.</param>
+            /// <param name="destinationType">Type to which sourceValue should be converted to.</param>
+            /// <returns>Whether the object can be converted.</returns>
             public override bool CanConvertTo(object sourceValue, Type destinationType)
             {
                 return false;
             }
 
+            /// <summary>
+            /// Convert from sourceValue to the specified type.
+            /// </summary>
+            /// <param name="sourceValue">Value to be converted.</param>
+            /// <param name="destinationType">Type to which sourceValue should be converted to.</param>
+            /// <param name="formatProvider">Format provider for the conversion.</param>
+            /// <param name="ignoreCase">Whether to ignore the case.</param>
+            /// <returns>The converted object.</returns>
             public override object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
                 throw PSTraceSource.NewNotSupportedException();

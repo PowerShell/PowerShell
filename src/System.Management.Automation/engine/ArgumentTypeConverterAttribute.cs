@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This is used for automatic conversions to be performed in shell variables.
     /// </summary>
-    internal sealed class ArgumentTypeConverterAttribute : ArgumentTransformationAttribute
+    public sealed class ArgumentTypeConverterAttribute : ArgumentTransformationAttribute
     {
         /// <summary>
         /// This ctor form is used to initialize shell variables
@@ -36,6 +36,12 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Transforms the inputData.
+        /// </summary>
+        /// <param name="engineIntrinsics">Object of type EngineIntrinsics.</param>
+        /// <param name="inputData">Object to be transformed.</param>
+        /// <returns>The object after transformation.</returns>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
             return Transform(engineIntrinsics, inputData, false, false);

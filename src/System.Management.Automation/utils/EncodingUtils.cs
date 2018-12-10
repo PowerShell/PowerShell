@@ -87,8 +87,14 @@ namespace System.Management.Automation
     /// When the input data is of type string and is valid to be converted to System.Text.Encoding, we do
     /// the conversion and return the converted value. Otherwise, we just return the input data.
     /// </summary>
-    internal sealed class ArgumentToEncodingTransformationAttribute : ArgumentTransformationAttribute
+    public sealed class ArgumentToEncodingTransformationAttribute : ArgumentTransformationAttribute
     {
+        /// <summary>
+        /// Transform the argument to type System.Text.Encoding.
+        /// </summary>
+        /// <param name="engineIntrinsics">EngineIntrinsics object.</param>
+        /// <param name="inputData">Value of attribute to be transformmed.</param>
+        /// <returns>The object after transformation.</returns>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
             switch (inputData)

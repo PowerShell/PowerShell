@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet start invocation of jobs in background.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113405")]
-    [OutputType(typeof(PSRemotingJob))]
+    [OutputType(typeof(Job))]
     public class StartJobCommand : PSExecutionCmdlet, IDisposable
     {
         #region Private members

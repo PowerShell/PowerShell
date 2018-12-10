@@ -230,8 +230,20 @@ namespace System.Management.Automation.Internal
 
         private MshCommandRuntime _commandRuntime;
 
-        internal class ValidateVariableName : ValidateArgumentsAttribute
+        /// <summary>
+        /// Validates variable name to be valid.
+        /// </summary>
+        public class ValidateVariableName : ValidateArgumentsAttribute
         {
+            /// <summary>
+            /// Validate the value of arguments is a valid variable name.
+            /// </summary>
+            /// <param name="arguments">
+            /// The value of the arguments is a variable name to be validated.
+            /// </param>
+            /// <param name="engineIntrinsics">
+            /// Instance of EngineIntrinsics class.
+            /// </param>
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 string varName = arguments as string;

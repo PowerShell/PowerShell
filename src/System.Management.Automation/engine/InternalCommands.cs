@@ -2005,8 +2005,14 @@ namespace Microsoft.PowerShell.Commands
         ///   * A string without a dot, i.e. "2"
         ///   * The string 'latest', which we interpret to be the current version of PowerShell.
         /// </summary>
-        private sealed class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
+        public sealed class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
         {
+            /// <summary>
+            /// Transform the argument to a version.
+            /// </summary>
+            /// <param name="engineIntrinsics">EngineIntrinsics object.</param>
+            /// <param name="inputData">Value of attribute to be transformmed.</param>
+            /// <returns>The object after transformation.</returns>
             public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
             {
                 object version = PSObject.Base(inputData);
@@ -2043,8 +2049,16 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private sealed class ValidateVersionAttribute : ValidateArgumentsAttribute
+        /// <summary>
+        /// Attribute to validate the version.
+        /// </summary>
+        public sealed class ValidateVersionAttribute : ValidateArgumentsAttribute
         {
+            /// <summary>
+            /// Validate the arguments is a valid version.
+            /// </summary>
+            /// <param name="arguments">Value of the version argument.</param>
+            /// <param name="engineIntrinsics">EngineIntrinsics object.</param>
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
