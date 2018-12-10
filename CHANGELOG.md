@@ -5,7 +5,7 @@
 ### Breaking Changes
 
 - `Get-ExperimentalFeature` no longer has `-ListAvailable` switch (#8318)
-- Debug parameter now sets `DebugPreference` to continue instead of inquire (#8195) (Thanks @KirkMunro!)
+- `Debug` parameter now sets `DebugPreference` to `Continue` instead of `Inquire` (#8195) (Thanks @KirkMunro!)
 
 ### Engine Updates and Fixes
 
@@ -31,10 +31,9 @@
 
 ### Code Cleanup
 
-- More changes and cleanup to reduce the startup time by 24% (#8396)
 - Update `resgen`, `typegen` to use .Net Core 2.1 (#8369) (Thanks @bergmeister!)
 - Change `Newtonsoft` deserializing bug comment to link to the new issue (#8377) (Thanks @louistio!)
-- Improve PowerShell startup time (#8341)
+- Improve PowerShell startup time by 24% (#8341) (#8396)
 - Cleanup `#if !CORECLR` code (#8337) (Thanks @iSazonov!)
 - Cleanup `UpdatableHelpSystem` and enable XSD validation on MAML help content (#8335) (Thanks @iSazonov!)
 - Remove old `customPSSnapInType` parameter from `PSSnapInInfo()` (#8333) (Thanks @iSazonov!)
