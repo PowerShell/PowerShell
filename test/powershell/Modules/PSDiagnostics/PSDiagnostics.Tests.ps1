@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" {
+Describe "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $OriginalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( -not $IsWindows ) {
@@ -12,7 +12,7 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" 
         $Global:PSDefaultParameterValues = $OriginalDefaultParameterValues
     }
 
-    Context -Name "Test for Enable-PSTrace cmdlet" {
+    Context "Test for Enable-PSTrace cmdlet" {
         it "Should enable Analytic logs for Microsoft-Windows-PowerShell." {
             Enable-PSTrace -Force
 
@@ -22,7 +22,7 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" 
         }
     }
 
-    Context -Name "Test for Disable-PSTrace cmdlet" {
+    Context "Test for Disable-PSTrace cmdlet" {
         it "Should disable Analytic logs for Microsoft-Windows-PowerShell." {
             Disable-PSTrace
 
@@ -32,7 +32,7 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" 
         }
     }
 
-    Context -Name "Test for Get-LogProperties cmdlet" {
+    Context "Test for Get-LogProperties cmdlet" {
         it "Should show properties of Admin logs for 'Microsoft-Windows-PowerShell'." {
             [XML]$WevtUtilOutput = wevtutil gl Microsoft-Windows-PowerShell/Admin /f:xml
 
@@ -46,7 +46,7 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI", "RequireAdminOnWindows" 
         }
     }
 
-    Context -Name "Test for Set-LogProperties cmdlet" {
+    Context "Test for Set-LogProperties cmdlet" {
         BeforeAll {
             $LogType = 'Analytic'
             if ($IsWindows) {
