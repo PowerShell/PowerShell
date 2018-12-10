@@ -137,15 +137,6 @@ namespace System.Management.Automation
             discoveryTracer.ShowHeaders = false;
         }
 
-        private void AddCmdletToCache(CmdletConfigurationEntry entry)
-        {
-            if (!IsSpecialCmdlet(entry.ImplementingType))
-            {
-                CmdletInfo newCmdletInfo = NewCmdletInfo(entry, SessionStateEntryVisibility.Public);
-                AddCmdletInfoToCache(newCmdletInfo.Name, newCmdletInfo, isGlobal: true);
-            }
-        }
-
         /// <summary>
         /// Determines if the cmdlet is a cmdlet that shouldn't be in the discovery list.
         /// </summary>
@@ -161,13 +152,6 @@ namespace System.Management.Automation
             // detail of the formatting and output component. That component uses these cmdlets by creating
             // an instance of the CommandProcessor class directly.
             return implementingType == typeof(OutLineOutputCommand) || implementingType == typeof(FormatDefaultCommand);
-        }
-
-        private CmdletInfo NewCmdletInfo(CmdletConfigurationEntry entry, SessionStateEntryVisibility visibility)
-        {
-            CmdletInfo ci = new CmdletInfo(entry.Name, entry.ImplementingType, entry.HelpFileName, entry.PSSnapIn, Context);
-            ci.Visibility = visibility;
-            return ci;
         }
 
         private CmdletInfo NewCmdletInfo(SessionStateCmdletEntry entry)
@@ -1553,49 +1537,6 @@ namespace System.Management.Automation
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Removes a cmdlet from the cmdlet cache.
-        /// </summary>
-        /// <param name="entry">
-        /// The configuration entry for the cmdlet which is being removed.
-        /// </param>
-        private void RemoveCmdletFromCache(CmdletConfigurationEntry entry)
-        {
-            IDictionary<string, List<CmdletInfo>> cmdletTable = Context.EngineSessionState.GetCmdletTable();
-            List<CmdletInfo> cacheEntry;
-            if (cmdletTable.TryGetValue(entry.Name, out cacheEntry))
-            {
-                int removalIndex = GetCmdletRemovalIndex(cacheEntry, entry.PSSnapIn == null ? String.Empty : entry.PSSnapIn.Name);
-
-                if (removalIndex >= 0)
-                {
-                    string name = cacheEntry[removalIndex].Name;
-                    cacheEntry.RemoveAt(removalIndex);
-                    Context.EngineSessionState.RemoveCmdlet(name, removalIndex, true);
-                }
-
-                // Remove the entry from the cache if there are no more cmdlets
-                if (cacheEntry.Count == 0)
-                {
-                    Context.EngineSessionState.RemoveCmdletEntry(entry.Name, true);
-                }
-            }
-        }
-
-        private int GetCmdletRemovalIndex(List<CmdletInfo> cacheEntry, string PSSnapin)
-        {
-            int removalIndex = -1;
-            for (int index = 0; index < cacheEntry.Count; ++index)
-            {
-                if (String.Equals(cacheEntry[index].ModuleName, PSSnapin, StringComparison.OrdinalIgnoreCase))
-                {
-                    removalIndex = index;
-                    break;
-                }
-            }
-            return removalIndex;
         }
 
         internal ExecutionContext Context { get; }
