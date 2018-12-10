@@ -42,10 +42,10 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI","RequireAdminOnWindows" {
             if($IsWindows){
                 [XML]$WevtUtilBefore = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
                 $LogPropertyToSet    = [Microsoft.PowerShell.Diagnostics.LogDetails]::new($WevtUtilBefore.channel.Name,
-                                                                            $WevtUtilBefore.channel.Enabled -as [bool],
+                                                                            [bool]::Parse($WevtUtilBefore.channel.Enabled),
                                                                             $LogType,
-                                                                            $WevtUtilBefore.channel.Logging.Retention -as [bool],
-                                                                            $WevtUtilBefore.channel.Logging.AutoBackup -as [bool],
+                                                                            [bool]::Parse($WevtUtilBefore.channel.Logging.Retention),
+                                                                            [bool]::Parse($WevtUtilBefore.channel.Logging.AutoBackup),
                                                                             $WevtUtilBefore.channel.Logging.MaxSize -as [int]
                                                                             )
             }
@@ -53,11 +53,10 @@ Describe -Name "PSDiagnostics cmdlets tests" -Tag "CI","RequireAdminOnWindows" {
 
         it "Should invert AutoBackup setting of $LogType logs for 'Microsoft-Windows-PowerShell'." -Skip:(-not $IsWindows) {
             $LogPropertyToSet.AutoBackup = -not $LogPropertyToSet.AutoBackup
-            $LogProperty                 = Set-LogProperties -LogDetails $LogPropertyToSet -Force
+            Set-LogProperties -LogDetails $LogPropertyToSet -Force
 
             [XML]$WevtUtilOutput         = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
-
-            $LogPropertyToSet.AutoBackup | Should -Be $WevtUtilOutput.Channel.Logging.AutoBackup
+            (Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType).AutoBackup | Should -Be ([bool]::Parse($WevtUtilOutput.Channel.Logging.AutoBackup))
         }
 
         it "Should throw excpetion for invalid LogName." -Skip:(-not $IsWindows) {
