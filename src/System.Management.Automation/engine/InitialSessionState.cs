@@ -3926,7 +3926,7 @@ namespace System.Management.Automation.Runspaces
 
             // If this is an in-memory assembly, don't added it to the list of AssemblyEntries
             // since it can't be loaded by path or name
-            if (! string.IsNullOrEmpty(assembly.Location))
+            if (!string.IsNullOrEmpty(assembly.Location))
             {
                 SessionStateAssemblyEntry assemblyEntry =
                     new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
