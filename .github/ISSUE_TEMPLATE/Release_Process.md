@@ -6,7 +6,7 @@ about: Maintainers Only - Release Process
 <!--
 
 This template is for maintainers to create an issues to track the release process.
-Please use this template if you are not a maintainer.
+Please **only** use this template if you are a maintainer.
 
 -->
 
