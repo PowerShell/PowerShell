@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 }
                 else
                 {
-                    _outputBuilder.AppendFormat(_cultureInfo, FormatString, stringValue);
+                    _outputBuilder.AppendFormat(_cultureInfo, FormatString, inputValue);
                 }
             }
         }
