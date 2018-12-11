@@ -18,22 +18,28 @@
     On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
     On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
 #>
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName="Daily")]
 param(
-    [Parameter()]
+    [Parameter(ParameterSetName="Daily")]
     [string] $Destination,
 
-    [Parameter()]
+    [Parameter(ParameterSetName="Daily")]
     [switch] $Daily,
 
-    [Parameter()]
-    [switch] $UseMSI,
-
-    [Parameter()]
+    [Parameter(ParameterSetName="Daily")]
     [switch] $DoNotOverwrite,
 
+    [Parameter(ParameterSetName="Daily")]
+    [switch] $AddToPath,
+
+    [Parameter(ParameterSetName="MSI")]
+    [switch] $UseMSI,
+
+    [Parameter(ParameterSetName="MSI")]
+    [switch] $Quiet,
+
     [Parameter()]
-    [switch] $AddToPath
+    [switch] $Preview
 )
 
 Set-StrictMode -Version latest
@@ -138,7 +144,11 @@ try {
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
     } else {
         $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
-        $release = $metadata.ReleaseTag -replace '^v'
+        if ($Preview) {
+            $release = $metadata.PreviewReleaseTag -replace '^v'
+        } else {
+            $release = $metadata.ReleaseTag -replace '^v'
+        }
 
         $packageName = if ($IsWinEnv) {
             if ($UseMSI) {
@@ -174,7 +184,13 @@ try {
 
         New-Item -ItemType Directory -Path $contentPath > $null
         if ($IsWinEnv) {
-            if ($UseMSI) {
+            if ($UseMSI -and $Quiet) {
+                Write-Verbose "Performing quiet install"
+                $process = Start-Process msiexec -ArgumentList "/i",$packagePath,"/quiet" -Wait -PassThru
+                if ($process.exitcode -ne 0) {
+                    throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
+                }
+            } elseif ($UseMSI) {
                 Start-Process $packagePath -Wait
             } else {
                 Expand-Archive -Path $packagePath -DestinationPath $contentPath
