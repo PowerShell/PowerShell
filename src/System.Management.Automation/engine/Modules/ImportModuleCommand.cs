@@ -471,7 +471,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (IOException)
                     {
-                        ;
                     }
                 }
             }

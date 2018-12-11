@@ -599,7 +599,7 @@ namespace System.Management.Automation
                 }
                 else if (kind == TokenKind.And)
                 {
-                    ;   // do nothing
+                    // do nothing
                 }
                 else if (kind == TokenKind.Or)
                 {

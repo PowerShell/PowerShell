@@ -8,90 +8,6 @@ using Microsoft.Win32;
 
 #pragma warning disable 1591, 1572, 1571, 1573, 1587, 1570, 0067
 
-#region CLR_STUBS
-
-// This namespace contains stubs for some .NET types that are not in CoreCLR, such as ISerializable and SerializableAttribute.
-// We use the stubs in this namespace to reduce #if/def in the code as much as possible.
-namespace Microsoft.PowerShell.CoreClr.Stubs
-{
-    #region SystemManagementStubs
-
-    // Summary:
-    //     Describes the authentication level to be used to connect to WMI. This is
-    //     used for the COM connection to WMI.
-    public enum AuthenticationLevel
-    {
-        // Summary:
-        //     Authentication level should remain as it was before.
-        Unchanged = -1,
-        //
-        // Summary:
-        //     The default COM authentication level. WMI uses the default Windows Authentication
-        //     setting.
-        Default = 0,
-        //
-        // Summary:
-        //     No COM authentication.
-        None = 1,
-        //
-        // Summary:
-        //     Connect-level COM authentication.
-        Connect = 2,
-        //
-        // Summary:
-        //     Call-level COM authentication.
-        Call = 3,
-        //
-        // Summary:
-        //     Packet-level COM authentication.
-        Packet = 4,
-        //
-        // Summary:
-        //     Packet Integrity-level COM authentication.
-        PacketIntegrity = 5,
-        //
-        // Summary:
-        //     Packet Privacy-level COM authentication.
-        PacketPrivacy = 6,
-    }
-
-    // Summary:
-    //     Describes the impersonation level to be used to connect to WMI.
-    public enum ImpersonationLevel
-    {
-        // Summary:
-        //     Default impersonation.
-        Default = 0,
-        //
-        // Summary:
-        //     Anonymous COM impersonation level that hides the identity of the caller.
-        //     Calls to WMI may fail with this impersonation level.
-        Anonymous = 1,
-        //
-        // Summary:
-        //     Identify-level COM impersonation level that allows objects to query the credentials
-        //     of the caller. Calls to WMI may fail with this impersonation level.
-        Identify = 2,
-        //
-        // Summary:
-        //     Impersonate-level COM impersonation level that allows objects to use the
-        //     credentials of the caller. This is the recommended impersonation level for
-        //     WMI calls.
-        Impersonate = 3,
-        //
-        // Summary:
-        //     Delegate-level COM impersonation level that allows objects to permit other
-        //     objects to use the credentials of the caller. This level, which will work
-        //     with WMI calls but may constitute an unnecessary security risk, is supported
-        //     only under Windows 2000.
-        Delegate = 4,
-    }
-
-    #endregion
-}
-
-#endregion CLR_STUBS
-
 #region PS_STUBS
 // Include PS types that are not needed for PowerShell on CSS
 
@@ -132,26 +48,6 @@ namespace System.Management.Automation
     }
 
     #endregion PSTransaction
-
-    #region ApartmentState
-
-    internal enum ApartmentState
-    {
-        //
-        // Summary:
-        //     The System.Threading.Thread will create and enter a single-threaded apartment.
-        STA = 0,
-        //
-        // Summary:
-        //     The System.Threading.Thread will create and enter a multithreaded apartment.
-        MTA = 1,
-        //
-        // Summary:
-        //     The System.Threading.Thread.ApartmentState property has not been set.
-        Unknown = 2
-    }
-
-    #endregion ApartmentState
 }
 
 namespace System.Management.Automation.Internal

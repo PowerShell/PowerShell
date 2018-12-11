@@ -399,7 +399,6 @@ namespace System.Management.Automation.Runspaces
         public SessionStateAssemblyEntry(string name)
             : base(name)
         {
-            ;
         }
 
         /// <summary>
@@ -2735,15 +2734,14 @@ namespace System.Management.Automation.Runspaces
         {
             // Use the user name passed to initial session state if available, or
             // otherwise use the current user name.
-            var userName = (!string.IsNullOrEmpty(this.UserDriveUserName)) ?
-                this.UserDriveUserName :
+            var userName = !string.IsNullOrEmpty(this.UserDriveUserName)
+                ? this.UserDriveUserName
                 // domain\user on Windows, just user on Unix
 #if UNIX
-                Platform.Unix.UserName
+                : Platform.Unix.UserName;
 #else
-                System.Security.Principal.WindowsIdentity.GetCurrent().Name
+                : System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 #endif
-                ;
 
             // Ensure that user name contains no invalid path characters.
             // MSDN indicates that logon names cannot contain any of these invalid characters,

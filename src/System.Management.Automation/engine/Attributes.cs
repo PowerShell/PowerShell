@@ -1476,13 +1476,17 @@ namespace System.Management.Automation
             else if ((ie = arguments as IEnumerable) != null)
             {
                 IEnumerator e = ie.GetEnumerator();
-                for (; e.MoveNext() == true; len++)
-                    ;
+                while (e.MoveNext())
+                {
+                    len++;
+                }
             }
             else if ((ienumerator = arguments as IEnumerator) != null)
             {
-                for (; ienumerator.MoveNext() == true; len++)
-                    ;
+                while (ienumerator.MoveNext())
+                {
+                    len++;
+                }
             }
             else
             {
