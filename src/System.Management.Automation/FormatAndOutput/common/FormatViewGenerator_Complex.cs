@@ -623,7 +623,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     if (_enumerationLimit == enumCount)
                     {
-                        DisplayLeaf(PSObjectHelper.ellipses, formatValueList);
+                        DisplayLeaf(PSObjectHelper.Ellipsis, formatValueList);
                         break;
                     }
                     enumCount++;

@@ -18,6 +18,7 @@ using System.Management.Automation.Internal;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
@@ -3849,7 +3850,7 @@ namespace System.Management.Automation
 
             if (valAsString.Length > msgLength)
             {
-                valAsString = valAsString.Substring(0, msgLength) + "...";
+                valAsString = valAsString.Substring(0, msgLength) + PSObjectHelper.Ellipsis;
             }
             Trace("TraceVariableAssignment", ParserStrings.TraceVariableAssignment, varName, valAsString);
         }

@@ -1298,13 +1298,13 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"
                                   $result = $_.Content
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
-                                  if($result.Length -eq 200) { $result += ""..."" }
+                                  if($result.Length -eq 200) { $result += ""`u{2026}"" }
                                   $result
                                 ", label: "Content")
                         .AddItemScriptBlock(@"
                                   $result = $_.RawContent
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
-                                  if($result.Length -eq 200) { $result += ""..."" }
+                                  if($result.Length -eq 200) { $result += ""`u{2026}"" }
                                   $result
                                 ", label: "RawContent")
                         .AddItemProperty(@"Headers")
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"
                                   $result = $_.RawContent
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
-                                  if($result.Length -eq 200) { $result += ""..."" }
+                                  if($result.Length -eq 200) { $result += ""`u{2026}"" }
                                   $result
                                 ", label: "RawContent")
                         .AddItemProperty(@"Headers")
