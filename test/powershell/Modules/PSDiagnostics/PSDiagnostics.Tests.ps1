@@ -4,14 +4,18 @@
 Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $LogType = 'Analytic'
-        $LogSettingBak = Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType
         $OriginalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ( -not $IsWindows ) {
+        if (-not $IsWindows) {
             $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else{
+            $LogSettingBak = Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType
         }
     }
     AfterAll {
-        Set-LogProperties -LogDetails $LogSettingBak -Force
+        if ($IsWindows) {
+            Set-LogProperties -LogDetails $LogSettingBak -Force
+        }
         $Global:PSDefaultParameterValues = $OriginalDefaultParameterValues
     }
 
