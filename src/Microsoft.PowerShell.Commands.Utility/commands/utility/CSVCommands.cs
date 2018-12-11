@@ -1389,7 +1389,6 @@ namespace Microsoft.PowerShell.Commands
                         current.Remove(0, current.Length);
                     }
                 }
-
                 else if (ch == '"')
                 {
                     if (seenBeginQuote)

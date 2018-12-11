@@ -1505,7 +1505,6 @@ namespace System.Management.Automation
                     }
                 }
             }
-
             catch (ArgumentException)
             {
                 throwNotSupported = true;

@@ -1713,25 +1713,22 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            // Is it the global scope?
-
             if (String.Compare(
                     driveName,
                     StringLiterals.Global,
                     StringComparison.OrdinalIgnoreCase) == 0)
             {
+                // It's the global scope.
                 s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
             }
-
-            // Is it the local scope?
-
             else if (String.Compare(
                         driveName,
                         StringLiterals.Local,
                         StringComparison.OrdinalIgnoreCase) == 0)
             {
+                // It's the local scope.
                 s_tracer.WriteLine("match found: {0}", driveName);
                 result = true;
                 scope = _sessionState.Internal.CurrentScope;

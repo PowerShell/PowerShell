@@ -901,7 +901,6 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-
                 else if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
                     // Parse setting file arg and write error

@@ -4643,7 +4643,6 @@ namespace System.Management.Automation
                 if (providerPaths.Count > 0)
                     providerPath = providerPaths[0];
             }
-
             catch (DriveNotFoundException)
             {
                 // This exception is expected for remote sessions where drives exist in a remote session but not

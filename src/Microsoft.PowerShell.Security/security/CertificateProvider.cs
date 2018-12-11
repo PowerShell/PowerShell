@@ -3180,7 +3180,7 @@ namespace Microsoft.PowerShell.Commands
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
             if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) &&
-                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
+                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture) == -1)
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
                 try

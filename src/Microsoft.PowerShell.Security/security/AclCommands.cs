@@ -800,7 +800,6 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(er);
                 }
             }
-
             else
             {
                 foreach (string p in Path)

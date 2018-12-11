@@ -3373,7 +3373,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 CopyItemFromRemoteSession(path, destinationPath, recurse, Force, fromSession);
             }
-
             else
             {
                 // Copy-Item to session
@@ -3385,9 +3384,7 @@ namespace Microsoft.PowerShell.Commands
                         CopyItemLocalOrToSession(path, destinationPath, recurse, Force, ps);
                     }
                 }
-
-                // Copy-Item local
-                else
+                else // Copy-Item local
                 {
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
                 }

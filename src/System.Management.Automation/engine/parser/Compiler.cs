@@ -368,7 +368,7 @@ namespace System.Management.Automation.Language
         internal static readonly FieldInfo PSObject_isDeserialized =
             typeof(PSObject).GetField(nameof(PSObject.isDeserialized), instanceFlags);
         internal static readonly MethodInfo PSObject_ToStringParser =
-            typeof(PSObject).GetMethod(nameof(PSObject.ToStringParser), staticFlags, null, new[]{typeof(ExecutionContext), typeof(object)}, null);
+            typeof(PSObject).GetMethod(nameof(PSObject.ToStringParser), staticFlags, null, new[] { typeof(ExecutionContext), typeof(object) }, null);
 
         internal static readonly PropertyInfo PSReference_Value =
             typeof(PSReference).GetProperty(nameof(PSReference.Value));

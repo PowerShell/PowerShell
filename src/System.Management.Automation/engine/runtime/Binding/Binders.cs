@@ -3820,7 +3820,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        internal static Expression InvokeConverter(LanguagePrimitives.ConversionData conversion,
+        internal static Expression InvokeConverter(LanguagePrimitives.IConversionData conversion,
                                                    Expression value,
                                                    Type resultType,
                                                    bool debase,
@@ -7455,9 +7455,7 @@ namespace System.Management.Automation.Language
         private static readonly
             Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints, bool>, PSCreateInstanceBinder>
             s_binderCache =
-                new Dictionary
-                    <Tuple<CallInfo, PSMethodInvocationConstraints, bool>, PSCreateInstanceBinder>(
-                    new KeyComparer());
+                new Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints, bool>, PSCreateInstanceBinder>(new KeyComparer());
 
         public static PSCreateInstanceBinder Get(CallInfo callInfo, PSMethodInvocationConstraints constraints, bool publicTypeOnly = false)
         {
@@ -7632,9 +7630,7 @@ namespace System.Management.Automation.Language
         private static readonly
             Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints>, PSInvokeBaseCtorBinder>
             s_binderCache =
-                new Dictionary
-                    <Tuple<CallInfo, PSMethodInvocationConstraints>, PSInvokeBaseCtorBinder>(
-                    new KeyComparer());
+                new Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints>, PSInvokeBaseCtorBinder>(new KeyComparer());
 
         public static PSInvokeBaseCtorBinder Get(CallInfo callInfo, PSMethodInvocationConstraints constraints)
         {
