@@ -9,6 +9,7 @@
 
 ### Engine Updates and Fixes
 
+- Improve PowerShell startup time by 24% (#8341) (#8396)
 - Remove extra newlines from formatting which resulted in unnecessary double newlines (#8247)
 - Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318)
 - Fix `Export-ModuleMember` bug for a `ScriptBlock` having no context (#8363)
@@ -18,22 +19,21 @@
 
 ### General Cmdlet Updates and Fixes
 
+- Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318)
 - Add cmdlet `Join-String` for creating text from pipeline input (#7660) (Thanks @powercode!)
 - Expose all cmdlets from `PSDiagnostics` if `logman.exe` is available (#8366)
 - Fix `Get-Help` for advanced functions with MAML help content (#8353)
-- Conditionally mark getter/setter implementations virtual in generated classes (#8303) (Thanks @IISResetMe!)
+- Conditionally mark getter/setter implementations as virtual in generated classes (#8303) (Thanks @IISResetMe!)
 - Fix for `PSDrive` creation with a UNC path with a trailing backslash or forward slash when combined with `-Persist` (#8305) (Thanks @kvprasoon!)
 - Remove `Persist` parameter from `New-PSDrive` on non-Windows platform (#8291) (Thanks @lukexjeremy!)
 - `Test-Path`: Return `$false` when given an empty or `$null` `-Path`/`-LiteralPath` value (#8080) (Thanks @vexx32!)
 - Token calculation fix for `Get-Help` executed on `ScriptBlock` for comment help. (#8238) (Thanks @hubuk!)
-- Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318)
 - Support `Get-PSHostProcessInfo` and `Enter-PSHostProcess` on Unix platforms (#8232)
 
 ### Code Cleanup
 
 - Update `resgen`, `typegen` to use .Net Core 2.1 (#8369) (Thanks @bergmeister!)
 - Change `Newtonsoft` deserializing bug comment to link to the new issue (#8377) (Thanks @louistio!)
-- Improve PowerShell startup time by 24% (#8341) (#8396)
 - Cleanup `#if !CORECLR` code (#8337) (Thanks @iSazonov!)
 - Cleanup `UpdatableHelpSystem` and enable XSD validation on MAML help content (#8335) (Thanks @iSazonov!)
 - Remove old `customPSSnapInType` parameter from `PSSnapInInfo()` (#8333) (Thanks @iSazonov!)
