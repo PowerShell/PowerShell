@@ -583,7 +583,7 @@ namespace System.Management.Automation
         /// <param name="first">first object</param>
         /// <param name="second">object to compare first to</param>
         /// <returns>true if first is equal to the second</returns>
-        public new static bool Equals(object first, object second)
+        public static new bool Equals(object first, object second)
         {
             return Equals(first, second, false, CultureInfo.InvariantCulture);
         }

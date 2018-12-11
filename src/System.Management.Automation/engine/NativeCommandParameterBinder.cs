@@ -347,7 +347,7 @@ namespace System.Management.Automation
             return needQuotes;
         }
 
-        static private string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
+        private static string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
         {
             if (arrayLiteralAst == null) return " ";
 

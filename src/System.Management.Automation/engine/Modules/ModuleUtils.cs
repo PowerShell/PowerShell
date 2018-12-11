@@ -14,14 +14,14 @@ namespace System.Management.Automation.Internal
         // Default option for local file system enumeration:
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
-        private readonly static System.IO.EnumerationOptions s_defaultEnumerationOptions =
+        private static readonly System.IO.EnumerationOptions s_defaultEnumerationOptions =
                                         new System.IO.EnumerationOptions() { AttributesToSkip = 0 };
 
         // Default option for UNC path enumeration. Same as above plus a large buffer size.
         // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
         // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
         //    "A "large" buffer, for example, would be 16K. Typical is 4K."
-        private readonly static System.IO.EnumerationOptions s_uncPathEnumerationOptions =
+        private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
                                         new System.IO.EnumerationOptions() { AttributesToSkip = 0, BufferSize = 16384 };
 
         /// <summary>

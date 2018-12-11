@@ -781,7 +781,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// can running parallelly under more than one runspace(s).
         /// </para>
         /// </summary>
-        static internal ConcurrentDictionary<Guid, CimSessionState> cimSessions
+        internal static ConcurrentDictionary<Guid, CimSessionState> cimSessions
             = new ConcurrentDictionary<Guid, CimSessionState>();
 
         /// <summary>
@@ -789,7 +789,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Default runspace id
         /// </para>
         /// </summary>
-        static internal Guid defaultRunspaceId = Guid.Empty;
+        internal static Guid defaultRunspaceId = Guid.Empty;
 
         /// <summary>
         /// <para>

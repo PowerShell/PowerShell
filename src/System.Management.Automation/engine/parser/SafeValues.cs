@@ -59,7 +59,7 @@ namespace System.Management.Automation.Language
         }
 
         // A readonly singleton with the default SafeValueContext.
-        internal readonly static IsSafeValueVisitor Default = new IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext.Default);
+        internal static readonly IsSafeValueVisitor Default = new IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext.Default);
 
         // This is a check of the number of visits
         private uint _visitCount = 0;
