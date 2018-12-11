@@ -136,8 +136,31 @@ echo "*** Setting up PowerShell Core repo..."
 # Import the public repository GPG keys
 curl https://packages.microsoft.com/keys/microsoft.asc | $SUDO apt-key add -
 #Add the Repo
+if [[ "${DISTRIB_ID}" = "linuxmint" ]]; then
+    echo "Attempting to remap linuxmint to an appropriate ubuntu version" >&2
+    LINUXMINT_VERSION=${DISTRIB_RELEASE}
+    #https://en.wikipedia.org/wiki/Linux_Mint_version_history
+    case ${LINUXMINT_VERSION} in
+        19*)
+            DISTRIB_RELEASE=18.04
+        ;;
+        18*)
+            DISTRIB_RELEASE=16.04
+        ;;
+        17*)
+            DISTRIB_RELEASE=14.04
+        ;;
+        *)
+            echo "ERROR: unsupported linuxmint version (${LINUXMINT_VERSION})." >&2
+            echo "Supported versions: 19" >&2
+            echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
+            exit 1
+        ;;          
+    esac
+    echo "Remapping linuxmint version ${LINUXMINT_VERSION} to ubuntu version ${DISTRIB_RELEASE}" >&2
+fi
 case $DISTRIB_ID in
-    ubuntu)
+    ubuntu|linuxmint)
         case $DISTRIB_RELEASE in
             18.04|16.10|16.04|15.10|14.04)
                 curl https://packages.microsoft.com/config/ubuntu/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
@@ -145,6 +168,7 @@ case $DISTRIB_ID in
             *)
                 echo "ERROR: unsupported Ubuntu version ($DISTRIB_RELEASE)." >&2
                 echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 18.04." >&2
+                echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
                 exit 1
             ;;
         esac
@@ -158,6 +182,7 @@ case $DISTRIB_ID in
             *)
                 echo "ERROR: unsupported Debian version ($DISTRIB_RELEASE)." >&2
                 echo "Supported versions: 8, 9." >&2
+                echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
                 exit 1
             ;;
         esac
