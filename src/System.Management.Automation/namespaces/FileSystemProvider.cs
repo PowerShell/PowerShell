@@ -1686,8 +1686,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteError(new ErrorRecord(ex, "DirUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory.FullName));
                         }
-                    }// foreach
-                }// foreach
+                    }
+                }
 
                 bool isFilterHiddenSpecified = false;           // "Hidden" is specified somewhere in the expression
                 bool isSwitchFilterHiddenSpecified = false;     // "Hidden" is specified somewhere in the parameters
@@ -1747,9 +1747,9 @@ namespace Microsoft.PowerShell.Commands
 
                                 Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers, tracker);
                             }
-                        }//foreach
-                    }//if
-                }//if
+                        }
+                    }
+                }
             }
             catch (ArgumentException argException)
             {
@@ -3395,7 +3395,7 @@ namespace Microsoft.PowerShell.Commands
 
             _excludeMatcher.Clear();
             _excludeMatcher = null;
-        } //CopyItem
+        }
 
         private void CopyItemFromRemoteSession(string path, string destinationPath, bool recurse, bool force, PSSession fromSession)
         {
@@ -3768,7 +3768,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-            }// ExcludeFile
+            }
         }
 
         private void CopyDirectoryFromRemoteSession(
@@ -7291,7 +7291,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public String Stream { get; set; }
 #endif
-    } //FileSystemContentWriterDynamicParameters
+    }
 
     /// <summary>
     /// Defines the dynamic parameters used by the set-content and
@@ -7316,7 +7316,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _suppressNewline = false;
-    } //FileSystemContentWriterDynamicParameters
+    }
 
     /// <summary>
     /// Defines the dynamic parameters used by the get-content cmdlet.

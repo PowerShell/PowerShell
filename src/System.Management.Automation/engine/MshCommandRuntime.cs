@@ -380,7 +380,7 @@ namespace System.Management.Automation
             ProgressRecord progressRecord)
         {
             WriteProgress(sourceId, progressRecord, false);
-        } //WriteProgress
+        }
 
         internal void WriteProgress(
                 Int64 sourceId,
@@ -419,7 +419,7 @@ namespace System.Management.Automation
                 lastProgressContinueStatus,
                 "ProgressPreference",
                 progressRecord.Activity);
-        } //WriteProgress
+        }
 
         /// <summary>
         /// Display debug information
@@ -2606,7 +2606,7 @@ namespace System.Management.Automation
             // Writing normal output with "2>&1"
             // bypasses ErrorActionPreference, as intended.
             this.OutputPipe.AddItems(convertedList);
-        } //_WriteObjectsSkipAllowCheck
+        }
 
         #endregion Write
 

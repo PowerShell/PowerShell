@@ -521,7 +521,7 @@ namespace System.Management.Automation.Internal.Host
                         _parent.EnterNestedPrompt();
                         endLoop = false;
                         break;
-                }//switch
+                }
             } while (endLoop != true);
 
             return shouldContinue;
@@ -1033,5 +1033,5 @@ namespace System.Management.Automation.Internal.Host
         private InternalHost _parent = null;
         private PSInformationalBuffers _informationalBuffers = null;
     }
-}  // namespace
+}
 

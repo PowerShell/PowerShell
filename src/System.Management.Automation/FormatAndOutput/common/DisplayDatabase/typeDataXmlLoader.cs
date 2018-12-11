@@ -1316,7 +1316,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ProcessUnknownNode(n);
                     }
                 }
-            } //using
+            }
         }
 
         private void LoadTypeGroup(TypeInfoDataBase db, XmlNode typeGroupNode, int index)

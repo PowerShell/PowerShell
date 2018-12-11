@@ -1139,7 +1139,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        }  // GetMetadata
+        }
 
         //
         /// <summary>

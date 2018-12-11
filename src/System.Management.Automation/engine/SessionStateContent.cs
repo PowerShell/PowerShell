@@ -1021,7 +1021,7 @@ namespace System.Management.Automation
         #endregion ClearContent
 
         #endregion IContentCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

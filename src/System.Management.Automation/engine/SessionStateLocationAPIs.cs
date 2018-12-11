@@ -1067,7 +1067,7 @@ namespace System.Management.Automation
         }
 
         #endregion push-Pop current working directory
-    }           // SessionStateInternal class
+    }
 
     /// <summary>
     /// Event argument for the LocationChangedAction containing

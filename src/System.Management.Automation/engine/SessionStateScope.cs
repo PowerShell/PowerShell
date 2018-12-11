@@ -1566,7 +1566,7 @@ namespace System.Management.Automation
                     return;
                 }
             }
-        }// RemoveCmdlet
+        }
 
         /// <summary>
         /// Removes a cmdlet entry from the cmdlet table.
@@ -1587,7 +1587,7 @@ namespace System.Management.Automation
                 "The caller should verify the name");
 
             _cmdlets.Remove(name);
-        }// RemoveCmdletEntry
+        }
 
         #endregion Cmdlets
 

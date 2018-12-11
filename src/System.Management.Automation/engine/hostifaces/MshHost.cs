@@ -331,4 +331,4 @@ namespace System.Management.Automation.Host
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         Runspace Runspace { get; }
     }
-}   // namespace System.Management.Automation.Host
+}

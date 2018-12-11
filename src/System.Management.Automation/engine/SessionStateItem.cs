@@ -1362,7 +1362,7 @@ namespace System.Management.Automation
         #endregion InvokeDefaultAction
 
         #endregion ItemCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

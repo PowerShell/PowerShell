@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         internal void WriteStreamObject(Action<Cmdlet> action)
         {
             action(this);
-        }// WriteStreamObject
+        }
 
         /// <summary>
         /// Resolve all the machine names provided. Basically, if a machine
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
                     resolvedComputerNames[i] = ResolveComputerName(computerNames[i]);
                 }
             }
-        }// ResolveComputerNames
+        }
 
         /// <summary>
         /// Resolves a computer name. If its null or empty
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
             String message = GetMessage(resourceString, null);
 
             return message;
-        }// GetMessage
+        }
 
         /// <summary>
         /// </summary>
@@ -1386,7 +1386,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Operations.Add(operation);
             }
-        }// CreateHelpersForSpecifiedComputerNames
+        }
 
         /// <summary>
         /// Creates helper objects for SSH remoting computer names
@@ -1721,7 +1721,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Operations.Add(operation);
             }
-        }// CreateHelpersForSpecifiedVMSession
+        }
 
         /// <summary>
         /// Creates helper objects with the command for the specified
@@ -1800,7 +1800,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ResolvedComputerNames = resolvedNameList.ToArray();
-        }// CreateHelpersForSpecifiedContainerSession
+        }
 
         /// <summary>
         /// Creates a pipeline from the powershell

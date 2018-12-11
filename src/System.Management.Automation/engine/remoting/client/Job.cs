@@ -1677,7 +1677,7 @@ namespace System.Management.Automation
         }
 
         #endregion
-    } //Job
+    }
 
     /// <summary>
     /// Top level job object for remoting. This contains multiple child job
@@ -3021,7 +3021,7 @@ namespace System.Management.Automation
 
                 this.WriteObject(dataObject);
             }
-        } //HandleOutputReady
+        }
 
         /// <summary>
         /// Handler which will handle error ready events of the
@@ -3054,7 +3054,7 @@ namespace System.Management.Automation
                     this.WriteError(errorRecord);
                 }
             }
-        } //HandleErrorReady
+        }
 
         /// <summary>
         /// When the client remote session reports a URI redirection, this method will report the
@@ -3096,7 +3096,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-            }// if (hostCallsStream...
+            }
         }
 
         /// <summary>

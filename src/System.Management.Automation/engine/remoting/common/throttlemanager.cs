@@ -279,7 +279,7 @@ namespace System.Management.Automation.Remoting
 
             // start operations from queue if possible
             StartOperationsFromQueue();
-        }// AddOperation
+        }
 
         /// <summary>
         /// Stop throttling operations
@@ -439,7 +439,7 @@ namespace System.Management.Automation.Remoting
             _startOperationQueue = new List<IThrottleOperation>();
             _stopOperationQueue = new List<IThrottleOperation>();
             _syncObject = new Object();
-        }// ThrottleManager
+        }
 
         #endregion Constructors
 
@@ -533,7 +533,7 @@ namespace System.Management.Automation.Remoting
             {
                 operation.StartOperation();
             }
-        } //StartOneOperationFromQueue
+        }
 
         /// <summary>
         /// Start operations to the limit possible from the queue

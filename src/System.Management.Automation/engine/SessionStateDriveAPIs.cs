@@ -1441,7 +1441,7 @@ namespace System.Management.Automation
                     _currentDrive = value;
             }
         }
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500
