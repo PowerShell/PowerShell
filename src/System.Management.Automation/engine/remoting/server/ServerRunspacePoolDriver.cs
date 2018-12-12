@@ -2113,8 +2113,7 @@ namespace System.Management.Automation
                             () =>
                             {
                                 _results = _wrappedDebugger.ProcessCommand(_command, _output);
-                            }
-                            );
+                            });
                     }
                     else
                     {
