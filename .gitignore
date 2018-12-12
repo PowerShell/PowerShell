@@ -68,3 +68,7 @@ TestsResults*.xml
 PowerShell.sln.DotSettings.user
 *.msp
 StyleCop.Cache
+
+# GitKracken Files
+.gk/
+gkconfig.yml
