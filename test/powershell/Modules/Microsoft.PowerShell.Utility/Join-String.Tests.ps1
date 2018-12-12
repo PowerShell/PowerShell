@@ -54,6 +54,13 @@ Describe "Join-String" -Tags "CI" {
         $actual | Should -BeExactly $expected
     }
 
+    It "Should join numeric values Formatted" {
+        $testValues = 1.2, 3.4, 5.6
+        $expected = $testValues.Foreach{"{0:N2}" -f $_} -join "; "
+        $actual = $testValues | Join-String -Separator "; " -Format "{0:N2}"
+        $actual | Should -BeExactly $expected
+    }
+
     It "Should join script block results with default separator" {
         $sb = {$_.Name + $_.Length}
         $expected = ($testObject | ForEach-Object $sb) -join $ofs
@@ -105,8 +112,8 @@ Describe "Join-String" -Tags "CI" {
         $cmd = '[io.fileinfo]::new("c:\temp") | Join-String -Property '
         $res = tabexpansion2 $cmd $cmd.length
         $completionTexts = $res.CompletionMatches.CompletionText
-        $Propertys = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
-        foreach ($n in $Propertys) {
+        $Properties = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
+        foreach ($n in $Properties) {
             $n -in $completionTexts | Should -BeTrue
         }
     }
