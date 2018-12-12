@@ -443,17 +443,17 @@ namespace Microsoft.PowerShell.Commands
         private void GetAndWriteParameterInfo(HelpInfo helpInfo)
         {
             s_tracer.WriteLine("Searching parameters for {0}", helpInfo.Name);
-            List<PSObject> _pInfos = new List<PSObject>(_parameters.Length);
+            List<PSObject> pInfosList = new List<PSObject>(_parameters.Length);
 
-            foreach (var _parameter in _parameters)
+            foreach (var parameter in _parameters)
             {
-                foreach (var _pInfo in helpInfo.GetParameter(_parameter))
+                foreach (var pInfo in helpInfo.GetParameter(parameter))
                 {
-                    _pInfos.Add(_pInfo);
+                    pInfosList.Add(pInfo);
                 }
             }
 
-            PSObject[] pInfos = _pInfos.ToArray();
+            PSObject[] pInfos = pInfosList.ToArray();
 
             if ((pInfos == null) || (pInfos.Length == 0))
             {
@@ -567,17 +567,17 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_parameters != null)
                         {
-                            List<PSObject> _pInfos = new List<PSObject>(_parameters.Length);
+                            List<PSObject> pInfosList = new List<PSObject>(_parameters.Length);
 
-                            foreach (var _parameter in _parameters)
+                            foreach (var parameter in _parameters)
                             {
-                                foreach (var _pInfo in helpInfo.GetParameter(_parameter))
+                                foreach (var pInfo in helpInfo.GetParameter(parameter))
                                 {
-                                    _pInfos.Add(_pInfo);
+                                    pInfosList.Add(pInfo);
                                 }
                             }
 
-                            PSObject[] pInfos = _pInfos.ToArray();
+                            PSObject[] pInfos = pInfosList.ToArray();
 
                             if ((pInfos == null) || (pInfos.Length == 0))
                             {
