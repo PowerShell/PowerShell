@@ -4094,7 +4094,7 @@ param(
     ${Examples},
 
     [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
-    [string]
+    [string[]]
     ${Parameter},
 
     [string[]]

@@ -157,7 +157,12 @@ namespace Microsoft.PowerShell.Commands
         /// Support WildCard strings as supported by WildcardPattern class.
         /// </remarks>
         [Parameter(ParameterSetName = "Parameters", Mandatory = true)]
-        public string Parameter { set; get; }
+        public string[] Parameter
+        {
+            get => _parameters;
+            set => _parameters = value;
+        }
+        private string[] _parameters;
 
         /// <summary>
         /// Gets and sets list of Component's to search on.
@@ -438,7 +443,17 @@ namespace Microsoft.PowerShell.Commands
         private void GetAndWriteParameterInfo(HelpInfo helpInfo)
         {
             s_tracer.WriteLine("Searching parameters for {0}", helpInfo.Name);
-            PSObject[] pInfos = helpInfo.GetParameter(Parameter);
+            List<PSObject> _pInfos = new List<PSObject>(_parameters.Length);
+
+            foreach (var _parameter in _parameters)
+            {
+                foreach (var _pInfo in helpInfo.GetParameter(_parameter))
+                {
+                    _pInfos.Add(_pInfo);
+                }
+            }
+
+            PSObject[] pInfos = _pInfos.ToArray();
 
             if ((pInfos == null) || (pInfos.Length == 0))
             {
@@ -476,7 +491,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((cat & supportedCategories) == 0)
             {
-                if (!string.IsNullOrEmpty(Parameter))
+                if (_parameters != null)
                 {
                     throw PSTraceSource.NewArgumentException("Parameter",
                         HelpErrors.ParamNotSupported, "-Parameter");
@@ -537,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
                     // show inline help
                     if (showFullHelp)
                     {
-                        if (!string.IsNullOrEmpty(Parameter))
+                        if (_parameters != null)
                         {
                             GetAndWriteParameterInfo(helpInfo);
                         }
@@ -550,9 +565,20 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (!string.IsNullOrEmpty(Parameter))
+                        if (_parameters != null)
                         {
-                            PSObject[] pInfos = helpInfo.GetParameter(Parameter);
+                            List<PSObject> _pInfos = new List<PSObject>(_parameters.Length);
+
+                            foreach (var _parameter in _parameters)
+                            {
+                                foreach (var _pInfo in helpInfo.GetParameter(_parameter))
+                                {
+                                    _pInfos.Add(_pInfo);
+                                }
+                            }
+
+                            PSObject[] pInfos = _pInfos.ToArray();
+
                             if ((pInfos == null) || (pInfos.Length == 0))
                             {
                                 return;
