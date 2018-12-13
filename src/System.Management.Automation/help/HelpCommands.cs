@@ -157,12 +157,7 @@ namespace Microsoft.PowerShell.Commands
         /// Support WildCard strings as supported by WildcardPattern class.
         /// </remarks>
         [Parameter(ParameterSetName = "Parameters", Mandatory = true)]
-        public string[] Parameter
-        {
-            get => _parameters;
-            set => _parameters = value;
-        }
-        private string[] _parameters;
+        public string[] Parameter { get; set; }
 
         /// <summary>
         /// Gets and sets list of Component's to search on.
@@ -443,9 +438,9 @@ namespace Microsoft.PowerShell.Commands
         private void GetAndWriteParameterInfo(HelpInfo helpInfo)
         {
             s_tracer.WriteLine("Searching parameters for {0}", helpInfo.Name);
-            List<PSObject> pInfosList = new List<PSObject>(_parameters.Length);
+            List<PSObject> pInfosList = new List<PSObject>(Parameter.Length);
 
-            foreach (var parameter in _parameters)
+            foreach (var parameter in Parameter)
             {
                 foreach (var pInfo in helpInfo.GetParameter(parameter))
                 {
@@ -491,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((cat & supportedCategories) == 0)
             {
-                if (_parameters != null)
+                if (Parameter != null)
                 {
                     throw PSTraceSource.NewArgumentException("Parameter",
                         HelpErrors.ParamNotSupported, "-Parameter");
@@ -552,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
                     // show inline help
                     if (showFullHelp)
                     {
-                        if (_parameters != null)
+                        if (Parameter != null)
                         {
                             GetAndWriteParameterInfo(helpInfo);
                         }
@@ -565,11 +560,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (_parameters != null)
+                        if (Parameter != null)
                         {
-                            List<PSObject> pInfosList = new List<PSObject>(_parameters.Length);
+                            List<PSObject> pInfosList = new List<PSObject>(Parameter.Length);
 
-                            foreach (var parameter in _parameters)
+                            foreach (var parameter in Parameter)
                             {
                                 foreach (var pInfo in helpInfo.GetParameter(parameter))
                                 {
