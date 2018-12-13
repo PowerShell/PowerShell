@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace PSTests.Sequential
 {
+    [TestCaseOrderer("TestOrder.TestCaseOrdering.PriorityOrderer", "powershell-tests")]
     public class PowerShellPolicyFixture : IDisposable
     {
         private const string configFileName = "powershell.config.json";
@@ -344,7 +345,7 @@ namespace PSTests.Sequential
             this.fixture = fixture;
         }
 
-        [Fact]
+        [Fact, TestPriority(1)]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
@@ -358,7 +359,7 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(userPolicies, fixture.CurrentUserPolicies);
         }
 
-        [Fact]
+        [Fact, TestPriority(2)]
         public void PowerShellConfig_GetPowerShellPolicies_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
@@ -371,7 +372,7 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(sysPolicies, fixture.SystemWidePolicies);
         }
 
-        [Fact]
+        [Fact, TestPriority(3)]
         public void PowerShellConfig_GetPowerShellPolicies_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
@@ -384,7 +385,7 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(userPolicies, fixture.CurrentUserPolicies);
         }
 
-        [Fact]
+        [Fact, TestPriority(4)]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
@@ -395,7 +396,7 @@ namespace PSTests.Sequential
             Assert.Null(userPolicies);
         }
 
-        [Fact]
+        [Fact, TestPriority(5)]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
@@ -406,7 +407,7 @@ namespace PSTests.Sequential
             Assert.Null(userPolicies);
         }
 
-        [Fact]
+        [Fact, TestPriority(6)]
         public void Utils_GetPolicySetting_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
@@ -504,7 +505,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
         }
 
-        [Fact]
+        [Fact, TestPriority(7)]
         public void Utils_GetPolicySetting_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
@@ -602,7 +603,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
         }
 
-        [Fact]
+        [Fact, TestPriority(8)]
         public void Utils_GetPolicySetting_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
@@ -701,7 +702,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
         }
 
-        [Fact]
+        [Fact, TestPriority(9)]
         public void Utils_GetPolicySetting_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
@@ -800,7 +801,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
         }
 
-        [Fact]
+        [Fact, TestPriority(10)]
         public void Utils_GetPolicySetting_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();

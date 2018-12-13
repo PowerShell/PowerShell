@@ -5,6 +5,7 @@
   <PropertyGroup>
     <Description>PowerShell xUnit Tests</Description>
     <AssemblyName>powershell-tests</AssemblyName>
+    <GenerateProgramFile>true</GenerateProgramFile>
     <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
@@ -26,5 +27,4 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
     <PackageReference Include="XunitXml.TestLogger" Version="2.0.0" />
   </ItemGroup>
-
 </Project>
