@@ -44,8 +44,10 @@ namespace System.Management.Automation
             string commandName,
             IEnumerable<string> lookupPaths,
             ExecutionContext context,
-            Collection<string> acceptableCommandNames)
+            Collection<string> acceptableCommandNames,
+            bool useFuzzyMatch = false)
         {
+            _useFuzzyMatch = useFuzzyMatch;
             string[] commandPatterns;
             if (acceptableCommandNames != null)
             {
@@ -420,11 +422,28 @@ namespace System.Management.Automation
                     // to forcefully use null if pattern is "."
                     if (pattern.Length != 1 || pattern[0] != '.')
                     {
-                        var matchingFiles = Directory.EnumerateFiles(directory, pattern);
-
-                        result = _postProcessEnumeratedFiles != null
-                            ? _postProcessEnumeratedFiles(matchingFiles.ToArray())
-                            : matchingFiles;
+                        if (_useFuzzyMatch)
+                        {
+                            var files = new List<string>();
+                            var matchingFiles = Directory.EnumerateFiles(directory);
+                            foreach (string file in matchingFiles)
+                            {
+                                if (FuzzyMatcher.FuzzyMatch(Path.GetFileName(file), pattern))
+                                {
+                                    files.Add(file);
+                                }
+                            }
+                            result = _postProcessEnumeratedFiles != null
+                                ? _postProcessEnumeratedFiles(files.ToArray())
+                                : files;
+                        }
+                        else
+                        {
+                            var matchingFiles = Directory.EnumerateFiles(directory, pattern);
+                            result = _postProcessEnumeratedFiles != null
+                                ? _postProcessEnumeratedFiles(matchingFiles.ToArray())
+                                : matchingFiles;
+                        }
                     }
                 }
             }
@@ -558,6 +577,8 @@ namespace System.Management.Automation
 
         private string[] _orderedPathExt;
         private Collection<string> _acceptableCommandNames;
+
+        private bool _useFuzzyMatch = false;
 
         #endregion private members
     }

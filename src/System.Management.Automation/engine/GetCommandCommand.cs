@@ -349,6 +349,14 @@ namespace Microsoft.PowerShell.Commands
 
         private PSTypeName[] _parameterTypes;
 
+        /// <summary>
+        /// This parameter enables using fuzzy matching to find the command.
+        /// </summary>
+        [Parameter(ParameterSetName = "AllCommandSet")]
+        public SwitchParameter UseFuzzyMatching { get; set; }
+
+        private List<Tuple<CommandInfo, int>> _commandScores = new List<Tuple<CommandInfo, int>>();
+
         #endregion Definitions of cmdlet parameters
 
         #region Overrides
@@ -418,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // We do not show the pithy aliases (not of the format Verb-Noun) and applications by default.
             // We will show them only if the Name, All and totalCount are not specified.
-            if ((this.Name == null) && (!_all) && TotalCount == -1)
+            if ((this.Name == null) && (!_all) && TotalCount == -1 && !UseFuzzyMatching)
             {
                 CommandTypes commandTypesToIgnore = 0;
 
@@ -498,6 +506,11 @@ namespace Microsoft.PowerShell.Commands
         private void OutputResultsHelper(IEnumerable<CommandInfo> results)
         {
             CommandOrigin origin = this.MyInvocation.CommandOrigin;
+
+            if (UseFuzzyMatching)
+            {
+                results = _commandScores.OrderByDescending(x => x.Item2).Select(x => x.Item1).ToList();
+            }
 
             int count = 0;
             foreach (CommandInfo result in results)
@@ -715,6 +728,12 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName);
+                    if (UseFuzzyMatching)
+                    {
+                        options |= SearchResolutionOptions.FuzzySearch;
+                        isPattern = true;
+                    }
+
                     if (isPattern)
                     {
                         options |= SearchResolutionOptions.CommandNameIsPattern;
@@ -756,7 +775,25 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (TotalCount < 0 || count < TotalCount)
                             {
-                                foreach (CommandInfo command in System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(plainCommandName, this.Context, this.MyInvocation.CommandOrigin, rediscoverImportedModules: true, moduleVersionRequired: _isFullyQualifiedModuleSpecified))
+                                IEnumerable<CommandInfo> commands;
+                                if (UseFuzzyMatching)
+                                {
+                                    foreach(Tuple<CommandInfo, int> commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(plainCommandName, this.Context,
+                                        this.MyInvocation.CommandOrigin, rediscoverImportedModules: true, moduleVersionRequired: _isFullyQualifiedModuleSpecified))
+                                    {
+                                        _commandScores.Add(commandScore);
+                                    }
+
+                                    commands = _commandScores.Select(x => x.Item1).ToList();
+                                }
+                                else
+                                {
+                                    commands = System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(plainCommandName,
+                                        this.Context, this.MyInvocation.CommandOrigin, rediscoverImportedModules: true,
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified);
+                                }
+
+                                foreach (CommandInfo command in commands)
                                 {
                                     // Cannot pass in "command" by ref (foreach iteration variable)
                                     CommandInfo current = command;
@@ -900,6 +937,13 @@ namespace Microsoft.PowerShell.Commands
                         if (TotalCount >= 0 && currentCount > TotalCount)
                         {
                             break;
+                        }
+
+                        if (UseFuzzyMatching)
+                        {
+                            int score = 0;
+                            FuzzyMatcher.FuzzyMatch(current.Name, commandName, out score);
+                            _commandScores.Add(new Tuple<CommandInfo, int>(current, score));
                         }
 
                         _accumulatedResults.Add(current);
