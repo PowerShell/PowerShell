@@ -459,7 +459,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // IsValidValue
+        }
 
         /// <summary>
         /// Runs all ArgumentTransformationAttributes that are specified in the Attributes
@@ -531,7 +531,7 @@ namespace System.Management.Automation
             {
                 return (_options & ScopedItemOptions.Constant) != 0;
             }
-        } // IsConstant
+        }
 
         /// <summary>
         /// Returns true if the PSVariable is readonly (only visible in the
@@ -543,7 +543,7 @@ namespace System.Management.Automation
             {
                 return (_options & ScopedItemOptions.ReadOnly) != 0;
             }
-        } // IsReadOnly
+        }
 
         /// <summary>
         /// Returns true if the PSVariable is private (only visible in the
@@ -555,7 +555,7 @@ namespace System.Management.Automation
             {
                 return (_options & ScopedItemOptions.Private) != 0;
             }
-        } // IsPrivate
+        }
 
         /// <summary>
         /// Returns true if the PSVariable is propagated to all scopes
@@ -567,7 +567,7 @@ namespace System.Management.Automation
             {
                 return (_options & ScopedItemOptions.AllScope) != 0;
             }
-        } // IsAllScope
+        }
 
         /// <summary>
         /// Indicates that the variable has been removed from session state
@@ -731,7 +731,7 @@ namespace System.Management.Automation
             return value;
         }
 #endif
-    } // class PSVariable
+    }
 
     internal class LocalVariable : PSVariable
     {

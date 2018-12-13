@@ -18,6 +18,7 @@ param (
     [switch]$AppImage,
     [switch]$TarX64,
     [switch]$TarArm,
+    [switch]$TarArm64,
     [switch]$FxDependent,
     [switch]$Alpine
 )
@@ -64,6 +65,11 @@ try {
         ## Note that 'linux-arm' can only be built on Ubuntu environment.
         Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
         Start-PSPackage -Type tar-arm @releaseTagParam
+    }
+
+    if ($TarArm64) {
+        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam
+        Start-PSPackage -Type tar-arm64 @releaseTagParam
     }
 }
 finally

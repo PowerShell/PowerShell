@@ -227,7 +227,7 @@ namespace System.Management.Automation
                 drive.DriveBeingCreated = false;
             }
             return result;
-        } // ValidateDriveWithProvider
+        }
 
         /// <summary>
         /// Gets an instance of a provider given the provider ID.
@@ -255,7 +255,7 @@ namespace System.Management.Automation
             ProviderInfo provider = GetSingleProvider(providerId);
 
             return GetProviderInstance(provider);
-        } // GetProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of a provider given the provider information.
@@ -277,7 +277,7 @@ namespace System.Management.Automation
             }
 
             return provider.CreateInstance();
-        } // GetProviderInstance
+        }
 
         /// <summary>
         /// Creates an exception for the case where the provider name matched multiple providers.
@@ -355,7 +355,7 @@ namespace System.Management.Automation
             }
 
             return driveCmdletProvider;
-        } // GetDriveProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an DriveCmdletProvider given the provider information.
@@ -390,7 +390,7 @@ namespace System.Management.Automation
             }
 
             return driveCmdletProvider;
-        } // GetDriveProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an DriveCmdletProvider given the provider ID.
@@ -425,7 +425,7 @@ namespace System.Management.Automation
             }
 
             return driveCmdletProvider;
-        } // GetDriveProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ItemCmdletProvider given the provider ID.
@@ -463,7 +463,7 @@ namespace System.Management.Automation
             }
 
             return itemCmdletProvider;
-        } // GetItemProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ItemCmdletProvider given the provider.
@@ -498,7 +498,7 @@ namespace System.Management.Automation
             }
 
             return itemCmdletProvider;
-        } // GetItemProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ItemCmdletProvider given the provider ID.
@@ -533,7 +533,7 @@ namespace System.Management.Automation
             }
 
             return itemCmdletProvider;
-        } // GetItemProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ContainerCmdletProvider given the provider ID.
@@ -571,7 +571,7 @@ namespace System.Management.Automation
             }
 
             return containerCmdletProvider;
-        } // GetContainerProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ContainerCmdletProvider given the provider.
@@ -606,7 +606,7 @@ namespace System.Management.Automation
             }
 
             return containerCmdletProvider;
-        } // GetContainerProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an ContainerCmdletProvider given the provider ID.
@@ -641,7 +641,7 @@ namespace System.Management.Automation
             }
 
             return containerCmdletProvider;
-        } // GetContainerProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an NavigationCmdletProvider given the provider.
@@ -676,7 +676,7 @@ namespace System.Management.Automation
             }
 
             return navigationCmdletProvider;
-        } // GetNavigationProviderInstance
+        }
 
         /// <summary>
         /// Gets an instance of an NavigationCmdletProvider given the provider ID.
@@ -715,7 +715,7 @@ namespace System.Management.Automation
             }
 
             return navigationCmdletProvider;
-        } // GetNavigationProviderInstance
+        }
 
         #region GetProvider
 
@@ -753,7 +753,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // IsProviderLoaded
+        }
 
         /// <summary>
         /// Gets the provider of the specified name
@@ -902,7 +902,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // GetProvider
+        }
 
         /// <summary>
         /// Gets all the CoreCommandProviders
@@ -921,8 +921,8 @@ namespace System.Management.Automation
                     }
                 }
                 return result;
-            } // get
-        } // Providers
+            }
+        }
 
         /// <summary>
         /// Copy the Providers from another session state instance...
@@ -1069,9 +1069,9 @@ namespace System.Management.Automation
                     {
                         context.WriteError(exception.ErrorRecord);
                     }
-                } // foreach (drive in newDrives)
+                }
             }
-        } // InitializeProvider
+        }
 
         /// <summary>
         /// Creates and adds a provider to the provider container
@@ -1269,7 +1269,7 @@ namespace System.Management.Automation
             // Now write out the result
 
             return provider;
-        } // NewProvider
+        }
 
         private ProviderInfo ProviderExists(ProviderInfo provider)
         {
@@ -1526,7 +1526,7 @@ namespace System.Management.Automation
                     ProvidersCurrentWorkingDrive.Remove(provider);
                 }
             }
-        } // RemoveProvider
+        }
 
         /// <summary>
         /// Removes the provider from the providers dictionary.
@@ -1571,8 +1571,8 @@ namespace System.Management.Automation
                 }
                 return count;
             }
-        } // ProviderCount
-    } // SessionStateInternal class
+        }
+    }
 }
 
 #pragma warning restore 56500

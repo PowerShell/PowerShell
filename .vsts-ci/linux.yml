@@ -30,11 +30,14 @@ variables:
 resources:
 - repo: self
   clean: true
-phases:
-- phase: Linux_CI
+jobs:
+- job: Linux_CI
 
-  queue:
+  pool:
     name: Hosted Ubuntu 1604
+
+  timeoutInMinutes: 120
+
   steps:
   - powershell: |
       Get-Process

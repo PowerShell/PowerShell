@@ -4383,9 +4383,9 @@ namespace System.Management.Automation
                                 // We can get here when get-item fails, perhaps due an acl or whatever.
                                 results.Add(new CompletionResult(completionText));
                             }
-                        } // End of not filesystem case
-                    } // End of foreach
-                } // End of 'if (psobjs != null)'
+                        }
+                    }
+                }
             }
 
             return results;

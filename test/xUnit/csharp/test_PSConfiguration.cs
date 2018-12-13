@@ -349,7 +349,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
-            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.SystemWide);
+            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
             Assert.NotNull(sysPolicies);
@@ -363,7 +363,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
-            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.SystemWide);
+            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
             Assert.NotNull(sysPolicies);
@@ -376,7 +376,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
-            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.SystemWide);
+            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
             Assert.Null(sysPolicies);
@@ -389,7 +389,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
-            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.SystemWide);
+            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
             Assert.Null(sysPolicies);
@@ -400,7 +400,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
-            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.SystemWide);
+            var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
             Assert.Null(sysPolicies);

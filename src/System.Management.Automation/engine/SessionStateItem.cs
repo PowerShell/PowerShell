@@ -71,7 +71,7 @@ namespace System.Management.Automation
             Collection<PSObject> results = context.GetAccumulatedObjects();
 
             return results;
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the specified object
@@ -139,7 +139,7 @@ namespace System.Management.Automation
                     GetItemPrivate(providerInstance, providerPath, context);
                 }
             }
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the item at the specified path.
@@ -208,7 +208,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-item cmdlet.
@@ -272,7 +272,7 @@ namespace System.Management.Automation
                 return GetItemDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
             return null;
-        } // GetItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-item cmdlet.
@@ -347,7 +347,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // GetItemDynamicParameters
+        }
 
         #endregion GetItem
 
@@ -406,7 +406,7 @@ namespace System.Management.Automation
             // Since there was no errors return the accumulated objects
 
             return context.GetAccumulatedObjects();
-        } // SetItem
+        }
 
         /// <summary>
         /// Sets the specified object to the specified value
@@ -477,7 +477,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // SetItem
+        }
 
         /// <summary>
         /// Sets item at the specified path.
@@ -550,7 +550,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // SetItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-item cmdlet.
@@ -617,7 +617,7 @@ namespace System.Management.Automation
                 return SetItemDynamicParameters(providerInstance, providerPaths[0], value, newContext);
             }
             return null;
-        } // SetItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-item cmdlet.
@@ -696,7 +696,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // SetItemDynamicParameters
+        }
 
         #endregion SetItem
 
@@ -755,7 +755,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return context.GetAccumulatedObjects();
-        } // ClearItem
+        }
 
         /// <summary>
         /// Clears the specified item. Depending on the provider that the path
@@ -824,7 +824,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // ClearItem
+        }
 
         /// <summary>
         /// Clears the item at the specified path.
@@ -893,7 +893,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // ClearItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-item cmdlet.
@@ -957,7 +957,7 @@ namespace System.Management.Automation
                 return ClearItemDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
             return null;
-        } // ClearItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-item cmdlet.
@@ -1032,7 +1032,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // ClearItemDynamicParameters
+        }
 
         #endregion ClearItem
 
@@ -1081,7 +1081,7 @@ namespace System.Management.Automation
             InvokeDefaultAction(paths, context);
 
             context.ThrowFirstErrorOrDoNothing();
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Performs the default action on the specified item. The default action
@@ -1149,7 +1149,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Invokes the default action on the item at the specified path.
@@ -1218,7 +1218,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the invoke-item cmdlet.
@@ -1282,7 +1282,7 @@ namespace System.Management.Automation
                 return InvokeDefaultActionDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
             return null;
-        } // InvokeDefaultActionDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the invoke-item cmdlet.
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // InvokeDefaultActionDynamicParameters
+        }
 
         #endregion InvokeDefaultAction
 

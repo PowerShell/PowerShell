@@ -100,7 +100,7 @@ The  `It` block is intended to be used inside of a `Describe` or `Context` block
 ### Admin privileges in tests
 
 Tests that require admin privileges **on Windows** must be additionally marked with `RequireAdminOnWindows` Pester tag.
-In the AppVeyor CI, we run two different passes:
+In the Azure DevOps Windows CI, we run two different passes:
 
 - The pass with exclusion of tests with `RequireAdminOnWindows` tag
 - The pass where we run only `RequireAdminOnWindows` tests
@@ -324,7 +324,7 @@ They cause problems for two reasons:
 * They are different on different platforms (`\r\n` on Windows and `\n` on Unix).
 * Even on the same system, they depends on the way how the repo was cloned.
 
-Particularly, in the default AppVeyor CI Windows image, you will get `\n` line ends in all your files.
+Particularly, in the default Azure DevOps CI Windows image, you will get `\n` line ends in all your files.
 That causes problems, because at runtime `Get-MultiLineString` would likely produce `\r\n` line ends on windows.
 
 Some workaround could be added, but they are sub-optimal and make reading test code harder.

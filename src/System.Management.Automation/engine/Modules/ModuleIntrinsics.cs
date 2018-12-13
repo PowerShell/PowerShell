@@ -1286,7 +1286,7 @@ namespace System.Management.Automation
                 // If the Windows PowerShell Module path is already present, insert the system module path
                 // ($PSHOME/Modules) before it.
                 insertIndex = PathContainsSubstring(currentProcessModulePath, windowsPowerShellModulePath);
-#endif                
+#endif
                 currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
 
@@ -1295,7 +1295,7 @@ namespace System.Management.Automation
 
             // index of $PSHome\Modules in currentProcessModulePath
             int indexOfPSHomeModulePath = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
-            
+
             // if $PSHome\Modules not found (psHomePosition == -1) - append <Program Files> location to the end;
             // if $PSHome\Modules IS found (psHomePosition >= 0) - insert <Program Files> location before $PSHome\Modules
             currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, indexOfPSHomeModulePath);
@@ -1322,10 +1322,10 @@ namespace System.Management.Automation
         private static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
-            string systemWideModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.SystemWide);
+            string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
             string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
 
-            string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
+            string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
             if (!string.IsNullOrEmpty(newModulePathString))
             {
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation
             };
             return aliasCopy;
         }
-    } // ModuleIntrinsics
+    }
 
     /// <summary>
     /// Enumeration of reasons for a failure to match a module by constraints.
@@ -1769,4 +1769,4 @@ namespace System.Management.Automation
         /// </summary>
         void OnRemove(PSModuleInfo psModuleInfo);
     }
-} // System.Management.Automation
+}

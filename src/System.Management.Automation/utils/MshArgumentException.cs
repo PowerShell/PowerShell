@@ -150,6 +150,6 @@ namespace System.Management.Automation
             get { return String.IsNullOrEmpty(_message) ? base.Message : _message; }
         }
         private string _message;
-    } // PSArgumentException
-} // System.Management.Automation
+    }
+}
 

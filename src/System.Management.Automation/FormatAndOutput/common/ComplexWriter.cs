@@ -711,7 +711,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return s;
             }
 
-            return s.Substring(0, lineBreak) + PSObjectHelper.ellipses;
+            return s.Substring(0, lineBreak) + PSObjectHelper.Ellipsis;
         }
 
         internal static string PadLeft(string val, int count)

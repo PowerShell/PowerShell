@@ -194,8 +194,8 @@ namespace System.Management.Automation.Provider
         object ClearPropertyDynamicParameters(
             string path,
             Collection<string> propertyToClear);
-    } // IPropertyCmdletProvider
+    }
 
     #endregion IPropertyCmdletProvider
-} // namespace System.Management.Automation
+}
 

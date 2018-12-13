@@ -901,7 +901,7 @@ function Export-PSOsLog
             Write-Output $log
         }
         else {
-            throw "did not recieve at least $MinimumCount records but $($log.Count) instead."
+            throw "did not recieve at least $MinimumCount records but $($logToCount.Count) instead."
         }
     } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
         $log = Start-NativeExecution -command {log show --info @extraParams}

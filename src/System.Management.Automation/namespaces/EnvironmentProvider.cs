@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public EnvironmentProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(envDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
                 result = new DictionaryEntry(name, value);
             }
             return result;
-        } // GetSessionStateItem
+        }
 
         /// <summary>
         /// Sets the environment variable of the specified name to the specified value
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteItemObject(item, name, false);
                 }
             }
-        } // SetSessionStateItem
+        }
 
         /// <summary>
         /// Removes the specified environment variable from session state.
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             Environment.SetEnvironmentVariable(name, null);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
         /// Gets a flattened view of the environment variables in session state
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return providerTable;
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Gets the Value property of the DictionaryEntry item
@@ -235,9 +235,9 @@ namespace Microsoft.PowerShell.Commands
                 value = ((DictionaryEntry)item).Value;
             }
             return value;
-        } // GetValueOfItem
+        }
 
         #endregion protected members
-    } // EnvironmentProvider
+    }
 }
 

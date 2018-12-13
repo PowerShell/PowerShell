@@ -37,7 +37,7 @@ namespace System.Management.Automation
             {
                 _scriptScope = this;
             }
-        } // SessionStateScope constructor
+        }
 
         #endregion constructor
 
@@ -149,7 +149,7 @@ namespace System.Management.Automation
                     automountedDrives.Add(newDrive.Name, newDrive);
                 }
             }
-        } // New Drive
+        }
 
         /// <summary>
         /// Removes the specified drive from this scope.
@@ -191,7 +191,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // RemoveDrive
+        }
 
         /// <summary>
         /// Removes all the drives from the scope.
@@ -200,7 +200,7 @@ namespace System.Management.Automation
         {
             GetDrives().Clear();
             GetAutomountedDrives().Clear();
-        } // RemoveAllDrives
+        }
 
         /// <summary>
         /// Retrieves the drive of the specified name.
@@ -232,7 +232,7 @@ namespace System.Management.Automation
                 GetAutomountedDrives().TryGetValue(name, out result);
             }
             return result;
-        } // GetDrive
+        }
 
         /// <summary>
         /// Gets an IEnumerable for the drives in this scope.
@@ -259,7 +259,7 @@ namespace System.Management.Automation
                 }
                 return result;
             }
-        } // Drives
+        }
         #endregion Drives
 
         #region Variables
@@ -286,7 +286,7 @@ namespace System.Management.Automation
             PSVariable result;
             TryGetVariable(name, origin, false, out result);
             return result;
-        } // GetVariable
+        }
 
         /// <summary>
         /// Gets the specified variable from the variable table.
@@ -300,7 +300,7 @@ namespace System.Management.Automation
         internal PSVariable GetVariable(string name)
         {
             return GetVariable(name, ScopeOrigin);
-        } // GetVariable
+        }
 
         /// <summary>
         /// Looks up a variable, returns true and the variable if found and is visible, throws if the found variable is not visible,
@@ -493,7 +493,7 @@ namespace System.Management.Automation
             _variables[name] = variable;
             variable.SessionState = sessionState;
             return variable;
-        } // SetVariable
+        }
 
         /// <summary>
         /// Sets a variable to scope without any checks.
@@ -591,7 +591,7 @@ namespace System.Management.Automation
             _variables[variable.Name] = variable;
             variable.SessionState = sessionState;
             return variable;
-        } // NewVariable
+        }
 
         /// <summary>
         /// Removes a variable from the variable table.
@@ -642,7 +642,7 @@ namespace System.Management.Automation
             // Finally mark the variable itself has having been removed so
             // anyone holding a reference to it can be aware of this.
             variable.WasRemoved = true;
-        } // RemoveVariable
+        }
 
         internal bool TrySetLocalParameterValue(string name, object value)
         {
@@ -690,7 +690,7 @@ namespace System.Management.Automation
             {
                 return GetAliases().Values;
             }
-        } // AliasTable
+        }
 
         /// <summary>
         /// Gets the specified alias from the alias table.
@@ -711,7 +711,7 @@ namespace System.Management.Automation
             GetAliases().TryGetValue(name, out result);
 
             return result;
-        } // GetAlias
+        }
 
         /// <summary>
         /// Sets an alias to the given value.
@@ -783,7 +783,7 @@ namespace System.Management.Automation
             AddAliasToCache(name, value);
 
             return aliasInfos[name];
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets an alias to the given value.
@@ -899,7 +899,7 @@ namespace System.Management.Automation
             AddAliasToCache(name, value);
 
             return result;
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets an alias to the given value.
@@ -971,7 +971,7 @@ namespace System.Management.Automation
             AddAliasToCache(aliasToSet.Name, aliasToSet.Definition);
 
             return aliasToSet;
-        } // SetAliasItem
+        }
 
         /// <summary>
         /// Removes a alias from the alias table.
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
             }
 
             aliasInfos.Remove(name);
-        } // RemoveAlias
+        }
 
         #endregion aliases
 
@@ -1028,8 +1028,8 @@ namespace System.Management.Automation
             get
             {
                 return GetFunctions();
-            } // get
-        } // FunctionTable
+            }
+        }
 
         /// <summary>
         /// Gets the specified function from the function table.
@@ -1051,7 +1051,7 @@ namespace System.Management.Automation
             GetFunctions().TryGetValue(name, out result);
 
             return result;
-        } // GetFunction
+        }
 
         /// <summary>
         /// Sets an function to the given function declaration.
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
             ExecutionContext context)
         {
             return SetFunction(name, function, null, ScopedItemOptions.Unspecified, force, origin, context);
-        } // SetFunction
+        }
         /// <summary>
         /// Sets an function to the given function declaration.
         /// </summary>
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation
             ExecutionContext context)
         {
             return SetFunction(name, function, originalFunction, ScopedItemOptions.Unspecified, force, origin, context);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Sets an function to the given function declaration.
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
             ExecutionContext context)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, context, null);
-        } // SetFunction
+        }
 
         internal FunctionInfo SetFunction(
             string name,
@@ -1324,7 +1324,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // SetFunction
+        }
 
         /// <summary>
         /// Removes a function from the function table.
@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
                 }
             }
             functionInfos.Remove(name);
-        } // RemoveFunction
+        }
 
         #endregion functions
 
@@ -1381,8 +1381,8 @@ namespace System.Management.Automation
             get
             {
                 return _cmdlets;
-            } // get
-        } // CmdletTable
+            }
+        }
 
         /// <summary>
         /// Gets the specified cmdlet from the cmdlet table.
@@ -1412,7 +1412,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetCmdlet
+        }
 
         /// <summary>
         /// Adds a cmdlet to the cmdlet cache.
@@ -1522,7 +1522,7 @@ namespace System.Management.Automation
             }
 
             return _cmdlets[name][0];
-        } // AddCmdlet
+        }
 
         /// <summary>
         /// Removes a cmdlet from the cmdlet table.
@@ -1978,6 +1978,6 @@ namespace System.Management.Automation
         }
 
         #endregion
-    } // class SessionStateScope
-} // namespace System.Management.Automation
+    }
+}
 

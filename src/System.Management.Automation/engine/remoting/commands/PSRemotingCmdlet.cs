@@ -981,7 +981,7 @@ namespace Microsoft.PowerShell.Commands
                         PSRemotingErrorId.RemoteRunspaceInfoLimitExceeded.ToString(),
                             ErrorCategory.InvalidArgument, Session));
             }
-        } // ValidateRemoteRunspacesSpecified
+        }
 
         /// <summary>
         /// Updates connection info with the data read from cmdlet's parameters and
@@ -1462,7 +1462,7 @@ namespace Microsoft.PowerShell.Commands
                 IThrottleOperation operation = new ExecutionCmdletHelperRunspace(pipelines[i]);
                 Operations.Add(operation);
             }
-        } // CreateHelpersForSpecifiedRunspaces
+        }
 
         /// <summary>
         /// Creates helper objects with the command for the specified
@@ -1528,7 +1528,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Operations.Add(operation);
             }
-        } // CreateHelpersForSpecifiedUris
+        }
 
         /// <summary>
         /// Creates helper objects with the command for the specified
@@ -1907,7 +1907,7 @@ namespace Microsoft.PowerShell.Commands
                 ExecutionCmdletHelper helper = (ExecutionCmdletHelper)operation;
                 helper.Pipeline.Input.Close();
             }
-        } // CloseAllInputStreams
+        }
 
         /// <summary>
         /// Writes an error record specifying that creation of remote runspace
@@ -1926,7 +1926,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorCategory.InvalidArgument, uri);
 
             WriteError(errorRecord);
-        } // WriteErrorCreateRemoteRunspaceFailed
+        }
 
         /// <summary>
         /// FilePathComputername parameter set
@@ -3245,7 +3245,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-    } // ExecutionCmdletHelper
+    }
 
     /// <summary>
     /// Contains a pipeline and calls InvokeAsync on the pipeline
@@ -3306,7 +3306,7 @@ namespace Microsoft.PowerShell.Commands
                 internalException = e;
                 RaiseOperationCompleteEvent();
             }
-        } // StartOperation
+        }
 
         /// <summary>
         /// Closes the pipeline asynchronously
@@ -3329,7 +3329,7 @@ namespace Microsoft.PowerShell.Commands
                 // else ThrottleManager will have
                 RaiseOperationCompleteEvent();
             }
-        } // StopOperation
+        }
 
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
@@ -3355,7 +3355,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             RaiseOperationCompleteEvent(stateEventArgs);
-        } // HandlePipelineStateChanged
+        }
 
         /// <summary>
         /// Raise an OperationComplete Event. The base event will be
@@ -3364,7 +3364,7 @@ namespace Microsoft.PowerShell.Commands
         private void RaiseOperationCompleteEvent()
         {
             RaiseOperationCompleteEvent(null);
-        } // RaiseOperationCompleteEvent
+        }
 
         /// <summary>
         /// Raise an operation complete event.
@@ -3393,8 +3393,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
-        } // RaiseOperationCompleteEvent
-    } // ExecutionCmdletHelperRunspace
+        }
+    }
 
     /// <summary>
     /// This helper class contains a runspace and
@@ -3448,7 +3448,7 @@ namespace Microsoft.PowerShell.Commands
             this.pipeline = pipeline;
             pipeline.StateChanged +=
                 new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
-        } // IREHelperComputerName
+        }
 
         /// <summary>
         /// Call OpenAsync() on the RemoteRunspace
@@ -3464,7 +3464,7 @@ namespace Microsoft.PowerShell.Commands
                 internalException = e;
                 RaiseOperationCompleteEvent();
             }
-        } // StartOperation
+        }
 
         /// <summary>
         /// StopAsync on the pipeline
@@ -3494,7 +3494,7 @@ namespace Microsoft.PowerShell.Commands
                 // this StopOperation to complete
                 RaiseOperationCompleteEvent();
             }
-        } // StopOperation
+        }
 
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
@@ -3563,8 +3563,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     break;
-            } // switch (state...
-        } // HandleRunspaceStateChanged
+            }
+        }
 
         /// <summary>
         /// Handles the state changed event for the pipeline.
@@ -3591,8 +3591,8 @@ namespace Microsoft.PowerShell.Commands
                         RemoteRunspace.CloseAsync();
                     }
                     break;
-            } // switch(state...
-        } // HandlePipelineStateChanged
+            }
+        }
 
         /// <summary>
         /// Raise an OperationComplete Event. The base event will be
@@ -3601,7 +3601,7 @@ namespace Microsoft.PowerShell.Commands
         private void RaiseOperationCompleteEvent()
         {
             RaiseOperationCompleteEvent(null);
-        } // RaiseOperationCompleteEvent
+        }
 
         /// <summary>
         /// Raise an operation complete event.
@@ -3631,8 +3631,8 @@ namespace Microsoft.PowerShell.Commands
                     OperationState.StopComplete;
             operationStateEventArgs.BaseEvent = baseEventArgs;
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
-        } // RaiseOperationCompleteEvent
-    } // ExecutionCmdletHelperComputerName
+        }
+    }
 
     #region Path Resolver
 
@@ -3773,7 +3773,7 @@ namespace Microsoft.PowerShell.Commands
                     results));
                 return null;
             }
-        } // ResolvePath
+        }
     }
 
     #endregion

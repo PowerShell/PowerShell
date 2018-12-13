@@ -51,11 +51,11 @@ namespace System.Management.Automation
             {
                 this.Push(stackContents[index]);
             }
-        } // constructor
+        }
 
         /// <summary>
         /// Gets the name of the stack
         /// </summary>
         public string Name { get; } = null;
-    } // PathInfoStack
-} // namespace System.Management.Automation
+    }
+}

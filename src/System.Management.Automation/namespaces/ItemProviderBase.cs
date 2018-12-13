@@ -44,7 +44,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             GetItem(path);
-        } // GetItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -68,7 +68,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return GetItemDynamicParameters(path);
-        } // GetItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the SetItem protected method. It is called instead
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             SetItem(path, value);
-        } // SetItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -129,7 +129,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return SetItemDynamicParameters(path, value);
-        } // SetItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the ClearItem protected method. It is called instead
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             ClearItem(path);
-        } // ClearItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return ClearItemDynamicParameters(path);
-        } // ClearItemDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the InvokeDefaultAction protected method. It is called instead
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             InvokeDefaultAction(path);
-        } // InvokeDefaultAction
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -229,7 +229,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return InvokeDefaultActionDynamicParameters(path);
-        } // InvokeDefaultActionDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the Exists protected method. It is called instead
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Provider
             }
 
             return itemExists;
-        } // Exists
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -289,7 +289,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return ItemExistsDynamicParameters(path);
-        } // ItemExistsDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the IsValidPath protected method. It is called instead
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return IsValidPath(path);
-        } // IsValidPath
+        }
 
         /// <summary>
         /// Internal wrapper for the ExpandPath protected method. It is called instead
@@ -343,7 +343,7 @@ namespace System.Management.Automation.Provider
 
             // Call virtual method
             return ExpandPath(path);
-        } // IsValidPath
+        }
 
         #endregion internal methods
 
@@ -403,7 +403,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // GetItemDynamicParameters
+        }
 
         /// <summary>
         /// Sets the item specified by the path.
@@ -467,7 +467,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // SetItemDynamicParameters
+        }
 
         /// <summary>
         /// Clears the item specified by the path.
@@ -524,7 +524,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // ClearItemDynamicParameters
+        }
 
         /// <summary>
         /// Invokes the default action on the specified item.
@@ -582,7 +582,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // InvokeDefaultActionDynamicParameters
+        }
 
         /// <summary>
         /// Determines if an item exists at the specified path.
@@ -642,7 +642,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // ItemExistsDynamicParameters
+        }
 
         /// <summary>
         /// Providers must override this method to verify the syntax and semantics
@@ -681,11 +681,11 @@ namespace System.Management.Automation.Provider
             {
                 return new string[] { path };
             }
-        } // IsValidPath
+        }
 
         #endregion Protected methods
-    } // ItemCmdletProvider
+    }
 
     #endregion ItemCmdletProvider
-} // namespace System.Management.Automation
+}
 

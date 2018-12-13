@@ -1315,7 +1315,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // ScriptBlockToPowerShellNotSupportedException
+    }
 
     /// <summary>
     /// Defines Event arguments passed to OnScriptBlockInvocationEventHandler

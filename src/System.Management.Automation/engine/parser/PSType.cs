@@ -434,6 +434,19 @@ namespace System.Management.Automation.Language
                 return baseClass ?? typeof(object);
             }
 
+            private bool ShouldImplementProperty(string name, Type type)
+            {
+                foreach (var interfaceType in _typeBuilder.GetInterfaces())
+                {
+                    if (interfaceType.GetProperty(name, type) != null)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             public void DefineMembers()
             {
                 // If user didn't provide any instance ctors or static ctor we will generate default ctor or static ctor respectively.
@@ -576,6 +589,11 @@ namespace System.Management.Automation.Language
                 // The property set and property get methods require a special set of attributes.
                 var getSetAttributes = Reflection.MethodAttributes.SpecialName | Reflection.MethodAttributes.HideBySig;
                 getSetAttributes |= propertyMemberAst.IsPublic ? Reflection.MethodAttributes.Public : Reflection.MethodAttributes.Private;
+                if (ShouldImplementProperty(propertyMemberAst.Name, type))
+                {
+                    getSetAttributes |= Reflection.MethodAttributes.Virtual;
+                }
+
                 if (propertyMemberAst.IsStatic)
                 {
                     backingFieldAttributes |= FieldAttributes.Static;

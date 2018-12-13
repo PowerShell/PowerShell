@@ -32,13 +32,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _content;
-            } // get
+            }
 
             set
             {
                 _content = value;
             }
-        } // Value
+        }
 
         #endregion Parameters
 
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                     contentStreams = new List<ContentHolder>();
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Closes all the content writers
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             Dispose(true);
-        } // EndProcessing
+        }
 
         #endregion Command code
 
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void SeekContentPosition(List<ContentHolder> contentHolders)
         {
             // default does nothing.
-        } // SeekContentPosition
+        }
 
         /// <summary>
         /// Called by the base class before the streams are open for the path.
@@ -316,10 +316,10 @@ namespace Microsoft.PowerShell.Commands
                         results.Add(holder);
                     }
                 }
-            } // foreach pathInfo in pathInfos
+            }
 
             return results;
-        } // GetContentWriters
+        }
 
         /// <summary>
         /// Gets the list of paths accepted by the user
@@ -345,5 +345,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion protected members
-    } // WriteContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

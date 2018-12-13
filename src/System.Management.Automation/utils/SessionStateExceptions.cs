@@ -547,7 +547,7 @@ namespace System.Management.Automation
             return StringUtil.Format(resourceStr, a);
         }
         #endregion Private
-    } // SessionStateException
+    }
 
     /// <summary>
     /// SessionStateUnauthorizedAccessException occurs when
@@ -638,7 +638,7 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // SessionStateUnauthorizedAccessException
+    }
 
     /// <summary>
     /// ProviderNotFoundException occurs when no provider can be found
@@ -732,7 +732,7 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // ProviderNotFoundException
+    }
 
     /// <summary>
     /// ProviderNameAmbiguousException occurs when more than one provider exists
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         private ReadOnlyCollection<ProviderInfo> _possibleMatches;
 
         #endregion public properties
-    } // ProviderNameAmbiguousException
+    }
 
     /// <summary>
     /// DriveNotFoundException occurs when no drive can be found
@@ -926,7 +926,7 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // DriveNotFoundException
+    }
 
     /// <summary>
     /// ItemNotFoundException occurs when the path contained no wildcard characters
@@ -1010,6 +1010,6 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // ItemNotFoundException
-} // namespace System.Management.Automation
+    }
+}
 

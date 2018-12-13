@@ -31,7 +31,7 @@ Describe "Format-Table" -Tags "CI" {
                 $info = @{}
                 $info.array = $al
                 $result = $info | Format-Table | Out-String
-                $result | Should -Match "array\s+{0, 1, 2, 3...}"
+                $result | Should -Match "array\s+{0, 1, 2, 3`u{2026}}" # ellipsis
         }
 
         It "Format-Table with Negative Count should work" {
@@ -255,8 +255,9 @@ Left Center Right
 
         It "Format-Table should not have trailing whitespace if there is truncation: <view>" -TestCases @(
             # `u{2B758} is a double-byte Japanese character
-            @{view="Test.Format.Left"  ; object=[pscustomobject]@{Left="123`u{2B758}"}    ; expected="Left----1..."      },
-            @{view="Test.Format.Center"; object=[pscustomobject]@{Center="12345`u{2B758}"}; expected="Center------123..."}
+            # `u{2026} is the ellipsis
+            @{view="Test.Format.Left"  ; object=[pscustomobject]@{Left="123`u{2B758}"}    ; expected="Left----123`u{2026}"      },
+            @{view="Test.Format.Center"; object=[pscustomobject]@{Center="12345`u{2B758}"}; expected="Center------12345`u{2026}"}
         ) {
             param($view, $object, $expected)
 
@@ -501,7 +502,7 @@ Long*********r3
 Head
 er
 ----*-------*-----
-1...*...5678*12...
+123`u{2026}*`u{2026}345678*1234`u{2026}
 
 
 "@ },
@@ -513,7 +514,7 @@ ngH
 ead
 er
 ---
-123
+12`u{2026}
 
 
 "@ },

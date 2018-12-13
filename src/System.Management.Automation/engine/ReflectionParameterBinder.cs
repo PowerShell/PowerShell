@@ -143,7 +143,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.ExceptionWhenSetting,
                     name, e.Message);
             }
-        } // BindParameter
+        }
 
         #endregion Parameter binding
 
@@ -295,5 +295,5 @@ namespace System.Management.Automation
         }
 
         #endregion Private members
-    } // ReflectionParameterBinder
-} // namespace System.Management.Automation
+    }
+}

@@ -235,7 +235,7 @@ namespace System.Management.Automation
         private bool _isInitialized;
 
         #endregion private members
-    } // class ScopedItemSearcher
+    }
 
     /// <summary>
     /// The scope searcher for variables
@@ -293,7 +293,7 @@ namespace System.Management.Automation
 
             return result;
         }
-    } // VariableScopeItemSearcher
+    }
 
     /// <summary>
     /// The scope searcher for aliases
@@ -346,7 +346,7 @@ namespace System.Management.Automation
 
             return result;
         }
-    } // AliasScopeItemSearcher
+    }
 
     /// <summary>
     /// The scope searcher for functions
@@ -433,7 +433,7 @@ namespace System.Management.Automation
             get { return _name; }
         }
         private string _name = String.Empty;
-    } // FunctionScopeItemSearcher
+    }
 
     /// <summary>
     /// The scope searcher for drives
@@ -479,5 +479,5 @@ namespace System.Management.Automation
             }
             return result;
         }
-    } // DriveScopeItemSearcher
-} // namespace System.Management.Automation
+    }
+}

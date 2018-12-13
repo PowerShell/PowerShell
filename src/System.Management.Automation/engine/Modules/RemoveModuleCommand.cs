@@ -369,4 +369,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion Remove-Module
-} // Microsoft.PowerShell.Commands
+}

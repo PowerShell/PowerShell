@@ -175,7 +175,7 @@ namespace System.Management.Automation
         private ErrorRecord _errorRecord = null;
 
         #endregion Properties
-    } // class CmdletInvocationException
+    }
     #endregion CmdletInvocationException
 
     #region CmdletProviderInvocationException
@@ -295,7 +295,7 @@ namespace System.Management.Automation
             return (e == null) ? null : e.InnerException;
         }
         #endregion Internal
-    } // CmdletProviderInvocationException
+    }
     #endregion CmdletProviderInvocationException
 
     #region PipelineStoppedException
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-    } // PipelineStoppedException
+    }
     #endregion PipelineStoppedException
 
     #region PipelineClosedException
@@ -430,7 +430,7 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // PipelineClosedException
+    }
     #endregion PipelineClosedException
 
     #region ActionPreferenceStopException
@@ -609,7 +609,7 @@ namespace System.Management.Automation
         }
         private readonly ErrorRecord _errorRecord = null;
         #endregion Properties
-    } // ActionPreferenceStopException
+    }
     #endregion ActionPreferenceStopException
 
     #region ParentContainsErrorRecordException
@@ -796,7 +796,7 @@ namespace System.Management.Automation
         {
         }
         #endregion constructors
-    } // class RedirectedException
+    }
     #endregion RedirectedException
 
     #region ScriptCallDepthException
@@ -909,7 +909,7 @@ namespace System.Management.Automation
             get { return 0; }
         }
         #endregion properties
-    } // ScriptCallDepthException
+    }
     #endregion ScriptCallDepthException
 
     #region PipelineDepthException
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation
             get { return 0; }
         }
         #endregion properties
-    } // PipelineDepthException
+    }
     #endregion
 
     #region HaltCommandException
@@ -1086,8 +1086,8 @@ namespace System.Management.Automation
         {
         }
         #endregion Serialization
-    } // HaltCommandException
+    }
     #endregion HaltCommandException
-} // namespace System.Management.Automation
+}
 
 #pragma warning restore 56506

@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _passThrough; }
             set { _passThrough = value; }
-        } // PassThru
+        }
         #endregion
 
         #region Public and Protected Methods

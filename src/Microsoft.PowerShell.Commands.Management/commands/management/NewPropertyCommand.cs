@@ -24,13 +24,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -43,14 +43,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The name of the property to create on the item
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.Force = value;
             }
-        } // Force
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                 return InvokeProvider.Property.NewPropertyDynamicParameters(Path[0], Name, PropertyType, Value, context);
             }
             return InvokeProvider.Property.NewPropertyDynamicParameters(".", Name, PropertyType, Value, context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -170,8 +170,8 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // NewItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

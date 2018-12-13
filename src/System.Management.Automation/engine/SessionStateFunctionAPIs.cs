@@ -58,7 +58,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetFunctionTable
+        }
 
         /// <summary>
         /// Gets an IEnumerable for the function table for a given scope
@@ -96,7 +96,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetFunctionTableAtScope
+        }
 
         /// <summary>
         /// List of functions/filters to export from this session state object...
@@ -167,7 +167,7 @@ namespace System.Management.Automation
             }
 
             return (IsFunctionVisibleInDebugger(result, origin)) ? result : null;
-        } // GetFunction
+        }
 
         private bool IsFunctionVisibleInDebugger(FunctionInfo fnInfo, CommandOrigin origin)
         {
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         internal FunctionInfo GetFunction(string name)
         {
             return GetFunction(name, CommandOrigin.Internal);
-        } // GetFunction
+        }
 
         private IEnumerable<string> GetFunctionAliases(IParameterMetadataProvider ipmp)
         {
@@ -312,7 +312,7 @@ namespace System.Management.Automation
             }
 
             return functionInfo;
-        } // SetFunctionRaw
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -353,7 +353,7 @@ namespace System.Management.Automation
             CommandOrigin origin)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, ExecutionContext, null);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -398,7 +398,7 @@ namespace System.Management.Automation
             string helpFile)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, ExecutionContext, helpFile, false);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -447,7 +447,7 @@ namespace System.Management.Automation
             string helpFile)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, context, helpFile, false);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -539,7 +539,7 @@ namespace System.Management.Automation
                     origin);
 
             return searcher.InitialScope.SetFunction(name, function, originalFunction, options, force, origin, context, helpFile);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -727,7 +727,7 @@ namespace System.Management.Automation
                 scope = searcher.CurrentLookupScope;
             }
             scope.RemoveFunction(name, force);
-        } // RemoveFunction
+        }
 
         /// <summary>
         /// Removes a function from the function table.
@@ -778,5 +778,5 @@ namespace System.Management.Automation
         }
 
         #endregion Functions
-    } // SessionStateInternal class
+    }
 }

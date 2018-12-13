@@ -362,7 +362,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 callId = DispatchTable.CreateNewCallId();
 
                 DataStructureHandler.SendSetMaxRunspacesToServer(maxRunspaces, callId);
-            } // lock ...
+            }
 
             // this call blocks until the response is received
             object response = DispatchTable.GetResponse(callId, false);
@@ -425,7 +425,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 callId = DispatchTable.CreateNewCallId();
 
                 DataStructureHandler.SendSetMinRunspacesToServer(minRunspaces, callId);
-            } // lock ...
+            }
 
             // this call blocks until the response is received
             object response = DispatchTable.GetResponse(callId, false);
@@ -476,7 +476,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
 
                 DataStructureHandler.SendGetAvailableRunspacesToServer(callId);
-            } // lock ...
+            }
 
             // this call blocks until the response is received
             object response = DispatchTable.GetResponse(callId, 0);
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // Delay notifying upper layers of finished state change event
                     // until after transport close ack is received (HandleSessionClosed handler).
                 }
-            } // else if ...
+            }
         }
 
         /// <summary>

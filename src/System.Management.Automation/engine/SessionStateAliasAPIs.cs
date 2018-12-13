@@ -66,7 +66,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAliasTable
+        }
 
         /// <summary>
         /// Gets an IEnumerable for the alias table for a given scope
@@ -104,7 +104,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAliasTableAtScope
+        }
 
         /// <summary>
         /// List of aliases to export from this session state object...
@@ -162,7 +162,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAlias
+        }
 
         /// <summary>
         /// Gets the value of the specified alias from the alias table.
@@ -222,7 +222,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetAliasAtScope
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -263,7 +263,7 @@ namespace System.Management.Automation
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, this.ExecutionContext, force, origin);
 
             return info;
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -340,7 +340,7 @@ namespace System.Management.Automation
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, options, this.ExecutionContext, force, origin);
 
             return info;
-        } // SetAliasValue
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -408,7 +408,7 @@ namespace System.Management.Automation
             AliasInfo info = _currentScope.SetAliasItem(alias, force, origin);
 
             return info;
-        } // SetAliasItem
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -465,7 +465,7 @@ namespace System.Management.Automation
             AliasInfo info = scope.SetAliasItem(alias, force, origin);
 
             return info;
-        } // SetAliasItemAtScope
+        }
 
         /// <summary>
         /// Sets the alias with specified name to the specified value in the current scope.
@@ -554,7 +554,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // RemoveAlias
+        }
 
         /// <summary>
         /// Gets the aliases by command name (used by metadata-driven help)
@@ -578,6 +578,6 @@ namespace System.Management.Automation
         }
 
         #endregion aliases
-    } // SessionStateInternal class
+    }
 }
 

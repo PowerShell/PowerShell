@@ -1579,7 +1579,7 @@ namespace System.Management.Automation.Runspaces.Internal
                                 ThreadPool.QueueUserWorkItem(new WaitCallback(runspaceRequester.DoComplete));
                             }
                         }
-                    } // end lock(ultimateRequestQueue)
+                    }
 
                     lock (runspaceRequestQueue)
                     {
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     );
                 throw e;
             }
-        } // AssertIfStateIsBeforeOpen
+        }
 
         /// <summary>
         /// Raises the ForwardEvent event

@@ -391,8 +391,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             ProcessUnknownNode(n);
                         }
-                    } // foreach
-                } // using
+                    }
+                }
             }
             else
             {
@@ -1315,7 +1315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         ProcessUnknownNode(n);
                     }
-                } // for each
+                }
             } //using
         }
 
@@ -1357,7 +1357,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // finally add to the list
                 db.typeGroupSection.typeGroupDefinitionList.Add(typeGroupDefinition);
-            } // using
+            }
         }
 
         private void LoadTypeGroupTypeRefs(XmlNode typesNode, TypeGroupDefinition typeGroupDefinition)
@@ -1376,7 +1376,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                             tr.name = GetMandatoryInnerText(n);
                             typeGroupDefinition.typeReferenceList.Add(tr);
-                        } // using
+                        }
                     }
                     else
                     {
@@ -1441,7 +1441,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             this.ProcessUnknownNode(n);
                         }
-                    } // using
+                    }
                 }
 
                 if (appliesTo.referenceList.Count == 0)
@@ -2063,7 +2063,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         // for further processing by calling context
                         unprocessedNodes.Add(n);
                     }
-                } // foreach
+                }
 
                 if (expressionNodeFound)
                 {

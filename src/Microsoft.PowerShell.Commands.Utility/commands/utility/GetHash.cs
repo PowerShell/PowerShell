@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Path parameter.
-        /// The paths of the files to calculate a hashs.
+        /// The paths of the files to calculate hash values.
         /// Resolved wildcards.
         /// </summary>
         /// <value></value>
@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
             catch
             {
                 // Seems it will never throw! Remove?
-                Exception exc = new NotSupportedException(UtilityResources.AlgorithmTypeNotSupported);
+                Exception exc = new NotSupportedException(UtilityCommonStrings.AlgorithmTypeNotSupported);
                 ThrowTerminatingError(new ErrorRecord(exc, "AlgorithmTypeNotSupported", ErrorCategory.NotImplemented, null));
             }
         }

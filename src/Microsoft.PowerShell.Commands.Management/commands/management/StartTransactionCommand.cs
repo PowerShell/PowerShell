@@ -98,6 +98,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // StartTransactionCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 
