@@ -51,13 +51,18 @@ function Get-ReleaseTag
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
 
     $releaseTag = $metadata.PreviewReleaseTag
-    if($env:TRAVIS_BUILD_NUMBER)
+    $previewVersion = $releaseTag.Split('-')
+    $previewPrefix = $previewVersion[0]
+    $previewLabel = $previewVersion[1].replace('.','')
+
+    if($isDailyBuild)
     {
-        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag+'.'+$env:TRAVIS_BUILD_NUMBER
+        $previewLabel= "daily{0}" -f $previewLabel
     }
 
-    return $releaseTag
+    $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+
+    return $preReleaseVersion
 }
 
 # This function retrieves the appropriate svg to be used when presenting
