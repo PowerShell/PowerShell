@@ -26,7 +26,10 @@ namespace System.Management.Automation
             while (patternIdx != patternLength && strIdx != strLength)
             {
                 if (char.ToLowerInvariant(pattern[patternIdx]) == char.ToLowerInvariant(stringToSearch[strIdx]))
+                {
                     ++patternIdx;
+                }
+
                 ++strIdx;
             }
 
@@ -43,13 +46,13 @@ namespace System.Management.Automation
         public static bool FuzzyMatch(string stringToSearch, string pattern, out int outScore)
         {
             // Score constants
-            const int adjacencyBonus = 5;               // bonus for adjacent matches
-            const int separatorBonus = 10;              // bonus if match occurs after a separator
-            const int camelBonus = 10;                  // bonus if match is uppercase and prev is lower
+            const int AdjacencyBonus = 5;               // bonus for adjacent matches
+            const int SeparatorBonus = 10;              // bonus if match occurs after a separator
+            const int CamelBonus = 10;                  // bonus if match is uppercase and prev is lower
 
-            const int leadingLetterPenalty = -3;        // penalty applied for every letter in stringToSearch before the first match
-            const int maxLeadingLetterPenalty = -9;     // maximum penalty for leading letters
-            const int unmatchedLetterPenalty = -1;      // penalty for every letter that doesn't matter
+            const int LeadingLetterPenalty = -3;        // penalty applied for every letter in stringToSearch before the first match
+            const int MaxLeadingLetterPenalty = -9;     // maximum penalty for leading letters
+            const int UnmatchedLetterPenalty = -1;      // penalty for every letter that doesn't matter
 
 
             // Loop variables
@@ -103,32 +106,42 @@ namespace System.Management.Automation
                     // Note: Math.Max because penalties are negative values. So max is smallest penalty.
                     if (patternIdx == 0)
                     {
-                        var penalty = Math.Max(strIdx * leadingLetterPenalty, maxLeadingLetterPenalty);
+                        var penalty = Math.Max(strIdx * LeadingLetterPenalty, MaxLeadingLetterPenalty);
                         score += penalty;
                     }
 
                     // Apply bonus for consecutive bonuses
                     if (prevMatched)
-                        newScore += adjacencyBonus;
+                    {
+                        newScore += AdjacencyBonus;
+                    }
 
                     // Apply bonus for matches after a separator
                     if (prevSeparator)
-                        newScore += separatorBonus;
+                    {
+                        newScore += SeparatorBonus;
+                    }
 
                     // Apply bonus across camel case boundaries. Includes "clever" isLetter check.
                     if (prevLower && strChar == strUpper && strLower != strUpper)
-                        newScore += camelBonus;
+                    {
+                        newScore += CamelBonus;
+                    }
 
                     // Update pattern index IF the next pattern letter was matched
                     if (nextMatch)
+                    {
                         ++patternIdx;
+                    }
 
                     // Update best letter in stringToSearch which may be for a "next" letter or a "rematch"
                     if (newScore >= bestLetterScore)
                     {
                         // Apply penalty for now skipped letter
                         if (bestLetter != null)
-                            score += unmatchedLetterPenalty;
+                        {
+                            score += UnmatchedLetterPenalty;
+                        }
 
                         bestLetter = strChar;
                         bestLower = char.ToLowerInvariant((char)bestLetter);
@@ -140,7 +153,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    score += unmatchedLetterPenalty;
+                    score += UnmatchedLetterPenalty;
                     prevMatched = false;
                 }
 

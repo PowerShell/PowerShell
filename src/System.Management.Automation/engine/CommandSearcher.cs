@@ -660,7 +660,7 @@ namespace System.Management.Automation
                     foreach (KeyValuePair<string, AliasInfo> aliasEntry in _context.EngineSessionState.GetAliasTable())
                     {
                         if (aliasMatcher.IsMatch(aliasEntry.Key) ||
-                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzySearch) &&
+                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                             FuzzyMatcher.FuzzyMatch(aliasEntry.Key, _commandName)))
                         {
                             matchingAliases.Add(aliasEntry.Value);
@@ -740,7 +740,7 @@ namespace System.Management.Automation
                     foreach (DictionaryEntry functionEntry in _context.EngineSessionState.GetFunctionTable())
                     {
                         if (functionMatcher.IsMatch((string)functionEntry.Key) ||
-                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzySearch) &&
+                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                             FuzzyMatcher.FuzzyMatch(functionEntry.Key.ToString(), _commandName)))
                         {
                             matchingFunction.Add((CommandInfo)functionEntry.Value);
@@ -973,7 +973,7 @@ namespace System.Management.Automation
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
                             if (cmdletMatcher.IsMatch(cmdlet.Name) ||
-                                (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzySearch) &&
+                                (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                                 FuzzyMatcher.FuzzyMatch(cmdlet.Name, _commandName)))
                             {
                                 if (string.IsNullOrEmpty(PSSnapinQualifiedCommandName.PSSnapInName) ||
@@ -1387,7 +1387,7 @@ namespace System.Management.Automation
                         _context.CommandDiscovery.GetLookupDirectoryPaths(),
                         _context,
                         acceptableCommandNames: null,
-                        useFuzzyMatch: _commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzySearch));
+                        useFuzzyMatch: _commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch));
             }
             else
             {
@@ -1585,6 +1585,8 @@ namespace System.Management.Automation
         ResolveFunctionPatterns = 0x02,
         CommandNameIsPattern = 0x04,
         SearchAllScopes = 0x08,
-        FuzzySearch = 0x10,
+
+        /// <summary>Use fuzzy matching.</summary>
+        FuzzyMatch = 0x10,
     }
 }

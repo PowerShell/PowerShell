@@ -433,6 +433,7 @@ namespace System.Management.Automation
                                     files.Add(file);
                                 }
                             }
+
                             result = _postProcessEnumeratedFiles != null
                                 ? _postProcessEnumeratedFiles(files.ToArray())
                                 : files;

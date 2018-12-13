@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
         private PSTypeName[] _parameterTypes;
 
         /// <summary>
-        /// This parameter enables using fuzzy matching to find the command.
+        /// Gets or sets the parameter that enables using fuzzy matching.
         /// </summary>
         [Parameter(ParameterSetName = "AllCommandSet")]
         public SwitchParameter UseFuzzyMatching { get; set; }
@@ -730,7 +730,7 @@ namespace Microsoft.PowerShell.Commands
                     bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName);
                     if (UseFuzzyMatching)
                     {
-                        options |= SearchResolutionOptions.FuzzySearch;
+                        options |= SearchResolutionOptions.FuzzyMatch;
                         isPattern = true;
                     }
 
@@ -778,8 +778,12 @@ namespace Microsoft.PowerShell.Commands
                                 IEnumerable<CommandInfo> commands;
                                 if (UseFuzzyMatching)
                                 {
-                                    foreach(Tuple<CommandInfo, int> commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(plainCommandName, this.Context,
-                                        this.MyInvocation.CommandOrigin, rediscoverImportedModules: true, moduleVersionRequired: _isFullyQualifiedModuleSpecified))
+                                    foreach (Tuple<CommandInfo, int> commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(
+                                        plainCommandName,
+                                        this.Context,
+                                        this.MyInvocation.CommandOrigin,
+                                        rediscoverImportedModules: true,
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified))
                                     {
                                         _commandScores.Add(commandScore);
                                     }
@@ -788,8 +792,11 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 else
                                 {
-                                    commands = System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(plainCommandName,
-                                        this.Context, this.MyInvocation.CommandOrigin, rediscoverImportedModules: true,
+                                    commands = System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(
+                                        plainCommandName,
+                                        this.Context,
+                                        this.MyInvocation.CommandOrigin,
+                                        rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified);
                                 }
 
