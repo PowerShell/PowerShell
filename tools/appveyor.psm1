@@ -589,11 +589,22 @@ function Invoke-AppveyorFinish
     try {
         $releaseTag = Get-ReleaseTag
 
+        $previewVersion = $releaseTag.Split('-')
+        $previewPrefix = $previewVersion[0]
+        $previewLabel = $previewVersion[1].replace('.','')
+
+        if(Test-DailyBuild)
+        {
+            $previewLabel= "daily{0}" -f $previewLabel
+        }
+
+        $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+
         # Build clean before backing to remove files from testing
-        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean
 
         # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
+        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $preReleaseVersion -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -605,31 +616,6 @@ function Invoke-AppveyorFinish
             {
                 $null = $artifacts.Add($package.msi)
                 $null = $artifacts.Add($package.wixpdb)
-            }
-        }
-
-        if ($env:APPVEYOR_REPO_TAG_NAME)
-        {
-            $preReleaseVersion = $env:APPVEYOR_REPO_TAG_NAME
-        }
-        else
-        {
-            $previewVersion = $releaseTag.Split('-')
-            $previewPrefix = $previewVersion[0]
-            $previewLabel = $previewVersion[1].replace('.','')
-
-            if(Test-DailyBuild)
-            {
-                $previewLabel= "daily{0}" -f $previewLabel
-            }
-
-            if ($env:TF_BUILD)
-            {
-                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
-            }
-            else
-            {
-                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
             }
         }
 
