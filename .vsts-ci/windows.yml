@@ -94,6 +94,6 @@ steps:
   - powershell: |
       Import-Module .\tools\Appveyor.psm1
       Restore-PSOptions
-      Invoke-AppveyorFinish
+      Invoke-AppveyorFinish -NuGetKey $(NUGET_KEY)
     displayName: Finish
     condition: eq(variables['Purpose'], 'ElevatedPesterTests_xUnit_Packaging')

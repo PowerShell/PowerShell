@@ -579,6 +579,10 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
+    param(
+        [string] $NuGetKey
+    )
+
     try {
         $releaseTag = Get-ReleaseTag
 
@@ -664,10 +668,10 @@ function Invoke-AppveyorFinish
                 Write-Warning "Artifact $_ does not exist."
             }
 
-            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
+            if($NuGetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
                 Write-Log "pushing $_ to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $NuGetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if(!$pushedAllArtifacts)
