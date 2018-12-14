@@ -68,7 +68,7 @@ jobs:
 
   - powershell: |
       $ErrorActionPreference = 'continue'
-      tools/travis.ps1
+      tools/travis.ps1 -NugetKey $(NUGET_KEY)
     displayName: Build and test
     condition: succeeded()
 
