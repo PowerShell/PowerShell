@@ -394,8 +394,8 @@ namespace System.Management.Automation.Internal
         {
             foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, useFuzzyMatching: true))
             {
-                int score = 0;
-                if (FuzzyMatcher.FuzzyMatch(command.Name, pattern, out score))
+                int score = FuzzyMatcher.GetDamerauLevenshteinDistance(command.Name, pattern);
+                if (score <= FuzzyMatcher.MinimumDistance)
                 {
                     yield return Tuple.Create(command, score);
                 }
@@ -450,7 +450,7 @@ namespace System.Management.Automation.Internal
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name) ||
-                                 (useFuzzyMatching && FuzzyMatcher.FuzzyMatch(entry.Value.Name, pattern)))
+                                 (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)))
                                 {
                                     CommandInfo current = null;
                                     switch (entry.Value.CommandType)
@@ -509,7 +509,7 @@ namespace System.Management.Automation.Internal
                         CommandTypes commandTypes = pair.Value;
 
                         if (commandPattern.IsMatch(commandName) ||
-                            (useFuzzyMatching && FuzzyMatcher.FuzzyMatch(commandName, pattern)))
+                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)))
                         {
                             bool shouldExportCommand = true;
 

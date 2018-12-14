@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores.OrderByDescending(x => x.Item2).Select(x => x.Item1).ToList();
+                results = _commandScores.OrderBy(x => x.Item2).Select(x => x.Item1).ToList();
             }
 
             int count = 0;
@@ -948,8 +948,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (UseFuzzyMatching)
                         {
-                            int score = 0;
-                            FuzzyMatcher.FuzzyMatch(current.Name, commandName, out score);
+                            int score = FuzzyMatcher.GetDamerauLevenshteinDistance(current.Name, commandName);
                             _commandScores.Add(new Tuple<CommandInfo, int>(current, score));
                         }
 

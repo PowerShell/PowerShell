@@ -428,7 +428,7 @@ namespace System.Management.Automation
                             var matchingFiles = Directory.EnumerateFiles(directory);
                             foreach (string file in matchingFiles)
                             {
-                                if (FuzzyMatcher.FuzzyMatch(Path.GetFileName(file), pattern))
+                                if (FuzzyMatcher.IsFuzzyMatch(Path.GetFileName(file), pattern))
                                 {
                                     files.Add(file);
                                 }

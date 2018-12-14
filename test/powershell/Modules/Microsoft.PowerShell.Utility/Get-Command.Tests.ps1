@@ -4,7 +4,7 @@
 Describe "Get-Command CI tests" -Tag Feature {
     Context "-UseFuzzyMatch tests" {
         It "Should match cmdlets" {
-            $cmds = Get-Command get-hel -UseFuzzyMatch
+            $cmds = Get-Command get-hlp -UseFuzzyMatch
             $cmds.Count | Should -BeGreaterThan 0
             $cmds[0].Name | Should -BeExactly 'Get-Help' -Because "This should be closest match so shows up first"
         }
@@ -17,7 +17,7 @@ Describe "Get-Command CI tests" -Tag Feature {
 
             $cmds = Get-Command pin -UseFuzzyMatch
             $cmds.Count | Should -BeGreaterThan 0
-            $cmds[0].Name | Should -BeExactly $ping -Because "This should be closest match so shows up first"
+            $cmds.Name | Should -Contain $ping
         }
     }
 }

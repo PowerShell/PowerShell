@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-// Based off https://gist.githubusercontent.com/CDillinger/2aa02128f840bdca90340ce08ee71bc2/raw/f596e6931a58ddf7d15e488b70fe20702290d699/FuzzyMatch.cs
+// Based off https://www.csharpstar.com/csharp-string-distance-algorithm/
 
 using System;
 using System.Collections.Generic;
@@ -10,169 +10,56 @@ namespace System.Management.Automation
 {
     internal static class FuzzyMatcher
     {
+        public const int MinimumDistance = 5;
+
         /// <summary>
-        /// Does a fuzzy search for a pattern within a string.
+        /// Determine if the two strings are considered similar.
         /// </summary>
-        /// <param name="stringToSearch">The string to search for the pattern in.</param>
-        /// <param name="pattern">The pattern to search for in the string.</param>
-        /// <returns>true if each character in pattern is found sequentially within stringToSearch; otherwise, false.</returns>
-        public static bool FuzzyMatch(string stringToSearch, string pattern)
+        /// <param name="string1">The first string to compare.</param>
+        /// <param name="string2">The second string to compare.</param>
+        /// <returns>True if the two strings have a distance <= MinimumDistance.</returns>
+        public static bool IsFuzzyMatch(string string1, string string2)
         {
-            var patternIdx = 0;
-            var strIdx = 0;
-            var patternLength = pattern.Length;
-            var strLength = stringToSearch.Length;
-
-            while (patternIdx != patternLength && strIdx != strLength)
-            {
-                if (char.ToLowerInvariant(pattern[patternIdx]) == char.ToLowerInvariant(stringToSearch[strIdx]))
-                {
-                    ++patternIdx;
-                }
-
-                ++strIdx;
-            }
-
-            return patternLength != 0 && strLength != 0 && patternIdx == patternLength;
+            return GetDamerauLevenshteinDistance(string1, string2) <= MinimumDistance;
         }
 
+
         /// <summary>
-        /// Does a fuzzy search for a pattern within a string, and gives the search a score on how well it matched.
+        /// Compute the distance between two strings.
         /// </summary>
-        /// <param name="stringToSearch">The string to search for the pattern in.</param>
-        /// <param name="pattern">The pattern to search for in the string.</param>
-        /// <param name="outScore">The score which this search received, if a match was found.</param>
-        /// <returns>true if each character in pattern is found sequentially within stringToSearch; otherwise, false.</returns>
-        public static bool FuzzyMatch(string stringToSearch, string pattern, out int outScore)
+        /// <param name="string1">The first string to compare.</param>
+        /// <param name="string2">The second string to compare.</param>
+        /// <returns>The distance value where the lower the value the shorter the distance between the two strings representing a closer match.</returns>
+        public static int GetDamerauLevenshteinDistance(string string1, string string2)
         {
-            // Score constants
-            const int AdjacencyBonus = 5;               // bonus for adjacent matches
-            const int SeparatorBonus = 10;              // bonus if match occurs after a separator
-            const int CamelBonus = 10;                  // bonus if match is uppercase and prev is lower
+            var bounds = new { Height = string1.Length + 1, Width = string2.Length + 1 };
 
-            const int LeadingLetterPenalty = -3;        // penalty applied for every letter in stringToSearch before the first match
-            const int MaxLeadingLetterPenalty = -9;     // maximum penalty for leading letters
-            const int UnmatchedLetterPenalty = -1;      // penalty for every letter that doesn't matter
+            int[,] matrix = new int[bounds.Height, bounds.Width];
 
+            for (int height = 0; height < bounds.Height; height++) { matrix[height, 0] = height; };
+            for (int width = 0; width < bounds.Width; width++) { matrix[0, width] = width; };
 
-            // Loop variables
-            var score = 0;
-            var patternIdx = 0;
-            var patternLength = pattern.Length;
-            var strIdx = 0;
-            var strLength = stringToSearch.Length;
-            var prevMatched = false;
-            var prevLower = false;
-            var prevSeparator = true;                   // true if first letter match gets separator bonus
-
-            // Use "best" matched letter if multiple string letters match the pattern
-            char? bestLetter = null;
-            char? bestLower = null;
-            int? bestLetterIdx = null;
-            var bestLetterScore = 0;
-
-            var matchedIndices = new List<int>();
-
-            // Loop over strings
-            while (strIdx != strLength)
+            for (int height = 1; height < bounds.Height; height++)
             {
-                var patternChar = patternIdx != patternLength ? pattern[patternIdx] as char? : null;
-                var strChar = stringToSearch[strIdx];
-
-                var patternLower = patternChar != null ? char.ToLowerInvariant((char)patternChar) as char? : null;
-                var strLower = char.ToLowerInvariant(strChar);
-                var strUpper = char.ToUpperInvariant(strChar);
-
-                var nextMatch = patternChar != null && patternLower == strLower;
-                var rematch = bestLetter != null && bestLower == strLower;
-
-                var advanced = nextMatch && bestLetter != null;
-                var patternRepeat = bestLetter != null && patternChar != null && bestLower == patternLower;
-                if (advanced || patternRepeat)
+                for (int width = 1; width < bounds.Width; width++)
                 {
-                    score += bestLetterScore;
-                    matchedIndices.Add((int)bestLetterIdx);
-                    bestLetter = null;
-                    bestLower = null;
-                    bestLetterIdx = null;
-                    bestLetterScore = 0;
+                    int cost = (string1[height - 1] == string2[width - 1]) ? 0 : 1;
+                    int insertion = matrix[height, width - 1] + 1;
+                    int deletion = matrix[height - 1, width] + 1;
+                    int substitution = matrix[height - 1, width - 1] + cost;
+
+                    int distance = Math.Min(insertion, Math.Min(deletion, substitution));
+
+                    if (height > 1 && width > 1 && string1[height - 1] == string2[width - 2] && string1[height - 2] == string2[width - 1])
+                    {
+                        distance = Math.Min(distance, matrix[height - 2, width - 2] + cost);
+                    }
+
+                    matrix[height, width] = distance;
                 }
-
-                if (nextMatch || rematch)
-                {
-                    var newScore = 0;
-
-                    // Apply penalty for each letter before the first pattern match
-                    // Note: Math.Max because penalties are negative values. So max is smallest penalty.
-                    if (patternIdx == 0)
-                    {
-                        var penalty = Math.Max(strIdx * LeadingLetterPenalty, MaxLeadingLetterPenalty);
-                        score += penalty;
-                    }
-
-                    // Apply bonus for consecutive bonuses
-                    if (prevMatched)
-                    {
-                        newScore += AdjacencyBonus;
-                    }
-
-                    // Apply bonus for matches after a separator
-                    if (prevSeparator)
-                    {
-                        newScore += SeparatorBonus;
-                    }
-
-                    // Apply bonus across camel case boundaries. Includes "clever" isLetter check.
-                    if (prevLower && strChar == strUpper && strLower != strUpper)
-                    {
-                        newScore += CamelBonus;
-                    }
-
-                    // Update pattern index IF the next pattern letter was matched
-                    if (nextMatch)
-                    {
-                        ++patternIdx;
-                    }
-
-                    // Update best letter in stringToSearch which may be for a "next" letter or a "rematch"
-                    if (newScore >= bestLetterScore)
-                    {
-                        // Apply penalty for now skipped letter
-                        if (bestLetter != null)
-                        {
-                            score += UnmatchedLetterPenalty;
-                        }
-
-                        bestLetter = strChar;
-                        bestLower = char.ToLowerInvariant((char)bestLetter);
-                        bestLetterIdx = strIdx;
-                        bestLetterScore = newScore;
-                    }
-
-                    prevMatched = true;
-                }
-                else
-                {
-                    score += UnmatchedLetterPenalty;
-                    prevMatched = false;
-                }
-
-                // Includes "clever" isLetter check.
-                prevLower = strChar == strLower && strLower != strUpper;
-                prevSeparator = strChar == '_' || strChar == ' ';
-
-                ++strIdx;
             }
 
-            // Apply score for last match
-            if (bestLetter != null)
-            {
-                score += bestLetterScore;
-                matchedIndices.Add((int)bestLetterIdx);
-            }
-
-            outScore = score;
-            return patternIdx == patternLength;
+            return matrix[bounds.Height - 1, bounds.Width - 1];
         }
     }
 }
