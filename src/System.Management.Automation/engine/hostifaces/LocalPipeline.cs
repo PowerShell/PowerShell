@@ -1,15 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
+using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Tracing;
-using Microsoft.PowerShell.Commands;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -152,13 +155,30 @@ namespace System.Management.Automation.Runspaces
 
             PSThreadOptions memberOptions = this.IsNested ? PSThreadOptions.UseCurrentThread : this.LocalRunspace.ThreadOptions;
 
+            // If impersonation identity flow is requested, then get current thread impersonation, if any.
+#if !UNIX
+            ThreadStart invokeThreadProcDelegate;
+            if ((InvocationSettings != null) && InvocationSettings.FlowImpersonationPolicy &&
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate))
+            {
+                invokeThreadProcDelegate = InvokeThreadProcImpersonate;
+            }
+            else
+            {
+                _identityToImpersonate = null;
+                invokeThreadProcDelegate = InvokeThreadProc;
+            }
+#else
+            ThreadStart invokeThreadProcDelegate = InvokeThreadProc;
+#endif
+
             switch (memberOptions)
             {
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
                         // Start execution of pipeline in another thread
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), DefaultPipelineStackSize);
+                        Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
 #if !CORECLR
                         // No ApartmentState in CoreCLR
@@ -189,14 +209,14 @@ namespace System.Management.Automation.Runspaces
                         {
                             // if this a nested pipeline we are already in the appropriate thread so we just execute the pipeline here
                             SetupInvokeThread(Thread.CurrentThread, true);
-                            this.InvokeThreadProc();
+                            InvokeThreadProc();
                         }
                         else
                         {
                             // otherwise we execute the pipeline in the Runspace's thread
                             PipelineThread invokeThread = this.LocalRunspace.GetPipelineThread();
                             SetupInvokeThread(invokeThread.Worker, true);
-                            invokeThread.Start(this.InvokeThreadProc);
+                            invokeThread.Start(invokeThreadProcDelegate);
                         }
                         break;
                     }
@@ -212,7 +232,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             // prepare invoke thread
                             SetupInvokeThread(Thread.CurrentThread, false);
-                            this.InvokeThreadProc();
+                            InvokeThreadProc();
                         }
                         finally
                         {
@@ -508,8 +528,25 @@ namespace System.Management.Automation.Runspaces
             return flowControlException;
         }
 
-        // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-        // Removed HandleUnexpectedExceptions infrastructure
+#if !UNIX
+        /// <summary>
+        /// Invokes the InvokeThreadProc() method on new thread, and flows calling thread 
+        /// impersonation as needed.
+        /// </summary>
+        private void InvokeThreadProcImpersonate()
+        {
+            if (_identityToImpersonate != null)
+            {
+                WindowsIdentity.RunImpersonated(
+                    _identityToImpersonate.AccessToken,
+                    () => { InvokeThreadProc(); });
+                return;
+            }
+
+            InvokeThreadProc();
+        }
+#endif
+
         /// <summary>
         /// Start thread method for asynchronous pipeline execution.
         /// </summary>
@@ -520,19 +557,6 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-#if !CORECLR    // Impersonation is not supported in CoreCLR.
-                // Used to store old impersonation context if we impersonate.
-                System.Security.Principal.WindowsImpersonationContext oldImpersonationCtxt = null;
-                try
-                {
-                    if ((InvocationSettings != null) && (InvocationSettings.FlowImpersonationPolicy))
-                    {
-                        // we have a valid identity to impersonate.
-                        System.Security.Principal.WindowsIdentity identityToImPersonate =
-                            new System.Security.Principal.WindowsIdentity(InvocationSettings.WindowsIdentityToImpersonate.Token);
-                        oldImpersonationCtxt = identityToImPersonate.Impersonate();
-                    }
-#endif
                 // Set up pipeline internal host if it is available.
                 if (InvocationSettings != null && InvocationSettings.Host != null)
                 {
@@ -575,29 +599,6 @@ namespace System.Management.Automation.Runspaces
                     // Invoke finished successfully. Set state to Completed.
                     SetPipelineState(PipelineState.Completed);
                 }
-#if !CORECLR
-                }
-                finally
-                {
-                    // Impersonation is not supported in CoreCLR.
-                    // This finally block is needed to handle fxcop CA2124
-                    // If sensitive operations such as impersonation occur in the try block, and an
-                    // exception is thrown, the filter can execute before the finally block. For the
-                    // impersonation example, this means that the filter would execute as the impersonated user.
-                    if (oldImpersonationCtxt != null)
-                    {
-                        try
-                        {
-                            oldImpersonationCtxt.Undo();
-                            oldImpersonationCtxt.Dispose();
-                            oldImpersonationCtxt = null;
-                        }
-                        catch (System.Security.SecurityException)
-                        {
-                        }
-                    }
-                }
-#endif
             }
             catch (PipelineStoppedException ex)
             {
@@ -1101,11 +1102,14 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        // NTRAID#Windows Out Of Band Releases-925566-2005/12/09-JonN
         private bool _useExternalInput;
 
         private PipelineWriter _oldExternalErrorOutput;
         private PipelineWriter _oldExternalSuccessOutput;
+
+#if !UNIX
+        private WindowsIdentity _identityToImpersonate;
+#endif
 
         #endregion private_fields
 

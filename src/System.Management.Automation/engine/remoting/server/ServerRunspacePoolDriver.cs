@@ -4,18 +4,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Threading;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
-using System.Diagnostics;
+#if !UNIX
 using System.Security.Principal;
+#endif
+using System.Threading;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -2061,13 +2064,7 @@ namespace System.Management.Automation
             {
 #if !UNIX
                 // Get impersonation information to flow if any.
-                WindowsIdentity currentIdentity = null;
-                try
-                {
-                    currentIdentity = WindowsIdentity.GetCurrent();
-                }
-                catch (System.Security.SecurityException) { }
-                _identityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ? currentIdentity : null;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
 #endif
 
                 // Signal thread to process command.
@@ -2079,7 +2076,11 @@ namespace System.Management.Automation
                 _commandCompleteEvent.Wait();
                 _commandCompleteEvent.Reset();
 #if !UNIX
-                _identityToImpersonate = null;
+                if (_identityToImpersonate != null)
+                {
+                    _identityToImpersonate.Dispose();
+                    _identityToImpersonate = null;
+                }
 #endif
 
                 // Propagate exception.
@@ -2110,18 +2111,11 @@ namespace System.Management.Automation
                     {
                         WindowsIdentity.RunImpersonated(
                             _identityToImpersonate.AccessToken,
-                            () =>
-                            {
-                                _results = _wrappedDebugger.ProcessCommand(_command, _output);
-                            });
-                    }
-                    else
-                    {
-#endif
-                        _results = _wrappedDebugger.ProcessCommand(_command, _output);
-#if !UNIX
+                            () => { _results = _wrappedDebugger.ProcessCommand(_command, _output); });
+                        return;
                     }
 #endif
+                    _results = _wrappedDebugger.ProcessCommand(_command, _output);
                 }
                 catch (Exception e)
                 {
