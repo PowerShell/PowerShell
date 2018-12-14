@@ -1531,7 +1531,7 @@ namespace System.Management.Automation
                     WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingException, ex.Message));
                 }
             }
-            
+
             return false;
         }
 
@@ -1781,6 +1781,7 @@ namespace System.Management.Automation.Internal
         internal static bool StopwatchIsNotHighResolution;
         internal static bool DisableGACLoading;
         internal static bool SetConsoleWidthToZero;
+        internal static bool SetConsoleHeightToZero;
 
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test

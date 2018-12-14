@@ -791,4 +791,11 @@ A Name                                  B
                 [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
             }
         }
+
+        It "-RepeatHeader should output the header at every screen full" -Skip:([Console]::BufferHeight -eq 0) {
+            $numObjects = 250
+            $out = 1..$numObjects | ForEach-Object { @{foo=$_} } | Format-Table -RepeatHeaderPerScreen | Out-String
+            $lines = $out.Split([System.Environment]::NewLine)
+            ($lines | Select-String "Name\s*Value").Count | Should -Be ([int]($numObjects / [Console]::BufferHeight) + 1)
+        }
     }

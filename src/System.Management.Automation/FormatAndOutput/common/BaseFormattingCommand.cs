@@ -759,6 +759,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private Nullable<bool> _autosize = null;
 
         /// <summary>
+        /// Gets or sets if header is repeated per screen.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter RepeatHeader { get; set; }
+
+        /// <summary>
         /// optional, non positional parameter
         /// </summary>
         /// <value></value>
@@ -808,6 +814,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (_autosize.HasValue)
                 parameters.autosize = _autosize.Value;
+
+            if (RepeatHeader)
+            {
+                parameters.repeatHeader = true;
+            }
 
             parameters.groupByParameter = this.ProcessGroupByParameter();
 

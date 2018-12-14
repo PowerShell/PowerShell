@@ -250,6 +250,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private enum PreprocessingState { raw, processed, error }
 
         private const int DefaultConsoleWidth = 120;
+        private const int DefaultConsoleHeight = int.MaxValue;
         internal const int StackAllocThreshold = 120;
 
         /// <summary>
@@ -373,6 +374,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return _command.Process(o);
         }
+
+        internal bool _repeatHeader = false;
 
         /// <summary>
         /// class factory for output context
@@ -785,6 +788,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
+        /// However, if we can't read that (for example, implicit remoting has no console window), we default
+        /// to something reasonable: 120 columns.
+        /// </summary>
+        static private int GetConsoleWindowHeight()
+        {
+            if (InternalTestHooks.SetConsoleHeightToZero)
+            {
+                return DefaultConsoleHeight;
+            }
+
+            if (_noConsole)
+            {
+                return DefaultConsoleHeight;
+            }
+
+            try
+            {
+                // if Console height is set to 0, the default height is returned.
+                // This can happen in environments where TERM is not set.
+                return (Console.WindowHeight != 0) ? Console.WindowHeight : DefaultConsoleHeight;
+            }
+            catch
+            {
+                _noConsole = true;
+                return DefaultConsoleHeight;
+            }
+        }
+
+        /// <summary>
         /// base class for all the formatting hints
         /// </summary>
         private abstract class FormattingHint
@@ -925,6 +957,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private sealed class TableOutputContext : TableOutputContextBase
         {
+            private int _rowCount = 0;
+            private const int WhitespaceAndPagerLineCount = 2;
+            private bool _repeatHeader = false;
+
             /// <summary>
             /// construct a context to push on the stack
             /// </summary>
@@ -936,6 +972,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 GroupStartData formatData)
                 : base(cmd, parentContext, formatData)
             {
+                FormatOutputContext foc = parentContext as FormatOutputContext;
+                if (foc != null)
+                {
+                    TableHeaderInfo thi = foc.Data.shapeInfo as TableHeaderInfo;
+                    if (thi != null)
+                    {
+                        _repeatHeader = thi.repeatHeader;
+                    }
+                }
             }
 
             /// <summary>
@@ -992,7 +1037,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     properties[k++] = tci.label ?? tci.propertyName;
                 }
-                this.Writer.GenerateHeader(properties, this.InnerCommand._lo);
+                _rowCount += this.Writer.GenerateHeader(properties, this.InnerCommand._lo);
             }
 
             /// <summary>
@@ -1006,6 +1051,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (headerColumns == 0)
                 {
                     return;
+                }
+
+                if (_repeatHeader && _rowCount >= GetConsoleWindowHeight() - WhitespaceAndPagerLineCount)
+                {
+                    this.InnerCommand._lo.WriteLine(string.Empty);
+                    _rowCount = this.Writer.GenerateHeader(null, this.InnerCommand._lo);
                 }
 
                 TableRowEntry tre = fed.formatEntryInfo as TableRowEntry;
@@ -1030,6 +1081,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
                 this.Writer.GenerateRow(values, this.InnerCommand._lo, tre.multiLine, alignment, InnerCommand._lo.DisplayCells);
+                _rowCount++;
             }
 
             private TableHeaderInfo CurrentTableHeaderInfo
@@ -1182,7 +1234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = TextAlignment.Left;
                 }
 
-                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, false);
+                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, false, GetConsoleWindowHeight());
             }
 
             /// <summary>

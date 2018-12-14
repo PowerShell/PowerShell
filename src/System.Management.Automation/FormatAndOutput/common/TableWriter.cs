@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private class ScreenInfo
         {
             internal int screenColumns = 0;
+            internal int screenRows = 0;
 
             internal const int separatorCharacterCount = 1;
 
@@ -40,6 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ScreenInfo _si;
         private const char ESC = '\u001b';
         private const string ResetConsoleVt100Code = "\u001b[m";
+        private string[] _header;
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
         {
@@ -80,7 +82,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="columnWidths">array of specified column widths</param>
         /// <param name="alignment">array of alignment flags</param>
         /// <param name="suppressHeader">if true, suppress header printing</param>
-        internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader)
+        /// <param name="screenRows">number of rows on the screen</param>
+        internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader, int screenRows = int.MaxValue)
         {
             //Console.WriteLine("         1         2         3         4         5         6         7");
             //Console.WriteLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
@@ -126,6 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // now set the run time data structures
             _si = new ScreenInfo();
             _si.screenColumns = screenColumns;
+            _si.screenRows = screenRows;
             _si.columnInfo = new ColumnInfo[columnWidths.Length];
 
             int startCol = _startColumn;
@@ -140,16 +144,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        internal void GenerateHeader(string[] values, LineOutput lo)
+        internal int GenerateHeader(string[] values, LineOutput lo)
         {
-            if (_disabled)
-                return;
+            if (_disabled || _hideHeader)
+            {
+                return 0;
+            }
+            else if (_header != null)
+            {
+                foreach (string line in _header)
+                {
+                    lo.WriteLine(line);
+                }
 
-            if (_hideHeader)
-                return;
+                return _header.Length;
+            }
+
+            var header = new List<string>();
 
             // generate the row with the header labels
-            GenerateRow(values, lo, true, null, lo.DisplayCells);
+            foreach (string line in GenerateRow(values, lo, true, null, lo.DisplayCells))
+            {
+                header.Add(line);
+            }
 
             // generate an array of "--" as header markers below
             // the column header labels
@@ -175,13 +192,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // would be invalidated
                 breakLine[k] = StringUtil.DashPadding(count);
             }
-            GenerateRow(breakLine, lo, false, null, lo.DisplayCells);
+
+            foreach (string line in GenerateRow(breakLine, lo, false, null, lo.DisplayCells))
+            {
+                header.Add(line);
+            }
+
+            _header = header.ToArray();
+            return _header.Length;
         }
 
-        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
+        internal string[] GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
         {
+            string[] lines = new string[]{};
+
             if (_disabled)
-                return;
+                return lines;
 
             // build the current row alignment settings
             int cols = _si.columnInfo.Length;
@@ -207,16 +233,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (multiLine)
             {
-                string[] lines = GenerateTableRow(values, currentAlignment, lo.DisplayCells);
+                lines = GenerateTableRow(values, currentAlignment, lo.DisplayCells);
 
                 for (int k = 0; k < lines.Length; k++)
                 {
                     lo.WriteLine(lines[k]);
                 }
+
+                return lines;
             }
             else
             {
-                lo.WriteLine(GenerateRow(values, currentAlignment, dc));
+                string line = GenerateRow(values, currentAlignment, dc);
+                lo.WriteLine(line);
+                return new string[1]{line};
             }
         }
 
