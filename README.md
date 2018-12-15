@@ -130,11 +130,11 @@ For more information on how and why we built this dashboard, check out this [blo
 
 Want to chat with other members of the PowerShell community?
 
-We have a Gitter Room which you can join below.
+We have a Gitter Room which you can join below.  
 
-[![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge).  Everyone is welcome!  
 
-There is also the community driven PowerShell Slack Team which you can sign up for at [Slack].
+There is also the community driven PowerShell Slack Team which you can sign up for at [Slack].  
 
 [Slack]: http://slack.poshcode.org
 
