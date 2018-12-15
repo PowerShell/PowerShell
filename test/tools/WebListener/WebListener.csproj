@@ -3,15 +3,11 @@
   <Import Project="..\..\Test.Common.props"/>
 
   <PropertyGroup>
-    <!-- .Net Core 3.0-preview has not implemented the project SDK 'Microsoft.NET.Sdk.Web' yet,
-          fallback to .Net Core 2.1 for testing purposes. -->
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.5</RuntimeFrameworkVersion>
     <Description>A simple ASP.NET Core MVC app to provide an HTTP and HTTPS server for testing.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="3.0.0-preview-18579-0056" />
   </ItemGroup>
 
   <ItemGroup>
