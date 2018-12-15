@@ -18,6 +18,7 @@ pr:
   paths:
     include:
     - '*'
+    - /.vsts-ci/linkcheck.yml
     exclude:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/spelling.yml
