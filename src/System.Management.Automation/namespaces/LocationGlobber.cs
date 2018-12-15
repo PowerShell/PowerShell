@@ -61,7 +61,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // LocationGlobber(SessionState)
+        }
 
         #endregion Constructor
 
@@ -116,7 +116,7 @@ namespace System.Management.Automation
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedMonadPathsFromMonadPath(path, allowNonexistingPaths, context, out providerInstance);
-        } // GetGlobbedMonadPathsFromMonadPath
+        }
 
         /// <summary>
         /// Converts a PowerShell path containing glob characters to PowerShell paths that match
@@ -243,7 +243,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // GetGlobbedMonadPathsFromMonadPath
+        }
 
         private Collection<string> ResolveProviderPathFromProviderPath(
             string providerPath,
@@ -667,7 +667,7 @@ namespace System.Management.Automation
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, context, out provider, out providerInstance);
-        } // GetGlobbedProviderPathsFromMonadPath
+        }
 
         /// <summary>
         /// Converts a PowerShell path containing glob characters to the provider
@@ -784,7 +784,7 @@ namespace System.Management.Automation
 
                 return paths;
             }
-        } // GetGlobbedProviderPathsFromMonadPath
+        }
 
         #endregion Provider paths from Monad path globbing
 
@@ -871,7 +871,7 @@ namespace System.Management.Automation
                 }
             }
             return results;
-        } // GetGlobbedProviderPathsFromProviderPath
+        }
 
         /// <summary>
         /// Given a provider specific path that contains glob characters, this method
@@ -955,7 +955,7 @@ namespace System.Management.Automation
                     context,
                     out providerInstance);
             }
-        } // GetGlobbedProviderPathsFromProviderPath
+        }
 
         #endregion Provider path to provider paths globbing
 
@@ -1004,7 +1004,7 @@ namespace System.Management.Automation
         {
             ProviderInfo provider = null;
             return GetProviderPath(path, out provider);
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Gets a provider specific path when given an Msh path without resolving the
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Gets a provider specific path when given an Msh path without resolving the
@@ -1134,7 +1134,7 @@ namespace System.Management.Automation
             string result = GetProviderPath(path, context, out provider, out drive);
 
             return result;
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Returns a provider specific path for given PowerShell path.
@@ -1324,7 +1324,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderPath
+        }
 
         /// <summary>
         /// Determines if the specified path is a provider. This is done by looking for
@@ -1423,7 +1423,7 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // IsProviderQualifiedPath
+        }
 
         /// <summary>
         /// Determines if the given path is absolute while on a single root filesystem.
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation
 #else
             return false;
 #endif
-        } // IsSingleFileSystemAbsolutePath
+        }
 
         /// <summary>
         /// Determines if the given path is relative or absolute
@@ -1534,7 +1534,7 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // IsAbsolutePath
+        }
 
         /// <summary>
         /// Determines if the given path is relative or absolute
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation
 #endif
 
             return result;
-        } // IsAbsolutePath
+        }
 
         #endregion Path manipulation
 
@@ -1672,7 +1672,7 @@ namespace System.Management.Automation
             string result = WildcardPattern.Unescape(path);
 
             return result;
-        } // RemoveGlobEscaping
+        }
 
         #region Path manipulation methods
 
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
                 s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
-            } // globalScope
+            }
 
             // Is it the local scope?
 
@@ -1735,14 +1735,14 @@ namespace System.Management.Automation
                 s_tracer.WriteLine("match found: {0}", driveName);
                 result = true;
                 scope = _sessionState.Internal.CurrentScope;
-            } // currentScope
+            }
             else
             {
                 scope = null;
             }
 
             return result;
-        } // IsShellVirtualDrive
+        }
 
         /// <summary>
         /// Gets a provider specific path that represents the specified path and is relative
@@ -1946,7 +1946,7 @@ namespace System.Management.Automation
                 providerInstance = null;
                 return string.Empty;
             }
-        } // GetDriveRootRelativePathFromPSPath
+        }
 
         private string GetDriveRootRelativePathFromProviderPath(
             string providerPath,
@@ -2269,7 +2269,7 @@ namespace System.Management.Automation
                 driveRootRelativeWorkingPath);
 
             return driveRootRelativeWorkingPath;
-        } // GenerateRelativePath
+        }
 
         private bool HasRelativePathTokens(string path)
         {
@@ -2351,7 +2351,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderSpecificPath
+        }
 
         /// <summary>
         /// Parses the provider-qualified path into the provider name and
@@ -2395,7 +2395,7 @@ namespace System.Management.Automation
             string result = path.Substring(providerIdSeparatorIndex + StringLiterals.ProviderPathSeparator.Length);
 
             return result;
-        } // ParseProviderPath
+        }
 
         #endregion Path manipulation methods
 
@@ -2477,7 +2477,7 @@ namespace System.Management.Automation
                     context);
 
             return expandedPaths;
-        } // GetGlobbedProviderPathsFromProviderPath
+        }
 
         /// <summary>
         /// Determines if the specified path contains any globing characters. These
@@ -2500,7 +2500,7 @@ namespace System.Management.Automation
             }
 
             return WildcardPattern.ContainsWildcardCharacters(path);
-        } // StringContainsGlobCharacters
+        }
 
         /// <summary>
         /// Determines if the path and context are such that we need to run through
@@ -2545,7 +2545,7 @@ namespace System.Management.Automation
             s_pathResolutionTracer.WriteLine("Path contains wildcard characters: {0}", pathContainsGlobCharacters);
 
             return (pathContainsGlobCharacters || contextContainsIncludeExclude) && (!contextContainsNoGlob);
-        } // ShouldPerformGlobbing
+        }
 
         /// <summary>
         /// Generates an array of provider specific paths from the single provider specific
@@ -2866,7 +2866,7 @@ namespace System.Management.Automation
                                 }
                             }
                         }
-                    } // while (leafElements.Count > 0)
+                    }
 
                     Dbg.Diagnostics.Assert(
                         dirs != null,
@@ -2950,7 +2950,7 @@ namespace System.Management.Automation
                 "This method should at least return the path or more if it has glob characters");
 
             return result;
-        } // ExpandMshGlobPath
+        }
 
         /// <summary>
         /// Gets either a drive-qualified or provider-qualified path based on the drive
@@ -2997,7 +2997,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetMshQualifiedPath
+        }
 
         /// <summary>
         /// Removes the provider or drive qualifier from a Msh path.
@@ -3034,7 +3034,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // RemoveMshQualifier
+        }
 
         /// <summary>
         /// Given an Msh relative or absolute path, returns a drive-qualified absolute path.
@@ -3134,7 +3134,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetDriveQualifiedPath
+        }
 
         /// <summary>
         /// Removes the drive qualifier from a drive qualified MSH path
@@ -3177,7 +3177,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // RemoveDriveQualifier
+        }
 
         /// <summary>
         /// Given an Msh path, returns a provider-qualified path.
@@ -3235,7 +3235,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderQualifiedPath
+        }
 
         /// <summary>
         /// Removes the provider qualifier from a provider-qualified MSH path
@@ -3265,7 +3265,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // RemoveProviderQualifier
+        }
 
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
@@ -3457,10 +3457,10 @@ namespace System.Management.Automation
                                 childPath = isLastLeaf ? childPath : WildcardPattern.Escape(childPath);
                                 newDirs.Add(childPath);
                             }
-                        } // foreach (child in childNames)
+                        }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
             else
             {
                 s_tracer.WriteLine(
@@ -3508,11 +3508,11 @@ namespace System.Management.Automation
                             newDirs.Add(childPath);
                         }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
 
             return newDirs;
-        } // GenerateNewPSPathsWithGlobLeaf
+        }
 
         /// <summary>
         /// Generates an array of provider specific paths from the single provider specific
@@ -3840,7 +3840,7 @@ namespace System.Management.Automation
                                 }
                             }
                         }
-                    } // while (leafElements.Count > 0)
+                    }
 
                     Dbg.Diagnostics.Assert(
                         dirs != null,
@@ -3892,7 +3892,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ExpandGlobPath
+        }
 
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
@@ -4048,10 +4048,10 @@ namespace System.Management.Automation
 
                                 newDirs.Add(childPath);
                             }
-                        } // foreach (child in childNames)
+                        }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
             else
             {
                 s_tracer.WriteLine(
@@ -4095,11 +4095,11 @@ namespace System.Management.Automation
                             s_pathResolutionTracer.WriteLine("Valid intermediate container: {0}", childPath);
                         }
                     }
-                } // foreach (dir in currentDirs)
-            } // if (StringContainsGlobCharacters(leafElement))
+                }
+            }
 
             return newDirs;
-        } // GenerateNewPathsWithGlobLeaf
+        }
 
         /// <summary>
         /// Gets the child names in the specified path by using the provider
@@ -4311,7 +4311,7 @@ namespace System.Management.Automation
             {
                 getChildNamesContext.RemoveStopReferral();
             }
-        } // GetChildNamesInDir
+        }
 
         /// <summary>
         /// Determines if the specified PSObject contains a string that matches the specified
@@ -4501,7 +4501,7 @@ namespace System.Management.Automation
 
                     result.Append(workerArray[index]);
                 }
-            } // for ()
+            }
 
             s_tracer.WriteLine(
                 "Original path: {0} Converted to: {1}",
@@ -4509,7 +4509,7 @@ namespace System.Management.Automation
                 result.ToString());
 
             return result.ToString();
-        } // ConvertMshEscapeToRegexEscape
+        }
 
         /// <summary>
         /// Determines if the path is relative to a provider home based on
@@ -4559,7 +4559,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // IsHomePath
+        }
 
         /// <summary>
         /// Determines if the specified path looks like a remote path. (starts with
@@ -4583,7 +4583,7 @@ namespace System.Management.Automation
 
             return path.StartsWith(StringLiterals.DefaultRemotePathPrefix, StringComparison.Ordinal) ||
                    path.StartsWith(StringLiterals.AlternateRemotePathPrefix, StringComparison.Ordinal);
-        } // IsRemotePath
+        }
 
         /// <summary>
         /// Generates the path for the home location for a provider when given a
@@ -4643,7 +4643,7 @@ namespace System.Management.Automation
                         provider = _sessionState.Internal.GetSingleProvider(providerName);
                         path = path.Substring(index + StringLiterals.ProviderPathSeparator.Length);
                     }
-                } // IsProviderPath
+                }
 
                 if (path.IndexOf(StringLiterals.HomePath, StringComparison.Ordinal) == 0)
                 {
@@ -4695,10 +4695,10 @@ namespace System.Management.Automation
                     }
                 }
                 result = path;
-            } // IsHomePath
+            }
 
             return result;
-        } // GetHomeRelativePath
+        }
 
         private static void TraceFilters(CmdletProviderContext context)
         {
@@ -4732,5 +4732,5 @@ namespace System.Management.Automation
         }
         #endregion internal methods
 
-    } // class LocationGlobber
-} // namespace System.Management.Automation
+    }
+}

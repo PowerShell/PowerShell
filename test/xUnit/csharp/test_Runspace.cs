@@ -66,7 +66,8 @@ namespace PSTests.Parallel
         [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
-            InitialSessionState iss = InitialSessionState.CreateDefault2();
+            // CreateDefault2 is intentional.
+            InitialSessionState iss = InitialSessionState.CreateDefault();
 
             // NOTE: instantiate custom host myHost for the next line to capture stdout and stderr output
             //       in addition to just the PSObjects
@@ -90,9 +91,11 @@ namespace PSTests.Parallel
                         ++objCount;
                         Assert.NotNull(result);
                     }
+
                     Assert.Equal(count, objCount);
-                    powerShell.Dispose();
                 }
+
+                runspace.Close();
             }
         }
     }

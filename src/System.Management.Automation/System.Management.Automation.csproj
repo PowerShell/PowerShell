@@ -23,7 +23,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="6.2.0-preview.2" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="6.2.0-preview.3" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -33,7 +33,6 @@
   <ItemGroup>
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Remove="engine\CodeMethods.cs" />
     <Compile Remove="engine\ComInterop\ArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\BoolArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\BoundDispEvent.cs" />

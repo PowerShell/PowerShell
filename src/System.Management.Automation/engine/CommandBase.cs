@@ -279,7 +279,7 @@ namespace System.Management.Automation
         Ignore,
         /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
         Suspend,
-    } // enum ActionPreference
+    }
     #endregion ActionPreference
 
     #region ConfirmImpact
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         /// confirmed by default unless otherwise specified.
         /// </summary>
         High,
-    } // enum ConfirmImpact
+    }
     #endregion ConfirmImpact
 
     /// <summary>
@@ -372,7 +372,7 @@ namespace System.Management.Automation
                     return this.InternalState;
                 }
             }
-        } // SessionState
+        }
 
         /// <summary>
         /// Gets the event manager for the current runspace.
@@ -386,7 +386,7 @@ namespace System.Management.Automation
                     return this.Context.Events;
                 }
             }
-        } // Events
+        }
 
         /// <summary>
         /// Repository for jobs
@@ -439,7 +439,7 @@ namespace System.Management.Automation
                     return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this));
                 }
             }
-        } // InvokeProvider
+        }
 
         #region Provider wrappers
 
@@ -466,7 +466,7 @@ namespace System.Management.Automation
             {
                 return SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
             }
-        } // GetUnresolvedProviderPathFromPSPath
+        }
 
         /// <Content contentref="System.Management.Automation.PathIntrinsics.GetResolvedProviderPathFromPSPath" />
         public Collection<string> GetResolvedProviderPathFromPSPath(string path, out ProviderInfo provider)
@@ -475,7 +475,7 @@ namespace System.Management.Automation
             {
                 return SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider);
             }
-        } // GetResolvedProviderPathFromPSPath
+        }
         #endregion Provider wrappers
 
         #endregion internal_members
@@ -506,7 +506,7 @@ namespace System.Management.Automation
             {
                 return this.SessionState.PSVariable.GetValue(name);
             }
-        } // GetVariableValue
+        }
 
         /// <Content contentref="System.Management.Automation.VariableIntrinsics.GetValue" />
 
@@ -516,7 +516,7 @@ namespace System.Management.Automation
             {
                 return this.SessionState.PSVariable.GetValue(name, defaultValue);
             }
-        } // GetVariableValue
+        }
 
         #endregion PSVariable APIs
 
@@ -525,6 +525,6 @@ namespace System.Management.Automation
         #endregion Parameter methods
 
         #endregion public_methods
-    } // PSCmdlet
+    }
 }
 

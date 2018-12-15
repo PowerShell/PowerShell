@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         secondPassUnprocessedNodes.Add(n);
                     }
-                } // foreach
+                }
 
                 if (view.mainControl == null)
                 {
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // save for further processing
                     unprocessedNodes.Add(n);
                 }
-            } // for
+            }
 
             if (!nameNodeFound)
             {

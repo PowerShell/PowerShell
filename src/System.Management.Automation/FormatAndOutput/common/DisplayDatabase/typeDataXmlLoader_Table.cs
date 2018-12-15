@@ -239,9 +239,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         this.ProcessUnknownNode(n);
                     }
-                } // foreach
+                }
                 return chd;
-            } // using
+            }
         }
 
         private bool ReadPositiveIntegerValue(XmlNode n, out int val)
@@ -483,7 +483,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 return rid;
-            } // using
+            }
         }
     }
 }

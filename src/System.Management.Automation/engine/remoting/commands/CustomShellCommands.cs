@@ -4005,9 +4005,9 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                             string encodedSessionConfigData = SecurityElement.Escape(sessionConfigData);
                             result.Properties.Add(new PSNoteProperty(ConfigurationDataFromXML.SESSIONCONFIGTOKEN, encodedSessionConfigData));
                         }
-                    } // end of using (...)
-                } // end of if (unsetModulePath || !string.IsNullOrEmpty(modulePathParameter))
-            } // end of if (modulePathSpecified)
+                    }
+                }
+            }
 
             // DISC endpoint
             if (Path != null)

@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", 'tar-alpine', 'fxdependent')]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -65,10 +65,12 @@ function Start-PSPackage {
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
-        } elseif ($Type -eq "tar-arm") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        } elseif ($Type -eq "tar-arm") {
+            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        } elseif ($Type -eq "tar-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
@@ -370,6 +372,19 @@ function Start-PSPackage {
                     Version = $Version
                     Force = $Force
                     Architecture = "arm32"
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    New-TarballPackage @Arguments
+                }
+            }
+            "tar-arm64" {
+                $Arguments = @{
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    Architecture = "arm64"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {

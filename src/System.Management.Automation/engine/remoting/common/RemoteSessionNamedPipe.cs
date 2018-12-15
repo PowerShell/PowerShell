@@ -623,7 +623,7 @@ namespace System.Management.Automation.Remoting
                 listenerThread.Name = _threadName;
                 listenerThread.IsBackground = true;
                 listenerThread.Start(clientConnectCallback);
-            } // Lock _syncObject.
+            }
         }
 
         #endregion

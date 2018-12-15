@@ -1520,9 +1520,7 @@ namespace System.Management.Automation.Remoting.Server
             readerSettings.CheckCharacters = false;
             readerSettings.IgnoreComments = true;
             readerSettings.IgnoreProcessingInstructions = true;
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
             readerSettings.XmlResolver = null;
-#endif
             readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
             readerSettings.MaxCharactersFromEntities = 1024;
             readerSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;

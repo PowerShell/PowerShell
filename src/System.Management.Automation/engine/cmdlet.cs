@@ -1801,7 +1801,7 @@ namespace System.Management.Automation
         #endregion Exposed API Override
 
         #endregion public_methods
-    } // Cmdlet
+    }
 
     /// <summary>
     /// This describes the reason why ShouldProcess returned what it returned.

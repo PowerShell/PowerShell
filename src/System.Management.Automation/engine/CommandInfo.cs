@@ -122,7 +122,7 @@ namespace System.Management.Automation
 
             Name = name;
             CommandType = type;
-        } // CommandInfo ctor
+        }
 
         /// <summary>
         /// Creates an instance of the CommandInfo class with the specified name and type
@@ -143,7 +143,7 @@ namespace System.Management.Automation
             : this(name, type)
         {
             this.Context = context;
-        } // CommandInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
@@ -616,7 +616,7 @@ namespace System.Management.Automation
                 }
                 return _parameterSets;
             }
-        } // ParameterSets
+        }
         internal ReadOnlyCollection<CommandParameterSetInfo> _parameterSets;
 
         /// <summary>
@@ -741,8 +741,8 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetParameterMetadata
-    } // CommandInfo
+        }
+    }
 
     /// <summary>
     /// Represents <see cref="System.Type"/>, but can be used where a real type
@@ -985,4 +985,4 @@ namespace System.Management.Automation
     {
         ScriptBlock ScriptBlock { get; }
     }
-} // namespace System.Management.Automation
+}

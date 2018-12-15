@@ -1131,7 +1131,7 @@ namespace System.Management.Automation
                     {
                         // do nothing
                     }
-                } // if (source ...
+                }
             }
 
             return false;

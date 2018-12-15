@@ -660,7 +660,7 @@ namespace System.Management.Automation
 
                 return result;
             }
-        } // BindParameter
+        }
 
         /// <summary>
         /// This method ensures that if the parameter is mandatory, and AllowNull, AllowEmptyString,
@@ -1306,7 +1306,7 @@ namespace System.Management.Automation
 
                     throw pbe;
                 }
-            } // TraceScope
+            }
 
             if (result != null)
             {
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // CoerceTypeAsNeeded
+        }
 
         private static bool IsNullParameterValue(object currentValue)
         {
@@ -1869,7 +1869,7 @@ namespace System.Management.Automation
                                 error.Message);
                         throw bindingException;
                     }
-                } // (currentValueAsIList == null)
+                }
 
                 if (!coercionRequired)
                 {
@@ -1881,7 +1881,7 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // EncodeCollection
+        }
 
         internal static IList GetIList(object value)
         {
@@ -1896,7 +1896,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetIList
+        }
 
         protected IScriptExtent GetErrorExtent(CommandParameterInternal cpi)
         {
@@ -1919,7 +1919,7 @@ namespace System.Management.Automation
         }
 
         #endregion private helpers
-    } // ParameterBinderBase
+    }
 
     /// <summary>
     /// Represents an unbound parameter object in the engine. It's similar to
@@ -2048,5 +2048,5 @@ namespace System.Management.Automation
             return result;
         }
     }
-} // namespace System.Management.Automation
+}
 

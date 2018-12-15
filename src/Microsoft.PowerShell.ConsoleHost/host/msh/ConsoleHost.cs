@@ -126,8 +126,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                 profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
 #else
-                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                    @"\Microsoft\Windows\PowerShell";
+                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
 
                 if (!Directory.Exists(profileDir))
                 {
@@ -2496,7 +2495,7 @@ namespace Microsoft.PowerShell
                     {
                         _parent._isRunningPromptLoop = false;
                     }
-                } // end while
+                }
             }
 
             internal void BlockCommandOutput()
@@ -2832,7 +2831,7 @@ namespace Microsoft.PowerShell
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
         private static PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
-    } // ConsoleHost
+    }
 
     /// <summary>
     /// Defines arguments passed to ConsoleHost.CreateRunspace

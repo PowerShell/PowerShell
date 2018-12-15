@@ -166,7 +166,7 @@ namespace System.Management.Automation
         /// </summary>
         internal ProviderIntrinsics InvokeProvider
         {
-            get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); } // get
+            get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); }
         }
         private ProviderIntrinsics _invokeProvider;
 
@@ -533,5 +533,5 @@ namespace System.Management.Automation
             return pie;
         }
         #endregion Errors
-    } // SessionStateInternal class
+    }
 }

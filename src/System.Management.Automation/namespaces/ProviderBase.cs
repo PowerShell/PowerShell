@@ -101,7 +101,7 @@ namespace System.Management.Automation.Provider
             }
 
             _providerInformation = providerInfoToSet;
-        } // SetProviderInformation
+        }
 
         /// <summary>
         /// Checks whether the filter of the provider is set.
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Provider
                 _contextBase = value;
                 _contextBase.ProviderInstance = this;
             }
-        } // Context
+        }
 
         /// <summary>
         /// Called when the provider is first initialized. It sets the context
@@ -195,7 +195,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
             return Start(providerInfo);
-        } // Start
+        }
 
         /// <summary>
         /// Gets an object that defines the additional parameters for the Start implementation
@@ -213,7 +213,7 @@ namespace System.Management.Automation.Provider
             Context = cmdletProviderContext;
 
             return StartDynamicParameters();
-        } // StartDynamicParameter
+        }
 
         /// <summary>
         /// Called when the provider is being removed. It sets the context
@@ -226,12 +226,12 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
             Stop();
-        } // Stop
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.StopProcessing" />
         protected internal virtual void StopProcessing()
         {
-        } // StopProcessing
+        }
 
         #endregion CmdletProvider method wrappers
 
@@ -270,7 +270,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.GetProperty(path, providerSpecificPickList);
-        } // GetProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.GetPropertyDynamicParameters(path, providerSpecificPickList);
-        } // GetPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the SetProperty protected method. This method will
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.SetProperty(path, propertyValue);
-        } // SetProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.SetPropertyDynamicParameters(path, propertyValue);
-        } // SetPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the ClearProperty protected method. This method will
@@ -413,7 +413,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.ClearProperty(path, propertyName);
-        } // ClearProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -448,7 +448,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.ClearPropertyDynamicParameters(path, providerSpecificPickList);
-        } // ClearPropertyDynamicParameters
+        }
 
         #endregion IPropertyCmdletProvider
 
@@ -498,7 +498,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.NewProperty(path, propertyName, propertyTypeName, value);
-        } // NewProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -540,7 +540,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.NewPropertyDynamicParameters(path, propertyName, propertyTypeName, value);
-        } // NewPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the RemoveProperty protected method. This method will
@@ -578,7 +578,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.RemoveProperty(path, propertyName);
-        } // RemoveProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.RemovePropertyDynamicParameters(path, propertyName);
-        } // RemovePropertyDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the RenameProperty protected method. This method will
@@ -654,7 +654,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.RenameProperty(path, propertyName, newPropertyName);
-        } // RenameProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -692,7 +692,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.RenamePropertyDynamicParameters(path, sourceProperty, destinationProperty);
-        } // RenamePropertyDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the CopyProperty protected method. This method will
@@ -738,7 +738,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.CopyProperty(sourcePath, sourceProperty, destinationPath, destinationProperty);
-        } // CopyProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -780,7 +780,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.CopyPropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
-        } // CopyPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the MoveProperty protected method. This method will
@@ -826,7 +826,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             propertyProvider.MoveProperty(sourcePath, sourceProperty, destinationPath, destinationProperty);
-        } // MoveProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -868,7 +868,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return propertyProvider.MovePropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
-        } // MovePropertyDynamicParameters
+        }
 
         #endregion IDynamicPropertyCmdletProvider method wrappers
 
@@ -905,7 +905,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             return contentProvider.GetContentReader(path);
-        } // GetContentReader
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -935,7 +935,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return contentProvider.GetContentReaderDynamicParameters(path);
-        } // GetContentReaderDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the GetContentWriter protected method. This method will
@@ -968,7 +968,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             return contentProvider.GetContentWriter(path);
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -998,7 +998,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return contentProvider.GetContentWriterDynamicParameters(path);
-        } // GetContentWriterDynamicParameters
+        }
 
         /// <summary>
         /// Internal wrapper for the ClearContent protected method. This method will
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Provider
             // Call interface method
 
             contentProvider.ClearContent(path);
-        } // ClearContent
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
             return contentProvider.ClearContentDynamicParameters(path);
-        } // ClearContentDynamicParameters
+        }
 
         #endregion IContentCmdletProvider method wrappers
 
@@ -1140,9 +1140,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return Context.Stopping;
-                } // TraceProperty
-            } // get
-        } // Stopping
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the instance of session state for the current runspace.
@@ -1158,9 +1158,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return new SessionState(Context.ExecutionContext.EngineSessionState);
-                } // TraceProperty
-            } // get
-        } // SessionState
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the instance of the provider interface APIs for the current runspace.
@@ -1176,9 +1176,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return new ProviderIntrinsics(Context.ExecutionContext.EngineSessionState);
-                } // TraceProperty
-            } // get
-        } // InvokeProvider
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the instance of the command invocation APIs for the current runspace.
@@ -1194,9 +1194,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return new CommandInvocationIntrinsics(Context.ExecutionContext);
-                } // TraceProperty
-            } // get
-        } // InvokeCommand
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the credentials under which the operation should run.
@@ -1231,8 +1231,8 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     return _providerInformation;
-                } // TraceProperty
-            } // get
+                }
+            }
         }
 
         /// <summary>
@@ -1249,9 +1249,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return Context.Drive;
-                } // TraceProperty
-            } // get
-        } // PSDriveInfo
+                }
+            }
+        }
 
         /// <summary>
         /// The dynamic parameters object populated with the values as specified
@@ -1268,9 +1268,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return Context.DynamicParameters;
-                } // TraceProperty
-            } // get
-        } // DynamicParameters
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the force property.
@@ -1295,9 +1295,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return Context.Force;
-                } // TraceProperty
-            } // get
-        } // Force
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the provider specific filter that was supplied by the caller.
@@ -1313,9 +1313,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return Context.Filter;
-                } // TraceProperty
-            } // get
-        } // Filter
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the include wildcard patterns which is used to determine which items
@@ -1332,9 +1332,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return Context.Include;
-                } // TraceProperty
-            } // get
-        } // Include
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the exclude wildcard patterns which is used to determine which items
@@ -1351,9 +1351,9 @@ namespace System.Management.Automation.Provider
                         "The context should always be set");
 
                     return Context.Exclude;
-                } // TraceProperty
-            } // get
-        } // Exclude
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the host interaction APIs.
@@ -1371,7 +1371,7 @@ namespace System.Management.Automation.Provider
                     return Context.ExecutionContext.EngineHostInterface;
                 }
             }
-        } // Host
+        }
 
         #region IResourceSupplier
         /// <summary>
@@ -1429,7 +1429,7 @@ namespace System.Management.Automation.Provider
 
                 return retValue;
             }
-        } // GetResourceString
+        }
         #endregion IResourceSupplier
 
         #region ThrowTerminatingError
@@ -1490,7 +1490,7 @@ namespace System.Management.Automation.Provider
 
                 return Context.ShouldProcess(target);
             }
-        } // ShouldProcess
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.ShouldProcess" />
         public bool ShouldProcess(
@@ -1505,7 +1505,7 @@ namespace System.Management.Automation.Provider
 
                 return Context.ShouldProcess(target, action);
             }
-        } // ShouldProcess
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.ShouldProcess" />
         public bool ShouldProcess(
@@ -1524,7 +1524,7 @@ namespace System.Management.Automation.Provider
                     verboseWarning,
                     caption);
             }
-        } // ShouldProcess
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.ShouldProcess" />
         public bool ShouldProcess(
@@ -1545,7 +1545,7 @@ namespace System.Management.Automation.Provider
                     caption,
                     out shouldProcessReason);
             }
-        } // ShouldProcess
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.ShouldContinue" />
         public bool ShouldContinue(
@@ -1560,7 +1560,7 @@ namespace System.Management.Automation.Provider
 
                 return Context.ShouldContinue(query, caption);
             }
-        } // ShouldContinue
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.ShouldContinue" />
         public bool ShouldContinue(
@@ -1578,7 +1578,7 @@ namespace System.Management.Automation.Provider
                 return Context.ShouldContinue(
                     query, caption, ref yesToAll, ref noToAll);
             }
-        } // ShouldContinue
+        }
 
         #region Transaction Support
 
@@ -1623,7 +1623,7 @@ namespace System.Management.Automation.Provider
 
                 Context.WriteVerbose(text);
             }
-        } // WriteVerbose
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteWarning" />
         public void WriteWarning(string text)
@@ -1636,7 +1636,7 @@ namespace System.Management.Automation.Provider
 
                 Context.WriteWarning(text);
             }
-        } // WriteVerbose
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteProgress" />
         public void WriteProgress(ProgressRecord progressRecord)
@@ -1654,7 +1654,7 @@ namespace System.Management.Automation.Provider
 
                 Context.WriteProgress(progressRecord);
             }
-        } // WriteProgress
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteDebug" />
         public void WriteDebug(string text)
@@ -1667,7 +1667,7 @@ namespace System.Management.Automation.Provider
 
                 Context.WriteDebug(text);
             }
-        } // WriteDebug
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteInformation" />
         public void WriteInformation(InformationRecord record)
@@ -1680,7 +1680,7 @@ namespace System.Management.Automation.Provider
 
                 Context.WriteInformation(record);
             }
-        } // WriteInformation
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteInformation" />
         public void WriteInformation(Object messageData, string[] tags)
@@ -1693,7 +1693,7 @@ namespace System.Management.Automation.Provider
 
                 Context.WriteInformation(messageData, tags);
             }
-        } // WriteInformation
+        }
 
         /// <summary>
         /// Converts the incoming object to a PSObject and then adds extra
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation.Provider
                 "The context should always be set");
 
             Context.WriteObject(result);
-        } // WriteObject
+        }
 
         /// <summary>
         /// Converts the incoming object to a PSObject and then adds extra
@@ -1748,7 +1748,7 @@ namespace System.Management.Automation.Provider
                 "The context should always be set");
 
             Context.WriteObject(result);
-        } // WriteObject
+        }
 
         /// <summary>
         /// Wraps the item in a PSObject and attaches some notes to the
@@ -1848,7 +1848,7 @@ namespace System.Management.Automation.Provider
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSProvider", this.ProviderInfo);
 
             return result;
-        } // WrapOutputInPSObject
+        }
 
         /// <summary>
         /// Writes an item to the output as a PSObject with extra data attached
@@ -1880,7 +1880,7 @@ namespace System.Management.Automation.Provider
             {
                 WriteObject(item, path, isContainer);
             }
-        } // WriteItemObject
+        }
 
         /// <summary>
         /// Writes a property object to the output as a PSObject with extra data attached
@@ -1908,7 +1908,7 @@ namespace System.Management.Automation.Provider
             {
                 WriteObject(propertyValue, path);
             }
-        } // WritePropertyObject
+        }
 
         /// <summary>
         /// Writes a Security Descriptor object to the output as a PSObject with extra data attached
@@ -1936,7 +1936,7 @@ namespace System.Management.Automation.Provider
             {
                 WriteObject(securityDescriptor, path);
             }
-        } // WriteSecurityDescriptorObject
+        }
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteError" />
         public void WriteError(ErrorRecord errorRecord)
@@ -1964,15 +1964,15 @@ namespace System.Management.Automation.Provider
 
                 Context.WriteError(errorRecord);
             }
-        } // WriteError
+        }
 
         #endregion User feedback mechanisms
 
         #endregion protected members
-    } // CmdletProvider
+    }
 
     #endregion CmdletProvider
-} // namespace System.Management.Automation
+}
 
 #pragma warning restore 56506
 

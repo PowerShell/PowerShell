@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 Destination,
                 propertyName,
                 context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -159,8 +159,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // MoveItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

@@ -29,6 +29,7 @@ queue:
       Purpose: UnelevatedPesterTests
     ElevatedPesterTests_xUnit_Packaging:
       Purpose: ElevatedPesterTests_xUnit_Packaging
+  timeoutInMinutes: 120
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
@@ -93,6 +94,6 @@ steps:
   - powershell: |
       Import-Module .\tools\Appveyor.psm1
       Restore-PSOptions
-      Invoke-AppveyorFinish
+      Invoke-AppveyorFinish -NuGetKey $(NUGET_KEY)
     displayName: Finish
     condition: eq(variables['Purpose'], 'ElevatedPesterTests_xUnit_Packaging')

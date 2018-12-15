@@ -355,8 +355,8 @@ namespace Microsoft.PowerShell.Commands
                                 jobsToWrite.AddRange(childJobs);
                                 //WriteResultsForJobsInCollection(childJobs, false);
 
-                            } // foreach(RemoteRunspaceInfo...
-                        } // foreach ...
+                            }
+                        }
                     }
                     break;
 
@@ -390,8 +390,8 @@ namespace Microsoft.PowerShell.Commands
                                 jobsToWrite.AddRange(childJobs);
                                 //WriteResultsForJobsInCollection(childJobs, false);
 
-                            } // foreach (String...
-                        } // foreach ...
+                            }
+                        }
                     }
                     break;
 
@@ -413,8 +413,8 @@ namespace Microsoft.PowerShell.Commands
                                     List<Job> childJobs = job.GetJobsForLocation(location);
                                     jobsToWrite.AddRange(childJobs);
                                     //WriteResultsForJobsInCollection(childJobs, false);
-                                } // foreach (String...
-                            } // foreach ...
+                                }
+                            }
                         }
                     }
                     break;
@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteResultsForJobsInCollection(jobsToWrite, checkForRecurse, false);
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// StopProcessing - when the command is stopped,
@@ -955,7 +955,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteJobResults(job);
                 WriteJobStateInformationIfRequired(job);
             }
-        } // WriteAllEntities
+        }
 
         /// <summary>
         /// Writes the job objects if required by the cmdlet

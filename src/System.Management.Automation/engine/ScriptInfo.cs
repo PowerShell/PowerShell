@@ -37,7 +37,7 @@ namespace System.Management.Automation
             }
 
             this.ScriptBlock = script;
-        } // ScriptInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
@@ -122,5 +122,5 @@ namespace System.Management.Automation
             }
         }
         private CommandMetadata _commandMetadata;
-    } // ScriptInfo
-} // namespace System.Management.Automation
+    }
+}

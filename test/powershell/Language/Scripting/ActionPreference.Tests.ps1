@@ -97,8 +97,8 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         }
 
         It '<switch> does not take precedence over $ErrorActionPreference' -TestCases @(
-            @{switch="-Verbose"},
-            @{switch="-Debug"}
+            @{switch="Verbose"},
+            @{switch="Debug"}
         ) {
             param($switch)
             $ErrorActionPreference = "SilentlyContinue"

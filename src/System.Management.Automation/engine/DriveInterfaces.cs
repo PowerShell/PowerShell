@@ -22,7 +22,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // DriveManagementIntrinsics private
+        }
 
         /// <summary>
         /// Constructs a Drive management facade
@@ -41,7 +41,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // DriveManagementIntrinsics internal
+        }
 
         #endregion Constructors
 
@@ -63,8 +63,8 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the sessionState field");
 
                 return _sessionState.CurrentDrive;
-            } // get
-        } // Current
+            }
+        }
 
         #region New
 
@@ -109,7 +109,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewDrive(drive, scope);
-        } // New
+        }
 
         /// <summary>
         /// Creates a new MSH drive in session state
@@ -158,7 +158,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.NewDrive(drive, scope, context);
-        } // New
+        }
 
         /// <summary>
         /// Gets an object that defines the additional parameters for the NewDrive implementation
@@ -191,7 +191,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NewDriveDynamicParameters(providerId, context);
-        } // NewDriveDynamicParameters
+        }
 
         #endregion New
 
@@ -221,7 +221,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveDrive(driveName, force, scope);
-        } // Remove
+        }
 
         /// <summary>
         /// Removes the specified drive.
@@ -254,7 +254,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveDrive(driveName, force, scope, context);
-        } // RemoveDrive
+        }
 
         #endregion Remove
 
@@ -284,7 +284,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetDrive(driveName);
-        } // GetDrive
+        }
 
         /// <summary>
         /// Gets the drive information for the drive specified by name.
@@ -321,7 +321,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetDrive(driveName, scope);
-        } // GetAtScope
+        }
 
         /// <summary>
         /// Retrieves all the drives in the specified scope
@@ -333,7 +333,7 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.Drives(null);
-        } // GetAll
+        }
 
         /// <summary>
         /// Retrieves all the drives in the specified scope
@@ -357,7 +357,7 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.Drives(scope);
-        } // GetAllAtScope
+        }
 
         /// <summary>
         /// Gets all the drives for the specified provider
@@ -377,7 +377,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetDrivesForProvider(providerName);
-        } // GetAllForProvider
+        }
 
         #endregion GetDrive
 
@@ -389,6 +389,6 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // DriveIntrinsics
+    }
 }
 

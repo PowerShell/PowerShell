@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// </summary>
         public RuntimeDefinedParameter()
         {
-        } // RuntimeDefinedParameter
+        }
 
         /// <summary>
         /// Constructs a new instance of a runtime-defined parameter using the specified parameters.
@@ -68,7 +68,7 @@ namespace System.Management.Automation
             {
                 Attributes = attributes;
             }
-        } // RuntimeDefinedParameter
+        }
 
         /// <summary>
         /// Gets or sets the name of the parameter
@@ -90,7 +90,7 @@ namespace System.Management.Automation
                 }
                 _name = value;
             }
-        } // Name
+        }
         private string _name = String.Empty;
 
         /// <summary>

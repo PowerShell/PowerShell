@@ -26,13 +26,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -45,14 +45,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The properties to clear from the item
@@ -63,13 +63,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _property;
-            } // get
+            }
 
             set
             {
                 _property = value;
             }
-        } // Name
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
                 ".",
                 propertyCollection,
                 context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -165,8 +165,8 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound));
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // ClearItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

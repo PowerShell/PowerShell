@@ -118,7 +118,7 @@ namespace System.Management.Automation.Internal
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
             _commandRuntime = commandRuntime;
-        } // ctor
+        }
         #endregion ctor
 
         #region parameters
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Internal
         internal TransactionParameters(MshCommandRuntime commandRuntime)
         {
             _commandRuntime = commandRuntime;
-        } // ctor
+        }
         #endregion ctor
 
         #region parameters

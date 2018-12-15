@@ -523,5 +523,5 @@ namespace System.Management.Automation
 
         #endregion Private
     }
-} // namespace System.Management.Automation
+}
 

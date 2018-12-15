@@ -408,4 +408,4 @@ namespace System.Management.Automation.Remoting
             this.PowerShellGuidObserver -= new System.EventHandler(this.OnPowershellGuidReported);
         }
     }
-} // namespace System.Management.Automation.Remoting
+}

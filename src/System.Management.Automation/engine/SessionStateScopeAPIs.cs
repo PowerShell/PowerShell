@@ -109,7 +109,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetScopeByID
+        }
 
         /// <summary>
         /// Given a scope ID, walks the scope list to the appropriate scope and returns it.
@@ -148,7 +148,7 @@ namespace System.Management.Automation
             }
 
             return processingScope;
-        } // GetScopeByID
+        }
 
         /// <summary>
         /// The global scope of session state.  Can be accessed
@@ -205,7 +205,7 @@ namespace System.Management.Automation
 
                 _currentScope = value;
             }
-        } // CurrentScope
+        }
 
         /// <summary>
         /// Gets the session state current script scope.
@@ -238,7 +238,7 @@ namespace System.Management.Automation
                 newScope.ScriptScope = newScope;
             }
             return newScope;
-        } // NewScope
+        }
 
         /// <summary>
         /// Removes the current scope from the scope tree and
@@ -304,7 +304,7 @@ namespace System.Management.Automation
                     // Ignore all exceptions from the provider as we are
                     // going to force the removal anyway
                 }
-            } // foreach drive
+            }
 
             scope.RemoveAllDrives();
 
@@ -316,8 +316,8 @@ namespace System.Management.Automation
                 _currentScope = _currentScope.Parent;
             }
             scope.Parent = null;
-        } // RemoveScope
-    } // SessionStateInternal class
+        }
+    }
 }
 
 #pragma warning restore 56500

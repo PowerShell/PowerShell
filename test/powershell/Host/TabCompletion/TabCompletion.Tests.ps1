@@ -1031,15 +1031,21 @@ dir -Recurse `
         }
 
         It 'Should complete about help topic' {
-            $aboutHelpPath = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathUserScope = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathAllUsersScope = Join-Path $PSHOME (Get-Culture).Name
 
             ## If help content does not exist, tab completion will not work. So update it first.
-            if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt"))) {
+            $userScopeHelp = Test-Path (Join-Path $aboutHelpPathUserScope "about_Splatting.help.txt")
+            $allUserScopeHelp = Test-Path (Join-Path $aboutHelpPathAllUsersScope "about_Splatting.help.txt")
+            if ((-not $userScopeHelp) -and (-not $aboutHelpPathAllUsersScope)) {
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
             }
 
+            # If help content is present on both scopes, expect 2 or else expect 1 completion.
+            $expectedCompletions = if ($userScopeHelp -and $allUserScopeHelp) { 2 } else { 1 }
+
             $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
     }

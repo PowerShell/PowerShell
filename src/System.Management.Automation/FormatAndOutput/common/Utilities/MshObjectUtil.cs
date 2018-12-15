@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal static class PSObjectHelper
     {
-        internal const string ellipses = "...";
+        internal const char Ellipsis = '\u2026';
 
         internal static string PSObjectIsOfExactType(Collection<string> typeNames)
         {
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     if (enumCount == enumerationLimit)
                                     {
-                                        sb.Append(ellipses);
+                                        sb.Append(Ellipsis);
                                         break;
                                     }
                                     enumCount++;
@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     if (enumCount == enumerationLimit)
                                     {
-                                        sb.Append(ellipses);
+                                        sb.Append(Ellipsis);
                                         break;
                                     }
                                     enumCount++;

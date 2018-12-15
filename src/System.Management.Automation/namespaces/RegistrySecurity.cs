@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteSecurityDescriptorObject(sd, path);
             }
-        } // SetSecurityDescriptor
+        }
 
         /// <summary>
         /// Creates a new empty security descriptor.

@@ -62,8 +62,8 @@ namespace System.Management.Automation.Provider
         /// writer.
         /// </remarks>
         void Close();
-    } // IContentWriter
+    }
 
     #endregion IContentWriter
-} // namespace System.Management.Automation
+}
 

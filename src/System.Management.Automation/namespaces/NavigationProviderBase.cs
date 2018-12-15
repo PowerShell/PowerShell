@@ -66,7 +66,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return MakePath(parent, child);
-        } // MakePath
+        }
 
         /// <summary>
         /// Internal wrapper for the GetParentPath protected method. It is called instead
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return GetParentPath(path, root);
-        } // GetParentPath
+        }
 
         /// <summary>
         /// Internal wrapper for the NormalizeRelativePath method. It is called instead
@@ -141,7 +141,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return NormalizeRelativePath(path, basePath);
-        } // NormalizeRelativePath
+        }
 
         /// <summary>
         /// Internal wrapper for the GetChildName protected method. It is called instead
@@ -172,7 +172,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return GetChildName(path);
-        } // GetChildName
+        }
 
         /// <summary>
         /// Internal wrapper for the IsItemContainer protected method. It is called instead
@@ -197,7 +197,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return IsItemContainer(path);
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Internal wrapper for the MoveItem protected method. It is called instead
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             MoveItem(path, destination);
-        } // MoveItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return MoveItemDynamicParameters(path, destination);
-        } // MoveItemDynamicParameters
+        }
 
         #endregion Internal methods
 
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Provider
         protected virtual string MakePath(string parent, string child)
         {
             return MakePath(parent, child, childIsLeaf: false);
-        } // MakePath
+        }
 
         /// <summary>
         /// Joins two strings with a path a provider specific path separator.
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Provider
                 }
                 return parentPath;
             }
-        } // GetParentPath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Provider
             {
                 return ContractRelativePath(path, basePath, false, Context);
             }
-        } // NormalizeRelativePath
+        }
 
         internal string ContractRelativePath(
             string path,
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Provider
             }
 
             return result;
-        } // ContractRelativePath
+        }
 
         /// <summary>
         /// Get the common base path of two paths
@@ -792,7 +792,7 @@ namespace System.Management.Automation.Provider
 
                 return result;
             }
-        } // GetChildName
+        }
 
         /// <summary>
         /// Determines if the item specified by the path is a container.
@@ -890,7 +890,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // MoveItemDynamicParameters
+        }
 
         #endregion Protected methods
 
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation.Provider
             }
 
             return tokenizedPathStack;
-        } // TokenizePathToStack
+        }
 
         /// <summary>
         /// Given the tokenized path, the relative path elements are removed.
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation.Provider
             }
 
             return normalizedPathStack;
-        } // NormalizeThePath
+        }
 
         /// <summary>
         /// Pops each leaf element of the stack and uses MakePath to generate the relative path
@@ -1110,11 +1110,11 @@ namespace System.Management.Automation.Provider
                 }
             }
             return leafElement;
-        } // CreateNormalizedRelativePathFromStack
+        }
 
         #endregion private members
-    } // NavigationCmdletProvider
+    }
 
     #endregion NavigationCmdletProvider
-} // namespace System.Management.Automation
+}
 

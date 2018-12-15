@@ -353,7 +353,7 @@ namespace System.Management.Automation
             }
 
             return s;
-        } // Unescape
+        }
 
         private static bool IsWildcardChar(char ch)
         {

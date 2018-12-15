@@ -980,7 +980,7 @@ namespace Microsoft.PowerShell.Commands
                         FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingFormats",
                             null,
                             entries,
-                            RunspaceConfigurationCategory.Formats);
+                            FormatAndTypeDataHelper.Category.Formats);
                     }
                 }
                 catch (RuntimeException e)

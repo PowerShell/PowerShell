@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
             OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
             operationStateEventArgs.OperationState = state;
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
-        } // RaiseOperationCompleteEvent
+        }
 
         ///<summary>
         /// Raise WMI state changed event
@@ -1553,7 +1553,7 @@ namespace Microsoft.PowerShell.Commands
         private void SetStatusMessage()
         {
             _statusMessage = "test";
-        } // SetStatusMessage
+        }
 
         private bool _moreData = false;
         /// <summary>
@@ -2016,6 +2016,6 @@ namespace Microsoft.PowerShell.Commands
                 SetJobState(JobState.Stopped, _helper.InternalException);
             }
             //Do Nothing
-        } // HandleThrottleComplete
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public FunctionProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(functionDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
             CommandInfo function = SessionState.Internal.GetFunction(name, Context.Origin);
 
             return function;
-        } // GetSessionStateItem
+        }
 
         /// <summary>
         /// Sets the function of the specified name to the specified value
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteItemObject(modifiedItem, modifiedItem.Name, false);
                 }
             }
-        } // SetSessionStateItem
+        }
 #pragma warning restore 0162
 
         private static void SetOptions(CommandInfo function, ScopedItemOptions options)
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveFunction(name, Force);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
         /// Since items are often more than their value, this method should
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Gets a flattened view of the functions in session state
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
         internal override IDictionary GetSessionStateTable()
         {
             return SessionState.Internal.GetFunctionTable();
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion protected members
-    } // FunctionProvider
+    }
 
     /// <summary>
     /// The dynamic parameter object for the FunctionProvider SetItem and NewItem commands

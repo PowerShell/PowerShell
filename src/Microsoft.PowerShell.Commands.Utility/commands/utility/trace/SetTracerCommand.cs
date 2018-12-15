@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return base.FileListener; }
             set { base.FileListener = value; }
-        } // File
+        }
 
         /// <summary>
         /// Force parameter to control read-only files.
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _passThru; }
             set { _passThru = value; }
-        } // Passthru
+        }
         private bool _passThru;
 
         #endregion Parameters
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
                     RemoveListenersByName(matchingSources, RemoveFileListener, true);
                     break;
             }
-        } // ProcessRecord
+        }
 
         #endregion Cmdlet code
     }

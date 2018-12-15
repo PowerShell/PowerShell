@@ -367,7 +367,7 @@ $redirectTests = @(
     @{redirectType = 'relative'; redirectedMethod = 'GET'}
 )
 
-Describe "Invoke-WebRequest tests" -Tags "Feature" {
+Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }
@@ -1785,7 +1785,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 }
 
-Describe "Invoke-RestMethod tests" -Tags "Feature" {
+Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }
@@ -3069,7 +3069,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 }
 
-Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {
+Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }
@@ -3149,7 +3149,7 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
     }
 }
 
-Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
+Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $WebListener = Start-WebListener
     }

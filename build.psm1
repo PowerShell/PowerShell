@@ -5,10 +5,6 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
-# Path to a directory to store modules we temporarily need to test PowerShell
-$script:TestModuleDirPath = Join-Path ([System.IO.Path]::GetTempPath()) 'PwshTestModules'
-$null = New-Item -Force -ItemType Directory -Path $script:TestModuleDirPath
-
 $dotnetCLIChannel = 'preview' # TODO: Change this to 'release' once .Net Core 3.0 goes RTM
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
@@ -224,9 +220,10 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("fxdependent",
+        [ValidateSet("alpine-x64",
+                     "fxdependent",
                      "linux-arm",
-                     "alpine-x64",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -556,7 +553,7 @@ function Restore-PSModuleToBuild
 
     Write-Log "Restore PowerShell modules to $publishPath"
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
-    Copy-PSGalleryModules -Destination $modulesDir
+    Copy-PSGalleryModules -Destination $modulesDir -CsProjPath "$PSScriptRoot\src\Modules\PSGalleryModules.csproj"
 }
 
 function Restore-PSPester
@@ -594,9 +591,10 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
+                     "alpine-x64",
                      "fxdependent",
                      "linux-arm",
-                     "alpine-x64",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -848,8 +846,8 @@ function Publish-PSTestTools {
         }
     }
 
-    # Get the SelfSignedCertificate module so the web listener can use it
-    Save-Module -Name SelfSignedCertificate -Path $script:TestModuleDirPath -Repository "PSGallery" -MinimumVersion '0.0.2' -Force -Confirm:$false
+    # `dotnet restore` on test project is not called if product projects have been restored unless -Force is specified.
+    Copy-PSGalleryModules -Destination "${PSScriptRoot}/test/tools/Modules" -CsProjPath "$PSScriptRoot/test/tools/Modules/PSGalleryTestModules.csproj" -Force
 }
 
 function Get-ExperimentalFeatureTests {
@@ -893,7 +891,7 @@ function Start-PSPester {
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
-          Restore-PSPester
+        Restore-PSPester
     }
 
     if ($IncludeFailingTest.IsPresent)
@@ -954,7 +952,7 @@ function Start-PSPester {
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
-    $newPathFragment = $TestModulePath + $TestModulePathSeparator + $script:TestModuleDirPath + $TestModulePathSeparator
+    $newPathFragment = $TestModulePath + $TestModulePathSeparator
     $command += '$env:PSModulePath = '+"'$newPathFragment'" + '+$env:PSModulePath;'
 
     # Windows needs the execution policy adjusted
@@ -1371,7 +1369,6 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
         [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
     )
 
@@ -1384,10 +1381,9 @@ function Start-PSxUnit {
     }
 
     try {
-        Push-Location $PSScriptRoot/test/csharp
+        Push-Location $PSScriptRoot/test/xUnit
 
         # Path manipulation to obtain test project output directory
-        dotnet restore
 
         if(-not $Environment.IsWindows)
         {
@@ -1419,30 +1415,22 @@ function Start-PSxUnit {
             }
         }
 
-        # Run sequential tests first, and then run the tests that can execute in parallel
-        if (Test-Path $SequentialTestResultsFile) {
-            Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
-        }
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential -p:ParallelizeTestCollections=false --test-adapter-path:. "--logger:xunit;LogFilePath=$SequentialTestResultsFile"
-        Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        dotnet build --configuration $Options.configuration 
 
-        $extraParams = @()
+        if (Test-Path $ParallelTestResultsFile) {
+            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
+        }
 
         # we are having intermittent issues on macOS with these tests failing.
         # VSTS has suggested forcing them to be sequential
         if($env:TF_BUILD -and $IsMacOS)
         {
             Write-Log 'Forcing parallel xunit tests to run sequentially.'
-            $extraParams += @(
-                '-parallel'
-                'none'
-            )
+            dotnet test -p:ParallelizeTestCollections=false --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
+        } else {
+            dotnet test --configuration $Options.configuration --no-restore --no-build --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
         }
 
-        if (Test-Path $ParallelTestResultsFile) {
-            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
-        }
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --no-build  --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
         Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
@@ -2061,8 +2049,9 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("linux-arm",
-                     "alpine-x64",
+        [ValidateSet("alpine-x64",
+                     "linux-arm",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -2197,6 +2186,7 @@ function Start-CrossGen {
         "System.IO.Pipes.dll"
         "System.Diagnostics.FileVersionInfo.dll"
         "System.Collections.Specialized.dll"
+        "Microsoft.ApplicationInsights.dll"
     )
 
     # Common PowerShell libraries to crossgen
@@ -2271,7 +2261,13 @@ function Copy-PSGalleryModules
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Destination
+        [string]$CsProjPath,
+
+        [Parameter(Mandatory=$true)]
+        [string]$Destination,
+
+        [Parameter()]
+        [switch]$Force
     )
 
     if (!$Destination.EndsWith("Modules")) {
@@ -2279,7 +2275,8 @@ function Copy-PSGalleryModules
     }
 
     Find-DotNet
-    Restore-PSPackage
+
+    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "info : global-packages: (.*)") {
@@ -2289,7 +2286,7 @@ function Copy-PSGalleryModules
         throw "Can't find nuget global cache"
     }
 
-    $psGalleryProj = [xml](Get-Content -Raw $PSScriptRoot\src\Modules\PSGalleryModules.csproj)
+    $psGalleryProj = [xml](Get-Content -Raw $CsProjPath)
 
     foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
         $name = $m.Include

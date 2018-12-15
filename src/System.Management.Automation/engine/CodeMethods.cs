@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#if !UNIX
 using System;
 using System.Collections;
 using System.Reflection;
@@ -130,3 +131,4 @@ namespace Microsoft.PowerShell
         #endregion
     }
 }
+#endif

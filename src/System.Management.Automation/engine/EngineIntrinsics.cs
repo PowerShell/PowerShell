@@ -59,8 +59,8 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the host field");
 
                 return _host;
-            } // get
-        } // Host
+            }
+        }
 
         /// <summary>
         /// Gets engine APIs to access the event manager
@@ -70,8 +70,8 @@ namespace System.Management.Automation
             get
             {
                 return _context.Events;
-            } // get
-        } // Host
+            }
+        }
 
         /// <summary>
         /// Gets the engine APIs to access providers
@@ -82,7 +82,7 @@ namespace System.Management.Automation
             {
                 return _context.EngineSessionState.InvokeProvider;
             }
-        } // InvokeProvider
+        }
 
         /// <summary>
         /// Gets the engine APIs to access session state
@@ -93,7 +93,7 @@ namespace System.Management.Automation
             {
                 return _context.EngineSessionState.PublicSessionState;
             }
-        } // SessionState
+        }
 
         /// <summary>
         /// Gets the engine APIs to invoke a command
@@ -111,6 +111,6 @@ namespace System.Management.Automation
         private PSHost _host;
         private CommandInvocationIntrinsics _invokeCommand;
         #endregion private data
-    } // EngineIntrinsics
+    }
 }
 
