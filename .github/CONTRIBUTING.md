@@ -56,7 +56,7 @@ To run the spellchecker, follow the steps as follows:
 * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms`
+* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
 * if the `.spelling` file is updated, commit and push it
 
 ## Contributing to Code
