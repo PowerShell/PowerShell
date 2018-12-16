@@ -12,7 +12,7 @@ Please see the [.NET Core Sample Application](#net-core-sample-application) sect
 
 - [sample-windows](./sample-windows) - .NET Core `2.1` + PowerShell Core NuGet packages.
   .NET Core SDK `2.1` or higher is required.
-- [sample-crossplatform](./sample-crossplatform) - .Net Core `2.1` + PowerShell Core NuGet packages.
+- [sample-crossplatform](./sample-crossplatform) - .NET Core `2.1` + PowerShell Core NuGet packages.
 
 You can find the sample application project `MyApp` in each of the above 2 sample folders.
 To build the sample project, run the following commands (make sure the required .NET Core SDK is in use):
