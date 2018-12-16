@@ -10,9 +10,10 @@ Please see the [.NET Core Sample Application](#net-core-sample-application) sect
 [Resolving]: https://github.com/dotnet/corefx/blob/d6678e9653defe3cdfff26b2ff62135b6b22c77f/src/System.Runtime.Loader/ref/System.Runtime.Loader.cs#L38
 ## .NET Core Sample Application
 
-- [sample-windows](./sample-windows) - .NET Core `2.1` + PowerShell Core NuGet packages.
-  .NET Core SDK `2.1` or higher is required.
-- [sample-crossplatform](./sample-crossplatform) - .NET Core `2.1` + PowerShell Core NuGet packages.
+Note: The .NET Core `2.1` runtime and .NET Core SDK `2.1` or higher is required for the examples below:
+
+- [sample-windows](./sample-windows)
+- [sample-crossplatform](./sample-crossplatform)
 
 You can find the sample application project `MyApp` in each of the above 2 sample folders.
 To build the sample project, run the following commands (make sure the required .NET Core SDK is in use):
