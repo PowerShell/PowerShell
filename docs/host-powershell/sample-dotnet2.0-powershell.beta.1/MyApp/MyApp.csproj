@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>MyApp</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj" />
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.0-beta.1" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.1.1" />
   </ItemGroup>
 
 </Project>
