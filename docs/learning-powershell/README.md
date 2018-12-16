@@ -63,7 +63,6 @@ Click on the link below to learn more about debugging:
 - [PowerShell Command-line Debugging][cli-debugging]
 
 [use-vscode-editor]:./using-vscode.md#editing-with-vs-code
-[use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
 [cli-debugging]:./debugging-from-commandline.md
 [get-powershell]:../../README.md#get-powershell
 [build-powershell]:../../README.md#building-the-repository
