@@ -109,7 +109,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
         $x.Objects.Object[1].Property."#text" | Should -BeExactly "banana"
     }
 
-    It "Serialize nested PSObject properties" {
+    It "Serialize nested pscustomobject properties" {
         $nestedObject = [pscustomobject]@{
             Prop1 = [pscustomobject]@{
                 Prop1 = [pscustomobject]@{
