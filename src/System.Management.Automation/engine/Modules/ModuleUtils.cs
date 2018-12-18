@@ -390,14 +390,14 @@ namespace System.Management.Automation.Internal
         /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
         /// <param name="moduleVersionRequired">Specific module version to be required.</param>
         /// <returns>IEnumerable tuple containing the CommandInfo and the match score.</returns>
-        internal static IEnumerable<Tuple<CommandInfo, int>> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
+        internal static IEnumerable<CommandScore> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
         {
             foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, useFuzzyMatching: true))
             {
                 int score = FuzzyMatcher.GetDamerauLevenshteinDistance(command.Name, pattern);
                 if (score <= FuzzyMatcher.MinimumDistance)
                 {
-                    yield return Tuple.Create(command, score);
+                    yield return new CommandScore(command, score);
                 }
             }
         }
@@ -578,6 +578,18 @@ namespace System.Management.Automation.Internal
                 }
             }
         }
+    }
+
+    internal struct CommandScore
+    {
+        public CommandScore(CommandInfo command, int score)
+        {
+            Command = command;
+            Score=  score;
+        }
+
+        public CommandInfo Command;
+        public int Score;
     }
 }
 

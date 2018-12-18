@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Reflection;
@@ -355,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllCommandSet")]
         public SwitchParameter UseFuzzyMatching { get; set; }
 
-        private List<Tuple<CommandInfo, int>> _commandScores = new List<Tuple<CommandInfo, int>>();
+        private List<CommandScore> _commandScores = new List<CommandScore>();
 
         #endregion Definitions of cmdlet parameters
 
@@ -509,7 +510,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores.OrderBy(x => x.Item2).Select(x => x.Item1).ToList();
+                results = _commandScores.OrderBy(x => x.Score).Select(x => x.Command).ToList();
             }
 
             int count = 0;
@@ -778,7 +779,7 @@ namespace Microsoft.PowerShell.Commands
                                 IEnumerable<CommandInfo> commands;
                                 if (UseFuzzyMatching)
                                 {
-                                    foreach (Tuple<CommandInfo, int> commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(
+                                    foreach (var commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(
                                         plainCommandName,
                                         this.Context,
                                         this.MyInvocation.CommandOrigin,
@@ -788,7 +789,7 @@ namespace Microsoft.PowerShell.Commands
                                         _commandScores.Add(commandScore);
                                     }
 
-                                    commands = _commandScores.Select(x => x.Item1).ToList();
+                                    commands = _commandScores.Select(x => x.Command).ToList();
                                 }
                                 else
                                 {
@@ -949,7 +950,7 @@ namespace Microsoft.PowerShell.Commands
                         if (UseFuzzyMatching)
                         {
                             int score = FuzzyMatcher.GetDamerauLevenshteinDistance(current.Name, commandName);
-                            _commandScores.Add(new Tuple<CommandInfo, int>(current, score));
+                            _commandScores.Add(new CommandScore(current, score));
                         }
 
                         _accumulatedResults.Add(current);
