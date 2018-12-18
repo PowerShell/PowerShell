@@ -158,15 +158,12 @@ namespace System.Management.Automation.Runspaces
 #if !UNIX
             // Use thread proc that supports impersonation flow for new thread start.
             ThreadStart invokeThreadProcDelegate = InvokeThreadProcImpersonate;
+            _identityToImpersonate = null;
 
             // If impersonation identity flow is requested, then get current thread impersonation, if any.
             if ((InvocationSettings != null) && InvocationSettings.FlowImpersonationPolicy)
             {
                 Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
-            }
-            else
-            {
-                _identityToImpersonate = null;
             }
 #else
             // UNIX does not support thread impersonation flow.
