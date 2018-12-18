@@ -155,20 +155,21 @@ namespace System.Management.Automation.Runspaces
 
             PSThreadOptions memberOptions = this.IsNested ? PSThreadOptions.UseCurrentThread : this.LocalRunspace.ThreadOptions;
 
-            // If impersonation identity flow is requested, then get current thread impersonation, if any.
 #if !UNIX
-            ThreadStart invokeThreadProcDelegate;
-            if ((InvocationSettings != null) && InvocationSettings.FlowImpersonationPolicy &&
-                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate))
+            // Use thread proc that supports impersonation flow for new thread start.
+            ThreadStart invokeThreadProcDelegate = InvokeThreadProcImpersonate;
+
+            // If impersonation identity flow is requested, then get current thread impersonation, if any.
+            if ((InvocationSettings != null) && InvocationSettings.FlowImpersonationPolicy)
             {
-                invokeThreadProcDelegate = InvokeThreadProcImpersonate;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
             }
             else
             {
                 _identityToImpersonate = null;
-                invokeThreadProcDelegate = InvokeThreadProc;
             }
 #else
+            // UNIX does not support thread impersonation flow.
             ThreadStart invokeThreadProcDelegate = InvokeThreadProc;
 #endif
 
@@ -177,7 +178,8 @@ namespace System.Management.Automation.Runspaces
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-                        // Start execution of pipeline in another thread
+                        // Start execution of pipeline in another thread, 
+                        // and support impersonation flow as needed (Windows only).
                         Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
 #if !CORECLR
@@ -207,13 +209,15 @@ namespace System.Management.Automation.Runspaces
                     {
                         if (this.IsNested)
                         {
-                            // if this a nested pipeline we are already in the appropriate thread so we just execute the pipeline here
+                            // If this a nested pipeline we are already in the appropriate thread so we just execute the pipeline here.
+                            // Impersonation flow (Windows only) is not needed when using existing thread.
                             SetupInvokeThread(Thread.CurrentThread, true);
                             InvokeThreadProc();
                         }
                         else
                         {
-                            // otherwise we execute the pipeline in the Runspace's thread
+                            // Otherwise we execute the pipeline in the Runspace's thread,
+                            // and support information flow on new thread as needed (Windows only).
                             PipelineThread invokeThread = this.LocalRunspace.GetPipelineThread();
                             SetupInvokeThread(invokeThread.Worker, true);
                             invokeThread.Start(invokeThreadProcDelegate);
@@ -230,7 +234,8 @@ namespace System.Management.Automation.Runspaces
 
                         try
                         {
-                            // prepare invoke thread
+                            // Prepare invoke thread.
+                            // Impersonation flow (Windows only) is not needed when using existing thread.
                             SetupInvokeThread(Thread.CurrentThread, false);
                             InvokeThreadProc();
                         }
@@ -535,9 +540,16 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void InvokeThreadProcImpersonate()
         {
+            if (_identityToImpersonate != null)
+            {
                 WindowsIdentity.RunImpersonated(
                     _identityToImpersonate.AccessToken,
                     () => InvokeThreadProc());
+
+                return;
+            }
+
+            InvokeThreadProc();
         }
 #endif
 
