@@ -417,7 +417,7 @@ namespace System.Management.Automation
                 PSMemberInfoCollection<PSMemberInfo> instanceMembers = mshSource.InstanceMembers;
                 if (instanceMembers != null)
                 {
-                    WriteMemberInfoCollection(instanceMembers);
+                    WriteMemberInfoCollection(instanceMembers, depth, true);
                 }
             }
 
@@ -569,7 +569,7 @@ namespace System.Management.Automation
             PSMemberInfoCollection<PSMemberInfo> instanceMembers = source.InstanceMembers;
             if (instanceMembers != null)
             {
-                WriteMemberInfoCollection(instanceMembers);
+                WriteMemberInfoCollection(instanceMembers, depth, true);
             }
 
             _writer.WriteEndElement();
@@ -678,14 +678,20 @@ namespace System.Management.Automation
         /// Serialize member set. This method serializes without writing.
         /// enclosing tags and attributes.
         /// </summary>
-        /// <param name="members">
+        /// <param name="me">
         /// Enumerable containing members
         /// </param>
-        private void WriteMemberInfoCollection(PSMemberInfoCollection<PSMemberInfo> members)
+        /// <param name="depth"></param>
+        /// <param name="writeEnclosingMemberSetElementTag">
+        /// if this is true, write an enclosing "<memberset></memberset>" tag.
+        /// </param>
+        /// <returns></returns>
+        private void WriteMemberInfoCollection(
+            PSMemberInfoCollection<PSMemberInfo> me, int depth, bool writeEnclosingMemberSetElementTag)
         {
-            Dbg.Assert(members != null, "caller should validate the parameter");
+            Dbg.Assert(me != null, "caller should validate the parameter");
 
-            foreach (PSMemberInfo info in members)
+            foreach (PSMemberInfo info in me)
             {
                 if (!info.ShouldSerialize)
                 {
