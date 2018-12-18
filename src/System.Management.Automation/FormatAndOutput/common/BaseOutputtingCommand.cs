@@ -969,11 +969,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 GroupStartData formatData)
                 : base(cmd, parentContext, formatData)
             {
-                FormatOutputContext foc = parentContext as FormatOutputContext;
-                if (foc != null)
+                if (parentContext is FormatOutputContext foc)
                 {
-                    TableHeaderInfo thi = foc.Data.shapeInfo as TableHeaderInfo;
-                    if (thi != null)
+                    if (foc.Data.shapeInfo is TableHeaderInfo thi)
                     {
                         _repeatHeader = thi.repeatHeader;
                     }
