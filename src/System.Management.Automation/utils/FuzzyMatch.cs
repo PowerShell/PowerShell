@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-// Based off https://www.csharpstar.com/csharp-string-distance-algorithm/
-
 using System;
 using System.Collections.Generic;
 
@@ -26,6 +24,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Compute the distance between two strings.
+        /// Based off https://www.csharpstar.com/csharp-string-distance-algorithm/.
         /// </summary>
         /// <param name="string1">The first string to compare.</param>
         /// <param name="string2">The second string to compare.</param>
