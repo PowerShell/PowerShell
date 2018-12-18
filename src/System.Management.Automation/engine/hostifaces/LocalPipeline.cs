@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -13,6 +11,8 @@ using System.Management.Automation.Tracing;
 using System.Security.Principal;
 #endif
 using System.Threading;
+using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -535,15 +535,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void InvokeThreadProcImpersonate()
         {
-            if (_identityToImpersonate != null)
-            {
                 WindowsIdentity.RunImpersonated(
                     _identityToImpersonate.AccessToken,
-                    () => { InvokeThreadProc(); });
-                return;
-            }
-
-            InvokeThreadProc();
+                    () => InvokeThreadProc());
         }
 #endif
 

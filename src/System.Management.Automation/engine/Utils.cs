@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
-using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -28,6 +25,9 @@ using System.Security.Principal;
 #endif
 using System.Text;
 using System.Threading;
+using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -1240,7 +1240,7 @@ namespace System.Management.Automation
             {
                 WindowsIdentity.RunImpersonated(
                     identityToImpersonate.AccessToken,
-                    () => { callback(state); });
+                    () => callback(state));
                 return;
             }
             callback(state);

@@ -2109,9 +2109,9 @@ namespace System.Management.Automation
 #if !UNIX
                     if (_identityToImpersonate != null)
                     {
-                        WindowsIdentity.RunImpersonated(
+                        _results = WindowsIdentity.RunImpersonated(
                             _identityToImpersonate.AccessToken,
-                            () => { _results = _wrappedDebugger.ProcessCommand(_command, _output); });
+                            () =>_wrappedDebugger.ProcessCommand(_command, _output));
                         return;
                     }
 #endif

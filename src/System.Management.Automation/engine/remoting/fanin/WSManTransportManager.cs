@@ -2673,9 +2673,9 @@ namespace System.Management.Automation.Remoting.Client
                     // If we initialized with thread impersonation, make sure de-initialize is run with the same.
                     if (_identityToImpersonate != null)
                     {
-                        WindowsIdentity.RunImpersonated(
+                        result = WindowsIdentity.RunImpersonated(
                             _identityToImpersonate.AccessToken,
-                            () => { result = WSManNativeApi.WSManDeinitialize(_handle, 0); });
+                            () => WSManNativeApi.WSManDeinitialize(_handle, 0));
                     }
                     else
                     {

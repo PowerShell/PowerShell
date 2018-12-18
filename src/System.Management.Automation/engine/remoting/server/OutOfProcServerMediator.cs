@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Win32.SafeHandles;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
@@ -9,6 +8,7 @@ using System.Threading;
 #if !UNIX
 using System.Security.Principal;
 #endif
+using Microsoft.Win32.SafeHandles;
 
 using Dbg = System.Management.Automation.Diagnostics;
 

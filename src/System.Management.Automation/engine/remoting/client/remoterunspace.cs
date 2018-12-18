@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.PowerShell.Commands;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +16,7 @@ using System.Management.Automation.Tracing;
 using System.Security.Principal;
 #endif
 using System.Threading;
+using Microsoft.PowerShell.Commands;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
