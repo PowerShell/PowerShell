@@ -375,8 +375,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return _command.Process(o);
         }
 
-        internal bool _repeatHeader = false;
-
         /// <summary>
         /// class factory for output context
         /// </summary>
@@ -788,10 +786,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// However, if we can't read that (for example, implicit remoting has no console window), we default
-        /// to something reasonable: 120 columns.
+        /// Return the console height.null  If not available (like when remoting), treat as Int.MaxValue.
         /// </summary>
-        static private int GetConsoleWindowHeight()
+        private static int GetConsoleWindowHeight()
         {
             if (InternalTestHooks.SetConsoleHeightToZero)
             {

@@ -75,36 +75,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Initialize the table specifying the width of each column
+        /// Initialize the table specifying the width of each column.
         /// </summary>
-        /// <param name="leftMarginIndent">left margin indentation</param>
-        /// <param name="screenColumns">number of character columns on the screen</param>
-        /// <param name="columnWidths">array of specified column widths</param>
-        /// <param name="alignment">array of alignment flags</param>
-        /// <param name="suppressHeader">if true, suppress header printing</param>
-        /// <param name="screenRows">number of rows on the screen</param>
+        /// <param name="leftMarginIndent">Left margin indentation</param>
+        /// <param name="screenColumns">Number of character columns on the screen</param>
+        /// <param name="columnWidths">Array of specified column widths</param>
+        /// <param name="alignment">Array of alignment flags</param>
+        /// <param name="suppressHeader">If true, suppress header printing</param>
+        /// <param name="screenRows">Number of rows on the screen</param>
         internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader, int screenRows = int.MaxValue)
         {
-            //Console.WriteLine("         1         2         3         4         5         6         7");
-            //Console.WriteLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
-
             if (leftMarginIndent < 0)
             {
                 leftMarginIndent = 0;
             }
+
             if (screenColumns - leftMarginIndent < ScreenInfo.minimumScreenColumns)
             {
                 _disabled = true;
                 return;
             }
-            _startColumn = leftMarginIndent;
 
+            _startColumn = leftMarginIndent;
             _hideHeader = suppressHeader;
 
             // make sure the column widths are correct; if not, take appropriate action
-            ColumnWidthManager manager = new ColumnWidthManager(screenColumns - leftMarginIndent,
-                                                        ScreenInfo.minimumColumnWidth,
-                                                        ScreenInfo.separatorCharacterCount);
+            ColumnWidthManager manager = new ColumnWidthManager(
+                screenColumns - leftMarginIndent,
+                ScreenInfo.minimumColumnWidth,
+                ScreenInfo.separatorCharacterCount);
 
             manager.CalculateColumnWidths(columnWidths);
 
@@ -140,7 +139,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _si.columnInfo[k].width = columnWidths[k];
                 _si.columnInfo[k].alignment = alignment[k];
                 startCol += columnWidths[k] + ScreenInfo.separatorCharacterCount;
-                //Console.WriteLine("start = {0} width = {1}", si.columnInfo[k].startCol, si.columnInfo[k].width);
             }
         }
 
@@ -204,7 +202,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal string[] GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
         {
-            string[] lines = new string[]{};
+            string[] lines = new string[] { };
 
             if (_disabled)
                 return lines;
