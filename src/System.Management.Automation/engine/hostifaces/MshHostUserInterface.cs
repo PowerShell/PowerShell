@@ -440,50 +440,21 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool minimalTranscriptHeader)
+        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader)
         {
             TranscriptionOption transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
             TranscriptionData.Transcripts.Add(transcript);
 
-            LogTranscriptHeader(senderInfo, transcript, minimalTranscriptHeader);
+            LogTranscriptHeader(senderInfo, transcript, useMinimalHeader);
         }
 
-        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript, bool minimalTranscriptHeader = false)
+        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript, bool useMinimalHeader = false)
         {
-            string username = Environment.UserDomainName + "\\" + Environment.UserName;
-            string runAsUser = username;
-
-            if (senderInfo != null)
-            {
-                username = senderInfo.UserInfo.Identity.Name;
-            }
-
-            // Add bits from PSVersionTable
-            StringBuilder versionInfoFooter = new StringBuilder();
-            Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
-            foreach (string versionKey in versionInfo.Keys)
-            {
-                object value = versionInfo[versionKey];
-
-                if (value != null)
-                {
-                    var arrayValue = value as object[];
-                    string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
-                    versionInfoFooter.AppendLine(versionKey + ": " + valueString);
-                }
-            }
-
-            string configurationName = string.Empty;
-            if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
-            {
-                configurationName = senderInfo.ConfigurationName;
-            }
-
             // Transcribe the transcript header
             string line;
-            if (minimalTranscriptHeader)
+            if (useMinimalHeader)
             {
                 line =
                     string.Format(
@@ -493,6 +464,35 @@ namespace System.Management.Automation.Host
             }
             else
             {
+                string username = Environment.UserDomainName + "\\" + Environment.UserName;
+                string runAsUser = username;
+
+                if (senderInfo != null)
+                {
+                    username = senderInfo.UserInfo.Identity.Name;
+                }
+
+                // Add bits from PSVersionTable
+                StringBuilder versionInfoFooter = new StringBuilder();
+                Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
+                foreach (string versionKey in versionInfo.Keys)
+                {
+                    object value = versionInfo[versionKey];
+
+                    if (value != null)
+                    {
+                        var arrayValue = value as object[];
+                        string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
+                        versionInfoFooter.AppendLine(versionKey + ": " + valueString);
+                    }
+                }
+
+                string configurationName = string.Empty;
+                if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
+                {
+                    configurationName = senderInfo.ConfigurationName;
+                }
+
                 line =
                     string.Format(
                         Globalization.CultureInfo.InvariantCulture,
