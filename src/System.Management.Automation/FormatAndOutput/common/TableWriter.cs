@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ScreenInfo _si;
         private const char ESC = '\u001b';
         private const string ResetConsoleVt100Code = "\u001b[m";
-        private string[] _header;
+        private List<string> _header;
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
         {
@@ -155,16 +155,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     lo.WriteLine(line);
                 }
 
-                return _header.Length;
+                return _header.Count;
             }
 
             var header = new List<string>();
 
             // generate the row with the header labels
-            foreach (string line in GenerateRow(values, lo, true, null, lo.DisplayCells))
-            {
-                header.Add(line);
-            }
+            header = GenerateRow(values, lo, true, null, lo.DisplayCells);
 
             // generate an array of "--" as header markers below
             // the column header labels
@@ -191,18 +188,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 breakLine[k] = StringUtil.DashPadding(count);
             }
 
-            foreach (string line in GenerateRow(breakLine, lo, false, null, lo.DisplayCells))
-            {
-                header.Add(line);
-            }
-
-            _header = header.ToArray();
-            return _header.Length;
+            header.AddRange(GenerateRow(breakLine, lo, false, null, lo.DisplayCells));
+            _header = header;
+            return _header.Count;
         }
 
-        internal string[] GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
+        internal List<string> GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
         {
-            string[] lines = new string[] { };
+            List<string> lines = new List<string>();
 
             if (_disabled)
                 return lines;
@@ -231,11 +224,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (multiLine)
             {
-                lines = GenerateTableRow(values, currentAlignment, lo.DisplayCells);
-
-                for (int k = 0; k < lines.Length; k++)
+                foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
                 {
-                    lo.WriteLine(lines[k]);
+                    lines.Add(line);
+                    lo.WriteLine(line);
                 }
 
                 return lines;
@@ -244,7 +236,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 string line = GenerateRow(values, currentAlignment, dc);
                 lo.WriteLine(line);
-                return new string[1]{line};
+                lines.Add(line);
+                return lines;
             }
         }
 
