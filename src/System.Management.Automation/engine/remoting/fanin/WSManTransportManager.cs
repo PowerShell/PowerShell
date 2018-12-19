@@ -7,24 +7,20 @@
  *
  */
 
-using System.Management.Automation.Tracing;
-using System.IO;
-using System.Xml;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Management.Automation.Internal;
-#if !CORECLR
+using System.Management.Automation.Remoting.Server;
+using System.Management.Automation.Runspaces.Internal;
+using System.Management.Automation.Tracing;
+using System.Runtime.InteropServices;
+#if !UNIX
 using System.Security.Principal;
 #endif
-
-// Don't expose the System.Management.Automation namespace here. This is transport layer
-// and it shouldn't know anything about the engine.
-using System.Management.Automation.Remoting.Server;
-// TODO: this seems ugly...Remoting datatypes should be in remoting namespace
-using System.Management.Automation.Runspaces.Internal;
+using System.Xml;
+using System.Threading;
 
 using PSRemotingCryptoHelper = System.Management.Automation.Internal.PSRemotingCryptoHelper;
 using WSManConnectionInfo = System.Management.Automation.Runspaces.WSManConnectionInfo;
@@ -2591,7 +2587,7 @@ namespace System.Management.Automation.Remoting.Client
             // Dispose
             private bool _isDisposed;
             private object _syncObject = new object();
-#if !CORECLR
+#if !UNIX
             private WindowsIdentity _identityToImpersonate;
 #endif
 
@@ -2600,11 +2596,9 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             internal WSManAPIDataCommon()
             {
-#if !CORECLR
+#if !UNIX
                 // Check for thread impersonation and save identity for later de-initialization.
-                _identityToImpersonate = WindowsIdentity.GetCurrent();
-                _identityToImpersonate = (_identityToImpersonate.ImpersonationLevel == TokenImpersonationLevel.Impersonation) ?
-                    _identityToImpersonate : null;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
 #endif
 
                 _handle = IntPtr.Zero;
@@ -2673,42 +2667,25 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != _handle)
                 {
-#if !CORECLR
-                    // If we initialized with thread impersonation make sure de-initialize is run with same.
-                    WindowsImpersonationContext impersonationContext = null;
+                    int result = 0;
+
+#if !UNIX
+                    // If we initialized with thread impersonation, make sure de-initialize is run with the same.
                     if (_identityToImpersonate != null)
                     {
-                        try
-                        {
-                            _identityToImpersonate.Impersonate();
-                        }
-                        catch (ObjectDisposedException)
-                        {
-                            _handle = IntPtr.Zero;
-                            return;
-                        }
+                        result = WindowsIdentity.RunImpersonated(
+                            _identityToImpersonate.AccessToken,
+                            () => WSManNativeApi.WSManDeinitialize(_handle, 0));
                     }
+                    else
+                    {
+#endif
+                        result = WSManNativeApi.WSManDeinitialize(_handle, 0);
+#if !UNIX
+                    }
+#endif
 
-                    try
-                    {
-#endif
-                    int result = WSManNativeApi.WSManDeinitialize(_handle, 0);
                     Dbg.Assert(result == 0, "WSManDeinitialize returned non-zero value");
-#if !CORECLR
-                    }
-                    finally
-                    {
-                        if (impersonationContext != null)
-                        {
-                            try
-                            {
-                                impersonationContext.Undo();
-                                impersonationContext.Dispose();
-                            }
-                            catch (System.Security.SecurityException) { }
-                        }
-                    }
-#endif
                     _handle = IntPtr.Zero;
                 }
             }

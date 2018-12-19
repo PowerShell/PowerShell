@@ -1,12 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Tracing;
 using System.IO;
-using System.Threading;
-using System.Security.Principal;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Tracing;
+using System.Threading;
+#if !UNIX
+using System.Security.Principal;
+#endif
 using Microsoft.Win32.SafeHandles;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting.Server
@@ -26,8 +29,10 @@ namespace System.Management.Automation.Remoting.Server
         protected string _initialCommand;
         protected ManualResetEvent allcmdsClosedEvent;
 
+#if !UNIX
         // Thread impersonation.
         protected WindowsIdentity _windowsIdentityToImpersonate;
+#endif
 
         /// <summary>
         /// Count of commands in progress
@@ -350,13 +355,13 @@ namespace System.Management.Automation.Remoting.Server
 
                     // process data in a thread pool thread..this way Runspace, Command
                     // data can be processed concurrently.
-#if CORECLR
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
-#else
+#if !UNIX
                     Utils.QueueWorkItemWithImpersonation(
-                        _windowsIdentityToImpersonate,
-                        new WaitCallback(ProcessingThreadStart),
-                        data);
+                            _windowsIdentityToImpersonate,
+                            new WaitCallback(ProcessingThreadStart),
+                            data);
+#else
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
                 } while (true);
             }
@@ -591,15 +596,8 @@ namespace System.Management.Automation.Remoting.Server
             originalStdErr = new NamedPipeErrorTextWriter(namedPipeServer.TextWriter);
 
 #if !UNIX
-            // Flow impersonation if requested.
-            WindowsIdentity currentIdentity = null;
-            try
-            {
-                currentIdentity = WindowsIdentity.GetCurrent();
-            }
-            catch (System.Security.SecurityException) { }
-            _windowsIdentityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ?
-                currentIdentity : null;
+            // Flow impersonation as needed.
+            Utils.TryGetWindowsImpersonatedIdentity(out _windowsIdentityToImpersonate);
 #endif
         }
 

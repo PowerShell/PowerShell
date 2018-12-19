@@ -1,21 +1,24 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Tracing;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Management.Automation.Remoting;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Microsoft.PowerShell.Commands;
-using System.Security.Principal;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
+using System.Management.Automation.Tracing;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Threading;
+using Microsoft.PowerShell.Commands;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -1806,9 +1809,11 @@ namespace System.Management.Automation
         private UnhandledBreakpointProcessingMode _unhandledBreakpointMode;
         private bool _detachCommand;
 
-        // Impersonation flow
+#if !UNIX
+        // Windows impersonation flow
         private WindowsIdentity _identityToPersonate;
         private bool _identityPersonationChecked;
+#endif
 
         /// <summary>
         /// RemoteDebuggerStopEvent
@@ -2197,11 +2202,13 @@ namespace System.Management.Automation
             _runspace.RemoteDebuggerStop -= HandleForwardedDebuggerStopEvent;
             _runspace.RemoteDebuggerBreakpointUpdated -= HandleForwardedDebuggerBreakpointUpdatedEvent;
 
+#if !UNIX
             if (_identityToPersonate != null)
             {
                 _identityToPersonate.Dispose();
                 _identityToPersonate = null;
             }
+#endif
         }
 
         #endregion
@@ -2378,16 +2385,17 @@ namespace System.Management.Automation
 
             if (!invokedOnBlockedThread)
             {
-#if CORECLR
-                Threading.ThreadPool.QueueUserWorkItem(
-                    ProcessDebuggerStopEventProc,
-                    args);
-#else
                 // Otherwise run on worker thread.
+#if !UNIX
                 Utils.QueueWorkItemWithImpersonation(
                     _identityToPersonate,
                     ProcessDebuggerStopEventProc,
                     args);
+#else
+                Threading.ThreadPool.QueueUserWorkItem(
+                    ProcessDebuggerStopEventProc,
+                    args);
+
 #endif
             }
         }
@@ -2503,19 +2511,15 @@ namespace System.Management.Automation
                 throw new InvalidRunspaceStateException();
             }
 
+#if !UNIX
             if (!_identityPersonationChecked)
             {
                 _identityPersonationChecked = true;
 
                 // Save identity to impersonate.
-                WindowsIdentity currentIdentity = null;
-                try
-                {
-                    currentIdentity = WindowsIdentity.GetCurrent();
-                }
-                catch (System.Security.SecurityException) { }
-                _identityToPersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ? currentIdentity : null;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToPersonate);
             }
+#endif
         }
 
         private void SetRemoteDebug(bool remoteDebug, RunspaceAvailability? availability)
@@ -2574,12 +2578,12 @@ namespace System.Management.Automation
             }
         }
 
-        #endregion
+#endregion
     }
 
-    #endregion
+#endregion
 
-    #region RemoteSessionStateProxy
+#region RemoteSessionStateProxy
 
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
@@ -2981,5 +2985,5 @@ namespace System.Management.Automation
         }
     }
 
-    #endregion
+#endregion
 }

@@ -4,18 +4,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Threading;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
-using System.Diagnostics;
+#if !UNIX
 using System.Security.Principal;
+#endif
+using System.Threading;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -2037,7 +2040,9 @@ namespace System.Management.Automation
             private PSDataCollection<PSObject> _output;
             private DebuggerCommandResults _results;
             private Exception _exception;
+#if !UNIX
             private WindowsIdentity _identityToImpersonate;
+#endif
 
             // Constructors
             private ThreadCommandProcessing() { }
@@ -2057,14 +2062,10 @@ namespace System.Management.Automation
             // Methods
             public DebuggerCommandResults Invoke(ManualResetEventSlim startInvokeEvent)
             {
+#if !UNIX
                 // Get impersonation information to flow if any.
-                WindowsIdentity currentIdentity = null;
-                try
-                {
-                    currentIdentity = WindowsIdentity.GetCurrent();
-                }
-                catch (System.Security.SecurityException) { }
-                _identityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ? currentIdentity : null;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
+#endif
 
                 // Signal thread to process command.
                 Dbg.Assert(!_commandCompleteEvent.IsSet, "Command complete event shoulds always be non-signaled here.");
@@ -2074,8 +2075,13 @@ namespace System.Management.Automation
                 // Wait for completion.
                 _commandCompleteEvent.Wait();
                 _commandCompleteEvent.Reset();
-
-                _identityToImpersonate = null;
+#if !UNIX
+                if (_identityToImpersonate != null)
+                {
+                    _identityToImpersonate.Dispose();
+                    _identityToImpersonate = null;
+                }
+#endif
 
                 // Propagate exception.
                 if (_exception != null)
@@ -2098,18 +2104,17 @@ namespace System.Management.Automation
 
             internal void DoInvoke()
             {
-#if !CORECLR // TODO:CORECLR - WindowsIdentity.Impersonate() is not available. Use WindowsIdentity.RunImplemented to replace it.
-                // Flow impersonation onto thread if needed.
-                WindowsImpersonationContext impersonationContext = null;
-                if ((_identityToImpersonate != null) &&
-                    (_identityToImpersonate.ImpersonationLevel == TokenImpersonationLevel.Impersonation))
-                {
-                    impersonationContext = _identityToImpersonate.Impersonate();
-                }
-#endif
-
                 try
                 {
+#if !UNIX
+                    if (_identityToImpersonate != null)
+                    {
+                        _results = WindowsIdentity.RunImpersonated(
+                            _identityToImpersonate.AccessToken,
+                            () =>_wrappedDebugger.ProcessCommand(_command, _output));
+                        return;
+                    }
+#endif
                     _results = _wrappedDebugger.ProcessCommand(_command, _output);
                 }
                 catch (Exception e)
@@ -2119,19 +2124,6 @@ namespace System.Management.Automation
                 finally
                 {
                     _commandCompleteEvent.Set();
-
-#if !CORECLR // TODO:CORECLR - WindowsIdentity.Impersonate() is not available. Use WindowsIdentity.RunImplemented to replace it.
-                    // Restore previous context to thread.
-                    if (impersonationContext != null)
-                    {
-                        try
-                        {
-                            impersonationContext.Undo();
-                            impersonationContext.Dispose();
-                        }
-                        catch (System.Security.SecurityException) { }
-                    }
-#endif
                 }
             }
         }
@@ -2317,7 +2309,7 @@ namespace System.Management.Automation
 
                 if (isNestedStop)
                 {
-                    // Blocking call for nested debugger execution (Workflow) stop events.
+                    // Blocking call for nested debugger execution (Debug-Runspace) stop events.
                     // The root debugger never makes two EnterDebugMode calls without an ExitDebugMode.
                     if (_nestedDebugStopCompleteEvent == null)
                     {
@@ -2494,8 +2486,7 @@ namespace System.Management.Automation
             bool addToHistory)
         {
             // For nested debugger command processing, invoke command on new local runspace since
-            // the root script debugger runspace is unavailable (it is running a PS script or a
-            // workflow function script).
+            // the root script debugger runspace is unavailable (it is running a PS script).
             Runspace runspace = (remoteHost != null) ?
                 RunspaceFactory.CreateRunspace(remoteHost) : RunspaceFactory.CreateRunspace();
 
