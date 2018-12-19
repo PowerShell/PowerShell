@@ -1067,7 +1067,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         alignment[k] = TextAlignment.Left; // hard coded default
                     }
                 }
-                this.Writer.GenerateRow(values, this.InnerCommand._lo, tre.multiLine, alignment, InnerCommand._lo.DisplayCells);
+                this.Writer.GenerateRow(values, this.InnerCommand._lo, tre.multiLine, alignment, InnerCommand._lo.DisplayCells, generatedRows: null);
                 _rowCount++;
             }
 
@@ -1278,7 +1278,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     else
                         values[k] = string.Empty;
                 }
-                this.Writer.GenerateRow(values, this.InnerCommand._lo, false, null, InnerCommand._lo.DisplayCells);
+                this.Writer.GenerateRow(values, this.InnerCommand._lo, false, null, InnerCommand._lo.DisplayCells, generatedRows: null);
                 _buffer.Reset();
             }
 
