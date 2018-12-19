@@ -158,10 +158,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return _header.Count;
             }
 
-            var header = new List<string>();
+            _header = new List<string>();
 
             // generate the row with the header labels
-            header = GenerateRow(values, lo, true, null, lo.DisplayCells);
+            GenerateRow(values, lo, true, null, lo.DisplayCells, _header);
 
             // generate an array of "--" as header markers below
             // the column header labels
@@ -188,17 +188,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 breakLine[k] = StringUtil.DashPadding(count);
             }
 
-            header.AddRange(GenerateRow(breakLine, lo, false, null, lo.DisplayCells));
-            _header = header;
+            GenerateRow(breakLine, lo, false, null, lo.DisplayCells, _header);
             return _header.Count;
         }
 
-        internal List<string> GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
+        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc, List<string> generatedRows)
         {
-            List<string> lines = new List<string>();
-
             if (_disabled)
-                return lines;
+                return;
 
             // build the current row alignment settings
             int cols = _si.columnInfo.Length;
@@ -226,18 +223,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
                 {
-                    lines.Add(line);
+                    generatedRows?.Add(line);
                     lo.WriteLine(line);
                 }
-
-                return lines;
             }
             else
             {
                 string line = GenerateRow(values, currentAlignment, dc);
+                generatedRows?.Add(line);
                 lo.WriteLine(line);
-                lines.Add(line);
-                return lines;
             }
         }
 
