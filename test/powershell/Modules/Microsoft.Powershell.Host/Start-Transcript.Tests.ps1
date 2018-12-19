@@ -294,7 +294,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
     }
 
-    It "MinimalTranscriptHeader should reduce length of transcript header" {
+    It "UseMinimalHeader should reduce length of transcript header" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Stop-Transcript
@@ -302,7 +302,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         $transcriptMinHeaderFilePath = $transcriptFilePath + "_minimal" 
         $scriptMinHeader = {
-            Start-Transcript -Path $transcriptMinHeaderFilePath -MinimalTranscriptHeader
+            Start-Transcript -Path $transcriptMinHeaderFilePath -UseMinimalHeader
             Stop-Transcript
         }
 
