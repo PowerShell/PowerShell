@@ -54,7 +54,7 @@ namespace System.Management.Automation
                 "After replacement with the metadata of the new parameters, ParameterSetCount should be equal to nextAvailableParameterSetIndex");
 
             return result;
-        } // ReplaceMetadata
+        }
 
         /// <summary>
         /// Merges the specified metadata with the other metadata already defined
@@ -170,7 +170,7 @@ namespace System.Management.Automation
             {
                 return _parameterSetMap.Count;
             }
-        } // ParameterSetCount
+        }
 
         /// <summary>
         /// Gets a bit-field representing all valid parameter sets
@@ -249,7 +249,7 @@ namespace System.Management.Automation
                 }
             }
             return index;
-        } // AddParameterSetToMap
+        }
 
         /// <summary>
         /// Loops through all the parameters and retrieves the parameter set names.  In the process
@@ -327,7 +327,7 @@ namespace System.Management.Automation
                 parameter.Parameter.ParameterSetFlags = parameterSetBitField;
             }
             return defaultParameterSetFlag;
-        } // GenerateParameterSetMappingFromMetadata
+        }
 
         /// <summary>
         /// Gets the parameter set name for the specified parameter set.
@@ -379,7 +379,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // GetParameterSetName
+        }
 
         /// <summary>
         /// Helper function to retrieve the name of the parameter
@@ -561,7 +561,7 @@ namespace System.Management.Automation
                 result = matchingParameters[0];
             }
             return result;
-        } // GetMatchingParameter
+        }
 
         /// <summary>
         /// Gets a collection of all the parameters that are allowed in the parameter set
@@ -586,7 +586,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // GetParametersInParameterSet
+        }
 
         /// <summary>
         /// Gets a dictionary of the compiled parameter metadata for this Type.
@@ -617,7 +617,7 @@ namespace System.Management.Automation
             _bindableParameters = new Dictionary<string, MergedCompiledCommandParameter>(_bindableParameters, StringComparer.OrdinalIgnoreCase);
             _aliasedParameters = new Dictionary<string, MergedCompiledCommandParameter>(_aliasedParameters, StringComparer.OrdinalIgnoreCase);
         }
-    } // MergedCommandParameterMetadata
+    }
 
     /// <summary>
     /// Makes an association between a CompiledCommandParameter and the type

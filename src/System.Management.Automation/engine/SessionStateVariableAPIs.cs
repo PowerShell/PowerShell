@@ -62,7 +62,7 @@ namespace System.Management.Automation
             PSVariable resultItem = GetVariableItem(variablePath, out scope, origin);
 
             return resultItem;
-        } // GetVariable
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -80,7 +80,7 @@ namespace System.Management.Automation
         internal PSVariable GetVariable(string name)
         {
             return GetVariable(name, CommandOrigin.Internal);
-        } // GetVariable
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -123,7 +123,7 @@ namespace System.Management.Automation
             object resultItem = GetVariableValue(variablePath, out context, out scope);
 
             return resultItem;
-        } // GetVariableValue
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -502,7 +502,7 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // GetVariableFromProvider
+        }
 #pragma warning restore 0162
 
         /// <summary>
@@ -557,7 +557,7 @@ namespace System.Management.Automation
                 scope = searcher.CurrentLookupScope;
             }
             return result;
-        } // GetVariableItem
+        }
 
         /// <summary>
         /// Looks up the specified variable and returns the context under which
@@ -588,7 +588,7 @@ namespace System.Management.Automation
             out SessionStateScope scope)
         {
             return GetVariableItem(variablePath, out scope, CommandOrigin.Internal);
-        } // GetVariableItem
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -639,7 +639,7 @@ namespace System.Management.Automation
             }
 
             return resultItem;
-        } // GetVariable
+        }
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -896,10 +896,10 @@ namespace System.Management.Automation
                     {
                     }
                 }
-            } // if resultItem != null
+            }
 
             return resultItem;
-        } // GetVariableValueAtScope
+        }
 
         internal object GetAutomaticVariableValue(AutomaticVariable variable)
         {
@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
 #endif
             }
             return result;
-        } // SetVariable
+        }
 
         /// <summary>
         /// Set a variable in session state.
@@ -1413,7 +1413,7 @@ namespace System.Management.Automation
                     force,
                     this,
                     origin);
-        } // SetVariableAtScope
+        }
 
         #region NewVariable
 
@@ -1444,7 +1444,7 @@ namespace System.Management.Automation
                     variable,
                     force,
                     this);
-        } // NewVariable
+        }
 
         /// <summary>
         /// Creates a new variable in the specified scope
@@ -1493,7 +1493,7 @@ namespace System.Management.Automation
                     variable,
                     force,
                     this);
-        } // NewVariableAtScope
+        }
 
         #endregion NewVariable
 
@@ -1580,7 +1580,7 @@ namespace System.Management.Automation
                 RemoveItem(new string[] { variablePath.QualifiedName }, false, context);
                 context.ThrowFirstErrorOrDoNothing();
             }
-        } // RemoveVariable
+        }
 
         /// <summary>
         /// Removes a variable from the variable table.
@@ -1629,7 +1629,7 @@ namespace System.Management.Automation
             {
                 scope.RemoveVariable(variablePath.QualifiedName, force);
             }
-        } // RemoveVariable
+        }
 
         /// <summary>
         /// Remove a variable from session state. This interface supports
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
                     context.ThrowFirstErrorOrDoNothing();
                 }
             }
-        } // RemoveVariableAtScope
+        }
 
         /// <summary>
         /// Remove a variable from session state.
@@ -1785,7 +1785,7 @@ namespace System.Management.Automation
             SessionStateScope lookupScope = GetScopeByID(scopeID);
 
             lookupScope.RemoveVariable(variablePath.QualifiedName, force);
-        } // RemoveVariableAtScope
+        }
 
         /// <summary>
         /// Gets a flattened view of the variables that are visible using

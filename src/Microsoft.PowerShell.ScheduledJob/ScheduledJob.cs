@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 // Add this job to the local repository.
                 ScheduledJobSourceAdapter.AddToRepository(this);
-            } // lock
+            }
         }
 
         /// <summary>

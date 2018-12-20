@@ -50,7 +50,7 @@ namespace System.Management.Automation
             Path = path;
             Extension = System.IO.Path.GetExtension(path);
             _context = context;
-        } // ApplicationInfo ctor
+        }
         private ExecutionContext _context;
         #endregion ctor
 
@@ -131,5 +131,5 @@ namespace System.Management.Automation
             }
         }
         private ReadOnlyCollection<PSTypeName> _outputType = null;
-    } // ApplicationInfo
-} // namespace System.Management.Automation
+    }
+}

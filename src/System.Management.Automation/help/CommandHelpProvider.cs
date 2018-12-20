@@ -517,7 +517,7 @@ namespace System.Management.Automation
                     searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
                     searchPaths.Add(mshSnapInInfo.ApplicationBase);
                 }
-                else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path))
+                else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path) && !string.IsNullOrEmpty(cmdletInfo.Module.ModuleBase))
                 {
                     searchPaths.Add(HelpUtils.GetModuleBaseForUserHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name));
                     searchPaths.Add(cmdletInfo.Module.ModuleBase);

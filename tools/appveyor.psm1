@@ -369,7 +369,6 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $SequentialXUnitTestResultsFile = "$pwd\SequentialXUnitTestResults.xml"
     $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
@@ -443,19 +442,13 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
-        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-        Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
         Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
-        @(
-            $SequentialXUnitTestResultsFile,
-            $ParallelXUnitTestResultsFile
-        ) | ForEach-Object {
-            Test-XUnitTestResults -TestResultsFile $_
-        }
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
 
         # Run tests with specified experimental features enabled
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
@@ -517,16 +510,23 @@ function Push-Artifact
     param(
         [Parameter(Mandatory)]
         [ValidateScript({Test-Path -Path $_})]
-        $Path
+        $Path,
+        [string]
+        $Name
     )
 
-    if($env:Appveyor)
+    if(!$Name)
     {
-        Push-AppveyorArtifact $Path
+        $artifactName = [system.io.path]::GetFileName($Path)
     }
-    elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
+    else
+    {
+        $artifactName = $Name
+    }
+
+    if ($env:TF_BUILD) {
         # In VSTS
-        Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$Path"
+        Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     }
 }
 
@@ -579,14 +579,29 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
+    param(
+        [string] $NuGetKey
+    )
+
     try {
         $releaseTag = Get-ReleaseTag
 
+        $previewVersion = $releaseTag.Split('-')
+        $previewPrefix = $previewVersion[0]
+        $previewLabel = $previewVersion[1].replace('.','')
+
+        if(Test-DailyBuild)
+        {
+            $previewLabel= "daily{0}" -f $previewLabel
+        }
+
+        $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+
         # Build clean before backing to remove files from testing
-        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean
 
         # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
+        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $preReleaseVersion -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -598,31 +613,6 @@ function Invoke-AppveyorFinish
             {
                 $null = $artifacts.Add($package.msi)
                 $null = $artifacts.Add($package.wixpdb)
-            }
-        }
-
-        if ($env:APPVEYOR_REPO_TAG_NAME)
-        {
-            $preReleaseVersion = $env:APPVEYOR_REPO_TAG_NAME
-        }
-        else
-        {
-            $previewVersion = $releaseTag.Split('-')
-            $previewPrefix = $previewVersion[0]
-            $previewLabel = $previewVersion[1].replace('.','')
-
-            if(Test-DailyBuild)
-            {
-                $previewLabel= "daily{0}" -f $previewLabel
-            }
-
-            if ($env:TF_BUILD)
-            {
-                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
-            }
-            else
-            {
-                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
             }
         }
 
@@ -678,10 +668,10 @@ function Invoke-AppveyorFinish
                 Write-Warning "Artifact $_ does not exist."
             }
 
-            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
+            if($NuGetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
                 Write-Log "pushing $_ to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $NuGetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if(!$pushedAllArtifacts)

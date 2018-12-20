@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Management.Automation.Internal;
-#if !CORECLR
+#if !UNIX
 using System.Security.Principal;
 #endif
 
@@ -735,11 +735,9 @@ namespace System.Management.Automation.Remoting.Client
                     _isServicingCallbacks = true;
 
                     // Start a thread pool thread to process callbacks.
-#if !CORECLR
-                    // Flow thread impersonation as needed.
-                    WindowsIdentity identityToImpersonate = WindowsIdentity.GetCurrent();
-                    identityToImpersonate = (identityToImpersonate.ImpersonationLevel == TokenImpersonationLevel.Impersonation) ?
-                        identityToImpersonate : null;
+#if !UNIX
+                    WindowsIdentity identityToImpersonate;
+                    Utils.TryGetWindowsImpersonatedIdentity(out identityToImpersonate);
 
                     Utils.QueueWorkItemWithImpersonation(
                         identityToImpersonate,

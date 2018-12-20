@@ -553,4 +553,4 @@ namespace System.Management.Automation
         internal string Name { get; set; }
         internal List<string> CommandsToPostFilter { get; set; }
     }
-} // System.Management.Automation
+}

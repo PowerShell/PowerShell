@@ -31,7 +31,7 @@ namespace System.Management.Automation.Internal
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
             _commandRuntime = commandRuntime;
-        } // ctor
+        }
 
         #endregion ctor
 
@@ -240,6 +240,6 @@ namespace System.Management.Automation.Internal
                 }
             }
         }
-    } // class UserFeedbackParameters
+    }
 }
 

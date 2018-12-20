@@ -128,14 +128,14 @@ namespace Microsoft.PowerShell.Commands
                 default:
                     mshObject = InputObject;
                     break;
-            } // switch
+            }
 
             if (Path != null && Path.Length > 0)
             {
                 return InvokeProvider.Property.SetPropertyDynamicParameters(Path[0], mshObject, context);
             }
             return InvokeProvider.Property.SetPropertyDynamicParameters(".", mshObject, context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
                         false,
                         "One of the parameter sets should have been resolved or an error should have been thrown by the command processor");
                     break;
-            } // switch
+            }
 
             foreach (string path in Path)
             {
@@ -216,8 +216,8 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // SetItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

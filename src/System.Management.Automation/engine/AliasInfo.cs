@@ -117,7 +117,7 @@ namespace System.Management.Automation
 
                 return referencedCommand;
             }
-        } // ReferencedCommand
+        }
 
         /// <summary>
         /// Gets the command information for the command that
@@ -223,7 +223,7 @@ namespace System.Management.Automation
             }
 
             _definition = definition;
-        } // SetDefinition
+        }
 
         /// <summary>
         /// Gets or sets the scope options for the alias
@@ -354,5 +354,5 @@ namespace System.Management.Automation
                 return null;
             }
         }
-    } // AliasInfo
-} // namespace System.Management.Automation
+    }
+}

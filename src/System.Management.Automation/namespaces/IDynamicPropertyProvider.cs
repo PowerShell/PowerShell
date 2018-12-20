@@ -333,8 +333,8 @@ namespace System.Management.Automation.Provider
             string sourceProperty,
             string destinationPath,
             string destinationProperty);
-    } // IDynamicPropertyCmdletProvider
+    }
 
     #endregion IDynamicPropertyCmdletProvider
-} // namespace System.Management.Automation
+}
 

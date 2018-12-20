@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                 value = ((DictionaryEntry)item).Value;
             }
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteItemObject(item, name, isContainer);
                 }
             }
-        } // GetItem
+        }
 
         /// <summary>
         /// Sets a session state item to a given value
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
                         argException.ErrorRecord,
                         argException));
             }
-        } // SetItem
+        }
 
         /// <summary>
         /// </summary>
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
                         argException.ErrorRecord,
                         argException));
             }
-        } // ClearItem
+        }
 
         #endregion ItemCmdletProvider overrides
 
@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets the name(s) of the item(s) at the given path
@@ -491,7 +491,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Determines if there are any items
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // HasChildItems
+        }
 
         /// <summary>
         /// Determines if the specified item exists
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // ItemExists
+        }
 
         /// <summary>
         /// Determines if the specified path is syntactically and semantically valid.
@@ -739,7 +739,7 @@ namespace Microsoft.PowerShell.Commands
                     SetItem(path, newItem);
                 }
             }
-        } // NewItem
+        }
 
         /// <summary>
         /// Copies the specified item.
@@ -848,7 +848,7 @@ namespace Microsoft.PowerShell.Commands
                         e));
                 return;
             }
-        } // CopyItem
+        }
 
         /// <summary>
         /// Copies the specified item.
@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
                         e));
                 return;
             }
-        } // RenameItem
+        }
 
         #endregion ContainerCmdletProvider overrides
 
@@ -1074,7 +1074,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
         #endregion
-    } // SessionStateProviderBase
+    }
 
     /// <summary>
     /// The content reader/writer for all providers deriving from SessionStateProviderBase

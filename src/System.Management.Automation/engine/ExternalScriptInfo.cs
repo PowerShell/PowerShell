@@ -559,7 +559,7 @@ namespace System.Management.Automation
             CommandNotFoundException cmdE = new CommandNotFoundException(innerException.Message, innerException);
             throw cmdE;
         }
-    } // ExternalScriptInfo
+    }
 
     /// <summary>
     /// Thrown when fail to parse #requires statements. Caught by CommandDiscovery.
@@ -595,5 +595,5 @@ namespace System.Management.Automation
         /// </summary>
         public Version Version { get; internal set; }
     }
-} // namespace System.Management.Automation
+}
 

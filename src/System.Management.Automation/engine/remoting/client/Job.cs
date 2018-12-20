@@ -1579,7 +1579,7 @@ namespace System.Management.Automation
             }
 
             return returnJobList;
-        } // GetJobsForLocation
+        }
 
         #endregion Private/Internal Methods
 
@@ -1883,7 +1883,7 @@ namespace System.Management.Automation
             }
 
             return returnJobList;
-        } // GetResultForComputer
+        }
 
         /// <summary>
         /// Get entity result for the specified runspace
@@ -1905,7 +1905,7 @@ namespace System.Management.Automation
                 }
             }
             return returnJobList;
-        } // GetResultForRunspace
+        }
 
         /// <summary>
         /// Get entity result for the specified helper object
@@ -1929,7 +1929,7 @@ namespace System.Management.Automation
             }
 
             return returnJobList;
-        } // GetResultForHelper
+        }
 
         #endregion internal methods
 
@@ -2313,12 +2313,12 @@ namespace System.Management.Automation
             //                        }
             //                        break;
             //                    }
-            //                } // for (int ...
+            //                }
 
             //                setFinished = true;
-            //            } // if (finishedCount ...
-            //        } // lock...
-        } // SetStatusMessage
+            //            }
+            //        }
+        }
 
         #region finish logic
 
@@ -3097,7 +3097,7 @@ namespace System.Management.Automation
                     }
                 }
             }// if (hostCallsStream...
-        } // HandleHostCalls
+        }
 
         /// <summary>
         /// Handle changes in pipeline states
@@ -3160,7 +3160,7 @@ namespace System.Management.Automation
             //DoFinish has logic to check if it has been already called and second call
             //becomes noOp.
             DoFinish();
-        } // HandleThrottleComplete
+        }
 
         /// <summary>
         /// Handle the operation complete event
@@ -3327,7 +3327,7 @@ namespace System.Management.Automation
                 failureErrorRecord = new ErrorRecord(failureException, targetObject,
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
                                 null, null, null, null, null, errorDetails, null);
-            } // if (runspace...
+            }
             else if (pipeline.PipelineStateInfo.State == PipelineState.Failed)
             {
                 object targetObject = runspace.ConnectionInfo.ComputerName;
@@ -3360,8 +3360,8 @@ namespace System.Management.Automation
                     OriginInfo originInfo = new OriginInfo(computerName, runspaceId);
 
                     failureErrorRecord = new RemotingErrorRecord(errorRecord, originInfo);
-                } // if (exception != null...
-            } // if (pipeline...
+                }
+            }
         }
 
         /// <summary>

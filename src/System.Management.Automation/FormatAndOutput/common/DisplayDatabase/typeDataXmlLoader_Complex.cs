@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (!IsFilteredOutNode(n))
                         unprocessedNodes.Add(n);
                 }
-            } // foreach
+            }
 
             if (expressionNodeFound)
             {

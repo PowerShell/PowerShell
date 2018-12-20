@@ -597,9 +597,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region LoadAssembly
 
-        // We now ship the NetCoreApp2.0 reference assemblies with PowerShell Core, so that Add-Type can work
+        // We now ship .Net Core's reference assemblies with PowerShell Core, so that Add-Type can work
         // in a predictable way and won't be broken when we move to newer version of .NET Core.
-        // The NetCoreApp2.0 reference assemblies are located at '$PSHOME\ref'.
+        // The reference assemblies are located at '$PSHOME\ref'.
         private static string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
         private static string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
 
@@ -655,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
-            // netcoreapp2.0 currently comes with 137 reference assemblies (maybe more in future), so we use a capacity of '150'.
+            // netcoreapp2.1 currently comes with 144 reference assemblies (maybe more in future), so we use a capacity of '150'.
             var defaultRefAssemblies = new List<PortableExecutableReference>(150);
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))

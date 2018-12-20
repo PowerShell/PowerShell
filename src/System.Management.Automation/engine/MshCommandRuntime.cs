@@ -2315,7 +2315,7 @@ namespace System.Management.Automation
             private InternalCommand _wasPermittedToWrite = null;
             private bool _wasPermittedToWriteToPipeline = false;
             private Thread _wasPermittedToWriteThread = null;
-        } // AllowWrite
+        }
 
         /// <summary>
         /// Stores the exception to be returned from
@@ -2382,7 +2382,7 @@ namespace System.Management.Automation
         internal void SetupErrorVariable()
         {
             SetupVariable(VariableStreamKind.Error, this.ErrorVariable, ref _errorVarList);
-        } // SetupErrorVariable
+        }
 
         private void EnsureVariableParameterAllowed()
         {
@@ -2411,7 +2411,7 @@ namespace System.Management.Automation
             AppendDollarError(obj);
 
             this.OutputPipe.AppendVariableList(VariableStreamKind.Error, obj);
-        } // AppendError
+        }
 
         /// <summary>
         /// Appends the object to $global:error.  Non-terminating errors
@@ -2435,7 +2435,7 @@ namespace System.Management.Automation
             }
 
             Context.AppendDollarError(obj);
-        } // AppendDollarError
+        }
 
         #endregion Error PSVariable
 
@@ -2454,7 +2454,7 @@ namespace System.Management.Automation
         internal void SetupWarningVariable()
         {
             SetupVariable(VariableStreamKind.Warning, this.WarningVariable, ref _warningVarList);
-        } // SetupWarningVariable
+        }
 
         /// <summary>
         /// Append a warning to WarningVariable if specified.
@@ -2463,7 +2463,7 @@ namespace System.Management.Automation
         internal void AppendWarningVarList(object obj)
         {
             this.OutputPipe.AppendVariableList(VariableStreamKind.Warning, obj);
-        } // AppendWarning
+        }
 
         #endregion Warning PSVariable
 
@@ -2482,7 +2482,7 @@ namespace System.Management.Automation
         internal void SetupInformationVariable()
         {
             SetupVariable(VariableStreamKind.Information, this.InformationVariable, ref _informationVarList);
-        } // SetupWarningVariable
+        }
 
         internal void SetupVariable(VariableStreamKind streamKind, string variableName, ref IList varList)
         {
@@ -2538,7 +2538,7 @@ namespace System.Management.Automation
                 this.OutputPipe.AddVariableList(streamKind, varList);
             }
             _state.PSVariable.Set(variableName, varList);
-        } // SetupVariable
+        }
 
         /// <summary>
         /// Append a Information to InformationVariable if specified.
@@ -2547,7 +2547,7 @@ namespace System.Management.Automation
         internal void AppendInformationVarList(object obj)
         {
             this.OutputPipe.AppendVariableList(VariableStreamKind.Information, obj);
-        } // AppendInformation
+        }
 
         #endregion Information PSVariable
 
@@ -2684,7 +2684,7 @@ namespace System.Management.Automation
                 DoWriteError(new KeyValuePair<ErrorRecord, ActionPreference>(errorRecord, preference));
             }
 #endif
-        } // WriteError
+        }
 
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
@@ -2735,7 +2735,7 @@ namespace System.Management.Automation
             ThrowIfWriteNotPermitted(true);
 
             _WriteErrorSkipAllowCheck(errorRecord, preference);
-        } // DoWriteError
+        }
 
         // NOTICE-2004/06/08-JonN 959638
         // Use this variant to skip the ThrowIfWriteNotPermitted check
@@ -2822,7 +2822,7 @@ namespace System.Management.Automation
                         false  // hasSecurityImpact
                     );
                     break;
-            } // switch (preference)
+            }
 
             // 2005/01/20 Do not write the object to $error if
             // ManageException has already done so
@@ -2953,7 +2953,7 @@ namespace System.Management.Automation
             {
                 _debugPreference = value;
                 _isDebugPreferenceSet = true;
-            } // set
+            }
         }
 
         private bool _isVerbosePreferenceCached = false;
@@ -3044,7 +3044,7 @@ namespace System.Management.Automation
 
                 _warningPreference = value;
                 IsWarningActionSet = true;
-            } // set
+            }
         }
 
         // This is used so that people can tell whether the verbose switch
@@ -3065,7 +3065,7 @@ namespace System.Management.Automation
             {
                 _verboseFlag = value;
                 IsVerboseFlagSet = true;
-            } // Set
+            }
         }
 
         internal bool IsVerboseFlagSet { get; private set; } = false;
@@ -3088,7 +3088,7 @@ namespace System.Management.Automation
             {
                 _confirmFlag = value;
                 IsConfirmFlagSet = true;
-            } // set
+            }
         }
 
         internal bool IsConfirmFlagSet { get; private set; } = false;
@@ -3111,7 +3111,7 @@ namespace System.Management.Automation
             {
                 _useTransactionFlag = value;
                 UseTransactionFlagSet = true;
-            } // set
+            }
         }
 
         internal bool UseTransactionFlagSet { get; private set; } = false;
@@ -3135,7 +3135,7 @@ namespace System.Management.Automation
             {
                 _debugFlag = value;
                 IsDebugFlagSet = true;
-            } // set
+            }
         }
 
         internal bool IsDebugFlagSet { get; private set; } = false;
@@ -3166,7 +3166,7 @@ namespace System.Management.Automation
             {
                 _whatIfFlag = value;
                 IsWhatIfFlagSet = true;
-            } // set
+            }
         }
 
         internal bool IsWhatIfFlagSet { get; private set; }
@@ -3207,7 +3207,7 @@ namespace System.Management.Automation
 
                 _errorAction = value;
                 IsErrorActionSet = true;
-            } // set
+            }
         }
 
         internal bool IsErrorActionSet { get; private set; } = false;
@@ -3235,7 +3235,7 @@ namespace System.Management.Automation
             {
                 _progressPreference = value;
                 _isProgressPreferenceSet = true;
-            } // set
+            }
         }
         private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
         private bool _isProgressPreferenceSet = false;
@@ -3269,7 +3269,7 @@ namespace System.Management.Automation
 
                 _informationPreference = value;
                 IsInformationActionSet = true;
-            } // set
+            }
         }
         private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
 
@@ -3357,7 +3357,7 @@ namespace System.Management.Automation
                     Dbg.Assert(false, "Bad preference value" + preference);
                     return true;
             }
-        } // WriteHelper_ShouldWrite
+        }
 
         /// <summary>
         /// Complete implementation of WriteDebug/WriteVerbose/WriteProgress
@@ -3432,7 +3432,7 @@ namespace System.Management.Automation
                 true,  // replaceNoWithHalt
                 false  // hasSecurityImpact
             );
-        } // WriteHelper
+        }
 
         /// <summary>
         /// Helper for continue prompt, handles Inquire
@@ -3607,7 +3607,7 @@ namespace System.Management.Automation
                     throw ManageException(e);
                 }
             } while (true);
-        } // InquireHelper
+        }
 
         /// <summary>
         /// Determines if this is being run in the context of a remote host or not.

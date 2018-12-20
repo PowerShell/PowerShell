@@ -95,7 +95,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // NewDrive
+        }
 
         /// <summary>
         /// Adds a drive to the PowerShell namespace.
@@ -226,7 +226,7 @@ namespace System.Management.Automation
 
                 throw e;
             }
-        } // NewDrive
+        }
 
         private static bool IsValidDriveName(string name)
         {
@@ -248,7 +248,7 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // IsValidDriveName
+        }
         private static char[] s_charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
 
         /// <summary>
@@ -350,7 +350,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetProviderRootFromSpecifiedRoot
+        }
 
         /// <summary>
         /// Gets an object that defines the additional parameters for the NewDrive implementation
@@ -399,7 +399,7 @@ namespace System.Management.Automation
                         e);
             }
             return result;
-        } // NewDriveDynamicParameters
+        }
 
         #endregion NewDrive
 
@@ -466,7 +466,7 @@ namespace System.Management.Automation
 
                 // Increment the scope ID
                 ++scopeID;
-            } // foreach scope
+            }
 
             if (result == null && automount)
             {
@@ -491,7 +491,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetDrive
+        }
 
         /// <summary>
         /// Searches through the session state scopes looking
@@ -594,7 +594,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetDrive
+        }
 
         private PSDriveInfo AutomountFileSystemDrive(string name)
         {
@@ -632,7 +632,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // AutomountFileSystemDrive
+        }
 
         private PSDriveInfo AutomountFileSystemDrive(System.IO.DriveInfo systemDriveInfo)
         {
@@ -734,7 +734,7 @@ namespace System.Management.Automation
                     Severity.Warning);
             }
             return result;
-        } // AutomountFileSystemDrive
+        }
 
         /// <summary>
         /// Auto-mounts a built-in drive.
@@ -747,7 +747,7 @@ namespace System.Management.Automation
             PSDriveInfo result = GetDrive(name, false);
 
             return result;
-        } // AutomountFileSystemDrive
+        }
 
         /// <summary>
         /// Automatically mount the specified drive
@@ -878,7 +878,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ValidateOrRemoveAutoMountedDrive
+        }
 
         /// <summary>
         /// If a VHD is mounted to a drive prior to the PowerShell session being launched,
@@ -965,7 +965,7 @@ namespace System.Management.Automation
             }
 
             return drives;
-        } // GetDrivesForProvider
+        }
 
         #endregion GetDrive
 
@@ -1004,7 +1004,7 @@ namespace System.Management.Automation
             }
 
             RemoveDrive(drive, force, scopeID);
-        } // RemoveDrive
+        }
 
         /// <summary>
         /// Removes the drive with the specified name.
@@ -1053,7 +1053,7 @@ namespace System.Management.Automation
             {
                 RemoveDrive(drive, force, scopeID, context);
             }
-        } // RemoveDrive
+        }
 
         /// <summary>
         /// Removes the specified drive.
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation
             {
                 context.ThrowFirstErrorOrDoNothing();
             }
-        } // RemoveDrive
+        }
 
         /// <summary>
         /// Removes the specified drive.
@@ -1210,7 +1210,7 @@ namespace System.Management.Automation
                         e.ErrorRecord,
                         e));
             }
-        } // RemoveDrive
+        }
 
         /// <summary>
         /// Determines if the drive can be removed by calling the provider
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation
             }
 
             return driveRemovable;
-        } // CanRemoveDrive
+        }
 
         #endregion RemoveDrive
 
@@ -1377,7 +1377,7 @@ namespace System.Management.Automation
                 {
                     break;
                 }
-            } // foreach scope
+            }
 
             // Now lookup all the file system drives and automount any that are not
             // present
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation
                 results.Add(drive);
             }
             return results;
-        } // Drives
+        }
 
         #endregion Drives
 
@@ -1431,7 +1431,7 @@ namespace System.Management.Automation
                     return ExecutionContext.TopLevelSessionState.CurrentDrive;
                 else
                     return _currentDrive;
-            } // get
+            }
 
             set
             {
@@ -1439,8 +1439,8 @@ namespace System.Management.Automation
                     ExecutionContext.TopLevelSessionState.CurrentDrive = value;
                 else
                     _currentDrive = value;
-            } // set
-        } // CurrentDrive
+            }
+        }
     }           // SessionStateInternal class
 }
 

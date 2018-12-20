@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.OptionsInternal = value;
             }
-        } // Options
+        }
 
         /// <summary>
         /// The parameter for the expression that should be traced.
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return base.FileListener; }
             set { base.FileListener = value; }
-        } // File
+        }
 
         /// <summary>
         /// Force parameter to control read-only files.
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return base.DebuggerListener; }
             set { base.DebuggerListener = value; }
-        } // Debugger
+        }
 
         /// <summary>
         /// If this parameter is specified the Msh Host trace listener will be added.
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return base.PSHostListener; }
             set { base.PSHostListener = value; }
-        } // PSHost
+        }
 
         #endregion Parameters
 
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(result, true);
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Finishes running the command if specified and then sets the
@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 GC.SuppressFinalize(this);
             }
-        } // Dispose
+        }
         private bool _disposed;
         #endregion IDisposable
     }

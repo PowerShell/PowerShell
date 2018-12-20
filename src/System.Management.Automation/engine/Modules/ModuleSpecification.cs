@@ -341,4 +341,4 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion
-} // Microsoft.PowerShell.Commands
+}

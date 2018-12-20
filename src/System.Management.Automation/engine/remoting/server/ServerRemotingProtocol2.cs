@@ -184,7 +184,7 @@ namespace System.Management.Automation
                         ResetRunspaceState.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
                     break;
-            } // switch...
+            }
         }
 
         /// <summary>
@@ -651,7 +651,7 @@ namespace System.Management.Automation
                         HostResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostResponse>(remoteHostResponse));
                     }
                     break;
-            } // switch ...
+            }
         }
 
         /// <summary>

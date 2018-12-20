@@ -1,5 +1,84 @@
 # Changelog
 
+## v6.2.0-preview.3 - 2018-12-10
+
+### Breaking Changes
+
+- `Get-ExperimentalFeature` no longer has `-ListAvailable` switch (#8318)
+- `Debug` parameter now sets `DebugPreference` to `Continue` instead of `Inquire` (#8195) (Thanks @KirkMunro!)
+
+### Engine Updates and Fixes
+
+- Improve PowerShell startup time by 24% (#8341) (#8396)
+- Remove extra newlines from formatting which resulted in unnecessary double newlines (#8247)
+- Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318)
+- Fix `Export-ModuleMember` bug for a `ScriptBlock` having no context (#8363)
+- Fix race condition to access `powershell.config.json` (#8249) (Thanks @iSazonov!)
+- Add `SkipCA` and `SkipCN` check requirement to WinRM/OMI HTTPS connection (#8279)
+- Add fix for `Start-Job` initialization script which should not be executed as trusted in system lockdown (#8284)
+
+### General Cmdlet Updates and Fixes
+
+- Add `Enable-ExperimentalFeature` and `Disable-ExperimentalFeature` cmdlets (#8318)
+- Add cmdlet `Join-String` for creating text from pipeline input (#7660) (Thanks @powercode!)
+- Expose all cmdlets from `PSDiagnostics` if `logman.exe` is available (#8366)
+- Fix `Get-Help` for advanced functions with MAML help content (#8353)
+- Conditionally mark getter/setter implementations as virtual in generated classes (#8303) (Thanks @IISResetMe!)
+- Fix for `PSDrive` creation with a UNC path with a trailing backslash or forward slash when combined with `-Persist` (#8305) (Thanks @kvprasoon!)
+- Remove `Persist` parameter from `New-PSDrive` on non-Windows platform (#8291) (Thanks @lukexjeremy!)
+- `Test-Path`: Return `$false` when given an empty or `$null` `-Path`/`-LiteralPath` value (#8080) (Thanks @vexx32!)
+- Token calculation fix for `Get-Help` executed on `ScriptBlock` for comment help. (#8238) (Thanks @hubuk!)
+- Support `Get-PSHostProcessInfo` and `Enter-PSHostProcess` on Unix platforms (#8232)
+
+### Code Cleanup
+
+- Update `resgen`, `typegen` to use .Net Core 2.1 (#8369) (Thanks @bergmeister!)
+- Change `Newtonsoft` deserializing bug comment to link to the new issue (#8377) (Thanks @louistio!)
+- Cleanup `#if !CORECLR` code (#8337) (Thanks @iSazonov!)
+- Cleanup `UpdatableHelpSystem` and enable XSD validation on MAML help content (#8335) (Thanks @iSazonov!)
+- Remove old `customPSSnapInType` parameter from `PSSnapInInfo()` (#8333) (Thanks @iSazonov!)
+- Cleanup `#if CORECLR` from some files (#8332) (Thanks @iSazonov!)
+- Cleanup `AssemblyInfo` (#8190) (Thanks @iSazonov!)
+- Fix `GetLocationCommand` output type parameter set and style issues (#8324) (Thanks @Meir017!)
+
+### Tools
+
+- Remove `dependabot` attribution and generate changelog sections using `CL-*` labels (#8386)
+
+### Tests
+
+- Update folder path for storing optimization profile and add test to validate loaded assemblies and libraries on startup (#8406)
+- Fix an intermittent failure in macOS logging tests (#8385)
+- Created a `csproj` to pin test modules and updated `build.psm1` accordingly (#8350)
+- Update help content for `TabCompletion` tests only if it does not exist (#8355)
+- Skip `Enter-PSHostProcess` tests on `AppVeyor` due to `PSReadline` issue (#8317)
+
+### Build and Packaging Improvements
+
+- Remove `AmazonLinux` Dockerfile (#8271) (Thanks @kiazhi!)
+- Make `install-powershell.sh` auto-detect if it should use `wget` or `curl` (#8225) (Thanks @DarwinJS!)
+- Bump `NJsonSchema` from `9.12.2` to `9.13.1` (#8319) (#8328) (#8412) (#8371) (#8384)
+- Bump `Microsoft.PowerShell.Native` from `6.2.0-preview.2` to `6.2.0-preview.3` (#8411)
+- Update the name of the artifact to be unique per artifact (#8405)
+- Create unified release build for macOS and Linux packages (#8399)
+- Add Linux `ARM64` build support (#8016) (Thanks @slide!)
+- Update the timeout of CI builds (#8398)
+- Bump `PackageManagement` from `1.2.2` to `1.2.4` in `/src/Modules` (#8320) (#8383)
+- Bump `Newtonsoft.Json` from `11.0.2` to `12.0.1` (#8348)
+- Enable pipeline to sync `PSGallery` modules to `AzArtifacts` feed (#8316)
+- Build Alpine `tar.gz` package in release builds (#8340)
+- Publish test package to `AppVeyor` daily build (#8273)
+- Bump `Microsoft.CodeAnalysis.CSharp` from `2.9.0` to `2.10.0` (#8294)
+- Bump `PowerShellGet` from `2.0.1` to `2.0.3` in `/src/Modules` (#8321)
+- Enable `Open Here` context menu on Windows to work with root of a drive (#8287)
+- Bump `System.Data.SqlClient` from `4.5.1` to `4.6.0` (#8266)
+
+### Documentation and Help Content
+
+- Merge `changelogs` from `6.1.1` and `6.0.5` into master (#8283)
+- Remove all reference to `AppVeyor` and `Travis CI` from docs (#8376)
+- Change default issue template to use different categories (#8203)
+
 ## v6.2.0-preview.2 - 2018-11-15
 
 ### Breaking Changes

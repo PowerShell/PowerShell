@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-using Xunit;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,23 +13,30 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
-using System.Reflection;
+using Xunit;
 
 namespace PSTests.Parallel
 {
-    public class FileSystemProviderTests: IDisposable
+    public class FileSystemProviderTests : IDisposable
     {
         private string testPath;
         private string testContent;
+
         public FileSystemProviderTests()
         {
             testPath = Path.GetTempFileName();
             testContent = "test content!";
-            if(File.Exists(testPath)) File.Delete(testPath);
-            File.AppendAllText(testPath,testContent);
+            if (File.Exists(testPath))
+            {
+                File.Delete(testPath);
+            }
+
+            File.AppendAllText(testPath, testContent);
         }
+
         void IDisposable.Dispose()
         {
             File.Delete(testPath);
@@ -38,18 +45,19 @@ namespace PSTests.Parallel
         private ExecutionContext GetExecutionContext()
         {
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
-            PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
+            PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
             InitialSessionState iss = InitialSessionState.CreateDefault2();
             AutomationEngine engine = new AutomationEngine(hostInterface, iss);
             ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
             return executionContext;
         }
+
         private ProviderInfo GetProvider()
         {
             ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
 
-            SessionStateProviderEntry providerEntry = new SessionStateProviderEntry("FileSystem",typeof(FileSystemProvider), null);
+            SessionStateProviderEntry providerEntry = new SessionStateProviderEntry("FileSystem", typeof(FileSystemProvider), null);
             sessionState.AddSessionStateEntry(providerEntry);
             ProviderInfo matchingProvider = sessionState.ProviderList.ToList()[0];
 
@@ -59,7 +67,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestCreateJunctionFails()
         {
-            if(!Platform.IsWindows)
+            if (!Platform.IsWindows)
             {
                 Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty));
             }
@@ -73,20 +81,20 @@ namespace PSTests.Parallel
         public void TestGetHelpMaml()
         {
             FileSystemProvider fileSystemProvider = new FileSystemProvider();
-            Assert.Equal(fileSystemProvider.GetHelpMaml(String.Empty,String.Empty),String.Empty);
-            Assert.Equal(fileSystemProvider.GetHelpMaml("helpItemName",String.Empty),String.Empty);
-            Assert.Equal(fileSystemProvider.GetHelpMaml(String.Empty,"path"),String.Empty);
+            Assert.Equal(fileSystemProvider.GetHelpMaml(string.Empty, string.Empty), string.Empty);
+            Assert.Equal(fileSystemProvider.GetHelpMaml("helpItemName", string.Empty), string.Empty);
+            Assert.Equal(fileSystemProvider.GetHelpMaml(string.Empty, "path"), string.Empty);
         }
 
         [Fact]
         public void TestMode()
         {
-            Assert.Equal(FileSystemProvider.Mode(null),String.Empty);
+            Assert.Equal(FileSystemProvider.Mode(null), string.Empty);
             FileSystemInfo directoryObject = null;
             FileSystemInfo fileObject = null;
             FileSystemInfo executableObject = null;
 
-            if(!Platform.IsWindows)
+            if (!Platform.IsWindows)
             {
                 directoryObject = new DirectoryInfo(@"/");
                 fileObject = new FileInfo(@"/etc/hosts");
@@ -99,9 +107,9 @@ namespace PSTests.Parallel
                 executableObject = new FileInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
             }
 
-            Assert.Equal("d-----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"));
-            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r","-").Replace("a","-"));
-            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(executableObject)).Replace("r","-").Replace("a","-"));
+            Assert.Equal("d-----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r", "-"));
+            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r", "-").Replace("a", "-"));
+            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(executableObject)).Replace("r", "-").Replace("a", "-"));
         }
 
         [Fact]
@@ -111,15 +119,15 @@ namespace PSTests.Parallel
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-            PSObject pso=new PSObject();
-            pso.AddOrSetProperty("IsReadOnly",false);
+            PSObject pso = new PSObject();
+            pso.AddOrSetProperty("IsReadOnly", false);
             fileSystemProvider.SetProperty(testPath, pso);
-            fileSystemProvider.GetProperty(testPath, new Collection<string>(){"IsReadOnly"});
+            fileSystemProvider.GetProperty(testPath, new Collection<string>(){ "IsReadOnly" });
             FileInfo fileSystemObject1 = new FileInfo(testPath);
-            PSObject psobject1=PSObject.AsPSObject(fileSystemObject1);
-            foreach(PSPropertyInfo property in psobject1.Properties)
+            PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
+            foreach (PSPropertyInfo property in psobject1.Properties)
             {
-                if(property.Name == "IsReadOnly")
+                if (property.Name == "IsReadOnly")
                 {
                     Assert.False((bool)property.Value);
                 }
@@ -133,12 +141,12 @@ namespace PSTests.Parallel
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-            fileSystemProvider.GetProperty(testPath, new Collection<string>(){"Name"});
+            fileSystemProvider.GetProperty(testPath, new Collection<string>(){ "Name" });
             FileInfo fileSystemObject1 = new FileInfo(testPath);
-            PSObject psobject1=PSObject.AsPSObject(fileSystemObject1);
-            foreach(PSPropertyInfo property in psobject1.Properties)
+            PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
+            foreach (PSPropertyInfo property in psobject1.Properties)
             {
-                if(property.Name == "FullName")
+                if (property.Name == "FullName")
                 {
                     Assert.Equal(testPath, property.Value);
                 }
@@ -152,7 +160,7 @@ namespace PSTests.Parallel
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-            fileSystemProvider.ClearProperty(testPath, new Collection<string>(){"Attributes"});
+            fileSystemProvider.ClearProperty(testPath, new Collection<string>(){ "Attributes" });
         }
 
         [Fact]
@@ -164,7 +172,7 @@ namespace PSTests.Parallel
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 
             IContentReader contentReader = fileSystemProvider.GetContentReader(testPath);
-            Assert.Equal(contentReader.Read(1)[0],testContent);
+            Assert.Equal(contentReader.Read(1)[0], testContent);
             contentReader.Close();
         }
 
@@ -177,9 +185,9 @@ namespace PSTests.Parallel
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 
             IContentWriter contentWriter = fileSystemProvider.GetContentWriter(testPath);
-            contentWriter.Write(new List<string>(){"contentWriterTestContent"});
+            contentWriter.Write(new List<string>(){ "contentWriterTestContent" });
             contentWriter.Close();
-            Assert.Equal(File.ReadAllText(testPath), testContent+@"contentWriterTestContent"+ System.Environment.NewLine);
+            Assert.Equal(File.ReadAllText(testPath), testContent + @"contentWriterTestContent" + System.Environment.NewLine);
         }
 
         [Fact]

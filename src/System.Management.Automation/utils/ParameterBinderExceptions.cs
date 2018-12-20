@@ -1048,5 +1048,5 @@ namespace System.Management.Automation
 
         #endregion serialization
     }
-} // namespace System.Management.Automation
+}
 

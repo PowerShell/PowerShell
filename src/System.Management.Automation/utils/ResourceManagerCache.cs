@@ -107,7 +107,7 @@ namespace System.Management.Automation
                 "If the manager was not already created, it should have been dynamically created or an exception should have been thrown");
 
             return manager;
-        } // GetResourceManager
+        }
 
         /// <summary>
         /// Design For Testability -- assert on failed resource lookup
@@ -237,6 +237,6 @@ namespace System.Management.Automation
 
             return rm;
         }
-    } // class ResourceManagerCache
-} // namespace System.Management.Automation
+    }
+}
 

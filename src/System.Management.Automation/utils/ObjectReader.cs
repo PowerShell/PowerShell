@@ -225,7 +225,7 @@ namespace System.Management.Automation.Internal
         protected abstract void Dispose(bool disposing);
 
         #endregion IDisposable
-    } // ObjectReaderBase
+    }
 
     /// <summary>
     /// A PipelineReader reading objects from an ObjectStream
@@ -335,7 +335,7 @@ namespace System.Management.Automation.Internal
                 _stream.Close();
             }
         }
-    } // ObjectReader
+    }
 
     /// <summary>
     /// A PipelineReader reading PSObjects from an ObjectStream
@@ -472,7 +472,7 @@ namespace System.Management.Automation.Internal
             return retval;
         }
         #endregion Private
-    } // PSObjectReader
+    }
 
     /// <summary>
     /// A ObjectReader for a PSDataCollection ObjectStream

@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -236,9 +236,9 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(result);
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // PingPathCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

@@ -263,7 +263,7 @@ namespace System.Management.Automation
 
                 // After the above steps, we know the ScriptBlockAst is in fact just a HashtableAst,
                 // now we need to check if the HashtableAst is safe.
-                return IsSafeValueVisitor.IsAstSafe(hashtableAst, GetSafeValueVisitor.SafeValueContext.Default);
+                return IsSafeValueVisitor.Default.IsAstSafe(hashtableAst);
             }
         }
 

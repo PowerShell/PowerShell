@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public AliasProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(aliasDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
             AliasInfo value = SessionState.Internal.GetAlias(name, Context.Origin);
 
             return value;
-        } // GetSessionStateItem
+        }
 
         /// <summary>
         /// Since items are often more than their value, this method should
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
                 value = aliasInfo.Definition;
             }
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Sets the alias of the specified name to the specified value
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteItemObject(item, item.Name, false);
             }
-        } // SetSessionStateItem
+        }
 #pragma warning restore 0162
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveAlias(name, Force);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
         /// Gets a flattened view of the alias in session state
@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
         internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetAliasTable();
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion protected members
 
-    } // AliasProvider
+    }
 
     /// <summary>
     /// The dynamic parameter object for the AliasProvider SetItem and NewItem commands

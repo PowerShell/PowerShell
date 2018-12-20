@@ -311,12 +311,12 @@ Path:.*
             $configFile = WriteLogSettings -LogId $logId
             $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
 
-            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 2 |
+            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 3 |
                 Set-Content -Path $contentFile
             $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
 
             $items | Should -Not -Be $null
-            $items.Count | Should -BeGreaterThan 1
+            $items.Count | Should -BeGreaterThan 2
             $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
             $items[1].EventId | Should -BeExactly 'NamedPipeIPC_ServerListenerStarted:NamedPipe.Open.Informational'
             $items[2].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'

@@ -7486,7 +7486,7 @@ namespace Microsoft.PowerShell.Commands
 
             return foundModule;
         }
-    } // end ModuleCmdletBase
+    }
 
     /// <summary>
     /// Holds the result of a binary module analysis.

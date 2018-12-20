@@ -47,8 +47,8 @@ namespace System.Management.Automation
                         new SessionState(this));
 
                 return result;
-            } // get
-        } // CurrentLocation
+            }
+        }
 
         /// <summary>
         /// Gets the namespace specific path of the current working directory
@@ -123,7 +123,7 @@ namespace System.Management.Automation
                 path = LocationGlobber.GetDriveQualifiedPath(drive.CurrentLocation, drive);
             }
             return new PathInfo(drive, drive.Provider, path, new SessionState(this));
-        } // GetNamespaceCurrentLocation
+        }
 
         /// <summary>
         /// Changes the current working directory to the path specified.
@@ -155,7 +155,7 @@ namespace System.Management.Automation
         internal PathInfo SetLocation(string path)
         {
             return SetLocation(path, null);
-        } // SetLocation
+        }
 
         /// <summary>
         /// Changes the current working directory to the path specified
@@ -587,7 +587,7 @@ namespace System.Management.Automation
             }
 
             return this.CurrentLocation;
-        } // SetLocation
+        }
 
         /// <summary>
         /// Determines if the specified path is the current working directory
@@ -784,7 +784,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // IsCurrentLocationOrAncestor
+        }
 
         #endregion Current working directory/drive
 
@@ -1016,7 +1016,7 @@ namespace System.Management.Automation
             PathInfoStack result = new PathInfoStack(stackName, locationStack);
 
             return result;
-        } // LocationStack
+        }
 
         /// <summary>
         /// Sets the default stack ID to the specified stack ID
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation
                 return new PathInfoStack(_defaultStackName, locationStack);
             }
             return null;
-        } // SetDefaultLocationStack
+        }
 
         #endregion push-Pop current working directory
     }           // SessionStateInternal class

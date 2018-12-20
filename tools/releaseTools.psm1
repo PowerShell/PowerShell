@@ -1,3 +1,5 @@
+#requires -Version 6.0
+
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 class CommitNode {
@@ -30,9 +32,7 @@ class CommitNode {
 # These powershell team members don't use 'microsoft.com' for Github email or choose to not show their emails.
 # We have their names in this array so that we don't need to query Github to find out if they are powershell team members.
 $Script:powershell_team = @(
-    "Klaudia Algiz"
     "Robert Holt"
-    "Dan Travison"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -42,6 +42,10 @@ $Script:community_login_map = @{
     "github@markekraus.com" = "markekraus"
     "info@powercode-consulting.se" = "powercode"
 }
+
+$Script:attribution_ignore_list = @(
+    'dependabot[bot]@users.noreply.github.com'
+)
 
 ##############################
 #.SYNOPSIS
@@ -189,8 +193,41 @@ function Get-ChangeLog
         $new_commits = $new_commits_during_last_release + $new_commits_after_last_release
     }
 
+    # Array of unlabled PRs.
+    $unlabeledPRs = @()
+
+    # Array of PRs with multiple labels. The label "CL-BreakingChange" is allowed with some other "CL-*" label.
+    $multipleLabelsPRs = @()
+
+    # Array of Breaking Change PRs.
+    $clBreakingChange = @()
+
+    # Array of PRs with build and packaging changes.
+    $clBuildPackage = @()
+
+    # Array of PRs with code cleanup changes.
+    $clCodeCleanup = @()
+
+    # Array of PRs with documentation changes.
+    $clDocs = @()
+
+    # Array of PRs with engine changes.
+    $clEngine = @()
+
+    # Array of PRs with general cmdlet changes.
+    $clGeneral = @()
+
+    # Array of PRs with test changes.
+    $clTest = @()
+
+    # Array of PRs with tool changes.
+    $clTools = @()
+
+    # Array of PRs tagged with 'CL-Untagged' label.
+    $clUntagged = @()
+
     foreach ($commit in $new_commits) {
-        if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName) {
+        if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
             $commit.ChangeLogMessage = "- {0}" -f $commit.Subject
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
@@ -211,9 +248,74 @@ function Get-ChangeLog
         if ($commit.IsBreakingChange) {
             $commit.ChangeLogMessage = "{0} [Breaking Change]" -f $commit.ChangeLogMessage
         }
+
+        ## Get the labels for the PR
+        try {
+            $pr = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/PowerShell/pulls/$($commit.PullRequest)" -Headers $header -ErrorAction SilentlyContinue
+        }
+        catch {
+            if ($_.Exception.Response.StatusCode -eq '404') {
+                Write-Warning -Message "Ignoring commit $($commit.Hash) by $($commit.AuthorName), as it does not have a PR."
+                continue
+            }
+        }
+
+        $clLabel = $pr.labels | Where-Object { $_.Name -match "^CL-"}
+
+        if ($clLabel.count -gt 1 -and $clLabel.Name -notcontains 'CL-BreakingChange') {
+            $multipleLabelsPRs = $pr
+        }
+        elseif ($clLabel.count -eq 0) {
+            $unlabeledPRs = $pr
+        }
+        else {
+            switch ($clLabel.Name) {
+                "CL-BreakingChange" { $clBreakingChange += $commit }
+                "CL-BuildPackaging" { $clBuildPackage += $commit }
+                "CL-CodeCleanup" { $clCodeCleanup += $commit }
+                "CL-Docs" { $clDocs += $commit }
+                "CL-Engine" { $clEngine += $commit }
+                "CL-General" { $clGeneral += $commit }
+                "CL-Test" { $clTest += $commit }
+                "CL-Tools" { $clTools += $commit }
+                "CL-Untagged" { $clUntagged += $commit }
+                "CL-NotInBuild" { continue }
+                Default { throw "unknown tag '$cLabel' for PR: '$($commit.PullRequest)'" }
+            }
+        }
     }
 
-    $new_commits | Sort-Object -Descending -Property IsBreakingChange | ForEach-Object -MemberName ChangeLogMessage
+    if ($multipleLabelsPRs.count -gt 0) {
+        Write-Error "PRs should not be tagged with multiple CL labels. PRs with multiple labels: $($multipleLabelsPRs.number -join ' ')"
+        $shouldThrow = $true
+    }
+
+    if ($unlabeledPRs.count -gt 0) {
+        Write-Error "PRs should have at least one CL label. PRs missing labels: $($unlabeledPRs.number -join ' ')"
+        $shouldThrow = $true
+    }
+
+    if ($shouldThrow) {
+        throw "Some PRs are tagged multiple times or have no tags."
+    }
+
+    PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
+    PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
+    PrintChangeLog -clSection $clEngine -sectionTitle 'Engine Updates and Fixes'
+    PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
+    PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup'
+    PrintChangeLog -clSection $clTools -sectionTitle 'Tools'
+    PrintChangeLog -clSection $clTest -sectionTitle 'Tests'
+    PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
+    PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
+}
+
+function PrintChangeLog($clSection, $sectionTitle) {
+    if ($clSection.Count -gt 0) {
+        "### $sectionTitle"
+        $clSection | ForEach-Object -MemberName ChangeLogMessage
+        ""
+    }
 }
 
 ##############################

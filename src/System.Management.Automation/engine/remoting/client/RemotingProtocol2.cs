@@ -196,8 +196,8 @@ namespace System.Management.Automation.Internal
                         PSEventArgsReceived.SafeInvoke(this, new RemoteDataEventArgs<PSEventArgs>(psEventArgs));
                     }
                     break;
-            } // switch ...
-        } // ProcessReceivedData
+            }
+        }
 
         /// <summary>
         /// Creates a PowerShell data structure handler instance associated
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Internal
                     _closingReason = e.SessionStateInfo.Reason;
                 }
             }
-        } // HandleClientRemoteSessionStateChanged
+        }
 
         /// <summary>
         /// Session is reporting that URI is getting redirected.
@@ -641,7 +641,7 @@ namespace System.Management.Automation.Internal
                     {
                         dsHandler.SetStateToFailed(stateInfo.Reason);
                     }
-                } // if ...
+                }
                 else if (stateInfo.State == RunspacePoolState.Closed)
                 {
                     foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation.Internal
                     inputstream.DataReady += new EventHandler(HandleInputDataReady);
                     WriteInput(inputstream);
                 }
-            } // else ...
+            }
         }
 
         /// <summary>
@@ -1315,8 +1315,8 @@ namespace System.Management.Automation.Internal
                         Dbg.Assert(false, "we should not be encountering this");
                     }
                     break;
-            } // switch ...
-        } // ProcessReceivedData
+            }
+        }
 
         /// <summary>
         /// Set the state of the associated powershell to stopped

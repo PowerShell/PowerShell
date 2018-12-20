@@ -187,7 +187,7 @@ namespace System.Management.Automation
             {
                 getProviderPathContext.RemoveStopReferral();
             }
-        } // GetParentPath
+        }
 
         private string AddQualifier(string path, ProviderInfo provider, string qualifier, bool isProviderQualified, bool isDriveQualified)
         {
@@ -286,7 +286,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // RemoveQualifier
+        }
 
         /// <summary>
         /// Gets the path to the parent object for the given object
@@ -431,7 +431,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // GetParentPath
+        }
 
         #endregion GetParentPath
 
@@ -630,7 +630,7 @@ namespace System.Management.Automation
             {
                 getProviderPathContext.RemoveStopReferral();
             }
-        } // NormalizeRelativePath
+        }
 
         /// <summary>
         /// Tests the specified character for equality with one of the powershell path separators and
@@ -733,7 +733,7 @@ namespace System.Management.Automation
             }
 
             return path;
-        } // NormalizeRelativePath
+        }
 
         #endregion NormalizeRelativePath
 
@@ -773,7 +773,7 @@ namespace System.Management.Automation
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
 
             return MakePath(parent, child, context);
-        } // MakePath
+        }
 
         /// <summary>
         /// Generates a path from the given parts.
@@ -868,7 +868,7 @@ namespace System.Management.Automation
                 result = MakePath(provider, parent, child, context);
             }
             return result;
-        } // MakePath
+        }
 
         /// <summary>
         /// Uses the specified provider to put the two parts of a path together
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // MakePath
+        }
 
         #endregion MakePath
 
@@ -1050,7 +1050,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } // GetChildName
+        }
 
         /// <summary>
         /// Gets the name of the leaf element in the specified path.
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation
             }
 
             return GetChildName(provider, workingPath, context);
-        } // GetChildName
+        }
 
         /// <summary>
         /// Gets the leaf element of the specified path.
@@ -1280,7 +1280,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // GetChildName
+        }
 
         #endregion GetChildName
 
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation
             // Since there was no errors return the accumulated objects
 
             return context.GetAccumulatedObjects();
-        } // MoveItem
+        }
 
         /// <summary>
         /// Moves the item specified by path to the specified destination.
@@ -1504,7 +1504,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // MoveItem
+        }
 
         /// <summary>
         /// Moves the item at the specified path to the destination path
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // MoveItem
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
@@ -1647,7 +1647,7 @@ namespace System.Management.Automation
                 return MoveItemDynamicParameters(providerInstance, providerPaths[0], destination, newContext);
             }
             return null;
-        } // MoveItemDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
@@ -1731,7 +1731,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // MoveItemDynamicParameters
+        }
 
         #endregion MoveItem
 

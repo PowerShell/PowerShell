@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
                     AddItemToCache(string.Empty, s_storeLocations);
                 }
             }
-        } // constructor
+        }
 
         /// <summary>
         /// Removes an item at the specified path
@@ -955,7 +955,7 @@ namespace Microsoft.PowerShell.Commands
             drives.Add(drive);
 
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         /// <summary>
         /// Determines if the item at the given path is a store-location
@@ -1129,7 +1129,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", result);
             return result;
-        } // ItemExists
+        }
 
         /// <summary>
         /// Gets the store location, store, or certificate
@@ -1353,7 +1353,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process.Start(System.IO.Path.Combine(certPath, certmgr));
             }
-        } // InvokeDefaultAction
+        }
 
         static private string EnsureDriveIsRooted(string path)
         {
@@ -1378,7 +1378,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", result);
             return result;
-        } // EnsureDriveIsRooted
+        }
 
         static private ErrorRecord CreateErrorRecord(string path,
                                               CertificateProviderItem itemType)
@@ -2068,7 +2068,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return item;
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the child items of a given store, or location.
@@ -2128,7 +2128,7 @@ namespace Microsoft.PowerShell.Commands
         {
             path = NormalizePath(path);
             GetChildItemsOrNames(path, false, returnContainers, true, GetFilter());
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Determines if the item at the specified path is a store
@@ -2176,7 +2176,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", isContainer);
             return isContainer;
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for get-item on the Certificate
@@ -2789,7 +2789,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    } // CertificateProvider
+    }
 
     /// <summary>
     /// Defines a class to represent a store location in the certificate

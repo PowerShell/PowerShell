@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-using Xunit;
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
+using Xunit;
 
 namespace PSTests.Parallel
 {

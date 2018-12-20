@@ -133,7 +133,7 @@ namespace System.Management.Automation
                 // to do so again.
                 variable.AddParameterAttributesNoChecks(runtimeDefinedParameter.Attributes);
             }
-        } // BindParameter
+        }
 
         /// <summary>
         /// Return the default value of a script parameter, evaluating the parse tree if necessary.
@@ -165,5 +165,5 @@ namespace System.Management.Automation
         internal SessionStateScope LocalScope { get; set; }
 
         #endregion private members
-    } // ScriptParameterBinder
-} // namespace System.Management.Automation
+    }
+}

@@ -156,6 +156,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool dummy;
             List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out dummy);
             thi.hideHeader = this.HideHeaders;
+            thi.repeatHeader = this.RepeatHeader;
 
             int col = 0;
             foreach (TableRowItemDefinition rowItem in activeRowItemDefinitionList)
@@ -289,6 +290,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _tableBody.header.hideHeader;
                 }
+                return false;
+            }
+        }
+
+        private bool RepeatHeaders
+        {
+            get
+            {
+                if (this.parameters != null)
+                {
+                    return this.parameters.repeatHeader;
+                }
+
                 return false;
             }
         }

@@ -122,32 +122,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// True if it is the inbox powershell for NanoServer or IoT.
-        /// </summary>
-        internal static bool IsInbox
-        {
-            get
-            {
-#if UNIX
-                return false;
-#else
-                if (_isInbox.HasValue) { return _isInbox.Value; }
-
-                _isInbox = false;
-                if (IsNanoServer || IsIoT)
-                {
-                    _isInbox = string.Equals(
-                        Utils.DefaultPowerShellAppBase,
-                        Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID),
-                        StringComparison.OrdinalIgnoreCase);
-                }
-
-                return _isInbox.Value;
-#endif
-            }
-        }
-
-        /// <summary>
         /// True if underlying system is Windows Desktop.
         /// </summary>
         public static bool IsWindowsDesktop
@@ -168,7 +142,6 @@ namespace System.Management.Automation
 #if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
-        private static bool? _isInbox = null;
         private static bool? _isWindowsDesktop = null;
 #endif
 
@@ -768,4 +741,4 @@ namespace System.Management.Automation
             }
         }
     }
-} // namespace System.Management.Automation
+}
