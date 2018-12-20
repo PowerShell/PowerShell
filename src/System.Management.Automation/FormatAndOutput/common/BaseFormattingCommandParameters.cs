@@ -46,6 +46,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal Nullable<bool> autosize = null;
 
         /// <summary>
+        /// If true, the header for a table is repeated after each screen full
+        /// of content.
+        /// </summary>
+        internal bool repeatHeader = false;
+
+        /// <summary>
         /// errors are shown as out of band messages
         /// </summary>
         internal Nullable<bool> showErrorsAsMessages = null;

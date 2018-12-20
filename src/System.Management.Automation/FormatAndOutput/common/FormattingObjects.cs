@@ -220,6 +220,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         public bool hideHeader;
+        public bool repeatHeader;
         public List<TableColumnInfo> tableColumnInfoList;
     }
 
