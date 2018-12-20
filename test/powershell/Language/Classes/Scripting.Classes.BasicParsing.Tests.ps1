@@ -390,11 +390,11 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     It "Verb should be Get (class C2)" {$c.VerbName | Should -BeExactly 'Get'}
     It "Noun should be Thing (class C2)" {$c.NounName | Should -BeExactly 'Thing'}
 
-    It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | Should -BeTrue }
+    It  "SupportsShouldProcess should be $true" { $c.SupportsShouldProcess | Should -BeTrue }
     It  "SupportsPaging should be `$true" { $c.SupportsPaging | Should -BeTrue }
     Context "Support ConfirmImpact as an attribute" {
         It  "ConfirmImpact should be high" {
-            [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
+            [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
             $t = [C3].GetCustomAttributes($false)
             $t.Count | Should -Be 1
             $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute
