@@ -1,15 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
-using System.Threading;
-using Microsoft.Win32;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Tracing;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Threading;
 using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -152,13 +155,29 @@ namespace System.Management.Automation.Runspaces
 
             PSThreadOptions memberOptions = this.IsNested ? PSThreadOptions.UseCurrentThread : this.LocalRunspace.ThreadOptions;
 
+#if !UNIX
+            // Use thread proc that supports impersonation flow for new thread start.
+            ThreadStart invokeThreadProcDelegate = InvokeThreadProcImpersonate;
+            _identityToImpersonate = null;
+
+            // If impersonation identity flow is requested, then get current thread impersonation, if any.
+            if ((InvocationSettings != null) && InvocationSettings.FlowImpersonationPolicy)
+            {
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
+            }
+#else
+            // UNIX does not support thread impersonation flow.
+            ThreadStart invokeThreadProcDelegate = InvokeThreadProc;
+#endif
+
             switch (memberOptions)
             {
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-                        // Start execution of pipeline in another thread
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), DefaultPipelineStackSize);
+                        // Start execution of pipeline in another thread, 
+                        // and support impersonation flow as needed (Windows only).
+                        Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
 #if !CORECLR
                         // No ApartmentState in CoreCLR
@@ -187,16 +206,18 @@ namespace System.Management.Automation.Runspaces
                     {
                         if (this.IsNested)
                         {
-                            // if this a nested pipeline we are already in the appropriate thread so we just execute the pipeline here
+                            // If this a nested pipeline we are already in the appropriate thread so we just execute the pipeline here.
+                            // Impersonation flow (Windows only) is not needed when using existing thread.
                             SetupInvokeThread(Thread.CurrentThread, true);
-                            this.InvokeThreadProc();
+                            InvokeThreadProc();
                         }
                         else
                         {
-                            // otherwise we execute the pipeline in the Runspace's thread
+                            // Otherwise we execute the pipeline in the Runspace's thread,
+                            // and support information flow on new thread as needed (Windows only).
                             PipelineThread invokeThread = this.LocalRunspace.GetPipelineThread();
                             SetupInvokeThread(invokeThread.Worker, true);
-                            invokeThread.Start(this.InvokeThreadProc);
+                            invokeThread.Start(invokeThreadProcDelegate);
                         }
                         break;
                     }
@@ -210,9 +231,10 @@ namespace System.Management.Automation.Runspaces
 
                         try
                         {
-                            // prepare invoke thread
+                            // Prepare invoke thread.
+                            // Impersonation flow (Windows only) is not needed when using existing thread.
                             SetupInvokeThread(Thread.CurrentThread, false);
-                            this.InvokeThreadProc();
+                            InvokeThreadProc();
                         }
                         finally
                         {
@@ -508,8 +530,26 @@ namespace System.Management.Automation.Runspaces
             return flowControlException;
         }
 
-        // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-        // Removed HandleUnexpectedExceptions infrastructure
+#if !UNIX
+        /// <summary>
+        /// Invokes the InvokeThreadProc() method on new thread, and flows calling thread 
+        /// impersonation as needed.
+        /// </summary>
+        private void InvokeThreadProcImpersonate()
+        {
+            if (_identityToImpersonate != null)
+            {
+                WindowsIdentity.RunImpersonated(
+                    _identityToImpersonate.AccessToken,
+                    () => InvokeThreadProc());
+
+                return;
+            }
+
+            InvokeThreadProc();
+        }
+#endif
+
         /// <summary>
         /// Start thread method for asynchronous pipeline execution.
         /// </summary>
@@ -520,19 +560,6 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-#if !CORECLR    // Impersonation is not supported in CoreCLR.
-                // Used to store old impersonation context if we impersonate.
-                System.Security.Principal.WindowsImpersonationContext oldImpersonationCtxt = null;
-                try
-                {
-                    if ((InvocationSettings != null) && (InvocationSettings.FlowImpersonationPolicy))
-                    {
-                        // we have a valid identity to impersonate.
-                        System.Security.Principal.WindowsIdentity identityToImPersonate =
-                            new System.Security.Principal.WindowsIdentity(InvocationSettings.WindowsIdentityToImpersonate.Token);
-                        oldImpersonationCtxt = identityToImPersonate.Impersonate();
-                    }
-#endif
                 // Set up pipeline internal host if it is available.
                 if (InvocationSettings != null && InvocationSettings.Host != null)
                 {
@@ -575,29 +602,6 @@ namespace System.Management.Automation.Runspaces
                     // Invoke finished successfully. Set state to Completed.
                     SetPipelineState(PipelineState.Completed);
                 }
-#if !CORECLR
-                }
-                finally
-                {
-                    // Impersonation is not supported in CoreCLR.
-                    // This finally block is needed to handle fxcop CA2124
-                    // If sensitive operations such as impersonation occur in the try block, and an
-                    // exception is thrown, the filter can execute before the finally block. For the
-                    // impersonation example, this means that the filter would execute as the impersonated user.
-                    if (oldImpersonationCtxt != null)
-                    {
-                        try
-                        {
-                            oldImpersonationCtxt.Undo();
-                            oldImpersonationCtxt.Dispose();
-                            oldImpersonationCtxt = null;
-                        }
-                        catch (System.Security.SecurityException)
-                        {
-                        }
-                    }
-                }
-#endif
             }
             catch (PipelineStoppedException ex)
             {
@@ -847,7 +851,12 @@ namespace System.Management.Automation.Runspaces
                         try
                         {
                             CommandOrigin commandOrigin = command.CommandOrigin;
-                            if (IsNested)
+
+                            // Do not set command origin to internal if this is a script debugger originated command (which always
+                            // runs nested commands).  This prevents the script debugger command line from seeing private commands.
+                            if (IsNested &&
+                                !LocalRunspace.InNestedPrompt &&
+                                !((LocalRunspace.Debugger != null) && (LocalRunspace.Debugger.InBreakpoint)))
                             {
                                 commandOrigin = CommandOrigin.Internal;
                             }
@@ -1096,11 +1105,14 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        // NTRAID#Windows Out Of Band Releases-925566-2005/12/09-JonN
         private bool _useExternalInput;
 
         private PipelineWriter _oldExternalErrorOutput;
         private PipelineWriter _oldExternalSuccessOutput;
+
+#if !UNIX
+        private WindowsIdentity _identityToImpersonate;
+#endif
 
         #endregion private_fields
 

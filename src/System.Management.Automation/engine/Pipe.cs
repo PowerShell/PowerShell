@@ -511,7 +511,7 @@ namespace System.Management.Automation.Internal
             {
                 _downstreamCmdlet.DoExecute();
             }
-        } // internal void AddItems(object objects)
+        }
 
         /// <summary>
         /// Returns an object from the pipe. If pipe is empty returns null.
@@ -591,4 +591,4 @@ namespace System.Management.Automation.Internal
             return ObjectQueue.ToArray();
         }
     }
-} // namespace System.Management.Automation.Internal
+}

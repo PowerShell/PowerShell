@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public VariableProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(variableDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             return (PSVariable)SessionState.Internal.GetVariable(name, Context.Origin);
-        } // GetSessionStateItem
+        }
 
         /// <summary>
         /// Sets the variable of the specified name to the specified value
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteItemObject(item, item.Name, false);
             }
-        } // SetSessionStateItem
+        }
 
         /// <summary>
         /// Removes the specified variable from session state.
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveVariable(name, Force);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
         /// Gets a flattened view of the variables in session state
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
         internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetVariableTable();
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Gets the value of the item that is returned from GetItem by
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
                 value = var.Value;
             }
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
@@ -232,6 +232,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion protected members
 
-    } // VariableProvider
+    }
 }
 

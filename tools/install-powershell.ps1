@@ -18,19 +18,28 @@
     On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
     On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
 #>
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName="Daily")]
 param(
-    [Parameter()]
+    [Parameter(ParameterSetName="Daily")]
     [string] $Destination,
 
-    [Parameter()]
+    [Parameter(ParameterSetName="Daily")]
     [switch] $Daily,
 
-    [Parameter()]
+    [Parameter(ParameterSetName="Daily")]
     [switch] $DoNotOverwrite,
 
+    [Parameter(ParameterSetName="Daily")]
+    [switch] $AddToPath,
+
+    [Parameter(ParameterSetName="MSI")]
+    [switch] $UseMSI,
+
+    [Parameter(ParameterSetName="MSI")]
+    [switch] $Quiet,
+
     [Parameter()]
-    [switch] $AddToPath
+    [switch] $Preview
 )
 
 Set-StrictMode -Version latest
@@ -51,8 +60,16 @@ if (-not $Destination) {
         $Destination = "${Destination}-daily"
     }
 }
+
 $Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
-Write-Verbose "Destination: $Destination" -Verbose
+
+if (-not $UseMSI) {
+    Write-Verbose "Destination: $Destination" -Verbose
+} else {
+    if (-not $IsWinEnv) {
+        throw "-UseMSI is only supported on Windows"
+    }
+}
 
 Function Remove-Destination([string] $Destination) {
     if (Test-Path -Path $Destination) {
@@ -127,10 +144,18 @@ try {
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
     } else {
         $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
-        $release = $metadata.ReleaseTag -replace '^v'
+        if ($Preview) {
+            $release = $metadata.PreviewReleaseTag -replace '^v'
+        } else {
+            $release = $metadata.ReleaseTag -replace '^v'
+        }
 
         $packageName = if ($IsWinEnv) {
-            "PowerShell-${release}-win-${architecture}.zip"
+            if ($UseMSI) {
+                "PowerShell-${release}-win-${architecture}.msi"
+            } else {
+                "PowerShell-${release}-win-${architecture}.zip"
+            }
         } elseif ($IsLinuxEnv) {
             "powershell-${release}-linux-${architecture}.tar.gz"
         } elseif ($IsMacOSEnv) {
@@ -141,27 +166,52 @@ try {
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
-        Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+        if ($PSVersionTable.PSEdition -eq "Desktop") {
+            # On Windows PowerShell, progress can make the download significantly slower
+            $oldProgressPreference = $ProgressPreference
+            $ProgressPreference = "SilentlyContinue"
+        }
+
+        try {
+            Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+        } finally {
+            if ($PSVersionTable.PSEdition -eq "Desktop") {
+                $ProgressPreference = $oldProgressPreference
+            }
+        }
+
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
         New-Item -ItemType Directory -Path $contentPath > $null
         if ($IsWinEnv) {
-            Expand-Archive -Path $packagePath -DestinationPath $contentPath
+            if ($UseMSI -and $Quiet) {
+                Write-Verbose "Performing quiet install"
+                $process = Start-Process msiexec -ArgumentList "/i",$packagePath,"/quiet" -Wait -PassThru
+                if ($process.exitcode -ne 0) {
+                    throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
+                }
+            } elseif ($UseMSI) {
+                Start-Process $packagePath -Wait
+            } else {
+                Expand-Archive -Path $packagePath -DestinationPath $contentPath
+            }
         } else {
             tar zxf $packagePath -C $contentPath
         }
     }
-    Remove-Destination $Destination
-    if (Test-Path $Destination) {
-        Write-Verbose "Copying files" -Verbose
-        # only copy files as folders will already exist at $Destination
-        Get-ChildItem -Recurse -Path "$contentPath" -File | ForEach-Object {
-            $DestinationFilePath = Join-Path $Destination $_.fullname.replace($contentPath,"")
-            Copy-Item $_.fullname -Destination $DestinationFilePath
+    if (-not $UseMSI) {
+        Remove-Destination $Destination
+        if (Test-Path $Destination) {
+            Write-Verbose "Copying files" -Verbose
+            # only copy files as folders will already exist at $Destination
+            Get-ChildItem -Recurse -Path "$contentPath" -File | ForEach-Object {
+                $DestinationFilePath = Join-Path $Destination $_.fullname.replace($contentPath,"")
+                Copy-Item $_.fullname -Destination $DestinationFilePath
+            }
+        } else {
+            $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
+            Move-Item -Path $contentPath -Destination $Destination
         }
-    } else {
-        $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
-        Move-Item -Path $contentPath -Destination $Destination
     }
 
     # Edit icon to disambiguate daily builds.
@@ -180,7 +230,7 @@ try {
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
     if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
-    if ($AddToPath) {
+    if ($AddToPath -and -not $UseMSI) {
         if ($IsWinEnv -and (-not [System.Environment]::GetEnvironmentVariable("Path", "Machine").Contains($Destination))) {
             ## Add to the Machine scope 'Path' environment variable
             $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
@@ -227,9 +277,11 @@ try {
         }
     }
 
-    Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
-    if ($Destination -eq $PSHome) {
-        Write-Host "Please restart pwsh" -ForegroundColor Magenta
+    if (-not $UseMSI) {
+        Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
+        if ($Destination -eq $PSHome) {
+            Write-Host "Please restart pwsh" -ForegroundColor Magenta
+        }
     }
 } finally {
     # Restore original value

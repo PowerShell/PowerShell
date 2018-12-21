@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                     drive.Root));
             }
             return drive;
-        } // NewDrive
+        }
 
         /// <summary>
         /// Creates HKEY_LOCAL_MACHINE and HKEY_CURRENT_USER registry drives during provider initialization.
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                     null));
 
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
             // Write out the result
 
             WriteRegistryItemObject(result, path);
-        } // GetItem
+        }
 
         /// <summary>
         /// Sets registry values at <paramref name="path "/> to the <paramref name="value"/> specified.
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
                     }
-                } // DynamicParameters != null
+                }
 
                 if (!valueSet)
                 {
@@ -366,8 +366,8 @@ namespace Microsoft.PowerShell.Commands
                 key.Close();
 
                 WriteItemObject(result, path, false);
-            } // ShouldProcess
-        } // SetItem
+            }
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the SetItem method.
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
         protected override object SetItemDynamicParameters(string path, object value)
         {
             return new RegistryProviderSetItemDynamicParameter();
-        } // SetItemDynamicParameters
+        }
 
         /// <summary>
         /// Clears the item at the specified <paramref name="path"/>.
@@ -493,8 +493,8 @@ namespace Microsoft.PowerShell.Commands
                 // Write out the key
 
                 WriteRegistryItemObject(key, path);
-            } // ShouldProcess
-        } // ClearItem
+            }
+        }
 
         #endregion ItemCmdletProvider overrides
 
@@ -625,8 +625,8 @@ namespace Microsoft.PowerShell.Commands
                                     WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, keypath));
                                 }
                             }
-                        } // foreach subkeyName in keyNames
-                    } // keyNames != null
+                        }
+                    }
                 }
                 catch (System.IO.IOException ioException)
                 {
@@ -650,7 +650,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, path));
                 }
             }
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets all the child key and value names of the key at the specified <paramref name="path"/>.
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, path));
                 }
             }
-        } // GetChildNames
+        }
 
         private const string charactersThatNeedEscaping = ".*?[]:";
 
@@ -795,7 +795,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result.ToString();
-        } // EscapeSpecialChars
+        }
 
         /// <summary>
         /// Escapes the characters in the registry key name that are used by globbing and
@@ -844,7 +844,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result.ToString();
-        } // EscapeChildName
+        }
 
         /// <summary>
         /// Renames the key at the specified <paramref name="path"/> to <paramref name="newName"/>.
@@ -907,8 +907,8 @@ namespace Microsoft.PowerShell.Commands
                 // Implement rename as a move operation
 
                 MoveRegistryItem(path, newPath);
-            } // ShouldProcess
-        } // RenameItem
+            }
+        }
 
         /// <summary>
         /// Creates a new registry key or value at the specified <paramref name="path"/>.
@@ -1070,8 +1070,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteError(new ErrorRecord(notSupportedException, notSupportedException.GetType().FullName, ErrorCategory.InvalidOperation, path));
                 }
-            } // ShouldProcess
-        } // NewItem
+            }
+        }
 
         /// <summary>
         /// Removes the specified registry key and all sub-keys
@@ -1155,10 +1155,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteError(new ErrorRecord(notSupportedException, notSupportedException.GetType().FullName, ErrorCategory.InvalidOperation, path));
                 }
-            } // ShouldProcess
+            }
 
             key.Close();
-        } // RemoveItem
+        }
 
         /// <summary>
         /// Determines if the key at the specified path exists.
@@ -1212,7 +1212,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // ItemExists
+        }
 
         /// <summary>
         /// Determines if the specified key has subkeys.
@@ -1265,7 +1265,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // HasChildItems
+        }
 
         /// <summary>
         /// Copies the specified registry key to the specified <paramref name="path"/>.
@@ -1332,7 +1332,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             key.Close();
-        } // CopyItem
+        }
 
         private bool CopyRegistryKey(
             IRegistryWrapper key,
@@ -1493,7 +1493,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // CopyRegistryKey
+        }
 
         private bool ErrorIfDestinationIsSourceOrChildOfSource(
             string sourcePath,
@@ -1553,7 +1553,7 @@ namespace Microsoft.PowerShell.Commands
                     destinationPath));
             }
             return result;
-        } // ErrorIfDestinationIsSourceOrChildOfSource
+        }
 
         #endregion ContainerCmdletProvider overrides
 
@@ -1613,7 +1613,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Moves the specified key.
@@ -1657,7 +1657,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 MoveRegistryItem(path, destination);
             }
-        } // MoveItem
+        }
 
         private void MoveRegistryItem(string path, string destination)
         {
@@ -1747,7 +1747,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
             }
-        } // MoveRegistryItem
+        }
 
         #endregion NavigationCmdletProvider overrides
 
@@ -1817,7 +1817,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WritePropertyObject(propertyResults, path);
             }
-        } // GetProperty
+        }
 
         /// <summary>
         /// Sets the specified properties of the item at the specified <paramref name="path"/>.
@@ -1924,7 +1924,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             key.Close();
-        } // SetProperty
+        }
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to the
@@ -2290,8 +2290,8 @@ namespace Microsoft.PowerShell.Commands
 
                         WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, propertyNameToRemove));
                     }
-                } // if should process
-            } // foreach
+                }
+            }
 
             key.Close();
             WriteErrorIfPerfectMatchNotFound(hadAMatch, path, propertyName);
@@ -2841,7 +2841,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteWrappedPropertyObject(sourceValue, realSourceProperty, sourceKey.Name);
             }
-        } // CopyProperty
+        }
 
         private void MoveProperty(
             IRegistryWrapper sourceKey,
@@ -2907,7 +2907,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, sourceKey.Name));
                 return;
             }
-        } // MoveProperty
+        }
 
         /// <summary>
         /// Converts all / in the path to \
@@ -2934,7 +2934,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // NormalizePath
+        }
 
         private bool HasRelativePathTokens(string path)
         {
@@ -3056,10 +3056,10 @@ namespace Microsoft.PowerShell.Commands
                         hadAMatch = true;
                         filteredCollection.Add(valueName);
                     }
-                } // foreach
+                }
 
                 WriteErrorIfPerfectMatchNotFound(hadAMatch, path, requestedValueName);
-            } // foreach
+            }
         }
 
         private void WriteErrorIfPerfectMatchNotFound(bool hadAMatch, string path, string requestedValueName)
@@ -3270,7 +3270,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return null;
-        } // GetHiveRoot
+        }
 
         /// <summary>
         /// Creates the parent for the keypath specified by <paramref name="path"/>.
@@ -3579,7 +3579,7 @@ namespace Microsoft.PowerShell.Commands
             } while (false);
 
             return result;
-        } // GetRegkeyForPath
+        }
 
         // NB: The HKEY_DYN_DATA hive is left out of the following lists because
         // it is only available on Win98/ME and we do not support that platform.
@@ -3734,7 +3734,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteWrappedPropertyObject(newValue, propertyName, path);
             }
-        } // SetRegistryValue
+        }
 
         /// <summary>
         /// helper to wrap property values when sent to the pipeline into an PSObject;
@@ -3997,7 +3997,7 @@ namespace Microsoft.PowerShell.Commands
             outputObject.AddOrSetProperty("Property", valueNames);
 
             WriteItemObject(outputObject, path, true);
-        } // WriteRegistryItemObject
+        }
 
         /// <summary>
         /// Takes a string and tries to parse it into a RegistryValueKind enum
@@ -4058,7 +4058,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return success;
-        } // ParseKind
+        }
 
         /// <summary>
         /// Gets the default value name token from the resource.
@@ -4106,7 +4106,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
         #endregion Private members
-    } // RegistryProvider
+    }
 
     /// <summary>
     /// Defines dynamic parameters for the registry provider
@@ -4124,5 +4124,5 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public RegistryValueKind Type { get; set; } = RegistryValueKind.Unknown;
     }
-} // namespace System.Management.Automation
+}
 #endif // !UNIX

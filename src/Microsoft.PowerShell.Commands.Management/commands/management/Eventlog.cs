@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Overrides
 
         #region Private

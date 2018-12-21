@@ -25,13 +25,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -44,14 +44,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The name of the property to create on the item
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                 return InvokeProvider.Property.RemovePropertyDynamicParameters(Path[0], propertyName, context);
             }
             return InvokeProvider.Property.RemovePropertyDynamicParameters(".", propertyName, context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -170,8 +170,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // RemoveItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

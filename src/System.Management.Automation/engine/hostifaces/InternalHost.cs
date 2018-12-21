@@ -190,11 +190,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-#if CORECLR     // No CultureInfo.InstalledUICulture In CoreCLR. Locale cannot be changed On CSS.
-                CultureInfo ci = _externalHostRef.Value.CurrentUICulture ?? CultureInfo.CurrentUICulture;
-#else
                 CultureInfo ci = _externalHostRef.Value.CurrentUICulture ?? CultureInfo.InstalledUICulture;
-#endif
                 return ci;
             }
         }
@@ -303,7 +299,6 @@ namespace System.Management.Automation.Internal.Host
                     commandInfoProperty.Value = callingCommand.CommandInfo;
                 }
 
-#if !CORECLR //TODO:CORECLR StackTrace not in CoreCLR
                 stackTraceProperty = newValue.Properties["StackTrace"];
                 if (stackTraceProperty == null)
                 {
@@ -314,7 +309,6 @@ namespace System.Management.Automation.Internal.Host
                     oldStackTrace = stackTraceProperty.Value;
                     stackTraceProperty.Value = new System.Diagnostics.StackTrace();
                 }
-#endif
 
                 Context.SetVariable(SpecialVariables.CurrentlyExecutingCommandVarPath, newValue);
             }

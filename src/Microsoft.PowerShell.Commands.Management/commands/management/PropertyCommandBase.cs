@@ -22,13 +22,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Filter;
-            } // get
+            }
 
             set
             {
                 base.Filter = value;
-            } // set
-        } // Filter
+            }
+        }
 
         /// <summary>
         /// Gets or sets the include property
@@ -39,13 +39,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Include;
-            } // get
+            }
 
             set
             {
                 base.Include = value;
-            } // set
-        } // Include
+            }
+        }
 
         /// <summary>
         /// Gets or sets the exclude property
@@ -56,13 +56,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Exclude;
-            } // get
+            }
 
             set
             {
                 base.Exclude = value;
-            } // set
-        } // Exclude
+            }
+        }
         #endregion Parameters
 
         #region parameter data
@@ -73,5 +73,5 @@ namespace Microsoft.PowerShell.Commands
         internal string[] paths = new string[0];
 
         #endregion parameter data
-    } // ItemPropertyCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

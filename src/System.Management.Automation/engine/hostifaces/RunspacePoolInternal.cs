@@ -1263,10 +1263,7 @@ namespace System.Management.Automation.Runspaces.Internal
             result.Open();
 
             // Enforce the system lockdown policy if one is defined.
-            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-            {
-                result.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-            }
+            Utils.EnforceSystemLockDownLanguageMode(result.ExecutionContext);
 
             result.Events.ForwardEvent += OnRunspaceForwardEvent; // this must be done after open since open initializes the ExecutionContext
 
@@ -1582,7 +1579,7 @@ namespace System.Management.Automation.Runspaces.Internal
                                 ThreadPool.QueueUserWorkItem(new WaitCallback(runspaceRequester.DoComplete));
                             }
                         }
-                    } // end lock(ultimateRequestQueue)
+                    }
 
                     lock (runspaceRequestQueue)
                     {
@@ -1640,7 +1637,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     );
                 throw e;
             }
-        } // AssertIfStateIsBeforeOpen
+        }
 
         /// <summary>
         /// Raises the ForwardEvent event

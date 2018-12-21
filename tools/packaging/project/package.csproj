@@ -11,6 +11,6 @@
     <NuspecProperties>runtime=$(RID);version=$(SemVer);PackageName=$(PackageName)</NuspecProperties>
     <NuspecBasePath>$(StagingPath)</NuspecBasePath>
     <IsTool>True</IsTool>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 </Project>

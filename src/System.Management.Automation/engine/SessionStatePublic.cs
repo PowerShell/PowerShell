@@ -31,7 +31,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // SessionState
+        }
 
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
@@ -63,7 +63,7 @@ namespace System.Management.Automation
             }
 
             _sessionState.PublicSessionState = this;
-        } // SessionState
+        }
 
         /// <summary>
         /// Construct a new session state object...
@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// </summary>
         public CmdletProviderManagementIntrinsics Provider
         {
-            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); } // get
+            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); }
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSVariableIntrinsics PSVariable
         {
-            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); } // get
+            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); }
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace System.Management.Automation
         internal SessionStateInternal Internal
         {
             get { return _sessionState; }
-        } // Internal
+        }
         #endregion Internal methods
 
         #region private data
@@ -312,7 +312,7 @@ namespace System.Management.Automation
         private PSVariableIntrinsics _variable;
 
         #endregion private data
-    } // SessionStatePublic
+    }
 
     /// <summary>
     /// This enum defines the visibility of execution environment elements...

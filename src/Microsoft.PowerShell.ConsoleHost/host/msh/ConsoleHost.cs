@@ -126,8 +126,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                 profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
 #else
-                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                    @"\Microsoft\Windows\PowerShell";
+                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
 
                 if (!Directory.Exists(profileDir))
                 {
@@ -1657,10 +1656,7 @@ namespace Microsoft.PowerShell
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
-                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-                {
-                    _runspaceRef.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-                }
+                Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
 
                 string allUsersProfile = HostUtilities.GetFullProfileFileName(null, false);
                 string allUsersHostSpecificProfile = HostUtilities.GetFullProfileFileName(shellId, false);
@@ -2499,7 +2495,7 @@ namespace Microsoft.PowerShell
                     {
                         _parent._isRunningPromptLoop = false;
                     }
-                } // end while
+                }
             }
 
             internal void BlockCommandOutput()
@@ -2835,7 +2831,7 @@ namespace Microsoft.PowerShell
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
         private static PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
-    } // ConsoleHost
+    }
 
     /// <summary>
     /// Defines arguments passed to ConsoleHost.CreateRunspace

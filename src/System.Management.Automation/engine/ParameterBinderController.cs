@@ -256,7 +256,7 @@ namespace System.Management.Automation
             }
 
             UnboundArguments = result;
-        } // ReparseUnboundArgumentsForBinder
+        }
 
         private static bool IsSwitchAndSetValue(
             String argumentName,
@@ -273,7 +273,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // EnsureBoolOrSwitchAndSetValue
+        }
 
         /// <summary>
         /// The argument looks like a parameter if it is a string
@@ -717,7 +717,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // BindPositionalParameters
+        }
 
         /// <summary>
         /// This method only updates the collections contained in the dictionary, not the dictionary
@@ -988,7 +988,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // EvaluateUnboundPositionalParameters
+        }
 
         private static void AddNewPosition(
             SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> result,

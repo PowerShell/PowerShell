@@ -3244,7 +3244,7 @@ namespace System.Management.Automation
             try
             {
                 typeConversion.WriteLine("Converting object to string.");
-                return PSObject.ToStringParser(ecFromTLS, valueToConvert);
+                return PSObject.ToStringParser(ecFromTLS, valueToConvert, formatProvider);
             }
             catch (ExtendedTypeSystemException e)
             {
@@ -3851,7 +3851,12 @@ namespace System.Management.Automation
                     ExecutionContext ecFromTLS = LocalPipeline.GetExecutionContextFromTLS();
                     object result = null;
 
-                    if (ecFromTLS == null || ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage)
+                    // Setting arbitrary properties is dangerous, so we allow this only if
+                    //  - It's running on a thread without Runspace; Or
+                    //  - It's in FullLanguage but not because it's part of a parameter binding that is transitioning from ConstrainedLanguage to FullLanguage
+                    // When this is invoked from a parameter binding in transition from ConstrainedLanguage environment to FullLanguage command, we disallow
+                    // the property conversion because it's dangerous.
+                    if (ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding))
                     {
                         result = _constructor();
                         var psobject = valueToConvert as PSObject;

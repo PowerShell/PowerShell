@@ -63,6 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             InitializeFormatErrorManager();
             InitializeGroupBy();
             InitializeAutoSize();
+            InitializeRepeatHeader();
         }
 
         private void InitializeFormatErrorManager()
@@ -144,6 +145,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _autosize = controlBody.autosize.Value;
                 }
+            }
+        }
+
+        private void InitializeRepeatHeader()
+        {
+            if (parameters != null)
+            {
+                _repeatHeader = parameters.repeatHeader;
             }
         }
 
@@ -311,6 +320,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get { return _autosize; }
         }
         private bool _autosize = false;
+
+        protected bool RepeatHeader
+        {
+            get { return _repeatHeader; }
+        }
+        private bool _repeatHeader = false;
 
         protected class DataBaseInfo
         {

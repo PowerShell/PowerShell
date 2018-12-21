@@ -1,4 +1,26 @@
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/spelling.yml
+pr:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/spelling.yml
 queue:
   name: Hosted VS2017
   parallel: 2 # Limit to two agents at a time
@@ -7,6 +29,7 @@ queue:
       Purpose: UnelevatedPesterTests
     ElevatedPesterTests_xUnit_Packaging:
       Purpose: ElevatedPesterTests_xUnit_Packaging
+  timeoutInMinutes: 120
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
@@ -71,6 +94,6 @@ steps:
   - powershell: |
       Import-Module .\tools\Appveyor.psm1
       Restore-PSOptions
-      Invoke-AppveyorFinish
+      Invoke-AppveyorFinish -NuGetKey $(NUGET_KEY)
     displayName: Finish
     condition: eq(variables['Purpose'], 'ElevatedPesterTests_xUnit_Packaging')

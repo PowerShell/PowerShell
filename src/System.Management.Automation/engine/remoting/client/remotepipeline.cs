@@ -779,7 +779,7 @@ namespace System.Management.Automation
                         _pipelineStateInfo.Clone(),
                         previousAvailability,
                         _runspace.RunspaceAvailability));
-            } // lock...
+            }
 
             // using the copyStateInfo here as this piece of code is
             // outside of lock and _pipelineStateInfo might get changed

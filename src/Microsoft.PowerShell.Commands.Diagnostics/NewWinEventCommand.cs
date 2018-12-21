@@ -242,9 +242,7 @@ namespace Microsoft.PowerShell.Commands
                     IgnoreProcessingInstructions = true,
                     MaxCharactersInDocument = 0, // no limit
                     ConformanceLevel = ConformanceLevel.Fragment,
-#if !CORECLR
-                    XmlResolver = null,
-#endif
+                    XmlResolver = null
                 };
 
                 int definedParameterCount = 0;

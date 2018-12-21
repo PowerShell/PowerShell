@@ -783,6 +783,7 @@ namespace System.Management.Automation
                     { typeof(ValidateRangeAttribute),                      new[] { "ValidateRange" } },
                     { typeof(ValidateScriptAttribute),                     new[] { "ValidateScript" } },
                     { typeof(ValidateSetAttribute),                        new[] { "ValidateSet" } },
+                    { typeof(ValidateTrustedDataAttribute),                new[] { "ValidateTrustedData" } },
                     { typeof(ValidateUserDriveAttribute),                  new[] { "ValidateUserDrive"} },
                     { typeof(Version),                                     new[] { "version" } },
                     { typeof(void),                                        new[] { "void" } },

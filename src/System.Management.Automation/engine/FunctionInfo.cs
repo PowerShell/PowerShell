@@ -31,7 +31,7 @@ namespace System.Management.Automation
         /// </exception>
         internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context) : this(name, function, context, null)
         {
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
         /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
@@ -64,7 +64,7 @@ namespace System.Management.Automation
 
             this.Module = function.Module;
             _helpFile = helpFile;
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
         /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         /// </exception>
         internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context) : this(name, function, options, context, null)
         {
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
         /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
@@ -113,7 +113,7 @@ namespace System.Management.Automation
             : this(name, function, context, helpFile)
         {
             _options = options;
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
@@ -190,6 +190,7 @@ namespace System.Management.Automation
         internal void Update(ScriptBlock newFunction, bool force, ScopedItemOptions options)
         {
             Update(newFunction, force, options, null);
+            this.DefiningLanguageMode = newFunction.LanguageMode;
         }
 
         /// <summary/>
@@ -401,7 +402,7 @@ namespace System.Management.Automation
             {
                 return _verb;
             }
-        } // Verb
+        }
         private string _verb = String.Empty;
 
         /// <summary>
@@ -413,7 +414,7 @@ namespace System.Management.Automation
             {
                 return _noun;
             }
-        } // Noun
+        }
         private string _noun = String.Empty;
 
         /// <summary>
@@ -429,7 +430,7 @@ namespace System.Management.Automation
             {
                 _helpFile = value;
             }
-        } // HelpFile
+        }
         private string _helpFile = String.Empty;
 
         /// <summary>
@@ -485,5 +486,5 @@ namespace System.Management.Automation
         {
             get { return ScriptBlock.OutputType; }
         }
-    } // FunctionInfo
-} // namespace System.Management.Automation
+    }
+}

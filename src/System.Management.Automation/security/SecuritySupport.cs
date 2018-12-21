@@ -184,11 +184,11 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.SystemWide, shellId);
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.AllUsers, shellId);
                     }
                     else
                     {
-                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.SystemWide, shellId, executionPolicy);
+                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.AllUsers, shellId, executionPolicy);
                     }
                     break;
                 }
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Internal
 
                 // 2: Look up the system-wide preference
                 case ExecutionPolicyScope.LocalMachine:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.SystemWide, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.AllUsers, shellId);
             }
 
             return null;
@@ -1475,6 +1475,11 @@ namespace System.Management.Automation
 
     internal class AmsiUtils
     {
+        private static string GetProcessHostName(string processName)
+        {
+            return string.Concat("PowerShell_", processName, ".exe_0.0.0.0");
+        }
+
         internal static int Init()
         {
             Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
@@ -1492,10 +1497,13 @@ namespace System.Management.Automation
                 catch (ComponentModel.Win32Exception)
                 {
                     // This exception can be thrown during thread impersonation (Access Denied for process module access).
-                    // Use command line arguments or process name.
-                    string[] cmdLineArgs = Environment.GetCommandLineArgs();
-                    string processPath = (cmdLineArgs.Length > 0) ? cmdLineArgs[0] : currentProcess.ProcessName;
-                    hostname = string.Concat("PowerShell_", processPath, ".exe_0.0.0.0");
+                    hostname = GetProcessHostName(currentProcess.ProcessName);
+                }
+                catch (FileNotFoundException)
+                {
+                    // This exception can occur if the file is renamed or moved to some other folder
+                    // (This has occurred during Exchange set up).
+                    hostname = GetProcessHostName(currentProcess.ProcessName);
                 }
 
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
@@ -1523,11 +1531,11 @@ namespace System.Management.Automation
 #if UNIX
             return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
 #else
-            return WinScanContent(content, sourceMetadata);
+            return WinScanContent(content, sourceMetadata, warmUp: false);
 #endif
         }
 
-        internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(string content, string sourceMetadata)
+        internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(string content, string sourceMetadata, bool warmUp)
         {
             if (String.IsNullOrEmpty(sourceMetadata))
             {
@@ -1587,14 +1595,30 @@ namespace System.Management.Automation
                         }
                     }
 
+                    if (warmUp)
+                    {
+                        // We are warming up the AMSI component in console startup, and that means we initialize AMSI
+                        // and create a AMSI session, but don't really scan anything.
+                        return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
+                    }
+
                     AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_CLEAN;
 
-                    hr = AmsiNativeMethods.AmsiScanString(
-                        s_amsiContext,
-                        content,
-                        sourceMetadata,
-                        s_amsiSession,
-                        ref result);
+                    // Run AMSI content scan
+                    unsafe
+                    {
+                        fixed (char* buffer = content)
+                        {
+                            var buffPtr = new IntPtr(buffer);
+                            hr = AmsiNativeMethods.AmsiScanBuffer(
+                                s_amsiContext,
+                                buffPtr,
+                                (uint)(content.Length * sizeof(char)),
+                                sourceMetadata,
+                                s_amsiSession,
+                                ref result);
+                        }
+                    }
 
                     if (!Utils.Succeeded(hr))
                     {
@@ -1703,6 +1727,10 @@ namespace System.Management.Automation
 
                 /// AMSI_RESULT_NOT_DETECTED -> 1
                 AMSI_RESULT_NOT_DETECTED = 1,
+
+                /// Certain policies set by administrator blocked this content on this machine
+                AMSI_RESULT_BLOCKED_BY_ADMIN_BEGIN = 0x4000,
+                AMSI_RESULT_BLOCKED_BY_ADMIN_END = 0x4fff,
 
                 /// AMSI_RESULT_DETECTED -> 32768
                 AMSI_RESULT_DETECTED = 32768,

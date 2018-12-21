@@ -770,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
                 return false;
-        } // Read
+        }
 
         private void CreateStreams(string filePath, string streamName, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, Encoding fileEncoding)
         {
@@ -969,7 +969,7 @@ namespace Microsoft.PowerShell.Commands
             if (_writer != null) { _writer.Flush(); }
             if (_reader != null) { _reader.DiscardBufferedData(); }
             if (_backReader != null) { _backReader.DiscardBufferedData(); }
-        } // Seek
+        }
 
         /// <summary>
         /// Closes the file.
@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 File.SetAttributes(_path, _oldAttributes);
             }
-        } // Close
+        }
 
         /// <summary>
         /// Writes the specified object to the file
@@ -1043,7 +1043,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return content;
-        } // Write
+        }
 
         private void WriteObject(object content)
         {
@@ -1076,7 +1076,7 @@ namespace Microsoft.PowerShell.Commands
                     _writer.WriteLine(content.ToString());
                 }
             }
-        } // WriteObject
+        }
 
         /// <summary>
         /// Closes the file stream
@@ -1085,7 +1085,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        } // Dispose
+        }
 
         internal void Dispose(bool isDisposing)
         {
@@ -1101,7 +1101,7 @@ namespace Microsoft.PowerShell.Commands
                     _writer.Dispose();
             }
         }
-    } // class FileSystemContentStream
+    }
 
     internal sealed class FileStreamBackReader : StreamReader
     {
@@ -1524,4 +1524,4 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal string EncodingName { get; }
     }
-} // namespace System.Management.Automation
+}

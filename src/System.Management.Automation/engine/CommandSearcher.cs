@@ -64,12 +64,12 @@ namespace System.Management.Automation
         IEnumerator<CommandInfo> IEnumerable<CommandInfo>.GetEnumerator()
         {
             return this;
-        } // GetEnumerator
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this;
-        } // GetEnumerator
+        }
 
         /// <summary>
         /// Moves the enumerator to the next command match. Public for IEnumerable
@@ -198,7 +198,7 @@ namespace System.Management.Automation
                     _currentState = SearchState.QualifiedFileSystemPath;
                     return true;
                 }
-            } // SearchState.Reset
+            }
 
             if (_currentState == SearchState.PowerShellPathResolution)
             {
@@ -210,7 +210,7 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
-            } // SearchState.PowerShellPathResolution
+            }
 
             // Search using CommandPathSearch
 
@@ -223,7 +223,7 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
-            } // SearchState.QualifiedFileSystemPath || SearchState.PathSearch
+            }
 
             if (_currentState == SearchState.PathSearch)
             {
@@ -238,7 +238,7 @@ namespace System.Management.Automation
             }
 
             return false;
-        } // MoveNext
+        }
 
         private CommandInfo SearchForAliases()
         {
@@ -405,7 +405,7 @@ namespace System.Management.Automation
 
                 return _currentMatch;
             }
-        } // Current
+        }
 
         object IEnumerator.Current
         {
@@ -629,7 +629,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetNextFromPath
+        }
 
         /// <summary>
         /// Gets the next matching alias
@@ -707,7 +707,7 @@ namespace System.Management.Automation
                     result.Definition);
             }
             return result;
-        } // GetNextAlias
+        }
 
         /// <summary>
         /// Gets the next matching function
@@ -920,7 +920,7 @@ namespace System.Management.Automation
                 result = GetFunctionFromModules(function);
             }
             return result;
-        } // GetFunction
+        }
 
         /// <summary>
         /// Gets the next cmdlet from the collection of matching cmdlets.
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // DoPowerShellRelativePathLookup
+        }
 
         /// <summary>
         /// Resolves the given path as an PSPath and ensures that it was resolved
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // ResolvePSPath
+        }
 
         /// <summary>
         /// Creates a collection of patterns used to find the command
@@ -1213,7 +1213,7 @@ namespace System.Management.Automation
                 result.Add(name);
             }
             return result;
-        } // ConstructSearchPatternsFromName
+        }
 
         /// <summary>
         /// Determines if the given command name is a qualified PowerShell path.
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation
                 LocationGlobber.IsProviderDirectPath(commandName);
 
             return result;
-        } // IsQualifiedPSPath
+        }
 
         private enum CanDoPathLookupResult
         {
@@ -1309,7 +1309,7 @@ namespace System.Management.Automation
             } while (false);
 
             return result;
-        } // CanDoPathLookup
+        }
 
         /// <summary>
         /// The command name to search for
@@ -1480,7 +1480,7 @@ namespace System.Management.Automation
             _currentState = SearchState.SearchingAliases;
             _matchingAlias = null;
             _matchingCmdlet = null;
-        } // Reset
+        }
 
         internal CommandOrigin CommandOrigin
         {
@@ -1546,10 +1546,10 @@ namespace System.Management.Automation
 
             // No more matches can be found
             NoMoreMatches,
-        } // SearchState
+        }
 
         #endregion private members
-    } // CommandSearcher
+    }
 
     /// <summary>
     /// Determines which types of commands should be globbed using the specified

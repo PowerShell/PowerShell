@@ -23,6 +23,14 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
 
+        $fullyQualifiedPathTestCases = @(
+            # The current behaviour in PowerShell is that version gets ignored when using Get-Module -FullyQualifiedName with a path
+            @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 2 }
+            @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
+        )
+
         $env:PSModulePath = Join-Path $testdrive "Modules"
     }
 
@@ -120,6 +128,20 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules | Should -HaveCount 1
         $modules.Name | Should -BeExactly "Zoo"
         $modules.ExportedFunctions.Count | Should -Be 1 -Because 'We added a new function to export'
+    }
+
+    It "Get-Module respects absolute paths in module specifications: <ModPath>" -TestCases $fullyQualifiedPathTestCases {
+        param([string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
+
+        $modSpec = @{
+            ModuleName = $ModPath
+            RequiredVersion = $Version
+        }
+
+        $modules = Get-Module -ListAvailable -FullyQualifiedName $modSpec
+        $modules | Should -HaveCount $Count
+        $modules[0].Name | Should -BeExactly $Name
+        $modules.Version | Should -Contain $Version
     }
 
     Context "PSEdition" {

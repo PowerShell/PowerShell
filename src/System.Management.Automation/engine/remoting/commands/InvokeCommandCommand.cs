@@ -1088,10 +1088,10 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                 }
                                 break;
-                        } // switch ...
-                    } // else ...
+                        }
+                    }
                 }
-            } // if (!pipelineinvoked...
+            }
 
             if (InputObject != AutomationNull.Value && !_inputStreamClosed)
             {
@@ -1115,7 +1115,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// InvokeAsync would have been called in ProcessRecord. Wait here
@@ -1219,11 +1219,11 @@ namespace Microsoft.PowerShell.Commands
                             // finally dispose the job.
                             _job.Dispose();
 
-                        } // if (needToCollect...
+                        }
                     }// else - job == null
                 }
             }// if (!async ...
-        } // EndProcessing
+        }
 
         /// <summary>
         /// This method is called when the user sends a stop signal to the
@@ -1310,7 +1310,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _operationsComplete.Set();
             _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
-        } // HandleThrottleComplete
+        }
 
         /// <summary>
         /// Clears the internal invoke command instance on all
@@ -2023,7 +2023,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // Dispose
+        }
 
         #endregion IDisposable Overrides
     }

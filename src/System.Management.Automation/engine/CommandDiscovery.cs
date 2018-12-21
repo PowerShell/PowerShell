@@ -137,15 +137,6 @@ namespace System.Management.Automation
             discoveryTracer.ShowHeaders = false;
         }
 
-        private void AddCmdletToCache(CmdletConfigurationEntry entry)
-        {
-            if (!IsSpecialCmdlet(entry.ImplementingType))
-            {
-                CmdletInfo newCmdletInfo = NewCmdletInfo(entry, SessionStateEntryVisibility.Public);
-                AddCmdletInfoToCache(newCmdletInfo.Name, newCmdletInfo, isGlobal: true);
-            }
-        }
-
         /// <summary>
         /// Determines if the cmdlet is a cmdlet that shouldn't be in the discovery list.
         /// </summary>
@@ -161,13 +152,6 @@ namespace System.Management.Automation
             // detail of the formatting and output component. That component uses these cmdlets by creating
             // an instance of the CommandProcessor class directly.
             return implementingType == typeof(OutLineOutputCommand) || implementingType == typeof(FormatDefaultCommand);
-        }
-
-        private CmdletInfo NewCmdletInfo(CmdletConfigurationEntry entry, SessionStateEntryVisibility visibility)
-        {
-            CmdletInfo ci = new CmdletInfo(entry.Name, entry.ImplementingType, entry.HelpFileName, entry.PSSnapIn, Context);
-            ci.Visibility = visibility;
-            return ci;
         }
 
         private CmdletInfo NewCmdletInfo(SessionStateCmdletEntry entry)
@@ -654,7 +638,7 @@ namespace System.Management.Automation
             processor.Command.MyInvocation.InvocationName = commandInfo.Name;
 
             return processor;
-        } // LookupCommandProcessor
+        }
 
         internal static void ShouldRun(ExecutionContext context, PSHost host, CommandInfo commandInfo, CommandOrigin commandOrigin)
         {
@@ -1332,7 +1316,7 @@ namespace System.Management.Automation
 
             // Construct the CommandPathSearch object and return it.
             return new CommandPathSearch(patterns, lookupPathArray, Context);
-        } // GetCommandPathSearcher
+        }
 
         /// <summary>
         /// Gets the resolved paths contained in the PATH environment
@@ -1388,7 +1372,7 @@ namespace System.Management.Automation
 
             // Cache the new lookup paths
             return _cachedLookupPaths ?? (_cachedLookupPaths = result);
-        } // GetLookupDirectoryPaths
+        }
 
         /// <summary>
         /// The cached list of lookup paths. It can be invalidated by
@@ -1426,8 +1410,8 @@ namespace System.Management.Automation
                 }
 
                 return s_cachedPathExtCollectionWithPs1;
-            } // get
-        } // PathExtensions
+            }
+        }
 
         /// <summary>
         /// Gets the PATHEXT environment variable extensions and tokenizes them.
@@ -1445,8 +1429,8 @@ namespace System.Management.Automation
                 }
 
                 return s_cachedPathExtCollection;
-            } // get
-        } // PathExtensions
+            }
+        }
 
         private static void InitPathExtCache(string pathExt)
         {
@@ -1553,49 +1537,6 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // GetCmdletInfo
-
-        /// <summary>
-        /// Removes a cmdlet from the cmdlet cache.
-        /// </summary>
-        /// <param name="entry">
-        /// The configuration entry for the cmdlet which is being removed.
-        /// </param>
-        private void RemoveCmdletFromCache(CmdletConfigurationEntry entry)
-        {
-            IDictionary<string, List<CmdletInfo>> cmdletTable = Context.EngineSessionState.GetCmdletTable();
-            List<CmdletInfo> cacheEntry;
-            if (cmdletTable.TryGetValue(entry.Name, out cacheEntry))
-            {
-                int removalIndex = GetCmdletRemovalIndex(cacheEntry, entry.PSSnapIn == null ? String.Empty : entry.PSSnapIn.Name);
-
-                if (removalIndex >= 0)
-                {
-                    string name = cacheEntry[removalIndex].Name;
-                    cacheEntry.RemoveAt(removalIndex);
-                    Context.EngineSessionState.RemoveCmdlet(name, removalIndex, true);
-                }
-
-                // Remove the entry from the cache if there are no more cmdlets
-                if (cacheEntry.Count == 0)
-                {
-                    Context.EngineSessionState.RemoveCmdletEntry(entry.Name, true);
-                }
-            }
-        }
-
-        private int GetCmdletRemovalIndex(List<CmdletInfo> cacheEntry, string PSSnapin)
-        {
-            int removalIndex = -1;
-            for (int index = 0; index < cacheEntry.Count; ++index)
-            {
-                if (String.Equals(cacheEntry[index].ModuleName, PSSnapin, StringComparison.OrdinalIgnoreCase))
-                {
-                    removalIndex = index;
-                    break;
-                }
-            }
-            return removalIndex;
         }
 
         internal ExecutionContext Context { get; }
@@ -1748,7 +1689,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // IndexOfRelativePath
+        }
 
         /// <summary>
         /// Finds the first index of the specified string. The string
@@ -1782,7 +1723,7 @@ namespace System.Management.Automation
             }
             return result;
         }
-    } // LookupPathCollection
+    }
 
     // Guid is {ea9e8155-5042-5537-0b73-8c0e6b53f398}
     [EventSource(Name = "Microsoft-PowerShell-CommandDiscovery")]

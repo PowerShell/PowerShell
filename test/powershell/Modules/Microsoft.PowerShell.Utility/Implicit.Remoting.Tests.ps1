@@ -11,25 +11,6 @@ $PSDefaultParameterValues["it:skip"] = $skipTest
 
 try
 {
-    #
-    # Ensure WinRM remoting is enabled
-    #
-    if (! $skipTest)
-    {
-        # Check to see if a default endpoint has been created
-        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
-        $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
-
-        if ($matchedEndpoint -eq $null)
-        {
-            # An endpoint for this instance of PowerShell does not exist.
-            #
-            # -SkipNetworkProfileCheck is used in case Docker or another application
-            # has created a publich virtual network profile on the system
-            Enable-PSRemoting -SkipNetworkProfileCheck
-        }
-    }
-
     Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows" {
 
         BeforeAll {

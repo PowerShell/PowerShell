@@ -61,6 +61,9 @@ namespace System.Management.Automation
             _helpFilePath = helpFile;
             _PSSnapin = PSSnapin;
             _options = ScopedItemOptions.ReadOnly;
+
+            // CmdletInfo represents cmdlets exposed from assemblies.  On a locked down system, only trusted
+            // assemblies will be loaded.  Therefore, a CmdletInfo instance will always be trusted.
             this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
         }
 
@@ -144,7 +147,7 @@ namespace System.Management.Automation
             {
                 return _verb;
             }
-        } // Verb
+        }
         private string _verb = String.Empty;
 
         /// <summary>
@@ -156,7 +159,7 @@ namespace System.Management.Automation
             {
                 return _noun;
             }
-        } // Noun
+        }
         private string _noun = String.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
@@ -196,7 +199,7 @@ namespace System.Management.Automation
             {
                 _helpFilePath = value;
             }
-        } // HelpFile
+        }
         private string _helpFilePath = String.Empty;
 
         internal override HelpCategory HelpCategory
@@ -540,5 +543,5 @@ namespace System.Management.Automation
         }
 
         #endregion internal/private members
-    } // CmdletInfo
-} // namespace System.Management.Automation
+    }
+}

@@ -166,7 +166,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
-    } // IThrottleOperation
+    }
 
     #endregion IThrottleOperation
 
@@ -251,7 +251,7 @@ namespace System.Management.Automation.Remoting
 
             // schedule operations here if possible
             StartOperationsFromQueue();
-        } // SubmitOperations
+        }
 
         /// <summary>
         /// Add a single operation to the queue
@@ -304,7 +304,7 @@ namespace System.Management.Automation.Remoting
                 {
                     needToReturn = true;
                 }
-            } // lock ...
+            }
 
             if (needToReturn)
             {
@@ -346,8 +346,8 @@ namespace System.Management.Automation.Remoting
                     _stopOperationQueue.Add(operation);
 
                     operation.IgnoreStop = true;
-                } // foreach...
-            } // lock...
+                }
+            }
 
             foreach (IThrottleOperation operation in startOperationsInProcessArray)
             {
@@ -357,7 +357,7 @@ namespace System.Management.Automation.Remoting
             // Raise event as it can be that at this point, all operations are
             // complete
             RaiseThrottleManagerEvents();
-        } // StopAllOperations
+        }
 
         /// <summary>
         /// Stop the specified operation
@@ -415,7 +415,7 @@ namespace System.Management.Automation.Remoting
             }
 
             RaiseThrottleManagerEvents();
-        } // EndSubmitOperations
+        }
 
         #endregion Public (internal) Methods
 
@@ -508,7 +508,7 @@ namespace System.Management.Automation.Remoting
 
             // Do necessary things for starting operation for the next item in the queue
             StartOneOperationFromQueue();
-        } // OperationCompleteHandler
+        }
 
         /// <summary>
         /// Method used to start the operation on one item in the queue
@@ -560,7 +560,7 @@ namespace System.Management.Automation.Remoting
                     StartOneOperationFromQueue();
                 }
             }
-        } // StartOperationsFromQueue
+        }
 
         /// <summary>
         /// Raise the throttle manager events once the conditions are met
@@ -586,7 +586,7 @@ namespace System.Management.Automation.Remoting
             {
                 ThrottleComplete.SafeInvoke(this, EventArgs.Empty);
             }
-        } // RaiseThrottleManagerEvents
+        }
 
         #endregion Private Methods
 
@@ -656,7 +656,7 @@ namespace System.Management.Automation.Remoting
             {
                 StopAllOperations();
             }
-        } // Dispose
+        }
 
         #endregion IDisposable Overrides
     }

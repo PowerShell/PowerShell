@@ -17,9 +17,6 @@ using Microsoft.Win32;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Threading;
-#if CORECLR
-using System.Xml.XPath;
-#endif
 
 namespace Microsoft.WSMan.Management
 {
@@ -990,17 +987,14 @@ namespace Microsoft.WSMan.Management
             {
                 RegistryKey rGPOLocalMachineKey = Registry.LocalMachine.OpenSubKey(
                     Registry_Path_Credentials_Delegation + @"\CredentialsDelegation",
-#if !CORECLR
                     RegistryKeyPermissionCheck.ReadWriteSubTree,
-#endif
                     System.Security.AccessControl.RegistryRights.FullControl);
 
                 if (rGPOLocalMachineKey != null)
                 {
-                    rGPOLocalMachineKey = rGPOLocalMachineKey.OpenSubKey(Key_Allow_Fresh_Credentials,
-#if !CORECLR
+                    rGPOLocalMachineKey = rGPOLocalMachineKey.OpenSubKey(
+                        Key_Allow_Fresh_Credentials,
                         RegistryKeyPermissionCheck.ReadWriteSubTree,
-#endif
                         System.Security.AccessControl.RegistryRights.FullControl);
                     if (rGPOLocalMachineKey == null)
                     {

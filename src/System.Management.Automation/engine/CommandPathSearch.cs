@@ -223,7 +223,7 @@ namespace System.Management.Automation
                 int indexToRemove = indexesToRemove[removeIndex - 1];
                 _lookupPaths.RemoveAt(indexToRemove);
             }
-        } // ResolveCurrentDirectoryInLookupPaths
+        }
 
         /// <summary>
         /// Gets an instance of a command enumerator
@@ -234,7 +234,7 @@ namespace System.Management.Automation
         IEnumerator<string> IEnumerable<string>.GetEnumerator()
         {
             return this;
-        } // GetEnumerator
+        }
 
         /// <summary>
         /// Gets an instance of a command enumerator
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this;
-        } // GetEnumerator
+        }
 
         /// <summary>
         /// Moves the enumerator to the next command match
@@ -337,7 +337,7 @@ namespace System.Management.Automation
             } while (true);
 
             return result;
-        } // MoveNext
+        }
 
         /// <summary>
         /// Resets the enumerator to before the first command match
@@ -349,7 +349,7 @@ namespace System.Management.Automation
             _currentDirectoryResults = Utils.EmptyArray<string>();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
             _justReset = true;
-        } // Reset
+        }
 
         /// <summary>
         /// Gets the path to the current command match.
@@ -370,7 +370,7 @@ namespace System.Management.Automation
 
                 return _currentDirectoryResultsEnumerator.Current;
             }
-        } // Current
+        }
 
         object IEnumerator.Current
         {
@@ -449,7 +449,7 @@ namespace System.Management.Automation
 
             _currentDirectoryResults = result ?? Utils.EmptyArray<string>();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
-        } // GetMatchingPathsInDirectory
+        }
 
         private IEnumerable<string> CheckAgainstAcceptableCommandNames(string[] fileNames)
         {
@@ -559,6 +559,6 @@ namespace System.Management.Automation
         private Collection<string> _acceptableCommandNames;
 
         #endregion private members
-    } // CommandSearch
+    }
 }
 

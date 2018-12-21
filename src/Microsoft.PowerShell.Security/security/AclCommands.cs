@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return coreCommandContext;
             }
-        } // CmdletProviderContext
+        }
 
         #region brokered properties
 
@@ -881,7 +881,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // class GetAclCommand : PSCmdlet
+    }
 
     /// <summary>
     /// Defines the implementation of the 'set-acl' cmdlet.
@@ -1569,7 +1569,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // class SetAclCommand
+    }
 #endif // !UNIX
 
 }// namespace Microsoft.PowerShell.Commands

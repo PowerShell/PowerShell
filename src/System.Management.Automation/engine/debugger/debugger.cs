@@ -18,6 +18,7 @@ using System.Management.Automation.Internal;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
@@ -1443,13 +1444,7 @@ namespace System.Management.Automation
                 _currentDebuggerAction = DebuggerResumeAction.Continue;
                 ResumeExecution(DebuggerResumeAction.Stop);
             }
-#if !CORECLR // Workflow Not Supported on OneCore PS
-            // Lazily subscribe to workflow start engine event for workflow debugging.
-            if (!_wfStartEventSubscribed && IsJobDebuggingMode())
-            {
-                SubscribeToEngineWFJobStartEvent();
-            }
-#endif
+
             UpdateBreakpoints(functionContext);
 
             if (_steppingMode == SteppingMode.StepIn &&
@@ -1631,9 +1626,6 @@ namespace System.Management.Automation
         private PowerShell _psDebuggerCommand;
 
         // Job debugger integration.
-#if !CORECLR // Workflow Not Supported on OneCore PS
-        private bool _wfStartEventSubscribed;
-#endif
         private bool _nestedDebuggerStop;
         private bool _writeWFErrorOnce;
         private Dictionary<Guid, PSJobStartEventArgs> _runningJobs;
@@ -1725,6 +1717,22 @@ namespace System.Management.Automation
                 // Ignore, it means they don't have the default prompt
             }
 
+            // Change the context language mode before updating the prompt script.
+            // This way the new prompt scriptblock will pick up the current context language mode.
+            PSLanguageMode? originalLanguageMode = null;
+            if (_context.UseFullLanguageModeInDebugger &&
+                (_context.LanguageMode != PSLanguageMode.FullLanguage))
+            {
+                originalLanguageMode = _context.LanguageMode;
+                _context.LanguageMode = PSLanguageMode.FullLanguage;
+            }
+            else if (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                System.Management.Automation.Security.SystemEnforcementMode.Enforce)
+            {
+                // If there is a system lockdown in place, enforce it
+                originalLanguageMode = Utils.EnforceSystemLockDownLanguageMode(this._context);
+            }
+
             // Update the prompt to the debug prompt
             if (hadDefaultPrompt)
             {
@@ -1741,21 +1749,6 @@ namespace System.Management.Automation
                 {
                     hadDefaultPrompt = false;
                 }
-            }
-
-            PSLanguageMode? originalLanguageMode = null;
-            if (_context.UseFullLanguageModeInDebugger &&
-                (_context.LanguageMode != PSLanguageMode.FullLanguage))
-            {
-                originalLanguageMode = _context.LanguageMode;
-                _context.LanguageMode = PSLanguageMode.FullLanguage;
-            }
-            else if (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                System.Management.Automation.Security.SystemEnforcementMode.Enforce)
-            {
-                // If there is a system lockdown in place, enforce it
-                originalLanguageMode = _context.LanguageMode;
-                _context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
             }
 
             RunspaceAvailability previousAvailability = _context.CurrentRunspace.RunspaceAvailability;
@@ -2097,14 +2090,7 @@ namespace System.Management.Automation
                     ResumeExecution(DebuggerResumeAction.StepInto);
                 }
             }
-#if !CORECLR
-            // Workflow Not Supported on OneCore PS
-            // Look for any running workflow jobs and set to step mode.
-            if ((nestedType & EnableNestedType.NestedJob) == EnableNestedType.NestedJob)
-            {
-                EnableRunningWorkflowJobsForStepping();
-            }
-#endif
+
             // Look for any runspaces with debuggers and set to setp mode.
             if ((nestedType & EnableNestedType.NestedRunspace) == EnableNestedType.NestedRunspace)
             {
@@ -2812,62 +2798,6 @@ namespace System.Management.Automation
 
         #region Job debugger integration
 
-#if !CORECLR // Workflow Not Supported on OneCore PS
-        private void SubscribeToEngineWFJobStartEvent()
-        {
-            Diagnostics.Assert(_context.Events != null, "Event manager cannot be null.");
-
-            _context.Events.SubscribeEvent(
-                    source: null,
-                    eventName: null,
-                    sourceIdentifier: PSEngineEvent.WorkflowJobStartEvent,
-                    data: null,
-                    handlerDelegate: HandleJobStartEvent,
-                    supportEvent: true,
-                    forwardEvent: false);
-
-            _wfStartEventSubscribed = true;
-        }
-
-        private void UnsubscribeFromEngineWFJobStartEvent()
-        {
-            PSEventManager eventManager = _context.Events;
-            Diagnostics.Assert(eventManager != null, "Event manager cannot be null.");
-
-            foreach (var subscriber in eventManager.GetEventSubscribers(PSEngineEvent.WorkflowJobStartEvent))
-            {
-                eventManager.UnsubscribeEvent(subscriber);
-            }
-
-            _wfStartEventSubscribed = false;
-        }
-
-        private void HandleJobStartEvent(object sender, PSEventArgs args)
-        {
-            Diagnostics.Assert(args.SourceArgs.Length == 1, "WF Job Started engine event SourceArgs should have a single element.");
-            PSJobStartEventArgs jobStartedArgs = args.SourceArgs[0] as PSJobStartEventArgs;
-            Diagnostics.Assert(jobStartedArgs != null, "WF Job Started engine event args cannot be null.");
-            Diagnostics.Assert(jobStartedArgs.Job != null, "WF Job to start cannot be null.");
-            Diagnostics.Assert(jobStartedArgs.Debugger != null, "WF Job Started Debugger object cannot be null.");
-
-            if (!(jobStartedArgs.Debugger.GetType().FullName.Equals("Microsoft.PowerShell.Workflow.PSWorkflowDebugger",
-                StringComparison.OrdinalIgnoreCase)))
-            {
-                // Check to ensure only PS workflow debuggers can be passed in.
-                throw new PSInvalidOperationException();
-            }
-
-            // At this point the script debugger stack frame must be the Workflow execution function which is DebuggerHidden.
-            // The internal debugger resume action is set to StepOut, *if* the user selected StepIn, so as to skip this frame
-            // since debugging the workflow execution function is turned off.  We look at the previous resume action to see
-            // what the user intended.  If it is StepIn then we start the workflow job debugger in step mode.
-            Diagnostics.Assert(_callStack.LastFunctionContext()._debuggerHidden, "Current stack frame must be WF function DebuggerHidden");
-            DebuggerResumeAction startAction = (_previousDebuggerAction == DebuggerResumeAction.StepInto) ?
-                DebuggerResumeAction.StepInto : DebuggerResumeAction.Continue;
-            AddToJobRunningList(jobStartedArgs, startAction);
-        }
-#endif
-
         private void AddToJobRunningList(PSJobStartEventArgs jobArgs, DebuggerResumeAction startAction)
         {
             bool newJob = false;
@@ -2992,9 +2922,6 @@ namespace System.Management.Automation
 
         private void ClearRunningJobList()
         {
-#if !CORECLR // Workflow Not Supported on OneCore PS
-            UnsubscribeFromEngineWFJobStartEvent();
-#endif
             PSJobStartEventArgs[] runningJobs = null;
             lock (_syncObject)
             {
@@ -3147,12 +3074,6 @@ namespace System.Management.Automation
         {
             if (!IsJobDebuggingMode())
             {
-#if !CORECLR    // Workflow Not Supported on OneCore PS
-                // Remove workflow job callback.
-                UnsubscribeFromEngineWFJobStartEvent();
-                // Write warning to user.
-                WriteWorkflowDebugNotSupportedError();
-#endif
                 // Ignore job debugger stop.
                 args.ResumeAction = DebuggerResumeAction.Continue;
                 return;
@@ -3356,57 +3277,6 @@ namespace System.Management.Automation
             }
         }
 
-#if !CORECLR // Workflow Not Supported on OneCore PS
-        private void EnableRunningWorkflowJobsForStepping()
-        {
-            // Make sure workflow job start callback is set to pick
-            // up any newly starting jobs.
-            if (!_wfStartEventSubscribed)
-            {
-                lock (_syncObject)
-                {
-                    if (!_wfStartEventSubscribed)
-                    {
-                        SubscribeToEngineWFJobStartEvent();
-                    }
-                }
-            }
-
-            // Get list of workflow jobs
-            Collection<Job> jobs;
-            using (PowerShell ps = PowerShell.Create())
-            {
-                ps.Commands.Clear();
-                ps.AddScript(@"Get-Job | Where-Object {$_.PSJobTypeName -eq 'PSWorkflowJob'}");
-                jobs = ps.Invoke<Job>();
-            }
-
-            // Add debuggable workflow jobs to running Job list
-            // and set debugger to step mode.
-            foreach (var parentJob in jobs)
-            {
-                if (parentJob != null)
-                {
-                    foreach (var childJob in parentJob.ChildJobs)
-                    {
-                        IJobDebugger debuggableJob = childJob as IJobDebugger;
-                        if (debuggableJob != null)
-                        {
-                            AddToJobRunningList(
-                                new PSJobStartEventArgs(
-                                    childJob,
-                                    debuggableJob.Debugger,
-                                    debuggableJob.IsAsync),
-                                    DebuggerResumeAction.StepInto);
-                        }
-                    }
-                }
-            }
-
-            // Ensure existing running jobs in list are also set to step mode.
-            SetRunningJobListToStep(true);
-        }
-#endif
         #endregion
 
         #region Runspace debugger integration
@@ -3844,9 +3714,6 @@ namespace System.Management.Automation
         /// </summary>
         public void Dispose()
         {
-#if !CORECLR // Workflow Not Supported on OneCore PS
-            UnsubscribeFromEngineWFJobStartEvent();
-#endif
             // Ensure all job event handlers are removed.
             PSJobStartEventArgs[] runningJobs;
             lock (_syncObject)
@@ -3983,7 +3850,7 @@ namespace System.Management.Automation
 
             if (valAsString.Length > msgLength)
             {
-                valAsString = valAsString.Substring(0, msgLength) + "...";
+                valAsString = valAsString.Substring(0, msgLength) + PSObjectHelper.Ellipsis;
             }
             Trace("TraceVariableAssignment", ParserStrings.TraceVariableAssignment, varName, valAsString);
         }

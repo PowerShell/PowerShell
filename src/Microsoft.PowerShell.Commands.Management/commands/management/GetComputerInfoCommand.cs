@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                 systemInfo.networkAdapters = GetNetworkAdapters(session);
 
                 UpdateProgress(null);   // close the progress bar
-            } // end of using(CimSession...)
+            }
 
             var infoOutput = CreateFullOutputObject(systemInfo, osInfo, miscInfo);
 

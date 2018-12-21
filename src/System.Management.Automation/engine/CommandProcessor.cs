@@ -208,7 +208,44 @@ namespace System.Management.Automation
                 this.Command != null,
                 "CommandProcessor did not initialize Command\n" + this.CommandInfo.Name);
 
-            BindCommandLineParameters();
+            PSLanguageMode? oldLanguageMode = null;
+            bool? oldLangModeTransitionStatus = null;
+            try
+            {
+                var scriptCmdletInfo = this.CommandInfo as IScriptCommandInfo;
+                if (scriptCmdletInfo != null &&
+                    scriptCmdletInfo.ScriptBlock.LanguageMode.HasValue &&
+                    scriptCmdletInfo.ScriptBlock.LanguageMode != Context.LanguageMode)
+                {
+                    // Set the language mode before parameter binding if it's necessary for a script cmdlet, so that the language
+                    // mode is appropriately applied for evaluating parameter defaults and argument type conversion.
+                    oldLanguageMode = Context.LanguageMode;
+                    Context.LanguageMode = scriptCmdletInfo.ScriptBlock.LanguageMode.Value;
+
+                    // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
+                    if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && Context.LanguageMode == PSLanguageMode.FullLanguage)
+                    {
+                        oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
+                        Context.LanguageModeTransitionInParameterBinding = true;
+                    }
+                }
+
+                BindCommandLineParameters();
+            }
+            finally
+            {
+                if (oldLanguageMode.HasValue)
+                {
+                    // Revert to the original language mode after doing the parameter binding
+                    Context.LanguageMode = oldLanguageMode.Value;
+                }
+
+                if (oldLangModeTransitionStatus.HasValue)
+                {
+                    // Revert the transition state to old value after doing the parameter binding
+                    Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus.Value;
+                }
+            }
         }
 
         protected override void OnSetCurrentScope()
@@ -587,7 +624,7 @@ namespace System.Management.Automation
             errorRecord.SetInvocationInfo(this.Command.MyInvocation);
 
             this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
-        } // WriteIgnoredInputObjectError
+        }
 
         /// <summary>
         /// Reads an object from an input pipeline and attempts to bind the parameters

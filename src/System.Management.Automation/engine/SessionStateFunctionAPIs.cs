@@ -27,7 +27,7 @@ namespace System.Management.Automation
             FunctionInfo fn = this.SetFunction(entry.Name, sb, null, entry.Options, false, CommandOrigin.Internal, this.ExecutionContext, entry.HelpFile, true);
             fn.Visibility = entry.Visibility;
             fn.Module = entry.Module;
-            fn.ScriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
+            fn.ScriptBlock.LanguageMode = entry.ScriptBlock.LanguageMode ?? PSLanguageMode.FullLanguage;
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetFunctionTable
+        }
 
         /// <summary>
         /// Gets an IEnumerable for the function table for a given scope
@@ -96,7 +96,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetFunctionTableAtScope
+        }
 
         /// <summary>
         /// List of functions/filters to export from this session state object...
@@ -104,6 +104,33 @@ namespace System.Management.Automation
         internal List<FunctionInfo> ExportedFunctions { get; } = new List<FunctionInfo>();
 
         internal bool UseExportList { get; set; } = false;
+
+        /// <summary>
+        /// Set to true when module functions are being explicitly exported using Export-ModuleMember
+        /// </summary>
+        internal bool FunctionsExported { get; set; }
+
+        /// <summary>
+        /// Set to true when any processed module functions are being explicitly exported using '*' wildcard
+        /// </summary>
+        internal bool FunctionsExportedWithWildcard
+        {
+            get { return _functionsExportedWithWildcard; }
+            set
+            {
+                Dbg.Assert((value == true), "This property should never be set/reset to false");
+                if (value == true)
+                {
+                    _functionsExportedWithWildcard = value;
+                }
+            }
+        }
+        private bool _functionsExportedWithWildcard;
+
+        /// <summary>
+        /// Set to true if module loading is performed under a manifest that explicitly exports functions (no wildcards)
+        /// </summary>
+        internal bool ManifestWithExplicitFunctionExport { get; set; }
 
         /// <summary>
         /// Get a functions out of session state.
@@ -138,8 +165,40 @@ namespace System.Management.Automation
             {
                 result = ((IEnumerator<FunctionInfo>)searcher).Current;
             }
-            return result;
-        } // GetFunction
+
+            return (IsFunctionVisibleInDebugger(result, origin)) ? result : null;
+        }
+
+        private bool IsFunctionVisibleInDebugger(FunctionInfo fnInfo, CommandOrigin origin)
+        {
+            // Ensure the returned function item is not exposed across language boundaries when in 
+            // a debugger breakpoint or nested prompt.
+            // A debugger breakpoint/nested prompt has access to all current scoped functions.
+            // This includes both running commands from the prompt or via a debugger Action scriptblock.
+
+            // Early out.
+            // Always allow built-in functions needed for command line debugging.
+            if ((this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage) ||
+                (fnInfo == null) ||
+                (fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase)) ||
+                (fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)) ||
+                (fnInfo.Name.Equals("Clear-Host", StringComparison.Ordinal)))
+            {
+                return true;
+            }
+
+            // Check both InNestedPrompt and Debugger.InBreakpoint to ensure we don't miss a case.
+            // Function is not visible if function and context language modes are different.
+            var runspace = this.ExecutionContext.CurrentRunspace;
+            if ((runspace != null) &&
+                (runspace.InNestedPrompt || (runspace.Debugger?.InBreakpoint == true)) &&
+                (fnInfo.DefiningLanguageMode.HasValue && (fnInfo.DefiningLanguageMode != this.ExecutionContext.LanguageMode)))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Get a functions out of session state.
@@ -156,7 +215,7 @@ namespace System.Management.Automation
         internal FunctionInfo GetFunction(string name)
         {
             return GetFunction(name, CommandOrigin.Internal);
-        } // GetFunction
+        }
 
         private IEnumerable<string> GetFunctionAliases(IParameterMetadataProvider ipmp)
         {
@@ -253,7 +312,7 @@ namespace System.Management.Automation
             }
 
             return functionInfo;
-        } // SetFunctionRaw
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -294,7 +353,7 @@ namespace System.Management.Automation
             CommandOrigin origin)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, ExecutionContext, null);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -339,7 +398,7 @@ namespace System.Management.Automation
             string helpFile)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, ExecutionContext, helpFile, false);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -388,7 +447,7 @@ namespace System.Management.Automation
             string helpFile)
         {
             return SetFunction(name, function, originalFunction, options, force, origin, context, helpFile, false);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -480,7 +539,7 @@ namespace System.Management.Automation
                     origin);
 
             return searcher.InitialScope.SetFunction(name, function, originalFunction, options, force, origin, context, helpFile);
-        } // SetFunction
+        }
 
         /// <summary>
         /// Set a function in the current scope of session state.
@@ -668,7 +727,7 @@ namespace System.Management.Automation
                 scope = searcher.CurrentLookupScope;
             }
             scope.RemoveFunction(name, force);
-        } // RemoveFunction
+        }
 
         /// <summary>
         /// Removes a function from the function table.
@@ -719,5 +778,5 @@ namespace System.Management.Automation
         }
 
         #endregion Functions
-    } // SessionStateInternal class
+    }
 }

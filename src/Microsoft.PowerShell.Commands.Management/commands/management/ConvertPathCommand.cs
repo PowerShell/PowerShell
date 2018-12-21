@@ -28,13 +28,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _paths;
-            } // get
+            }
 
             set
             {
                 _paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -47,14 +47,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         #endregion Parameters
 
@@ -122,9 +122,9 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // ConvertPathCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

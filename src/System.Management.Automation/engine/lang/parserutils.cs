@@ -1581,7 +1581,7 @@ namespace System.Management.Automation
                 throw InterpreterError.NewInterpreterExceptionByMessage(typeof(RuntimeException), errorPosition,
                     e.Message, "MethodInvocationException", e);
             }
-        } // CallMethod
+        }
     }
 
     #endregion ParserOps

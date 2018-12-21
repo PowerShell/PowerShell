@@ -170,8 +170,8 @@ namespace System.Management.Automation
                     }
                 }
                 return _capabilities;
-            } // get
-        } // Capabilities
+            }
+        }
         private ProviderCapabilities _capabilities = ProviderCapabilities.None;
         private bool _capabilitiesRead;
 
@@ -182,7 +182,7 @@ namespace System.Management.Automation
         /// The location can be either a fully qualified provider path
         /// or an Msh path. This is the location that is substituted for the ~.
         /// </remarks>
-        public string Home { get; set; } // Home
+        public string Home { get; set; }
 
         /// <summary>
         /// Gets an enumeration of drives that are available for
@@ -193,8 +193,8 @@ namespace System.Management.Automation
             get
             {
                 return _sessionState.Drive.GetAllForProvider(FullName);
-            } // get
-        } // Drives
+            }
+        }
 
         /// <summary>
         /// A hidden drive for the provider that is used for setting
@@ -211,8 +211,8 @@ namespace System.Management.Automation
             get
             {
                 return _hiddenDrive;
-            } // get
-        } // HiddenDrive
+            }
+        }
 
         /// <summary>
         /// Gets the string representation of the instance which is the name of the provider.
@@ -641,6 +641,6 @@ namespace System.Management.Automation
             }
             return _noteProperty;
         }
-    } // class ProviderInfo
-} // namespace System.Management.Automation
+    }
+}
 

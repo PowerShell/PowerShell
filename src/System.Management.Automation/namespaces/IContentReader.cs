@@ -61,8 +61,8 @@ namespace System.Management.Automation.Provider
         /// reader.
         /// </remarks>
         void Close();
-    } // IContentReader
+    }
 
     #endregion IContentReader
-} // namespace System.Management.Automation
+}
 
