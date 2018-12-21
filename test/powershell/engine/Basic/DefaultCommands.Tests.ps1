@@ -545,20 +545,21 @@ Describe "Verify approved aliases list" -Tags "CI" {
             Select-Object -Property Name, ConfirmImpact
 
         $currentCmdletList = Get-Command -CommandType Cmdlet |
-            Where-Object { $moduleList -contains $_.Source -and $_.ImplementingType } |
+            Where-Object { $moduleList -contains $_.Source -and $null -ne $_.ImplementingType } |
             Select-Object -Property Name, @{
                 Name = 'ConfirmImpact'
                 Expression = {
                     if ($t = $_.ImplementingType) {
-                        $t.GetCustomAttributes($true).Where{$_.VerbName}.ConfirmImpact
+                        $t.GetCustomAttributes($true).Where{$_.TypeId.Name -eq 'CmdletAttribute'}.ConfirmImpact
                     }
                 }
             }
 
-        $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $CmdletList
+        # -PassThru is provided to give meaningful output when differences arise
+        $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $CmdletList -Property ConfirmImpact -PassThru
 
         # As above, the test message doesn't give full list, so we write-host it explicitly
-        $result | Write-Host
+        $result | Sort-Object -Property Name, SideIndicator | Write-Host
         $result | Should -BeNullOrEmpty
     }
 }
