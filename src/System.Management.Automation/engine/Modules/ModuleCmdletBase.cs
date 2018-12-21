@@ -6487,7 +6487,7 @@ namespace Microsoft.PowerShell.Commands
                 // it isn't already there.
                 if (string.IsNullOrEmpty(assembly.Location))
                 {
-                    if (! Context.AssemblyCache.ContainsKey(assembly.FullName))
+                    if (!Context.AssemblyCache.ContainsKey(assembly.FullName))
                     {
                         Context.AssemblyCache.Add(assembly.FullName, assembly);
                     }
