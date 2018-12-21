@@ -490,10 +490,10 @@ namespace System.Management.Automation
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal readonly static ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
-        internal readonly static ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -508,7 +508,7 @@ namespace System.Management.Automation
             return policy;
         }
 
-        private readonly static ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
+        private static readonly ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
             new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
 
         /// <summary>
@@ -564,7 +564,7 @@ namespace System.Management.Automation
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
             {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
-        private readonly static ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
+        private static readonly ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
             new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
 
         /// <summary>

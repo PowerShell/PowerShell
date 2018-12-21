@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// Add brokered properties for easy access to important properties
         /// of security descriptor
         /// </summary>
-        static internal void AddBrokeredProperties(
+        internal static void AddBrokeredProperties(
             Collection<PSObject> results,
             bool audit,
             bool allCentralAccessPolicies)

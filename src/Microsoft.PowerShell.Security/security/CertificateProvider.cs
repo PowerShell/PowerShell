@@ -1355,7 +1355,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        static private string EnsureDriveIsRooted(string path)
+        private static string EnsureDriveIsRooted(string path)
         {
             string result = path;
 
@@ -1380,7 +1380,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        static private ErrorRecord CreateErrorRecord(string path,
+        private static ErrorRecord CreateErrorRecord(string path,
                                               CertificateProviderItem itemType)
         {
             Exception e = null;
@@ -1491,7 +1491,7 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(er);
         }
 
-        static private string NormalizePath(string path)
+        private static string NormalizePath(string path)
         {
             if (path.Length > 0)
             {
@@ -1510,7 +1510,7 @@ namespace Microsoft.PowerShell.Commands
             return path;
         }
 
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_pathSeparators);
             string[] result = null;
@@ -3068,7 +3068,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly char[] s_separators = new char[] { '/', '\\' };
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_separators);
             string[] result = null;

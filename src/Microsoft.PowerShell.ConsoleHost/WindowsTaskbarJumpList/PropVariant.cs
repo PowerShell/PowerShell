@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell
         private class PropVariantNativeMethods
         {
             [DllImport("Ole32.dll", PreserveSig = false)]
-            internal extern static void PropVariantClear([In, Out] PropVariant pvar);
+            internal static extern void PropVariantClear([In, Out] PropVariant pvar);
         }
     }
 }

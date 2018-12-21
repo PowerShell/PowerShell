@@ -157,7 +157,7 @@ namespace Microsoft.WSMan.Management
             return _resourceMgr.GetString(rscname);
         }
 
-        static internal string FormatResourceMsgFromResourcetextS(string rscname,
+        internal static string FormatResourceMsgFromResourcetextS(string rscname,
             params object[] args)
         {
             return FormatResourceMsgFromResourcetextS(_resourceMgr, rscname, args);
@@ -169,7 +169,7 @@ namespace Microsoft.WSMan.Management
             return FormatResourceMsgFromResourcetextS(_resourceMgr, resourceName, args);
         }
 
-        static private string FormatResourceMsgFromResourcetextS(
+        private static string FormatResourceMsgFromResourcetextS(
             ResourceManager resourceManager,
             string resourceName,
             object[] args)
@@ -605,7 +605,7 @@ namespace Microsoft.WSMan.Management
         /// <exception cref="InvalidOperationException">
         /// If there is ambiguity as specified above.
         /// </exception>
-        static internal void ValidateSpecifiedAuthentication(AuthenticationMechanism authentication, PSCredential credential, string certificateThumbprint)
+        internal static void ValidateSpecifiedAuthentication(AuthenticationMechanism authentication, PSCredential credential, string certificateThumbprint)
         {
             if ((credential != null) && (certificateThumbprint != null))
             {
