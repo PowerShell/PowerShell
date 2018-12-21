@@ -16,14 +16,32 @@ namespace System.Management.Automation.Unicode
     /// </summary>
     internal static partial class SimpleCaseFolding
     {
+            static  ushort refL1 = MemoryMarshal.GetReference(L1.AsSpan());
+            static ushort refL3 = MemoryMarshal.GetReference(L3.AsSpan());
+
         /// <summary>
         /// Simple case folding of the char (Utf16).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static char SimpleCaseFold(char ch)
+        internal static char SimpleCaseFold(char c)
         {
-            return s_simpleCaseFoldingTableBMPane1[ch];
+            //var v = Unsafe.Add(ref refL1, 1);
+            //var v = Unsafe.Add(ref refL1, c >> 8);
+            //var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
+            var ch = Unsafe.Add(ref refL3, Unsafe.Add(ref refL1, c >> 8) + (c & 0xFF));
+            //ushort ch = (ushort)v;
 
+            return Unsafe.As<ushort,char>(ref ch);
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static char SimpleCaseFold1(char c)
+        {
+            ushort v    = L1[c >> 8];
+            v           = L3[v + (c & 0xFF)];
+
+            return v == 0 ? c : (char)v;
         }
 
         /// <summary>
@@ -150,8 +168,6 @@ namespace System.Management.Automation.Unicode
         {
             ref char res = ref MemoryMarshal.GetReference(destination);
             ref char src = ref MemoryMarshal.GetReference(source);
-            var simpleCaseFoldingTableBMPane1 = s_simpleCaseFoldingTableBMPane1.AsSpan();
-            var simpleCaseFoldingTableBMPane2 = s_simpleCaseFoldingTableBMPane2.AsSpan();
 
             var length = source.Length;
             int i = 0;
@@ -182,7 +198,7 @@ namespace System.Management.Automation.Unicode
                 {
                     //destination[i] = (char)s_simpleCaseFoldingTableBMPane1[ch];
                     //Unsafe.Add(ref res, i) = s_simpleCaseFoldingTableBMPane1[ch];
-                    Unsafe.Add(ref res, i) = simpleCaseFoldingTableBMPane1[ch];
+                    Unsafe.Add(ref res, i) = SimpleCaseFold(ch);
                 }
                 else
                 {
@@ -194,7 +210,7 @@ namespace System.Management.Automation.Unicode
                             // The index is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                             var index = ((ch - HIGH_SURROGATE_START) * 0x400) + (ch2 - LOW_SURROGATE_START);
                             // The utf32 is Utf32 - 0x10000 (UNICODE_PLANE01_START)
-                            var utf32 = simpleCaseFoldingTableBMPane2[index];
+                            var utf32 = SimpleCaseFold((char)index);
                             Unsafe.Add(ref res, i) = (char)((utf32 / 0x400) + (int)HIGH_SURROGATE_START);
                             i++;
                             Unsafe.Add(ref res, i) = (char)((utf32 % 0x400) + (int)LOW_SURROGATE_START);
@@ -204,7 +220,7 @@ namespace System.Management.Automation.Unicode
                             // Broken unicode - throw?
                             Unsafe.Add(ref res, i) = ch;
                             i++;
-                            Unsafe.Add(ref res, i) = simpleCaseFoldingTableBMPane1[ch];
+                            Unsafe.Add(ref res, i) = SimpleCaseFold(ch);
                         }
                     }
                     else
@@ -218,13 +234,11 @@ namespace System.Management.Automation.Unicode
 
         internal static void SpanSimpleCaseFold(Span<char> destination, ReadOnlySpan<char> source)
         {
-            Diagnostics.Assert(destination.Length >= source.Length, "Destination span length must be equal or greater then source span length.");
+            //Diagnostics.Assert(destination.Length >= source.Length, "Destination span length must be equal or greater then source span length.");
             ref char res = ref MemoryMarshal.GetReference(destination);
             ref char src = ref MemoryMarshal.GetReference(source);
             //var simpleCaseFoldingTableBMPane1 = s_simpleCaseFoldingTableBMPane1.AsSpan();
             //var simpleCaseFoldingTableBMPane2 = s_simpleCaseFoldingTableBMPane2.AsSpan();
-            ref char simpleCaseFoldingTableBMPane1 = ref MemoryMarshal.GetReference(s_simpleCaseFoldingTableBMPane1.AsSpan());
-            ref char simpleCaseFoldingTableBMPane2 = ref MemoryMarshal.GetReference(s_simpleCaseFoldingTableBMPane2.AsSpan());
 
             var length = source.Length;
             int i = 0;
@@ -256,7 +270,7 @@ namespace System.Management.Automation.Unicode
                     //destination[i] = (char)s_simpleCaseFoldingTableBMPane1[ch];
                     //Unsafe.Add(ref res, i) = s_simpleCaseFoldingTableBMPane1[ch];
                     //Unsafe.Add(ref res, i) = simpleCaseFoldingTableBMPane1[ch];
-                    Unsafe.Add(ref res, i) = Unsafe.Add(ref simpleCaseFoldingTableBMPane1, ch);
+                    Unsafe.Add(ref res, i) = SimpleCaseFold(ch);
                 }
                 else
                 {
@@ -270,7 +284,7 @@ namespace System.Management.Automation.Unicode
                             // to an array with size uint (index from 0 to 65535).
                             var index = ((ch - HIGH_SURROGATE_START) * 0x400) + (ch2 - LOW_SURROGATE_START);
                             // The utf32 is Utf32 - 0x10000 (UNICODE_PLANE01_START)
-                            var utf32 = Unsafe.Add(ref simpleCaseFoldingTableBMPane2, index);
+                            var utf32 = SimpleCaseFold((char)index);
                             Unsafe.Add(ref res, i) = (char)((utf32 / 0x400) + (int)HIGH_SURROGATE_START);
                             i++;
                             Unsafe.Add(ref res, i) = (char)((utf32 % 0x400) + (int)LOW_SURROGATE_START);
@@ -282,7 +296,7 @@ namespace System.Management.Automation.Unicode
                             // so we copy a high surrogate and convert the full char.
                             Unsafe.Add(ref res, i) = ch;
                             i++;
-                            Unsafe.Add(ref res, i) = Unsafe.Add(ref simpleCaseFoldingTableBMPane1, ch);
+                            Unsafe.Add(ref res, i) = SimpleCaseFold(ch);
                         }
                     }
                     else
@@ -370,8 +384,6 @@ namespace System.Management.Automation.Unicode
 
             ref char refA = ref MemoryMarshal.GetReference(strA.AsSpan());
             ref char refB = ref MemoryMarshal.GetReference(strB.AsSpan());
-            ref char simpleCaseFoldingTableBMPane1 = ref MemoryMarshal.GetReference(s_simpleCaseFoldingTableBMPane1.AsSpan());
-            ref char simpleCaseFoldingTableBMPane2 = ref MemoryMarshal.GetReference(s_simpleCaseFoldingTableBMPane2.AsSpan());
 
             // -1 because char before last can be surrogate in both strings.
             var length = Math.Min(strA.Length, strB.Length) - 1;
@@ -390,7 +402,7 @@ namespace System.Management.Automation.Unicode
 
                 if (IsNotSurrogate(c1) && IsNotSurrogate(c2))
                 {
-                    c = Unsafe.Add(ref simpleCaseFoldingTableBMPane1, c1) - Unsafe.Add(ref simpleCaseFoldingTableBMPane1, c2);
+                    c = SimpleCaseFold(c1) - SimpleCaseFold(c2);
 
                     if (c == 0)
                     {
@@ -418,12 +430,12 @@ namespace System.Management.Automation.Unicode
                 // The index is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                 var index1 = ((c1 - HIGH_SURROGATE_START) * 0x400) + (c12 - LOW_SURROGATE_START);
                 // The utf32 is Utf32 - 0x10000 (UNICODE_PLANE01_START)
-                var utf32_1 = Unsafe.Add(ref simpleCaseFoldingTableBMPane2, index1);
+                var utf32_1 = SimpleCaseFold((char)index1);
 
                 // The index is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                 var index2 = ((c2 - HIGH_SURROGATE_START) * 0x400) + (c22 - LOW_SURROGATE_START);
                 // The utf32 is Utf32 - 0x10000 (UNICODE_PLANE01_START)
-                var utf32_2 = Unsafe.Add(ref simpleCaseFoldingTableBMPane2, index1);
+                var utf32_2 = SimpleCaseFold((char)index1);
 
                 c = utf32_1 - utf32_2;
 
@@ -437,7 +449,7 @@ namespace System.Management.Automation.Unicode
             //c1 = Unsafe.Add(ref refA, i + 1);
             //c2 = Unsafe.Add(ref refB, i + 1);
 
-            c = Unsafe.Add(ref simpleCaseFoldingTableBMPane1, Unsafe.Add(ref refA, i)) - Unsafe.Add(ref simpleCaseFoldingTableBMPane1, Unsafe.Add(ref refB, i));
+            c = SimpleCaseFold(Unsafe.Add(ref refA, i)) - SimpleCaseFold(Unsafe.Add(ref refB, i));
 
             if (c != 0)
             {
@@ -535,7 +547,7 @@ namespace System.Management.Automation.Unicode
 
         private static int GetHashCodeSimpleCaseFolding(string source)
         {
-            Diagnostics.Assert(source != null, "source must not be null");
+            //Diagnostics.Assert(source != null, "source must not be null");
 
             // Do not allocate on the stack if string is empty
             if (source.Length == 0)
