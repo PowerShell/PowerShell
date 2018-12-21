@@ -210,16 +210,5 @@
       </Rules>
       <AnalyzerSettings />
     </Analyzer>
-    <Analyzer AnalyzerId="StyleCop.CSharp.SpacingRules">
-      <Rules>
-        <Rule Name="MemberAccessSymbolsMustBeSpacedCorrectly">
-          <!-- it's OK to place a member name after '.' on the next line -->
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
-      </Rules>
-      <AnalyzerSettings />
-    </Analyzer>
   </Analyzers>
 </StyleCopSettings>
