@@ -36,8 +36,7 @@ namespace System.Management.Automation
                 = ctxt.InternalHost.InternalUI.GetInformationalMessageBuffers();
             result._originalHost = ctxt.InternalHost.ExternalHost;
 
-            ctxt.InternalHost.
-                    InternalUI.SetInformationalMessageBuffers(newBuffers);
+            ctxt.InternalHost.InternalUI.SetInformationalMessageBuffers(newBuffers);
             ctxt.InternalHost.SetHostRef(newHost);
 
             return result;
@@ -48,8 +47,7 @@ namespace System.Management.Automation
         //     resetting unmanaged resources.
         void IDisposable.Dispose()
         {
-            _executionContext.InternalHost.
-                    InternalUI.SetInformationalMessageBuffers(_originalInformationalBuffers);
+            _executionContext.InternalHost.InternalUI.SetInformationalMessageBuffers(_originalInformationalBuffers);
             _executionContext.InternalHost.SetHostRef(_originalHost);
             GC.SuppressFinalize(this);
         }

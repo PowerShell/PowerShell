@@ -59,8 +59,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // Win8: 192504
                 if (LocalPipeline.GetExecutionContextFromTLS() != null)
                 {
-                    enumLimitVal = LocalPipeline.GetExecutionContextFromTLS().SessionState.PSVariable.
-                        GetValue("global:" + InitialSessionState.FormatEnumerationLimit);
+                    enumLimitVal = LocalPipeline.GetExecutionContextFromTLS()
+                        .SessionState.PSVariable
+                        .GetValue("global:" + InitialSessionState.FormatEnumerationLimit);
                 }
             }
             // Eat the following exceptions, enumerationLimit will use the default value

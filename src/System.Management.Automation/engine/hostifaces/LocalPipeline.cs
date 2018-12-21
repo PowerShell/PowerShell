@@ -360,8 +360,9 @@ namespace System.Management.Automation.Runspaces
                 // Set Informational Buffers on the host only if this is not a child.
                 // Do not overwrite parent's informational buffers.
                 if (!this.IsChild)
-                    LocalRunspace.ExecutionContext.InternalHost.
-                        InternalUI.SetInformationalMessageBuffers(InformationalBuffers);
+                {
+                    LocalRunspace.ExecutionContext.InternalHost.InternalUI.SetInformationalMessageBuffers(InformationalBuffers);
+                }
 
                 bool oldQuestionMarkValue = true;
                 bool savedIgnoreScriptDebug = this.LocalRunspace.ExecutionContext.IgnoreScriptDebug;

@@ -209,8 +209,7 @@ namespace System.Management.Automation.Internal
             ClientRemotePowerShell shell)
         {
             BaseClientCommandTransportManager clientTransportMgr =
-                RemoteSession.SessionDataStructureHandler.
-                    CreateClientCommandTransportManager(shell, shell.NoInput);
+                RemoteSession.SessionDataStructureHandler.CreateClientCommandTransportManager(shell, shell.NoInput);
 
             return new ClientPowerShellDataStructureHandler(
                 clientTransportMgr, _clientRunspacePoolId, shell.InstanceId);

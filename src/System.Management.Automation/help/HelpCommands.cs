@@ -792,10 +792,10 @@ namespace Microsoft.PowerShell.Commands
                 // 2. This method is primarily used to get uri faster while serializing the CommandInfo objects (from Get-Command)
                 // 3. Exchange uses Get-Help proxy to not call Get-Help cmdlet at-all while serializing CommandInfo objects
                 // 4. Using HelpSystem directly will not allow Get-Help proxy to do its job.
-                System.Management.Automation.PowerShell getHelpPS = System.Management.Automation.PowerShell.Create(
-                    RunspaceMode.CurrentRunspace).AddCommand("get-help").
-                    AddParameter("Name", cmdName).AddParameter("Category",
-                                                                cmdInfo.HelpCategory.ToString());
+                var getHelpPS = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
+                    .AddCommand("get-help")
+                    .AddParameter("Name", cmdName)
+                    .AddParameter("Category", cmdInfo.HelpCategory.ToString());
                 try
                 {
                     Collection<PSObject> helpInfos = getHelpPS.Invoke();

@@ -1021,8 +1021,7 @@ namespace System.Management.Automation
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
                     if (context.CurrentCommandProcessor != null)
                     {
-                        context.CurrentCommandProcessor.CommandRuntime.
-                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
@@ -1036,8 +1035,7 @@ namespace System.Management.Automation
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
                     if (context.CurrentCommandProcessor != null)
                     {
-                        context.CurrentCommandProcessor.CommandRuntime.
-                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
