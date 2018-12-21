@@ -624,6 +624,63 @@ namespace System.Management.Automation
         }
     }
 
+    /// <summary>
+    /// A simple implementation of CRC32.
+    /// See "CRC-32 algorithm" in https://en.wikipedia.org/wiki/Cyclic_redundancy_check.
+    /// </summary>
+    internal class CRC32Hash
+    {
+        // CRC-32C polynomial representations
+        private const uint polynomial = 0x1EDC6F41;
+        private static uint[] table;
+
+        static CRC32Hash()
+        {
+            uint temp = 0;
+            table = new uint[256];
+
+            for (int i = 0; i < table.Length; i++)
+            {
+                temp = (uint)i;
+                for (int j = 0; j < 8; j++)
+                {
+                    if ((temp & 1) == 1)
+                    {
+                        temp = (temp >> 1) ^ polynomial;
+                    }
+                    else
+                    {
+                        temp >>= 1;
+                    }
+                }
+                table[i] = temp;
+            }
+        }
+
+        private static uint Compute(byte[] buffer)
+        {
+            uint crc = 0xFFFFFFFF;
+            for (int i = 0; i < buffer.Length; ++i)
+            {
+                var index = (byte)(crc ^ buffer[i] & 0xff);
+                crc = (crc >> 8) ^ table[index];
+            }
+            return ~crc;
+        }
+
+        internal static byte[] ComputeHash(byte[] buffer)
+        {
+            uint crcResult = Compute(buffer);
+            return BitConverter.GetBytes(crcResult);
+        }
+
+        internal static string ComputeHash(string input)
+        {
+            byte[] hashBytes = ComputeHash(Encoding.UTF8.GetBytes(input));
+            return BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+        }
+    }
+
     #region ReferenceEqualityComparer
 
     /// <summary>

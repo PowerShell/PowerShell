@@ -17,9 +17,6 @@ using Microsoft.Win32;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Threading;
-#if CORECLR
-using System.Xml.XPath;
-#endif
 
 namespace Microsoft.WSMan.Management
 {
@@ -160,7 +157,7 @@ namespace Microsoft.WSMan.Management
             return _resourceMgr.GetString(rscname);
         }
 
-        static internal string FormatResourceMsgFromResourcetextS(string rscname,
+        internal static string FormatResourceMsgFromResourcetextS(string rscname,
             params object[] args)
         {
             return FormatResourceMsgFromResourcetextS(_resourceMgr, rscname, args);
@@ -172,7 +169,7 @@ namespace Microsoft.WSMan.Management
             return FormatResourceMsgFromResourcetextS(_resourceMgr, resourceName, args);
         }
 
-        static private string FormatResourceMsgFromResourcetextS(
+        private static string FormatResourceMsgFromResourcetextS(
             ResourceManager resourceManager,
             string resourceName,
             object[] args)
@@ -337,7 +334,6 @@ namespace Microsoft.WSMan.Management
                 _sr = new StreamReader(_fs);
                 strOut = _sr.ReadToEnd();
             }
-
             catch (ArgumentNullException e)
             {
                 ErrorRecord er = new ErrorRecord(e, "ArgumentNullException", ErrorCategory.InvalidArgument, null);
@@ -608,7 +604,7 @@ namespace Microsoft.WSMan.Management
         /// <exception cref="InvalidOperationException">
         /// If there is ambiguity as specified above.
         /// </exception>
-        static internal void ValidateSpecifiedAuthentication(AuthenticationMechanism authentication, PSCredential credential, string certificateThumbprint)
+        internal static void ValidateSpecifiedAuthentication(AuthenticationMechanism authentication, PSCredential credential, string certificateThumbprint)
         {
             if ((credential != null) && (certificateThumbprint != null))
             {
@@ -990,17 +986,14 @@ namespace Microsoft.WSMan.Management
             {
                 RegistryKey rGPOLocalMachineKey = Registry.LocalMachine.OpenSubKey(
                     Registry_Path_Credentials_Delegation + @"\CredentialsDelegation",
-#if !CORECLR
                     RegistryKeyPermissionCheck.ReadWriteSubTree,
-#endif
                     System.Security.AccessControl.RegistryRights.FullControl);
 
                 if (rGPOLocalMachineKey != null)
                 {
-                    rGPOLocalMachineKey = rGPOLocalMachineKey.OpenSubKey(Key_Allow_Fresh_Credentials,
-#if !CORECLR
+                    rGPOLocalMachineKey = rGPOLocalMachineKey.OpenSubKey(
+                        Key_Allow_Fresh_Credentials,
                         RegistryKeyPermissionCheck.ReadWriteSubTree,
-#endif
                         System.Security.AccessControl.RegistryRights.FullControl);
                     if (rGPOLocalMachineKey == null)
                     {
@@ -1084,7 +1077,6 @@ namespace Microsoft.WSMan.Management
                     }
                 }
             }
-
             catch (IOException e)
             {
 

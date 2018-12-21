@@ -31,7 +31,7 @@ namespace System.Management.Automation.Internal
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
             _commandRuntime = commandRuntime;
-        } // ctor
+        }
 
         #endregion ctor
 
@@ -50,7 +50,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.Verbose; }
             set { _commandRuntime.Verbose = value; }
-        } //Verbose
+        }
 
         /// <summary>
         /// Gets or sets the value of the Debug parameter for the cmdlet.
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.Debug; }
             set { _commandRuntime.Debug = value; }
-        } //Debug
+        }
 
         /// <summary>
         /// Gets or sets the value of the ErrorAction parameter for the cmdlet.
@@ -80,7 +80,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.ErrorAction; }
             set { _commandRuntime.ErrorAction = value; }
-        } //ErrorAction
+        }
 
         /// <summary>
         /// Gets or sets the value of the WarningAction parameter for the cmdlet.
@@ -95,7 +95,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.WarningPreference; }
             set { _commandRuntime.WarningPreference = value; }
-        } //WarningAction
+        }
 
         /// <summary>
         /// Gets or sets the value of the InformationAction parameter for the cmdlet.
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.InformationPreference; }
             set { _commandRuntime.InformationPreference = value; }
-        } //InformationAction
+        }
 
         /// <summary>
         /// Gets or sets the value of the ErrorVariable parameter for the cmdlet.
@@ -129,7 +129,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.ErrorVariable; }
             set { _commandRuntime.ErrorVariable = value; }
-        }//ErrorVariable
+        }
 
         /// <summary>
         /// Gets or sets the value of the WarningVariable parameter for the cmdlet.
@@ -145,7 +145,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.WarningVariable; }
             set { _commandRuntime.WarningVariable = value; }
-        }//WarningVariable
+        }
 
         /// <summary>
         /// Gets or sets the value of the InformationVariable parameter for the cmdlet.
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.OutVariable; }
             set { _commandRuntime.OutVariable = value; }
-        } //OutVariable
+        }
 
         /// <summary>
         /// Gets or sets the OutBuffer parameter for the cmdlet.
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.OutBuffer; }
             set { _commandRuntime.OutBuffer = value; }
-        } //OutBuffer
+        }
 
         /// <summary>
         /// Gets or sets the PipelineVariable parameter for the cmdlet.
@@ -212,7 +212,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _commandRuntime.PipelineVariable; }
             set { _commandRuntime.PipelineVariable = value; }
-        } //PipelineVariable
+        }
 
         #endregion parameters
 
@@ -240,6 +240,6 @@ namespace System.Management.Automation.Internal
                 }
             }
         }
-    } // class UserFeedbackParameters
+    }
 }
 

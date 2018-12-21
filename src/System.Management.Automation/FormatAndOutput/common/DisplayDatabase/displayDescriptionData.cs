@@ -424,6 +424,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// RULE: valid only for table and wide only
         /// </summary>
         internal bool? autosize = null;
+
+        /// <summary>
+        /// RULE: only valid for table
+        /// </summary>
+        internal bool repeatHeader = false;
     }
 
     /// <summary>

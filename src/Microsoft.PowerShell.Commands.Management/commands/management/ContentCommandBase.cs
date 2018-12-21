@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
             result.Properties.Add(note, true);
 
             WriteObject(result);
-        } // WriteContentObject
+        }
 
         /// <summary>
         /// A cache of the notes that get added to the content items as they are written
@@ -325,8 +325,8 @@ namespace Microsoft.PowerShell.Commands
                 tracer.WriteLine("Attaching {0} = {1}", "PSProvider", Provider);
 
                 return content;
-            } // AttachNotes
-        } // ContentPathsCache
+            }
+        }
 
         /// <summary>
         /// A struct to hold the path information and the content readers/writers
@@ -347,14 +347,14 @@ namespace Microsoft.PowerShell.Commands
                 PathInfo = pathInfo;
                 Reader = reader;
                 Writer = writer;
-            } // constructor
+            }
 
             internal PathInfo PathInfo { get; }
 
             internal IContentReader Reader { get; }
 
             internal IContentWriter Writer { get; }
-        } // struct ContentHolder
+        }
 
         /// <summary>
         /// Closes the content readers and writers in the content holder array
@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // CloseContent
+        }
 
         /// <summary>
         /// Overridden by derived classes to support ShouldProcess with
@@ -539,10 +539,10 @@ namespace Microsoft.PowerShell.Commands
                         results.Add(holder);
                     }
                 }
-            } // foreach pathInfo in pathInfos
+            }
 
             return results;
-        } // GetContentReaders
+        }
 
         /// <summary>
         /// Resolves the specified paths to PathInfo objects
@@ -677,7 +677,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return results;
-        } // ResolvePaths
+        }
 
         #endregion protected members
 
@@ -710,5 +710,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion IDisposable
 
-    } // ContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

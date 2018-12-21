@@ -1183,7 +1183,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // BindParameters
+        }
 
         /// <summary>
         /// Determines if a ScriptBlock can be bound directly to the type of the specified parameter
@@ -1666,7 +1666,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // HandleRemainingArguments
+        }
 
         /// <summary>
         /// Determines if the cmdlet supports dynamic parameters. If it does,
@@ -1815,10 +1815,10 @@ namespace System.Management.Automation
                                     out outgoingBindingException);
                             }
                         }
-                    } // dynamicParameterCmdlet != null
+                    }
                 }
             }
-        } // HandleCommandLineDynamicParameters
+        }
 
         /// <summary>
         /// This method determines if the unbound mandatory parameters take pipeline input or
@@ -2717,7 +2717,7 @@ namespace System.Management.Automation
             }
 
             return validParameterSetCount;
-        } // ValidateParameterSets
+        }
 
         private int ResolveParameterSetAmbiguityBasedOnMandatoryParameters()
         {
@@ -2843,7 +2843,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // AtLeastOneValidParameterSetTakesPipelineInput
+        }
 
         /// <summary>
         /// Checks for unbound mandatory parameters. If any are found, an exception is thrown.
@@ -2975,7 +2975,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // HandleUnboundMandatoryParameters
+        }
 
         private Dictionary<string, PSObject> PromptForMissingMandatoryParameters(
             Collection<FieldDescription> fieldDescriptionList,
@@ -3116,7 +3116,7 @@ namespace System.Management.Automation
                 fDesc.IsMandatory = true;
 
                 fieldDescriptionList.Add(fDesc);
-            } // foreach unbound parameter
+            }
 
             return fieldDescriptionList;
         }
@@ -3829,7 +3829,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // InvokeAndBindDelayBindScriptBlock
+        }
 
         /// <summary>
         /// Determines the number of valid parameter sets based on the valid parameter

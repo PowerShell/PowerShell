@@ -598,7 +598,7 @@ namespace System.Management.Automation
             int paraNodes = GetParaMamlNodeCount(xmlNode.ChildNodes);
             int count = 0;
             // Don't trim the content if this is an "introduction" node.
-            bool trim = ! string.Equals(xmlNode.Name, "maml:introduction", StringComparison.OrdinalIgnoreCase);
+            bool trim = !string.Equals(xmlNode.Name, "maml:introduction", StringComparison.OrdinalIgnoreCase);
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))

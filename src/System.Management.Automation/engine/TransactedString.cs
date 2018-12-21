@@ -193,5 +193,5 @@ namespace Microsoft.PowerShell.Commands.Management
             }
         }
     }
-} // namespace Microsoft.Test.Management.Automation
+}
 

@@ -556,7 +556,7 @@ namespace System.Management.Automation
             {
                 exceptionToRethrow = e;
 
-            } // try
+            }
             catch (PipelineStoppedException)
             {
                 // If we're stopping the process, just rethrow this exception...
@@ -717,7 +717,7 @@ namespace System.Management.Automation
             catch (Win32Exception e)
             {
                 exceptionToRethrow = e;
-            } // try
+            }
             catch (PipelineStoppedException)
             {
                 // If we're stopping the process, just rethrow this exception...

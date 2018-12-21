@@ -332,6 +332,6 @@ namespace System.Management.Automation
         }
 
         #endregion private members
-    } // class CommandParameterSetInfo
-} // namespace System.Management.Automation
+    }
+}
 

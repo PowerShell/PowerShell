@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
                     AddItemToCache(string.Empty, s_storeLocations);
                 }
             }
-        } // constructor
+        }
 
         /// <summary>
         /// Removes an item at the specified path
@@ -955,7 +955,7 @@ namespace Microsoft.PowerShell.Commands
             drives.Add(drive);
 
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         /// <summary>
         /// Determines if the item at the given path is a store-location
@@ -1129,7 +1129,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", result);
             return result;
-        } // ItemExists
+        }
 
         /// <summary>
         /// Gets the store location, store, or certificate
@@ -1353,9 +1353,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process.Start(System.IO.Path.Combine(certPath, certmgr));
             }
-        } // InvokeDefaultAction
+        }
 
-        static private string EnsureDriveIsRooted(string path)
+        private static string EnsureDriveIsRooted(string path)
         {
             string result = path;
 
@@ -1378,9 +1378,9 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", result);
             return result;
-        } // EnsureDriveIsRooted
+        }
 
-        static private ErrorRecord CreateErrorRecord(string path,
+        private static ErrorRecord CreateErrorRecord(string path,
                                               CertificateProviderItem itemType)
         {
             Exception e = null;
@@ -1491,7 +1491,7 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(er);
         }
 
-        static private string NormalizePath(string path)
+        private static string NormalizePath(string path)
         {
             if (path.Length > 0)
             {
@@ -1510,7 +1510,7 @@ namespace Microsoft.PowerShell.Commands
             return path;
         }
 
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_pathSeparators);
             string[] result = null;
@@ -2068,7 +2068,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return item;
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the child items of a given store, or location.
@@ -2128,7 +2128,7 @@ namespace Microsoft.PowerShell.Commands
         {
             path = NormalizePath(path);
             GetChildItemsOrNames(path, false, returnContainers, true, GetFilter());
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Determines if the item at the specified path is a store
@@ -2176,7 +2176,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", isContainer);
             return isContainer;
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for get-item on the Certificate
@@ -2789,7 +2789,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    } // CertificateProvider
+    }
 
     /// <summary>
     /// Defines a class to represent a store location in the certificate
@@ -3068,7 +3068,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly char[] s_separators = new char[] { '/', '\\' };
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_separators);
             string[] result = null;
@@ -3180,7 +3180,7 @@ namespace Microsoft.PowerShell.Commands
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
             if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) &&
-                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
+                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture) == -1)
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
                 try

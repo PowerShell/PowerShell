@@ -57,14 +57,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// Gets or sets the filter property
@@ -91,13 +91,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Include;
-            } // get
+            }
 
             set
             {
                 base.Include = value;
-            } // set
-        } // Include
+            }
+        }
 
         /// <summary>
         /// Gets or sets the exclude property
@@ -108,13 +108,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return base.Exclude;
-            } // get
+            }
 
             set
             {
                 base.Exclude = value;
-            } // set
-        } // Exclude
+            }
+        }
 
         /// <summary>
         /// Gets or sets the recurse switch
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.Force = value;
             }
-        } // Force
+        }
 
         /// <summary>
         /// Gets or sets the names switch
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
             return result;
-        } // GetDynamicParameters
+        }
 
         #endregion Command parameters
 
@@ -351,9 +351,9 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
             }
-        } // ProcessRecord
+        }
 
         #endregion command code
-    } // class GetChildrenCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

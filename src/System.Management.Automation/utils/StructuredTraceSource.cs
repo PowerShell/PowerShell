@@ -1501,7 +1501,7 @@ namespace System.Management.Automation
         internal static Dictionary<String, PSTraceSource> PreConfiguredTraceSource { get; } = new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         #endregion TraceCatalog
-    }      // class PSTraceSource : Switch
+    }
 
     #region ScopeTracer object/helpers
     /// <summary>

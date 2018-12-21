@@ -215,7 +215,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // CreateWildcardsFromStrings
+        }
 
         /// <summary>
         /// Determines if the specified text matches any of the patterns
@@ -263,7 +263,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // MatchesAnyWildcardPattern
+        }
 
         /// <summary>
         /// Converts an OpenMode enum value to a FileMode

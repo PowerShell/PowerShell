@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         private static string NormalizePath(string path)
         {
             return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-        } // NormalizePath
+        }
 
         /// <summary>
         /// Checks if the item exist at the specified path. if it exists then creates
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return providerInfo;
-        } // Start
+        }
 
         #endregion CmdletProvider members
 
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
             drive.Trace();
 
             return result;
-        } // NewDrive
+        }
 
         /// <summary>
         /// MapNetworkDrive facilitates to map the newly created PS Drive to a network share.
@@ -993,10 +993,10 @@ namespace Microsoft.PowerShell.Commands
                     catch (System.UnauthorizedAccessException)
                     {
                     }
-                } // foreach
+                }
             }
             return results;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider methods
 
@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
-        } // GetItem
+        }
 
         private FileSystemInfo GetFileSystemItem(string path, ref bool isContainer, bool showHidden)
         {
@@ -1269,7 +1269,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return null;
-        } // GetFileSystemItem
+        }
 
         /// <summary>
         /// Invokes the item at the path using ShellExecute semantics.
@@ -1330,7 +1330,7 @@ namespace Microsoft.PowerShell.Commands
                 invokeProcess.Start();
 #endif
             }
-        } // InvokeDefaultAction
+        }
 
         #endregion ItemCmdletProvider members
 
@@ -1362,7 +1362,7 @@ namespace Microsoft.PowerShell.Commands
             uint depth)
         {
             GetPathItems(path, recurse, depth, false, ReturnContainers.ReturnMatchingContainers);
-        } // GetChildItems
+        }
         #endregion GetChildItems
 
         #region GetChildNames
@@ -1388,7 +1388,7 @@ namespace Microsoft.PowerShell.Commands
             ReturnContainers returnContainers)
         {
             GetPathItems(path, false, uint.MaxValue, true, returnContainers);
-        } // GetChildNames
+        }
         #endregion GetChildNames
 
         /// <summary>
@@ -1686,8 +1686,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteError(new ErrorRecord(ex, "DirUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory.FullName));
                         }
-                    }// foreach
-                }// foreach
+                    }
+                }
 
                 bool isFilterHiddenSpecified = false;           // "Hidden" is specified somewhere in the expression
                 bool isSwitchFilterHiddenSpecified = false;     // "Hidden" is specified somewhere in the parameters
@@ -1747,9 +1747,9 @@ namespace Microsoft.PowerShell.Commands
 
                                 Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers, tracker);
                             }
-                        }//foreach
-                    }//if
-                }//if
+                        }
+                    }
+                }
             }
             catch (ArgumentException argException)
             {
@@ -1765,7 +1765,7 @@ namespace Microsoft.PowerShell.Commands
                 // 2004/10/13-JonN removed ResourceActionFailedException wrapper
                 WriteError(new ErrorRecord(uae, "DirUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory.FullName));
             }
-        } // Dir
+        }
 
         /// <summary>
         /// Create an enum expression evaluator for user-specified attribute filtering
@@ -1980,7 +1980,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(accessException, "RenameItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
-        } // RenameItem
+        }
 
         #endregion RenameItem
 
@@ -2416,7 +2416,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentException("type", FileSystemProviderStrings.UnknownType);
             }
-        } // NewItem
+        }
 
         private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
@@ -2558,7 +2558,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(accessException, "CreateDirectoryUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
-        } // CreateDirectory
+        }
 
         private bool CreateIntermediateDirectories(string path)
         {
@@ -2634,7 +2634,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // CreateIntermediateDirectories
+        }
 
         #endregion NewItem
 
@@ -2774,7 +2774,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
-        } // RemoveItem
+        }
 
         /// <summary>
         /// Retrieves the dynamic parameters required for the Remove-Item cmdlet
@@ -2912,8 +2912,8 @@ namespace Microsoft.PowerShell.Commands
                     // Finally, remove the directory
                     RemoveFileSystemItem(directory, force);
                 }
-            } // ShouldProcess
-        } // RemoveDirectoryInfoItem
+            }
+        }
 
         /// <summary>
         /// Removes a file from the file system.
@@ -2936,8 +2936,8 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldProcess(file.FullName, action))
             {
                 RemoveFileSystemItem(file, force);
-            } // ShouldProcess
-        } // RemoveFileInfoItem
+            }
+        }
 
         /// <summary>
         /// Removes the file system object from the file system.
@@ -3069,7 +3069,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // RemoveFileSystemItem
+        }
 
         #endregion RemoveItem
 
@@ -3174,7 +3174,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // Exists
+        }
 
         /// <summary>
         /// Adds -OlderThan, -NewerThan dynamic properties.
@@ -3196,7 +3196,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return new FileSystemItemProviderDynamicParameters();
             }
-        } // ItemExistsDynamicParameters
+        }
 
         #endregion ItemExists
 
@@ -3279,7 +3279,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // HasChildItems
+        }
 
         private static bool DirectoryInfoHasChildItems(DirectoryInfo directory)
         {
@@ -3297,7 +3297,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // DirectoryInfoHasChildItems
+        }
 
         #endregion HasChildItems
 
@@ -3373,7 +3373,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 CopyItemFromRemoteSession(path, destinationPath, recurse, Force, fromSession);
             }
-
             else
             {
                 // Copy-Item to session
@@ -3385,9 +3384,7 @@ namespace Microsoft.PowerShell.Commands
                         CopyItemLocalOrToSession(path, destinationPath, recurse, Force, ps);
                     }
                 }
-
-                // Copy-Item local
-                else
+                else // Copy-Item local
                 {
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
                 }
@@ -3395,7 +3392,7 @@ namespace Microsoft.PowerShell.Commands
 
             _excludeMatcher.Clear();
             _excludeMatcher = null;
-        } //CopyItem
+        }
 
         private void CopyItemFromRemoteSession(string path, string destinationPath, bool recurse, bool force, PSSession fromSession)
         {
@@ -3474,7 +3471,7 @@ namespace Microsoft.PowerShell.Commands
                     RemoveFunctionsPSCopyFileFromRemoteSession(ps);
                 }
             }
-        } // CopyItemFromRemoteSession
+        }
 
         private void CopyItemLocalOrToSession(string path, string destinationPath, bool recurse, bool Force, System.Management.Automation.PowerShell ps)
         {
@@ -3505,7 +3502,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 RemoveFunctionPSCopyFileToRemoteSession(ps);
             }
-        } // CopyItem
+        }
 
         private void CopyDirectoryInfoItem(
             DirectoryInfo directory,
@@ -3621,7 +3618,7 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(new ErrorRecord(accessException, "CopyDirectoryInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                             }
                         }
-                    } // for files
+                    }
 
                     // Now copy all the directories to that directory
 
@@ -3653,10 +3650,10 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(new ErrorRecord(accessException, "CopyDirectoryInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, childDir));
                             }
                         }
-                    } // for directories
+                    }
                 }
-            } // ShouldProcess
-        } // CopyDirectoryInfoItem
+            }
+        }
 
         private void CopyFileInfoItem(FileInfo file, string destinationPath, bool force, System.Management.Automation.PowerShell ps)
         {
@@ -3761,15 +3758,15 @@ namespace Microsoft.PowerShell.Commands
 
                             FileInfo result = new FileInfo(destinationPath);
                             WriteItemObject(result, destinationPath, false);
-                        } // force
+                        }
                         else
                         {
                             WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                         }
                     }
-                } // ShouldProcess
-            }// ExcludeFile
-        } // CopyFileInfoItem
+                }
+            }
+        }
 
         private void CopyDirectoryFromRemoteSession(
             string sourceDirectoryName,
@@ -3852,7 +3849,7 @@ namespace Microsoft.PowerShell.Commands
                                                           fileSize);
                             }
                         }
-                    } // for files
+                    }
 
                     if (op["Directories"] != null)
                     {
@@ -3879,10 +3876,10 @@ namespace Microsoft.PowerShell.Commands
                                                            recurse,
                                                            ps);
                         }
-                    } // for directories
+                    }
                 }
-            } // ShouldProcess
-        } // CopyDirectoryFromRemoteSession
+            }
+        }
 
         private ArrayList GetRemoteSourceAlternateStreams(System.Management.Automation.PowerShell ps, string path)
         {
@@ -4049,7 +4046,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     SetFileMetadata(sourceFileFullName, destinationFile, ps);
                 }
-            } // ShouldProcess
+            }
         }
 
         private bool PerformCopyFileFromRemoteSession(string sourceFileFullName, FileInfo destinationFile, string destinationPath, bool force, System.Management.Automation.PowerShell ps,
@@ -4546,7 +4543,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // PerformCopyFileToRemoteSession
+        }
 
         private bool RemoteDestinationPathIsFile(string destination, System.Management.Automation.PowerShell ps)
         {
@@ -4605,7 +4602,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return path;
-        } // CreateDirectoryOnRemoteSession
+        }
 
         // Returns true if the destination path represents a device name, and write an error to the user.
         private bool PathIsReservedDeviceName(string destinationPath, string errorId)
@@ -4655,7 +4652,7 @@ namespace Microsoft.PowerShell.Commands
             }
 #endif
             return parentPath;
-        } // GetParentPath
+        }
 
         // Note: we don't use IO.Path.IsPathRooted as this deals with "invalid" i.e. unnormalized paths
         private static bool IsAbsolutePath(string path)
@@ -4941,7 +4938,7 @@ namespace Microsoft.PowerShell.Commands
             } while (false);
 
             return result;
-        } // NormalizeRelativePath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
@@ -5131,7 +5128,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
             return result;
-        } // NormalizeRelativePathHelper
+        }
 
         private string RemoveRelativeTokens(string path)
         {
@@ -5246,7 +5243,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return tokenizedPathStack;
-        } // TokenizePathToStack
+        }
 
         /// <summary>
         /// Given the tokenized path, the relative path elements are removed.
@@ -5342,7 +5339,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return normalizedPathStack;
-        } // NormalizeThePath
+        }
 
         /// <summary>
         /// Pops each leaf element of the stack and uses MakePath to generate the relative path
@@ -5375,7 +5372,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return leafElement;
-        } // CreateNormalizedRelativePathFromStack
+        }
 
         /// <summary>
         /// Gets the name of the leaf element of the specified path.
@@ -5422,7 +5419,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // GetChildName
+        }
 
         private static string EnsureDriveIsRooted(string path)
         {
@@ -5444,7 +5441,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // EnsureDriveIsRooted
+        }
 
         /// <summary>
         /// Determines if the item at the specified path is a directory.
@@ -5590,7 +5587,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(accessException, "MoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
-        } // MoveItem
+        }
 
         private void MoveFileInfoItem(
             FileInfo file,
@@ -5718,7 +5715,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, file));
                 }
             }
-        } // MoveFileInfoItem
+        }
 
         private void MoveDirectoryInfoItem(
             DirectoryInfo directory,
@@ -5805,7 +5802,7 @@ namespace Microsoft.PowerShell.Commands
                 //IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "MoveDirectoryItemIOError", ErrorCategory.WriteError, directory));
             }
-        } // MoveDirectoryItem
+        }
 
         private void CopyAndDelete(DirectoryInfo directory, string destination, bool force)
         {
@@ -5933,7 +5930,7 @@ namespace Microsoft.PowerShell.Commands
                                     WriteError(new ErrorRecord(exception, "GetValueError", ErrorCategory.ReadError, property));
                                 }
                             }
-                        } // foreach (property in providerSpecificPickList
+                        }
                     }
                 }
             }
@@ -5955,7 +5952,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WritePropertyObject(result, path);
             }
-        } // GetProperty
+        }
 
         /// <summary>
         /// Gets the dynamic property parameters required by the get-itemproperty cmdlet.
@@ -6108,8 +6105,8 @@ namespace Microsoft.PowerShell.Commands
                             Exception e = new IOException(error);
                             WriteError(new ErrorRecord(e, "SetPropertyError", ErrorCategory.ReadError, property));
                         }
-                    } // ShouldProcess
-                } // foreach property
+                    }
+                }
 
                 if (propertySet)
                 {
@@ -6126,7 +6123,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.ObjectNotFound,
                     path));
             }
-        } // SetProperty
+        }
 
         /// <summary>
         /// Gets the dynamic property parameters required by the set-itemproperty cmdlet.
@@ -6236,7 +6233,7 @@ namespace Microsoft.PowerShell.Commands
                     // Now write out the attribute that was cleared.
 
                     WritePropertyObject(result, path);
-                } // ShouldProcess
+                }
             }
             catch (UnauthorizedAccessException unauthorizedAccessException)
             {
@@ -6251,7 +6248,7 @@ namespace Microsoft.PowerShell.Commands
                 //IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "ClearPropertyIOError", ErrorCategory.WriteError, path));
             }
-        } // ClearProperty
+        }
 
         /// <summary>
         /// Gets the dynamic property parameters required by the clear-itemproperty cmdlet.
@@ -6353,8 +6350,8 @@ namespace Microsoft.PowerShell.Commands
                     // Get the stream name
                     streamName = dynParams.Stream;
 #endif
-                } // dynParams != null
-            } // DynamicParameters != null
+                }
+            }
 
 #if !UNIX
             // See if they've used the inline stream syntax. They have more than one colon.
@@ -6434,7 +6431,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return stream;
-        } // GetContentReader
+        }
 
         /// <summary>
         /// Gets the dynamic property parameters required by the get-content cmdlet.
@@ -6509,7 +6506,7 @@ namespace Microsoft.PowerShell.Commands
                     streamName = dynParams.Stream;
 #endif
                     suppressNewline = dynParams.NoNewline.IsPresent;
-                } // dynParams != null
+                }
             }
 
 #if !UNIX
@@ -6568,7 +6565,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return stream;
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gets the dynamic property parameters required by the set-content and
@@ -6744,7 +6741,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(accessException, "ClearContentUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
                 }
             }
-        } // ClearContent
+        }
 
         /// <summary>
         /// Gets the dynamic property parameters required by the clear-content cmdlet.
@@ -7067,7 +7064,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    } // class FileSystemProvider
+    }
 
     internal static class SafeInvokeCommand
     {
@@ -7277,7 +7274,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public bool WasStreamTypeSpecified { get; private set; }
 
-    } // class FileSystemContentDynamicParametersBase
+    }
 
     /// <summary>
     /// Defines the dynamic parameters used by the Clear-Content cmdlet.
@@ -7291,7 +7288,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public String Stream { get; set; }
 #endif
-    } //FileSystemContentWriterDynamicParameters
+    }
 
     /// <summary>
     /// Defines the dynamic parameters used by the set-content and
@@ -7316,7 +7313,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _suppressNewline = false;
-    } //FileSystemContentWriterDynamicParameters
+    }
 
     /// <summary>
     /// Defines the dynamic parameters used by the get-content cmdlet.
@@ -7354,12 +7351,12 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _wait;
-            } // get
+            }
 
             set
             {
                 _wait = value;
-            } // set
+            }
         }
         private bool _wait;
 
@@ -7387,8 +7384,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public bool DelimiterSpecified { get; private set;
 // get
-        } // DelimiterSpecified
-    } // class FileSystemContentReaderDynamicParameters
+        }
+    }
 
     /// <summary>
     /// Provides the dynamic parameters for test-path on the file system.
@@ -7406,7 +7403,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public DateTime? NewerThan { get; set; }
-    } // class FileSystemItemProviderDynamicParameters
+    }
 
     /// <summary>
     /// Provides the dynamic parameters for Get-Item on the file system.
@@ -7422,7 +7419,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
 #endif
-    } // class FileSystemItemProviderDynamicParameters
+    }
 
     /// <summary>
     /// Provides the dynamic parameters for Remove-Item on the file system.
@@ -7438,7 +7435,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
 #endif
-    } // class FileSystemItemProviderDynamicParameters
+    }
 
     #endregion
 
@@ -7593,26 +7590,6 @@ namespace Microsoft.PowerShell.Commands
             IntPtr InBuffer, int nInBufferSize,
             IntPtr OutBuffer, int nOutBufferSize,
             out int pBytesReturned, IntPtr lpOverlapped);
-
-#if !CORECLR
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern IntPtr FindFirstFileName(
-                string lpFileName,
-                uint flags,
-                ref UInt32 StringLength,
-                StringBuilder LinkName);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool FindNextFileName(
-                IntPtr hFindStream,
-                ref UInt32 StringLength,
-                StringBuilder LinkName);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool FindClose(IntPtr hFindFile);
-
-#endif
 
         [DllImport(PinvokeDllNames.GetFileInformationByHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern bool GetFileInformationByHandle(

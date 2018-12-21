@@ -50,7 +50,7 @@ namespace System.Management.Automation.Provider
 
             ProviderName = providerName;
             ProviderCapabilities = providerCapabilities;
-        } // constructor
+        }
 
         private char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
 
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Provider
         #region private data
 
         #endregion private data
-    } // class CmdletProviderAttribute
+    }
 
     /// <summary>
     /// This enumeration defines the capabilities that the provider implements.
@@ -150,5 +150,5 @@ namespace System.Management.Automation.Provider
         /// transaction to it, an exception is thrown.
         /// </summary>
         Transactions = 0x40,
-    } // ProviderCapabilities
-} // namespace System.Management.Automation
+    }
+}

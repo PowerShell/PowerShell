@@ -182,7 +182,7 @@ namespace System.Management.Automation
         /// disabled.
         /// </summary>
         NotEnabled = 31,
-    } // enum ErrorCategory
+    }
 
     /// <summary>
     /// Contains auxiliary information about an
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         /// control the maximum length of the GetMessage() string, we
         /// ellipsize these strings.  The current heuristic is to take
         /// strings longer than 40 characters and ellipsize them to
-        /// the first and last 15 characters plus "..." in the middle.
+        /// the first and last 19 characters plus "..." in the middle.
         /// </summary>
         /// <param name="uiCultureInfo">culture to retrieve template if needed</param>
         /// <param name="original">original string</param>
@@ -476,13 +476,17 @@ namespace System.Management.Automation
             {
                 return original;
             }
-            string first = original.Substring(0, 15);
-            string last = original.Substring(original.Length - 15, 15);
+
+            // We are splitting a string > 40 chars in half, so left and right can be
+            // at most 19 characters to include the ellipsis in the middle.
+            const int MaxHalfWidth = 19;
+            string first = original.Substring(0, MaxHalfWidth);
+            string last = original.Substring(original.Length - MaxHalfWidth, MaxHalfWidth);
             return
                 string.Format(uiCultureInfo, ErrorPackage.Ellipsize, first, last);
         }
         #endregion Private
-    } // class ErrorCategoryInfo
+    }
 
     /// <summary>
     /// additional details about an
@@ -806,7 +810,7 @@ namespace System.Management.Automation
                 return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
-        } // BuildMessage
+        }
         private string BuildMessage(
             IResourceSupplier resourceSupplier,
             string baseName,
@@ -839,7 +843,7 @@ namespace System.Management.Automation
                 return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
-        } // BuildMessage
+        }
         private string BuildMessage(
             System.Reflection.Assembly assembly,
             string baseName,
@@ -872,7 +876,7 @@ namespace System.Management.Automation
                 return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
-        } // BuildMessage
+        }
         private string BuildMessage(
             string template,
             string baseName,
@@ -900,10 +904,10 @@ namespace System.Management.Automation
                 _textLookupError = e;
                 return string.Empty; // fallback to Exception.Message
             }
-        } // BuildMessage
+        }
         #endregion Private
 
-    } // class ErrorDetails
+    }
 
     /// <summary>
     /// Represents an error.
@@ -1668,7 +1672,7 @@ namespace System.Management.Automation
         }
         #endregion ToString
 
-    } // class ErrorRecord
+    }
 
     /// <summary>
     /// Dummy generic class for type inference purposes on typed catch blocks.
@@ -1802,6 +1806,6 @@ namespace System.Management.Automation
         /// <returns>the error message template string corresponding to baseName and resourceId</returns>
         string GetResourceString(string baseName, string resourceId);
     }
-} // namespace System.Management.Automation
+}
 
 #pragma warning restore 56506

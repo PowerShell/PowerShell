@@ -446,7 +446,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteVerbose");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
         /// Display warning information
@@ -483,7 +483,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteWarning");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
         /// Write text into pipeline execution log.
@@ -591,7 +591,7 @@ namespace System.Management.Automation
                 commandRuntime.WriteProgress(sourceId, progressRecord);
             else
                 throw new System.NotImplementedException("WriteProgress");
-        }//WriteProgress
+        }
 
         /// <summary>
         /// Display debug information
@@ -634,7 +634,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteDebug");
             }
-        }//WriteDebug
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -696,7 +696,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -741,7 +741,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         #endregion Write
 
@@ -1801,7 +1801,7 @@ namespace System.Management.Automation
         #endregion Exposed API Override
 
         #endregion public_methods
-    } // Cmdlet
+    }
 
     /// <summary>
     /// This describes the reason why ShouldProcess returned what it returned.

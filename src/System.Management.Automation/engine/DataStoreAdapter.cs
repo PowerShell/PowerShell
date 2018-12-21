@@ -46,7 +46,7 @@ namespace System.Management.Automation
             {
                 _currentWorkingDirectory = value;
             }
-        } // CurrentLocation
+        }
 
         /// <summary>
         /// The current working directory for the virtual drive
@@ -136,7 +136,7 @@ namespace System.Management.Automation
             }
 
             _root = path;
-        } // SetRoot
+        }
 
         /// <summary>
         /// The root of the virtual drive
@@ -474,13 +474,13 @@ namespace System.Management.Automation
             get
             {
                 return _hidden;
-            } //get
+            }
 
             set
             {
                 _hidden = value;
-            } // set
-        }  // Hidden
+            }
+        }
 
         /// <summary>
         /// Determines if the drive should be hidden from the user.
@@ -510,7 +510,7 @@ namespace System.Management.Automation
             }
 
             _name = newName;
-        } // SetName
+        }
 
         /// <summary>
         /// Sets the provider of the drive to a new provider.
@@ -536,7 +536,7 @@ namespace System.Management.Automation
             }
 
             _provider = newProvider;
-        } // SetProvider
+        }
 
         /// <summary>
         /// Traces the virtual drive
@@ -580,7 +580,7 @@ namespace System.Management.Automation
                     "\tDescription: {0}",
                     Description);
             }
-        }//Trace
+        }
 
         /// <summary>
         /// Compares this instance to the specified drive.
@@ -760,7 +760,7 @@ namespace System.Management.Automation
                     return drive1.CompareTo(drive2) < 0;
                 }
             }
-        } // operator <
+        }
 
         /// <summary>
         /// Compares the specified drives to determine if drive1 is greater than
@@ -800,7 +800,7 @@ namespace System.Management.Automation
                     return drive1.CompareTo(drive2) > 0;
                 }
             }
-        } // operator >
+        }
 
         /// <summary>
         /// Gets the hash code for this instance.
@@ -823,6 +823,6 @@ namespace System.Management.Automation
             }
             return _noteProperty;
         }
-    }//Class PSDriveInfo
+    }
 }
 

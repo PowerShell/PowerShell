@@ -459,7 +459,7 @@ namespace System.Management.Automation
                     sb.Append(cc);
                     readingIdentifier = true;
                 }
-            }//while
+            }
 
             string result = sb.ToString().Trim();
             // If resulting identifier is enclosed in paired quotes,
@@ -614,7 +614,7 @@ namespace System.Management.Automation
                     }
                     orQueue.Enqueue(andCurrent);
                 }
-            }//foreach
+            }
 
             // Dequeue all nodes from OR queue,
             // create the OR tree (final expression tree)

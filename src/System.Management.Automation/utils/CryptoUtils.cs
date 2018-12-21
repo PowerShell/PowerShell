@@ -1012,8 +1012,8 @@ namespace System.Management.Automation.Internal
                             data[j] = 0;
                         }
                     }
-                } // if (ptr ...
-            } // if (rsa != null...
+                }
+            }
             else
             {
                 Dbg.Assert(false, "Session key not available to encrypt secure string");

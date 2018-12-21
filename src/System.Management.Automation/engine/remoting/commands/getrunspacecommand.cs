@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 GetMatchingRunspaces(true, true, this.State, this.ConfigurationName);
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// End processing clean up.

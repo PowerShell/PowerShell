@@ -23,13 +23,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _passThrough;
-            } // get
+            }
 
             set
             {
                 _passThrough = value;
-            } // set
-        } // PassThru
+            }
+        }
 
         /// <summary>
         /// Gets or sets the force property
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.Force = value;
             }
-        } // Force
+        }
 
         #endregion Parameters
 
@@ -95,9 +95,9 @@ namespace Microsoft.PowerShell.Commands
             CmdletProviderContext currentCommandContext = CmdletProviderContext;
             currentCommandContext.PassThru = PassThru;
             return currentCommandContext;
-        } // GetCurrentContext
+        }
 
         #endregion protected members
-    } // PassThroughItemPropertyCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

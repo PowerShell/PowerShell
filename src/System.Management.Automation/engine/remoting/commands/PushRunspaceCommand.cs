@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -525,9 +526,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         break;
                     }
-                } // while ...
+                }
             }
-        }// EndProcessing()
+        }
 
         /// <summary>
         /// </summary>
@@ -1151,7 +1152,7 @@ namespace Microsoft.PowerShell.Commands
 
                     case ContainerIdParameterSet:
                         targetName = (this.ContainerId.Length <= 15) ? this.ContainerId
-                                                                     : this.ContainerId.Remove(12) + "...";
+                                                                     : this.ContainerId.Remove(14) + PSObjectHelper.Ellipsis;
                         break;
 
                     case SessionParameterSet:

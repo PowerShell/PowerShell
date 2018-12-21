@@ -337,7 +337,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // Get
+        }
 
         /// <summary>
         /// Constructs an instance of CommandMetadata using reflection against a bindable object
@@ -696,7 +696,7 @@ namespace System.Management.Automation
                     _otherAttributes.Add(attribute);
                 }
             }
-        } // ConstructCmdletMetadataUsingReflection
+        }
 
         /// <summary>
         /// Extracts the cmdlet data from the CmdletAttribute
@@ -744,7 +744,7 @@ namespace System.Management.Automation
             {
                 PositionalBinding = cmdletBindingAttribute.PositionalBinding;
             }
-        } // ProcessCmdletAttribute
+        }
 
         /// <summary>
         /// Merges parameter metadata from different sources: those that are coming from Type,
@@ -815,7 +815,7 @@ namespace System.Management.Automation
             }
 
             return staticCommandParameterMetadata;
-        } // MergeParameterMetadata
+        }
 
         #endregion helper methods
 

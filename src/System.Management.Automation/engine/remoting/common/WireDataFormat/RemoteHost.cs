@@ -386,7 +386,7 @@ namespace System.Management.Automation.Remoting
                                     computerName, RemotingErrorIdStrings.RemoteHostPromptSecureStringPrompt));
                             }
                         }
-                    }// end of foreach
+                    }
 
                     if (havePSCredential)
                     {
@@ -399,8 +399,8 @@ namespace System.Management.Automation.Remoting
                         Parameters[0] = modifiedCaption;
                         Parameters[1] = modifiedMessage;
                     }
-                }// end of if (parameters ...
-            }// if (remoteHostCall.MethodId ...
+                }
+            }
 
             // Check if the incoming message is a readline as secure string
             // if so do the following:

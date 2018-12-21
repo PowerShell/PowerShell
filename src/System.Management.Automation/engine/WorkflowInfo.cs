@@ -140,7 +140,7 @@ namespace System.Management.Automation
         /// </exception>
         internal WorkflowInfo(string name, ScriptBlock workflow, ScopedItemOptions options, ExecutionContext context) : this(name, workflow, options, context, null)
         {
-        } // workflowInfo ctor
+        }
 
         /// <summary>
         /// Creates an instance of the WorkflowInfo class with the specified name and ScriptBlock
@@ -167,7 +167,7 @@ namespace System.Management.Automation
             : base(name, workflow, options, context, helpFile)
         {
             SetCommandType(CommandTypes.Workflow);
-        } // workflowInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor.
@@ -274,5 +274,5 @@ namespace System.Management.Automation
         {
             get { return HelpCategory.Workflow; }
         }
-    } // WorkflowInfo
-} // namespace System.Management.Automation
+    }
+}

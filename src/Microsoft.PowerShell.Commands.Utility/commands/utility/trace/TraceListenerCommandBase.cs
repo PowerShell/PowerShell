@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
                 _options = value;
                 optionsSpecified = true;
             }
-        } // Flags
+        }
         private PSTraceSourceOptions _options = PSTraceSourceOptions.All;
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         /// Adds the file trace listener using the specified file.
         /// </summary>
         /// <value></value>
-        internal string FileListener { get; set; } // File
+        internal string FileListener { get; set; }
 
         /// <summary>
         /// Property that sets force parameter.  This will clear the
@@ -79,13 +79,13 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// Note that we do not attempt to reset the read-only attribute.
         /// </remarks>
-        public bool ForceWrite { get; set; } // Force
+        public bool ForceWrite { get; set; }
 
         /// <summary>
         /// If this parameter is specified the Debugger trace listener will be added.
         /// </summary>
         /// <value></value>
-        internal bool DebuggerListener { get; set; } // Debugger
+        internal bool DebuggerListener { get; set; }
 
         /// <summary>
         /// If this parameter is specified the Msh Host trace listener will be added.
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _host; }
             set { _host = value; }
-        } // UseHost
+        }
         private bool _host = false;
 
         #endregion Parameters
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // RemoveAllTraceListenersFromSource
+        }
 
         #endregion RemoveTraceListeners
 

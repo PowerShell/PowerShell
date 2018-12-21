@@ -22,7 +22,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // CmdletProviderIntrinsics private
+        }
 
         /// <summary>
         /// Initializes a new instance of the SecurityDescriptorCmdletProviderIntrinsics
@@ -40,7 +40,7 @@ namespace System.Management.Automation
 
             _cmdlet = cmdlet;
             _sessionState = cmdlet.Context.EngineSessionState;
-        } // CmdletProviderIntrinsics internal
+        }
 
         /// <summary>
         /// Initializes a new instance of the SecurityDescriptorCmdletProviderIntrinsics
@@ -57,7 +57,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // CmdletProviderIntrinsics internal
+        }
 
         #endregion Constructors
 
@@ -87,7 +87,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
             return _sessionState.GetSecurityDescriptor(path, includeSections);
-        } // GetSecurityDescriptor
+        }
 
         /// <summary>
         /// Gets the SecurityDescriptor at the specified path, including only the specified
@@ -116,7 +116,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
             _sessionState.GetSecurityDescriptor(path, includeSections, context);
-        } // GetSecurityDescriptor
+        }
 
         #endregion GetSecurityDescriptor
 
@@ -145,7 +145,7 @@ namespace System.Management.Automation
             Collection<PSObject> result = _sessionState.SetSecurityDescriptor(path, sd);
 
             return result;
-        } // SetSecurityDescriptor
+        }
 
         /// <summary>
         /// Sets the SecurityDescriptor at the specified path, using the provided Context.
@@ -172,7 +172,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.SetSecurityDescriptor(path, sd, context);
-        } // SetSecurityDescriptor
+        }
 
         #endregion SetSecurityDescriptor
 
@@ -200,7 +200,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
             return _sessionState.NewSecurityDescriptorFromPath(path, includeSections);
-        } // NewSecurityDescriptor
+        }
 
         /// <summary>
         /// Creates a new SecurityDescriptor from the specified provider and of the given type,
@@ -230,7 +230,7 @@ namespace System.Management.Automation
             return _sessionState.NewSecurityDescriptorOfType(providerId,
                                                             type,
                                                             includeSections);
-        } // NewSecurityDescriptor
+        }
 
         #endregion NewSecurityDescriptor
 
@@ -242,6 +242,6 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // SecurityDescriptorCmdletProviderIntrinsics
+    }
 }
 

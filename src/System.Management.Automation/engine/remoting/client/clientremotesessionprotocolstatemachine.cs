@@ -312,7 +312,7 @@ namespace System.Management.Automation.Remoting
                         }
                     }
                     break;
-            } // switch...
+            }
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Remoting
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));
-        } // SetStateHandler
+        }
 
         /// <summary>
         /// Handler to be used in cases, where raising an event to
@@ -369,7 +369,7 @@ namespace System.Management.Automation.Remoting
             // raise an event to close the state machine
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close,
                             eventArgs.Reason));
-        } //SetStateToClosedHandler
+        }
 
         #region constructor
         /// <summary>

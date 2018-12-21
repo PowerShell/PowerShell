@@ -440,66 +440,79 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader)
+        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader)
         {
             TranscriptionOption transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
             TranscriptionData.Transcripts.Add(transcript);
 
-            LogTranscriptHeader(senderInfo, transcript);
+            LogTranscriptHeader(senderInfo, transcript, useMinimalHeader);
         }
 
-        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript)
+        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript, bool useMinimalHeader = false)
         {
-            string username = Environment.UserDomainName + "\\" + Environment.UserName;
-            string runAsUser = username;
-
-            if (senderInfo != null)
-            {
-                username = senderInfo.UserInfo.Identity.Name;
-            }
-
-            // Add bits from PSVersionTable
-            StringBuilder psVersionInfo = new StringBuilder();
-            Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
-            foreach (string versionKey in versionInfo.Keys)
-            {
-                Object value = versionInfo[versionKey];
-
-                if (value != null)
-                {
-                    var arrayValue = value as object[];
-                    string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
-                    psVersionInfo.AppendLine(versionKey + ": " + valueString);
-                }
-            }
-            string psConfigurationName = string.Empty;
-            if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
-            {
-                psConfigurationName = senderInfo.ConfigurationName;
-            }
             // Transcribe the transcript header
-            string format = InternalHostUserInterfaceStrings.TranscriptPrologue;
-            string line =
-                String.Format(
-                    Globalization.CultureInfo.InvariantCulture,
-                    format,
-                    DateTime.Now,
-                    username,
-                    runAsUser,
-                    psConfigurationName,
-                    Environment.MachineName,
-                    Environment.OSVersion.VersionString,
-                    String.Join(" ", Environment.GetCommandLineArgs()),
-                    System.Diagnostics.Process.GetCurrentProcess().Id,
-                    psVersionInfo.ToString().TrimEnd()
-                    );
+            string line;
+            if (useMinimalHeader)
+            {
+                line =
+                    string.Format(
+                        Globalization.CultureInfo.InvariantCulture,
+                        InternalHostUserInterfaceStrings.MinimalTranscriptPrologue,
+                        DateTime.Now);
+            }
+            else
+            {
+                string username = Environment.UserDomainName + "\\" + Environment.UserName;
+                string runAsUser = username;
+
+                if (senderInfo != null)
+                {
+                    username = senderInfo.UserInfo.Identity.Name;
+                }
+
+                // Add bits from PSVersionTable
+                StringBuilder versionInfoFooter = new StringBuilder();
+                Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
+                foreach (string versionKey in versionInfo.Keys)
+                {
+                    object value = versionInfo[versionKey];
+
+                    if (value != null)
+                    {
+                        var arrayValue = value as object[];
+                        string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
+                        versionInfoFooter.AppendLine(versionKey + ": " + valueString);
+                    }
+                }
+
+                string configurationName = string.Empty;
+                if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
+                {
+                    configurationName = senderInfo.ConfigurationName;
+                }
+
+                line =
+                    string.Format(
+                        Globalization.CultureInfo.InvariantCulture,
+                        InternalHostUserInterfaceStrings.TranscriptPrologue,
+                        DateTime.Now,
+                        username,
+                        runAsUser,
+                        configurationName,
+                        Environment.MachineName,
+                        Environment.OSVersion.VersionString,
+                        string.Join(" ", Environment.GetCommandLineArgs()),
+                        System.Diagnostics.Process.GetCurrentProcess().Id,
+                        versionInfoFooter.ToString().TrimEnd());
+            }
 
             lock (transcript.OutputToLog)
             {
                 transcript.OutputToLog.Add(line);
             }
+
             TranscribeCommandComplete(null);
         }
 
@@ -1287,5 +1300,5 @@ namespace System.Management.Automation.Host
             return result;
         }
     }
-} // namespace System.Management.Automation.Host
+}
 

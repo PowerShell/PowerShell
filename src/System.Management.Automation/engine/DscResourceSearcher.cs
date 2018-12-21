@@ -184,15 +184,15 @@ namespace System.Management.Automation
                             _matchingResourceList.Add(resourceInfo);
 
                             matchFound = true;
-                        } //if
-                    }//if
-                }// foreach
+                        }
+                    }
+                }
 
                 if (matchFound)
                     _matchingResource = _matchingResourceList.GetEnumerator();
                 else
                     return null;
-            }//if
+            }
 
             if (!_matchingResource.MoveNext())
             {

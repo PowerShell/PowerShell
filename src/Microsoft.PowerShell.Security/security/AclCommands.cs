@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return coreCommandContext;
             }
-        } // CmdletProviderContext
+        }
 
         #region brokered properties
 
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// Add brokered properties for easy access to important properties
         /// of security descriptor
         /// </summary>
-        static internal void AddBrokeredProperties(
+        internal static void AddBrokeredProperties(
             Collection<PSObject> results,
             bool audit,
             bool allCentralAccessPolicies)
@@ -800,7 +800,6 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(er);
                 }
             }
-
             else
             {
                 foreach (string p in Path)
@@ -881,7 +880,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // class GetAclCommand : PSCmdlet
+    }
 
     /// <summary>
     /// Defines the implementation of the 'set-acl' cmdlet.
@@ -1569,7 +1568,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // class SetAclCommand
+    }
 #endif // !UNIX
 
 }// namespace Microsoft.PowerShell.Commands

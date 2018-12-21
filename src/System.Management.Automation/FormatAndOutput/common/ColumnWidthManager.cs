@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (availableWidth == 0)
                         break;
                 }
-            } // while
+            }
 
             return true; // we fit
         }

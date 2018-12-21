@@ -277,7 +277,6 @@ namespace System.Management.Automation.Remoting
                 {
                     serverTransportMgr = new WSManPluginServerTransportManager(BaseTransportManager.DefaultFragmentSize, new PSRemotingCryptoHelperServer());
                 }
-
                 else
                 {
                     serverTransportMgr = new WSManPluginServerTransportManager(BaseTransportManager.DefaultFragmentSize, null);
@@ -1613,4 +1612,4 @@ namespace System.Management.Automation.Remoting
 
         #endregion
     }
-} // namespace System.Management.Automation.Remoting
+}

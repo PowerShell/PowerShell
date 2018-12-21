@@ -20,7 +20,6 @@ $powershellCoreModules = @(
     "Microsoft.WsMan.Management"
     "PackageManagement"
 #    "PowershellGet"
-    "PSReadline"
 )
 
 # The file extension for the help content on the Download Center.
@@ -53,16 +52,12 @@ $testCases = @{
         HelpInstallationPathHome = "$userHelpRoot\CimCmdlets\en-US"
     }
 
-<#
-    This scenario is broken due to issue # https://github.com/PowerShell/platyPS/issues/241
-    Re-enable when issue is fixed.
     "Microsoft.PowerShell.Archive" = @{
-        HelpFiles            = "Microsoft.PowerShell.Archive.psm1-help.xml"
+        HelpFiles            = "Microsoft.PowerShell.Archive-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_en-US_HelpContent$extension"
         HelpInstallationPath = "$pshome\Modules\Microsoft.PowerShell.Archive\en-US"
     }
-#>
 
     "Microsoft.PowerShell.Core" = @{
         HelpFiles            = "System.Management.Automation.dll-help.xml"
@@ -142,14 +137,6 @@ $testCases = @{
         CompressedFiles      = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_en-US_helpcontent$extension"
         HelpInstallationPath = "$pshome\Modules\PowershellGet\en-US"
         HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
-    }
-
-    "PSReadline" = @{
-        HelpFiles            = "Microsoft.PowerShell.PSReadLine.dll-help.xml"
-        HelpInfoFiles        = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_HelpInfo.xml"
-        CompressedFiles      = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PSReadLine\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\PSReadLine\en-US"
     }
 }
 

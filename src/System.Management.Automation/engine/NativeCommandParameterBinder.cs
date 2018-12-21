@@ -58,7 +58,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(false, "Unreachable code");
 
             throw new NotSupportedException();
-        } // BindParameter
+        }
 
         internal override object GetDefaultParameterValue(string name)
         {
@@ -138,7 +138,7 @@ namespace System.Management.Automation
             {
                 return _arguments.ToString();
             }
-        } // Arguments
+        }
         private readonly StringBuilder _arguments = new StringBuilder();
 
         #endregion internal members
@@ -255,7 +255,7 @@ namespace System.Management.Automation
                 if (cwdinfo.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                 {
                     // On UNIX, paths starting with ~ or absolute paths are not normalized
-                    bool normalizePath = arg.Length == 0 || ! (arg[0] == '~' || arg[0] == '/');
+                    bool normalizePath = arg.Length == 0 || !(arg[0] == '~' || arg[0] == '/');
 
                     // See if there are any matching paths otherwise just add the pattern as the argument
                     Collection<PSObject> paths = null;
@@ -347,7 +347,7 @@ namespace System.Management.Automation
             return needQuotes;
         }
 
-        static private string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
+        private static string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
         {
             if (arrayLiteralAst == null) return " ";
 
@@ -378,4 +378,4 @@ namespace System.Management.Automation
         private NativeCommand _nativeCommand;
 #endregion private members
     }
-} // namespace System.Management.Automation
+}

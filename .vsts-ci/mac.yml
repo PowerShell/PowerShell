@@ -32,11 +32,14 @@ variables:
 resources:
 - repo: self
   clean: true
-phases:
-- phase: macOS_CI
+jobs:
+- job: macOS_CI
 
-  queue:
+  pool:
     name: Hosted macOS
+
+  timeoutInMinutes: 120
+
   steps:
   - powershell: |
       Get-ChildItem -Path env:

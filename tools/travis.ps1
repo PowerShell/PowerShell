@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 param(
     [ValidateSet('Bootstrap','Build','Failure','Success')]
-    [String]$Stage = 'Build'
+    [String]$Stage = 'Build',
+    [String]$NugetKey
 )
 
 Import-Module $PSScriptRoot/../build.psm1 -Force
@@ -51,13 +52,18 @@ function Get-ReleaseTag
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
 
     $releaseTag = $metadata.PreviewReleaseTag
-    if($env:TRAVIS_BUILD_NUMBER)
+    $previewVersion = $releaseTag.Split('-')
+    $previewPrefix = $previewVersion[0]
+    $previewLabel = $previewVersion[1].replace('.','')
+
+    if($isDailyBuild)
     {
-        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag+'.'+$env:TRAVIS_BUILD_NUMBER
+        $previewLabel= "daily{0}" -f $previewLabel
     }
 
-    return $releaseTag
+    $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+
+    return $preReleaseVersion
 }
 
 # This function retrieves the appropriate svg to be used when presenting
@@ -330,12 +336,11 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        $SequentialXUnitTestResultsFile = "$pwd/SequentialXUnitTestResults.xml"
         $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
 
-        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         # If there are failures, Test-XUnitTestResults throws
-        $SequentialXUnitTestResultsFile, $ParallelXUnitTestResultsFile | ForEach-Object { Test-XUnitTestResults -TestResultsFile $_ }
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
     }
     catch {
         $result = "FAIL"
@@ -358,10 +363,10 @@ elseif($Stage -eq 'Build')
             # 1 - It's a Daily build (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
             # 3 - it's a nupkg file
-            if($isDailyBuild -and $env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+            if($isDailyBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
             {
                 Write-Log "pushing $package to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+                Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if ($IsLinux)

@@ -1,32 +1,35 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Security;
-using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.ComponentModel;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Security;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Text;
+using System.Threading;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
-
-using System.Diagnostics;
-using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
@@ -258,7 +261,6 @@ namespace System.Management.Automation
                     baseDirectories.Add(appBase);
                 }
 #if !UNIX
-                // Win8: 454976
                 // Now add the two variations of System32
                 baseDirectories.Add(Environment.GetFolderPath(Environment.SpecialFolder.System));
                 string systemX86 = Environment.GetFolderPath(Environment.SpecialFolder.SystemX86);
@@ -267,20 +269,6 @@ namespace System.Management.Automation
                     baseDirectories.Add(systemX86);
                 }
 #endif
-                // And built-in modules
-                string progFileDir;
-                // TODO: #1184 will resolve this work-around
-                // Side-by-side versions of PowerShell use modules from their application base, not
-                // the system installation path.
-                progFileDir = Path.Combine(appBase, "Modules");
-
-                if (!string.IsNullOrEmpty(progFileDir))
-                {
-                    baseDirectories.Add(Path.Combine(progFileDir, "PackageManagement"));
-                    baseDirectories.Add(Path.Combine(progFileDir, "PowerShellGet"));
-                    baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
-                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadLine"));
-                }
                 Interlocked.CompareExchange(ref s_productFolderDirectories, baseDirectories.ToArray(), null);
             }
 
@@ -494,7 +482,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is used to construct the profile path.
         /// </summary>
-        internal static string ProductNameForDirectory = Platform.IsInbox ? "WindowsPowerShell" : "PowerShell";
+        internal const string ProductNameForDirectory = "PowerShell";
 
         /// <summary>
         /// The subdirectory of module paths
@@ -502,10 +490,10 @@ namespace System.Management.Automation
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal readonly static ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.SystemWide };
-        internal readonly static ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.SystemWide, ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.SystemWide };
+        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -520,7 +508,7 @@ namespace System.Management.Automation
             return policy;
         }
 
-        private readonly static ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
+        private static readonly ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
             new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
 
         /// <summary>
@@ -576,7 +564,7 @@ namespace System.Management.Automation
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
             {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
-        private readonly static ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
+        private static readonly ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
             new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
 
         /// <summary>
@@ -586,7 +574,7 @@ namespace System.Management.Automation
         {
             Type tType = typeof(T);
             // SystemWide scope means 'LocalMachine' root key when query from registry
-            RegistryKey rootKey = (scope == ConfigScope.SystemWide) ? Registry.LocalMachine : Registry.CurrentUser;
+            RegistryKey rootKey = (scope == ConfigScope.AllUsers) ? Registry.LocalMachine : Registry.CurrentUser;
 
             GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
             Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
@@ -884,6 +872,40 @@ namespace System.Management.Automation
             return result;
         }
 
+#if !UNIX
+        private static bool TryGetWindowsCurrentIdentity(out WindowsIdentity currentIdentity)
+        {
+            try
+            {
+                currentIdentity = WindowsIdentity.GetCurrent();
+            }
+            catch (SecurityException)
+            {
+                currentIdentity = null;
+            }
+
+            return (currentIdentity != null);
+        }
+
+        /// <summary>
+        /// Gets the current impersonating Windows identity, if any
+        /// </summary>
+        /// <param name="impersonatedIdentity">Current impersonated Windows identity or null</param>
+        /// <returns>True if current identity is impersonated</returns>
+        internal static bool TryGetWindowsImpersonatedIdentity(out WindowsIdentity impersonatedIdentity)
+        {
+            WindowsIdentity currentIdentity;
+            if (TryGetWindowsCurrentIdentity(out currentIdentity) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation))
+            {
+                impersonatedIdentity = currentIdentity;
+                return true;
+            }
+
+            impersonatedIdentity = null;
+            return false;
+        }
+#endif
+
         internal static bool IsAdministrator()
         {
             // Porting note: only Windows supports the SecurityPrincipal API of .NET. Due to
@@ -895,44 +917,14 @@ namespace System.Management.Automation
 #if UNIX
             return true;
 #else
-            System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
-            System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
-
-            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-#endif
-        }
-
-        internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
-        {
-            IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-            NativeMethods.WIN32_FIND_DATA findData;
-
-            files = new List<string>();
-            directories = new List<string>();
-
-            IntPtr findHandle;
-
-            findHandle = NativeMethods.FindFirstFile(directory + "\\*", out findData);
-            if (findHandle != INVALID_HANDLE_VALUE)
+            WindowsIdentity currentIdentity;
+            if (TryGetWindowsCurrentIdentity(out currentIdentity))
             {
-                do
-                {
-                    if ((findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0)
-                    {
-                        if ((!String.Equals(".", findData.cFileName, StringComparison.OrdinalIgnoreCase)) &&
-                            (!String.Equals("..", findData.cFileName, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            directories.Add(directory + "\\" + findData.cFileName);
-                        }
-                    }
-                    else
-                    {
-                        files.Add(directory + "\\" + findData.cFileName);
-                    }
-                }
-                while (NativeMethods.FindNextFile(findHandle, out findData));
-                NativeMethods.FindClose(findHandle);
+                var principal = new WindowsPrincipal(currentIdentity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
+            return false;
+#endif
         }
 
         internal static bool IsReservedDeviceName(string destinationPath)
@@ -1218,7 +1210,7 @@ namespace System.Management.Automation
         internal static readonly UTF8Encoding utf8NoBom =
             new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-#if !CORECLR // TODO:CORECLR - WindowsIdentity.Impersonate() is not available. Use WindowsIdentity.RunImpersonated to replace it.
+#if !UNIX
         /// <summary>
         /// Queues a CLR worker thread with impersonation of provided Windows identity.
         /// </summary>
@@ -1244,28 +1236,14 @@ namespace System.Management.Automation
             WaitCallback callback = args[1] as WaitCallback;
             object state = args[2];
 
-            WindowsImpersonationContext impersonationContext = null;
-            if ((identityToImpersonate != null) &&
-                (identityToImpersonate.ImpersonationLevel == TokenImpersonationLevel.Impersonation))
+            if (identityToImpersonate != null)
             {
-                impersonationContext = identityToImpersonate.Impersonate();
+                WindowsIdentity.RunImpersonated(
+                    identityToImpersonate.AccessToken,
+                    () => callback(state));
+                return;
             }
-            try
-            {
-                callback(state);
-            }
-            finally
-            {
-                if (impersonationContext != null)
-                {
-                    try
-                    {
-                        impersonationContext.Undo();
-                        impersonationContext.Dispose();
-                    }
-                    catch (System.Security.SecurityException) { }
-                }
-            }
+            callback(state);
         }
 #endif
 
@@ -1578,7 +1556,7 @@ namespace System.Management.Automation
                     WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingException, ex.Message));
                 }
             }
-            
+
             return false;
         }
 
@@ -1828,6 +1806,7 @@ namespace System.Management.Automation.Internal
         internal static bool StopwatchIsNotHighResolution;
         internal static bool DisableGACLoading;
         internal static bool SetConsoleWidthToZero;
+        internal static bool SetConsoleHeightToZero;
 
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
@@ -1846,7 +1825,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a 
+        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a
         /// remote session, i.e., has run the Import-PSSession cmdlet.  This hook will return true if the provided commandPipeline
         /// is successfully batched and run in the remote session, and false if it is rejected for batching.
         /// </summary>
@@ -1959,5 +1938,51 @@ namespace System.Management.Automation.Internal
             }
             return item;
         }
+    }
+
+    /// <summary>
+    /// A readonly Hashset.
+    /// </summary>
+    internal sealed class ReadOnlyBag<T> : IEnumerable
+    {
+        private HashSet<T> _hashset;
+
+        /// <summary>
+        /// Constructor for the readonly Hashset.
+        /// </summary>
+        internal ReadOnlyBag(HashSet<T> hashset)
+        {
+            if (hashset == null)
+            {
+                throw new ArgumentNullException(nameof(hashset));
+            }
+
+            _hashset = hashset;
+        }
+
+        /// <summary>
+        /// Get the count of the Hashset.
+        /// </summary>
+        public int Count => _hashset.Count;
+
+        /// <summary>
+        /// Indicate if it's a readonly Hashset.
+        /// </summary>
+        public bool IsReadOnly => true;
+
+        /// <summary>
+        /// Check if the set contains an item.
+        /// </summary>
+        public bool Contains(T item) => _hashset.Contains(item);
+
+        /// <summary>
+        /// GetEnumerator method.
+        /// </summary>
+        public IEnumerator GetEnumerator() => _hashset.GetEnumerator();
+
+        /// <summary>
+        /// Get an empty singleton.
+        /// </summary>
+        internal static readonly ReadOnlyBag<T> Empty = new ReadOnlyBag<T>(new HashSet<T>(capacity: 0));
     }
 }

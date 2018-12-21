@@ -166,7 +166,7 @@ namespace System.Management.Automation
                 return string.Join(Environment.NewLine + Environment.NewLine, errorsToReport);
             }
         }
-    } // ParseException
+    }
 
     /// <summary>
     /// Defines the exception thrown when a incomplete parse error occurs while parsing msh script text.
@@ -264,4 +264,4 @@ namespace System.Management.Automation
         }
         #endregion ctor
     }
-} // System.Management.Automation
+}

@@ -40,14 +40,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _totalCount;
-            } // get
+            }
 
             set
             {
                 _totalCount = value;
                 _totalCountSpecified = true;
             }
-        } // TotalCount
+        }
         private bool _totalCountSpecified = false;
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
                 return InvokeProvider.Content.GetContentReaderDynamicParameters(Path[0], context);
             }
             return InvokeProvider.Content.GetContentReaderDynamicParameters(".", context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         } while (results != null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
                     }
-                } // foreach holder in contentStreams
+                }
             }
             finally
             {
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
                 // Empty the content holder array
                 contentStreams = new List<ContentHolder>();
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Scan forwards to get the tail content
@@ -416,6 +416,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Command code
 
-    } // GetContentCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

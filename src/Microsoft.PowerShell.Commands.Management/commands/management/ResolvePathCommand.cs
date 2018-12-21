@@ -28,13 +28,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _paths;
-            } // get
+            }
 
             set
             {
                 _paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -47,14 +47,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// Gets or sets the value that determines if the resolved path should
@@ -66,13 +66,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _relative;
-            } // get
+            }
 
             set
             {
                 _relative = value;
-            } // set
-        } // Relative
+            }
+        }
         private SwitchParameter _relative;
 
         #endregion Parameters
@@ -166,9 +166,9 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(result, enumerateCollection: true);
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // ResolvePathCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

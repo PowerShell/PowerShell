@@ -48,11 +48,11 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes the system policy</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
-            if (s_wasSystemPolicyDebugPolicy || (s_systemLockdownPolicy == null))
+            if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    if (s_wasSystemPolicyDebugPolicy || (s_systemLockdownPolicy == null))
+                    if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
                     {
                         s_systemLockdownPolicy = GetLockdownPolicy(null, null);
                     }
@@ -64,7 +64,7 @@ namespace System.Management.Automation.Security
 
         private static object s_systemLockdownPolicyLock = new Object();
         private static Nullable<SystemEnforcementMode> s_systemLockdownPolicy = null;
-        private static bool s_wasSystemPolicyDebugPolicy = false;
+        private static bool s_allowDebugOverridePolicy = false;
 
         /// <summary>
         /// Gets lockdown policy as applied to a file
@@ -249,7 +249,7 @@ namespace System.Management.Automation.Security
                             // https://msdn.microsoft.com/library/dd378457.aspx
                             Guid AppDatalocalLowFolderId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
                             tempPath = GetKnownFolderPath(AppDatalocalLowFolderId) + @"\Temp";
-                        } // end while loop
+                        }
 
                         // Test policy.
                         result = TestSaferPolicy(testPathScript, testPathModule);
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Security
 
         private static SystemEnforcementMode GetDebugLockdownPolicy(string path)
         {
-            s_wasSystemPolicyDebugPolicy = true;
+            s_allowDebugOverridePolicy = true;
 
             // Support fall-back debug hook for path exclusions on non-WOA platforms
             if (path != null)
@@ -419,7 +419,7 @@ namespace System.Management.Automation.Security
                         // Hook for testability. If we've got an environmental override, say that ADODB.Parameter
                         // is not allowed.
                         // 0000050b-0000-0010-8000-00aa006d2ea4 = ADODB.Parameter
-                        if (s_wasSystemPolicyDebugPolicy)
+                        if (s_allowDebugOverridePolicy)
                         {
                             if (String.Equals(clsid.ToString(), "0000050b-0000-0010-8000-00aa006d2ea4", StringComparison.OrdinalIgnoreCase))
                             {

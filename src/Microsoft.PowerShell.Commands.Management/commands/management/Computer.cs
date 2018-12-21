@@ -1528,8 +1528,8 @@ $result
                                 WriteWarning(StringUtil.Format(ComputerResources.RestartNeeded, null, computerName));
                             }
                         }
-                    } // end foreach
-                } // end using
+                    }
+                }
             }
             catch (CimException ex)
             {

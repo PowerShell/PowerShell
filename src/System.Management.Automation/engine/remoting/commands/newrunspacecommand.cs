@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
                     ConfigurationName = String.Empty;
                 }
             }
-        } // BeginProcessing
+        }
 
         /// <summary>
         /// The runspace objects will be created using OpenAsync.
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
                         remoteRunspaces = new List<RemoteRunspace>(); // added to avoid prefast warning
                     }
                     break;
-            } // switch (ParameterSetName...
+            }
 
             foreach (RemoteRunspace remoteRunspace in remoteRunspaces)
             {
@@ -284,8 +284,8 @@ namespace Microsoft.PowerShell.Commands
             foreach (object streamObject in streamObjects)
             {
                 WriteStreamObject((Action<Cmdlet>)streamObject);
-            } // foreach
-        }// ProcessRecord()
+            }
+        }
 
         /// <summary>
         /// OpenAsync would have been called from ProcessRecord. This method
@@ -311,8 +311,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     break;
                 }
-            } // while ...
-        }// EndProcessing()
+            }
+        }
 
         /// <summary>
         /// This method is called when the user sends a stop signal to the
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
             // for all the runspaces that have been submitted for opening
             // call StopOperation on each object and quit
             _throttleManager.StopAllOperations();
-        }// StopProcessing()
+        }
 
         #endregion Cmdlet Overrides
 
@@ -592,8 +592,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     break;
-            }// switch
-        } // HandleRunspaceStateChanged
+            }
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when PSSession
@@ -698,10 +698,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 ++rsIndex;
-            } // foreach
+            }
 
             return remoteRunspaces;
-        } // CreateRunspacesWhenRunspaceParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the URI parameter
@@ -762,10 +762,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteErrorCreateRemoteRunspaceFailed(e, ConnectionUri[i]);
                 }
-            } // for...
+            }
 
             return remoteRunspaces;
-        } // CreateRunspacesWhenUriParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the ComputerName parameter
@@ -831,10 +831,10 @@ namespace Microsoft.PowerShell.Commands
                     };
                     writer.Write(errorWriter);
                 }
-            }// end of for
+            }
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenComputerNameParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the VMId or VMName parameter
@@ -978,7 +978,7 @@ namespace Microsoft.PowerShell.Commands
             ResolvedComputerNames = this.VMName;
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenVMParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the ContainerId parameter is specified
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
             ResolvedComputerNames = resolvedNameList.ToArray();
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenContainerParameterSpecified
+        }
 
         /// <summary>
         /// CreateRunspacesForSSHHostParameterSet
@@ -1178,7 +1178,7 @@ namespace Microsoft.PowerShell.Commands
 
                 _stream.Dispose();
             }
-        } // Dispose
+        }
 
         /// <summary>
         /// Handles the throttling complete event of the throttle manager
@@ -1191,7 +1191,7 @@ namespace Microsoft.PowerShell.Commands
             _stream.ObjectWriter.Close();
 
             _operationsComplete.Set();
-        } // HandleThrottleComplete
+        }
 
         /// <summary>
         /// Writes an error record specifying that creation of remote runspace
@@ -1216,7 +1216,7 @@ namespace Microsoft.PowerShell.Commands
                 cmdlet.WriteError(errorRecord);
             };
             writer.Write(errorWriter);
-        } // WriteErrorCreateRemoteRunspaceFailed
+        }
 
         #endregion Private Methods
 
@@ -1244,7 +1244,7 @@ namespace Microsoft.PowerShell.Commands
         private string _defaultFQEID = "PSSessionOpenFailed";
 
         #endregion Private Members
-    }// NewRunspace
+    }
 
     #region Helper Classes
 
@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
                 _startComplete = false;
             }
             OperatedRunspace.OpenAsync();
-        } // StartOperation
+        }
 
         /// <summary>
         /// Closes the runspace already opened asynchronously
@@ -1437,7 +1437,7 @@ namespace Microsoft.PowerShell.Commands
 
             GC.SuppressFinalize(this);
         }
-    } // OpenRunspaceOperation
+    }
 
     #endregion Helper Classes
-}//End namespace
+}

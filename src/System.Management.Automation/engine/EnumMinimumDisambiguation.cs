@@ -80,8 +80,8 @@ namespace System.Management.Automation
                         {
                             return tName;
                         }
-                    }//foreach
-                }//if
+                    }
+                }
                 // No special cases match, throw error for multiple matches.
                 StringBuilder matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
                 string separator = ", ";

@@ -100,7 +100,7 @@ namespace System.Management.Automation
 
         #region Fields
 
-        private readonly static object s_syncObj = new object();
+        private static readonly object s_syncObj = new object();
         private readonly string[] _probingPaths;
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary

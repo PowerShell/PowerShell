@@ -257,19 +257,20 @@ Describe "Test-Connection" -tags "CI" {
             $result | Should -BeTrue
         }
     }
+}
 
-    Context "Connection" {
-        BeforeAll {
-            # Ensure the local host listen on port 80
-            $WebListener = Start-WebListener
-        }
+Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        # Ensure the local host listen on port 80
+        $WebListener = Start-WebListener
+        $UnreachableAddress = "10.11.12.13"
+    }
 
-        It "Test connection to local host port 80" {
-            Test-Connection '127.0.0.1' -TCPPort $WebListener.HttpPort | Should -BeTrue
-        }
+    It "Test connection to local host port 80" {
+        Test-Connection '127.0.0.1' -TCPPort $WebListener.HttpPort | Should -BeTrue
+    }
 
-        It "Test connection to unreachable host port 80" {
-            Test-Connection $UnreachableAddress -TCPPort 80 -TimeOut 1 | Should -BeFalse
-        }
+    It "Test connection to unreachable host port 80" {
+        Test-Connection $UnreachableAddress -TCPPort 80 -TimeOut 1 | Should -BeFalse
     }
 }

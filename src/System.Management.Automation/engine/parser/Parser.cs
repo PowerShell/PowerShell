@@ -7320,7 +7320,7 @@ namespace System.Management.Automation.Language
         {
             // These types are the ones known to contain
             // strings used by the parser as errors
-            Type[] resxTypes = new []
+            Type[] resxTypes = new[]
             {
                 typeof(ParserStrings),
                 typeof(DiscoveryExceptions),
