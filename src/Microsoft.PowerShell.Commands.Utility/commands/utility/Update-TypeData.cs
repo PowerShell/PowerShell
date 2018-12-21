@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = DynamicTypeSet)]
         [ValidateNotNull]
-        public Nullable<bool> InheritPropertySerializationSet
+        public bool? InheritPropertySerializationSet
         {
             set { _inheritPropertySerializationSet = value; }
             get { return _inheritPropertySerializationSet; }
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
         private Type _targetTypeForDeserialization;
         private int _serializationDepth = int.MinValue;
         private string _defaultDisplayProperty;
-        private Nullable<bool> _inheritPropertySerializationSet;
+        private bool? _inheritPropertySerializationSet;
 
         // These members are represented as AliasProperty in types.ps1xml
         private string _stringSerializationSource;

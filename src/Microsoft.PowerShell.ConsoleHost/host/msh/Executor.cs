@@ -525,11 +525,11 @@ namespace Microsoft.PowerShell
         /// objects were returned by the command.
         /// </returns>
 
-        internal Nullable<bool> ExecuteCommandAndGetResultAsBool(string command)
+        internal bool? ExecuteCommandAndGetResultAsBool(string command)
         {
             Exception unused = null;
 
-            Nullable<bool> result = ExecuteCommandAndGetResultAsBool(command, out unused);
+            bool? result = ExecuteCommandAndGetResultAsBool(command, out unused);
 
             return result;
         }
@@ -549,13 +549,13 @@ namespace Microsoft.PowerShell
         /// The Nullable`bool representation of the first result object returned, or null if an exception was thrown or no
         /// objects were returned by the command.
         /// </returns>
-        internal Nullable<bool> ExecuteCommandAndGetResultAsBool(string command, out Exception exceptionThrown)
+        internal bool? ExecuteCommandAndGetResultAsBool(string command, out Exception exceptionThrown)
         {
             exceptionThrown = null;
 
             Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
 
-            Nullable<bool> result = null;
+            bool? result = null;
 
             do
             {

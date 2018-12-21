@@ -407,10 +407,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
-            Nullable<bool>[] ascendingOverrides = null;
+            bool?[] ascendingOverrides = null;
             if (mshParameterList != null && mshParameterList.Count != 0)
             {
-                ascendingOverrides = new Nullable<bool>[mshParameterList.Count];
+                ascendingOverrides = new bool?[mshParameterList.Count];
                 for (int k = 0; k < ascendingOverrides.Length; k++)
                 {
                     object ascendingVal = mshParameterList[k].GetEntry(
@@ -645,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
             return order;
         }
 
-        internal static OrderByPropertyComparer CreateComparer(List<OrderByPropertyEntry> orderMatrix, bool ascendingFlag, Nullable<bool>[] ascendingOverrides, CultureInfo cultureInfo, bool caseSensitive)
+        internal static OrderByPropertyComparer CreateComparer(List<OrderByPropertyEntry> orderMatrix, bool ascendingFlag, bool?[] ascendingOverrides, CultureInfo cultureInfo, bool caseSensitive)
         {
             if (orderMatrix.Count == 0)
                 return null;

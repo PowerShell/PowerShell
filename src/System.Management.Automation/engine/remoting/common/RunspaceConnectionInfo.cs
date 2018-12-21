@@ -619,13 +619,13 @@ namespace System.Management.Automation.Runspaces
         /// targeted towards a command. If null, then the size is unlimited.
         /// Default is unlimited data.
         /// </summary>
-        public Nullable<int> MaximumReceivedDataSizePerCommand { get; set; }
+        public int? MaximumReceivedDataSizePerCommand { get; set; }
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
         /// If null, then the size is unlimited. Default is unlimited object size.
         /// </summary>
-        public Nullable<int> MaximumReceivedObjectSize { get; set; }
+        public int? MaximumReceivedObjectSize { get; set; }
 
         /// <summary>
         /// If true, underlying WSMan infrastructure will compress data sent on the network.
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="appName"></param>
         /// <returns></returns>
-        internal void ConstructUri(String scheme, String computerName, Nullable<Int32> port, String appName)
+        internal void ConstructUri(String scheme, String computerName, int? port, String appName)
         {
             // Default scheme is http
             _scheme = scheme;

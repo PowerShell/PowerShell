@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             set { showErrorsAsMessages = value; }
         }
-        internal Nullable<bool> showErrorsAsMessages = null;
+        internal bool? showErrorsAsMessages = null;
 
         /// <summary>
         /// optional, non positional parameter
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             set { showErrorsInFormattedOutput = value; }
         }
-        internal Nullable<bool> showErrorsInFormattedOutput = null;
+        internal bool? showErrorsInFormattedOutput = null;
 
         /// <summary>
         /// optional, non positional parameter
@@ -589,11 +589,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         EnumerableExpansionConversion.BothString, IgnoreCase = true)]
         public string Expand { get; set; } = null;
 
-        internal Nullable<EnumerableExpansion> expansion = null;
+        internal EnumerableExpansion? expansion = null;
 
-        internal Nullable<EnumerableExpansion> ProcessExpandParameter()
+        internal EnumerableExpansion? ProcessExpandParameter()
         {
-            Nullable<EnumerableExpansion> retVal = null;
+            EnumerableExpansion? retVal = null;
             if (string.IsNullOrEmpty(Expand))
             {
                 return null;
@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             set { _autosize = value; }
         }
-        private Nullable<bool> _autosize = null;
+        private bool? _autosize = null;
 
         /// <summary>
         /// Gets or sets if header is repeated per screen.
@@ -779,7 +779,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             set { _hideHeaders = value; }
         }
-        private Nullable<bool> _hideHeaders = null;
+        private bool? _hideHeaders = null;
 
         /// <summary>
         /// optional, non positional parameter
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             set { _multiLine = value; }
         }
-        private Nullable<bool> _multiLine = null;
+        private bool? _multiLine = null;
 
         #endregion
         internal override FormattingCommandLineParameters GetCommandLineParameters()

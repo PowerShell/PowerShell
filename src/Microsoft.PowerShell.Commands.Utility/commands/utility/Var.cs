@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands
                 _options = value;
             }
         }
-        private Nullable<ScopedItemOptions> _options;
+        private ScopedItemOptions? _options;
 
         /// <summary>
         /// Force the operation to make the best attempt at setting the variable.

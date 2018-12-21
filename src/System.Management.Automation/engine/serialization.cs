@@ -318,7 +318,7 @@ namespace System.Management.Automation
         /// is used by PriorityReceivedDataCollection (remoting) to process incoming data from the
         /// remote end. A value of Null means that the max memory is unlimited.
         /// </summary>
-        internal Nullable<int> MaximumAllowedMemory { set; get; }
+        internal int? MaximumAllowedMemory { set; get; }
 
         /// <summary>
         /// Logs that memory used by deserialized objects is not related to the size of input xml.
@@ -6958,8 +6958,8 @@ namespace Microsoft.PowerShell
             option.Culture = GetPropertyValue<CultureInfo>(pso, "Culture");
             option.IdleTimeout = GetPropertyValue<TimeSpan>(pso, "IdleTimeout");
             option.MaximumConnectionRedirectionCount = GetPropertyValue<int>(pso, "MaximumConnectionRedirectionCount");
-            option.MaximumReceivedDataSizePerCommand = GetPropertyValue<Nullable<int>>(pso, "MaximumReceivedDataSizePerCommand");
-            option.MaximumReceivedObjectSize = GetPropertyValue<Nullable<int>>(pso, "MaximumReceivedObjectSize");
+            option.MaximumReceivedDataSizePerCommand = GetPropertyValue<int?>(pso, "MaximumReceivedDataSizePerCommand");
+            option.MaximumReceivedObjectSize = GetPropertyValue<int?>(pso, "MaximumReceivedObjectSize");
             option.NoCompression = GetPropertyValue<bool>(pso, "NoCompression");
             option.NoEncryption = GetPropertyValue<bool>(pso, "NoEncryption");
             option.NoMachineProfile = GetPropertyValue<bool>(pso, "NoMachineProfile");

@@ -2085,7 +2085,7 @@ else
 
             set { threadAptState = value; }
         }
-        internal Nullable<ApartmentState> threadAptState;
+        internal ApartmentState? threadAptState;
 #endif
 
         /// <summary>
@@ -2106,7 +2106,7 @@ else
 
             set { threadOptions = value; }
         }
-        internal Nullable<PSThreadOptions> threadOptions;
+        internal PSThreadOptions? threadOptions;
 
         /// <summary>
         /// Set access mode
@@ -2165,7 +2165,7 @@ else
         /// </summary>
         [Parameter()]
         [AllowNull]
-        public Nullable<double> MaximumReceivedDataSizePerCommandMB
+        public double? MaximumReceivedDataSizePerCommandMB
         {
             get { return maxCommandSizeMB; }
             set
@@ -2181,7 +2181,7 @@ else
                 isMaxCommandSizeMBSpecified = true;
             }
         }
-        internal Nullable<double> maxCommandSizeMB;
+        internal double? maxCommandSizeMB;
         internal bool isMaxCommandSizeMBSpecified;
 
         /// <summary>
@@ -2189,7 +2189,7 @@ else
         /// </summary>
         [Parameter()]
         [AllowNull]
-        public Nullable<double> MaximumReceivedObjectSizeMB
+        public double? MaximumReceivedObjectSizeMB
         {
             get { return maxObjectSizeMB; }
             set
@@ -2205,7 +2205,7 @@ else
                 isMaxObjectSizeMBSpecified = true;
             }
         }
-        internal Nullable<double> maxObjectSizeMB;
+        internal double? maxObjectSizeMB;
         internal bool isMaxObjectSizeMBSpecified;
 
         /// <summary>
