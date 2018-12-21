@@ -1684,7 +1684,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
-        internal PipelineReader<object> GetObjectReaderForPipeline(String computerName, Guid runspaceId)
+        internal PipelineReader<object> GetObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
             if (_objectReaderForPipeline == null)
             {
@@ -1731,7 +1731,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
-        internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(String computerName, Guid runspaceId)
+        internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
             if (_psobjectReaderForPipeline == null)
             {

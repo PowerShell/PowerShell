@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    String stringValue = value as string;
+                    string stringValue = value as string;
                     if (stringValue != null)
                     {
                         ScriptBlock scriptBlock = ScriptBlock.Create(Context.ExecutionContext, stringValue);

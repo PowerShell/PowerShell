@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return _appName; }
             set
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 _appName = ResolveAppName(value);
             }
         }
-        private String _appName;
+        private string _appName;
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
-        public String ConfigurationName
+        public string ConfigurationName
         {
             get { return _shell; }
             set
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
                 _shell = ResolveShell(value);
             }
         }
-        private String _shell;
+        private string _shell;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override String[] Name
+        public override string[] Name
         {
             get { return base.Name; }
             set { base.Name = value; }

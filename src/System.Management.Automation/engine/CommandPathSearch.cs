@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// Used to enumerate the commands on the system that match the specified
     /// command name
     /// </summary>
-    internal class CommandPathSearch : IEnumerable<String>, IEnumerator<String>
+    internal class CommandPathSearch : IEnumerable<string>, IEnumerator<string>
     {
         [TraceSource("CommandSearch", "CommandSearch")]
         private static PSTraceSource s_tracer = PSTraceSource.GetTracer("CommandSearch", "CommandSearch");

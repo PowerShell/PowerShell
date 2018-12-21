@@ -113,9 +113,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resourceString">resource String which holds the message
         /// </param>
         /// <returns>Error message loaded from appropriate resource cache</returns>
-        internal String GetMessage(string resourceString)
+        internal string GetMessage(string resourceString)
         {
-            String message = GetMessage(resourceString, null);
+            string message = GetMessage(resourceString, null);
 
             return message;
         }
@@ -125,9 +125,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resourceString"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        internal String GetMessage(string resourceString, params object[] args)
+        internal string GetMessage(string resourceString, params object[] args)
         {
-            String message;
+            string message;
 
             if (args != null)
             {
@@ -222,9 +222,9 @@ namespace Microsoft.PowerShell.Commands
         ///     3. PowerShell
         /// </summary>
         /// <returns>The shell to launch in the remote machine</returns>
-        protected String ResolveShell(String shell)
+        protected string ResolveShell(string shell)
         {
-            String resolvedShell;
+            string resolvedShell;
 
             if (!String.IsNullOrEmpty(shell))
             {
@@ -247,9 +247,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="appName">application name to resolve</param>
         /// <returns>resolved appname</returns>
-        protected String ResolveAppName(String appName)
+        protected string ResolveAppName(string appName)
         {
-            String resolvedAppName;
+            string resolvedAppName;
 
             if (!String.IsNullOrEmpty(appName))
             {
@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Alias("Cn")]
-        public virtual String[] ComputerName { get; set; }
+        public virtual string[] ComputerName { get; set; }
 
         /// <summary>
         /// Computer names after they have been resolved
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>If Null or empty string is specified, then localhost is assumed.
         /// The ResolveComputerNames will include this.
         /// </remarks>
-        protected String[] ResolvedComputerNames { get; set; }
+        protected string[] ResolvedComputerNames { get; set; }
 
         /// <summary>
         /// Guid of target virtual machine.
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
-        public virtual String ApplicationName
+        public virtual string ApplicationName
         {
             get
             {
@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private String _appName;
+        private string _appName;
 
         /// <summary>
         /// Allows the user of the cmdlet to specify a throttling value
@@ -770,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        public String Subsystem { get; set; }
+        public string Subsystem { get; set; }
 
         #endregion
 
@@ -793,7 +793,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if ((credential != null) && (thumbprint != null))
             {
-                String message = PSRemotingErrorInvariants.FormatResourceString(
+                string message = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                         "CertificateThumbPrint", "Credential");
 
@@ -802,7 +802,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((authentication != AuthenticationMechanism.Default) && (thumbprint != null))
             {
-                String message = PSRemotingErrorInvariants.FormatResourceString(
+                string message = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                         "CertificateThumbPrint", authentication.ToString());
 
@@ -1023,9 +1023,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="computerNames">collection of computer
         /// names to validate</param>
-        protected void ValidateComputerName(String[] computerNames)
+        protected void ValidateComputerName(string[] computerNames)
         {
-            foreach (String computerName in computerNames)
+            foreach (string computerName in computerNames)
             {
                 UriHostNameType nametype = Uri.CheckHostName(computerName);
                 if (!(nametype == UriHostNameType.Dns || nametype == UriHostNameType.IPv4 ||
@@ -1316,7 +1316,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        public virtual String ConfigurationName { get; set; }
+        public virtual string ConfigurationName { get; set; }
 
         #endregion Parameters
 
@@ -2028,7 +2028,7 @@ namespace Microsoft.PowerShell.Commands
                 case PSExecutionCmdlet.LiteralFilePathComputerNameParameterSet:
                 case PSExecutionCmdlet.ComputerNameParameterSet:
                     {
-                        String[] resolvedComputerNames = null;
+                        string[] resolvedComputerNames = null;
                         ResolveComputerNames(ComputerName, out resolvedComputerNames);
                         ResolvedComputerNames = resolvedComputerNames;
 
@@ -2039,7 +2039,7 @@ namespace Microsoft.PowerShell.Commands
                 case PSExecutionCmdlet.SSHHostParameterSet:
                 case PSExecutionCmdlet.FilePathSSHHostParameterSet:
                     {
-                        String[] resolvedComputerNames = null;
+                        string[] resolvedComputerNames = null;
                         ResolveComputerNames(HostName, out resolvedComputerNames);
                         ResolvedComputerNames = resolvedComputerNames;
 
@@ -2454,7 +2454,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [ValidateNotNullOrEmpty()]
-        public virtual String[] Name
+        public virtual string[] Name
         {
             get
             {
@@ -2466,7 +2466,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private String[] _names;
+        private string[] _names;
 
         /// <summary>
         /// Name of the computer for which the runspace needs to be
@@ -2478,7 +2478,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRunspaceCmdlet.ComputerNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public virtual String[] ComputerName
+        public virtual string[] ComputerName
         {
             get
             {
@@ -2490,7 +2490,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private String[] _computerNames;
+        private string[] _computerNames;
 
         /// <summary>
         /// ID of target container.
@@ -2568,7 +2568,7 @@ namespace Microsoft.PowerShell.Commands
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
             bool writeErrorOnNoMatch,
             SessionFilterState filterState,
-            String configurationName)
+            string configurationName)
         {
             switch (ParameterSetName)
             {
@@ -2902,13 +2902,13 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName,
+            string configurationName,
             bool isContainer)
         {
-            String[] inputNames;
+            string[] inputNames;
             TargetMachineType computerType;
             bool supportWildChar;
-            String[] sessionNames = { "*" };
+            string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
@@ -2970,10 +2970,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName,
+            string configurationName,
             bool isContainer)
         {
-            String[] inputNames;
+            string[] inputNames;
             TargetMachineType computerType;
             bool supportWildChar;
             WildcardPattern configurationNamePattern =
@@ -3027,9 +3027,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName)
+            string configurationName)
         {
-            String[] sessionNames = { "*" };
+            string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
@@ -3072,7 +3072,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName)
+            string configurationName)
         {
             WildcardPattern configurationNamePattern =
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
@@ -3133,7 +3133,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteInvalidArgumentError(PSRemotingErrorId errorId, string resourceString, object errorArgument)
         {
-            String message = GetMessage(resourceString, errorArgument);
+            string message = GetMessage(resourceString, errorArgument);
 
             WriteError(new ErrorRecord(new ArgumentException(message), errorId.ToString(),
                 ErrorCategory.InvalidArgument, errorArgument));

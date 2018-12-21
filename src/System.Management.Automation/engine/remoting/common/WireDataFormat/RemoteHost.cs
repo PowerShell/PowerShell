@@ -326,7 +326,7 @@ namespace System.Management.Automation.Remoting
         /// <returns>a collection of remote host calls which will
         /// have to be executed before this host call can be
         /// executed</returns>
-        internal Collection<RemoteHostCall> PerformSecurityChecksOnHostMessage(String computerName)
+        internal Collection<RemoteHostCall> PerformSecurityChecksOnHostMessage(string computerName)
         {
             Dbg.Assert(!String.IsNullOrEmpty(computerName),
                 "Computer Name must be passed for use in warning messages");
@@ -433,7 +433,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="caption">caption to modify</param>
         /// <returns>new modified caption</returns>
-        private String ModifyCaption(string caption)
+        private string ModifyCaption(string caption)
         {
             string pscaption = CredUI.PromptForCredential_DefaultCaption;
 
@@ -458,7 +458,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="computerName">computername to include in the
         /// message</param>
         /// <returns>message which contains a warning as well</returns>
-        private String ModifyMessage(string message, string computerName)
+        private string ModifyMessage(string message, string computerName)
         {
             string modifiedMessage = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.RemoteHostPromptForCredentialModifiedMessage,

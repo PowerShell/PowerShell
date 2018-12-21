@@ -386,7 +386,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Tags of this module.
         /// </summary>
-        public IEnumerable<String> Tags
+        public IEnumerable<string> Tags
         {
             get { return _tags; }
         }
@@ -485,7 +485,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Company Name
         /// </summary>
-        public String CompanyName
+        public string CompanyName
         {
             get;
             internal set;
@@ -494,7 +494,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Copyright
         /// </summary>
-        public String Copyright
+        public string Copyright
         {
             get;
             internal set;
@@ -660,7 +660,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Prefix
         /// </summary>
-        public String Prefix
+        public string Prefix
         {
             get;
             internal set;
@@ -837,7 +837,7 @@ namespace System.Management.Automation
         /// <summary>
         /// FileList
         /// </summary>
-        public IEnumerable<String> FileList
+        public IEnumerable<string> FileList
         {
             get { return _fileList; }
         }
@@ -855,7 +855,7 @@ namespace System.Management.Automation
         /// or the key was not in the manifest, this should be an empty collection. This
         /// property is never null.
         /// </summary>
-        public IEnumerable<String> CompatiblePSEditions
+        public IEnumerable<string> CompatiblePSEditions
         {
             get { return _compatiblePSEditions; }
         }
@@ -925,7 +925,7 @@ namespace System.Management.Automation
         /// <summary>
         /// PowerShell Host Name
         /// </summary>
-        public String PowerShellHostName
+        public string PowerShellHostName
         {
             get;
             internal set;
@@ -961,12 +961,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Scripts to Process
         /// </summary>
-        public IEnumerable<String> Scripts
+        public IEnumerable<string> Scripts
         {
             get { return _scripts; }
         }
 
-        private List<String> _scripts = new List<string>();
+        private List<string> _scripts = new List<string>();
 
         internal void AddScript(string s)
         {
@@ -976,11 +976,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Required Assemblies
         /// </summary>
-        public IEnumerable<String> RequiredAssemblies
+        public IEnumerable<string> RequiredAssemblies
         {
             get { return _requiredAssemblies; }
         }
-        private Collection<String> _requiredAssemblies = new Collection<string>();
+        private Collection<string> _requiredAssemblies = new Collection<string>();
 
         internal void AddRequiredAssembly(string assembly)
         {
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Root Module
         /// </summary>
-        public String RootModule
+        public string RootModule
         {
             get;
             internal set;
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
         /// This member is used to copy over the RootModule in case the module is a manifest module
         /// This is so that only ModuleInfo for modules with type=Manifest have RootModule populated
         /// </summary>
-        internal String RootModuleForManifest
+        internal string RootModuleForManifest
         {
             get;
             set;

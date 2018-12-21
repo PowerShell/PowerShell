@@ -729,7 +729,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_BSTR
-        public String AsBstr
+        public string AsBstr
         {
             get
             {

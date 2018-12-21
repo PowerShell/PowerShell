@@ -242,7 +242,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the return of GetMember</param>
         /// <returns></returns>
-        protected override Collection<String> MethodDefinitions(PSMethod method)
+        protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             WMIMethodCacheEntry methodEntry = (WMIMethodCacheEntry)method.adapterData;
             Collection<string> returnValue = new Collection<string>();

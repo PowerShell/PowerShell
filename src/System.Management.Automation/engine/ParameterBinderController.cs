@@ -259,7 +259,7 @@ namespace System.Management.Automation
         }
 
         private static bool IsSwitchAndSetValue(
-            String argumentName,
+            string argumentName,
             CommandParameterInternal argument,
             CompiledCommandParameter matchingParameter)
         {

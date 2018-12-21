@@ -126,7 +126,7 @@ namespace System.Management.Automation.Language
 
             if (foundType2 != null)
             {
-                exception = new AmbiguousTypeException(typeName, new String[] { foundType.AssemblyQualifiedName, foundType2.AssemblyQualifiedName });
+                exception = new AmbiguousTypeException(typeName, new string[] { foundType.AssemblyQualifiedName, foundType2.AssemblyQualifiedName });
                 return null;
             }
 

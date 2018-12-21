@@ -169,7 +169,7 @@ namespace System.Management.Automation
             //    of the mshsnapin
             // Otherwise,
             //    Look in the default search path and cmdlet assembly path
-            Collection<String> searchPaths = new Collection<String>();
+            Collection<string> searchPaths = new Collection<string>();
             if (mshSnapInInfo != null)
             {
                 Diagnostics.Assert(!string.IsNullOrEmpty(mshSnapInInfo.ApplicationBase),

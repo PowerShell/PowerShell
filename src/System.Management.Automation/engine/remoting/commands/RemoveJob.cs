@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_names == null) return matches;
 
-            foreach (String name in _names)
+            foreach (string name in _names)
             {
                 if (string.IsNullOrEmpty(name))
                     continue;
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private bool FindJobsMatchingByNameHelper(List<Job> matches, IList<Job> jobsToSearch, String name,
+        private bool FindJobsMatchingByNameHelper(List<Job> matches, IList<Job> jobsToSearch, string name,
                         Hashtable duplicateDetector, bool recurse, bool writeobject, bool checkIfJobCanBeRemoved)
         {
             Dbg.Assert(!String.IsNullOrEmpty(name), "Caller should ensure that name is not null or empty");
@@ -599,7 +599,7 @@ namespace Microsoft.PowerShell.Commands
                   Mandatory = true,
                   ParameterSetName = JobCmdletBase.NameParameterSet)]
         [ValidateNotNullOrEmpty]
-        public String[] Name
+        public string[] Name
         {
             get
             {
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        private String[] _names;
+        private string[] _names;
 
         /// <summary>
         /// InstanceIds for which job
@@ -692,7 +692,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
             ParameterSetName = RemoveJobCommand.CommandParameterSet)]
         [ValidateNotNullOrEmpty]
-        public virtual String[] Command
+        public virtual string[] Command
         {
             get
             {
@@ -706,7 +706,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        private String[] _commands;
+        private string[] _commands;
 
         /// <summary>
         /// All the job objects matching the values in filter

@@ -1871,14 +1871,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
         /// <returns>public key as string</returns>
-        internal static String GetPublicKey(PSObject dataAsPSObject)
+        internal static string GetPublicKey(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
             {
                 throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
             }
 
-            return GetPropertyValue<String>(dataAsPSObject, RemoteDataNameStrings.PublicKey);
+            return GetPropertyValue<string>(dataAsPSObject, RemoteDataNameStrings.PublicKey);
         }
 
         /// <summary>
@@ -1886,7 +1886,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
         /// <returns>encrypted session key as string</returns>
-        internal static String GetEncryptedSessionKey(PSObject dataAsPSObject)
+        internal static string GetEncryptedSessionKey(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
             {

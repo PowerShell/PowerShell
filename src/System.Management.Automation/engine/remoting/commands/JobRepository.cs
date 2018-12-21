@@ -54,7 +54,7 @@ namespace System.Management.Automation
 
                 if (!_repository.Remove(instanceId))
                 {
-                    String message =
+                    string message =
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ItemNotFoundInRepository,
                             "Job repository", instanceId.ToString());
 

@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A friendly Name for this definition
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return _name; }
             set { _name = value; }
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// Name of the job that needs to be loaded
         /// from the specified module
         /// </summary>
-        public String Command { get; }
+        public string Command { get; }
 
         private Guid _instanceId;
 
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Friendly name associated with this specification
         /// </summary>
-        public String Name
+        public string Name
         {
             get
             {
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for this store
         /// </summary>
-        public String Name { get; set; } = String.Empty;
+        public string Name { get; set; } = String.Empty;
 
         /// <summary>
         /// Get a token that allows for construction of a job with a previously assigned

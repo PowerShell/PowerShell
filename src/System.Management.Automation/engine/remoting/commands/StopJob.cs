@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        public override String[] Command
+        public override string[] Command
         {
             get
             {

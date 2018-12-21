@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public String ComputerName { get; set; }
+        public string ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return _appName; }
             set
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
                 _appName = ResolveAppName(value);
             }
         }
-        private String _appName;
+        private string _appName;
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        public String ConfigurationName
+        public string ConfigurationName
         {
             get { return _shell; }
             set
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
                 _shell = ResolveShell(value);
             }
         }
-        private String _shell;
+        private string _shell;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            String message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, newSession.Name);
+                            string message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, newSession.Name);
                             WriteError(new ErrorRecord(new ArgumentException(message, ex), "ReceivePSSessionCannotConnectSession",
                                        ErrorCategory.InvalidOperation, newSession));
                         }
@@ -686,7 +686,7 @@ namespace Microsoft.PowerShell.Commands
                     if (session == null)
                     {
                         // No luck.  Return error.
-                        String message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, oldSession.Name);
+                        string message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, oldSession.Name);
                         WriteError(new ErrorRecord(new ArgumentException(message, ex), "ReceivePSSessionCannotConnectSession",
                                    ErrorCategory.InvalidOperation, oldSession));
 
@@ -1265,7 +1265,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteInvalidArgumentError(PSRemotingErrorId errorId, string resourceString, object errorArgument)
         {
-            String message = GetMessage(resourceString, errorArgument);
+            string message = GetMessage(resourceString, errorArgument);
 
             WriteError(new ErrorRecord(new ArgumentException(message), errorId.ToString(),
                        ErrorCategory.InvalidArgument, errorArgument));

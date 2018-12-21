@@ -602,7 +602,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for identifying this job object
         /// </summary>
-        public String Name
+        public string Name
         {
             get
             {
@@ -639,7 +639,7 @@ namespace System.Management.Automation
         ///<summary>
         /// Success status of the command execution.
         /// </summary>
-        public abstract String StatusMessage { get; }
+        public abstract string StatusMessage { get; }
 
         /// <summary>
         /// Indicates that more data is available in this
@@ -1290,7 +1290,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Indicates a location where this job is running
         /// </summary>
-        public abstract String Location { get; }
+        public abstract string Location { get; }
 
         #endregion results
 
@@ -1515,7 +1515,7 @@ namespace System.Management.Automation
         /// <remarks>Since the user can script/program against the
         /// job name, the auto generated name will not be
         /// localizable</remarks>
-        protected String AutoGenerateJobName()
+        protected string AutoGenerateJobName()
         {
             return "Job" + Id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
         }
@@ -1566,7 +1566,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="location">location to filter on</param>
         /// <returns>collection of jobs</returns>
-        internal List<Job> GetJobsForLocation(String location)
+        internal List<Job> GetJobsForLocation(string location)
         {
             List<Job> returnJobList = new List<Job>();
 
@@ -1704,8 +1704,8 @@ namespace System.Management.Automation
         /// <param name="name"> a friendly name for the job object
         /// </param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal PSRemotingJob(String[] computerNames,
-                        List<IThrottleOperation> computerNameHelpers, String remoteCommand, string name)
+        internal PSRemotingJob(string[] computerNames,
+                        List<IThrottleOperation> computerNameHelpers, string remoteCommand, string name)
             :
             this(computerNames, computerNameHelpers, remoteCommand, 0, name)
         { }
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
         /// <param name="name">a friendly name for the job object
         /// </param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
-                        List<IThrottleOperation> runspaceHelpers, String remoteCommand, string name)
+                        List<IThrottleOperation> runspaceHelpers, string remoteCommand, string name)
             :
             this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
         { }
@@ -1741,8 +1741,8 @@ namespace System.Management.Automation
         /// result object</param>
         /// <param name="throttleLimit">Throttle limit to use</param>
         /// <param name="name">a friendly name for the job object</param>
-        internal PSRemotingJob(String[] computerNames,
-                        List<IThrottleOperation> computerNameHelpers, String remoteCommand,
+        internal PSRemotingJob(string[] computerNames,
+                        List<IThrottleOperation> computerNameHelpers, string remoteCommand,
                             int throttleLimit, string name)
             : base(remoteCommand, name)
         {
@@ -1775,7 +1775,7 @@ namespace System.Management.Automation
         /// <param name="throttleLimit">throttle limit to use</param>
         /// <param name="name"></param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
-                        List<IThrottleOperation> runspaceHelpers, String remoteCommand,
+                        List<IThrottleOperation> runspaceHelpers, string remoteCommand,
                         int throttleLimit, string name)
             : base(remoteCommand, name)
         {
@@ -1867,7 +1867,7 @@ namespace System.Management.Automation
         /// <param name="computerName">computername for which entity
         /// result is required</param>
         /// <returns>entity result</returns>
-        internal List<Job> GetJobsForComputer(String computerName)
+        internal List<Job> GetJobsForComputer(string computerName)
         {
             List<Job> returnJobList = new List<Job>();
 
@@ -2532,7 +2532,7 @@ namespace System.Management.Automation
 
         private bool _isDisposed = false;
 
-        private String ConstructLocation()
+        private string ConstructLocation()
         {
             StringBuilder location = new StringBuilder();
 
@@ -3276,7 +3276,7 @@ namespace System.Management.Automation
                 failureException = runspace.RunspaceStateInfo.Reason;
                 object targetObject = runspace.ConnectionInfo.ComputerName;
 
-                String errorDetails = null;
+                string errorDetails = null;
 
                 // set the transport message in the error detail so that
                 // the user can directly get to see the message without
@@ -3354,7 +3354,7 @@ namespace System.Management.Automation
                                                             targetObject);
                     }
 
-                    String computerName = ((RemoteRunspace)pipeline.GetRunspace()).ConnectionInfo.ComputerName;
+                    string computerName = ((RemoteRunspace)pipeline.GetRunspace()).ConnectionInfo.ComputerName;
                     Guid runspaceId = pipeline.GetRunspace().InstanceId;
 
                     OriginInfo originInfo = new OriginInfo(computerName, runspaceId);

@@ -288,7 +288,7 @@ namespace System.Management.Automation.Remoting
         /// which this information originated
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "PSIP")]
-        public String PSComputerName
+        public string PSComputerName
         {
             get
             {
@@ -296,7 +296,7 @@ namespace System.Management.Automation.Remoting
             }
         }
         [DataMemberAttribute()]
-        private String _computerName;
+        private string _computerName;
 
         /// <summary>
         /// Runspace instance ID
@@ -337,7 +337,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="computerName">machine name</param>
         /// <param name="runspaceID">instance id of runspace</param>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
-        public OriginInfo(String computerName, Guid runspaceID)
+        public OriginInfo(string computerName, Guid runspaceID)
             : this(computerName, runspaceID, Guid.Empty)
         { }
 
@@ -348,7 +348,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="runspaceID">instance id of runspace</param>
         /// <param name="instanceID">instance id for the origin object</param>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
-        public OriginInfo(String computerName, Guid runspaceID, Guid instanceID)
+        public OriginInfo(string computerName, Guid runspaceID, Guid instanceID)
         {
             _computerName = computerName;
             _runspaceID = runspaceID;

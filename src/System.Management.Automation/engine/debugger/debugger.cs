@@ -3941,7 +3941,7 @@ namespace System.Management.Automation
             if (_isDisposed) { return new DebuggerCommandResults(null, false); }
 
             // Preprocess debugger commands.
-            String cmd = command.Commands[0].CommandText.Trim();
+            string cmd = command.Commands[0].CommandText.Trim();
 
             if (cmd.Equals("prompt", StringComparison.OrdinalIgnoreCase))
             {

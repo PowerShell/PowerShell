@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         /// <summary>
         /// Specifies the credentials of the user to impersonate in the
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Name { get; set; }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
-        public String ConfigurationName { get; set; }
+        public string ConfigurationName { get; set; }
 
         #endregion Parameters
 
@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell.Commands
                         // having to mine through the error record details
                         PSRemotingTransportException transException =
                             reason as PSRemotingTransportException;
-                        String errorDetails = null;
+                        string errorDetails = null;
                         int transErrorCode = 0;
                         if (transException != null)
                         {
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
                             transErrorCode = transException.ErrorCode;
                             if (senderAsOp != null)
                             {
-                                String host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
+                                string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
                                 if (transException.ErrorCode ==
                                     System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_REDIRECT_REQUESTED)
@@ -497,7 +497,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (senderAsOp != null)
                             {
-                                String host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
+                                string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
                                 errorDetails = "[" + host + "] " + protoException.Message;
                             }
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
                         // called when there are open runspaces
                         Uri connectionUri = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<Uri>(remoteRunspace.ConnectionInfo,
                             "ConnectionUri", null);
-                        String message =
+                        string message =
                             GetMessage(RemotingErrorIdStrings.RemoteRunspaceClosed,
                                         (connectionUri != null) ?
                                         connectionUri.AbsoluteUri : string.Empty);
@@ -777,7 +777,7 @@ namespace Microsoft.PowerShell.Commands
                 new List<RemoteRunspace>();
 
             // Resolve all the machine names
-            String[] resolvedComputerNames;
+            string[] resolvedComputerNames;
 
             ResolveComputerNames(ComputerName, out resolvedComputerNames);
 
@@ -1064,7 +1064,7 @@ namespace Microsoft.PowerShell.Commands
         private List<RemoteRunspace> CreateRunspacesForSSHHostParameterSet()
         {
             // Resolve all the machine names
-            String[] resolvedComputerNames;
+            string[] resolvedComputerNames;
 
             ResolveComputerNames(HostName, out resolvedComputerNames);
 

@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateSet("Local", "Global")]
-        public String Scope
+        public string Scope
         {
             get { return _scope; }
             set

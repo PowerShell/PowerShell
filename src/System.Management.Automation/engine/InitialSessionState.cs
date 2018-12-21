@@ -2066,16 +2066,16 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// </summary>
-        public virtual HashSet<String> StartupScripts
+        public virtual HashSet<string> StartupScripts
         {
             get
             {
                 if (_startupScripts == null)
-                    Interlocked.CompareExchange(ref _startupScripts, new HashSet<String>(), null);
+                    Interlocked.CompareExchange(ref _startupScripts, new HashSet<string>(), null);
                 return _startupScripts;
             }
         }
-        private HashSet<String> _startupScripts = new HashSet<string>();
+        private HashSet<string> _startupScripts = new HashSet<string>();
 
         private Object _syncObject = new Object();
 

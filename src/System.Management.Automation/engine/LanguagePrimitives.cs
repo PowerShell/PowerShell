@@ -302,11 +302,11 @@ namespace System.Management.Automation
 
         internal delegate void MemberSetValueError(SetValueException e);
 
-        internal const String OrderedAttribute = "ordered";
+        internal const string OrderedAttribute = "ordered";
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
         {
-            String availableProperties = GetAvailableProperties(pso);
+            string availableProperties = GetAvailableProperties(pso);
 
             string message = StringUtil.Format(ExtendedTypeSystem.PropertyNotFound, property.Key.ToString(), resultType.FullName, availableProperties);
 
@@ -1882,7 +1882,7 @@ namespace System.Management.Automation
         {
             private class EnumHashEntry
             {
-                internal EnumHashEntry(String[] names, Array values, UInt64 allValues, bool hasNegativeValue, bool hasFlagsAttribute)
+                internal EnumHashEntry(string[] names, Array values, UInt64 allValues, bool hasNegativeValue, bool hasFlagsAttribute)
                 {
                     this.names = names;
                     this.values = values;
@@ -1891,7 +1891,7 @@ namespace System.Management.Automation
                     this.hasFlagsAttribute = hasFlagsAttribute;
                 }
 
-                internal String[] names;
+                internal string[] names;
                 internal Array values;
                 internal UInt64 allValues;
                 internal bool hasNegativeValue;
@@ -4584,7 +4584,7 @@ namespace System.Management.Automation
             return pso;
         }
 
-        private static String GetAvailableProperties(PSObject pso)
+        private static string GetAvailableProperties(PSObject pso)
         {
             StringBuilder availableProperties = new StringBuilder();
             bool first = true;

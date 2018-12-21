@@ -342,7 +342,7 @@ namespace System.Management.Automation
             Int64 microsec = ((date.Ticks - dtTemp.Ticks) * 1000) / TimeSpan.TicksPerMillisecond;
 
             // fill the microseconds field
-            String strMicrosec = microsec.ToString((IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int64)));
+            string strMicrosec = microsec.ToString((IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int64)));
             if (strMicrosec.Length > 6)
             {
                 strMicrosec = strMicrosec.Substring(0, 6);

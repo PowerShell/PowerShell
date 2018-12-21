@@ -51,7 +51,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        internal static void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal static void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
             provider.LogEngineHealthEvent(logContext, eventId, exception, additionalInfo);
         }
@@ -92,7 +92,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal static void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal static void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
             provider.LogPipelineExecutionDetailEvent(logContext, pipelineExecutionDetail);
         }

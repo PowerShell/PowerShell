@@ -1792,7 +1792,7 @@ namespace System.Management.Automation.Provider
 
             // Construct a provider qualified path as the Path note
 
-            String providerQualifiedPath =
+            string providerQualifiedPath =
                 LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
 
             result.AddOrSetProperty("PSPath", providerQualifiedPath);

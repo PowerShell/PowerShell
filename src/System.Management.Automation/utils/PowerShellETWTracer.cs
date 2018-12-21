@@ -1088,7 +1088,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public bool WriteMessage(String message)
+        public bool WriteMessage(string message)
         {
             return DebugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage,
                                             PowerShellTraceOperationCode.None,

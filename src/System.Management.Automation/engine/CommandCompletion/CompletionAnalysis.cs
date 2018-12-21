@@ -1033,7 +1033,7 @@ namespace System.Management.Automation
                             DynamicKeywordProperty property;
                             if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out property))
                             {
-                                List<String> existingValues = null;
+                                List<string> existingValues = null;
                                 WildcardPattern wildcardPattern = null;
                                 bool isDependsOnProperty = String.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
                                 bool hasNewLine = false;
@@ -1041,7 +1041,7 @@ namespace System.Management.Automation
                                 if ((property.ValueMap != null && property.ValueMap.Count > 0) || isDependsOnProperty)
                                 {
                                     shouldContinue = false;
-                                    existingValues = new List<String>();
+                                    existingValues = new List<string>();
                                     if (String.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
                                     {
                                         var arrayAst = Ast.GetAncestorAst<ArrayLiteralAst>(lastAst);

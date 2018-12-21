@@ -89,7 +89,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal abstract void RaiseDataReceivedEvent(RemoteDataEventArgs arg); // this is the API the Transport calls
 
-        internal abstract event EventHandler<RemoteDataEventArgs<String>> PublicKeyReceived;
+        internal abstract event EventHandler<RemoteDataEventArgs<string>> PublicKeyReceived;
 
         internal abstract void SendRequestForPublicKey();
 

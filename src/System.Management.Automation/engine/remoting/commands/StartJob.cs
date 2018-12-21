@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
-        public virtual String Name
+        public virtual string Name
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        private String _name;
+        private string _name;
 
         /// <summary>
         /// Command to execute specified as a string. This can be a single
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override String[] ComputerName
+        public override string[] ComputerName
         {
             get
             {
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override String ConfigurationName
+        public override string ConfigurationName
         {
             get
             {
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override String ApplicationName
+        public override string ApplicationName
         {
             get
             {

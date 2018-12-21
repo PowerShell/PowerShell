@@ -444,12 +444,12 @@ namespace System.Management.Automation.Language
             typeof(StreamReader).GetMethod(nameof(StreamReader.ReadLine));
 
         internal static readonly ConstructorInfo String_ctor_char_int =
-            typeof(String).GetConstructor(new Type[] { typeof(char), typeof(int) });
+            typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) });
         internal static readonly MethodInfo String_Concat_String =
-            typeof(String).GetMethod(nameof(String.Concat), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(String.Concat), staticPublicFlags, null,
                                      CallingConventions.Standard, new Type[] { typeof(string), typeof(string) }, null);
         internal static readonly MethodInfo String_Equals =
-            typeof(String).GetMethod(nameof(String.Equals), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(String.Equals), staticPublicFlags, null,
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
         internal static readonly MethodInfo String_get_Chars =

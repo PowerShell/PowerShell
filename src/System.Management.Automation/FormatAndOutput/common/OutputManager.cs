@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <returns>true if there is a match</returns>
             internal bool AppliesToType(string typeName)
             {
-                foreach (String s in _applicableTypes)
+                foreach (string s in _applicableTypes)
                 {
                     if (string.Equals(s, typeName, StringComparison.OrdinalIgnoreCase))
                         return true;

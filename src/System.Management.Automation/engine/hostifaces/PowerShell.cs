@@ -4941,7 +4941,7 @@ namespace System.Management.Automation
         /// The history string to be used for displaying
         /// the history.
         /// </summary>
-        public String HistoryString { get; set; }
+        public string HistoryString { get; set; }
 
         /// <summary>
         /// Extra commands to run in a single invocation

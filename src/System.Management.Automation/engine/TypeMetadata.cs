@@ -502,7 +502,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter
         /// </summary>
-        public String Name
+        public string Name
         {
             get
             {

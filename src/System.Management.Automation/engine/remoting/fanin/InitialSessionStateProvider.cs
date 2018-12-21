@@ -675,7 +675,7 @@ namespace System.Management.Automation.Remoting
                 s_tracer.WriteLine("Loading assembly from path {0}", applicationBase);
                 try
                 {
-                    String assemblyPath;
+                    string assemblyPath;
                     if (!Path.IsPathRooted(assemblyName))
                     {
                         if (!String.IsNullOrEmpty(applicationBase) && Directory.Exists(applicationBase))
@@ -2468,7 +2468,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // If it's just a string, this is a visible command
-                String command = commandObject as String;
+                string command = commandObject as string;
                 if (!String.IsNullOrEmpty(command))
                 {
                     ProcessVisibleCommand(iss, command, commandModuleNames);

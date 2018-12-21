@@ -243,7 +243,7 @@ namespace System.Management.Automation
         /// <returns>a collection of string representing locations</returns>
         internal Collection<string> GetSearchPaths()
         {
-            Collection<String> searchPaths = this.HelpSystem.GetSearchPaths();
+            Collection<string> searchPaths = this.HelpSystem.GetSearchPaths();
 
             Diagnostics.Assert(searchPaths != null,
                 "HelpSystem returned an null search path");

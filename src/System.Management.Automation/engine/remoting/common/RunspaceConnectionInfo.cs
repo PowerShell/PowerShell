@@ -151,7 +151,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the computer
         /// </summary>
-        public abstract String ComputerName { get; set; }
+        public abstract string ComputerName { get; set; }
 
         /// <summary>
         /// Credential used for the connection
@@ -362,7 +362,7 @@ namespace System.Management.Automation.Runspaces
         {
             if ((port < MinPort || port > MaxPort))
             {
-                String message =
+                string message =
                     PSRemotingErrorInvariants.FormatResourceString(
                         RemotingErrorIdStrings.PortIsOutOfRange, port);
                 ArgumentException e = new ArgumentException(message);
@@ -417,7 +417,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the computer
         /// </summary>
-        public override String ComputerName
+        public override string ComputerName
         {
             get
             {
@@ -433,7 +433,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Scheme used for connection
         /// </summary>
-        public String Scheme
+        public string Scheme
         {
             get
             {
@@ -465,7 +465,7 @@ namespace System.Management.Automation.Runspaces
         /// AppName which identifies the connection
         /// end point in the machine
         /// </summary>
-        public String AppName
+        public string AppName
         {
             get
             {
@@ -796,8 +796,8 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentException">Invalid
         /// scheme or invalid port is specified</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential,System.Int64,System.Int64)", MessageId = "4#")]
-        public WSManConnectionInfo(String scheme, String computerName, Int32 port, String appName,
-                String shellUri, PSCredential credential,
+        public WSManConnectionInfo(string scheme, string computerName, Int32 port, string appName,
+                string shellUri, PSCredential credential,
                     int openTimeout)
         {
             Scheme = scheme;
@@ -825,8 +825,8 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>max server life timeout and open timeout are
         /// default in this case</remarks>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential)", MessageId = "4#")]
-        public WSManConnectionInfo(String scheme, String computerName, Int32 port, String appName,
-                    String shellUri, PSCredential credential) :
+        public WSManConnectionInfo(string scheme, string computerName, Int32 port, string appName,
+                    string shellUri, PSCredential credential) :
                         this(scheme, computerName, port, appName, shellUri, credential,
                             DefaultOpenTimeout)
         {
@@ -858,8 +858,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="credential"></param>
         /// <param name="openTimeout"></param>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "4#")]
-        public WSManConnectionInfo(bool useSsl, String computerName, Int32 port, String appName,
-                String shellUri, PSCredential credential,
+        public WSManConnectionInfo(bool useSsl, string computerName, Int32 port, string appName,
+                string shellUri, PSCredential credential,
                     int openTimeout) :
             this(useSsl ? DefaultSslScheme : DefaultScheme, computerName,
                 port, appName, shellUri, credential, openTimeout)
@@ -892,7 +892,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.Uri,System.String,System.Management.Automation.PSCredential)", MessageId = "1#")]
-        public WSManConnectionInfo(Uri uri, String shellUri, PSCredential credential)
+        public WSManConnectionInfo(Uri uri, string shellUri, PSCredential credential)
         {
             if (uri == null)
             {
@@ -939,7 +939,7 @@ namespace System.Management.Automation.Runspaces
         /// A thumb print of the certificate to use while connecting to the remote machine.
         /// </param>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#")]
-        public WSManConnectionInfo(Uri uri, String shellUri, String certificateThumbprint)
+        public WSManConnectionInfo(Uri uri, string shellUri, string certificateThumbprint)
             : this(uri, shellUri, (PSCredential)null)
         {
             _thumbPrint = certificateThumbprint;
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Private Methods
 
-        private String ResolveShellUri(string shell)
+        private string ResolveShellUri(string shell)
         {
             string resolvedShellUri = shell;
             if (String.IsNullOrEmpty(resolvedShellUri))
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="appName"></param>
         /// <returns></returns>
-        internal void ConstructUri(String scheme, String computerName, int? port, String appName)
+        internal void ConstructUri(string scheme, string computerName, int? port, string appName)
         {
             // Default scheme is http
             _scheme = scheme;
@@ -1164,7 +1164,7 @@ namespace System.Management.Automation.Runspaces
                 || _scheme.Equals(HttpsScheme, StringComparison.OrdinalIgnoreCase)
                 || _scheme.Equals(DefaultScheme, StringComparison.OrdinalIgnoreCase)))
             {
-                String message =
+                string message =
                     PSRemotingErrorInvariants.FormatResourceString(
                         RemotingErrorIdStrings.InvalidSchemeValue, _scheme);
                 ArgumentException e = new ArgumentException(message);
@@ -1349,7 +1349,7 @@ namespace System.Management.Automation.Runspaces
 #if NOT_APPLY_PORT_DCR
         private static string DEFAULT_SCHEME = HTTP_SCHEME;
         internal static string DEFAULT_SSL_SCHEME = HTTPS_SCHEME;
-        private static String DEFAULT_APP_NAME = "wsman";
+        private static string DEFAULT_APP_NAME = "wsman";
         /// <summary>
         /// See below for explanation.
         /// </summary>
@@ -1366,7 +1366,7 @@ namespace System.Management.Automation.Runspaces
         /// for this. Look at
         /// get-item WSMan:\localhost\Client\URLPrefix
         /// </summary>
-        private static readonly String s_defaultAppName = "/wsman";
+        private static readonly string s_defaultAppName = "/wsman";
 
         /// <summary>
         /// Default scheme.
@@ -1408,12 +1408,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// String that represents the local host Uri
         /// </summary>
-        private const String LocalHostUriString = "http://localhost/wsman";
+        private const string LocalHostUriString = "http://localhost/wsman";
 
         /// <summary>
         /// Default value for shell
         /// </summary>
-        private const String DefaultShellUri =
+        private const string DefaultShellUri =
              System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
 
         /// <summary>
@@ -1487,8 +1487,8 @@ namespace System.Management.Automation.Runspaces
 
         #region V3 Extensions
 
-        private const String DefaultM3PShellName = "Microsoft.PowerShell.Workflow";
-        private const String DefaultM3PEndpoint = Remoting.Client.WSManNativeApi.ResourceURIPrefix + DefaultM3PShellName;
+        private const string DefaultM3PShellName = "Microsoft.PowerShell.Workflow";
+        private const string DefaultM3PEndpoint = Remoting.Client.WSManNativeApi.ResourceURIPrefix + DefaultM3PShellName;
 
         /// <summary>
         /// Constructor that constructs the configuration name from its type

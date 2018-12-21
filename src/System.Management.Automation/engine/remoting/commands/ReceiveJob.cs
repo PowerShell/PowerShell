@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get
             {
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
                 _computerNames = value;
             }
         }
-        private String[] _computerNames;
+        private string[] _computerNames;
 
         /// <summary>
         /// Locations for which the results needs to be returned.
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 1)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Location
+        public string[] Location
         {
             get
             {
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                 _locations = value;
             }
         }
-        private String[] _locations;
+        private string[] _locations;
 
         /// <summary>
         /// Runspaces for which the results needs to be
@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (remoteJob == null)
                             {
-                                String message = GetMessage(RemotingErrorIdStrings.RunspaceParamNotSupported);
+                                string message = GetMessage(RemotingErrorIdStrings.RunspaceParamNotSupported);
 
                                 WriteError(new ErrorRecord(new ArgumentException(message),
                                     "RunspaceParameterNotSupported", ErrorCategory.InvalidArgument,
@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
                             // ComputerName parameter can only be used with remoting jobs
                             if (remoteJob == null)
                             {
-                                String message = GetMessage(RemotingErrorIdStrings.ComputerNameParamNotSupported);
+                                string message = GetMessage(RemotingErrorIdStrings.ComputerNameParamNotSupported);
 
                                 WriteError(new ErrorRecord(new ArgumentException(message),
                                     "ComputerNameParameterNotSupported", ErrorCategory.InvalidArgument,
@@ -380,10 +380,10 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            String[] resolvedComputernames = null;
+                            string[] resolvedComputernames = null;
                             ResolveComputerNames(_computerNames, out resolvedComputernames);
 
-                            foreach (String resolvedComputerName in resolvedComputernames)
+                            foreach (string resolvedComputerName in resolvedComputernames)
                             {
                                 // get the required child Job objects
                                 List<Job> childJobs = remoteJob.GetJobsForComputer(resolvedComputerName);
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (Job job in _jobs)
                             {
-                                foreach (String location in _locations)
+                                foreach (string location in _locations)
                                 {
                                     // get the required child Job objects
                                     List<Job> childJobs = job.GetJobsForLocation(location);

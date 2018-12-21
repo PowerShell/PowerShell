@@ -81,7 +81,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
             StringBuilder payload = PayloadBuilder;
             payload.Clear();
@@ -179,14 +179,14 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
             StringBuilder payload = PayloadBuilder;
             payload.Clear();
 
             if (pipelineExecutionDetail != null)
             {
-                foreach (String detail in pipelineExecutionDetail)
+                foreach (string detail in pipelineExecutionDetail)
                 {
                     payload.AppendLine(detail);
                 }
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Tracing
             AppendException(payload, exception);
             payload.AppendLine();
 
-            Dictionary<String, String> additionalInfo = new Dictionary<string, string>();
+            Dictionary<string, string> additionalInfo = new Dictionary<string, string>();
 
             additionalInfo.Add(EtwLoggingStrings.ProviderNameString, providerName);
 

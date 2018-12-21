@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSLocalEventManager Events { get; private set; }
 
-        internal HashSet<String> AutoLoadingModuleInProgress { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        internal HashSet<string> AutoLoadingModuleInProgress { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The debugger for the interpreter
