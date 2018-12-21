@@ -862,10 +862,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance.
+        /// Constructs an empty PowerShell instance and associates it with the provided
+        /// Runspace; a script or command must be added before invoking this instance.
         /// </summary>
         /// <param name="runspace">Runspace in which to invoke commands.</param>
         /// <returns>An instance of PowerShell.</returns>
+        /// <remarks>
+        /// The required Runspace argument is accepted no matter what state it is in.
+        /// Leaving Runspace state management to the caller allows them to open their
+        /// runspace in whatever manner is most appropriate for their application
+        /// (in another thread while this instance of the PowerShell class is being
+        /// instantiated, for example).
+        /// </remarks>
         public static PowerShell Create(Runspace runspace)
         {
             if (runspace == null)
@@ -874,7 +882,6 @@ namespace System.Management.Automation
             }
 
             PowerShell result = Create();
-
             result.Runspace = runspace;
 
             return result;
