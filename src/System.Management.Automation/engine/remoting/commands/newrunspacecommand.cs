@@ -1083,11 +1083,11 @@ namespace Microsoft.PowerShell.Commands
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
-                                                                    host : this.Host,
-                                                                    typeTable : typeTable,
-                                                                    applicationArguments : null,
-                                                                    name : rsName) as RemoteRunspace);
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: sshConnectionInfo,
+                                                                   host: this.Host,
+                                                                   typeTable: typeTable,
+                                                                   applicationArguments: null,
+                                                                   name: rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;
@@ -1109,11 +1109,11 @@ namespace Microsoft.PowerShell.Commands
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
-                                                                    host : this.Host,
-                                                                    typeTable : typeTable,
-                                                                    applicationArguments : null,
-                                                                    name : rsName) as RemoteRunspace);
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: sshConnectionInfo,
+                                                                   host: this.Host,
+                                                                   typeTable: typeTable,
+                                                                   applicationArguments: null,
+                                                                   name: rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;

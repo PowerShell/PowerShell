@@ -1243,7 +1243,6 @@ namespace System.Management.Automation.Runspaces
                         }
                         catch (ObjectDisposedException)
                         {
-                            ;
                         }
                     }
                 }

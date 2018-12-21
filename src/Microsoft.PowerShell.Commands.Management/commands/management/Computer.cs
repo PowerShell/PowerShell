@@ -27,7 +27,6 @@ using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using System.Linq;
 using Dbg = System.Management.Automation;
-using Microsoft.PowerShell.CoreClr.Stubs;
 
 // FxCop suppressions for resource strings:
 [module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "ComputerResources.resources", MessageId = "unjoined")]

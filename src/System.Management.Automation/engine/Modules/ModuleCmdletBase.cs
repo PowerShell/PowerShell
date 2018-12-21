@@ -6518,7 +6518,6 @@ namespace Microsoft.PowerShell.Commands
                     catch (PSArgumentException)
                     {
                         //BUGBUG - brucepay - probably want to have a verbose message here...
-                        ;
                     }
 #endif
 
