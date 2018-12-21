@@ -369,7 +369,7 @@ namespace System.Management.Automation.Remoting
             // raise an event to close the state machine
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close,
                             eventArgs.Reason));
-        } //SetStateToClosedHandler
+        }
 
         #region constructor
         /// <summary>

@@ -57,7 +57,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } //GetParentPath
+        }
 
         /// <summary>
         /// Gets the path to the parent object for the given object
@@ -477,7 +477,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } //NormalizeRelativePath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
@@ -1736,7 +1736,7 @@ namespace System.Management.Automation
         #endregion MoveItem
 
         #endregion NavigationCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

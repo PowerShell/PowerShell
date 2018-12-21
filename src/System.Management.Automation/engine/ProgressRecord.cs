@@ -500,7 +500,7 @@ namespace System.Management.Automation
         }
 
         #endregion
-    } //ProgressRecord
+    }
 
     /// <summary>
     /// Defines two types of progress record that refer to the beginning (or middle) and end of an operation.

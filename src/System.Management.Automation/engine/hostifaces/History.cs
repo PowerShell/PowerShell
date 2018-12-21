@@ -446,8 +446,8 @@ namespace Microsoft.PowerShell.Commands
                 HistoryInfo[] entries = new HistoryInfo[entriesList.Count];
                 entriesList.CopyTo(entries);
                 return entries;
-            }// end lock
-        }// end function
+            }
+        }
 
         /// <summary>
         /// Get History Entries based on the WildCard Pattern value.
@@ -1917,7 +1917,7 @@ namespace Microsoft.PowerShell.Commands
                 // Return the matching history entries for the command line parameter
                 // if newest id false...gets the oldest entry
                 _entries = _history.GetEntries(wildcardpattern, count, newest);
-            }// end case cmdline
+            }
 
             //Clear the History value.
             foreach (HistoryInfo entry in _entries)
@@ -1927,7 +1927,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return;
-        }//end function
+        }
 
         /// <summary>
         /// history obj

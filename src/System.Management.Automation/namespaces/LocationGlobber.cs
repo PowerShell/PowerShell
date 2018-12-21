@@ -4411,7 +4411,7 @@ namespace System.Management.Automation
 
             s_tracer.WriteLine("result = {0}; childName = {1}", result, childName);
             return result;
-        } //IsChildNameAMatch
+        }
 
         /// <summary>
         /// Converts a back tick '`' escape into back slash escape for

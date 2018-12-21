@@ -4910,7 +4910,7 @@ namespace System.Management.Automation
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 
     /// <summary>
     /// Defines the action to be taken for Navigation cmdlets

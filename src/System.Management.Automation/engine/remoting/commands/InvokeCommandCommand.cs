@@ -1220,9 +1220,9 @@ namespace Microsoft.PowerShell.Commands
                             _job.Dispose();
 
                         }
-                    }// else - job == null
+                    }
                 }
-            }// if (!async ...
+            }
         }
 
         /// <summary>
@@ -1280,7 +1280,7 @@ namespace Microsoft.PowerShell.Commands
                     _needToCollect = false;
                 }
             }
-        }// StopProcessing()
+        }
 
         #endregion Overrides
 

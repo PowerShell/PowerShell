@@ -888,7 +888,7 @@ namespace System.Management.Automation
             ScriptBlock result = ScriptBlock.Create(_context, scriptText);
             return result;
         }
-    } //CommandInvocationIntrinsics
+    }
     #endregion Auxiliary
 
     /// <summary>
@@ -995,7 +995,7 @@ namespace System.Management.Automation
                     return _invokeCommand ?? (_invokeCommand = new CommandInvocationIntrinsics(Context, this));
                 }
             }
-        } //InvokeCommand
+        }
         #endregion InvokeCommand
 
         #endregion public members

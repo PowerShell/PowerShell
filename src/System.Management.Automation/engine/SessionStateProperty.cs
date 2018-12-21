@@ -1105,7 +1105,7 @@ namespace System.Management.Automation
         #endregion ClearProperty
 
         #endregion IPropertyCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

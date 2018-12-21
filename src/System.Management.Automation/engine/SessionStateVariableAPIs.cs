@@ -1869,7 +1869,7 @@ namespace System.Management.Automation
         internal List<PSVariable> ExportedVariables { get; } = new List<PSVariable>();
 
         #endregion variables
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

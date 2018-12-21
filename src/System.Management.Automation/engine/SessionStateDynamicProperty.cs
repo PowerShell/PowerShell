@@ -2159,7 +2159,7 @@ namespace System.Management.Automation
         #endregion RenameProperty
 
         #endregion IDynamicPropertyCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

@@ -474,13 +474,13 @@ namespace System.Management.Automation
             get
             {
                 return _hidden;
-            } //get
+            }
 
             set
             {
                 _hidden = value;
             }
-        }  // Hidden
+        }
 
         /// <summary>
         /// Determines if the drive should be hidden from the user.
@@ -580,7 +580,7 @@ namespace System.Management.Automation
                     "\tDescription: {0}",
                     Description);
             }
-        }//Trace
+        }
 
         /// <summary>
         /// Compares this instance to the specified drive.
@@ -823,6 +823,6 @@ namespace System.Management.Automation
             }
             return _noteProperty;
         }
-    }//Class PSDriveInfo
+    }
 }
 

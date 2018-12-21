@@ -571,4 +571,4 @@ namespace System.Management.Automation.Internal.Host
 
         private readonly Guid _zeroGuid;
     }
-}  // namespace
+}

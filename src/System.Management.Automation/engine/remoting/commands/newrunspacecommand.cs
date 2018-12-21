@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
-        }// ProcessRecord()
+        }
 
         /// <summary>
         /// OpenAsync would have been called from ProcessRecord. This method
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
-        }// EndProcessing()
+        }
 
         /// <summary>
         /// This method is called when the user sends a stop signal to the
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
             // for all the runspaces that have been submitted for opening
             // call StopOperation on each object and quit
             _throttleManager.StopAllOperations();
-        }// StopProcessing()
+        }
 
         #endregion Cmdlet Overrides
 
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     break;
-            }// switch
+            }
         }
 
         /// <summary>
@@ -831,10 +831,10 @@ namespace Microsoft.PowerShell.Commands
                     };
                     writer.Write(errorWriter);
                 }
-            }// end of for
+            }
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenComputerNameParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the VMId or VMName parameter
@@ -978,7 +978,7 @@ namespace Microsoft.PowerShell.Commands
             ResolvedComputerNames = this.VMName;
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenVMParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the ContainerId parameter is specified
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
             ResolvedComputerNames = resolvedNameList.ToArray();
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenContainerParameterSpecified
+        }
 
         /// <summary>
         /// CreateRunspacesForSSHHostParameterSet
@@ -1244,7 +1244,7 @@ namespace Microsoft.PowerShell.Commands
         private string _defaultFQEID = "PSSessionOpenFailed";
 
         #endregion Private Members
-    }// NewRunspace
+    }
 
     #region Helper Classes
 
@@ -1440,4 +1440,4 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion Helper Classes
-}//End namespace
+}
