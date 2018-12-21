@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             base.Deserialize(so, deserializer);
             this.hideHeader = deserializer.DeserializeBoolMemberVariable(so, "hideHeader");
-            this.hideHeader = deserializer.DeserializeBoolMemberVariable(so, "repeatHeader");
+            this.repeatHeader = deserializer.DeserializeBoolMemberVariable(so, "repeatHeader");
             FormatInfoDataListDeserializer<TableColumnInfo>.ReadList(so, "tableColumnInfoList", this.tableColumnInfoList, deserializer);
         }
     }
