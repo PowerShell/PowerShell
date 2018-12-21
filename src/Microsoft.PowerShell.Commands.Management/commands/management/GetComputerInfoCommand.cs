@@ -615,7 +615,7 @@ namespace Microsoft.PowerShell.Commands
         /// null if unsuccessful, otherwise FirmwareType enum specifying
         /// the firmware type.
         /// </returns>
-        private static Nullable<FirmwareType> GetFirmwareType()
+        private static FirmwareType? GetFirmwareType()
         {
             try
             {
@@ -639,11 +639,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// null if unsuccessful, otherwise the amount of physically installed memory.
         /// </returns>
-        private static Nullable<UInt64> GetPhysicallyInstalledSystemMemory()
+        private static ulong? GetPhysicallyInstalledSystemMemory()
         {
             try
             {
-                UInt64 memory;
+                ulong memory;
                 if (Native.GetPhysicallyInstalledSystemMemory(out memory))
                     return memory;
             }

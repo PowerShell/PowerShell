@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
         internal static bool IsBooleanType(Type type)
         {
             if (type == typeof(bool) ||
-                type == typeof(Nullable<bool>))
+                type == typeof(bool?))
                 return true;
             else
                 return false;
@@ -1353,7 +1353,7 @@ namespace System.Management.Automation
         /// <returns>true if type is one of switch parameter types, false otherwise</returns>
         internal static bool IsSwitchParameterType(Type type)
         {
-            if (type == typeof(SwitchParameter) || type == typeof(Nullable<SwitchParameter>))
+            if (type == typeof(SwitchParameter) || type == typeof(SwitchParameter?))
                 return true;
             else
                 return false;

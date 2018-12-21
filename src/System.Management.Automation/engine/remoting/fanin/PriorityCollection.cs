@@ -307,7 +307,7 @@ namespace System.Management.Automation.Remoting
         private long _currentObjectId;
         private long _currentFrgId;
         // max deserialized object size in bytes
-        private Nullable<int> _maxReceivedObjectSize;
+        private int? _maxReceivedObjectSize;
         private int _totalReceivedObjectSizeSoFar;
         private bool _isCreateByClientTM;
 
@@ -374,7 +374,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set { _maxReceivedObjectSize = value; }
         }
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the total data received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedDataSize
+        internal int? MaximumReceivedDataSize
         {
             set
             {
@@ -779,7 +779,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set
             {

@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
             set { _width = value; }
         }
 
-        private Nullable<int> _width = null;
+        private int? _width = null;
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.

@@ -66,10 +66,10 @@ namespace System.Management.Automation.Remoting
         internal string AssemblyName;
         internal string EndPointConfigurationTypeName;
         internal Type EndPointConfigurationType;
-        internal Nullable<int> MaxReceivedObjectSizeMB;
-        internal Nullable<int> MaxReceivedCommandSizeMB;
+        internal int? MaxReceivedObjectSizeMB;
+        internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
-        internal Nullable<PSThreadOptions> ShellThreadOptions;
+        internal PSThreadOptions? ShellThreadOptions;
 
 #if !CORECLR // No ApartmentState In CoreCLR
         internal Nullable<System.Threading.ApartmentState> ShellThreadApartmentState;
@@ -180,9 +180,9 @@ namespace System.Management.Automation.Remoting
         /// <returns>
         /// If value is specified, specified value as int . otherwise null.
         /// </returns>
-        private static Nullable<int> GetIntValueInBytes(string optionValueInMB)
+        private static int? GetIntValueInBytes(string optionValueInMB)
         {
-            Nullable<int> result = null;
+            int? result = null;
             try
             {
                 double variableValue = (double)LanguagePrimitives.ConvertTo(optionValueInMB,
@@ -381,7 +381,7 @@ namespace System.Management.Automation.Remoting
         /// User Identity for which this information is requested
         /// </param>
         /// <returns></returns>
-        public virtual Nullable<int> GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
+        public virtual int? GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedObjectSize;
         }
@@ -395,7 +395,7 @@ namespace System.Management.Automation.Remoting
         /// User Identity for which this information is requested
         /// </param>
         /// <returns></returns>
-        public virtual Nullable<int> GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
+        public virtual int? GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedDataSize;
         }

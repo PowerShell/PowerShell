@@ -79,8 +79,8 @@ namespace System.Management.Automation.Remoting
         private PSSessionConfiguration _sessionConfigProvider;
 
         // used to apply quotas on command and session transportmanagers.
-        private Nullable<int> _maxRecvdObjectSize;
-        private Nullable<int> _maxRecvdDataSizeCommand;
+        private int? _maxRecvdObjectSize;
+        private int? _maxRecvdDataSizeCommand;
 
         private ServerRunspacePoolDriver _runspacePoolDriver;
         private PSRemotingCryptoHelperServer _cryptoHelper;

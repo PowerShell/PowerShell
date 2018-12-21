@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _maxRecvdDataSizePerCommand.Value; }
             set { _maxRecvdDataSizePerCommand = value; }
         }
-        private Nullable<int> _maxRecvdDataSizePerCommand;
+        private int? _maxRecvdDataSizePerCommand;
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _maxRecvdObjectSize.Value; }
             set { _maxRecvdObjectSize = value; }
         }
-        private Nullable<int> _maxRecvdObjectSize;
+        private int? _maxRecvdObjectSize;
 
         /// <summary>
         /// Specifies the output mode on the server when it is in Disconnected mode

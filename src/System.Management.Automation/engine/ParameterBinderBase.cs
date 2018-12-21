@@ -1072,7 +1072,7 @@ namespace System.Management.Automation
                         // Anything else passed should be reported as an error
 
                         if (toType == typeof(bool) || toType == typeof(SwitchParameter) ||
-                            toType == typeof(Nullable<bool>))
+                            toType == typeof(bool?))
                         {
                             Type boType = null;
                             if (argumentType == typeof(PSObject))

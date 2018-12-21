@@ -4403,13 +4403,13 @@ namespace System.Management.Automation.Remoting
         /// targeted towards a command. If null, then the size is unlimited.
         /// Default is unlimited data.
         /// </summary>
-        public Nullable<int> MaximumReceivedDataSizePerCommand { get; set; }
+        public int? MaximumReceivedDataSizePerCommand { get; set; }
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
         /// If null, then the size is unlimited. Default is 200MB object size.
         /// </summary>
-        public Nullable<int> MaximumReceivedObjectSize { get; set; } = 200 << 20;
+        public int? MaximumReceivedObjectSize { get; set; } = 200 << 20;
 
         /// <summary>
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
