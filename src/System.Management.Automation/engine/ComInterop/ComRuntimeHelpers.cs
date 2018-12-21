@@ -623,9 +623,9 @@ namespace System.Management.Automation.ComInterop
                         var attributes = new[] {
                             new CustomAttributeBuilder(typeof(UnverifiableCodeAttribute).GetConstructor(Type.EmptyTypes), Utils.EmptyArray<object>()),
                             //PermissionSet(SecurityAction.Demand, Unrestricted = true)
-                            new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[]{typeof(SecurityAction)}),
-                                new object[]{SecurityAction.Demand},
-                                new PropertyInfo[]{typeof(PermissionSetAttribute).GetProperty("Unrestricted")},
+                            new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[] { typeof(SecurityAction) }),
+                                new object[] { SecurityAction.Demand },
+                                new PropertyInfo[] { typeof(PermissionSetAttribute).GetProperty("Unrestricted") },
                                 new object[] {true})
                         };
 

@@ -996,8 +996,8 @@ namespace System.Management.Automation
 
             if (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(objType)))
             {
-                ConversionData data = GetConversionData(objType, typeof(bool)) ??
-                                      CacheConversion(objType, typeof(bool), CreateNumericToBoolConverter(objType), ConversionRank.Language);
+                IConversionData data = GetConversionData(objType, typeof(bool)) ??
+                                       CacheConversion(objType, typeof(bool), CreateNumericToBoolConverter(objType), ConversionRank.Language);
                 return (bool)data.Invoke(obj, typeof(bool), false, null, null, null);
             }
 
@@ -4212,7 +4212,7 @@ namespace System.Management.Automation
 
         internal delegate object PSNullConverter(object nullOrAutomationNull);
 
-        internal interface ConversionData
+        internal interface IConversionData
         {
             object Converter { get; }
             ConversionRank Rank { get; }
@@ -4226,7 +4226,7 @@ namespace System.Management.Automation
         }
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
-        internal class ConversionData<T> : ConversionData
+        internal class ConversionData<T> : IConversionData
         {
             private readonly PSConverter<T> _converter;
 
@@ -4249,12 +4249,12 @@ namespace System.Management.Automation
             }
         }
 
-        private static Dictionary<ConversionTypePair, ConversionData> s_converterCache = new Dictionary<ConversionTypePair, ConversionData>(256);
+        private static Dictionary<ConversionTypePair, IConversionData> s_converterCache = new Dictionary<ConversionTypePair, IConversionData>(256);
 
-        private static ConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
+        private static IConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
         {
             ConversionTypePair pair = new ConversionTypePair(fromType, toType);
-            ConversionData data = null;
+            IConversionData data = null;
             lock (s_converterCache)
             {
                 if (!s_converterCache.TryGetValue(pair, out data))
@@ -4271,11 +4271,11 @@ namespace System.Management.Automation
             return data;
         }
 
-        private static ConversionData GetConversionData(Type fromType, Type toType)
+        private static IConversionData GetConversionData(Type fromType, Type toType)
         {
             lock (s_converterCache)
             {
-                ConversionData result = null;
+                IConversionData result = null;
                 s_converterCache.TryGetValue(new ConversionTypePair(fromType, toType), out result);
                 return result;
             }
@@ -4608,7 +4608,7 @@ namespace System.Management.Automation
             return availableProperties.ToString();
         }
 
-        internal static ConversionData FigureConversion(object valueToConvert, Type resultType, out bool debase)
+        internal static IConversionData FigureConversion(object valueToConvert, Type resultType, out bool debase)
         {
             PSObject valueAsPsObj;
             Type originalType;
@@ -4625,7 +4625,7 @@ namespace System.Management.Automation
 
             debase = false;
 
-            ConversionData data = FigureConversion(originalType, resultType);
+            IConversionData data = FigureConversion(originalType, resultType);
             if (data.Rank != ConversionRank.None)
             {
                 return data;
@@ -4764,7 +4764,7 @@ namespace System.Management.Automation
             throw new PSInvalidCastException("ConversionSupportedOnlyToCoreTypes", null, ExtendedTypeSystem.InvalidCastExceptionNonCoreType, resultType.ToString());
         }
 
-        private static ConversionData FigureLanguageConversion(Type fromType, Type toType,
+        private static IConversionData FigureLanguageConversion(Type fromType, Type toType,
                                                                out PSConverter<object> valueDependentConversion,
                                                                out ConversionRank valueDependentRank)
         {
@@ -4774,7 +4774,7 @@ namespace System.Management.Automation
             Type underlyingType = Nullable.GetUnderlyingType(toType);
             if (underlyingType != null)
             {
-                ConversionData nullableConversion = FigureConversion(fromType, underlyingType);
+                IConversionData nullableConversion = FigureConversion(fromType, underlyingType);
                 if (nullableConversion.Rank != ConversionRank.None)
                 {
                     return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertToNullable, nullableConversion.Rank);
@@ -4834,7 +4834,7 @@ namespace System.Management.Automation
                     return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertEnumerableToArray, ConversionRank.Language);
                 }
 
-                ConversionData data = FigureConversion(fromType, toElementType);
+                IConversionData data = FigureConversion(fromType, toElementType);
                 if (data.Rank != ConversionRank.None)
                 {
                     valueDependentRank = data.Rank & ConversionRank.ValueDependent;
@@ -5441,9 +5441,9 @@ namespace System.Management.Automation
         }
 
         internal class InternalPSObject : PSObject { }
-        internal static ConversionData FigureConversion(Type fromType, Type toType)
+        internal static IConversionData FigureConversion(Type fromType, Type toType)
         {
-            ConversionData data = GetConversionData(fromType, toType);
+            IConversionData data = GetConversionData(fromType, toType);
             if (data != null)
             {
                 return data;
@@ -5512,7 +5512,7 @@ namespace System.Management.Automation
 
             PSConverter<object> valueDependentConversion = null;
             ConversionRank valueDependentRank = ConversionRank.None;
-            ConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
+            IConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
             if (conversionData != null)
             {
                 return conversionData;
@@ -5632,9 +5632,9 @@ namespace System.Management.Automation
         }
 
         internal class Null { };
-        private static ConversionData FigureConversionFromNull(Type toType)
+        private static IConversionData FigureConversionFromNull(Type toType)
         {
-            ConversionData data = GetConversionData(typeof(Null), toType);
+            IConversionData data = GetConversionData(typeof(Null), toType);
             if (data != null)
             {
                 return data;

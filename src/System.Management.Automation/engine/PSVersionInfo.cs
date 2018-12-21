@@ -716,8 +716,8 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((dashIndex != - 1 && String.IsNullOrEmpty(preLabel))   ||
-                (plusIndex != - 1 && String.IsNullOrEmpty(buildLabel)) ||
+            if ((dashIndex != -1 && String.IsNullOrEmpty(preLabel))   ||
+                (plusIndex != -1 && String.IsNullOrEmpty(buildLabel)) ||
                 String.IsNullOrEmpty(versionSansLabel))
             {
                 // We have dash and no preReleaseLabel  or

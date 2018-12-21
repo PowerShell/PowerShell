@@ -63,7 +63,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionList.DebugView.InstructionView[]/*!*/ A0
+            public InstructionList.DebugView.InstructionView[] A0
             {
                 get
                 {
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionView[]/*!*/ A0
+            public InstructionView[] A0
             {
                 get
                 {

@@ -334,7 +334,6 @@ namespace Microsoft.WSMan.Management
                 _sr = new StreamReader(_fs);
                 strOut = _sr.ReadToEnd();
             }
-
             catch (ArgumentNullException e)
             {
                 ErrorRecord er = new ErrorRecord(e, "ArgumentNullException", ErrorCategory.InvalidArgument, null);
@@ -1078,7 +1077,6 @@ namespace Microsoft.WSMan.Management
                     }
                 }
             }
-
             catch (IOException e)
             {
 

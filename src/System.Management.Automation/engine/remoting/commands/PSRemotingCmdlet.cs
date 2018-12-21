@@ -852,7 +852,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Uri uri = new System.Uri("ssh://" + hostname);
                 host = ResolveComputerName(uri.Host);
-                ValidateComputerName(new string[]{host});
+                ValidateComputerName(new string[] { host });
                 if (uri.UserInfo != String.Empty)
                 {
                     userName = uri.UserInfo;
