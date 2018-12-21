@@ -597,7 +597,7 @@ namespace System.Management.Automation
         /// Short identifier for this result which will be
         /// recycled and used within a process
         /// </summary>
-        public Int32 Id { get; }
+        public int Id { get; }
 
         /// <summary>
         /// Name for identifying this job object

@@ -479,7 +479,7 @@ namespace System.Management.Automation
 
             base.GetObjectData(info, context);
             // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("SessionStateCategory", (Int32)_sessionStateCategory);
+            info.AddValue("SessionStateCategory", (int)_sessionStateCategory);
         }
         #endregion Serialization
 

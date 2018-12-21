@@ -449,7 +449,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Port in which to connect
         /// </summary>
-        public Int32 Port
+        public int Port
         {
             get
             {
@@ -796,7 +796,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentException">Invalid
         /// scheme or invalid port is specified</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential,System.Int64,System.Int64)", MessageId = "4#")]
-        public WSManConnectionInfo(String scheme, String computerName, Int32 port, String appName,
+        public WSManConnectionInfo(String scheme, String computerName, int port, String appName,
                 String shellUri, PSCredential credential,
                     int openTimeout)
         {
@@ -825,7 +825,7 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>max server life timeout and open timeout are
         /// default in this case</remarks>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential)", MessageId = "4#")]
-        public WSManConnectionInfo(String scheme, String computerName, Int32 port, String appName,
+        public WSManConnectionInfo(String scheme, String computerName, int port, String appName,
                     String shellUri, PSCredential credential) :
                         this(scheme, computerName, port, appName, shellUri, credential,
                             DefaultOpenTimeout)
@@ -842,7 +842,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="shellUri"></param>
         /// <param name="credential"></param>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "4#")]
-        public WSManConnectionInfo(bool useSsl, string computerName, Int32 port, string appName, string shellUri,
+        public WSManConnectionInfo(bool useSsl, string computerName, int port, string appName, string shellUri,
             PSCredential credential) :
             this(useSsl ? DefaultSslScheme : DefaultScheme, computerName, port, appName, shellUri, credential)
         {
@@ -858,7 +858,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="credential"></param>
         /// <param name="openTimeout"></param>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "4#")]
-        public WSManConnectionInfo(bool useSsl, String computerName, Int32 port, String appName,
+        public WSManConnectionInfo(bool useSsl, String computerName, int port, String appName,
                 String shellUri, PSCredential credential,
                     int openTimeout) :
             this(useSsl ? DefaultSslScheme : DefaultScheme, computerName,

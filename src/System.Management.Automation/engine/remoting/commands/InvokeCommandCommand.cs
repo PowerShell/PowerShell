@@ -222,8 +222,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public override Int32 Port
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        public override int Port
         {
             get
             {
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        public override Int32 ThrottleLimit
+        public override int ThrottleLimit
         {
             set
             {

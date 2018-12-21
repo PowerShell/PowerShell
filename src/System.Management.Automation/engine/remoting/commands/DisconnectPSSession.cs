@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.IdParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit { get; set; } = 0;
+        public int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Disconnect-PSSession does not support ComputerName parameter set.

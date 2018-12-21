@@ -200,7 +200,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Allows the consumer to override the default throttle limit
         /// </summary>
-        internal Int32 ThrottleLimit
+        internal int ThrottleLimit
         {
             set
             {
@@ -214,7 +214,7 @@ namespace System.Management.Automation.Remoting
                 return _throttleLimit;
             }
         }
-        private Int32 _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
+        private int _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
 
         #endregion Public (internal) Properties
 

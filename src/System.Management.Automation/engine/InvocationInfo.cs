@@ -123,7 +123,7 @@ namespace System.Management.Automation
             var list = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_PipelineIterationInfo");
             if (list != null)
             {
-                PipelineIterationInfo = (int[])list.ToArray(typeof(Int32));
+                PipelineIterationInfo = (int[])list.ToArray(typeof(int));
             }
             else
             {

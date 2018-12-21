@@ -1076,7 +1076,7 @@ namespace System.Management.Automation.Internal
 
         internal void HandleReconnectCompleted(object sender, EventArgs args)
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Connected, (Int32)connectionStates.Reconnecting);
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Connected, (int)connectionStates.Reconnecting);
 
             ReconnectCompleted.SafeInvoke(this, new RemoteDataEventArgs<Exception>(null));
             return;
@@ -1084,7 +1084,7 @@ namespace System.Management.Automation.Internal
 
         internal void HandleConnectCompleted(object sender, EventArgs args)
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Connected, (Int32)connectionStates.Connecting);
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Connected, (int)connectionStates.Connecting);
 
             ConnectCompleted.SafeInvoke(this, new RemoteDataEventArgs<Exception>(null));
             return;
@@ -1401,7 +1401,7 @@ namespace System.Management.Automation.Internal
             InvocationStateInfoReceived.SafeInvoke(this,
                 new RemoteDataEventArgs<PSInvocationStateInfo>(stateInfo));
 
-            Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Disconnected, (Int32)connectionStates.Connected);
+            Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Disconnected, (int)connectionStates.Connected);
         }
 
         /// <summary>
@@ -1412,8 +1412,8 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal void ReconnectAsync()
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Reconnecting, (Int32)connectionStates.Disconnected);
-            if ((currentState != (Int32)connectionStates.Disconnected))
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Reconnecting, (int)connectionStates.Disconnected);
+            if ((currentState != (int)connectionStates.Disconnected))
             {
                 Dbg.Assert(false, "Pipeline DS Handler is in unexpected connection state");
 
@@ -1427,7 +1427,7 @@ namespace System.Management.Automation.Internal
         //Called from session DSHandler. Connects to a remote powershell instance.
         internal void ConnectAsync()
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Connecting, (Int32)connectionStates.Disconnected);
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Connecting, (int)connectionStates.Disconnected);
 
             // Connect is called for *reconstruct* connection case and so
             // we need to set up all transport manager callbacks.
@@ -1593,7 +1593,7 @@ namespace System.Management.Automation.Internal
             Connected = 1, Disconnected = 3, Reconnecting = 4, Connecting = 5
         }
 
-        private Int32 _connectionState = (Int32)connectionStates.Connected;
+        private int _connectionState = (int)connectionStates.Connected;
 
         // Contains the associated session closed reason exception if any,
         // otherwise is null.

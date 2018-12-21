@@ -1100,10 +1100,10 @@ namespace System.Management.Automation
                                 else
                                     result = new SwitchParameter((bool)currentValue);
                             }
-                            else if (boType == typeof(Int32))
+                            else if (boType == typeof(int))
                             {
-                                if ((Int32)LanguagePrimitives.ConvertTo(currentValue,
-                                            typeof(Int32), CultureInfo.InvariantCulture) != 0)
+                                if ((int)LanguagePrimitives.ConvertTo(currentValue,
+                                            typeof(int), CultureInfo.InvariantCulture) != 0)
                                 {
                                     if (LanguagePrimitives.IsBooleanType(toType))
                                         result = ParserOps.BoolToObject(true);
