@@ -1350,7 +1350,7 @@ namespace Microsoft.PowerShell.Commands
         /// the language parameter. If the language parameter is null or has a
         /// value that is not a valid language ID, the method returns null.
         /// </returns>
-        protected static string GetLanguageName(UInt32? language)
+        protected static string GetLanguageName(uint? language)
         {
             if (language != null)
                 return Conversion.LocaleIdToLocaleName(language.Value);
@@ -1460,8 +1460,8 @@ namespace Microsoft.PowerShell.Commands
         public string Model;
         public string Name;
         public bool? NetworkServerModeEnabled;
-        public UInt32? NumberOfLogicalProcessors;
-        public UInt32? NumberOfProcessors;
+        public uint? NumberOfLogicalProcessors;
+        public uint? NumberOfProcessors;
         public string[] OEMStringArray;
         public bool? PartOfDomain;
         public Int64? PauseAfterReset;
@@ -1514,12 +1514,12 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiDeviceGuard
     {
         public UInt32[] AvailableSecurityProperties;
-        public UInt32? CodeIntegrityPolicyEnforcementStatus;
-        public UInt32? UsermodeCodeIntegrityPolicyEnforcementStatus;
+        public uint? CodeIntegrityPolicyEnforcementStatus;
+        public uint? UsermodeCodeIntegrityPolicyEnforcementStatus;
         public UInt32[] RequiredSecurityProperties;
         public UInt32[] SecurityServicesConfigured;
         public UInt32[] SecurityServicesRunning;
-        public UInt32? VirtualizationBasedSecurityStatus;
+        public uint? VirtualizationBasedSecurityStatus;
 
         public DeviceGuard AsOutputType
         {
@@ -1586,7 +1586,7 @@ namespace Microsoft.PowerShell.Commands
     {
         public UInt16? Availability;
         public string Caption;
-        public UInt32? ConfigManagerErrorCode;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public string Description;
         public string DeviceID;
@@ -1594,7 +1594,7 @@ namespace Microsoft.PowerShell.Commands
         public string ErrorDescription;
         public DateTime? InstallDate;
         public bool? IsLocked;
-        public UInt32? LastErrorCode;
+        public uint? LastErrorCode;
         public string Layout;
         public string Name;
         public UInt16? NumberOfFunctionKeys;
@@ -1612,7 +1612,7 @@ namespace Microsoft.PowerShell.Commands
     internal class WMiLogicalMemory
     {
         //TODO: fill this in!!!
-        public UInt32? TotalPhysicalMemory;
+        public uint? TotalPhysicalMemory;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
@@ -1624,12 +1624,12 @@ namespace Microsoft.PowerShell.Commands
         public string Name;
         public string Status;
         public UInt16? Availability;
-        public UInt32? ConfigManagerErrorCode;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public string DeviceID;
         public bool? ErrorCleared;
         public string ErrorDescription;
-        public UInt32? LastErrorCode;
+        public uint? LastErrorCode;
         public string PNPDeviceID;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
@@ -1656,36 +1656,36 @@ namespace Microsoft.PowerShell.Commands
         public string InterfaceName;
         public ulong? NetLuid;
         public string InterfaceGuid;
-        public UInt32? InterfaceIndex;
+        public uint? InterfaceIndex;
         public string DeviceName;
-        public UInt32? NetLuidIndex;
+        public uint? NetLuidIndex;
         public bool? Virtual;
         public bool? Hidden;
         public bool? NotUserRemovable;
         public bool? IMFilter;
-        public UInt32? InterfaceType;
+        public uint? InterfaceType;
         public bool? HardwareInterface;
         public bool? WdmInterface;
         public bool? EndPointInterface;
         public bool? iSCSIInterface;
-        public UInt32? State;
-        public UInt32? NdisMedium;
-        public UInt32? NdisPhysicalMedium;
-        public UInt32? InterfaceOperationalStatus;
+        public uint? State;
+        public uint? NdisMedium;
+        public uint? NdisPhysicalMedium;
+        public uint? InterfaceOperationalStatus;
         public bool? OperationalStatusDownDefaultPortNotAuthenticated;
         public bool? OperationalStatusDownMediaDisconnected;
         public bool? OperationalStatusDownInterfacePaused;
         public bool? OperationalStatusDownLowPowerState;
-        public UInt32? InterfaceAdminStatus;
-        public UInt32? MediaConnectState;
-        public UInt32? MtuSize;
+        public uint? InterfaceAdminStatus;
+        public uint? MediaConnectState;
+        public uint? MtuSize;
         public UInt16? VlanID;
         public ulong? TransmitLinkSpeed;
         public ulong? ReceiveLinkSpeed;
         public bool? PromiscuousMode;
         public bool? DeviceWakeUpEnable;
         public bool? ConnectorPresent;
-        public UInt32? MediaDuplexState;
+        public uint? MediaDuplexState;
         public string DriverDate;
         public ulong? DriverDateData;
         public string DriverVersionString;
@@ -1711,21 +1711,21 @@ namespace Microsoft.PowerShell.Commands
         public bool? AutoSense;
         public UInt16? Availability;
         public string Caption;
-        public UInt32? ConfigManagerErrorCode;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public string Description;
         public string DeviceID;
         public bool? ErrorCleared;
         public string ErrorDescription;
         public string GUID;
-        public UInt32? Index;
+        public uint? Index;
         public DateTime? InstallDate;
         public bool? Installed;
-        public UInt32? InterfaceIndex;
-        public UInt32? LastErrorCode;
+        public uint? InterfaceIndex;
+        public uint? LastErrorCode;
         public string MACAddress;
         public string Manufacturer;
-        public UInt32? MaxNumberControlled;
+        public uint? MaxNumberControlled;
         public ulong? MaxSpeed;
         public string Name;
         public string NetConnectionID;
@@ -1769,14 +1769,14 @@ namespace Microsoft.PowerShell.Commands
         public string DNSHostName;
         public string[] DNSServerSearchOrder;
         public bool? DomainDNSRegistrationEnabled;
-        public UInt32? ForwardBufferMemory;
+        public uint? ForwardBufferMemory;
         public bool? FullDNSRegistrationEnabled;
         public UInt16[] GatewayCostMetric;
         public byte? IGMPLevel;
-        public UInt32? Index;
-        public UInt32? InterfaceIndex;
+        public uint? Index;
+        public uint? InterfaceIndex;
         public string[] IPAddress;
-        public UInt32? IPConnectionMetric;
+        public uint? IPConnectionMetric;
         public bool? IPEnabled;
         public bool? IPFilterSecurityEnabled;
         public bool? IPPortSecurityEnabled;
@@ -1788,22 +1788,22 @@ namespace Microsoft.PowerShell.Commands
         public string IPXAddress;
         public bool? IPXEnabled;
         public UInt32[] IPXFrameType;
-        public UInt32? IPXMediaType;
+        public uint? IPXMediaType;
         public string[] IPXNetworkNumber;
         public string IPXVirtualNetNumber;
-        public UInt32? KeepAliveInterval;
-        public UInt32? KeepAliveTime;
+        public uint? KeepAliveInterval;
+        public uint? KeepAliveTime;
         public string MACAddress;
-        public UInt32? MTU;
-        public UInt32? NumForwardPackets;
+        public uint? MTU;
+        public uint? NumForwardPackets;
         public bool? PMTUBHDetectEnabled;
         public bool? PMTUDiscoveryEnabled;
         public string ServiceName;
         public string SettingID;
-        public UInt32? TcpipNetbiosOptions;
-        public UInt32? TcpMaxConnectRetransmissions;
-        public UInt32? TcpMaxDataRetransmissions;
-        public UInt32? TcpNumConnections;
+        public uint? TcpipNetbiosOptions;
+        public uint? TcpMaxConnectRetransmissions;
+        public uint? TcpMaxDataRetransmissions;
+        public uint? TcpNumConnections;
         public bool? TcpUseRFC1122UrgentPointer;
         public UInt16? TcpWindowSize;
         public bool? WINSEnableLMHostsLookup;
@@ -1833,7 +1833,7 @@ namespace Microsoft.PowerShell.Commands
         public bool? Debug;
         public string Description;
         public bool? Distributed;
-        public UInt32? EncryptionLevel;
+        public uint? EncryptionLevel;
         public byte? ForegroundApplicationBoost;
         public ulong? FreePhysicalMemory;
         public ulong? FreeSpaceInPagingFiles;
@@ -1843,31 +1843,31 @@ namespace Microsoft.PowerShell.Commands
         public DateTime? LocalDateTime;
         public string Locale;
         public string Manufacturer;
-        public UInt32? MaxNumberOfProcesses;
+        public uint? MaxNumberOfProcesses;
         public ulong? MaxProcessMemorySize;
         public string[] MUILanguages;
         public string Name;
-        public UInt32? NumberOfLicensedUsers;
-        public UInt32? NumberOfProcesses;
-        public UInt32? NumberOfUsers;
-        public UInt32? OperatingSystemSKU;
+        public uint? NumberOfLicensedUsers;
+        public uint? NumberOfProcesses;
+        public uint? NumberOfUsers;
+        public uint? OperatingSystemSKU;
         public string Organization;
         public string OSArchitecture;
-        public UInt32? OSLanguage;
-        public UInt32? OSProductSuite;
+        public uint? OSLanguage;
+        public uint? OSProductSuite;
         public UInt16? OSType;
         public string OtherTypeDescription;
         public bool? PAEEnabled;
         public bool? PortableOperatingSystem;
         public bool? Primary;
-        public UInt32? ProductType;
+        public uint? ProductType;
         public string RegisteredUser;
         public string SerialNumber;
         public UInt16? ServicePackMajorVersion;
         public UInt16? ServicePackMinorVersion;
         public ulong? SizeStoredInPagingFiles;
         public string Status;
-        public UInt32? SuiteMask;
+        public uint? SuiteMask;
         public string SystemDevice;
         public string SystemDirectory;
         public string SystemDrive;
@@ -1908,7 +1908,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Public Methods
 
         #region Private Methods
-        private OSProductSuite[] MakeProductSuites(UInt32? suiteMask)
+        private OSProductSuite[] MakeProductSuites(uint? suiteMask)
         {
             if (suiteMask == null)
                 return null;
@@ -1928,13 +1928,13 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiPageFileUsage
     {
-        public UInt32? AllocatedBaseSize;
+        public uint? AllocatedBaseSize;
         public string Caption;
-        public UInt32? CurrentUsage;
+        public uint? CurrentUsage;
         public string Description;
         public DateTime? InstallDate;
         public string Name;
-        public UInt32? PeakUsage;
+        public uint? PeakUsage;
         public string Status;
         public bool? TempPageFile;
     }
@@ -1947,33 +1947,33 @@ namespace Microsoft.PowerShell.Commands
         public string AssetTag;
         public UInt16? Availability;
         public string Caption;
-        public UInt32? Characteristics;
-        public UInt32? ConfigManagerErrorCode;
+        public uint? Characteristics;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public UInt16? CpuStatus;
-        public UInt32? CurrentClockSpeed;
+        public uint? CurrentClockSpeed;
         public UInt16? CurrentVoltage;
         public UInt16? DataWidth;
         public string Description;
         public string DeviceID;
         public bool? ErrorCleared;
         public string ErrorDescription;
-        public UInt32? ExtClock;
+        public uint? ExtClock;
         public UInt16? Family;
         public DateTime? InstallDate;
-        public UInt32? L2CacheSize;
-        public UInt32? L2CacheSpeed;
-        public UInt32? L3CacheSize;
-        public UInt32? L3CacheSpeed;
-        public UInt32? LastErrorCode;
+        public uint? L2CacheSize;
+        public uint? L2CacheSpeed;
+        public uint? L3CacheSize;
+        public uint? L3CacheSpeed;
+        public uint? LastErrorCode;
         public UInt16? Level;
         public UInt16? LoadPercentage;
         public string Manufacturer;
-        public UInt32? MaxClockSpeed;
+        public uint? MaxClockSpeed;
         public string Name;
-        public UInt32? NumberOfCores;
-        public UInt32? NumberOfEnabledCore;
-        public UInt32? NumberOfLogicalProcessors;
+        public uint? NumberOfCores;
+        public uint? NumberOfEnabledCore;
+        public uint? NumberOfLogicalProcessors;
         public string OtherFamilyDescription;
         public string PartNumber;
         public string PNPDeviceID;
@@ -1990,13 +1990,13 @@ namespace Microsoft.PowerShell.Commands
         public UInt16? StatusInfo;
         public string Stepping;
         public string SystemName;
-        public UInt32? ThreadCount;
+        public uint? ThreadCount;
         public string UniqueId;
         public UInt16? UpgradeMethod;
         public string Version;
         public bool? VirtualizationFirmwareEnabled;
         public bool? VMMonitorModeExtensions;
-        public UInt32? VoltageCaps;
+        public uint? VoltageCaps;
     }
 
 #pragma warning restore 649
@@ -2170,18 +2170,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum speed of the processor, in MHz
         /// </summary>
-        public UInt32? MaxClockSpeed { get; internal set; }
+        public uint? MaxClockSpeed { get; internal set; }
         /// <summary>
         /// Current speed of the processor, in MHz
         /// </summary>
-        public UInt32? CurrentClockSpeed { get; internal set; }
+        public uint? CurrentClockSpeed { get; internal set; }
         /// <summary>
         /// Number of cores for the current instance of the processor.
         /// </summary>
         /// <remarks>
         /// A core is a physical processor on the integrated circuit
         /// </remarks>
-        public UInt32? NumberOfCores { get; internal set; }
+        public uint? NumberOfCores { get; internal set; }
         /// <summary>
         /// Number of logical processors for the current instance of the processor.
         /// </summary>
@@ -2189,7 +2189,7 @@ namespace Microsoft.PowerShell.Commands
         /// For processors capable of hyperthreading, this value includes only the
         /// processors which have hyperthreading enabled
         /// </remarks>
-        public UInt32? NumberOfLogicalProcessors { get; internal set; }
+        public uint? NumberOfLogicalProcessors { get; internal set; }
         /// <summary>
         /// Processor information that describes the processor features.
         /// </summary>
@@ -2654,7 +2654,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Number of logical processors available on the computer
         /// </summary>
-        public UInt32? CsNumberOfLogicalProcessors { get; internal set; }
+        public uint? CsNumberOfLogicalProcessors { get; internal set; }
 
         /// <summary>
         /// Number of physical processors currently available on a system.
@@ -2666,7 +2666,7 @@ namespace Microsoft.PowerShell.Commands
         /// then the value of CsNumberOfProcessors is 2 and CsNumberOfLogicalProcessors
         /// is 4. The processors may be multicore or they may be hyperthreading processors
         /// </remarks>
-        public UInt32? CsNumberOfProcessors { get; internal set; }
+        public uint? CsNumberOfProcessors { get; internal set; }
 
         /// <summary>
         /// Array of <see cref="Processor"/> objects describing each processor on the system.
@@ -3098,7 +3098,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum number of process contexts the operating system can support
         /// </summary>
-        public UInt32? OsMaxNumberOfProcesses { get; internal set; }
+        public uint? OsMaxNumberOfProcesses { get; internal set; }
 
         /// <summary>
         /// Maximum number, in kilobytes, of memory that can be allocated to a process
@@ -3115,18 +3115,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Number of user licenses for the operating system.
         /// </summary>
-        public UInt32? OsNumberOfLicensedUsers { get; internal set; }
+        public uint? OsNumberOfLicensedUsers { get; internal set; }
 
         /// <summary>
         /// Number of process contexts currently loaded or running on the operating system
         /// </summary>
-        public UInt32? OsNumberOfProcesses { get; internal set; }
+        public uint? OsNumberOfProcesses { get; internal set; }
 
         /// <summary>
         /// Number of user sessions for which the operating system is storing
         /// state information currently
         /// </summary>
-        public UInt32? OsNumberOfUsers { get; internal set; }
+        public uint? OsNumberOfUsers { get; internal set; }
 
         /// <summary>
         /// Company name for the registered user of the operating system
