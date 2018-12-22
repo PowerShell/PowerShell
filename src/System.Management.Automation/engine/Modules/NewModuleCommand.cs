@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
             if (_scriptBlock != null)
             {
                 string gs = System.Guid.NewGuid().ToString();
-                if (String.IsNullOrEmpty(_name))
+                if (string.IsNullOrEmpty(_name))
                 {
                     _name = PSModuleInfo.DynamicModulePrefixString + gs;
                 }

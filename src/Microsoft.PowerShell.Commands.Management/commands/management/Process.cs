@@ -141,12 +141,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="x">first Process object</param>
         /// <param name="y">second Process object</param>
         /// <returns>
-        /// As String.Compare: returns less than zero if x less than y,
+        /// As string.Compare: returns less than zero if x less than y,
         /// greater than 0 if x greater than y, 0 if x == y.
         /// </returns>
         private static int ProcessComparison(Process x, Process y)
         {
-            int diff = String.Compare(
+            int diff = string.Compare(
                 SafeGetProcessName(x),
                 SafeGetProcessName(y),
                 StringComparison.OrdinalIgnoreCase);
@@ -1884,7 +1884,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     NetworkCredential nwcredential = _credential.GetNetworkCredential();
                     startInfo.UserName = nwcredential.UserName;
-                    if (String.IsNullOrEmpty(nwcredential.Domain))
+                    if (string.IsNullOrEmpty(nwcredential.Domain))
                     {
                         startInfo.Domain = ".";
                     }
@@ -2123,7 +2123,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void StdOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!String.IsNullOrEmpty(outLine.Data))
+            if (!string.IsNullOrEmpty(outLine.Data))
             {
                 _outputWriter.WriteLine(outLine.Data);
                 _outputWriter.Flush();
@@ -2132,7 +2132,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void StdErrorHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!String.IsNullOrEmpty(outLine.Data))
+            if (!string.IsNullOrEmpty(outLine.Data))
             {
                 _errorWriter.WriteLine(outLine.Data);
                 _errorWriter.Flush();
@@ -2301,7 +2301,7 @@ namespace Microsoft.PowerShell.Commands
             SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new SafeNativeMethods.PROCESS_INFORMATION();
             int error = 0;
             GCHandle pinnedEnvironmentBlock = new GCHandle();
-            string message = String.Empty;
+            string message = string.Empty;
 
             // building the cmdline with the file name given and it's arguments
             StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
@@ -2913,7 +2913,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _processName; }
             set { _processName = value; }
         }
-        private string _processName = String.Empty;
+        private string _processName = string.Empty;
         #endregion Properties
     }
 

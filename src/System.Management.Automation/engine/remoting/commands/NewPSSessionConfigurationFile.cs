@@ -584,7 +584,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Debug.Assert(!String.IsNullOrEmpty(_path));
+            Debug.Assert(!string.IsNullOrEmpty(_path));
 
             ProviderInfo provider = null;
             PSDriveInfo drive;
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(_guid), streamWriter, false));
 
                 // Author
-                if (String.IsNullOrEmpty(_author))
+                if (string.IsNullOrEmpty(_author))
                 {
                     _author = Environment.UserName;
                 }
@@ -643,12 +643,12 @@ namespace Microsoft.PowerShell.Commands
 
                 // Description
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Description, RemotingErrorIdStrings.DISCDescriptionComment,
-                    SessionConfigurationUtils.QuoteName(_description), streamWriter, String.IsNullOrEmpty(_description)));
+                    SessionConfigurationUtils.QuoteName(_description), streamWriter, string.IsNullOrEmpty(_description)));
 
                 // Company name
                 if (ShouldGenerateConfigurationSnippet("CompanyName"))
                 {
-                    if (String.IsNullOrEmpty(_companyName))
+                    if (string.IsNullOrEmpty(_companyName))
                     {
                         _companyName = Modules.DefaultCompanyName;
                     }
@@ -659,7 +659,7 @@ namespace Microsoft.PowerShell.Commands
                 // Copyright
                 if (ShouldGenerateConfigurationSnippet("Copyright"))
                 {
-                    if (String.IsNullOrEmpty(_copyright))
+                    if (string.IsNullOrEmpty(_copyright))
                     {
                         _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                     }
@@ -674,9 +674,9 @@ namespace Microsoft.PowerShell.Commands
                 string resultData = null;
 
                 // Transcript directory
-                resultData = String.IsNullOrEmpty(_transcriptDirectory) ? "'C:\\Transcripts\\'" : SessionConfigurationUtils.QuoteName(_transcriptDirectory);
+                resultData = string.IsNullOrEmpty(_transcriptDirectory) ? "'C:\\Transcripts\\'" : SessionConfigurationUtils.QuoteName(_transcriptDirectory);
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.TranscriptDirectory, RemotingErrorIdStrings.DISCTranscriptDirectoryComment,
-                    resultData, streamWriter, String.IsNullOrEmpty(_transcriptDirectory)));
+                    resultData, streamWriter, string.IsNullOrEmpty(_transcriptDirectory)));
 
                 // Run as virtual account
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RunAsVirtualAccount, RemotingErrorIdStrings.DISCRunAsVirtualAccountComment,
@@ -915,9 +915,9 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (string functionKey in hashtable.Keys)
                             {
-                                if (!String.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
@@ -979,8 +979,8 @@ namespace Microsoft.PowerShell.Commands
 
                                 foreach (string variableKey in hashtable.Keys)
                                 {
-                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                        !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                                    if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                        !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));
@@ -1440,7 +1440,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Debug.Assert(!String.IsNullOrEmpty(_path));
+            Debug.Assert(!string.IsNullOrEmpty(_path));
 
             ProviderInfo provider = null;
             PSDriveInfo drive;
@@ -1486,7 +1486,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(_guid), streamWriter, false));
 
                 // Author
-                if (String.IsNullOrEmpty(_author))
+                if (string.IsNullOrEmpty(_author))
                 {
                     _author = Environment.UserName;
                 }
@@ -1495,10 +1495,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // Description
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Description, RemotingErrorIdStrings.DISCDescriptionComment,
-                    SessionConfigurationUtils.QuoteName(_description), streamWriter, String.IsNullOrEmpty(_description)));
+                    SessionConfigurationUtils.QuoteName(_description), streamWriter, string.IsNullOrEmpty(_description)));
 
                 // Company name
-                if (String.IsNullOrEmpty(_companyName))
+                if (string.IsNullOrEmpty(_companyName))
                 {
                     _companyName = Modules.DefaultCompanyName;
                 }
@@ -1506,7 +1506,7 @@ namespace Microsoft.PowerShell.Commands
                     SessionConfigurationUtils.QuoteName(_companyName), streamWriter, false));
 
                 // Copyright
-                if (String.IsNullOrEmpty(_copyright))
+                if (string.IsNullOrEmpty(_copyright))
                 {
                     _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                 }
@@ -1618,9 +1618,9 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (string functionKey in hashtable.Keys)
                             {
-                                if (!String.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1679,8 +1679,8 @@ namespace Microsoft.PowerShell.Commands
 
                                 foreach (string variableKey in hashtable.Keys)
                                 {
-                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                        !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                                    if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                        !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));
@@ -1981,7 +1981,7 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = 0; i < values.Length; i++)
             {
-                if (!String.IsNullOrEmpty(values[i]))
+                if (!string.IsNullOrEmpty(values[i]))
                 {
                     sb.Append(QuoteName(values[i]));
 
@@ -2004,7 +2004,7 @@ namespace Microsoft.PowerShell.Commands
             for (int i = 0; i < values.Length; i++)
             {
                 string strVal = values[i] as string;
-                if (!String.IsNullOrEmpty(strVal))
+                if (!string.IsNullOrEmpty(strVal))
                 {
                     sb.Append(QuoteName(strVal));
                 }

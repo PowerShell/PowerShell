@@ -336,7 +336,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Default constructor
         /// </summary>
-        public PSCryptoException() : this(0, new StringBuilder(String.Empty)) { }
+        public PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
 
         /// <summary>
         /// Constructor that will be used from within CryptoUtils
@@ -1221,7 +1221,7 @@ namespace System.Management.Automation.Internal
         /// <returns>true on success</returns>
         internal bool ImportRemotePublicKey(string publicKeyAsString)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
+            Dbg.Assert(!string.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
 
             // generate the crypto provider to use for encryption
             //_rsaCryptoProvider = GenerateCryptoServiceProvider(false);
@@ -1265,7 +1265,7 @@ namespace System.Management.Automation.Internal
             }
             catch (PSCryptoException)
             {
-                encryptedSessionKey = String.Empty;
+                encryptedSessionKey = string.Empty;
                 return false;
             }
 
@@ -1362,7 +1362,7 @@ namespace System.Management.Automation.Internal
             }
             catch (PSCryptoException)
             {
-                publicKeyAsString = String.Empty;
+                publicKeyAsString = string.Empty;
                 return false;
             }
 
@@ -1375,7 +1375,7 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal bool ImportEncryptedSessionKey(string encryptedSessionKey)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");
+            Dbg.Assert(!string.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");
 
             try
             {

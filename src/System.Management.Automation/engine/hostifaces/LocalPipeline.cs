@@ -175,7 +175,7 @@ namespace System.Management.Automation.Runspaces
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-                        // Start execution of pipeline in another thread, 
+                        // Start execution of pipeline in another thread,
                         // and support impersonation flow as needed (Windows only).
                         Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
@@ -310,9 +310,9 @@ namespace System.Management.Automation.Runspaces
                         // Don't need to add Out-Default if the pipeline already has it, or we've got a pipeline evaluating
                         // the PSConsoleHostReadLine command.
                         if (
-                            String.Equals(outDefaultCommandInfo.Name, command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            String.Equals("PSConsoleHostReadLine", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            String.Equals("TabExpansion2", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(outDefaultCommandInfo.Name, command.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals("PSConsoleHostReadLine", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals("TabExpansion2", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
                             this.IsPulsePipeline)
                         {
                             needToAddOutDefault = false;
@@ -530,7 +530,7 @@ namespace System.Management.Automation.Runspaces
 
 #if !UNIX
         /// <summary>
-        /// Invokes the InvokeThreadProc() method on new thread, and flows calling thread 
+        /// Invokes the InvokeThreadProc() method on new thread, and flows calling thread
         /// impersonation as needed.
         /// </summary>
         private void InvokeThreadProcImpersonate()

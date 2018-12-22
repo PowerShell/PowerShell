@@ -1092,7 +1092,7 @@ namespace System.Management.Automation.Runspaces
         private string ResolveShellUri(string shell)
         {
             string resolvedShellUri = shell;
-            if (String.IsNullOrEmpty(resolvedShellUri))
+            if (string.IsNullOrEmpty(resolvedShellUri))
             {
                 resolvedShellUri = DefaultShellUri;
             }
@@ -1165,7 +1165,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             //default host is localhost
-            if (String.IsNullOrEmpty(computerName) || String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(computerName) || string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 _computerName = DefaultComputerName;
             }
@@ -1209,7 +1209,7 @@ namespace System.Management.Automation.Runspaces
 
             // default appname is WSMan
             _appName = appName;
-            if (String.IsNullOrEmpty(_appName))
+            if (string.IsNullOrEmpty(_appName))
             {
                 _appName = s_defaultAppName;
             }
@@ -1933,7 +1933,7 @@ namespace System.Management.Automation.Runspaces
             ValidatePortInRange(port);
 
             this.Port = (port != 0) ? port : DefaultPort;
-            this.Subsystem = (String.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+            this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
         }
 
         #endregion
@@ -2507,7 +2507,7 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                var cmdLine = String.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
+                var cmdLine = string.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
 
                 lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
                 lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
@@ -3086,7 +3086,7 @@ namespace System.Management.Automation.Runspaces
             this.RunAsAdmin = runAsAdmin;
             this.ConfigurationName = configurationName;
 
-            Dbg.Assert(!String.IsNullOrEmpty(containerId), "containerId input cannot be empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(containerId), "containerId input cannot be empty.");
 
             GetContainerProperties();
         }
@@ -3124,7 +3124,7 @@ namespace System.Management.Automation.Runspaces
                 // other errors caught without exception
                 default:
                     throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotCreateProcessInContainer,
-                                                                            ContainerId, 
+                                                                            ContainerId,
                                                                             Executable,
                                                                             ErrorCode));
             }
@@ -3212,7 +3212,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 result = HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString);
                 if (result != 0)
@@ -3308,7 +3308,7 @@ namespace System.Management.Automation.Runspaces
             return string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         @"{{""CommandLine"": ""{0} {1} -NoLogo {2}"",""RestrictedToken"": {3}}}",
-                        Executable, 
+                        Executable,
                         (RuntimeId != Guid.Empty) ? "-SocketServerMode -NoProfile" : "-NamedPipeServerMode",
                         string.IsNullOrEmpty(ConfigurationName) ? string.Empty : string.Concat("-Config ", ConfigurationName),
                         RunAsAdmin ? "false" : "true");
@@ -3320,7 +3320,7 @@ namespace System.Management.Automation.Runspaces
         private void TerminateContainerProcessInternal()
         {
             IntPtr ComputeSystem = IntPtr.Zero;
-            string resultString = String.Empty;
+            string resultString = string.Empty;
             IntPtr process = IntPtr.Zero;
 
             ProcessTerminated = false;
@@ -3345,7 +3345,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
                 {

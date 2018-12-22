@@ -868,7 +868,7 @@ namespace System.Management.Automation
 
             if (cmdletInfo != null)
             {
-                if (String.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -905,7 +905,7 @@ namespace System.Management.Automation
 
         internal void SetupOutVariable()
         {
-            if (String.IsNullOrEmpty(this.OutVariable))
+            if (string.IsNullOrEmpty(this.OutVariable))
             {
                 return;
             }
@@ -915,9 +915,9 @@ namespace System.Management.Automation
             // Handle the creation of OutVariable in the case of Out-Default specially,
             // as it needs to handle much of its OutVariable support itself.
             if (
-                (!String.IsNullOrEmpty(this.OutVariable)) &&
+                (!string.IsNullOrEmpty(this.OutVariable)) &&
                 (!(this.OutVariable.StartsWith("+", StringComparison.Ordinal))) &&
-                String.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
+                string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)
                     _state = new SessionState(Context.EngineSessionState);
@@ -945,7 +945,7 @@ namespace System.Management.Automation
             // This can't use the common SetupVariable implementation, as this needs to persist for an entire
             // pipeline.
 
-            if (String.IsNullOrEmpty(this.PipelineVariable))
+            if (string.IsNullOrEmpty(this.PipelineVariable))
             {
                 return;
             }
@@ -1249,8 +1249,8 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1365,8 +1365,8 @@ namespace System.Management.Automation
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file",
         ///                         out shouldProcessReason))
         ///                     {
@@ -1520,7 +1520,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            if (String.IsNullOrEmpty(verboseWarning))
+            if (string.IsNullOrEmpty(verboseWarning))
                 verboseWarning = StringUtil.Format(CommandBaseStrings.ShouldProcessWarningFallback,
                     verboseDescription);
 
@@ -1677,14 +1677,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {
@@ -1857,14 +1857,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -2043,7 +2043,7 @@ namespace System.Management.Automation
 
             // This code forces the stack trace and source fields to be populated
             if (errorRecord.Exception != null
-                && String.IsNullOrEmpty(errorRecord.Exception.StackTrace))
+                && string.IsNullOrEmpty(errorRecord.Exception.StackTrace))
             {
                 try
                 {
@@ -2486,7 +2486,7 @@ namespace System.Management.Automation
 
         internal void SetupVariable(VariableStreamKind streamKind, string variableName, ref IList varList)
         {
-            if (String.IsNullOrEmpty(variableName))
+            if (string.IsNullOrEmpty(variableName))
             {
                 return;
             }
@@ -2925,7 +2925,7 @@ namespace System.Management.Automation
                 {
                     return _debugPreference;
                 }
-                
+
                 if (IsDebugFlagSet)
                 {
                     return Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
@@ -2946,7 +2946,7 @@ namespace System.Management.Automation
 
                     _isDebugPreferenceCached = true;
                 }
-                
+
                 return _debugPreference;
             }
             set
@@ -3524,12 +3524,12 @@ namespace System.Management.Automation
                 pauseOption = currentOption++;
             }
 
-            if (String.IsNullOrEmpty(inquireMessage))
+            if (string.IsNullOrEmpty(inquireMessage))
             {
                 inquireMessage = CommandBaseStrings.ShouldContinuePromptCaption;
             }
 
-            if (String.IsNullOrEmpty(inquireCaption))
+            if (string.IsNullOrEmpty(inquireCaption))
             {
                 inquireCaption = CommandBaseStrings.InquireCaptionDefault;
             }

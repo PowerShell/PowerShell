@@ -80,13 +80,13 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             _commandWrapper = new CommandWrapper();
-            if (String.Equals(ParameterSetName, "File", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(ParameterSetName, "File", StringComparison.OrdinalIgnoreCase))
             {
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("filepath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
             }
-            else if (String.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
             {
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("LiteralPath", _fileName);

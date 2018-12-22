@@ -641,7 +641,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// A string describing this alias...
         /// </summary>
-        public string Description { get; } = String.Empty;
+        public string Description { get; } = string.Empty;
 
         /// <summary>
         /// Options controling scope visibility and setability for this entry.
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The description associated with this variable.
         /// </summary>
-        public string Description { get; } = String.Empty;
+        public string Description { get; } = string.Empty;
 
         /// <summary>
         /// The options associated with this variable (e.g. readonly, allscope, etc.)
@@ -1160,7 +1160,7 @@ namespace System.Management.Automation.Runspaces
                     if (element == null)
                         continue;
                     if ((objType == null || element.GetType() == objType) &&
-                        String.Equals(element.Name, name, StringComparison.OrdinalIgnoreCase))
+                        string.Equals(element.Name, name, StringComparison.OrdinalIgnoreCase))
                     {
                         _internalCollection.RemoveAt(i);
                     }
@@ -2462,7 +2462,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Start transcribing
-            if (!String.IsNullOrEmpty(TranscriptDirectory))
+            if (!string.IsNullOrEmpty(TranscriptDirectory))
             {
                 using (PowerShell psToInvoke = PowerShell.Create())
                 {
@@ -2635,7 +2635,7 @@ namespace System.Management.Automation.Runspaces
                         break;
 
                     case "ValidatePattern":
-                        string pattern = "^(" + String.Join("|", parameterValidationValues) + ")$";
+                        string pattern = "^(" + string.Join("|", parameterValidationValues) + ")$";
                         ValidatePatternAttribute validatePattern = new ValidatePatternAttribute(pattern);
                         metadata.Parameters[parameterName].Attributes.Add(validatePattern);
                         break;
@@ -2652,7 +2652,7 @@ namespace System.Management.Automation.Runspaces
                     string name = variable["Name"].ToString();
                     ScriptBlock sb = variable["Value"] as ScriptBlock;
 
-                    if (!String.IsNullOrEmpty(name) && (sb != null))
+                    if (!string.IsNullOrEmpty(name) && (sb != null))
                     {
                         sb.SessionStateInternal = initializedRunspace.ExecutionContext.EngineSessionState;
 
@@ -3470,7 +3470,7 @@ namespace System.Management.Automation.Runspaces
                     if (filesProcessed.TryAdd(sste.FileName, null))
                     {
                         string moduleName = string.Empty;
-                        if (sste.PSSnapIn != null && !String.IsNullOrEmpty(sste.PSSnapIn.Name))
+                        if (sste.PSSnapIn != null && !string.IsNullOrEmpty(sste.PSSnapIn.Name))
                         {
                             moduleName = sste.PSSnapIn.Name;
                         }
@@ -4251,9 +4251,9 @@ end {
             // Bug fix for Win7:2202228 Engine halts if initial command fulls up variable table
             // Anytime a new variable that the engine depends on to run is added, this table
             // must be updated...
-            new SessionStateVariableEntry(SpecialVariables.LastToken, null, String.Empty),
-            new SessionStateVariableEntry(SpecialVariables.FirstToken, null, String.Empty),
-            new SessionStateVariableEntry(SpecialVariables.StackTrace, null, String.Empty),
+            new SessionStateVariableEntry(SpecialVariables.LastToken, null, string.Empty),
+            new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
+            new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
 
             // Variable which controls the encoding for piping data to a NativeCommand
             new SessionStateVariableEntry(
@@ -4347,7 +4347,7 @@ end {
              //variable for PSEmailServer
             new SessionStateVariableEntry(
                 SpecialVariables.PSEmailServer,
-                String.Empty,
+                string.Empty,
                 RunspaceInit.PSEmailServerDescription
                 ),
 
@@ -4373,25 +4373,25 @@ end {
             new SessionStateVariableEntry(
                 SpecialVariables.IsLinux,
                 Platform.IsLinux,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
                 SpecialVariables.IsMacOS,
                 Platform.IsMacOS,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
                 SpecialVariables.IsWindows,
                 Platform.IsWindows,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
                 SpecialVariables.IsCoreCLR,
                 Platform.IsCoreCLR,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
             #endregion
         };

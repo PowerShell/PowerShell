@@ -1026,7 +1026,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetVariable(PSVariable variable, bool force, CommandOrigin origin)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1398,7 +1398,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetVariableAtScope(PSVariable variable, string scopeID, bool force, CommandOrigin origin)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1434,7 +1434,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object NewVariable(PSVariable variable, bool force)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1478,7 +1478,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object NewVariableAtScope(PSVariable variable, string scopeID, bool force)
         {
-            if (variable == null || String.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
             }
@@ -1691,7 +1691,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariableAtScope(string name, string scopeID, bool force)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }

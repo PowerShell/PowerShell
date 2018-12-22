@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
             }
 #endif
 
-            if (!String.IsNullOrEmpty(PSEdition))
+            if (!string.IsNullOrEmpty(PSEdition))
             {
                 modules = modules.Where(module => module.CompatiblePSEditions.Contains(PSEdition, StringComparer.OrdinalIgnoreCase));
             }

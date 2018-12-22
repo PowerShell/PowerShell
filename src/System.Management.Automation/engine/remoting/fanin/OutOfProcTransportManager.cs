@@ -1397,7 +1397,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             _client = new RemoteSessionHyperVSocketClient(_targetGuid, false, true);
-            if (!_client.Connect(null, String.Empty, false))
+            if (!_client.Connect(null, string.Empty, false))
             {
                 _client.Dispose();
                 throw new PSInvalidOperationException(

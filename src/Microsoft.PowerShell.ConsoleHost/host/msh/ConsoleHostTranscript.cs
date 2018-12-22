@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell
             }
         }
         */
-        private string _transcriptFileName = String.Empty;
+        private string _transcriptFileName = string.Empty;
 
         internal
         string

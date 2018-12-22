@@ -2299,12 +2299,12 @@ namespace Microsoft.PowerShell.ScheduledJob
     {
         internal static string Format(string formatSpec, object o)
         {
-            return String.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
+            return string.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
         }
 
         internal static string Format(string formatSpec, params object[] o)
         {
-            return String.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
+            return string.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
         }
     }
 

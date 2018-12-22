@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteTraceRouteProgress(TraceRouteReply traceRouteReply)
         {
-            String msg = String.Empty;
+            String msg = string.Empty;
 
             if (traceRouteReply.PingReplies[2].Status == IPStatus.TtlExpired || traceRouteReply.PingReplies[2].Status == IPStatus.Success)
             {
@@ -753,7 +753,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WritePingProgress(PingReply reply)
         {
-            String msg = String.Empty;
+            String msg = string.Empty;
             if (reply.Status != IPStatus.Success)
             {
                 msg = TestConnectionResources.PingTimeOut;

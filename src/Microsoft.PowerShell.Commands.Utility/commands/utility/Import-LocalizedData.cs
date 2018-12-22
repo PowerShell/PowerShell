@@ -237,9 +237,9 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetFilePath()
         {
-            if (String.IsNullOrEmpty(_fileName))
+            if (string.IsNullOrEmpty(_fileName))
             {
-                if (InvocationExtent == null || String.IsNullOrEmpty(InvocationExtent.File))
+                if (InvocationExtent == null || string.IsNullOrEmpty(InvocationExtent.File))
                 {
                     throw PSTraceSource.NewInvalidOperationException(ImportLocalizedDataStrings.NotCalledFromAScriptFile);
                 }
@@ -247,9 +247,9 @@ namespace Microsoft.PowerShell.Commands
 
             string dir = _baseDirectory;
 
-            if (String.IsNullOrEmpty(dir))
+            if (string.IsNullOrEmpty(dir))
             {
-                if (InvocationExtent != null && !String.IsNullOrEmpty(InvocationExtent.File))
+                if (InvocationExtent != null && !string.IsNullOrEmpty(InvocationExtent.File))
                 {
                     dir = Path.GetDirectoryName(InvocationExtent.File);
                 }
@@ -262,13 +262,13 @@ namespace Microsoft.PowerShell.Commands
             dir = PathUtils.ResolveFilePath(dir, this);
 
             string fileName = _fileName;
-            if (String.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(fileName))
             {
                 fileName = InvocationExtent.File;
             }
             else
             {
-                if (!String.IsNullOrEmpty(Path.GetDirectoryName(fileName)))
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(fileName)))
                 {
                     throw PSTraceSource.NewInvalidOperationException(ImportLocalizedDataStrings.FileNameParameterCannotHavePath);
                 }
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
             CultureInfo currentCulture = culture;
             string filePath;
             string fullFileName = fileName + ".psd1";
-            while (currentCulture != null && !String.IsNullOrEmpty(currentCulture.Name))
+            while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
 

@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     ErrorRecord errorRecord = new ErrorRecord(
-                        new ArgumentException(String.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
+                        new ArgumentException(string.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
                         "INVALID_SOURCE_IDENTIFIER",
                         ErrorCategory.InvalidArgument,
                         null);

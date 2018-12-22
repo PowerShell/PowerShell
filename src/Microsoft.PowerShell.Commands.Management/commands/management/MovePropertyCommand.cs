@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            string propertyName = String.Empty;
+            string propertyName = string.Empty;
             if (Name != null && Name.Length > 0)
             {
                 propertyName = Name[0];

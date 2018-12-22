@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <returns>Whether the type is registered already.</returns>
         public bool IsRegistered(string typeName)
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 return false;
             }
@@ -90,7 +90,7 @@ namespace System.Management.Automation
                 ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(PSTypeExtensions.EmptyTypes);
                 if (!constructor.IsPublic)
                 {
-                    string message = String.Format(CultureInfo.CurrentCulture,
+                    string message = string.Format(CultureInfo.CurrentCulture,
                                                    RemotingErrorIdStrings.JobManagerRegistrationConstructorError,
                                                    jobSourceAdapterType.FullName);
                     throw new InvalidOperationException(message);
@@ -857,7 +857,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Write a warning
-                    string message = String.Format(CultureInfo.CurrentCulture,
+                    string message = string.Format(CultureInfo.CurrentCulture,
                                                    RemotingErrorIdStrings.JobSourceAdapterError,
                                                    exception.Message,
                                                    sourceAdapter.Name);

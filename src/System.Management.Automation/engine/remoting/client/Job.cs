@@ -430,7 +430,7 @@ namespace System.Management.Automation
         protected Job(string command, string name)
             : this(command)
         {
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 _name = name;
             }
@@ -470,7 +470,7 @@ namespace System.Management.Automation
             Id = token.Id;
             InstanceId = token.InstanceId;
 
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 _name = name;
             }
@@ -544,7 +544,7 @@ namespace System.Management.Automation
         /// </summary>
         private static int s_jobIdSeed = 0;
 
-        private string _jobTypeName = String.Empty;
+        private string _jobTypeName = string.Empty;
 
         #endregion Private Members
 
@@ -1572,7 +1572,7 @@ namespace System.Management.Automation
 
             foreach (Job job in ChildJobs)
             {
-                if (String.Equals(job.Location, location, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(job.Location, location, StringComparison.OrdinalIgnoreCase))
                 {
                     returnJobList.Add(job);
                 }
@@ -1875,7 +1875,7 @@ namespace System.Management.Automation
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
                 if (child == null) continue;
-                if (String.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
+                if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
                     returnJobList.Add(child);
@@ -3308,11 +3308,11 @@ namespace System.Management.Automation
 
                         errorDetails += message;
                     }
-                    else if (!String.IsNullOrEmpty(transException.Message))
+                    else if (!string.IsNullOrEmpty(transException.Message))
                     {
                         errorDetails += transException.Message;
                     }
-                    else if (!String.IsNullOrEmpty(transException.TransportMessage))
+                    else if (!string.IsNullOrEmpty(transException.TransportMessage))
                     {
                         errorDetails += transException.TransportMessage;
                     }

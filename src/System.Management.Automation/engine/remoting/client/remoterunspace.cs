@@ -2642,7 +2642,7 @@ namespace System.Management.Automation
             }
             catch (RemoteException e)
             {
-                if (String.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
                 {
                     _setVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                     throw _setVariableCommandNotFoundException;
@@ -2701,7 +2701,7 @@ namespace System.Management.Automation
             }
             catch (RemoteException e)
             {
-                if (String.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
                 {
                     _getVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                     throw _getVariableCommandNotFoundException;

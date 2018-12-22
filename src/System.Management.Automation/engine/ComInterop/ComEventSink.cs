@@ -126,7 +126,7 @@ namespace System.Management.Automation.ComInterop
 
         public void AddHandler(int dispid, object func)
         {
-            string name = String.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
+            string name = string.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
 
             lock (_lockObject)
             {
@@ -151,7 +151,7 @@ namespace System.Management.Automation.ComInterop
 
         public void RemoveHandler(int dispid, object func)
         {
-            string name = String.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
+            string name = string.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
 
             lock (_lockObject)
             {

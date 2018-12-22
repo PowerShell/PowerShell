@@ -48,7 +48,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help file path for the cmdlet.
         /// </summary>
-        public string HelpFile { get; internal set; } = String.Empty;
+        public string HelpFile { get; internal set; } = string.Empty;
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSClassMemberInfo(string name, string memberType, string defaultValue)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("name");
 
             this.Name = name;

@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell
             {
                 if (fd != null)
                 {
-                    if (!String.IsNullOrEmpty(fd.HelpMessage))
+                    if (!string.IsNullOrEmpty(fd.HelpMessage))
                     {
                         return true;
                     }
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell
 
                 Boolean cancelInput = false;
 
-                if (!String.IsNullOrEmpty(caption))
+                if (!string.IsNullOrEmpty(caption))
                 {
                     // Should be a skin lookup
 
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell
                     WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                     WriteLineToConsole();
                 }
-                if (!String.IsNullOrEmpty(message))
+                if (!string.IsNullOrEmpty(message))
                 {
                     WriteLineToConsole(WrapToCurrentWindowWidth(message));
                 }

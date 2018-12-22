@@ -100,7 +100,7 @@ namespace System.Management.Automation.PerformanceData
                 {
                     InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
-                            String.Format(
+                            string.Format(
                             CultureInfo.InvariantCulture,
                             "Denominator for update not valid for the given counter id {0}",
                             counterId));
@@ -367,7 +367,7 @@ namespace System.Management.Automation.PerformanceData
                 {
                     InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "Lookup for counter corresponding to counter id {0} failed",
                         counterId));
@@ -411,7 +411,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                    String.Format(
+                    string.Format(
                     CultureInfo.InvariantCulture,
                     "Lookup for counter corresponding to counter name {0} failed",
                     counterName));
@@ -449,7 +449,7 @@ namespace System.Management.Automation.PerformanceData
                 {
                     InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
-                            String.Format(
+                            string.Format(
                             CultureInfo.InvariantCulture,
                             "Lookup for counter corresponding to counter id {0} failed",
                             counterId));
@@ -494,7 +494,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                    String.Format(
+                    string.Format(
                     CultureInfo.InvariantCulture,
                     "Lookup for counter corresponding to counter name {0} failed",
                     counterName));
@@ -531,7 +531,7 @@ namespace System.Management.Automation.PerformanceData
                 {
                     InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
-                            String.Format(
+                            string.Format(
                             CultureInfo.InvariantCulture,
                             "Lookup for counter corresponding to counter id {0} failed",
                             counterId));
@@ -576,7 +576,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "Lookup for counter corresponding to counter name {0} failed",
                         counterName));

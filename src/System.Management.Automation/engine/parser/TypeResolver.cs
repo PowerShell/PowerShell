@@ -483,7 +483,7 @@ namespace System.Management.Automation.Language
         internal static Type ResolveType(string strTypeName, out Exception exception)
         {
             exception = null;
-            if (String.IsNullOrWhiteSpace(strTypeName))
+            if (string.IsNullOrWhiteSpace(strTypeName))
             {
                 return null;
             }

@@ -521,7 +521,7 @@ namespace System.Management.Automation
                 // returning in GetProperties
                 foreach (PropertyDescriptor descriptor in properties)
                 {
-                    if (String.Equals(descriptor.Name, defaultProperty, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(descriptor.Name, defaultProperty, StringComparison.OrdinalIgnoreCase))
                     {
                         return descriptor;
                     }

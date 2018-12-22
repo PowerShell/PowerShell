@@ -700,7 +700,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
 
 #if !CORECLR
-            MainWindowTitle = String.Empty;
+            MainWindowTitle = string.Empty;
             try
             {
                 var proc = Process.GetProcessById(processId);

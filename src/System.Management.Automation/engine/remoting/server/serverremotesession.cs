@@ -755,7 +755,7 @@ namespace System.Management.Automation.Remoting
 
             DISCPowerShellConfiguration discProvider = null;
 
-            if (String.IsNullOrEmpty(configurationData.ConfigFilePath))
+            if (string.IsNullOrEmpty(configurationData.ConfigFilePath))
             {
                 _sessionConfigProvider = configurationData.CreateEndPointConfigurationInstance();
             }

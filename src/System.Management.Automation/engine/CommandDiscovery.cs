@@ -197,7 +197,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CmdletInfo AddCmdletInfoToCache(string name, CmdletInfo newCmdletInfo, bool isGlobal)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -346,13 +346,13 @@ namespace System.Management.Automation
                 // If there were no PSSnapins required but there is a shellID required, then we need
                 // to error
 
-                if (!String.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
+                if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
                 {
                     ScriptRequiresException sre =
                       new ScriptRequiresException(
                           scriptInfo.Name,
-                          String.Empty,
-                          String.Empty,
+                          string.Empty,
+                          string.Empty,
                           "RequiresShellIDInvalidForSingleShell");
 
                     throw sre;
@@ -765,7 +765,7 @@ namespace System.Management.Automation
             CommandOrigin commandOrigin,
             ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 return null;
             }
@@ -1198,7 +1198,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (String.IsNullOrEmpty(moduleName) || String.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
 
             bool isPathCacheValid =
                 path != null &&
-                String.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
                 _cachedPath != null;
 
             if (!isPathCacheValid)
@@ -1473,7 +1473,7 @@ namespace System.Management.Automation
         /// </exception>
         internal IEnumerator<CmdletInfo> GetCmdletInfo(string cmdletName, bool searchAllScopes)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
+            Dbg.Assert(!string.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
 
             PSSnapinQualifiedName commandName = PSSnapinQualifiedName.GetInstance(cmdletName);
 
@@ -1498,9 +1498,9 @@ namespace System.Management.Automation
 
                 foreach (var cmdletInfo in cmdlets)
                 {
-                    if (!String.IsNullOrEmpty(commandName.PSSnapInName))
+                    if (!string.IsNullOrEmpty(commandName.PSSnapInName))
                     {
-                        if (String.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
                         {
                             yield return cmdletInfo;
                             if (!searchAllScopes)
@@ -1514,7 +1514,7 @@ namespace System.Management.Automation
                         // tries to access Microsoft.PowerShell.Core\\Get-Command, it cannot. So, adding an additional check to return the correct cmdletInfo for cmdlets from core modules.
                         else if (InitialSessionState.IsEngineModule(cmdletInfo.ModuleName))
                         {
-                            if (String.Equals(
+                            if (string.Equals(
                                 cmdletInfo.ModuleName,
                                 InitialSessionState.GetNestedModuleDllName(commandName.PSSnapInName),
                                 StringComparison.OrdinalIgnoreCase))
@@ -1564,7 +1564,7 @@ namespace System.Management.Automation
 
                 // check the environment variable
                 string psEnvironmentVariable = Environment.GetEnvironmentVariable(environmentVariable);
-                if (!String.IsNullOrEmpty(psEnvironmentVariable))
+                if (!string.IsNullOrEmpty(psEnvironmentVariable))
                 {
                     return LanguagePrimitives.ConvertTo<PSModuleAutoLoadingPreference>(psEnvironmentVariable);
                 }
@@ -1660,7 +1660,7 @@ namespace System.Management.Automation
 
             foreach (string name in this)
             {
-                if (String.Equals(item, name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(item, name, StringComparison.OrdinalIgnoreCase))
                 {
                     result = true;
                     break;
@@ -1682,7 +1682,7 @@ namespace System.Management.Automation
             for (int index = 0; index < this.Count; ++index)
             {
                 string path = this[index];
-                if (!String.IsNullOrEmpty(path) &&
+                if (!string.IsNullOrEmpty(path) &&
                     path.StartsWith(".", StringComparison.Ordinal))
                 {
                     result.Add(index);
@@ -1706,7 +1706,7 @@ namespace System.Management.Automation
         /// </exception>
         public new int IndexOf(string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
@@ -1715,7 +1715,7 @@ namespace System.Management.Automation
 
             for (int index = 0; index < this.Count; ++index)
             {
-                if (String.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
                 {
                     result = index;
                     break;

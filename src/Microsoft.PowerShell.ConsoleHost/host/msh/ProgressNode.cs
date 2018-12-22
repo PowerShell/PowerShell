@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell
 
             // Fifth and Sixth lines: The current operation
 
-            if (!String.IsNullOrEmpty(CurrentOperation))
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 strCollection.Add(" ");
                 RenderFullDescription(this.CurrentOperation, indent, maxWidth, rawUI, strCollection, isFullPlus);
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell
 
             // Third line: The current operation
 
-            if (!String.IsNullOrEmpty(CurrentOperation))
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 strCollection.Add(
                     StringUtil.TruncateToBufferCellWidth(
@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell
             {
                 ++lines;
             }
-            if (!String.IsNullOrEmpty(CurrentOperation))
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 if (isFullPlus)
                 {
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell
                 // Start with 1 for the Activity, and 1 for the Status.
 
                 int lines = 2;
-                if (!String.IsNullOrEmpty(CurrentOperation))
+                if (!string.IsNullOrEmpty(CurrentOperation))
                 {
                     ++lines;
                 }

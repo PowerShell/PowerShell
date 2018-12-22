@@ -40,7 +40,7 @@ namespace System.Management.Automation.Host
         {
             // the only required parameter is the name.
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name", DescriptionsStrings.NullOrEmptyErrorTemplate, "name");
             }
@@ -102,7 +102,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterTypeName))
+                if (string.IsNullOrEmpty(parameterTypeName))
                 {
                     // the default if the type name is not specified is 'string'
 
@@ -129,7 +129,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterTypeFullName))
+                if (string.IsNullOrEmpty(parameterTypeFullName))
                 {
                     // the default if the type name is not specified is 'string'
 
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterAssemblyFullName))
+                if (string.IsNullOrEmpty(parameterAssemblyFullName))
                 {
                     // the default if the type name is not specified is 'string'
 
@@ -313,7 +313,7 @@ namespace System.Management.Automation.Host
         void
         SetParameterTypeName(string nameOfType)
         {
-            if (String.IsNullOrEmpty(nameOfType))
+            if (string.IsNullOrEmpty(nameOfType))
             {
                 throw PSTraceSource.NewArgumentException("nameOfType", DescriptionsStrings.NullOrEmptyErrorTemplate, "nameOfType");
             }
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Host
         void
         SetParameterTypeFullName(string fullNameOfType)
         {
-            if (String.IsNullOrEmpty(fullNameOfType))
+            if (string.IsNullOrEmpty(fullNameOfType))
             {
                 throw PSTraceSource.NewArgumentException("fullNameOfType", DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfType");
             }
@@ -353,7 +353,7 @@ namespace System.Management.Automation.Host
         void
         SetParameterAssemblyFullName(string fullNameOfAssembly)
         {
-            if (String.IsNullOrEmpty(fullNameOfAssembly))
+            if (string.IsNullOrEmpty(fullNameOfAssembly))
             {
                 throw PSTraceSource.NewArgumentException("fullNameOfAssembly", DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfAssembly");
             }

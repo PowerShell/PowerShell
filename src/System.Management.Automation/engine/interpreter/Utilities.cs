@@ -925,7 +925,7 @@ namespace System.Management.Automation.Interpreter
         [Conditional("DEBUG")]
         public static void NotEmpty(string str)
         {
-            Debug.Assert(!String.IsNullOrEmpty(str));
+            Debug.Assert(!string.IsNullOrEmpty(str));
         }
     }
 

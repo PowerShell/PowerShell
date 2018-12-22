@@ -374,7 +374,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             // if we get a base InformationRecord object, check if the computerName is
                             // populated in the Source field
-                            if (!String.IsNullOrEmpty(informationRecord.Source))
+                            if (!string.IsNullOrEmpty(informationRecord.Source))
                             {
                                 string computerName;
                                 Guid jobInstanceId;
@@ -474,7 +474,7 @@ namespace System.Management.Automation.Remoting.Internal
         internal static ErrorRecord AddSourceTagToError(ErrorRecord errorRecord, Guid sourceId)
         {
             if (errorRecord == null) return null;
-            if (errorRecord.ErrorDetails == null) errorRecord.ErrorDetails = new ErrorDetails(String.Empty);
+            if (errorRecord.ErrorDetails == null) errorRecord.ErrorDetails = new ErrorDetails(string.Empty);
             errorRecord.ErrorDetails.RecommendedAction = CreateInformationalMessage(sourceId, errorRecord.ErrorDetails.RecommendedAction);
             return errorRecord;
         }

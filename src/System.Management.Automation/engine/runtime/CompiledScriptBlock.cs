@@ -1417,7 +1417,7 @@ namespace System.Management.Automation
 
                             string errorMessage = StringUtil.Format(SecuritySupportStrings.CouldNotEncryptContent, textToLog, error.ToString());
                             PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
-                                            0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
+                                            0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? string.Empty);
                         }
                         else
                         {
@@ -1440,12 +1440,12 @@ namespace System.Management.Automation
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)
             {
                 PSEtwLog.LogOperationalWarning(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
-                    segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
+                    segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? string.Empty);
             }
             else
             {
                 PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
-                    segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
+                    segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? string.Empty);
             }
 
             return true;
@@ -1477,7 +1477,7 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    string fullCertificateContent = String.Join(Environment.NewLine, logSetting.EncryptionCertificate);
+                    string fullCertificateContent = string.Join(Environment.NewLine, logSetting.EncryptionCertificate);
 
                     // If the certificate has changed, drop all of our cached information
                     ResetCertificateCacheIfNeeded(fullCertificateContent);
@@ -1511,7 +1511,7 @@ namespace System.Management.Automation
                         // they can just wait on the compromised box and see the sensitive data eventually anyways.
                         string errorMessage = StringUtil.Format(SecuritySupportStrings.CouldNotUseCertificate, error.ToString());
                         PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
-                                        0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
+                                        0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? string.Empty);
 
                         return true;
                     }
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation
 
                             string errorMessage = StringUtil.Format(SecuritySupportStrings.CertificateContainsPrivateKey, certificateForLog);
                             PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
-                                            0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
+                                            0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? string.Empty);
                         }
                     }
                 }
@@ -1546,14 +1546,14 @@ namespace System.Management.Automation
         }
 
         private static object s_syncObject = new Object();
-        private static string s_lastSeenCertificate = String.Empty;
+        private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
 
         // Reset any static caches if the certificate has changed
         private static void ResetCertificateCacheIfNeeded(string certificate)
         {
-            if (!String.Equals(s_lastSeenCertificate, certificate, StringComparison.Ordinal))
+            if (!string.Equals(s_lastSeenCertificate, certificate, StringComparison.Ordinal))
             {
                 s_hasProcessedCertificate = false;
                 s_lastSeenCertificate = certificate;

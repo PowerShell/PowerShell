@@ -191,7 +191,7 @@ namespace System.Management.Automation
                 return _definition;
             }
         }
-        private string _definition = String.Empty;
+        private string _definition = string.Empty;
 
         /// <summary>
         /// Sets the new definition for the alias.
@@ -328,7 +328,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the description for the alias
         /// </summary>
-        public string Description { get; set; } = String.Empty;
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// If ResolvedCommand returns null, this property will

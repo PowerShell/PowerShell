@@ -786,7 +786,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (this.Type == (uint)WSManDataType.WSMAN_DATA_TYPE_TEXT)
                         return _text;
                     else
-                        return String.Empty;
+                        return string.Empty;
                 }
             }
 

@@ -131,7 +131,7 @@ namespace Microsoft.WSMan.Management
 
             WSManHelper helper = new WSManHelper(this);
             IWSManEx wsmanObject = (IWSManEx)new WSManClass();
-            string connectionStr = String.Empty;
+            string connectionStr = string.Empty;
             connectionStr = helper.CreateConnectionString(null, port, computername, applicationname);
             IWSManSession m_SessionObj = null;
             try
@@ -146,7 +146,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                    if (!string.IsNullOrEmpty(m_SessionObj.Error))
                     {
                         XmlDocument ErrorDoc = new XmlDocument();
                         ErrorDoc.LoadXml(m_SessionObj.Error);

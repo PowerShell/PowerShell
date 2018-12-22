@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
                  (
-                    String.Compare(
+                    string.Compare(
                         pathInfo.Path,
                         _currentContentItem.PathInfo.Path,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, String.Empty, context);
+                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, string.Empty, context);
                     }
                     note = new PSNoteProperty("PSParentPath", parentPath);
                     result.Properties.Add(note, true);

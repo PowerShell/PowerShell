@@ -446,16 +446,16 @@ namespace System.Management.Automation.Language
         internal static readonly ConstructorInfo String_ctor_char_int =
             typeof(string).GetConstructor(new Type[] { typeof(char), typeof(int) });
         internal static readonly MethodInfo String_Concat_String =
-            typeof(string).GetMethod(nameof(String.Concat), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(string.Concat), staticPublicFlags, null,
                                      CallingConventions.Standard, new Type[] { typeof(string), typeof(string) }, null);
         internal static readonly MethodInfo String_Equals =
-            typeof(string).GetMethod(nameof(String.Equals), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null,
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
         internal static readonly MethodInfo String_get_Chars =
             typeof(string).GetMethod("get_Chars");
         internal static readonly PropertyInfo String_Length =
-            typeof(string).GetProperty(nameof(String.Length));
+            typeof(string).GetProperty(nameof(string.Length));
 
         internal static readonly MethodInfo StringOps_Compare =
             typeof(StringOps).GetMethod(nameof(StringOps.Compare), staticFlags);

@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            if (String.IsNullOrEmpty(ConfigurationName))
+            if (string.IsNullOrEmpty(ConfigurationName))
             {
                 if ((ParameterSetName == EnterPSSessionCommand.ComputerNameParameterSet) ||
                     (ParameterSetName == EnterPSSessionCommand.UriParameterSet))
@@ -218,8 +218,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // convert null to String.Empty for VM/Container session
-                    ConfigurationName = String.Empty;
+                    // convert null to string.Empty for VM/Container session
+                    ConfigurationName = string.Empty;
                 }
             }
         }
@@ -1207,7 +1207,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Dbg.Assert(!String.IsNullOrEmpty(ContainerId), "ContainerId has to be set.");
+                Dbg.Assert(!string.IsNullOrEmpty(ContainerId), "ContainerId has to be set.");
 
                 ContainerConnectionInfo connectionInfo = null;
 

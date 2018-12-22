@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foundMatch = true;
                     if (ShouldProcess(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventResource,
                             currentEvent.SourceIdentifier),
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.SourceIdentifierNotFound, _sourceIdentifier)),
                     "INVALID_SOURCE_IDENTIFIER",
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventIdentifierNotFound, _eventIdentifier)),
                     "INVALID_EVENT_IDENTIFIER",

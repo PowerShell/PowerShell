@@ -46,7 +46,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("assembly");
             }
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
             {
                 throw PSTraceSource.NewArgumentException("baseName");
             }
@@ -155,12 +155,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("assembly");
             }
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
             {
                 throw PSTraceSource.NewArgumentException("baseName");
             }
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
             {
                 throw PSTraceSource.NewArgumentException("resourceId");
             }
@@ -197,7 +197,7 @@ namespace System.Management.Automation
                 text = resourceManager.GetString(resourceId);
             }
 
-            if (String.IsNullOrEmpty(text) && s_DFT_monitorFailingResourceLookup)
+            if (string.IsNullOrEmpty(text) && s_DFT_monitorFailingResourceLookup)
             {
                 Diagnostics.Assert(false,
                     "Lookup failure: baseName " + baseName + " resourceId " + resourceId);

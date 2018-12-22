@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             List<string> pathsToProcess = new List<string>();
             ProviderInfo provider = null;
 
-            if (String.Equals(this.ParameterSetName, "ByLiteralPath", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(this.ParameterSetName, "ByLiteralPath", StringComparison.OrdinalIgnoreCase))
             {
                 foreach (string path in _paths)
                 {

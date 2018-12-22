@@ -91,7 +91,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0} [{1}-{2}] [{3}->{4}]",
+            return string.Format(CultureInfo.InvariantCulture, "{0} [{1}-{2}] [{3}->{4}]",
                 (IsFault ? "fault" : "catch(" + ExceptionType.Name + ")"),
                 StartIndex, EndIndex,
                 HandlerStartIndex, HandlerEndIndex
@@ -229,11 +229,11 @@ namespace System.Management.Automation.Interpreter
         {
             if (IsClear)
             {
-                return String.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
+                return string.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
             }
             else
             {
-                return String.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
+                return string.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
             }
         }
     }

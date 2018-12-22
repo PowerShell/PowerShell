@@ -56,7 +56,7 @@ namespace System.Management.Automation
         {
             MamlClassHelpInfo mamlClassHelpInfo = new MamlClassHelpInfo(xmlNode, helpCategory);
 
-            if (String.IsNullOrEmpty(mamlClassHelpInfo.Name))
+            if (string.IsNullOrEmpty(mamlClassHelpInfo.Name))
                 return null;
 
             mamlClassHelpInfo.AddCommonHelpProperties();

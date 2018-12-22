@@ -567,7 +567,7 @@ namespace System.Management.Automation.Language
         /// <param name="label">label name. Can be null</param>
         private void CheckLabelExists(StatementAst ast, string label)
         {
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 return;
             }
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.InvalidInstanceProperty),
                             ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            String.Join("', '", tableKeys));
+                            string.Join("', '", tableKeys));
                     }
                 }
             }

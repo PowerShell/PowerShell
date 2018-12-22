@@ -1483,7 +1483,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Cached Window Title, for systems that needs it
         /// </summary>
-        private string _title = String.Empty;
+        private string _title = string.Empty;
 
         /// <summary>
         /// Gets or sets the title of the displayed window. The example
@@ -1549,7 +1549,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
             }
         }
 

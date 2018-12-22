@@ -263,7 +263,7 @@ namespace System.Management.Automation
                 "ProviderInvocationException.RetrieveMessage needs innerException");
                 return string.Empty;
             }
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs errorId");
@@ -277,7 +277,7 @@ namespace System.Management.Automation
             }
 
             string format = resourceStr;
-            if (String.IsNullOrEmpty(format))
+            if (string.IsNullOrEmpty(format))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage bad errorId " + errorId);
@@ -288,7 +288,7 @@ namespace System.Management.Automation
             if (path == null)
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -297,7 +297,7 @@ namespace System.Management.Automation
             else
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -312,7 +312,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get { return (String.IsNullOrEmpty(_message)) ? base.Message : _message; }
+            get { return (string.IsNullOrEmpty(_message)) ? base.Message : _message; }
         }
         [NonSerialized]
         private string _message /* = null */;
@@ -511,7 +511,7 @@ namespace System.Management.Automation
         {
             get { return _itemName; }
         }
-        private string _itemName = String.Empty;
+        private string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.

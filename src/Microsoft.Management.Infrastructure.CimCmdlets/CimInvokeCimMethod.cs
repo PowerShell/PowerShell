@@ -376,7 +376,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     declaration = cimClass.CimClassMethods[methodName];
                     if (declaration == null)
                     {
-                        throw new ArgumentException(String.Format(
+                        throw new ArgumentException(string.Format(
                                 CultureInfo.CurrentUICulture, Strings.InvalidMethod, methodName, className));
                     }
                 }
@@ -391,7 +391,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     CimMethodParameterDeclaration paramDeclaration = declaration.Parameters[parameterName];
                     if (paramDeclaration == null)
                     {
-                        throw new ArgumentException(String.Format(
+                        throw new ArgumentException(string.Format(
                             CultureInfo.CurrentUICulture, Strings.InvalidMethodParameter, parameterName, methodName, className));
                     }
                     parameter = CimMethodParameter.Create(

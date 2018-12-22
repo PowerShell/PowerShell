@@ -154,7 +154,7 @@ namespace System.Management.Automation
 
             string helpFile = providerInfo.HelpFile;
 
-            if (String.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
+            if (string.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
             {
                 return;
             }
@@ -191,7 +191,7 @@ namespace System.Management.Automation
             }
 
             string location = MUIFileSearcher.LocateFile(helpFileToLoad, searchPaths);
-            if (String.IsNullOrEmpty(location))
+            if (string.IsNullOrEmpty(location))
                 throw new FileNotFoundException(helpFile);
 
             XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -209,7 +209,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.Name, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         helpItemsNode = node;
                         break;
@@ -227,7 +227,7 @@ namespace System.Management.Automation
                     for (int i = 0; i < helpItemsNode.ChildNodes.Count; i++)
                     {
                         XmlNode node = helpItemsNode.ChildNodes[i];
-                        if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "providerHelp", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.Name, "providerHelp", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             HelpInfo helpInfo = ProviderHelpInfo.Load(node);
 
@@ -385,7 +385,7 @@ namespace System.Management.Automation
             }
 
             string providerName = helpRequest.Provider;
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 providerName = this._sessionState.Path.CurrentLocation.Provider.Name;
             }

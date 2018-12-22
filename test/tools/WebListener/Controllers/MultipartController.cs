@@ -24,7 +24,7 @@ namespace mvc.Controllers
             _environment = environment;
         }
         public ActionResult Index()
-        {   
+        {
             return View();
         }
 
@@ -70,7 +70,7 @@ namespace mvc.Controllers
             Hashtable headers = new Hashtable();
             foreach (var key in Request.Headers.Keys)
             {
-                headers.Add(key, String.Join(Constants.HeaderSeparator, Request.Headers[key]));
+                headers.Add(key, string.Join(Constants.HeaderSeparator, Request.Headers[key]));
             }
             Hashtable output = new Hashtable
             {

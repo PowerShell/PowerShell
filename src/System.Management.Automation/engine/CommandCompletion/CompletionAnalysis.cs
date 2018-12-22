@@ -597,7 +597,7 @@ namespace System.Management.Automation
             else
             {
                 IScriptPosition cursor = completionContext.CursorPosition;
-                bool isCursorLineEmpty = String.IsNullOrWhiteSpace(cursor.Line);
+                bool isCursorLineEmpty = string.IsNullOrWhiteSpace(cursor.Line);
                 var tokenBeforeCursor = completionContext.TokenBeforeCursor;
                 bool isLineContinuationBeforeCursor = false;
                 if (tokenBeforeCursor != null)
@@ -858,7 +858,7 @@ namespace System.Management.Automation
                     if (keywordAst != null)
                     {
                         // Handle only empty line
-                        if (String.IsNullOrWhiteSpace(cursor.Line))
+                        if (string.IsNullOrWhiteSpace(cursor.Line))
                         {
                             // Check if the cursor outside of last child of hashtable and within the hashtable
                             if (cursor.Offset > lastChildofHashtableAst.Extent.EndOffset &&
@@ -935,7 +935,7 @@ namespace System.Management.Automation
         private static string GetFirstLineSubString(string stringToComplete, out bool hasNewLine)
         {
             hasNewLine = false;
-            if (!String.IsNullOrEmpty(stringToComplete))
+            if (!string.IsNullOrEmpty(stringToComplete))
             {
                 var index = stringToComplete.IndexOfAny(Utils.Separators.CrLf);
                 if (index >= 0)
@@ -1035,14 +1035,14 @@ namespace System.Management.Automation
                             {
                                 List<string> existingValues = null;
                                 WildcardPattern wildcardPattern = null;
-                                bool isDependsOnProperty = String.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
+                                bool isDependsOnProperty = string.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
                                 bool hasNewLine = false;
                                 string stringQuote = (completionContext.TokenAtCursor is StringExpandableToken) ? "\"" : "'";
                                 if ((property.ValueMap != null && property.ValueMap.Count > 0) || isDependsOnProperty)
                                 {
                                     shouldContinue = false;
                                     existingValues = new List<string>();
-                                    if (String.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
                                     {
                                         var arrayAst = Ast.GetAncestorAst<ArrayLiteralAst>(lastAst);
                                         if (arrayAst != null && arrayAst.Elements.Count > 0)
@@ -1120,9 +1120,9 @@ namespace System.Management.Automation
                                                 var dynamicKeywordAst = statementAst as DynamicKeywordStatementAst;
                                                 if (dynamicKeywordAst != null &&
                                                     dynamicKeywordAst != keywordAst &&
-                                                    !String.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
+                                                    !string.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
                                                 {
-                                                    if (!String.IsNullOrEmpty(dynamicKeywordAst.ElementName))
+                                                    if (!string.IsNullOrEmpty(dynamicKeywordAst.ElementName))
                                                     {
                                                         StringBuilder sb = new StringBuilder("[", 50);
                                                         sb.Append(dynamicKeywordAst.Keyword.Keyword);
@@ -1332,7 +1332,7 @@ namespace System.Management.Automation
 
             IEnumerable<DynamicKeyword> keywords = configureAst.DefinedKeywords.Where(
                 k => // Node is special case, legal in both Resource and Meta configuration
-                    String.Compare(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) == 0 ||
+                    string.Compare(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) == 0 ||
                     (
                         // Check compatibility between Resource and Configuration Type
                         k.IsCompatibleWithConfigurationType(configureAst.ConfigurationType) &&
@@ -1346,7 +1346,7 @@ namespace System.Management.Automation
 
             if (keywords != null && keywords.Any())
             {
-                string commandName = (completionContext.WordToComplete ?? String.Empty) + "*";
+                string commandName = (completionContext.WordToComplete ?? string.Empty) + "*";
                 var wildcardPattern = WildcardPattern.Get(commandName, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
                 // Filter by name
@@ -1519,7 +1519,7 @@ namespace System.Management.Automation
                         string expandedString = null;
                         var expandableStringAst = new ExpandableStringExpressionAst(strConst.Extent, strConst.Value, StringConstantType.BareWord);
                         if (CompletionCompleters.IsPathSafelyExpandable(expandableStringAst: expandableStringAst,
-                                                                        extraText: String.Empty,
+                                                                        extraText: string.Empty,
                                                                         executionContext: completionContext.ExecutionContext,
                                                                         expandedString: out expandedString))
                         {
@@ -1673,7 +1673,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is FileRedirectionAst || CompleteAgainstSwitchFile(lastAst, completionContext.TokenBeforeCursor))
             {
                 string wordToComplete =
-                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, String.Empty, completionContext);
+                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
                 if (wordToComplete != null)
                 {
                     needFileCompletion = true;
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation
             else
             {
                 string wordToComplete =
-                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, String.Empty, completionContext);
+                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
                 if (wordToComplete != null)
                 {
                     completionContext.WordToComplete = wordToComplete;

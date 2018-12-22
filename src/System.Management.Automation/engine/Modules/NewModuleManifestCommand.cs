@@ -845,7 +845,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 insert = " " + insert;
             }
-            return String.Format(CultureInfo.InvariantCulture, "#{0}{1}", insert, streamWriter.NewLine);
+            return string.Format(CultureInfo.InvariantCulture, "#{0}{1}", insert, streamWriter.NewLine);
         }
 
         /// <summary>
@@ -907,7 +907,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
             {
-                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, String.Join(",", CompatiblePSEditions));
+                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);
                 var er = new ErrorRecord(ioe, "Modules_DuplicateEntriesInCompatiblePSEditions", ErrorCategory.InvalidArgument, CompatiblePSEditions);
                 ThrowTerminatingError(er);
@@ -972,7 +972,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Append(streamWriter.NewLine);
 
                     if (_rootModule == null)
-                        _rootModule = String.Empty;
+                        _rootModule = string.Empty;
 
                     BuildModuleManifest(result, "RootModule", Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 
@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ValidateUriParameterValue(Uri uri, string parameterName)
         {
-            Dbg.Assert(!String.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
+            Dbg.Assert(!string.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
 
             if (uri != null && !Uri.IsWellFormedUriString(uri.AbsoluteUri, UriKind.Absolute))
             {

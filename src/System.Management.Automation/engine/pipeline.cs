@@ -216,7 +216,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
-            if ((invocation == null) || String.IsNullOrEmpty(invocation.Line))
+            if ((invocation == null) || string.IsNullOrEmpty(invocation.Line))
             {
                 if (hostInterface != null)
                 {
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (!String.IsNullOrEmpty(logElement))
+            if (!string.IsNullOrEmpty(logElement))
             {
                 _eventLogBuffer.Add(logElement);
             }

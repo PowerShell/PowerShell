@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (String.IsNullOrEmpty(module.HelpInfoUri))
+            if (string.IsNullOrEmpty(module.HelpInfoUri))
             {
                 if (!noErrors)
                 {
@@ -361,7 +361,7 @@ namespace Microsoft.PowerShell.Commands
                     // multiple cultures or multiple modules are involved.
                     e = new UpdatableHelpExceptionContext(new UpdatableHelpSystemException(
                         "HelpCultureNotSupported", StringUtil.Format(HelpDisplayStrings.CannotMatchUICulturePattern,
-                        String.Join(", ", exception.Cultures)),
+                        string.Join(", ", exception.Cultures)),
                         ErrorCategory.InvalidArgument, exception.Cultures, null));
                     e.Modules = exception.Modules;
                     e.Cultures = exception.Cultures;
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="name">module name with globbing</param>
         private void ProcessModuleWithGlobbing(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.ModuleNameNullOrEmpty));
                 WriteError(e.ErrorRecord);

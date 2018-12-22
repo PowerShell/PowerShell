@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _lastObjectAsString = _lastObject.ToString();
                 }
-                if (0 == String.Compare(
+                if (0 == string.Compare(
                     inputString,
                     _lastObjectAsString,
                     StringComparison.CurrentCulture))

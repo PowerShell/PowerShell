@@ -47,12 +47,12 @@ namespace System.Management.Automation
         /// <returns>SyntaxHelpInfo object created based on information provided</returns>
         internal static SyntaxHelpInfo GetHelpInfo(string name, string text, HelpCategory category)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             SyntaxHelpInfo syntaxHelpInfo = new SyntaxHelpInfo(name, text, category);
 
-            if (String.IsNullOrEmpty(syntaxHelpInfo.Name))
+            if (string.IsNullOrEmpty(syntaxHelpInfo.Name))
                 return null;
 
             syntaxHelpInfo.AddCommonHelpProperties();

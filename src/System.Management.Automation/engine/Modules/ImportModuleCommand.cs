@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 bool alreadyLoaded = false;
-                if (!String.IsNullOrEmpty(rootedPath))
+                if (!string.IsNullOrEmpty(rootedPath))
                 {
                     // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
                     // TODO/FIXME: (for example checking ModuleType != Manifest below seems incorrect - cdxml modules also declare their own version)

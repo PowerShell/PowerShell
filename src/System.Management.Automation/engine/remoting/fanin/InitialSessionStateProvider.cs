@@ -678,7 +678,7 @@ namespace System.Management.Automation.Remoting
                     string assemblyPath;
                     if (!Path.IsPathRooted(assemblyName))
                     {
-                        if (!String.IsNullOrEmpty(applicationBase) && Directory.Exists(applicationBase))
+                        if (!string.IsNullOrEmpty(applicationBase) && Directory.Exists(applicationBase))
                         {
                             assemblyPath = Path.Combine(applicationBase, assemblyName);
                         }
@@ -1003,7 +1003,7 @@ namespace System.Management.Automation.Remoting
 
             foreach (ConfigTypeEntry configEntry in ConfigFileKeys)
             {
-                if (String.Equals(configEntry.Key, de.Key.ToString(), StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(configEntry.Key, de.Key.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     validKey = true;
 
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation.Remoting
         {
             string value = obj as string;
 
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 try
                 {
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation.Remoting
         {
             string value = obj as string;
 
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 try
                 {
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Remoting
         {
             string value = obj as string;
 
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 try
                 {
@@ -1168,10 +1168,10 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string aliasKey in hashtable.Keys)
                 {
-                    if (!String.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasValueToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasDescriptionToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasOptionsToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasValueToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasDescriptionToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasOptionsToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, aliasKey, key, path));
                         return false;
@@ -1221,9 +1221,9 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string functionKey in hashtable.Keys)
                 {
-                    if (!String.Equals(functionKey, FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(functionKey, FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(functionKey, FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(functionKey, FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(functionKey, FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(functionKey, FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, functionKey, key, path));
                         return false;
@@ -1267,8 +1267,8 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string variableKey in hashtable.Keys)
                 {
-                    if (!String.Equals(variableKey, VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(variableKey, VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(variableKey, VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(variableKey, VariableValueToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, variableKey, key, path));
                         return false;
@@ -1544,7 +1544,7 @@ namespace System.Management.Automation.Remoting
                         !ext.Equals(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         throw new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.DISCInvalidExtension, key, ext,
-                            String.Join(", ", StringLiterals.PowerShellScriptFileExtension, StringLiterals.PowerShellModuleFileExtension)));
+                            string.Join(", ", StringLiterals.PowerShellScriptFileExtension, StringLiterals.PowerShellModuleFileExtension)));
                     }
                 }
                 catch (ArgumentException argumentException)
@@ -1805,7 +1805,7 @@ namespace System.Management.Automation.Remoting
                     foreach (string roleCapability in roleCapabilities)
                     {
                         string roleCapabilityPath = GetRoleCapabilityPath(roleCapability);
-                        if (String.IsNullOrEmpty(roleCapabilityPath))
+                        if (string.IsNullOrEmpty(roleCapabilityPath))
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapability, roleCapability, roleCapability + PSRCExtension);
                             PSInvalidOperationException ioe = new PSInvalidOperationException(message);
@@ -1960,7 +1960,7 @@ namespace System.Management.Automation.Remoting
             bool providerVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleProviders);
             bool processDefaultSessionStateVisibility = false;
 
-            if (!String.IsNullOrEmpty(initialSessionState))
+            if (!string.IsNullOrEmpty(initialSessionState))
             {
                 sessionType = (SessionType)Enum.Parse(typeof(SessionType), initialSessionState, true);
 
@@ -2010,7 +2010,7 @@ namespace System.Management.Automation.Remoting
                     System.Collections.Generic.HashSet<string> addedProviders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (string provider in providers)
                     {
-                        if (!String.IsNullOrEmpty(provider))
+                        if (!string.IsNullOrEmpty(provider))
                         {
                             // Look up providers from provider name including wildcards.
                             var providersFound = iss.Providers.LookUpByName(provider);
@@ -2154,7 +2154,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string alias in aliases)
                     {
-                        if (!String.IsNullOrEmpty(alias))
+                        if (!string.IsNullOrEmpty(alias))
                         {
                             bool found = false;
 
@@ -2265,7 +2265,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string type in types)
                     {
-                        if (!String.IsNullOrEmpty(type))
+                        if (!string.IsNullOrEmpty(type))
                         {
                             iss.Types.Add(new SessionStateTypeEntry(type));
                         }
@@ -2282,7 +2282,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string format in formats)
                     {
-                        if (!String.IsNullOrEmpty(format))
+                        if (!string.IsNullOrEmpty(format))
                         {
                             iss.Formats.Add(new SessionStateFormatEntry(format));
                         }
@@ -2327,7 +2327,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (string script in startupScripts)
                     {
-                        if (!String.IsNullOrEmpty(script))
+                        if (!string.IsNullOrEmpty(script))
                         {
                             iss.StartupScripts.Add(script);
                         }
@@ -2469,7 +2469,7 @@ namespace System.Management.Automation.Remoting
 
                 // If it's just a string, this is a visible command
                 string command = commandObject as string;
-                if (!String.IsNullOrEmpty(command))
+                if (!string.IsNullOrEmpty(command))
                 {
                     ProcessVisibleCommand(iss, command, commandModuleNames);
                 }
@@ -2521,7 +2521,7 @@ namespace System.Management.Automation.Remoting
             if ((commandName == null) || (parameters == null))
             {
                 string hashtableKey = commandName;
-                if (String.IsNullOrEmpty(hashtableKey))
+                if (string.IsNullOrEmpty(hashtableKey))
                 {
                     IEnumerator errorKey = commandModification.Keys.GetEnumerator();
                     errorKey.MoveNext();
@@ -2557,7 +2557,7 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string parameterModification in parameter.Keys)
                 {
-                    if (String.Equals("Name", parameterModification, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals("Name", parameterModification, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
@@ -2571,7 +2571,7 @@ namespace System.Management.Automation.Remoting
 
                     foreach (string parameterModificationValue in TryGetStringArray(parameter[parameterModification]))
                     {
-                        if (!String.IsNullOrEmpty(parameterModificationValue))
+                        if (!string.IsNullOrEmpty(parameterModificationValue))
                         {
                             currentParameterModificationValue.Add(parameterModificationValue);
                         }
@@ -2625,14 +2625,14 @@ namespace System.Management.Automation.Remoting
         {
             string name = TryGetValue(alias, ConfigFileConstants.AliasNameToken);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
             string value = TryGetValue(alias, ConfigFileConstants.AliasValueToken);
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
@@ -2643,7 +2643,7 @@ namespace System.Management.Automation.Remoting
 
             string optionsString = TryGetValue(alias, ConfigFileConstants.AliasOptionsToken);
 
-            if (!String.IsNullOrEmpty(optionsString))
+            if (!string.IsNullOrEmpty(optionsString))
             {
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
@@ -2665,14 +2665,14 @@ namespace System.Management.Automation.Remoting
         {
             string name = TryGetValue(function, ConfigFileConstants.FunctionNameToken);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
             string value = TryGetValue(function, ConfigFileConstants.FunctionValueToken);
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
@@ -2681,7 +2681,7 @@ namespace System.Management.Automation.Remoting
 
             string optionsString = TryGetValue(function, ConfigFileConstants.FunctionOptionsToken);
 
-            if (!String.IsNullOrEmpty(optionsString))
+            if (!string.IsNullOrEmpty(optionsString))
             {
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
@@ -2705,14 +2705,14 @@ namespace System.Management.Automation.Remoting
         {
             string name = TryGetValue(variable, ConfigFileConstants.VariableNameToken);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
 
             string value = TryGetValue(variable, ConfigFileConstants.VariableValueToken);
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
@@ -2723,7 +2723,7 @@ namespace System.Management.Automation.Remoting
 
             string optionsString = TryGetValue(variable, ConfigFileConstants.AliasOptionsToken);
 
-            if (!String.IsNullOrEmpty(optionsString))
+            if (!string.IsNullOrEmpty(optionsString))
             {
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
@@ -2773,7 +2773,7 @@ namespace System.Management.Automation.Remoting
                 return table[key].ToString();
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>

@@ -162,7 +162,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
@@ -211,7 +211,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
@@ -539,7 +539,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, delegatecomputer);
                 }
@@ -599,7 +599,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, delegatecomputer);
                 }
@@ -878,7 +878,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }

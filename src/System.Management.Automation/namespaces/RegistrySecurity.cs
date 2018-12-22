@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
             IRegistryWrapper key = null;
 
             // Validate input first.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentNullException("path");
             }
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         {
             IRegistryWrapper key = null;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }

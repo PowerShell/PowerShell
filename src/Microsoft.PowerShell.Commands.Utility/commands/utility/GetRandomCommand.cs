@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
-                new ArgumentException(String.Format(
+                new ArgumentException(string.Format(
                     CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, min, max)),
                 "MinGreaterThanOrEqualMax",
                 ErrorCategory.InvalidArgument,

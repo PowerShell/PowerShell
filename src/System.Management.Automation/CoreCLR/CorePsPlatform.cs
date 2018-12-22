@@ -253,7 +253,7 @@ namespace System.Management.Automation
             {
                 case Platform.XDG_Type.CONFIG:
                     //the user has set XDG_CONFIG_HOME corresponding to profile path
-                    if (String.IsNullOrEmpty(xdgconfighome))
+                    if (string.IsNullOrEmpty(xdgconfighome))
                     {
                         //xdg values have not been set
                         return xdgConfigHomeDefault;
@@ -266,7 +266,7 @@ namespace System.Management.Automation
 
                 case Platform.XDG_Type.DATA:
                     //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome))
+                    if (string.IsNullOrEmpty(xdgdatahome))
                     {
                         // create the xdg folder if needed
                         if (!Directory.Exists(xdgDataHomeDefault))
@@ -290,7 +290,7 @@ namespace System.Management.Automation
 
                 case Platform.XDG_Type.USER_MODULES:
                     //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome))
+                    if (string.IsNullOrEmpty(xdgdatahome))
                     {
                         //xdg values have not been set
                         if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
@@ -317,7 +317,7 @@ namespace System.Management.Automation
 
                 case Platform.XDG_Type.CACHE:
                     //the user has set XDG_CACHE_HOME
-                    if (String.IsNullOrEmpty(xdgcachehome))
+                    if (string.IsNullOrEmpty(xdgcachehome))
                     {
                         //xdg values have not been set
                         if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
@@ -432,7 +432,7 @@ namespace System.Management.Automation
                         catch (UnauthorizedAccessException)
                         {
                             // directory creation may fail if the account doesn't have filesystem permission such as some service accounts
-                            folderPath = String.Empty;
+                            folderPath = string.Empty;
                         }
                     }
                     break;

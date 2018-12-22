@@ -36,7 +36,7 @@ namespace System.Management.Automation.Host
         {
             // the only required parameter is label.
 
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 // "label" is not localizable
                 throw PSTraceSource.NewArgumentException("label", DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Host
         {
             // the only required parameter is label.
 
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 // "label" is not localizable
                 throw PSTraceSource.NewArgumentException("label", DescriptionsStrings.NullOrEmptyErrorTemplate, "label");

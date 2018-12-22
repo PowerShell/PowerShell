@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            string errorMessage = String.Format(
+                            string errorMessage = string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 TranscriptStrings.TranscriptFileReadOnly,
                                 effectiveFilePath);
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                 }
 
-                string errorMessage = String.Format(
+                string errorMessage = string.Format(
                     System.Globalization.CultureInfo.CurrentCulture,
                     TranscriptStrings.CannotStartTranscription,
                     e.Message);

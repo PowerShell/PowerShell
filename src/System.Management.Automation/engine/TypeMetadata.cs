@@ -1208,7 +1208,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the type name of the bindable type
         /// </summary>
-        internal string TypeName { get; } = String.Empty;
+        internal string TypeName { get; } = string.Empty;
 
         /// <summary>
         /// Gets a dictionary of the compiled parameter metadata for this Type.
@@ -1270,7 +1270,7 @@ namespace System.Management.Automation
                 if (processingDynamicParameters)
                 {
                     // When processing dynamic parameters, parameter definitions come from the user,
-                    // Invalid data could be passed in, or the parameter could be actually disabled. 
+                    // Invalid data could be passed in, or the parameter could be actually disabled.
                     if (parameterDefinition == null || parameterDefinition.IsDisabled()) { continue; }
                 }
 

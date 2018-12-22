@@ -134,7 +134,7 @@ namespace System.Management.Automation
             // If the flow statement has no label, it always matches (because it just means, break or continue from
             // the most nested loop.)  Otherwise, compare the labels.
 
-            return String.IsNullOrEmpty(flowLabel) || flowLabel.Equals(loopLabel, StringComparison.OrdinalIgnoreCase);
+            return string.IsNullOrEmpty(flowLabel) || flowLabel.Equals(loopLabel, StringComparison.OrdinalIgnoreCase);
         }
     }
 
@@ -941,7 +941,7 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval?.ToString() ?? String.Empty;
+                string lvalString = lval?.ToString() ?? string.Empty;
 
                 return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval == null ? String.Empty : PSObject.ToStringParser(context, lval);
+                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
 
                 return BoolToObject(wcp.IsMatch(lvalString) ^ notLike);
             }
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
             {
                 object val = ParserOps.Current(errorPosition, list);
 
-                string lvalString = val == null ? String.Empty : PSObject.ToStringParser(context, val);
+                string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
 
                 if (wcp.IsMatch(lvalString) ^ notLike)
                 {
@@ -1152,7 +1152,7 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval == null ? String.Empty : PSObject.ToStringParser(context, lval);
+                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
 
                 // Find a match in the string.
                 Match m = r.Match(lvalString);
@@ -1195,7 +1195,7 @@ namespace System.Management.Automation
                     {
                         object val = list.Current;
 
-                        string lvalString = val == null ? String.Empty : PSObject.ToStringParser(context, val);
+                        string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
 
                         // Find a single match in the string.
                         Match m = r.Match(lvalString);
@@ -1426,7 +1426,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
             PSObject mshObj = obj as PSObject;
             if (mshObj == null)
@@ -1762,7 +1762,7 @@ namespace System.Management.Automation
             Type exceptionType, IScriptExtent errorPosition, string resourceIdAndErrorId, string resourceString, Exception innerException, params object[] args)
         {
             // errToken may be null
-            if (String.IsNullOrEmpty(resourceIdAndErrorId))
+            if (string.IsNullOrEmpty(resourceIdAndErrorId))
                 throw PSTraceSource.NewArgumentException("resourceIdAndErrorId");
             // innerException may be null
             // args may be null or empty
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation
                 {
                     message = StringUtil.Format(resourceString, args);
                 }
-                if (String.IsNullOrEmpty(message))
+                if (string.IsNullOrEmpty(message))
                 {
                     Dbg.Assert(false,
                         "Could not load text for parser exception '"
@@ -1836,8 +1836,8 @@ namespace System.Management.Automation
         {
             // errToken may be null
             // only assert -- be permissive at runtime
-            Dbg.Assert(!String.IsNullOrEmpty(message), "message was null or empty");
-            Dbg.Assert(!String.IsNullOrEmpty(errorId), "errorId was null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(message), "message was null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(errorId), "errorId was null or empty");
             // innerException may be null
 
             RuntimeException e;
@@ -1940,7 +1940,7 @@ namespace System.Management.Automation
                 {
                     message = StringUtil.Format(resourceString, args);
                 }
-                if (String.IsNullOrEmpty(message))
+                if (string.IsNullOrEmpty(message))
                 {
                     message = "Could not load text for msh script tracing message id '" + messageId + "'";
                     Dbg.Assert(false, message);

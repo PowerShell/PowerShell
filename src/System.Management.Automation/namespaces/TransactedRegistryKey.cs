@@ -1140,7 +1140,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             if (options < RegistryValueOptions.None || options > RegistryValueOptions.DoNotExpandEnvironmentNames)
             {
                 string resourceTemplate = RegistryProviderStrings.Arg_EnumIllegalVal;
-                string resource = String.Format(CultureInfo.CurrentCulture, resourceTemplate, options.ToString());
+                string resource = string.Format(CultureInfo.CurrentCulture, resourceTemplate, options.ToString());
                 throw new ArgumentException(resource);
             }
             bool doNotExpand = (options == RegistryValueOptions.DoNotExpandEnvironmentNames);
@@ -1262,7 +1262,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                                     // we found an empty string.  But if we're at the end of the data,
                                     // it's just the extra null terminator.
                                     if (nextNull != len - 1)
-                                        strings.Add(String.Empty);
+                                        strings.Add(string.Empty);
                                 }
                             }
                             else
@@ -1274,7 +1274,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                         data = new String[strings.Count];
                         strings.CopyTo((String[])data, 0);
-                        //data = strings.GetAllItems(String.class);
+                        //data = strings.GetAllItems(string.class);
                     }
                     break;
                 case Win32Native.REG_NONE:
@@ -1560,7 +1560,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 else
                 {
                     string resourceTemplate = RegistryProviderStrings.Arg_RegSetBadArrType;
-                    string resource = String.Format(CultureInfo.CurrentCulture, resourceTemplate, value.GetType().Name);
+                    string resource = string.Format(CultureInfo.CurrentCulture, resourceTemplate, value.GetType().Name);
                     throw new ArgumentException(resource);
                 }
             }
@@ -1639,7 +1639,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     if (str != null)
                     {
                         string resourceTemplate = RegistryProviderStrings.UnauthorizedAccess_RegistryKeyGeneric_Key;
-                        string resource = String.Format(CultureInfo.CurrentCulture, resourceTemplate, str);
+                        string resource = string.Format(CultureInfo.CurrentCulture, resourceTemplate, str);
                         throw new UnauthorizedAccessException(resource);
                     }
                     else
@@ -1668,7 +1668,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 case Win32Native.ERROR_FILE_NOT_FOUND:
                     {
                         string resourceTemplate = RegistryProviderStrings.Arg_RegKeyNotFound;
-                        string resource = String.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                        string resource = string.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
                         throw new IOException(resource);
                     }
 
@@ -1684,7 +1684,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     if (str != null)
                     {
                         string resourceTemplate = RegistryProviderStrings.UnauthorizedAccess_RegistryKeyGeneric_Key;
-                        string resource = String.Format(CultureInfo.CurrentCulture, resourceTemplate, str);
+                        string resource = string.Format(CultureInfo.CurrentCulture, resourceTemplate, str);
                         throw new UnauthorizedAccessException(resource);
                     }
                     else

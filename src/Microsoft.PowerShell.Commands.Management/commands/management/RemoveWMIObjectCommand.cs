@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_path != null)
                 {
                     mPath = new ManagementPath(_path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = this.Namespace;
                     }

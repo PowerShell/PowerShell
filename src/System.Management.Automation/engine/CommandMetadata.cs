@@ -312,7 +312,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static CommandMetadata Get(string commandName, Type cmdletType, ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 throw PSTraceSource.NewArgumentException("commandName");
             }
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CommandMetadata(string commandName, Type cmdletType, ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 throw PSTraceSource.NewArgumentException("commandName");
             }
@@ -448,7 +448,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the command this metadata represents
         /// </summary>
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// The Type which this CommandMetadata represents.
@@ -505,7 +505,7 @@ namespace System.Management.Automation
         /// Related link URI for Get-Help -Online
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpUri { get; set; } = String.Empty;
+        public string HelpUri { get; set; } = string.Empty;
 
         /// <summary>
         /// The remoting capabilities of this cmdlet, when exposed in a context
@@ -836,10 +836,10 @@ namespace System.Management.Automation
                     _wrappedCommand, _wrappedCommandType);
             }
 
-            string dynamicParamblock = String.Empty;
+            string dynamicParamblock = string.Empty;
             if (generateDynamicParameters && this.ImplementsDynamicParameters)
             {
-                dynamicParamblock = String.Format(CultureInfo.InvariantCulture, @"
+                dynamicParamblock = string.Format(CultureInfo.InvariantCulture, @"
 dynamicparam
 {{{0}}}
 

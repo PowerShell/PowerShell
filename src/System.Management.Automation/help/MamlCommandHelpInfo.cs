@@ -256,7 +256,7 @@ namespace System.Management.Automation
         {
             MamlCommandHelpInfo mamlCommandHelpInfo = new MamlCommandHelpInfo(xmlNode, helpCategory);
 
-            if (String.IsNullOrEmpty(mamlCommandHelpInfo.Name))
+            if (string.IsNullOrEmpty(mamlCommandHelpInfo.Name))
                 return null;
 
             mamlCommandHelpInfo.AddCommonHelpProperties();

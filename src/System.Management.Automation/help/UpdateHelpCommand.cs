@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
                     // Search for the HelpInfo XML
                     foreach (string path in _path)
                     {
-                        if (String.IsNullOrEmpty(path))
+                        if (string.IsNullOrEmpty(path))
                         {
                             PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                             WriteError(e.ErrorRecord);

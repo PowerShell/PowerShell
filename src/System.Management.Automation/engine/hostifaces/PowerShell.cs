@@ -5254,7 +5254,7 @@ namespace System.Management.Automation
 
                         localPipeline.IsChild = _shell.IsChild;
 
-                        if (!String.IsNullOrEmpty(_shell.HistoryString))
+                        if (!string.IsNullOrEmpty(_shell.HistoryString))
                         {
                             localPipeline.SetHistoryString(_shell.HistoryString);
                         }

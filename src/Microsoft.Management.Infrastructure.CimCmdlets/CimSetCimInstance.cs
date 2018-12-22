@@ -221,7 +221,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         if ((property.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly)
                         {
                             // can not modify ReadOnly property
-                            exception = new CimException(String.Format(CultureInfo.CurrentUICulture,
+                            exception = new CimException(string.Format(CultureInfo.CurrentUICulture,
                                 Strings.CouldNotModifyReadonlyProperty, key, cimInstance));
                             return false;
                         }
@@ -269,7 +269,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             if (e.NativeErrorCode == NativeErrorCode.Failed)
                             {
-                                string errorMessage = String.Format(CultureInfo.CurrentUICulture,
+                                string errorMessage = string.Format(CultureInfo.CurrentUICulture,
                                     Strings.UnableToAddPropertyToInstance,
                                     newProperty.Name,
                                     cimInstance);

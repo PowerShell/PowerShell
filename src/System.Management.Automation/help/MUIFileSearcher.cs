@@ -93,11 +93,11 @@ namespace System.Management.Automation
         /// </summary>
         private void SearchForFiles()
         {
-            if (String.IsNullOrEmpty(this.Target))
+            if (string.IsNullOrEmpty(this.Target))
                 return;
 
             string pattern = Path.GetFileName(this.Target);
-            if (String.IsNullOrEmpty(pattern))
+            if (string.IsNullOrEmpty(pattern))
                 return;
 
             Collection<string> normalizedSearchPaths = NormalizeSearchPaths(this.Target, this.SearchPaths);
@@ -206,7 +206,7 @@ namespace System.Management.Automation
             List<string> cultureNameList = new List<string>();
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
-            while (culture != null && !String.IsNullOrEmpty(culture.Name))
+            while (culture != null && !string.IsNullOrEmpty(culture.Name))
             {
                 cultureNameList.Add(culture.Name);
                 culture = culture.Parent;
@@ -255,7 +255,7 @@ namespace System.Management.Automation
 
             // step 1: if target has path attached, directly locate
             //         file from there.
-            if (!String.IsNullOrEmpty(target) && !String.IsNullOrEmpty(Path.GetDirectoryName(target)))
+            if (!string.IsNullOrEmpty(target) && !string.IsNullOrEmpty(Path.GetDirectoryName(target)))
             {
                 string directory = Path.GetDirectoryName(target);
 

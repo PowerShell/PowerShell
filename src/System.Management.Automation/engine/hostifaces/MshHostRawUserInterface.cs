@@ -71,7 +71,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+            return string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0},{1}", Width, Height);
+            return string.Format(CultureInfo.InvariantCulture, "{0},{1}", Width, Height);
         }
 
         /// <summary>
@@ -829,7 +829,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0},{1} ; {2},{3}", Left, Top, Right, Bottom);
+            return string.Format(CultureInfo.InvariantCulture, "{0},{1} ; {2},{3}", Left, Top, Right, Bottom);
         }
 
         /// <summary>

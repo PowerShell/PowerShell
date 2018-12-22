@@ -147,14 +147,14 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             object logData = context.GetVariableValue(SpecialVariables.PSLogUserDataPath);
 
             if (logData == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             return logData.ToString();

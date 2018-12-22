@@ -204,7 +204,7 @@ namespace System.Management.Automation
 
                 foreach (string pattern in globPatterns)
                 {
-                    if (!String.IsNullOrEmpty(pattern))
+                    if (!string.IsNullOrEmpty(pattern))
                     {
                         result.Add(
                             WildcardPattern.Get(

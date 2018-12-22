@@ -1371,7 +1371,7 @@ namespace System.Management.Automation.Runspaces
     {
         protected override void SetItem(int index, string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
@@ -1387,7 +1387,7 @@ namespace System.Management.Automation.Runspaces
 
         protected override void InsertItem(int index, string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
@@ -1434,7 +1434,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < this.Count; i++)
             {
                 string str = this[i];
-                if (String.IsNullOrEmpty(str))
+                if (string.IsNullOrEmpty(str))
                 {
                     throw PSTraceSource.NewArgumentException("strings");
                 }
@@ -1675,7 +1675,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="typeName"></param>
         public TypeData(string typeName) : this()
         {
-            if (String.IsNullOrWhiteSpace(typeName))
+            if (string.IsNullOrWhiteSpace(typeName))
                 throw PSTraceSource.NewArgumentNullException("typeName");
             this.TypeName = typeName;
         }
@@ -2081,7 +2081,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="name"></param>
         internal TypeMemberData(string name)
         {
-            if (String.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw PSTraceSource.NewArgumentException("name");
 
             Name = name;
@@ -2658,7 +2658,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (String.Compare(member.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(member.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     noteAsMemberInfo = member;
                 }
@@ -2688,7 +2688,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     else
                     {
-                        note.noteValue = String.Compare(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase) != 0;
+                        note.noteValue = string.Compare(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase) != 0;
                     }
                     return true;
                 }
@@ -2710,7 +2710,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (String.Compare(member.Name, memberName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(member.Name, memberName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     AddError(errors, typeName, TypesXmlStrings.MemberShouldNotBePresent, member.Name);
                     return false;
@@ -2725,7 +2725,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo m = members[i];
-                if (String.Compare(m.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(m.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     member = m;
                 }
@@ -2771,7 +2771,7 @@ namespace System.Management.Automation.Runspaces
                 string memberName = members[i].Name;
                 for (int j = 0; j < s_standardMembers.Length; j++)
                 {
-                    if (String.Equals(memberName, s_standardMembers[j], StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(memberName, s_standardMembers[j], StringComparison.OrdinalIgnoreCase))
                     {
                         found = true;
                         break;
@@ -2965,7 +2965,7 @@ namespace System.Management.Automation.Runspaces
         internal static void ProcessAliasData(ConcurrentBag<string> errors, string typeName, AliasPropertyData aliasData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             // ReferencedMemberName should not be an empty string
-            if (String.IsNullOrEmpty(aliasData.ReferencedMemberName))
+            if (string.IsNullOrEmpty(aliasData.ReferencedMemberName))
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "AliasPropertyData", "ReferencedMemberName");
                 return;
@@ -3064,7 +3064,7 @@ namespace System.Management.Automation.Runspaces
             Collection<string> referencedProperties = new Collection<string>();
             foreach (string name in propertySetData.ReferencedProperties)
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     AddError(errors, typeName, TypesXmlStrings.TypeDataShouldNotBeNullOrEmpty, "PropertySetData", "ReferencedProperties");
                     continue;
@@ -3177,7 +3177,7 @@ namespace System.Management.Automation.Runspaces
         private void ProcessTypeDataToAdd(ConcurrentBag<string> errors, TypeData typeData)
         {
             string typeName = typeData.TypeName;
-            Dbg.Assert(!String.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
+            Dbg.Assert(!string.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
 
             var propertySets = new Collection<PropertySetData>();
             if (typeData.DefaultDisplayPropertySet != null)
@@ -3294,7 +3294,7 @@ namespace System.Management.Automation.Runspaces
         private void ProcessTypeDataToRemove(ConcurrentBag<string> errors, TypeData typeData)
         {
             string typeName = typeData.TypeName;
-            Dbg.Assert(!String.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
+            Dbg.Assert(!string.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
 
             // We always remove the whole type
             bool typeExist = false;
@@ -4225,7 +4225,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="typeName">the name of the type to remove from TypeTable</param>
         public void RemoveType(string typeName)
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
                 throw PSTraceSource.NewArgumentNullException("typeName");
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");

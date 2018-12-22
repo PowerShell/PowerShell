@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
             Encoding encoding, bool usingByteEncoding, bool waitForChanges, CmdletProvider provider,
             bool isRawStream)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentNullException("path");
             }
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
 #if !UNIX
-                if (!String.IsNullOrEmpty(streamName))
+                if (!string.IsNullOrEmpty(streamName))
                 {
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, fileAccess, fileShare);
                 }
@@ -816,7 +816,7 @@ namespace Microsoft.PowerShell.Commands
             catch (IOException)
             {
 #if !UNIX
-                if (!String.IsNullOrEmpty(streamName))
+                if (!string.IsNullOrEmpty(streamName))
                 {
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, requestedAccess, fileShare);
                 }

@@ -129,8 +129,8 @@ namespace System.Management.Automation.Help
             string message = string.Empty;
             SortedSet<string> sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
             SortedSet<string> sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
-            string modules = String.Join(", ", sortedModules);
-            string cultures = String.Join(", ", sortedCultures);
+            string modules = string.Join(", ", sortedModules);
+            string cultures = string.Join(", ", sortedCultures);
 
             if (commandType == UpdatableHelpCommandType.UpdateHelpCommand)
             {
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Help
         /// <param name="percent">progress percentage</param>
         internal UpdatableHelpProgressEventArgs(string moduleName, string status, int percent)
         {
-            Debug.Assert(!String.IsNullOrEmpty(status));
+            Debug.Assert(!string.IsNullOrEmpty(status));
 
             CommandType = UpdatableHelpCommandType.UnknownCommand;
             ProgressStatus = status;
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Help
         /// <param name="percent">progress percentage</param>
         internal UpdatableHelpProgressEventArgs(string moduleName, UpdatableHelpCommandType type, string status, int percent)
         {
-            Debug.Assert(!String.IsNullOrEmpty(status));
+            Debug.Assert(!string.IsNullOrEmpty(status));
 
             CommandType = type;
             ProgressStatus = status;
@@ -379,7 +379,7 @@ namespace System.Management.Automation.Help
         /// <returns>resolved URI</returns>
         private string ResolveUri(string baseUri, bool verbose)
         {
-            Debug.Assert(!String.IsNullOrEmpty(baseUri));
+            Debug.Assert(!string.IsNullOrEmpty(baseUri));
 
             // Directory.Exists checks if baseUri is a network drive or
             // a local directory. If baseUri is local, we don't need to resolve it.
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Help
             string uri = pathOverride;
             string unresolvedUri = document["HelpInfo"]["HelpContentURI"].InnerText;
 
-            if (String.IsNullOrEmpty(pathOverride))
+            if (string.IsNullOrEmpty(pathOverride))
             {
                 if (shouldResolveUri)
                 {
@@ -583,7 +583,7 @@ namespace System.Management.Automation.Help
 
             UpdatableHelpInfo helpInfo = new UpdatableHelpInfo(unresolvedUri, updatableHelpItem);
 
-            if (!String.IsNullOrEmpty(currentCulture))
+            if (!string.IsNullOrEmpty(currentCulture))
             {
                 WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
                 IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { currentCulture }, wildcardOptions);
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Help
                 }
             }
 
-            if (!String.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
+            if (!string.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
             {
                 // throw exception
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
@@ -1228,8 +1228,8 @@ namespace System.Management.Automation.Help
             // We only accept txt files and xml files
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (!String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
-                    && !String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new UpdatableHelpSystemException("HelpContentContainsInvalidFiles",
                         StringUtil.Format(HelpDisplayStrings.HelpContentContainsInvalidFiles), ErrorCategory.InvalidData,
@@ -1240,7 +1240,7 @@ namespace System.Management.Automation.Help
             // xml validation
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
                 {
                     if (xsd == null)
                     {
@@ -1339,7 +1339,7 @@ namespace System.Management.Automation.Help
                         }
                     }
                 }
-                else if (String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 
@@ -1494,7 +1494,7 @@ namespace System.Management.Automation.Help
         {
             var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);
             string defaultSourcePath = updatableHelpSetting?.DefaultSourcePath;
-            return String.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
+            return string.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
         }
 
         /// <summary>
@@ -1672,7 +1672,7 @@ namespace System.Management.Automation.Help
                 }
 
                 mappedDrive = new PSDriveInfo(_driveName, cmdlet.SessionState.Internal.GetSingleProvider("FileSystem"),
-                    path, String.Empty, credential);
+                    path, string.Empty, credential);
 
                 cmdlet.SessionState.Drive.New(mappedDrive, "local");
 

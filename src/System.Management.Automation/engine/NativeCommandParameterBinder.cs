@@ -187,7 +187,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!String.IsNullOrEmpty(arg))
+                if (!string.IsNullOrEmpty(arg))
                 {
                     _arguments.Append(separator);
 

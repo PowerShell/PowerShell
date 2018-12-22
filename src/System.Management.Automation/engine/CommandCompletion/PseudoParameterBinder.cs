@@ -523,7 +523,7 @@ namespace System.Management.Automation.Language
                     if (parameter.Type == typeof(SwitchParameter))
                     {
                         if ((value != null) &&
-                            (String.Equals("$false", value.Extent.Text, StringComparison.OrdinalIgnoreCase)))
+                            (string.Equals("$false", value.Extent.Text, StringComparison.OrdinalIgnoreCase)))
                         {
                             continue;
                         }

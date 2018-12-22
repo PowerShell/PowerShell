@@ -460,7 +460,7 @@ namespace System.Management.Automation
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = FindExecutable(startInfo.FileName);
                         bool notDone = true;
-                        if (!String.IsNullOrEmpty(executable))
+                        if (!string.IsNullOrEmpty(executable))
                         {
                             if (IsConsoleApplication(executable))
                             {
@@ -1152,7 +1152,7 @@ namespace System.Management.Automation
                 // We have the test 'utscript\Engine\TestOutDefaultRedirection.ps1' to check that a user defined
                 // Out-Default function should not cause a native command to be redirected. So here we should only
                 // compare the command name to avoid breaking change.
-                if (String.Equals(outputProcessor.CommandInfo.Name, "Out-Default", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(outputProcessor.CommandInfo.Name, "Out-Default", StringComparison.OrdinalIgnoreCase))
                 {
                     // Verify that this isn't an Out-Default added for transcribing
                     if (!outputProcessor.Command.MyInvocation.BoundParameters.ContainsKey("Transcript"))

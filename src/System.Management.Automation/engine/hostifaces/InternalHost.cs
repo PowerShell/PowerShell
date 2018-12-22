@@ -64,12 +64,12 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (String.IsNullOrEmpty(_nameResult))
+                if (string.IsNullOrEmpty(_nameResult))
                 {
                     _nameResult = _externalHostRef.Value.Name;
 
 #pragma warning disable 56503
-                    if (String.IsNullOrEmpty(_nameResult))
+                    if (string.IsNullOrEmpty(_nameResult))
                     {
                         throw PSTraceSource.NewNotImplementedException();
                     }

@@ -130,12 +130,12 @@ namespace System.Management.Automation
 
             if (descriptionFallback == null)
             {
-                descriptionFallback = String.Empty;
+                descriptionFallback = string.Empty;
             }
 
             if (vendorFallback == null)
             {
-                vendorFallback = String.Empty;
+                vendorFallback = string.Empty;
             }
 
             Name = name;
@@ -229,7 +229,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(ModuleName) || Path.IsPathRooted(ModuleName))
+                if (string.IsNullOrEmpty(ModuleName) || Path.IsPathRooted(ModuleName))
                 {
                     return ModuleName;
                 }
@@ -263,7 +263,7 @@ namespace System.Management.Automation
         public Collection<string> Formats { get; }
 
         private string _descriptionIndirect;
-        private string _descriptionFallback = String.Empty;
+        private string _descriptionFallback = string.Empty;
         private string _description;
         /// <summary>
         /// Description of mshsnapin
@@ -281,7 +281,7 @@ namespace System.Management.Automation
         }
 
         private string _vendorIndirect;
-        private string _vendorFallback = String.Empty;
+        private string _vendorFallback = string.Empty;
         private string _vendor;
         /// <summary>
         /// Vendor of mshsnapin
@@ -382,12 +382,12 @@ namespace System.Management.Automation
                 }
             }
 
-            if (String.IsNullOrEmpty(_description))
+            if (string.IsNullOrEmpty(_description))
             {
                 _description = _descriptionFallback;
             }
 
-            if (String.IsNullOrEmpty(_vendor))
+            if (string.IsNullOrEmpty(_vendor))
             {
                 _vendor = _vendorFallback;
             }
@@ -422,7 +422,7 @@ namespace System.Management.Automation
         /// <param name="psSnapinId">PSSnapIn Id to validate</param>
         internal static bool IsPSSnapinIdValid(string psSnapinId)
         {
-            if (String.IsNullOrEmpty(psSnapinId))
+            if (string.IsNullOrEmpty(psSnapinId))
             {
                 return false;
             }
@@ -712,9 +712,9 @@ namespace System.Management.Automation
 
             bool logPipelineExecutionDetails = false;
             string logPipelineExecutionDetailsStr = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_LogPipelineExecutionDetails, false);
-            if (!String.IsNullOrEmpty(logPipelineExecutionDetailsStr))
+            if (!string.IsNullOrEmpty(logPipelineExecutionDetailsStr))
             {
-                if (String.Compare("1", logPipelineExecutionDetailsStr, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare("1", logPipelineExecutionDetailsStr, StringComparison.OrdinalIgnoreCase) == 0)
                     logPipelineExecutionDetails = true;
             }
 

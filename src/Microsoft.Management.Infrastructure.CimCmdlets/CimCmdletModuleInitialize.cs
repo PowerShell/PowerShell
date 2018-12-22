@@ -83,7 +83,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             /// The string defining real cmdlet name
             /// </summary>
             internal string Value { get { return this._value; } }
-            private string _value = String.Empty;
+            private string _value = string.Empty;
 
             /// <summary>
             /// The string defining real cmdlet name

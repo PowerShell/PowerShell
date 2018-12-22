@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             if (prefix == null || prefix.Length == 0)
             {
-                return new XmlQualifiedName(_r.NameTable.Add(value), _r.LookupNamespace(String.Empty));
+                return new XmlQualifiedName(_r.NameTable.Add(value), _r.LookupNamespace(string.Empty));
             }
             else
             {

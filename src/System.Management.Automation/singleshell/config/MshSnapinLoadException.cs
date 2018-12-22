@@ -99,19 +99,19 @@ namespace System.Management.Automation.Runspaces
             // if _PSSnapin or _reason is empty, this exception is created using default
             // constructor. Don't create the error record since there is
             // no useful information anyway.
-            if (!String.IsNullOrEmpty(_PSSnapin) && !String.IsNullOrEmpty(_reason))
+            if (!string.IsNullOrEmpty(_PSSnapin) && !string.IsNullOrEmpty(_reason))
             {
                 Assembly currentAssembly = typeof(PSSnapInException).Assembly;
 
                 if (_warning)
                 {
                     _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "PSSnapInLoadWarning", ErrorCategory.ResourceUnavailable, null);
-                    _errorRecord.ErrorDetails = new ErrorDetails(String.Format(ConsoleInfoErrorStrings.PSSnapInLoadWarning, _PSSnapin, _reason));
+                    _errorRecord.ErrorDetails = new ErrorDetails(string.Format(ConsoleInfoErrorStrings.PSSnapInLoadWarning, _PSSnapin, _reason));
                 }
                 else
                 {
                     _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "PSSnapInLoadFailure", ErrorCategory.ResourceUnavailable, null);
-                    _errorRecord.ErrorDetails = new ErrorDetails(String.Format(ConsoleInfoErrorStrings.PSSnapInLoadFailure, _PSSnapin, _reason));
+                    _errorRecord.ErrorDetails = new ErrorDetails(string.Format(ConsoleInfoErrorStrings.PSSnapInLoadFailure, _PSSnapin, _reason));
                 }
             }
         }

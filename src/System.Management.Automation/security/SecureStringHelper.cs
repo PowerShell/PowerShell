@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell
                 unsafe
                 {
                     if (!CAPI.CryptProtectData(new IntPtr(&dataIn),
-                                                String.Empty,
+                                                string.Empty,
                                                 new IntPtr(&entropy),
                                                 IntPtr.Zero,
                                                 IntPtr.Zero,

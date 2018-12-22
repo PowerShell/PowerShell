@@ -34,7 +34,7 @@ namespace System.Management.Automation
 
             _underType = Enum.GetUnderlyingType(typeof(T));
 
-            if (String.IsNullOrWhiteSpace(expression))
+            if (string.IsNullOrWhiteSpace(expression))
             {
                 throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                     null, "EmptyInputString", EnumExpressionEvaluatorStrings.EmptyInputString);
@@ -74,7 +74,7 @@ namespace System.Management.Automation
 
             foreach (string inputClause in expression)
             {
-                if (String.IsNullOrWhiteSpace(inputClause))
+                if (string.IsNullOrWhiteSpace(inputClause))
                 {
                     throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                         null, "EmptyInputString", EnumExpressionEvaluatorStrings.EmptyInputString);
@@ -474,7 +474,7 @@ namespace System.Management.Automation
             result = result.Trim();
 
             // possible empty token because white spaces are enclosed in quotation marks.
-            if (String.IsNullOrWhiteSpace(result))
+            if (string.IsNullOrWhiteSpace(result))
             {
                 throw InterpreterError.NewInterpreterException(input, typeof(RuntimeException),
                     null, "EmptyTokenString", EnumExpressionEvaluatorStrings.EmptyTokenString,

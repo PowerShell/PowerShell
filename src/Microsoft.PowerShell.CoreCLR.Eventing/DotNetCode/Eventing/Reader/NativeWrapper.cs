@@ -1035,7 +1035,7 @@ namespace System.Diagnostics.Eventing.Reader
                 while (true)
                 {
                     string s = Marshal.PtrToStringUni(pointer);
-                    if (String.IsNullOrEmpty(s))
+                    if (string.IsNullOrEmpty(s))
                         break;
                     keywordsList.Add(s);
                     //nr of bytes = # chars * 2 + 2 bytes for character '\0'.

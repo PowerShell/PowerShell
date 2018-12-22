@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell
                 if (!IsLocalFile(fi.FullName))
                 {
                     // Get the signature of the file.
-                    if (String.IsNullOrEmpty(script.ScriptContents))
+                    if (string.IsNullOrEmpty(script.ScriptContents))
                     {
                         reasonMessage = StringUtil.Format(Authenticode.Reason_FileContentUnavailable, path);
                         reason = new UnauthorizedAccessException(reasonMessage);
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell
                 // make it so.
 
                 // Get the signature of the file.
-                if (String.IsNullOrEmpty(script.ScriptContents))
+                if (string.IsNullOrEmpty(script.ScriptContents))
                 {
                     reasonMessage = StringUtil.Format(Authenticode.Reason_FileContentUnavailable, path);
                     reason = new UnauthorizedAccessException(reasonMessage);
@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell
                 // But accept mshxml files from publishers that we
                 // trust, or files in the system protected directories
                 bool reasonSet = false;
-                if (String.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
                 {
                     string[] trustedDirectories = new string[]
                         { Platform.GetFolderPath(Environment.SpecialFolder.System),
@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell
 
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
-                if (String.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
                     if (!IsUntrustedPublisher(signature, file)) return true;
             }
 
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell
 
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
-                if (String.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
 

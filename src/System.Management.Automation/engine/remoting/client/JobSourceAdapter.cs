@@ -369,7 +369,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for this store
         /// </summary>
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Get a token that allows for construction of a job with a previously assigned

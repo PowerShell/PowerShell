@@ -164,12 +164,12 @@ namespace System.Management.Automation
         /// <param name="toolTip">The text for the tooltip with details to be displayed about the object.</param>
         public CompletionResult(string completionText, string listItemText, CompletionResultType resultType, string toolTip)
         {
-            if (String.IsNullOrEmpty(completionText))
+            if (string.IsNullOrEmpty(completionText))
             {
                 throw PSTraceSource.NewArgumentNullException("completionText");
             }
 
-            if (String.IsNullOrEmpty(listItemText))
+            if (string.IsNullOrEmpty(listItemText))
             {
                 throw PSTraceSource.NewArgumentNullException("listItemText");
             }
@@ -179,7 +179,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentOutOfRangeException("resultType", resultType);
             }
 
-            if (String.IsNullOrEmpty(toolTip))
+            if (string.IsNullOrEmpty(toolTip))
             {
                 throw PSTraceSource.NewArgumentNullException("toolTip");
             }

@@ -134,7 +134,7 @@ namespace System.Management.Automation.Language
             }
 
             string fileName = position.File;
-            if (String.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(fileName))
             {
                 fileName = ParserStrings.TextForWordLine;
             }
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Language
             string sourceLine = position.StartScriptPosition.Line.TrimEnd();
 
             string message = string.Empty;
-            if (!String.IsNullOrEmpty(sourceLine))
+            if (!string.IsNullOrEmpty(sourceLine))
             {
                 int spacesBeforeError = position.StartColumnNumber - 1;
                 int errorLength = (position.StartLineNumber == position.EndLineNumber)
@@ -536,12 +536,12 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            if ((String.IsNullOrEmpty(otherPosition.File)) &&
+            if ((string.IsNullOrEmpty(otherPosition.File)) &&
                 (otherPosition.StartLineNumber == StartLineNumber) &&
                 (otherPosition.StartColumnNumber == StartColumnNumber) &&
                 (otherPosition.EndLineNumber == EndLineNumber) &&
                 (otherPosition.EndColumnNumber == EndColumnNumber) &&
-                (String.IsNullOrEmpty(otherPosition.Text)))
+                (string.IsNullOrEmpty(otherPosition.Text)))
             {
                 return true;
             }
@@ -582,7 +582,7 @@ namespace System.Management.Automation.Language
 
             if (string.IsNullOrEmpty(line))
             {
-                Line = String.Empty;
+                Line = string.Empty;
             }
             else
             {
@@ -727,7 +727,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }

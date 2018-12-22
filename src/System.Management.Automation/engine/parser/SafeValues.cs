@@ -434,8 +434,8 @@ namespace System.Management.Automation.Language
                 // depending on the nested expression we may retrieve a variable, or even need to
                 // execute a sub-expression. The result of which may be returned
                 // as a scalar, array or nested array. If the unwrap of first array doesn't contain a nested
-                // array we can then pass it to String.Join. If it *does* contain an array,
-                // we need to unwrap the inner array and pass *that* to String.Join.
+                // array we can then pass it to string.Join. If it *does* contain an array,
+                // we need to unwrap the inner array and pass *that* to string.Join.
                 //
                 // This means we get the same answer with GetPowerShell() as in the command-line
                 // { echo "abc $true $(1) $(2,3) def" }.Invoke() gives the same answer as
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Language
                         object[] subResult = resultArray[subExpressionOffset] as object[];
                         if (subResult != null)
                         {
-                            subExpressionResult[subExpressionOffset] = String.Join(ofs, subResult);
+                            subExpressionResult[subExpressionOffset] = string.Join(ofs, subResult);
                         }
                         else // it is a scalar, so we can just add it to our collections
                         {

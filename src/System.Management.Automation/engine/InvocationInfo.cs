@@ -282,13 +282,13 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!String.IsNullOrEmpty(ScriptPosition.File))
+                if (!string.IsNullOrEmpty(ScriptPosition.File))
                 {
                     return Path.GetDirectoryName(ScriptPosition.File);
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }

@@ -306,10 +306,10 @@ namespace System.Management.Automation
 
         private static bool Match(string target, string pattern)
         {
-            if (String.IsNullOrEmpty(pattern))
+            if (string.IsNullOrEmpty(pattern))
                 return true;
 
-            if (String.IsNullOrEmpty(target))
+            if (string.IsNullOrEmpty(target))
                 target = string.Empty;
 
             WildcardPattern matcher = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);

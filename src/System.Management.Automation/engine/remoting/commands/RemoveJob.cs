@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         private bool FindJobsMatchingByNameHelper(List<Job> matches, IList<Job> jobsToSearch, string name,
                         Hashtable duplicateDetector, bool recurse, bool writeobject, bool checkIfJobCanBeRemoved)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(name), "Caller should ensure that name is not null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(name), "Caller should ensure that name is not null or empty");
 
             bool jobFound = false;
 
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
                 // check if the job is available in any of the
                 // top level jobs
 
-                //if (String.Equals(job.Name, name, StringComparison.OrdinalIgnoreCase))
+                //if (string.Equals(job.Name, name, StringComparison.OrdinalIgnoreCase))
                 if (pattern.IsMatch(job.Name))
                 {
                     jobFound = true;

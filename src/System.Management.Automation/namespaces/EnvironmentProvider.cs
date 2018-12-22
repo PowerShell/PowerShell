@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.EnvironmentDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             object result = null;
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             if (value == null)
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             Environment.SetEnvironmentVariable(name, null);
@@ -192,9 +192,9 @@ namespace Microsoft.PowerShell.Commands
                     //       see https://github.com/PowerShell/PowerShell/issues/6305.
                     //       However, because retrieval *by name* later is invariably
                     //       case-INsensitive, in effect only a *single* variable exists.
-                    //       We simply ask Environment.GetEnvironmentVariable() for the effective value 
+                    //       We simply ask Environment.GetEnvironmentVariable() for the effective value
                     //       and use that as the only entry, because for a given key 'foo' (and all its case variations),
-                    //       that is guaranteed to match what $env:FOO and [environment]::GetEnvironmentVariable('foo') return. 
+                    //       that is guaranteed to match what $env:FOO and [environment]::GetEnvironmentVariable('foo') return.
                     //       (If, by contrast, we just used `entry` as-is every time a duplicate is encountered,
                     //        it could - intermittently - represent a value *other* than the effective one.)
                     string effectiveValue = Environment.GetEnvironmentVariable((string)entry.Key);
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
                         // Note: We *recreate* the entry so that the specific name casing of the
                         //       effective definition is also reflected. However, if the case variants
                         //       define the same value, it is unspecified which name variant is reflected
-                        //       in Get-Item env: output; given the always case-insensitive nature of the retrieval, 
+                        //       in Get-Item env: output; given the always case-insensitive nature of the retrieval,
                         //       that shouldn't matter.
                         providerTable.Remove((string)entry.Key);
                         providerTable.Add((string)entry.Key, entry);

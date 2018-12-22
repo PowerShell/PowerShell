@@ -84,12 +84,12 @@ namespace System.Management.Automation
             params object[] args)
             : base(errorCategory, invocationInfo, errorPosition, errorId, null, null)
         {
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw PSTraceSource.NewArgumentException("resourceString");
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 throw PSTraceSource.NewArgumentException("errorId");
             }
@@ -195,12 +195,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("invocationInfo");
             }
 
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw PSTraceSource.NewArgumentException("resourceString");
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 throw PSTraceSource.NewArgumentException("errorId");
             }
@@ -241,14 +241,14 @@ namespace System.Management.Automation
             ParameterBindingException pbex,
             string resourceString,
             params object[] args)
-            : base(String.Empty, innerException)
+            : base(string.Empty, innerException)
         {
             if (pbex == null)
             {
                 throw PSTraceSource.NewArgumentNullException("pbex");
             }
 
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw PSTraceSource.NewArgumentException("resourceString");
             }
@@ -398,7 +398,7 @@ namespace System.Management.Automation
                 return _parameterName;
             }
         }
-        private string _parameterName = String.Empty;
+        private string _parameterName = string.Empty;
 
         /// <summary>
         /// Gets the type the parameter is expecting.
@@ -495,9 +495,9 @@ namespace System.Management.Automation
                 _args.CopyTo(messageArgs, 6);
             }
 
-            string result = String.Empty;
+            string result = string.Empty;
 
-            if (!String.IsNullOrEmpty(_resourceString))
+            if (!string.IsNullOrEmpty(_resourceString))
             {
                 result = StringUtil.Format(_resourceString, messageArgs);
             }

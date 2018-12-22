@@ -2480,7 +2480,7 @@ function Get-PSImplicitRemotingSession
                     NewVMRunspaceTemplate,
                     /* 0 */ this.GenerateConnectionStringForNewRunspace(),
                     /* 1 */ this.GenerateCredentialParameter(),
-                    /* 2 */ String.IsNullOrEmpty(vmConfigurationName) ? String.Empty : String.Concat("-ConfigurationName ", vmConfigurationName));
+                    /* 2 */ string.IsNullOrEmpty(vmConfigurationName) ? string.Empty : string.Concat("-ConfigurationName ", vmConfigurationName));
             }
             else
             {
@@ -2493,7 +2493,7 @@ function Get-PSImplicitRemotingSession
                         NewContainerRunspaceTemplate,
                         /* 0 */ this.GenerateConnectionStringForNewRunspace(),
                         /* 1 */ containerConnectionInfo.ContainerProc.RunAsAdmin ? "-RunAsAdministrator" : string.Empty,
-                        /* 2 */ String.IsNullOrEmpty(containerConfigurationName) ? String.Empty : String.Concat("-ConfigurationName ", containerConfigurationName));
+                        /* 2 */ string.IsNullOrEmpty(containerConfigurationName) ? string.Empty : string.Concat("-ConfigurationName ", containerConfigurationName));
                 }
                 else
                 {

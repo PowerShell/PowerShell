@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
             string extension = Path.GetExtension(name);
             string fileBaseName;
             module = null;
-            if (String.IsNullOrEmpty(extension) || !ModuleIntrinsics.IsPowerShellModuleExtension(extension))
+            if (string.IsNullOrEmpty(extension) || !ModuleIntrinsics.IsPowerShellModuleExtension(extension))
             {
                 fileBaseName = name;
                 extension = null;
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string folder in Directory.EnumerateDirectories(path))
                 {
                     string moduleName = Path.GetFileName(folder);
-                    if (String.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         fileBaseName = moduleName;
 #endif
@@ -400,7 +400,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!isValidModuleVersion)
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, Modules.SkippingInvalidModuleVersionFolder,
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, Modules.SkippingInvalidModuleVersionFolder,
                                                 version.ToString(), moduleBase));
                 }
             }
@@ -627,7 +627,7 @@ namespace Microsoft.PowerShell.Commands
             string extension = Path.GetExtension(moduleSpecification.Name);
             // First check for fully-qualified paths - either absolute or relative
             string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
-            if (String.IsNullOrEmpty(rootedPath))
+            if (string.IsNullOrEmpty(rootedPath))
             {
                 rootedPath = FixupFileName(moduleBase, moduleSpecification.Name, extension);
             }
@@ -975,7 +975,7 @@ namespace Microsoft.PowerShell.Commands
                                 PSModuleInfo module = CreateModuleInfoForGetModule(file, refresh);
                                 if (module != null)
                                 {
-                                    if (String.Equals(moduleName, module.Name, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleName, module.Name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         foundModule = true;
                                         // We need to list all versions of the module.
@@ -1191,7 +1191,7 @@ namespace Microsoft.PowerShell.Commands
                     ImportModuleOptions options = new ImportModuleOptions();
                     bool found = false;
 
-                    moduleInfo = LoadModule(file, moduleBase: null, prefix: String.Empty, ss: null, ref options, flags, out found);
+                    moduleInfo = LoadModule(file, moduleBase: null, prefix: string.Empty, ss: null, ref options, flags, out found);
                 }
 
                 // return fake PSModuleInfo if can't read the file for any reason
@@ -2118,7 +2118,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (writingErrors)
                         {
-                            string invalidNameStr = String.Join(", ", invalidNames);
+                            string invalidNameStr = string.Join(", ", invalidNames);
                             string errorMsg = StringUtil.Format(Modules.InvalidExperimentalFeatureName, invalidNameStr);
                             WriteError(new ErrorRecord(new ArgumentException(errorMsg),
                                                        "Modules_InvalidExperimentalFeatureName",
@@ -2425,7 +2425,7 @@ namespace Microsoft.PowerShell.Commands
                         Modules.PSEditionNotSupported,
                         moduleManifestPath,
                         PSVersionInfo.PSEdition,
-                        String.Join(',', inferredCompatiblePSEditions));
+                        string.Join(',', inferredCompatiblePSEditions));
 
                     InvalidOperationException ioe = new InvalidOperationException(message);
 
@@ -2937,7 +2937,7 @@ namespace Microsoft.PowerShell.Commands
                 ImportModuleOptions nestedModuleOptions = new ImportModuleOptions();
 
                 // If the nested manifest explicitly (no wildcards) specifies functions to be exported then allow all functions to be exported
-                // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the 
+                // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the
                 // specified function list.
                 nestedModuleOptions.AllowNestedModuleFunctionsToExport = ((exportedFunctions != null) && !exportedFunctionsContainsWildcards);
 
@@ -3052,13 +3052,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     bool found;
                     newManifestInfo = LoadModuleNamedInManifest(
-                        parentModule: null, 
+                        parentModule: null,
                         moduleSpecification: new ModuleSpecification(actualRootModule),
-                        moduleBase: moduleBase, 
+                        moduleBase: moduleBase,
                         searchModulePath: false,
-                        prefix: resolvedCommandPrefix, 
-                        ss: ss, 
-                        options: options, 
+                        prefix: resolvedCommandPrefix,
+                        ss: ss,
+                        options: options,
                         manifestProcessingFlags: manifestProcessingFlags,
                         loadTypesFiles: (exportedTypeFiles == null || 0 == exportedTypeFiles.Count),        // If types files already loaded, don't load snapin files
                         loadFormatFiles: (exportedFormatFiles == null || 0 == exportedFormatFiles.Count),   // if format files already loaded, don't load snapin files
@@ -3388,7 +3388,7 @@ namespace Microsoft.PowerShell.Commands
                     // implicitly export functions and cmdlets.
                     if ((ss != null) && (!ss.Internal.UseExportList))
                     {
-                        // For cross language boundaries, implicitly import all functions only if 
+                        // For cross language boundaries, implicitly import all functions only if
                         // this manifest *does* exort functions explicitly.
                         List<WildcardPattern> fnMatchPattern = (
                                                                 (manifestScriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
@@ -4220,7 +4220,7 @@ namespace Microsoft.PowerShell.Commands
 
             CultureInfo culture = System.Globalization.CultureInfo.CurrentUICulture;
             CultureInfo currentCulture = culture;
-            while (currentCulture != null && !String.IsNullOrEmpty(currentCulture.Name))
+            while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 StringBuilder stringBuilder = new StringBuilder(dir);
                 stringBuilder.Append("\\");
@@ -5259,7 +5259,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!BaseForce && importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                 {
                     moduleFileFound = true;
- 
+
                     // If the module has already been loaded, then while loading it the second time, we should load it with the DefaultCommandPrefix specified in the module manifest. (If there is no Prefix from command line)
                     if (string.IsNullOrEmpty(prefix))
                     {
@@ -5916,7 +5916,7 @@ namespace Microsoft.PowerShell.Commands
             // If system is in lock down mode, we disallow trusted modules that use the dotsource operator while simultaneously using
             // wild cards for exporting module functions, unless there is an overriding manifest that explicitly exports functions
             // without wild cards.
-            // This is because dotsourcing brings functions into module scope and it is too easy to inadvertently or maliciously 
+            // This is because dotsourcing brings functions into module scope and it is too easy to inadvertently or maliciously
             // expose harmful private functions that run in trusted (FullLanguage) mode.
             if (!manifestWithExplicitFunctionExport && ss.Internal.FunctionsExportedWithWildcard &&
                 (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
@@ -6440,7 +6440,7 @@ namespace Microsoft.PowerShell.Commands
         {
             PSModuleInfo module = null;
 
-            if (String.IsNullOrEmpty(moduleName) && String.IsNullOrEmpty(fileName) && assemblyToLoad == null)
+            if (string.IsNullOrEmpty(moduleName) && string.IsNullOrEmpty(fileName) && assemblyToLoad == null)
                 throw PSTraceSource.NewArgumentNullException("moduleName,fileName,assemblyToLoad");
 
             // Load the dll and process any cmdlets it might contain...
@@ -6925,7 +6925,7 @@ namespace Microsoft.PowerShell.Commands
         internal static bool IsPrefixedCommand(CommandInfo commandInfo)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo is not null");
-            Dbg.Assert(!String.IsNullOrEmpty(commandInfo.Prefix), "Caller should verify that the commandInfo has prefix");
+            Dbg.Assert(!string.IsNullOrEmpty(commandInfo.Prefix), "Caller should verify that the commandInfo has prefix");
 
             string verb, noun;
             bool isPrefixed = CmdletInfo.SplitCmdletName(commandInfo.Name, out verb, out noun)
@@ -7449,13 +7449,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the context cached ModuleTable module for import only if found and has safe language boundaries while
         /// exporting all functions by default.
-        /// 
+        ///
         /// This protects cached trusted modules that exported all functions in a trusted context, from being re-used
         /// in an untrusted context and thus exposing functions that were meant to be private in that context.
-        /// 
+        ///
         /// Returning false forces module import to re-import the module from file with the current context and prevent
         /// all module functions from being exported by default.
-        /// 
+        ///
         /// Note that module loading order is important with this check when the system is *locked down with DeviceGuard*.
         /// If a submodule that does not explicitly export any functions is imported from the command line, its useless
         /// because no functions are exported (default fn export is explictly disallowed on locked down systems).

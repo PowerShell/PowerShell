@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (innerException == null) ? String.Empty : innerException.Message);
+                (innerException == null) ? string.Empty : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
         // sort by servicename
         private static int ServiceComparison(ServiceController x, ServiceController y)
         {
-            return String.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteNonTerminatingError(
                         pattern,
-                        String.Empty,
+                        string.Empty,
                         pattern,
                         null,
                         "NoServiceFoundForGivenName",
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!found && !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
                     WriteNonTerminatingError(
-                        String.Empty,
+                        string.Empty,
                         pattern,
                         pattern,
                         null,
@@ -1609,7 +1609,7 @@ namespace Microsoft.PowerShell.Commands
                     service = new ServiceController(serviceName);
                     objServiceShouldBeDisposed = true;
                 }
-                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+                Diagnostics.Assert(!string.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if
                 // there is no such service.  This checks whether
@@ -1646,7 +1646,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     hScManager = NativeMethods.OpenSCManagerW(
-                        String.Empty,
+                        string.Empty,
                         null,
                         NativeMethods.SC_MANAGER_CONNECT
                         );
@@ -1681,7 +1681,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
                     // Modify startup type or display name or credential
-                    if (!String.IsNullOrEmpty(DisplayName)
+                    if (!string.IsNullOrEmpty(DisplayName)
                         || ServiceStartupType.InvalidValue != StartupType || Credential != null)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
@@ -1985,14 +1985,14 @@ namespace Microsoft.PowerShell.Commands
         [ArchitectureSensitive]
         protected override void BeginProcessing()
         {
-            Diagnostics.Assert(!String.IsNullOrEmpty(Name),
+            Diagnostics.Assert(!string.IsNullOrEmpty(Name),
                 "null ServiceName");
-            Diagnostics.Assert(!String.IsNullOrEmpty(BinaryPathName),
+            Diagnostics.Assert(!string.IsNullOrEmpty(BinaryPathName),
                 "null BinaryPathName");
 
             // confirm the operation first
             // this is always false if WhatIf is set
-            if (!ShouldProcessServiceOperation(DisplayName ?? String.Empty, Name))
+            if (!ShouldProcessServiceOperation(DisplayName ?? string.Empty, Name))
             {
                 return;
             }
@@ -2262,7 +2262,7 @@ namespace Microsoft.PowerShell.Commands
                     service = new ServiceController(Name);
                     objServiceShouldBeDisposed = true;
                 }
-                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+                Diagnostics.Assert(!string.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if there is no such service.
                 // This checks whether the service actually exists.
@@ -2297,7 +2297,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     hScManager = NativeMethods.OpenSCManagerW(
-                        lpMachineName: String.Empty,
+                        lpMachineName: string.Empty,
                         lpDatabaseName: null,
                         dwDesiredAccess: NativeMethods.SC_MANAGER_ALL_ACCESS
                         );
@@ -2465,7 +2465,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _serviceName; }
             set { _serviceName = value; }
         }
-        private string _serviceName = String.Empty;
+        private string _serviceName = string.Empty;
         #endregion Properties
     }
     #endregion ServiceCommandException

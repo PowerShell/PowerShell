@@ -98,7 +98,7 @@ namespace System.Management.Automation
             string description,
             bool traceHeaders)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 // 2005/04/13-JonN In theory this should be ArgumentException,
                 // but I don't want to deal with loading the string in this
@@ -181,7 +181,7 @@ namespace System.Management.Automation
             string description,
             bool traceHeaders)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 // Note, all callers should have already verified the name before calling this
                 // API, so this exception should never be exposed to an end-user.
@@ -200,7 +200,7 @@ namespace System.Management.Automation
                             // trailing spaces if this actually does pad the name.
 
                             name =
-                                String.Format(
+                                string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture,
                                     "{0,-16}",
                                     name);
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw</returns>
         internal static PSArgumentNullException NewArgumentNullException(string paramName)
         {
-            if (String.IsNullOrEmpty(paramName))
+            if (string.IsNullOrEmpty(paramName))
             {
                 throw new ArgumentNullException("paramName");
             }
@@ -256,11 +256,11 @@ namespace System.Management.Automation
         internal static PSArgumentNullException NewArgumentNullException(
             string paramName, string resourceString, params object[] args)
         {
-            if (String.IsNullOrEmpty(paramName))
+            if (string.IsNullOrEmpty(paramName))
             {
                 throw NewArgumentNullException("paramName");
             }
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
             }
@@ -285,7 +285,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw</returns>
         internal static PSArgumentException NewArgumentException(string paramName)
         {
-            if (String.IsNullOrEmpty(paramName))
+            if (string.IsNullOrEmpty(paramName))
             {
                 throw new ArgumentNullException("paramName");
             }
@@ -314,11 +314,11 @@ namespace System.Management.Automation
         internal static PSArgumentException NewArgumentException(
             string paramName, string resourceString, params object[] args)
         {
-            if (String.IsNullOrEmpty(paramName))
+            if (string.IsNullOrEmpty(paramName))
             {
                 throw NewArgumentNullException("paramName");
             }
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
             }
@@ -360,7 +360,7 @@ namespace System.Management.Automation
         internal static PSInvalidOperationException NewInvalidOperationException(
             string resourceString, params object[] args)
         {
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
             }
@@ -390,7 +390,7 @@ namespace System.Management.Automation
             Exception innerException,
             string resourceString, params object[] args)
         {
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
             }
@@ -432,7 +432,7 @@ namespace System.Management.Automation
             string resourceString,
             params object[] args)
         {
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
             }
@@ -473,7 +473,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(string paramName, object actualValue)
         {
-            if (String.IsNullOrEmpty(paramName))
+            if (string.IsNullOrEmpty(paramName))
             {
                 throw new ArgumentNullException("paramName");
             }
@@ -504,11 +504,11 @@ namespace System.Management.Automation
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(
             string paramName, object actualValue, string resourceString, params object[] args)
         {
-            if (String.IsNullOrEmpty(paramName))
+            if (string.IsNullOrEmpty(paramName))
             {
                 throw NewArgumentNullException("paramName");
             }
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
             }
@@ -534,7 +534,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static PSObjectDisposedException NewObjectDisposedException(string objectName)
         {
-            if (String.IsNullOrEmpty(objectName))
+            if (string.IsNullOrEmpty(objectName))
             {
                 throw NewArgumentNullException("objectName");
             }

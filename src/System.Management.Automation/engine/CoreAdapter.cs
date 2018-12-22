@@ -3123,7 +3123,7 @@ namespace System.Management.Automation
                     else
                     {
                         // A property/field declared with new in a derived class might appear twice
-                        if (!String.Equals(previousMember.member.Name, fieldName))
+                        if (!string.Equals(previousMember.member.Name, fieldName))
                         {
                             throw new ExtendedTypeSystemException("NotACLSComplaintField", null,
                                 ExtendedTypeSystem.NotAClsCompliantFieldProperty, fieldName, type.FullName, previousMember.member.Name);
@@ -3144,7 +3144,7 @@ namespace System.Management.Automation
             else
             {
                 var firstProperty = previousPropertyEntry[0];
-                if (!String.Equals(property.Name, firstProperty.Name, StringComparison.Ordinal))
+                if (!string.Equals(property.Name, firstProperty.Name, StringComparison.Ordinal))
                 {
                     throw new ExtendedTypeSystemException("NotACLSComplaintProperty", null,
                                                           ExtendedTypeSystem.NotAClsCompliantFieldProperty, property.Name, type.FullName, firstProperty.Name);
@@ -4779,7 +4779,7 @@ namespace System.Management.Automation
             XmlNode node = (XmlNode)obj;
             string nodeNamespace = node.NamespaceURI;
             IEnumerable<string> baseTypeNames = GetDotNetTypeNameHierarchy(obj);
-            if (String.IsNullOrEmpty(nodeNamespace))
+            if (string.IsNullOrEmpty(nodeNamespace))
             {
                 foreach (string baseType in baseTypeNames)
                 {

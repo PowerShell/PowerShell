@@ -191,7 +191,7 @@ $result
             FolderItemVerbs verbs = item.Verbs();
             foreach (FolderItemVerb verb in verbs)
             {
-                if (!String.IsNullOrEmpty(verb.Name) &&
+                if (!string.IsNullOrEmpty(verb.Name) &&
                     (verb.Name.Equals(ControlPanelResources.VerbActionOpen, StringComparison.OrdinalIgnoreCase) ||
                      CompareVerbActionOpen(verb.Name)))
                 {
@@ -220,7 +220,7 @@ $result
                 foreach (ShellFolderItem item in allItems)
                 {
                     string canonicalName = (string)item.ExtendedProperty("System.ApplicationName");
-                    canonicalName = !String.IsNullOrEmpty(canonicalName)
+                    canonicalName = !string.IsNullOrEmpty(canonicalName)
                                         ? canonicalName.Substring(0, canonicalName.IndexOf("\0", StringComparison.OrdinalIgnoreCase))
                                         : null;
 

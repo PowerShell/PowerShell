@@ -183,7 +183,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
-            string tempDir = String.Empty;
+            string tempDir = string.Empty;
             string tempPath = Path.GetTempPath();
             do
             {
@@ -197,7 +197,7 @@ namespace System.Management.Automation
             }
             catch (UnauthorizedAccessException)
             {
-                tempDir = String.Empty; // will become current working directory
+                tempDir = string.Empty; // will become current working directory
             }
             return tempDir;
         }
@@ -221,7 +221,7 @@ namespace System.Management.Automation
                 System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
             string hostname = ipProperties.HostName;
-            if (!String.IsNullOrEmpty(ipProperties.DomainName))
+            if (!string.IsNullOrEmpty(ipProperties.DomainName))
             {
                 hostname = hostname + "." + ipProperties.DomainName;
             }
@@ -475,7 +475,7 @@ namespace System.Management.Automation
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
         internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
-        { 
+        {
             "AliasesToExport",
             "CmdletsToExport",
             "CompatiblePSEditions",

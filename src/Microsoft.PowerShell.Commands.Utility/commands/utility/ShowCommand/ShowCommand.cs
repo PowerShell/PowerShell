@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
             if (_showCommandProxy.ScreenHeight < this.Height)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
+                                    new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
             if (_showCommandProxy.ScreenWidth < this.Width)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
+                                    new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
         private void IssueErrorForNoCommand()
         {
             InvalidOperationException errorException = new InvalidOperationException(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
                     Name));
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
         private void IssueErrorForMoreThanOneCommand()
         {
             InvalidOperationException errorException = new InvalidOperationException(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,
                     Name,

@@ -942,7 +942,7 @@ namespace System.Management.Automation.Internal.Host
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {
                 string choice =
-                    String.Format(
+                    string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],

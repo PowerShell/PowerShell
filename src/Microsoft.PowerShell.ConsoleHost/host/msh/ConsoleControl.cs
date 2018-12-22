@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
             }
         }
 
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return String.Format(CultureInfo.InvariantCulture, "Size: {0}, Visible: {1}", Size, Visible);
+                return string.Format(CultureInfo.InvariantCulture, "Size: {0}, Visible: {1}", Size, Visible);
             }
         }
 
@@ -737,7 +737,7 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
-            Dbg.Assert(initialContent != null, "if no initial content is desired, pass String.Empty");
+            Dbg.Assert(initialContent != null, "if no initial content is desired, pass string.Empty");
             keyState = 0;
 
             CONSOLE_READCONSOLE_CONTROL control = new CONSOLE_READCONSOLE_CONTROL();
@@ -2459,7 +2459,7 @@ namespace Microsoft.PowerShell
             // the difference, we'll just return the empty string every time.
             if (result == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             return consoleTitle.ToString();
@@ -2509,7 +2509,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            if (String.IsNullOrEmpty(output))
+            if (string.IsNullOrEmpty(output))
                 return;
 
             // Native WriteConsole doesn't support output buffer longer than 64K.

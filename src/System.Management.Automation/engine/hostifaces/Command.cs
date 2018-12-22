@@ -821,7 +821,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public void Add(string command)
         {
-            if (String.Equals(command, "out-default", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(command, "out-default", StringComparison.OrdinalIgnoreCase))
             {
                 this.Add(command, true);
             }

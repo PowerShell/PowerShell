@@ -844,7 +844,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             else
             {
                 string resourceTemplate = RegistryProviderStrings.UnknownError_Num;
-                return String.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                return string.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
             }
         }
 

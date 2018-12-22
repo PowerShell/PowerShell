@@ -44,11 +44,11 @@ namespace System.Management.Automation
 
                 throw PSTraceSource.NewArgumentOutOfRangeException("activityId", activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
             }
-            if (String.IsNullOrEmpty(activity))
+            if (string.IsNullOrEmpty(activity))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
             }
-            if (String.IsNullOrEmpty(statusDescription))
+            if (string.IsNullOrEmpty(statusDescription))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
             }
@@ -141,7 +141,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
@@ -163,7 +163,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
@@ -284,7 +284,7 @@ namespace System.Management.Automation
         ToString()
         {
             return
-                String.Format(
+                string.Format(
                     System.Globalization.CultureInfo.CurrentCulture,
                     "parent = {0} id = {1} act = {2} stat = {3} cur = {4} pct = {5} sec = {6} type = {7}",
                     parentId,

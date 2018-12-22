@@ -249,13 +249,13 @@ namespace Microsoft.PowerShell.Commands
         {
             public int Compare(MemberDefinition first, MemberDefinition second)
             {
-                int result = String.Compare(first.MemberType.ToString(), second.MemberType.ToString(),
+                int result = string.Compare(first.MemberType.ToString(), second.MemberType.ToString(),
                     StringComparison.OrdinalIgnoreCase);
                 if (result != 0)
                 {
                     return result;
                 }
-                return String.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
+                return string.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
             }
         }
 

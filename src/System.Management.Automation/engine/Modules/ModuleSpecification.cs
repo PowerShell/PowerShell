@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return this;
             }
-            
+
             return new ModuleSpecification()
             {
                 Guid = Guid,
@@ -317,11 +317,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return x != null && y != null
-                && String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
                 && Guid.Equals(x.Guid, y.Guid)
                 && Version.Equals(x.RequiredVersion, y.RequiredVersion)
                 && Version.Equals(x.Version, y.Version)
-                && String.Equals(x.MaximumVersion, y.MaximumVersion);
+                && string.Equals(x.MaximumVersion, y.MaximumVersion);
         }
 
         /// <summary>

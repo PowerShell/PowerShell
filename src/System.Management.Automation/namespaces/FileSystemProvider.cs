@@ -252,18 +252,18 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (!String.IsNullOrEmpty(helpItemName))
+                if (!string.IsNullOrEmpty(helpItemName))
                 {
                     CmdletInfo.SplitCmdletName(helpItemName, out verb, out noun);
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
-                if (String.IsNullOrEmpty(verb) || String.IsNullOrEmpty(noun))
+                if (string.IsNullOrEmpty(verb) || string.IsNullOrEmpty(noun))
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 // Load the help file from the current UI culture subfolder
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
                 // Compose XPath query to select the appropriate node based on the cmdlet
-                string xpathQuery = String.Format(
+                string xpathQuery = string.Format(
                     CultureInfo.InvariantCulture,
                     HelpCommentsParser.ProviderHelpCommandXPath,
                     "[@id='FileSystem']",
@@ -301,31 +301,31 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (XmlException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (PathTooLongException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (IOException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (UnauthorizedAccessException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (NotSupportedException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (SecurityException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (XPathException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             finally
             {
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                     ((IDisposable)reader).Dispose();
                 }
             }
-            return String.Empty;
+            return string.Empty;
         }
 
         #endregion
@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
 
-            if (String.IsNullOrEmpty(drive.Root))
+            if (string.IsNullOrEmpty(drive.Root))
             {
                 throw PSTraceSource.NewArgumentException("drive.Root");
             }
@@ -877,7 +877,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string newDriveName = newDrive.Name.Substring(0, 1);
 
-                        string description = String.Empty;
+                        string description = string.Empty;
                         string root = newDrive.Name;
                         string displayRoot = null;
 
@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
         protected override bool IsValidPath(string path)
         {
             //Path passed should be fully qualified path.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 return false;
             }
@@ -1097,7 +1097,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool isContainer = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 // The parameter was null, throw an exception
                 throw PSTraceSource.NewArgumentException("path");
@@ -1255,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since all root paths are hidden we need to show the directory
                 // anyway
                 bool isRootPath =
-                    String.Compare(
+                    string.Compare(
                         Path.GetPathRoot(path),
                         result.FullName,
                         StringComparison.OrdinalIgnoreCase) == 0;
@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void InvokeDefaultAction(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -1424,7 +1424,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Don't handle full paths, paths that the user is already trying to
             // filter, or paths they are trying to escape.
-            if ((!String.IsNullOrEmpty(filter)) ||
+            if ((!string.IsNullOrEmpty(filter)) ||
                 (path.Contains(StringLiterals.DefaultPathSeparator, StringComparison.Ordinal)) ||
                 (path.Contains(StringLiterals.AlternatePathSeparator, StringComparison.Ordinal)) ||
                 (path.Contains(StringLiterals.EscapeCharacter)))
@@ -1465,7 +1465,7 @@ namespace Microsoft.PowerShell.Commands
             ReturnContainers returnContainers)
         {
             // Verify parameters
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -1805,7 +1805,7 @@ namespace Microsoft.PowerShell.Commands
 
             string switchParamString = sb.ToString();
 
-            if (!String.IsNullOrEmpty(switchParamString))
+            if (!string.IsNullOrEmpty(switchParamString))
             {
                 // Remove unnecessary PLUS sign
                 switchParamEvaluator = new FlagsExpression<FileAttributes>(switchParamString.Substring(1));
@@ -1822,11 +1822,11 @@ namespace Microsoft.PowerShell.Commands
         public static string Mode(PSObject instance)
         {
             if (instance == null)
-                return String.Empty;
+                return string.Empty;
 
             FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
             if (fileInfo == null)
-                return String.Empty;
+                return string.Empty;
 
             char[] mode = new char[6];
             mode[0] = (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
@@ -1868,14 +1868,14 @@ namespace Microsoft.PowerShell.Commands
         {
             // Check the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
             path = NormalizePath(path);
 
-            if (String.IsNullOrEmpty(newName))
+            if (string.IsNullOrEmpty(newName))
 
             {
                 throw PSTraceSource.NewArgumentException("newName");
@@ -1889,14 +1889,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 newName = newName.Remove(0, 2);
             }
-            else if (String.Equals(Path.GetDirectoryName(path), Path.GetDirectoryName(newName), StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(Path.GetDirectoryName(path), Path.GetDirectoryName(newName), StringComparison.OrdinalIgnoreCase))
             {
                 newName = Path.GetFileName(newName);
             }
 
             //Check to see if the target specified is just filename. We dont allow rename to move the file to a different directory.
             //If a path is specified for the newName then we flag that as an error.
-            if (String.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
+            if (string.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
             {
                 throw PSTraceSource.NewArgumentException("newName", FileSystemProviderStrings.RenameError);
             }
@@ -2017,12 +2017,12 @@ namespace Microsoft.PowerShell.Commands
 
             // Verify parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(type))
+            if (string.IsNullOrEmpty(type))
             {
                 type = "file";
             }
@@ -2111,7 +2111,7 @@ namespace Microsoft.PowerShell.Commands
                     bool isDirectory = false;
                     string strTargetPath = value.ToString();
 
-                    if (String.IsNullOrEmpty(strTargetPath))
+                    if (string.IsNullOrEmpty(strTargetPath))
                     {
                         throw PSTraceSource.NewArgumentNullException("value");
                     }
@@ -2493,7 +2493,7 @@ namespace Microsoft.PowerShell.Commands
         private void CreateDirectory(string path, bool streamOutput)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(path),
+                !string.IsNullOrEmpty(path),
                 "The caller should verify path");
 
             // Get the parent path
@@ -2564,7 +2564,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -2580,7 +2580,7 @@ namespace Microsoft.PowerShell.Commands
 
                 do
                 {
-                    string root = String.Empty;
+                    string root = string.Empty;
 
                     if (PSDriveInfo != null)
                     {
@@ -2589,8 +2589,8 @@ namespace Microsoft.PowerShell.Commands
 
                     string parentPath = GetParentPath(path, root);
 
-                    if (!String.IsNullOrEmpty(parentPath) &&
-                        String.Compare(
+                    if (!string.IsNullOrEmpty(parentPath) &&
+                        string.Compare(
                             parentPath,
                             previousParent,
                             StringComparison.OrdinalIgnoreCase) != 0)
@@ -2609,7 +2609,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                     previousParent = parentPath;
-                } while (!String.IsNullOrEmpty(previousParent));
+                } while (!string.IsNullOrEmpty(previousParent));
 
                 // Now create the missing directories
 
@@ -2654,7 +2654,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void RemoveItem(string path, bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -2734,7 +2734,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!p.IsMatch(stream.Stream)) { continue; }
                                 foundStream = true;
 
-                                string action = String.Format(
+                                string action = string.Format(
                                     CultureInfo.InvariantCulture,
                                     FileSystemProviderStrings.StreamAction,
                                     stream.Stream, fsinfo.FullName);
@@ -2864,7 +2864,7 @@ namespace Microsoft.PowerShell.Commands
                 // Loop through each of the contained files and remove them.
                 IEnumerable<FileInfo> files = null;
 
-                if (!String.IsNullOrEmpty(Filter))
+                if (!string.IsNullOrEmpty(Filter))
                 {
                     files = directory.EnumerateFiles(Filter);
                 }
@@ -3120,7 +3120,7 @@ namespace Microsoft.PowerShell.Commands
         {
             error = null;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -3221,7 +3221,7 @@ namespace Microsoft.PowerShell.Commands
 
             // verify parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -3327,12 +3327,12 @@ namespace Microsoft.PowerShell.Commands
             string destinationPath,
             bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(destinationPath))
+            if (string.IsNullOrEmpty(destinationPath))
             {
                 throw PSTraceSource.NewArgumentException("destinationPath");
             }
@@ -3411,7 +3411,7 @@ namespace Microsoft.PowerShell.Commands
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
                     if (op == null)
                     {
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailedToReadFile, path));
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailedToReadFile, path));
                         WriteError(new ErrorRecord(e, "CopyItemRemotelyFailedToReadFile", ErrorCategory.WriteError, path));
                         return;
                     }
@@ -3437,7 +3437,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 if (File.Exists(destinationPath))
                                 {
-                                    Exception e = new IOException(String.Format(
+                                    Exception e = new IOException(string.Format(
                                         CultureInfo.InvariantCulture,
                                         FileSystemProviderStrings.CopyItemRemotelyDestinationIsFile,
                                         path,
@@ -3559,7 +3559,7 @@ namespace Microsoft.PowerShell.Commands
                     // Verify that the destination is not a file on the remote end
                     if (RemoteDestinationPathIsFile(destination, ps))
                     {
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture,
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
                                                                     FileSystemProviderStrings.CopyItemRemoteDestinationIsFile,
                                                                     destination));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, destination));
@@ -3579,7 +3579,7 @@ namespace Microsoft.PowerShell.Commands
 
                     IEnumerable<FileInfo> files = null;
 
-                    if (String.IsNullOrEmpty(Filter))
+                    if (string.IsNullOrEmpty(Filter))
                     {
                         files = directory.EnumerateFiles();
                     }
@@ -3810,7 +3810,7 @@ namespace Microsoft.PowerShell.Commands
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
                     if (op == null)
                     {
-                        Exception e = new IOException(String.Format(
+                        Exception e = new IOException(string.Format(
                                                       CultureInfo.InvariantCulture,
                                                       FileSystemProviderStrings.CopyItemRemotelyFailedToGetDirectoryChildItems,
                                                       sourceDirectoryFullName));
@@ -3970,19 +3970,19 @@ namespace Microsoft.PowerShell.Commands
                     PSObject obj = (PSObject)metadata["Attributes"];
                     foreach (string value in (ArrayList)obj.BaseObject)
                     {
-                        if (String.Equals(value, "ReadOnly", StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(value, "ReadOnly", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.ReadOnly;
                         }
-                        else if (String.Equals(value, "Hidden", StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals(value, "Hidden", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.Hidden;
                         }
-                        else if (String.Equals(value, "Archive", StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals(value, "Archive", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.Archive;
                         }
-                        else if (String.Equals(value, "System", StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals(value, "System", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.System;
                         }
@@ -4053,11 +4053,11 @@ namespace Microsoft.PowerShell.Commands
                                                       long fileSize, bool isAlternateDataStream, string streamName)
         {
             bool success = false;
-            string activity = String.Format(CultureInfo.InvariantCulture,
+            string activity = string.Format(CultureInfo.InvariantCulture,
                                             FileSystemProviderStrings.CopyItemRemotelyProgressActivity,
                                             sourceFileFullName,
                                             destinationFile.FullName);
-            string statusDescription = String.Format(CultureInfo.InvariantCulture,
+            string statusDescription = string.Format(CultureInfo.InvariantCulture,
                                                         FileSystemProviderStrings.CopyItemRemotelyStatusDescription,
                                                         ps.Runspace.ConnectionInfo.ComputerName,
                                                         "localhost");
@@ -4118,7 +4118,7 @@ namespace Microsoft.PowerShell.Commands
                     if (op == null)
                     {
                         errorWhileCopyRemoteFile = true;
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture,
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
                                                                     FileSystemProviderStrings.CopyItemRemotelyFailedToReadFile,
                                                                     sourceFileFullName));
                         WriteError(new ErrorRecord(e, "FailedToCopyFileFromRemoteSession", ErrorCategory.WriteError, sourceFileFullName));
@@ -4322,11 +4322,11 @@ namespace Microsoft.PowerShell.Commands
 
         private bool CopyFileStreamToRemoteSession(FileInfo file, string destinationPath, System.Management.Automation.PowerShell ps, bool isAlternateStream, string streamName)
         {
-            string activity = String.Format(CultureInfo.InvariantCulture,
+            string activity = string.Format(CultureInfo.InvariantCulture,
                                             FileSystemProviderStrings.CopyItemRemotelyProgressActivity,
                                             file.FullName,
                                             destinationPath);
-            string statusDescription = String.Format(CultureInfo.InvariantCulture,
+            string statusDescription = string.Format(CultureInfo.InvariantCulture,
                                                      FileSystemProviderStrings.CopyItemRemotelyStatusDescription,
                                                      "localhost",
                                                      ps.Runspace.ConnectionInfo.ComputerName);
@@ -4425,14 +4425,14 @@ namespace Microsoft.PowerShell.Commands
                     if (op == null || op["BytesWritten"] == null)
                     {
                         //write error to stream
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, file.FullName));
                         return false;
                     }
 
                     if ((int)(op["BytesWritten"]) != toRead)
                     {
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, file.FullName));
                         return false;
                     }
@@ -4509,9 +4509,9 @@ namespace Microsoft.PowerShell.Commands
             // Make the remote path
             var remoteFilePath = MakeRemotePath(ps, destinationPath, file.Name);
 
-            if (String.IsNullOrEmpty(remoteFilePath))
+            if (string.IsNullOrEmpty(remoteFilePath))
             {
-                Exception e = new ArgumentException(String.Format(CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, destinationPath));
+                Exception e = new ArgumentException(string.Format(CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, destinationPath));
                 WriteError(new ErrorRecord(e, "RemotePathNotFound", ErrorCategory.WriteError, destinationPath));
                 return false;
             }
@@ -4526,7 +4526,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(file.FullName))
                 {
-                    if (!(String.Equals(":$DATA", stream.Stream, StringComparison.OrdinalIgnoreCase)))
+                    if (!(string.Equals(":$DATA", stream.Stream, StringComparison.OrdinalIgnoreCase)))
                     {
                         result = CopyFileStreamToRemoteSession(file, remoteFilePath, ps, true, stream.Stream);
                         if (!result)
@@ -4554,7 +4554,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (op == null || op["IsFileInfo"] == null)
             {
-                Exception e = new IOException(String.Format(
+                Exception e = new IOException(string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     FileSystemProviderStrings.CopyItemRemotelyFailedToValidateIfDestinationIsFile,
                                                     destination));
@@ -4586,7 +4586,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (force && (op["DirectoryPath"] == null))
             {
-                Exception e = new IOException(String.Format(CultureInfo.InvariantCulture,
+                Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
                                                             FileSystemProviderStrings.CopyItemRemotelyFailedToCreateDirectory,
                                                             destination));
                 WriteError(new ErrorRecord(e, "FailedToCreateDirectory", ErrorCategory.WriteError, destination));
@@ -4697,7 +4697,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
                 if (IsUNCPath(path))
                 {
@@ -4744,12 +4744,12 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static bool IsPathRoot(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 return false;
             }
 
-            bool isDriveRoot = String.Equals(path, Path.GetPathRoot(path), StringComparison.OrdinalIgnoreCase);
+            bool isDriveRoot = string.Equals(path, Path.GetPathRoot(path), StringComparison.OrdinalIgnoreCase);
             bool isUNCRoot = IsUNCRoot(path);
             bool result = isDriveRoot || isUNCRoot;
             s_tracer.WriteLine("result = {0}; isDriveRoot = {1}; isUNCRoot = {2}", result, isDriveRoot, isUNCRoot);
@@ -4777,14 +4777,14 @@ namespace Microsoft.PowerShell.Commands
             string path,
             string basePath)
         {
-            if (String.IsNullOrEmpty(path) || !IsValidPath(path))
+            if (string.IsNullOrEmpty(path) || !IsValidPath(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
             if (basePath == null)
             {
-                basePath = String.Empty;
+                basePath = string.Empty;
             }
 
             s_tracer.WriteLine("basePath = {0}", basePath);
@@ -4803,7 +4803,7 @@ namespace Microsoft.PowerShell.Commands
                 basePath = EnsureDriveIsRooted(basePath);
 
                 result = path;
-                if (String.IsNullOrEmpty(result))
+                if (string.IsNullOrEmpty(result))
                 {
                     break;
                 }
@@ -4844,11 +4844,11 @@ namespace Microsoft.PowerShell.Commands
                             // Now ensure that we have the proper casing by
                             // getting the names of the files and directories that match
 
-                            string directoryPath = GetParentPath(result, String.Empty);
+                            string directoryPath = GetParentPath(result, string.Empty);
 
-                            if (String.IsNullOrEmpty(directoryPath))
+                            if (string.IsNullOrEmpty(directoryPath))
                             {
-                                return String.Empty;
+                                return string.Empty;
                             }
 
 #if UNIX
@@ -4974,12 +4974,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (path.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             if (basePath == null)
             {
-                basePath = String.Empty;
+                basePath = string.Empty;
             }
 
             s_tracer.WriteLine("basePath = {0}", basePath);
@@ -4987,7 +4987,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             // Remove alternate data stream references
             // See if they've used the inline stream syntax. They have more than one colon.
-            string alternateDataStream = String.Empty;
+            string alternateDataStream = string.Empty;
             int firstColon = path.IndexOf(':');
             int secondColon = path.IndexOf(':', firstColon + 1);
             if (secondColon > 0)
@@ -5014,7 +5014,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
-                if (String.Equals(path, basePath, StringComparison.OrdinalIgnoreCase) &&
+                if (string.Equals(path, basePath, StringComparison.OrdinalIgnoreCase) &&
                     (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
@@ -5031,16 +5031,16 @@ namespace Microsoft.PowerShell.Commands
                 if ((
                     !(path + StringLiterals.DefaultPathSeparator).StartsWith(
                     basePath + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)) &&
-                    (!String.IsNullOrEmpty(basePath))
+                    (!string.IsNullOrEmpty(basePath))
                     )
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                     string commonBase = GetCommonBase(path, basePath);
 
                     Stack<string> parentNavigationStack = TokenizePathToStack(basePath, commonBase);
                     int parentPopCount = parentNavigationStack.Count;
 
-                    if (String.IsNullOrEmpty(commonBase))
+                    if (string.IsNullOrEmpty(commonBase))
                     {
                         parentPopCount--;
                     }
@@ -5059,9 +5059,9 @@ namespace Microsoft.PowerShell.Commands
                     // ..\..\dir*
                     // In that case (as above,) we keep the ..\..\directory1
                     // instead of ".." as would usually be returned
-                    if (!String.IsNullOrEmpty(commonBase))
+                    if (!string.IsNullOrEmpty(commonBase))
                     {
-                        if (String.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
+                        if (string.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
                             (!path.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
@@ -5086,14 +5086,14 @@ namespace Microsoft.PowerShell.Commands
                     // on the value of basePath.
                     if (IsPathRoot(path))
                     {
-                        if (String.IsNullOrEmpty(basePath))
+                        if (string.IsNullOrEmpty(basePath))
                         {
                             result = path;
                             break;
                         }
                         else
                         {
-                            result = String.Empty;
+                            result = string.Empty;
                             break;
                         }
                     }
@@ -5121,7 +5121,7 @@ namespace Microsoft.PowerShell.Commands
             } while (false);
 
 #if !UNIX
-            if (!String.IsNullOrEmpty(alternateDataStream))
+            if (!string.IsNullOrEmpty(alternateDataStream))
             {
                 result = result + alternateDataStream;
             }
@@ -5168,7 +5168,7 @@ namespace Microsoft.PowerShell.Commands
             // longer path. If it is not, take the child off of the longer
             // path and compare again.
 
-            while (!String.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
+            while (!string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
             {
                 if (path2.Length > path1.Length)
                 {
@@ -5209,7 +5209,7 @@ namespace Microsoft.PowerShell.Commands
                 // if its valid
 
                 string childName = GetChildName(tempPath);
-                if (String.IsNullOrEmpty(childName))
+                if (string.IsNullOrEmpty(childName))
                 {
                     // Push the parent on and then stop
                     s_tracer.WriteLine("tokenizedPathStack.Push({0})", tempPath);
@@ -5232,7 +5232,7 @@ namespace Microsoft.PowerShell.Commands
                 if (tempPath.Length >= previousParent.Length ||
                     IsPathRoot(tempPath))
                 {
-                    if (String.IsNullOrEmpty(basePath))
+                    if (string.IsNullOrEmpty(basePath))
                     {
                         s_tracer.WriteLine("tokenizedPathStack.Push({0})", tempPath);
                         tokenizedPathStack.Push(tempPath);
@@ -5357,11 +5357,11 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private string CreateNormalizedRelativePathFromStack(Stack<string> normalizedPathStack)
         {
-            string leafElement = String.Empty;
+            string leafElement = string.Empty;
 
             while (normalizedPathStack.Count > 0)
             {
-                if (String.IsNullOrEmpty(leafElement))
+                if (string.IsNullOrEmpty(leafElement))
                 {
                     leafElement = normalizedPathStack.Pop();
                 }
@@ -5390,7 +5390,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Verify the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -5458,7 +5458,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override bool IsItemContainer(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -5492,12 +5492,12 @@ namespace Microsoft.PowerShell.Commands
         {
             // Check the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(destination))
+            if (string.IsNullOrEmpty(destination))
             {
                 throw PSTraceSource.NewArgumentException("destination");
             }
@@ -5600,7 +5600,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify file.");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destination),
+                !string.IsNullOrEmpty(destination),
                 "THe caller should verify destination.");
 
             try
@@ -5727,7 +5727,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify directory.");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destination),
+                !string.IsNullOrEmpty(destination),
                 "The caller should verify destination.");
 
             try
@@ -5865,7 +5865,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         public void GetProperty(string path, Collection<string> providerSpecificPickList)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -5997,7 +5997,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // verify parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6055,7 +6055,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     string resource =
-                        String.Format(
+                        string.Format(
                             Host.CurrentCulture,
                             resourceTemplate,
                             path,
@@ -6168,7 +6168,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             Collection<string> propertiesToClear)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6216,7 +6216,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = FileSystemProviderStrings.ClearPropertyResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         fileSystemInfo.FullName,
@@ -6291,7 +6291,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         public IContentReader GetContentReader(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6465,7 +6465,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         public IContentWriter GetContentWriter(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6595,7 +6595,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         public void ClearContent(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6638,7 +6638,7 @@ namespace Microsoft.PowerShell.Commands
                         streamName = writerDynamicParameters.Stream;
                     }
 
-                    if (String.IsNullOrEmpty(streamName))
+                    if (string.IsNullOrEmpty(streamName))
                     {
                         // See if they've used the inline stream syntax. They have more than one colon.
                         int firstColon = path.IndexOf(':');
@@ -6655,7 +6655,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If they're just working on the DATA stream, don't use the Alternate Data Stream
                 // utils to clear the stream - otherwise, the Win32 API will trash the other streams.
-                if (String.Equals(":$DATA", streamName, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(":$DATA", streamName, StringComparison.OrdinalIgnoreCase))
                 {
                     clearStream = false;
                 }
@@ -6664,7 +6664,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     FileStream fileStream = null;
 
-                    string streamAction = String.Format(
+                    string streamAction = string.Format(
                         CultureInfo.InvariantCulture,
                         FileSystemProviderStrings.StreamAction,
                         streamName, path);
@@ -7654,7 +7654,7 @@ namespace Microsoft.PowerShell.Commands
             var links = new List<string>();
 #if UNIX
             string link = Platform.NonWindowsInternalGetTarget(filePath);
-            if (!String.IsNullOrEmpty(link))
+            if (!string.IsNullOrEmpty(link))
             {
                 links.Add(link);
             }
@@ -7697,7 +7697,7 @@ namespace Microsoft.PowerShell.Commands
 
                     //Don't add the target link to the list.
 
-                    if (String.Compare(fInfo.FullName, filePath, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(fInfo.FullName, filePath, StringComparison.OrdinalIgnoreCase) != 0)
                         links.Add(fInfo.FullName);
 
                     continueFind = InternalSymbolicLinkLinkCodeMethods.FindNextFileName(fileHandle, ref linkStringLength, linkName);
@@ -8040,9 +8040,9 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static bool WinCreateJunction(string path, string target)
         {
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
-                if (!String.IsNullOrEmpty(target))
+                if (!string.IsNullOrEmpty(target))
                 {
                     using (SafeHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericWrite))
                     {
@@ -8195,7 +8195,7 @@ namespace System.Management.Automation.Internal
 
                     // And trailing :$DATA (as long as it's not the default data stream)
                     string dataStream = ":$DATA";
-                    if (!String.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
                     {
                         findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);
                     }

@@ -735,7 +735,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -773,7 +773,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<ProviderInfo> GetProvider(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -875,17 +875,17 @@ namespace System.Management.Automation
                 }
             }
 
-            if (!String.IsNullOrEmpty(providerName.PSSnapInName))
+            if (!string.IsNullOrEmpty(providerName.PSSnapInName))
             {
                 // Be sure the PSSnapin/Module name matches
 
                 foreach (ProviderInfo provider in matchingProviders)
                 {
-                    if (String.Equals(
+                    if (string.Equals(
                             provider.PSSnapInName,
                             providerName.PSSnapInName,
                            StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals(
+                        string.Equals(
                             provider.ModuleName,
                             providerName.PSSnapInName,
                             StringComparison.OrdinalIgnoreCase))
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
                             "InitializeDefaultDrivesException",
                             SessionStateStrings.InitializeDefaultDrivesException,
                             provider,
-                            String.Empty,
+                            string.Empty,
                             e);
 
                     context.WriteError(
@@ -1387,7 +1387,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 throw PSTraceSource.NewArgumentException("providerName");
             }

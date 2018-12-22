@@ -78,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static bool IsDefaultComputerName(string computerName)
         {
-            return String.IsNullOrEmpty(computerName);
+            return string.IsNullOrEmpty(computerName);
         }
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="message"></param>
         internal static void WriteLog(string message, int indent, params object[] args)
         {
-            String outMessage = String.Empty;
+            String outMessage = string.Empty;
             FormatLogMessage(ref outMessage, message, args);
             WriteLog(outMessage, indent);
         }
@@ -273,7 +273,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="message"></param>
         internal static void WriteLogEx(string message, int indent, params object[] args)
         {
-            String outMessage = String.Empty;
+            String outMessage = string.Empty;
             WriteLogInternal(string.Empty, 0, -1);
             FormatLogMessage(ref outMessage, message, args);
             WriteLogInternal(outMessage, indent, 3);
@@ -310,7 +310,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Conditional("LOGENABLE")]
         private static void FormatLogMessage(ref String outMessage, string message, params object[] args)
         {
-            outMessage = String.Format(CultureInfo.CurrentCulture, message, args);
+            outMessage = string.Format(CultureInfo.CurrentCulture, message, args);
         }
 
         /// <summary>
@@ -396,7 +396,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="argumentName"></param>
         public static void ValidateNoNullorWhiteSpaceArgument(string obj, string argumentName)
         {
-            if (String.IsNullOrWhiteSpace(obj))
+            if (string.IsNullOrWhiteSpace(obj))
             {
                 throw new ArgumentException(argumentName);
             }
@@ -426,7 +426,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
             DebugHelper.WriteLogEx("An invalid name: {0}={1}", 0, parameterName, value);
-            throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture, Strings.InvalidParameterValue, value, parameterName));
+            throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Strings.InvalidParameterValue, value, parameterName));
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 foreach (string propertyName in value)
                 {
                     // * is wild char supported in select properties
-                    if ((propertyName != null) && (String.Compare(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase) == 0))
+                    if ((propertyName != null) && (string.Compare(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase) == 0))
                     {
                         continue;
                     }

@@ -393,7 +393,7 @@ namespace System.Management.Automation
         /// is specified.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpUri { get; set; } = String.Empty;
+        public string HelpUri { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets and sets the RemotingBehavior value that declares how this cmdlet should interact
@@ -682,7 +682,7 @@ namespace System.Management.Automation
             set
             {
                 _parameterSetName = value;
-                if (String.IsNullOrEmpty(_parameterSetName))
+                if (string.IsNullOrEmpty(_parameterSetName))
                 {
                     _parameterSetName = ParameterAttribute.AllParameterSets;
                 }
@@ -1329,7 +1329,7 @@ namespace System.Management.Automation
             Match match = regex.Match(objectString);
             if (!match.Success)
             {
-                var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidatePatternFailure : ErrorMessage;
+                var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidatePatternFailure : ErrorMessage;
                 throw new ValidationMetadataException("ValidatePatternFailure",
                         null, errorMessageFormat,
                         objectString, RegexPattern);
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ValidatePatternAttribute(string regexPattern)
         {
-            if (String.IsNullOrEmpty(regexPattern))
+            if (string.IsNullOrEmpty(regexPattern))
             {
                 throw PSTraceSource.NewArgumentException("regexPattern");
             }
@@ -1400,7 +1400,7 @@ namespace System.Management.Automation
 
             if (!LanguagePrimitives.IsTrue(result))
             {
-                var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateScriptFailure : ErrorMessage;
+                var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateScriptFailure : ErrorMessage;
                 throw new ValidationMetadataException("ValidateScriptFailure",
                         null, errorMessageFormat,
                         element, ScriptBlock);
@@ -1684,7 +1684,7 @@ namespace System.Management.Automation
                 }
             }
 
-            var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateSetFailure : ErrorMessage;
+            var errorMessageFormat = string.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateSetFailure : ErrorMessage;
             throw new ValidationMetadataException("ValidateSetFailure", null,
                 errorMessageFormat,
                 element.ToString(), SetAsString());
@@ -2054,7 +2054,7 @@ namespace System.Management.Automation
             }
             else if (arguments is string str)
             {
-                if (String.IsNullOrEmpty(str))
+                if (string.IsNullOrEmpty(str))
                 {
                     throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -2084,7 +2084,7 @@ namespace System.Management.Automation
 
                         if (element is string elementAsString)
                         {
-                            if (String.IsNullOrEmpty(elementAsString))
+                            if (string.IsNullOrEmpty(elementAsString))
                             {
                                 throw new ValidationMetadataException(
                                     "ArgumentCollectionContainsEmpty",

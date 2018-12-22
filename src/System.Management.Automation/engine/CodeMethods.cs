@@ -25,17 +25,17 @@ namespace Microsoft.PowerShell
         public static string PropertyValueCollection(PSObject instance)
         {
             if (instance == null)
-                return String.Empty;
+                return string.Empty;
 
             var values = (PropertyValueCollection)instance.BaseObject;
             if (values == null)
-                return String.Empty;
+                return string.Empty;
 
             if (values.Count == 1)
             {
                 if (values[0] == null)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
                 return (PSObject.AsPSObject(values[0]).ToString());
             }

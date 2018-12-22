@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal string GetMandatoryInnerText(XmlNode n)
         {
-            if (String.IsNullOrEmpty(n.InnerText))
+            if (string.IsNullOrEmpty(n.InnerText))
             {
                 this.ReportEmptyNode(n);
                 return null;
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal string GetMandatoryAttributeValue(XmlAttribute a)
         {
-            if (String.IsNullOrEmpty(a.Value))
+            if (string.IsNullOrEmpty(a.Value))
             {
                 this.ReportEmptyAttribute(a);
                 return null;
@@ -367,12 +367,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool MatchNodeNameHelper(XmlNode n, string s, bool allowAttributes)
         {
             bool match = false;
-            if (String.Equals(n.Name, s, StringComparison.Ordinal))
+            if (string.Equals(n.Name, s, StringComparison.Ordinal))
             {
                 // we have a case sensitive match
                 match = true;
             }
-            else if (String.Equals(n.Name, s, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(n.Name, s, StringComparison.OrdinalIgnoreCase))
             {
                 // try a case insensitive match
                 // we differ only in case: flag this as an ERROR for the time being
@@ -409,12 +409,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal bool MatchAttributeName(XmlAttribute a, string s)
         {
-            if (String.Equals(a.Name, s, StringComparison.Ordinal))
+            if (string.Equals(a.Name, s, StringComparison.Ordinal))
             {
                 // we have a case sensitive match
                 return true;
             }
-            else if (String.Equals(a.Name, s, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(a.Name, s, StringComparison.OrdinalIgnoreCase))
             {
                 // try a case insensitive match
                 // we differ only in case: flag this as an ERROR for the time being

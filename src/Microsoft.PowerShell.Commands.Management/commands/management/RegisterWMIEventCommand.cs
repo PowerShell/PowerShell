@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
 
                     ErrorRecord errorRecord = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(
+                            string.Format(
                                 Thread.CurrentThread.CurrentCulture,
                                 "Class", this.Class)),
                         "INVALID_QUERY_IDENTIFIER",
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
             if (this.Credential != null)
             {
                 System.Net.NetworkCredential cred = this.Credential.GetNetworkCredential();
-                if (String.IsNullOrEmpty(cred.Domain))
+                if (string.IsNullOrEmpty(cred.Domain))
                 {
                     conOptions.Username = cred.UserName;
                 }

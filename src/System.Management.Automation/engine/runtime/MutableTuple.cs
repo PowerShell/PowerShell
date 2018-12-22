@@ -355,7 +355,7 @@ namespace System.Management.Automation
 
             foreach (int curIndex in GetAccessPath(size, index))
             {
-                PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
+                PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
                 Diagnostics.Assert(pi != null, "reflection should always find Item");
                 yield return pi;
                 tupleType = pi.PropertyType;
@@ -425,7 +425,7 @@ namespace System.Management.Automation
                 }
                 for (int i = 0; i < size; i++)
                 {
-                    PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
                     res.SetValueImpl(i, MakeTuple(pi.PropertyType, null, null));
                 }
             }
@@ -522,7 +522,7 @@ namespace System.Management.Automation
                     int newStart = start + (i * multiplier);
                     int newEnd = System.Math.Min(end, start + ((i + 1) * multiplier));
 
-                    PropertyInfo pi = tupleType.GetProperty("Item" + String.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
 
                     newValues[i] = CreateNew(pi.PropertyType, newStart, newEnd, values);
                 }

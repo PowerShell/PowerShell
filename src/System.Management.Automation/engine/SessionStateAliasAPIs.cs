@@ -126,7 +126,7 @@ namespace System.Management.Automation
         internal AliasInfo GetAlias(string aliasName, CommandOrigin origin)
         {
             AliasInfo result = null;
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 return null;
             }
@@ -203,7 +203,7 @@ namespace System.Management.Automation
         internal AliasInfo GetAliasAtScope(string aliasName, string scopeID)
         {
             AliasInfo result = null;
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 return null;
             }
@@ -250,12 +250,12 @@ namespace System.Management.Automation
         /// </exception>
         internal AliasInfo SetAliasValue(string aliasName, string value, bool force, CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 throw PSTraceSource.NewArgumentException("aliasName");
             }
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 throw PSTraceSource.NewArgumentException("value");
             }
@@ -327,12 +327,12 @@ namespace System.Management.Automation
             bool force,
             CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 throw PSTraceSource.NewArgumentException("aliasName");
             }
 
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 throw PSTraceSource.NewArgumentException("value");
             }
@@ -455,7 +455,7 @@ namespace System.Management.Automation
             // If the "private" scope was specified, make sure the options contain
             // the Private flag
 
-            if (String.Equals(scopeID, StringLiterals.Private, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(scopeID, StringLiterals.Private, StringComparison.OrdinalIgnoreCase))
             {
                 alias.Options |= ScopedItemOptions.Private;
             }
@@ -521,7 +521,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveAlias(string aliasName, bool force)
         {
-            if (String.IsNullOrEmpty(aliasName))
+            if (string.IsNullOrEmpty(aliasName))
             {
                 throw PSTraceSource.NewArgumentException("aliasName");
             }

@@ -29,12 +29,12 @@ namespace System.Management.Automation
             this.ForwardHelpCategory = HelpCategory.Cmdlet |
                 HelpCategory.Function | HelpCategory.ExternalScript | HelpCategory.ScriptCommand | HelpCategory.Filter | HelpCategory.Workflow;
 
-            if (!String.IsNullOrEmpty(aliasInfo.Name))
+            if (!string.IsNullOrEmpty(aliasInfo.Name))
             {
                 Name = aliasInfo.Name.Trim();
             }
 
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 Synopsis = name.Trim();
             }
@@ -100,7 +100,7 @@ namespace System.Management.Automation
 
             AliasHelpInfo aliasHelpInfo = new AliasHelpInfo(aliasInfo);
 
-            if (String.IsNullOrEmpty(aliasHelpInfo.Name))
+            if (string.IsNullOrEmpty(aliasHelpInfo.Name))
                 return null;
 
             aliasHelpInfo.AddCommonHelpProperties();

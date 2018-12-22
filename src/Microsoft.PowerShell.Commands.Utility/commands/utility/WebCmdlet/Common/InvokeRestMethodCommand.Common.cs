@@ -87,8 +87,8 @@ namespace Microsoft.PowerShell.Commands
                 int readCount = 0;
                 while ((readCount < 10) && reader.Read())
                 {
-                    if (String.Equals("rss", reader.Name, StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals("feed", reader.Name, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals("rss", reader.Name, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals("feed", reader.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         isRssOrFeed = true;
                         break;
@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell.Commands
                     StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this);
                 }
 
-                if (!String.IsNullOrEmpty(ResponseHeadersVariable))
+                if (!string.IsNullOrEmpty(ResponseHeadersVariable))
                 {
                     PSVariableIntrinsics vi = SessionState.PSVariable;
                     vi.Set(ResponseHeadersVariable, WebResponseHelper.GetHeadersDictionary(response));

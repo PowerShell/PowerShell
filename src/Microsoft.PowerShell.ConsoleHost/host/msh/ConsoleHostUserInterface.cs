@@ -877,7 +877,7 @@ namespace Microsoft.PowerShell
         {
             List<Word> result = new List<Word>();
 
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return result;
             }

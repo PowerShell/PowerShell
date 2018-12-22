@@ -432,7 +432,7 @@ namespace System.Management.Automation
         {
             get { return _name; }
         }
-        private string _name = String.Empty;
+        private string _name = string.Empty;
     }
 
     /// <summary>

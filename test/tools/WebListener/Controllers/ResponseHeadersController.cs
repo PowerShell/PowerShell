@@ -22,9 +22,9 @@ namespace mvc.Controllers
             Hashtable headers = new Hashtable();
             foreach (var key in Request.Query.Keys)
             {
-                headers.Add(key, String.Join(Constants.HeaderSeparator, Request.Query[key]));
+                headers.Add(key, string.Join(Constants.HeaderSeparator, Request.Query[key]));
 
-                if (String.Equals("Content-Type", key, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals("Content-Type", key, StringComparison.InvariantCultureIgnoreCase))
                 {
                     // Content-Type must be applied right before it is sent to the client or MVC will overwrite.
                     string contentType = Request.Query[key];
@@ -42,7 +42,7 @@ namespace mvc.Controllers
             }
             return JsonConvert.SerializeObject(headers);
         }
-        
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

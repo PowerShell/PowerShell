@@ -284,10 +284,10 @@ namespace System.Management.Automation
                         memberFile = NativeMethods.CryptCATCDFEnumMembersByCDFTagEx(resultCDF, memberFile, memberCallBack, ref memberInfo, true, IntPtr.Zero);
                         fileName = Marshal.PtrToStringUni(memberFile);
 
-                        if (!String.IsNullOrEmpty(fileName))
+                        if (!string.IsNullOrEmpty(fileName))
                         {
                             IntPtr memberAttr = IntPtr.Zero;
-                            string fileRelativePath = String.Empty;
+                            string fileRelativePath = string.Empty;
                             do
                             {
                                 memberAttr = NativeMethods.CryptCATCDFEnumAttributesWithCDFTag(resultCDF, memberFile, memberInfo, memberAttr, memberCallBack);
@@ -295,7 +295,7 @@ namespace System.Management.Automation
                                 if (memberAttr != IntPtr.Zero)
                                 {
                                     fileRelativePath = ProcessFilePathAttributeInCatalog(memberAttr);
-                                    if (!String.IsNullOrEmpty(fileRelativePath))
+                                    if (!string.IsNullOrEmpty(fileRelativePath))
                                     {
                                         // Found the attribute we are looking for
                                         // Filename we read from the above API has <Hash> appended to its name as per CDF file tags convention
@@ -335,7 +335,7 @@ namespace System.Management.Automation
             _cmdlet = cmdlet;
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
 
-            if (!String.IsNullOrEmpty(hashAlgorithm))
+            if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 // Generate Path for Catalog Definition File
                 string cdfFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
@@ -498,7 +498,7 @@ namespace System.Management.Automation
                         if (catAttrInfo != IntPtr.Zero)
                         {
                             string relativePath = ProcessFilePathAttributeInCatalog(catAttrInfo);
-                            if (!String.IsNullOrEmpty(relativePath))
+                            if (!string.IsNullOrEmpty(relativePath))
                             {
                                 ProcessCatalogFile(relativePath, string.Empty, excludedPatterns, ref catalogHashes);
                             }
@@ -521,7 +521,7 @@ namespace System.Management.Automation
                             // We validate those along with file hashes so we are skipping duplicate entries
                             if (!((catalogVersion == 2) && (pIndirectData.DigestAlgorithm.pszObjId.Equals(new Oid("SHA1").Value, StringComparison.OrdinalIgnoreCase))))
                             {
-                                string relativePath = String.Empty;
+                                string relativePath = string.Empty;
                                 IntPtr memberAttrInfo = IntPtr.Zero;
                                 do
                                 {
@@ -530,7 +530,7 @@ namespace System.Management.Automation
                                     if (memberAttrInfo != IntPtr.Zero)
                                     {
                                         relativePath = ProcessFilePathAttributeInCatalog(memberAttrInfo);
-                                        if (!String.IsNullOrEmpty(relativePath))
+                                        if (!string.IsNullOrEmpty(relativePath))
                                         {
                                             break;
                                         }
@@ -541,7 +541,7 @@ namespace System.Management.Automation
                                 // If we did not find any Relative Path for the item in catalog we should quit
                                 // This catalog must not be valid for our use as catalogs generated using New-FileCatalog
                                 // always contains relative file Paths
-                                if (String.IsNullOrEmpty(relativePath))
+                                if (string.IsNullOrEmpty(relativePath))
                                 {
                                     ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
                                     _cmdlet.ThrowTerminatingError(errorRecord);
@@ -664,7 +664,7 @@ namespace System.Management.Automation
                     foreach (string fileItem in directoryItems)
                     {
                         // if its the catalog file we are validating we will skip it
-                        if (String.Equals(fileItem, catalogFilePath, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(fileItem, catalogFilePath, StringComparison.OrdinalIgnoreCase))
                             continue;
 
                         ProcessPathFile(new FileInfo(fileItem), new DirectoryInfo(folderPath), hashAlgorithm, excludedPatterns, ref fileHashes);
@@ -735,7 +735,7 @@ namespace System.Management.Automation
             Dictionary<string, string> catalogHashes = GetHashesFromCatalog(catalogFilePath, excludedPatterns, out catalogVersion);
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
 
-            if (!String.IsNullOrEmpty(hashAlgorithm))
+            if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 Dictionary<string, string> fileHashes = CalculateHashesFromPath(catalogFolders, catalogFilePath, hashAlgorithm, excludedPatterns);
                 CatalogInformation catalog = new CatalogInformation();

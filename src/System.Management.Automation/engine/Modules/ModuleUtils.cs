@@ -69,7 +69,7 @@ namespace System.Management.Automation.Internal
         internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
-            
+
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
@@ -145,7 +145,7 @@ namespace System.Management.Automation.Internal
                     {
                         analysisProgress = new ProgressRecord(0,
                             Modules.DeterminingAvailableModules,
-                            String.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
+                            string.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
                         {
                             RecordType = ProgressRecordType.Processing
                         };
@@ -372,7 +372,7 @@ namespace System.Management.Automation.Internal
 #if UNIX
             return false;
 #else
-            Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
 
             string windowsPowerShellPSHomePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
             return path.StartsWith(windowsPowerShellPSHomePath, StringComparison.OrdinalIgnoreCase);
@@ -505,7 +505,7 @@ namespace System.Management.Automation.Internal
                                         moduleCompareName = commandEntry.PSSnapIn.Name;
                                     }
 
-                                    if (String.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         if (commandEntry.Visibility == SessionStateEntryVisibility.Private)
                                         {

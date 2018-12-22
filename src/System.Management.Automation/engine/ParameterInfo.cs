@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        public string Name { get; } = String.Empty;
+        public string Name { get; } = string.Empty;
 
         /// <summary>
         /// Gets the type of the parameter.
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help message for this parameter.
         /// </summary>
-        public string HelpMessage { get; private set; } = String.Empty;
+        public string HelpMessage { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets the aliases by which this parameter can be referenced.

@@ -114,10 +114,10 @@ namespace Microsoft.PowerShell.Commands
         {
             GetWmiObjectCommand getObject = (GetWmiObjectCommand)_wmiObject;
             StringBuilder returnValue = new StringBuilder("select ");
-            returnValue.Append(String.Join(", ", getObject.Property));
+            returnValue.Append(string.Join(", ", getObject.Property));
             returnValue.Append(" from ");
             returnValue.Append(getObject.Class);
-            if (!String.IsNullOrEmpty(getObject.Filter))
+            if (!string.IsNullOrEmpty(getObject.Filter))
             {
                 returnValue.Append(" where ");
                 returnValue.Append(getObject.Filter);
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     mPath = new ManagementPath(setObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = setObject.Namespace;
                     }
@@ -519,7 +519,7 @@ namespace Microsoft.PowerShell.Commands
                 if (invokeObject.Path != null)
                 {
                     mPath = new ManagementPath(invokeObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = invokeObject.Namespace;
                     }
@@ -729,7 +729,7 @@ namespace Microsoft.PowerShell.Commands
                 if (removeObject.Path != null)
                 {
                     mPath = new ManagementPath(removeObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = removeObject.Namespace;
                     }
@@ -817,7 +817,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!getObject.ValidateClassFormat())
                 {
                     ArgumentException e = new ArgumentException(
-                        String.Format(
+                        string.Format(
                             Thread.CurrentThread.CurrentCulture,
                             "Class", getObject.Class));
 
@@ -1272,7 +1272,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     mPath = new ManagementPath(wmiInstance.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = wmiInstance.Namespace;
                     }

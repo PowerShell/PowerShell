@@ -403,7 +403,7 @@ namespace System.Management.Automation
                 return _verb;
             }
         }
-        private string _verb = String.Empty;
+        private string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the function.
@@ -415,7 +415,7 @@ namespace System.Management.Automation
                 return _noun;
             }
         }
-        private string _noun = String.Empty;
+        private string _noun = string.Empty;
 
         /// <summary>
         /// Gets the help file path for the function.
@@ -431,7 +431,7 @@ namespace System.Management.Automation
                 _helpFile = value;
             }
         }
-        private string _helpFile = String.Empty;
+        private string _helpFile = string.Empty;
 
         /// <summary>
         /// Returns the syntax of a command
@@ -446,7 +446,7 @@ namespace System.Management.Automation
                 {
                     synopsis.AppendLine();
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,

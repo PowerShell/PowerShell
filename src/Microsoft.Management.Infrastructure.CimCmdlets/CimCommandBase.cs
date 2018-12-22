@@ -876,7 +876,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string parameterName,
             PasswordAuthenticationMechanism authentication)
         {
-            string message = String.Format(CultureInfo.CurrentUICulture, Strings.InvalidAuthenticationTypeWithNullCredential,
+            string message = string.Format(CultureInfo.CurrentUICulture, Strings.InvalidAuthenticationTypeWithNullCredential,
                 authentication,
                 ImpersonatedAuthenticationMechanism.None,
                 ImpersonatedAuthenticationMechanism.Negotiate,
@@ -898,7 +898,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string parameterName,
             string conflictParameterName)
         {
-            string message = String.Format(CultureInfo.CurrentUICulture,
+            string message = string.Format(CultureInfo.CurrentUICulture,
                 Strings.ConflictParameterWasSet,
                 parameterName, conflictParameterName);
             PSArgumentException exception = new PSArgumentException(message, parameterName);
@@ -926,7 +926,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
                 propList.Append(property);
             }
-            string message = String.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindPropertyFromGivenClass,
+            string message = string.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindPropertyFromGivenClass,
                 className, propList);
             PSArgumentOutOfRangeException exception = new PSArgumentOutOfRangeException(
                 parameterName, actualValue, message);

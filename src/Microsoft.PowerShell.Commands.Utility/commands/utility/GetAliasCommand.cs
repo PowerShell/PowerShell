@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
             //get the command origin
             CommandOrigin origin = MyInvocation.CommandOrigin;
             string displayString = "name";
-            if (!String.IsNullOrEmpty(Scope))
+            if (!string.IsNullOrEmpty(Scope))
             {
                 // This can throw PSArgumentException and PSArgumentOutOfRangeException
                 // but just let them go as this is terminal for the pipeline and the

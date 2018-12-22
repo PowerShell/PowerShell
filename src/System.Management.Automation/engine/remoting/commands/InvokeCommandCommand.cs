@@ -478,14 +478,14 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
                     _name = value;
                     _asjob = true;
                 }
             }
         }
-        private string _name = String.Empty;
+        private string _name = string.Empty;
 
         /// <summary>
         /// The script block that the user has specified in the
@@ -892,7 +892,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (String.IsNullOrEmpty(ConfigurationName))
+            if (string.IsNullOrEmpty(ConfigurationName))
             {
                 if ((ParameterSetName == InvokeCommandCommand.ComputerNameParameterSet) ||
                     (ParameterSetName == InvokeCommandCommand.UriParameterSet) ||
@@ -904,8 +904,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // convert null to String.Empty for VM/Container session
-                    ConfigurationName = String.Empty;
+                    // convert null to string.Empty for VM/Container session
+                    ConfigurationName = string.Empty;
                 }
             }
 
