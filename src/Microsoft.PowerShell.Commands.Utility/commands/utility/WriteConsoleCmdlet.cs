@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromRemainingArguments = true, ValueFromPipeline = true)]
         [Alias("Msg", "Message")]
-        public object object { get; set; } = null;
+        public object Object { get; set; } = null;
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
