@@ -4131,7 +4131,7 @@ param(
     {
         $help
     }
-    else
+    elseif ($help -ne $null)
     {
         # Respect PAGER, use more on Windows, and use less on Linux
         $moreCommand,$moreArgs = $env:PAGER -split '\s+'
