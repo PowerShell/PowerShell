@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
 
         private class MiscInfoGroup
         {
-            public UInt64? physicallyInstalledMemory;
+            public ulong? physicallyInstalledMemory;
             public string timeZone;
             public string logonServer;
             public FirmwareType? firmwareType;
@@ -1484,7 +1484,7 @@ namespace Microsoft.PowerShell.Commands
         public string SystemSKUNumber;
         public string SystemType;
         public UInt16? ThermalState;
-        public UInt64? TotalPhysicalMemory;
+        public ulong? TotalPhysicalMemory;
         public string UserName;
         public UInt16? WakeUpType;
         public string Workgroup;
@@ -1636,9 +1636,9 @@ namespace Microsoft.PowerShell.Commands
         public UInt16? StatusInfo;
         public string SystemCreationClassName;
         public string SystemName;
-        public UInt64? Speed;
-        public UInt64? MaxSpeed;
-        public UInt64? RequestedSpeed;
+        public ulong? Speed;
+        public ulong? MaxSpeed;
+        public ulong? RequestedSpeed;
         public UInt16? UsageRestriction;
         public UInt16? PortType;
         public string OtherPortType;
@@ -1650,11 +1650,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] NetworkAddresses;
         public bool? FullDuplex;
         public bool? AutoSense;
-        public UInt64? SupportedMaximumTransmissionUnit;
-        public UInt64? ActiveMaximumTransmissionUnit;
+        public ulong? SupportedMaximumTransmissionUnit;
+        public ulong? ActiveMaximumTransmissionUnit;
         public string InterfaceDescription;
         public string InterfaceName;
-        public UInt64? NetLuid;
+        public ulong? NetLuid;
         public string InterfaceGuid;
         public UInt32? InterfaceIndex;
         public string DeviceName;
@@ -1680,14 +1680,14 @@ namespace Microsoft.PowerShell.Commands
         public UInt32? MediaConnectState;
         public UInt32? MtuSize;
         public UInt16? VlanID;
-        public UInt64? TransmitLinkSpeed;
-        public UInt64? ReceiveLinkSpeed;
+        public ulong? TransmitLinkSpeed;
+        public ulong? ReceiveLinkSpeed;
         public bool? PromiscuousMode;
         public bool? DeviceWakeUpEnable;
         public bool? ConnectorPresent;
         public UInt32? MediaDuplexState;
         public string DriverDate;
-        public UInt64? DriverDateData;
+        public ulong? DriverDateData;
         public string DriverVersionString;
         public string DriverName;
         public string DriverDescription;
@@ -1726,7 +1726,7 @@ namespace Microsoft.PowerShell.Commands
         public string MACAddress;
         public string Manufacturer;
         public UInt32? MaxNumberControlled;
-        public UInt64? MaxSpeed;
+        public ulong? MaxSpeed;
         public string Name;
         public string NetConnectionID;
         public UInt16? NetConnectionStatus;
@@ -1739,7 +1739,7 @@ namespace Microsoft.PowerShell.Commands
         public bool? PowerManagementSupported;
         public string ProductName;
         public string ServiceName;
-        public UInt64? Speed;
+        public ulong? Speed;
         public string Status;
         public UInt16? StatusInfo;
         public string SystemCreationClassName;
@@ -1835,16 +1835,16 @@ namespace Microsoft.PowerShell.Commands
         public bool? Distributed;
         public UInt32? EncryptionLevel;
         public byte? ForegroundApplicationBoost;
-        public UInt64? FreePhysicalMemory;
-        public UInt64? FreeSpaceInPagingFiles;
-        public UInt64? FreeVirtualMemory;
+        public ulong? FreePhysicalMemory;
+        public ulong? FreeSpaceInPagingFiles;
+        public ulong? FreeVirtualMemory;
         public DateTime? InstallDate;
         public DateTime? LastBootUpTime;
         public DateTime? LocalDateTime;
         public string Locale;
         public string Manufacturer;
         public UInt32? MaxNumberOfProcesses;
-        public UInt64? MaxProcessMemorySize;
+        public ulong? MaxProcessMemorySize;
         public string[] MUILanguages;
         public string Name;
         public UInt32? NumberOfLicensedUsers;
@@ -1865,15 +1865,15 @@ namespace Microsoft.PowerShell.Commands
         public string SerialNumber;
         public UInt16? ServicePackMajorVersion;
         public UInt16? ServicePackMinorVersion;
-        public UInt64? SizeStoredInPagingFiles;
+        public ulong? SizeStoredInPagingFiles;
         public string Status;
         public UInt32? SuiteMask;
         public string SystemDevice;
         public string SystemDirectory;
         public string SystemDrive;
-        public UInt64? TotalSwapSpaceSize;
-        public UInt64? TotalVirtualMemorySize;
-        public UInt64? TotalVisibleMemorySize;
+        public ulong? TotalSwapSpaceSize;
+        public ulong? TotalVirtualMemorySize;
+        public ulong? TotalVisibleMemorySize;
         public string Version;
         public string WindowsDirectory;
         #endregion Fields
@@ -2818,13 +2818,13 @@ namespace Microsoft.PowerShell.Commands
         /// return an accurate value for the physical memory. For example,
         /// it is not accurate if the BIOS is using some of the physical memory
         /// </remarks>
-        public UInt64? CsTotalPhysicalMemory { get; internal set; }
+        public ulong? CsTotalPhysicalMemory { get; internal set; }
 
         /// <summary>
         /// Size of physically installed memory, as reported by the Windows API
         /// function GetPhysicallyInstalledSystemMemory
         /// </summary>
-        public UInt64? CsPhysicallyInstalledMemory { get; internal set; }
+        public ulong? CsPhysicallyInstalledMemory { get; internal set; }
 
         /// <summary>
         /// Name of a user that is logged on currently.
@@ -3025,27 +3025,27 @@ namespace Microsoft.PowerShell.Commands
         /// physical memory, but what is reported to the operating system
         /// as available to it.
         /// </remarks>
-        public UInt64? OsTotalVisibleMemorySize { get; internal set; }
+        public ulong? OsTotalVisibleMemorySize { get; internal set; }
 
         /// <summary>
         /// Number, in kilobytes, of physical memory currently unused and available
         /// </summary>
-        public UInt64? OsFreePhysicalMemory { get; internal set; }
+        public ulong? OsFreePhysicalMemory { get; internal set; }
 
         /// <summary>
         /// Number, in kilobytes, of virtual memory
         /// </summary>
-        public UInt64? OsTotalVirtualMemorySize { get; internal set; }
+        public ulong? OsTotalVirtualMemorySize { get; internal set; }
 
         /// <summary>
         /// Number, in kilobytes, of virtual memory currently unused and available
         /// </summary>
-        public UInt64? OsFreeVirtualMemory { get; internal set; }
+        public ulong? OsFreeVirtualMemory { get; internal set; }
 
         /// <summary>
         /// Number, in kilobytes, of virtual memory currently in use
         /// </summary>
-        public UInt64? OsInUseVirtualMemory { get; internal set; }
+        public ulong? OsInUseVirtualMemory { get; internal set; }
 
         /// <summary>
         /// Total swap space in kilobytes
@@ -3057,7 +3057,7 @@ namespace Microsoft.PowerShell.Commands
         /// can be swapped out when the free page list falls and remains below
         /// a specified amount
         /// </remarks>
-        public UInt64? OsTotalSwapSpaceSize { get; internal set; }
+        public ulong? OsTotalSwapSpaceSize { get; internal set; }
 
         /// <summary>
         /// Total number of kilobytes that can be stored in the operating system
@@ -3065,13 +3065,13 @@ namespace Microsoft.PowerShell.Commands
         /// Be aware that this number does not represent the actual physical
         /// size of the paging file on disk
         /// </summary>
-        public UInt64? OsSizeStoredInPagingFiles { get; internal set; }
+        public ulong? OsSizeStoredInPagingFiles { get; internal set; }
 
         /// <summary>
         /// Number, in kilobytes, that can be mapped into the operating system
         /// paging files without causing any other pages to be swapped out
         /// </summary>
-        public UInt64? OsFreeSpaceInPagingFiles { get; internal set; }
+        public ulong? OsFreeSpaceInPagingFiles { get; internal set; }
 
         /// <summary>
         /// Array of fiel paths to the operating system's paging files
@@ -3103,7 +3103,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum number, in kilobytes, of memory that can be allocated to a process
         /// </summary>
-        public UInt64? OsMaxProcessMemorySize { get; internal set; }
+        public ulong? OsMaxProcessMemorySize { get; internal set; }
 
         /// <summary>
         /// Array of Multilingual User Interface Pack (MUI Pack) languages installed
