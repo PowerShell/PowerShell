@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Disable ThrottleLimit parameter inherited from base class.
         /// </summary>
-        public new Int32 ThrottleLimit { set { } get { return 0; } }
+        public new int ThrottleLimit { set { } get { return 0; } }
         private ObjectStream _stream;
         private RemoteRunspace _tempRunspace;
 

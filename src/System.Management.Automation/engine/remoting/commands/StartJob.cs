@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override Int32 Port
+        public override int Port
         {
             get
             {

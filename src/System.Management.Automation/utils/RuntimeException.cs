@@ -65,7 +65,7 @@ namespace System.Management.Automation
 
             base.GetObjectData(info, context);
             info.AddValue("ErrorId", _errorId);
-            info.AddValue("ErrorCategory", (Int32)_errorCategory);
+            info.AddValue("ErrorCategory", (int)_errorCategory);
         }
         #endregion Serialization
 

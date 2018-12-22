@@ -4667,8 +4667,13 @@ namespace Microsoft.PowerShell.Commands
                 if (!provider.NameEquals(context.ProviderNames.FileSystem))
                 {
                     // "The current provider ({0}) cannot open a file"
-                    throw InterpreterError.NewInterpreterException(filePath, typeof(RuntimeException),
-                        null, "FileOpenError", ParserStrings.FileOpenError, provider.FullName);
+                    throw InterpreterError.NewInterpreterException(
+                        filePath,
+                        typeof(RuntimeException),
+                        errorPosition: null,
+                        "FileOpenError",
+                        ParserStrings.FileOpenError,
+                        provider.FullName);
                 }
             }
 
@@ -4681,9 +4686,12 @@ namespace Microsoft.PowerShell.Commands
             if (filePaths.Count > 1)
             {
                 // "The path resolved to more than one file; can only process one file at a time."
-                throw InterpreterError.
-                    NewInterpreterException(filePaths, typeof(RuntimeException),
-                    null, "AmbiguousPath", ParserStrings.AmbiguousPath);
+                throw InterpreterError.NewInterpreterException(
+                    filePaths,
+                    typeof(RuntimeException),
+                    errorPosition: null,
+                    "AmbiguousPath",
+                    ParserStrings.AmbiguousPath);
             }
 
             return filePaths[0];

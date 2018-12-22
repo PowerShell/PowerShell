@@ -1589,20 +1589,24 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // The binary operation is specified explicitly by the user and the -Value parameter is
                     // not specified
-                    ThrowTerminatingError(ForEachObjectCommand.
-                            GenerateNameParameterError("Value",
-                                                       InternalCommandStrings.ValueNotSpecifiedForWhereObject,
-                                                       "ValueNotSpecifiedForWhereObject", null));
+                    ThrowTerminatingError(
+                        ForEachObjectCommand.GenerateNameParameterError(
+                            "Value",
+                            InternalCommandStrings.ValueNotSpecifiedForWhereObject,
+                            "ValueNotSpecifiedForWhereObject",
+                            target: null));
                 }
 
                 // The binary operation needs to be specified if the user specifies both the -Property and -Value
                 if (!_valueNotSpecified && (_binaryOperator == TokenKind.Ieq && _forceBooleanEvaluation))
                 {
                     // The -Property and -Value are specified explicitly by the user but the binary operation is not
-                    ThrowTerminatingError(ForEachObjectCommand.
-                            GenerateNameParameterError("Operator",
-                                                       InternalCommandStrings.OperatorNotSpecified,
-                                                       "OperatorNotSpecified", null));
+                    ThrowTerminatingError(
+                        ForEachObjectCommand.GenerateNameParameterError(
+                            "Operator",
+                            InternalCommandStrings.OperatorNotSpecified,
+                            "OperatorNotSpecified",
+                            target: null));
                 }
 
                 bool strictModeWithError = false;
@@ -1654,11 +1658,12 @@ namespace Microsoft.PowerShell.Commands
                 if (Context.IsStrictVersion(2))
                 {
                     WriteError(
-                        ForEachObjectCommand.
-                            GenerateNameParameterError("InputObject",
-                                                       InternalCommandStrings.InputObjectIsNull,
-                                                       "InputObjectIsNull", _inputObject,
-                                                       _property));
+                        ForEachObjectCommand.GenerateNameParameterError(
+                            "InputObject",
+                            InternalCommandStrings.InputObjectIsNull,
+                            "InputObjectIsNull",
+                            _inputObject,
+                            _property));
                     error = true;
                 }
                 return null;
@@ -1695,11 +1700,13 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 WriteError(
-                    ForEachObjectCommand.
-                        GenerateNameParameterError("Property",
-                                                   InternalCommandStrings.AmbiguousPropertyOrMethodName,
-                                                   "AmbiguousPropertyName", _inputObject,
-                                                   _property, possibleMatches));
+                    ForEachObjectCommand.GenerateNameParameterError(
+                        "Property",
+                        InternalCommandStrings.AmbiguousPropertyOrMethodName,
+                        "AmbiguousPropertyName",
+                        _inputObject,
+                        _property,
+                        possibleMatches));
                 error = true;
             }
             else if (members.Count == 0)

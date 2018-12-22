@@ -1695,7 +1695,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Reference count variable
         /// </summary>
-        internal Int32 RefCount
+        internal int RefCount
         {
             get
             {

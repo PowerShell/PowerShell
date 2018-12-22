@@ -74,13 +74,13 @@ namespace Microsoft.PowerShell
 
             // the following code might throw exceptions,
             // engine will catch these exceptions
-            Int32 highPart = (Int32)largeIntType.InvokeMember("HighPart",
+            int highPart = (int)largeIntType.InvokeMember("HighPart",
                 BindingFlags.GetProperty | BindingFlags.Public,
                 null,
                 largeIntObject,
                 null,
                 CultureInfo.InvariantCulture);
-            Int32 lowPart = (Int32)largeIntType.InvokeMember("LowPart",
+            int lowPart = (int)largeIntType.InvokeMember("LowPart",
                 BindingFlags.GetProperty | BindingFlags.Public,
                 null,
                 largeIntObject,

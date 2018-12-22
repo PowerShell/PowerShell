@@ -3435,12 +3435,7 @@ namespace System.Management.Automation
                                 {
                                     string parentPath = RemoveMshQualifier(mshQualifiedParentPath, drive);
 
-                                    childPath =
-                                        _sessionState.Internal.
-                                            MakePath(
-                                                parentPath,
-                                                child,
-                                                context);
+                                    childPath = _sessionState.Internal.MakePath(parentPath, child, context);
 
                                     childPath = GetMshQualifiedPath(childPath, drive);
                                 }
@@ -3487,13 +3482,7 @@ namespace System.Management.Automation
                         {
                             string parentPath = RemoveMshQualifier(resolvedPath, drive);
 
-                            childPath =
-                                _sessionState.Internal.
-                                    MakePath(
-                                        parentPath,
-                                        backslashEscapedLeafElement,
-                                        context);
-
+                            childPath = _sessionState.Internal.MakePath(parentPath, backslashEscapedLeafElement, context);
                             childPath = GetMshQualifiedPath(childPath, drive);
                         }
 
@@ -4033,12 +4022,7 @@ namespace System.Management.Automation
 
                                 if (navigationProvider != null)
                                 {
-                                    childPath =
-                                        navigationProvider.
-                                        MakePath(
-                                            unescapedDir,
-                                            child,
-                                            context);
+                                    childPath = navigationProvider.MakePath(unescapedDir, child, context);
                                 }
 
                                 s_tracer.WriteLine("Adding child path to dirs {0}", childPath);

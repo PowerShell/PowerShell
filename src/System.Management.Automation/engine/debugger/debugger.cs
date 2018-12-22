@@ -1649,7 +1649,7 @@ namespace System.Management.Automation
 
         // Process runspace debugger
         private Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>>();
-        private volatile Int32 _processingRunspaceDebugQueue;
+        private volatile int _processingRunspaceDebugQueue;
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
         private static readonly string s_processDebugPromptMatch;
@@ -3592,7 +3592,7 @@ namespace System.Management.Automation
 
         private void StartRunspaceForDebugQueueProcessing()
         {
-            Int32 startThread = Interlocked.CompareExchange(ref _processingRunspaceDebugQueue, 1, 0);
+            int startThread = Interlocked.CompareExchange(ref _processingRunspaceDebugQueue, 1, 0);
 
             if (startThread == 0)
             {

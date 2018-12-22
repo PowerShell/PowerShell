@@ -255,8 +255,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
-        [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public Int32 Port { get; set; }
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        public int Port { get; set; }
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.NameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit { get; set; } = 0;
+        public int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Overriding to suppress this parameter
