@@ -2623,6 +2623,11 @@ function New-MSIPackage
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+    if ($isPreview)
+    {
+        # remove the temporary generated files.wxs for preview builds
+        Remove-Item -ErrorAction SilentlyContinue $FilesWxsPath -Force
+    }
 
     if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
