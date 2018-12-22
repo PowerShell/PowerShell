@@ -2640,7 +2640,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            Byte[] bytes = (Byte[])source;
+            byte[] bytes = (byte[])source;
             if (property != null)
             {
                 serializer.WriteStartElement(entry.PropertyTag);

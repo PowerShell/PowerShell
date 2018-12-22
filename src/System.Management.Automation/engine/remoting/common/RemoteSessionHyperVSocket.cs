@@ -520,10 +520,10 @@ namespace System.Management.Automation.Remoting
                     bool emptyPassword = String.IsNullOrEmpty(networkCredential.Password);
                     bool emptyConfiguration = String.IsNullOrEmpty(configurationName);
 
-                    Byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
-                    Byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
-                    Byte[] password = Encoding.Unicode.GetBytes(networkCredential.Password);
-                    Byte[] response = new Byte[4]; // either "PASS" or "FAIL"
+                    byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
+                    byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
+                    byte[] password = Encoding.Unicode.GetBytes(networkCredential.Password);
+                    byte[] response = new byte[4]; // either "PASS" or "FAIL"
                     string responseString;
 
                     //
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Remoting
                             HyperVSocket.Send(Encoding.ASCII.GetBytes("NONEMPTYCF"));
                             HyperVSocket.Receive(response);
 
-                            Byte[] configName = Encoding.Unicode.GetBytes(configurationName);
+                            byte[] configName = Encoding.Unicode.GetBytes(configurationName);
                             HyperVSocket.Send(configName);
                         }
                     }
