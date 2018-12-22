@@ -1405,7 +1405,7 @@ namespace Microsoft.PowerShell.Commands
         public byte? EmbeddedControllerMajorVersion;
         public byte? EmbeddedControllerMinorVersion;
         public string IdentificationCode;
-        public UInt16? InstallableLanguages;
+        public ushort? InstallableLanguages;
         public DateTime? InstallDate;
         public string LanguageEdition;
         public string[] ListOfLanguages;
@@ -1416,45 +1416,45 @@ namespace Microsoft.PowerShell.Commands
         public DateTime? ReleaseDate;
         public string SerialNumber;
         public string SMBIOSBIOSVersion;
-        public UInt16? SMBIOSMajorVersion;
-        public UInt16? SMBIOSMinorVersion;
+        public ushort? SMBIOSMajorVersion;
+        public ushort? SMBIOSMinorVersion;
         public bool? SMBIOSPresent;
-        public UInt16? SoftwareElementState;
+        public ushort? SoftwareElementState;
         public string Status;
         public byte? SystemBiosMajorVersion;
         public byte? SystemBiosMinorVersion;
-        public UInt16? TargetOperatingSystem;
+        public ushort? TargetOperatingSystem;
         public string Version;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiComputerSystem
     {
-        public UInt16? AdminPasswordStatus;
+        public ushort? AdminPasswordStatus;
         public bool? AutomaticManagedPagefile;
         public bool? AutomaticResetBootOption;
         public bool? AutomaticResetCapability;
-        public UInt16? BootOptionOnLimit;
-        public UInt16? BootOptionOnWatchDog;
+        public ushort? BootOptionOnLimit;
+        public ushort? BootOptionOnWatchDog;
         public bool? BootROMSupported;
         public string BootupState;
         public UInt16[] BootStatus;
         public string Caption;
-        public UInt16? ChassisBootupState;
+        public ushort? ChassisBootupState;
         public string ChassisSKUNumber;
         public Int16? CurrentTimeZone;
         public bool? DaylightInEffect;
         public string Description;
         public string DNSHostName;
         public string Domain;
-        public UInt16? DomainRole;
+        public ushort? DomainRole;
         public bool? EnableDaylightSavingsTime;
-        public UInt16? FrontPanelResetStatus;
+        public ushort? FrontPanelResetStatus;
         public bool? HypervisorPresent;
         public bool? InfraredSupported;
         public string InitialLoadInfo;
         public DateTime? InstallDate;
-        public UInt16? KeyboardPasswordStatus;
+        public ushort? KeyboardPasswordStatus;
         public string LastLoadInfo;
         public string Manufacturer;
         public string Model;
@@ -1465,16 +1465,16 @@ namespace Microsoft.PowerShell.Commands
         public string[] OEMStringArray;
         public bool? PartOfDomain;
         public Int64? PauseAfterReset;
-        public UInt16? PCSystemType;
-        public UInt16? PCSystemTypeEx;
+        public ushort? PCSystemType;
+        public ushort? PCSystemTypeEx;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
-        public UInt16? PowerOnPasswordStatus;
-        public UInt16? PowerState;
-        public UInt16? PowerSupplyState;
+        public ushort? PowerOnPasswordStatus;
+        public ushort? PowerState;
+        public ushort? PowerSupplyState;
         public string PrimaryOwnerContact;
         public string PrimaryOwnerName;
-        public UInt16? ResetCapability;
+        public ushort? ResetCapability;
         public Int16? ResetCount;
         public Int16? ResetLimit;
         public string[] Roles;
@@ -1483,10 +1483,10 @@ namespace Microsoft.PowerShell.Commands
         public string SystemFamily;
         public string SystemSKUNumber;
         public string SystemType;
-        public UInt16? ThermalState;
+        public ushort? ThermalState;
         public ulong? TotalPhysicalMemory;
         public string UserName;
-        public UInt16? WakeUpType;
+        public ushort? WakeUpType;
         public string Workgroup;
 
         public PowerManagementCapabilities[] GetPowerManagementCapabilities()
@@ -1584,7 +1584,7 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiKeyboard
     {
-        public UInt16? Availability;
+        public ushort? Availability;
         public string Caption;
         public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
@@ -1597,13 +1597,13 @@ namespace Microsoft.PowerShell.Commands
         public uint? LastErrorCode;
         public string Layout;
         public string Name;
-        public UInt16? NumberOfFunctionKeys;
-        public UInt16? Password;
+        public ushort? NumberOfFunctionKeys;
+        public ushort? Password;
         public string PNPDeviceID;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
         public string Status;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string SystemCreationClassName;
         public string SystemName;
     }
@@ -1623,7 +1623,7 @@ namespace Microsoft.PowerShell.Commands
         public DateTime? InstallDate;
         public string Name;
         public string Status;
-        public UInt16? Availability;
+        public ushort? Availability;
         public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public string DeviceID;
@@ -1633,18 +1633,18 @@ namespace Microsoft.PowerShell.Commands
         public string PNPDeviceID;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string SystemCreationClassName;
         public string SystemName;
         public ulong? Speed;
         public ulong? MaxSpeed;
         public ulong? RequestedSpeed;
-        public UInt16? UsageRestriction;
-        public UInt16? PortType;
+        public ushort? UsageRestriction;
+        public ushort? PortType;
         public string OtherPortType;
         public string OtherNetworkPortType;
-        public UInt16? PortNumber;
-        public UInt16? LinkTechnology;
+        public ushort? PortNumber;
+        public ushort? LinkTechnology;
         public string OtherLinkTechnology;
         public string PermanentAddress;
         public string[] NetworkAddresses;
@@ -1679,7 +1679,7 @@ namespace Microsoft.PowerShell.Commands
         public uint? InterfaceAdminStatus;
         public uint? MediaConnectState;
         public uint? MtuSize;
-        public UInt16? VlanID;
+        public ushort? VlanID;
         public ulong? TransmitLinkSpeed;
         public ulong? ReceiveLinkSpeed;
         public bool? PromiscuousMode;
@@ -1691,8 +1691,8 @@ namespace Microsoft.PowerShell.Commands
         public string DriverVersionString;
         public string DriverName;
         public string DriverDescription;
-        public UInt16? MajorDriverVersion;
-        public UInt16? MinorDriverVersion;
+        public ushort? MajorDriverVersion;
+        public ushort? MinorDriverVersion;
         public byte? DriverMajorNdisVersion;
         public byte? DriverMinorNdisVersion;
         public string PnPDeviceID;
@@ -1707,9 +1707,9 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiNetworkAdapter
     {
         public string AdapterType;
-        public UInt16? AdapterTypeID;
+        public ushort? AdapterTypeID;
         public bool? AutoSense;
-        public UInt16? Availability;
+        public ushort? Availability;
         public string Caption;
         public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
@@ -1729,7 +1729,7 @@ namespace Microsoft.PowerShell.Commands
         public ulong? MaxSpeed;
         public string Name;
         public string NetConnectionID;
-        public UInt16? NetConnectionStatus;
+        public ushort? NetConnectionStatus;
         public bool? NetEnabled;
         public string[] NetworkAddresses;
         public string PermanentAddress;
@@ -1741,7 +1741,7 @@ namespace Microsoft.PowerShell.Commands
         public string ServiceName;
         public ulong? Speed;
         public string Status;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string SystemCreationClassName;
         public string SystemName;
         public DateTime? TimeOfLastReset;
@@ -1805,7 +1805,7 @@ namespace Microsoft.PowerShell.Commands
         public uint? TcpMaxDataRetransmissions;
         public uint? TcpNumConnections;
         public bool? TcpUseRFC1122UrgentPointer;
-        public UInt16? TcpWindowSize;
+        public ushort? TcpWindowSize;
         public bool? WINSEnableLMHostsLookup;
         public string WINSHostLookupFile;
         public string WINSPrimaryServer;
@@ -1855,7 +1855,7 @@ namespace Microsoft.PowerShell.Commands
         public string OSArchitecture;
         public uint? OSLanguage;
         public uint? OSProductSuite;
-        public UInt16? OSType;
+        public ushort? OSType;
         public string OtherTypeDescription;
         public bool? PAEEnabled;
         public bool? PortableOperatingSystem;
@@ -1863,8 +1863,8 @@ namespace Microsoft.PowerShell.Commands
         public uint? ProductType;
         public string RegisteredUser;
         public string SerialNumber;
-        public UInt16? ServicePackMajorVersion;
-        public UInt16? ServicePackMinorVersion;
+        public ushort? ServicePackMajorVersion;
+        public ushort? ServicePackMinorVersion;
         public ulong? SizeStoredInPagingFiles;
         public string Status;
         public uint? SuiteMask;
@@ -1942,32 +1942,32 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiProcessor
     {
-        public UInt16? AddressWidth;
-        public UInt16? Architecture;
+        public ushort? AddressWidth;
+        public ushort? Architecture;
         public string AssetTag;
-        public UInt16? Availability;
+        public ushort? Availability;
         public string Caption;
         public uint? Characteristics;
         public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
-        public UInt16? CpuStatus;
+        public ushort? CpuStatus;
         public uint? CurrentClockSpeed;
-        public UInt16? CurrentVoltage;
-        public UInt16? DataWidth;
+        public ushort? CurrentVoltage;
+        public ushort? DataWidth;
         public string Description;
         public string DeviceID;
         public bool? ErrorCleared;
         public string ErrorDescription;
         public uint? ExtClock;
-        public UInt16? Family;
+        public ushort? Family;
         public DateTime? InstallDate;
         public uint? L2CacheSize;
         public uint? L2CacheSpeed;
         public uint? L3CacheSize;
         public uint? L3CacheSpeed;
         public uint? LastErrorCode;
-        public UInt16? Level;
-        public UInt16? LoadPercentage;
+        public ushort? Level;
+        public ushort? LoadPercentage;
         public string Manufacturer;
         public uint? MaxClockSpeed;
         public string Name;
@@ -1980,19 +1980,19 @@ namespace Microsoft.PowerShell.Commands
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
         public string ProcessorId;
-        public UInt16? ProcessorType;
-        public UInt16? Revision;
+        public ushort? ProcessorType;
+        public ushort? Revision;
         public string Role;
         public bool? SecondLevelAddressTranslationExtensions;
         public string SerialNumber;
         public string SocketDesignation;
         public string Status;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string Stepping;
         public string SystemName;
         public uint? ThreadCount;
         public string UniqueId;
-        public UInt16? UpgradeMethod;
+        public ushort? UpgradeMethod;
         public string Version;
         public bool? VirtualizationFirmwareEnabled;
         public bool? VMMonitorModeExtensions;
@@ -2162,11 +2162,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Address width of the processor
         /// </summary>
-        public UInt16? AddressWidth { get; internal set; }
+        public ushort? AddressWidth { get; internal set; }
         /// <summary>
         /// Data width of the processor
         /// </summary>
-        public UInt16? DataWidth { get; internal set; }
+        public ushort? DataWidth { get; internal set; }
         /// <summary>
         /// Maximum speed of the processor, in MHz
         /// </summary>
@@ -2368,7 +2368,7 @@ namespace Microsoft.PowerShell.Commands
         /// Number of languages available for installation on this system.
         /// Language may determine properties such as the need for Unicode and bidirectional text
         /// </summary>
-        public UInt16? BiosInstallableLanguages { get; internal set; }
+        public ushort? BiosInstallableLanguages { get; internal set; }
 
         /// <summary>
         /// Date and time the object was installed.
@@ -2432,12 +2432,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// SMBIOS major version number. This property is null if SMBIOS is not found
         /// </summary>
-        public UInt16? BiosSMBIOSMajorVersion { get; internal set; }
+        public ushort? BiosSMBIOSMajorVersion { get; internal set; }
 
         /// <summary>
         /// SMBIOS minor version number. This property is null if SMBIOS is not found
         /// </summary>
-        public UInt16? BiosSMBIOSMinorVersion { get; internal set; }
+        public ushort? BiosSMBIOSMinorVersion { get; internal set; }
 
         /// <summary>
         /// If true, the SMBIOS is available on this computer system
@@ -2457,17 +2457,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Major elease of the System BIOS
         /// </summary>
-        public UInt16? BiosSystemBiosMajorVersion { get; internal set; }
+        public ushort? BiosSystemBiosMajorVersion { get; internal set; }
 
         /// <summary>
         /// Minor release of the System BIOS
         /// </summary>
-        public UInt16? BiosSystemBiosMinorVersion { get; internal set; }
+        public ushort? BiosSystemBiosMinorVersion { get; internal set; }
 
         /// <summary>
         /// Target operating system
         /// </summary>
-        public UInt16? BiosTargetOperatingSystem { get; internal set; }
+        public ushort? BiosTargetOperatingSystem { get; internal set; }
 
         /// <summary>
         /// Version of the BIOS.
@@ -3191,12 +3191,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Major version of the service pack installed on the computer system
         /// </summary>
-        public UInt16? OsServicePackMajorVersion { get; internal set; }
+        public ushort? OsServicePackMajorVersion { get; internal set; }
 
         /// <summary>
         /// Minor version of the service pack installed on the computer system
         /// </summary>
-        public UInt16? OsServicePackMinorVersion { get; internal set; }
+        public ushort? OsServicePackMinorVersion { get; internal set; }
 
         /// <summary>
         /// Current status
