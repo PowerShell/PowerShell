@@ -1102,7 +1102,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="name">Name of value to retrieve.</param>
         /// <returns>The data associated with the value.</returns>
         /// </summary>
-        public Object GetValue(String name)
+        public object GetValue(String name)
         {
             CheckValueReadPermission(name);
             return InternalGetValue(name, null, false, true);
@@ -1117,7 +1117,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="defaultValue">Value to return if name doesn't exist.</param>
         /// <returns>The data associated with the value.</returns>
         /// </summary>
-        public Object GetValue(String name, Object defaultValue)
+        public object GetValue(String name, object defaultValue)
         {
             CheckValueReadPermission(name);
             return InternalGetValue(name, defaultValue, false, true);
@@ -1135,7 +1135,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <returns>The data associated with the value.</returns>
         /// </summary>
         [ComVisible(false)]
-        public Object GetValue(String name, Object defaultValue, RegistryValueOptions options)
+        public object GetValue(String name, object defaultValue, RegistryValueOptions options)
         {
             if (options < RegistryValueOptions.None || options > RegistryValueOptions.DoNotExpandEnvironmentNames)
             {
@@ -1148,7 +1148,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             return InternalGetValue(name, defaultValue, doNotExpand, true);
         }
 
-        internal Object InternalGetValue(String name, Object defaultValue, bool doNotExpand, bool checkSecurity)
+        internal object InternalGetValue(String name, object defaultValue, bool doNotExpand, bool checkSecurity)
         {
             if (checkSecurity)
             {
@@ -1158,7 +1158,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             // Don't require a transaction. We don't want to throw for "Base" keys.
 
-            Object data = defaultValue;
+            object data = defaultValue;
             int type = 0;
             int datasize = 0;
 
@@ -1356,7 +1356,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="name">Name of value to store data in.</param>
         /// <param name="value">Data to store.</param>
         /// </summary>
-        public void SetValue(String name, Object value)
+        public void SetValue(String name, object value)
         {
             SetValue(name, value, RegistryValueKind.Unknown);
         }
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="valueKind">The registry data type to use when storing the data.</param>
         /// </summary>
         [ComVisible(false)]
-        public unsafe void SetValue(String name, Object value, RegistryValueKind valueKind)
+        public unsafe void SetValue(String name, object value, RegistryValueKind valueKind)
         {
             if (value == null)
                 throw new ArgumentNullException(RegistryProviderStrings.Arg_Value);

@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Object messageSender = null;
+            object messageSender = null;
             if (_sender != null) { messageSender = _sender.BaseObject; }
 
             // And then generate the event

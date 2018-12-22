@@ -25,14 +25,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Returns an Object value for an operation context
         /// </para>
         /// </summary>
-        public Object Context
+        public object Context
         {
             get
             {
                 return context;
             }
         }
-        protected Object context;
+        protected object context;
     }
 
     /// <summary>

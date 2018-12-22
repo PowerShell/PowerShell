@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The item about to be added.
         /// </summary>
-        public Object ItemAdded { get; }
+        public object ItemAdded { get; }
 
         /// <summary>
         /// PowerShell InstanceId which added this data.
@@ -1387,7 +1387,7 @@ namespace System.Management.Automation
         private Guid _lastPsInstanceId;
         private int _lastIndex;
 
-        private void RaiseDataAddingEvent(Guid psInstanceId, Object itemAdded)
+        private void RaiseDataAddingEvent(Guid psInstanceId, object itemAdded)
         {
             // A temporary variable is used as the DataAdding may
             // reach null (because of -='s) after the null check
@@ -1641,7 +1641,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Object deserialized = PSSerializer.Deserialize(PSSerializer.Serialize(value));
+                object deserialized = PSSerializer.Deserialize(PSSerializer.Serialize(value));
                 if (deserialized == null)
                 {
                     return null;
@@ -1660,7 +1660,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            Object baseObject = PSObject.Base(result);
+            object baseObject = PSObject.Base(result);
             if (baseObject == null)
             {
                 return true;
@@ -1690,7 +1690,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sync object for this collection
         /// </summary>
-        internal Object SyncObject { get; } = new object();
+        internal object SyncObject { get; } = new object();
 
         /// <summary>
         /// Reference count variable

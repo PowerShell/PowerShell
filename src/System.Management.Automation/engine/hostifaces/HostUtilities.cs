@@ -278,7 +278,7 @@ namespace System.Management.Automation
 
             // Get the last error
             ArrayList errorList = (ArrayList)localRunspace.GetExecutionContext.DollarErrorVariable;
-            Object lastError = null;
+            object lastError = null;
 
             if (errorList.Count > 0)
             {
@@ -335,7 +335,7 @@ namespace System.Management.Automation
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, Object lastError, ArrayList errorList)
+        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, object lastError, ArrayList errorList)
         {
             ArrayList returnSuggestions = new ArrayList();
 

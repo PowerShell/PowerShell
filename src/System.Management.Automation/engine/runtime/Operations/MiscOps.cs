@@ -2465,7 +2465,7 @@ namespace System.Management.Automation
                 }
 
                 var rest = new List<object>();
-                Object current = null;
+                object current = null;
 
                 int index = 0;
                 if (numberToReturn == 0)

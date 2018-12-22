@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the object that generates events to be monitored.
         /// </summary>
-        protected override Object GetSourceObject()
+        protected override object GetSourceObject()
         {
             // If it's not a forwarded event, the user must specify
             // an action

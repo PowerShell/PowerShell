@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
             Assembly webserviceproxy = GenerateWebServiceProxyAssembly(_namespace, _class);
             if (webserviceproxy == null)
                 return;
-            Object instance = InstantiateWebServiceProxy(webserviceproxy);
+            object instance = InstantiateWebServiceProxy(webserviceproxy);
 
             //to set the credentials into the generated webproxy Object
             PropertyInfo[] pinfo = instance.GetType().GetProperties();

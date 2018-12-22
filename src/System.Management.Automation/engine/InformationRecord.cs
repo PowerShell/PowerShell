@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// The message data for this informational record
         /// </summary>
         [DataMember]
-        public Object MessageData { get; internal set; }
+        public object MessageData { get; internal set; }
 
         /// <summary>
         /// The source of this informational record (script path, function name, etc.)

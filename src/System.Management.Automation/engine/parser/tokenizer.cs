@@ -1551,7 +1551,7 @@ namespace System.Management.Automation.Language
 
         #endregion Utilities
 
-        #region Object reuse
+        #region object reuse
 
         private readonly Queue<StringBuilder> _stringBuilders = new Queue<StringBuilder>();
 
@@ -1578,7 +1578,7 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        #endregion Object reuse
+        #endregion object reuse
 
         #region Comments
 

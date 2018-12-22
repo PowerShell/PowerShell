@@ -1872,7 +1872,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" />.</param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" />.</param>
-        private StringContent GetMultipartStringContent(Object fieldName, Object fieldValue)
+        private StringContent GetMultipartStringContent(Object fieldName, object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.

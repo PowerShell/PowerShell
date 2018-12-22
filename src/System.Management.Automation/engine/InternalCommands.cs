@@ -766,7 +766,7 @@ namespace Microsoft.PowerShell.Commands
             // Cannot invoke certain methods in ConstrainedLanguage mode
             if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                Object baseObject = PSObject.Base(inputObject);
+                object baseObject = PSObject.Base(inputObject);
 
                 if (!CoreTypes.Contains(baseObject.GetType()))
                 {

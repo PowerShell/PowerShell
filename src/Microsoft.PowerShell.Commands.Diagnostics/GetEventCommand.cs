@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell.Commands
         // Constructs and returns named event data field XPath portion as a string.
         // Fix Issue #2327
         //
-        private string HandleNamedDataHashValue(String key, Object value)
+        private string HandleNamedDataHashValue(String key, object value)
         {
             StringBuilder ret = new StringBuilder();
             Array dataArray = value as Array;
@@ -1783,7 +1783,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string key in hash.Keys)
                 {
-                    Object value = hash[key];
+                    object value = hash[key];
                     if (value == null)
                     {
                         string msg = _resourceMgr.GetString("NullNotAllowedInHashtable");

@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
             return this.displayName;
         }
 
-        internal abstract Object GetValue(PSObject liveObject);
+        internal abstract object GetValue(PSObject liveObject);
 
         internal Type GetValueType(PSObject liveObject, out object columnValue)
         {

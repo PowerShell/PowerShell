@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the object that generates events to be monitored
         /// </summary>
-        protected abstract Object GetSourceObject();
+        protected abstract object GetSourceObject();
 
         /// <summary>
         /// Returns the event name to be monitored on the input object
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            Object inputObject = PSObject.Base(GetSourceObject());
+            object inputObject = PSObject.Base(GetSourceObject());
             string eventName = GetSourceObjectEventName();
 
             try

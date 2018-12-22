@@ -218,7 +218,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             public ContextOperation operation;
             public ContextObjectType type;
-            public Object target;
+            public object target;
             public string objectId;
             public string memberId;
 

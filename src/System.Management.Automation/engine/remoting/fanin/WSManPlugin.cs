@@ -575,7 +575,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="source">Shell context</param>
         /// <param name="e"></param>
         private void HandleShellSessionClosed(
-            Object source,
+            object source,
             EventArgs e)
         {
             DeleteFromActiveShellSessions((IntPtr)source);

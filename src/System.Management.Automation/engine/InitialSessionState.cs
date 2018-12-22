@@ -2077,7 +2077,7 @@ namespace System.Management.Automation.Runspaces
         }
         private HashSet<string> _startupScripts = new HashSet<string>();
 
-        private Object _syncObject = new Object();
+        private object _syncObject = new Object();
 
         internal void Bind(ExecutionContext context, bool updateOnly)
         {

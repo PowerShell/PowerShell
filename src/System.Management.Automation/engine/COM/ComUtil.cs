@@ -317,7 +317,7 @@ namespace System.Management.Automation
 
                 //get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
-                Object defaultvalue = null;
+                object defaultvalue = null;
 
                 //check is this parameter is optional.
                 if ((ElementDescription.desc.paramdesc.wParamFlags & COM.PARAMFLAG.PARAMFLAG_FOPT) != 0)

@@ -939,7 +939,7 @@ namespace System.Management.Automation.Host
             return systemTranscript;
         }
         internal static TranscriptionOption systemTranscript = null;
-        private static Object s_systemTranscriptLock = new Object();
+        private static object s_systemTranscriptLock = new Object();
 
         private static TranscriptionOption GetTranscriptOptionFromSettings(Transcription transcriptConfig, TranscriptionOption currentTranscript)
         {

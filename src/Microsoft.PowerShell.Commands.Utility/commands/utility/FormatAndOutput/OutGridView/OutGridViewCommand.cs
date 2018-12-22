@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            Object baseObject = input.BaseObject;
+            object baseObject = input.BaseObject;
 
             // Throw a terminating error for types that are not supported.
             if (baseObject is ScriptBlock ||

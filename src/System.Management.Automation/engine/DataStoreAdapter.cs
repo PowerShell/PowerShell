@@ -688,8 +688,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator ==(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if ((drive1Object == null) == (drive2Object == null))
             {
@@ -739,8 +739,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator <(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if (drive1Object == null)
             {
@@ -777,8 +777,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator >(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if ((drive1Object == null))
             {

@@ -200,7 +200,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="key">connection string</param>
         /// <param name="value">session object</param>
-        internal void AddtoDictionary(string key, Object value)
+        internal void AddtoDictionary(string key, object value)
         {
             key = key.ToLowerInvariant();
             lock (Sessions.SessionObjCache)
