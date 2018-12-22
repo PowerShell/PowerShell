@@ -1491,8 +1491,8 @@ namespace Microsoft.PowerShell.Commands
 
             var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
             var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                        .AddCommand(commandInfo)
-                        .AddParameter("Noun", wordToComplete + "*");
+                .AddCommand(commandInfo)
+                .AddParameter("Noun", wordToComplete + "*");
 
             if (fakeBoundParameters.Contains("Module"))
             {
