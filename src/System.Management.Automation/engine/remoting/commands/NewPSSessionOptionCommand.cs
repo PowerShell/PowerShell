@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("OperationTimeoutMSec")]
         [ValidateRange(0, Int32.MaxValue)]
-        public Int32 OperationTimeout
+        public int OperationTimeout
         {
             get
             {
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
             }
             set { _operationtimeout = value; }
         }
-        private Int32? _operationtimeout;
+        private int? _operationtimeout;
 
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".

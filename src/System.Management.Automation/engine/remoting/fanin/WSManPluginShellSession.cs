@@ -41,7 +41,7 @@ namespace System.Management.Automation.Remoting
         // shell context.
         internal RegisteredWaitHandle registeredShutDownWaitHandle;
         internal WSManPluginServerTransportManager transportMgr;
-        internal System.Int32 registeredShutdownNotification;
+        internal int registeredShutdownNotification;
 
         // event that gets raised when session is closed.."source" will provide
         // IntPtr for "creationRequestDetails" which can be used to free

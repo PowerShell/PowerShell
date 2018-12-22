@@ -1908,7 +1908,7 @@ namespace System.Management.Automation
         /// <param name="nCmdShow">The command to do</param>
         /// <returns>true it it was successful</returns>
         [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
