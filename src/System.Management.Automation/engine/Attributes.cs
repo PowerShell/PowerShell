@@ -1675,11 +1675,10 @@ namespace System.Management.Automation
             string objString = element.ToString();
             foreach (string setString in ValidValues)
             {
-                if (CultureInfo.InvariantCulture.
-                        CompareInfo.Compare(setString, objString,
-                                            IgnoreCase
-                                                ? CompareOptions.IgnoreCase
-                                                : CompareOptions.None) == 0)
+                if (CultureInfo.InvariantCulture.CompareInfo.Compare(
+                        setString,
+                        objString,
+                        IgnoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0)
                 {
                     return;
                 }

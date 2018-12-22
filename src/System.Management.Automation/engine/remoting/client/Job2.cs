@@ -820,8 +820,7 @@ namespace System.Management.Automation
                     ExecutionError.Add(
                         new ErrorRecord(e.Error,
                                         "ContainerParentJobStartError",
-                                        ErrorCategory.
-                                            InvalidResult,
+                                        ErrorCategory.InvalidResult,
                                         childJob));
                     _tracer.WriteMessage(TraceClassName, "StartJob-Handler", Guid.Empty, this,
                         "Child job asynchronously had error, child InstanceId: {0}", childJob.InstanceId.ToString());

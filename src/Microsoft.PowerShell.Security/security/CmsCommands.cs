@@ -142,10 +142,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 StringBuilder outputString = new StringBuilder();
 
-                Collection<PSObject> output = System.Management.Automation.PowerShell.Create().
-                    AddCommand("Microsoft.PowerShell.Utility\\Out-String").
-                    AddParameter("Stream").
-                    Invoke(_inputObjects);
+                Collection<PSObject> output = System.Management.Automation.PowerShell.Create()
+                    .AddCommand("Microsoft.PowerShell.Utility\\Out-String")
+                    .AddParameter("Stream")
+                    .Invoke(_inputObjects);
 
                 foreach (PSObject outputObject in output)
                 {
