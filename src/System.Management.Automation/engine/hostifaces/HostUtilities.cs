@@ -928,7 +928,7 @@ namespace System.Management.Automation
         /// </summary>
         public const string PSEditFunction = @"
             param (
-                [Parameter(Mandatory=$true)] [String[]] $FileName
+                [Parameter(Mandatory=$true)] [string[]] $FileName
             )
 
             foreach ($file in $FileName)

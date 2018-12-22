@@ -28,7 +28,7 @@ namespace System.Management.Automation
         private string _historyString;
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
         private CommandCollection _commands = new CommandCollection();
-        private String _computerName;
+        private string _computerName;
         private Guid _runspaceId;
         private ConnectCommandInfo _connectCmdInfo = null;
 

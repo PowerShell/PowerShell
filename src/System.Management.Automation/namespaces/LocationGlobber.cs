@@ -2662,7 +2662,7 @@ namespace System.Management.Automation
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<String> leafElements = new Stack<String>();
+                    Stack<string> leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
@@ -3619,7 +3619,7 @@ namespace System.Management.Automation
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<String> leafElements = new Stack<String>();
+                    Stack<string> leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {

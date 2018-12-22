@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
-        public override String[] ComputerName
+        public override string[] ComputerName
         {
             get
             {
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        public override String ConfigurationName
+        public override string ConfigurationName
         {
             get
             {
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
-        public override String ApplicationName
+        public override string ApplicationName
         {
             get
             {
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        public String JobName
+        public string JobName
         {
             get
             {
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        private String _name = String.Empty;
+        private string _name = String.Empty;
 
         /// <summary>
         /// The script block that the user has specified in the
@@ -1073,7 +1073,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (Operations.Count > 0)
                                     {
-                                        String[] locations = new String[ConnectionUri.Length];
+                                        string[] locations = new String[ConnectionUri.Length];
                                         for (int i = 0; i < locations.Length; i++)
                                         {
                                             locations[i] = ConnectionUri[i].ToString();

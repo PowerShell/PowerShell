@@ -1507,7 +1507,7 @@ namespace System.Management.Automation.Remoting.Server
         /// <param name="xmlBuffer">The input buffer to search. It must be base-64 encoded XML.</param>
         /// <param name="xmlTag">The XML tag used to identify the value to extract.</param>
         /// <returns>The extracted tag converted from a base-64 string.</returns>
-        internal static System.Byte[] ExtractEncodedXmlElement(String xmlBuffer, String xmlTag)
+        internal static System.Byte[] ExtractEncodedXmlElement(string xmlBuffer, string xmlTag)
         {
             if (xmlBuffer == null || xmlTag == null)
                 return new System.Byte[1];
@@ -1524,7 +1524,7 @@ namespace System.Management.Automation.Remoting.Server
             readerSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;
             XmlReader reader = XmlReader.Create(new StringReader(xmlBuffer), readerSettings);
 
-            String additionalData;
+            string additionalData;
             if (XmlNodeType.Element == reader.MoveToContent())
             {
                 additionalData = reader.ReadElementContentAsString(xmlTag, reader.NamespaceURI);

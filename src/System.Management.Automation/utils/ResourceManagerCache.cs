@@ -91,7 +91,7 @@ namespace System.Management.Automation
                     // cache entry and then add it into the cache keyed by the assembly
                     // location
 
-                    var baseNameCacheEntry = new Dictionary<String, ResourceManager>();
+                    var baseNameCacheEntry = new Dictionary<string, ResourceManager>();
 
                     baseNameCacheEntry[baseName] = manager;
 

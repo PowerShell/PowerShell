@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return _appName; }
             set
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
                 _appName = ResolveAppName(value);
             }
         }
-        private String _appName;
+        private string _appName;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
                            ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.VMNameInstanceIdParameterSet)]
-        public String ConfigurationName { get; set; }
+        public string ConfigurationName { get; set; }
 
         /// <summary>
         /// The AllowRedirection parameter enables the implicit redirection functionality.

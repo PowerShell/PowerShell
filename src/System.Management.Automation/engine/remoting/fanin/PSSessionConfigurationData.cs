@@ -40,7 +40,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// </summary>
-        public String PrivateData
+        public string PrivateData
         {
             get
             {

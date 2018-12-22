@@ -44,9 +44,9 @@ namespace System.Management.Automation.Remoting
         // TODO: If this is not used, remove this.
         //internal abstract event EventHandler<RemoteDataEventArgs> DataReceived;
 
-        internal abstract event EventHandler<RemoteDataEventArgs<String>> EncryptedSessionKeyReceived;
+        internal abstract event EventHandler<RemoteDataEventArgs<string>> EncryptedSessionKeyReceived;
 
-        internal abstract event EventHandler<RemoteDataEventArgs<String>> PublicKeyRequestReceived;
+        internal abstract event EventHandler<RemoteDataEventArgs<string>> PublicKeyRequestReceived;
 
         internal abstract void SendPublicKeyAsync(string localPublicKey);
 

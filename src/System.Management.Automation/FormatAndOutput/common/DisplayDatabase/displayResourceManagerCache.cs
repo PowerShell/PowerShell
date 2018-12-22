@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         continue;
                     }
 
-                    String nameToCompare = fullName ? aName.FullName : aName.Name;
+                    string nameToCompare = fullName ? aName.FullName : aName.Name;
 
                     if (string.Equals(nameToCompare, assemblyName, StringComparison.Ordinal))
                     {

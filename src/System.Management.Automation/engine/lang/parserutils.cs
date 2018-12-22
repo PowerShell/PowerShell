@@ -153,7 +153,7 @@ namespace System.Management.Automation
         internal BreakException() { }
 
         [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
-        internal BreakException(String label, Exception innerException)
+        internal BreakException(string label, Exception innerException)
             : base(label)
         {
         }
@@ -179,7 +179,7 @@ namespace System.Management.Automation
         internal ContinueException() { }
 
         [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
-        internal ContinueException(String label, Exception innerException)
+        internal ContinueException(string label, Exception innerException)
             : base(label)
         {
         }
@@ -642,7 +642,7 @@ namespace System.Management.Automation
             List<string> results = new List<string>();
             foreach (string item in content)
             {
-                List<string> split = new List<String>();
+                List<string> split = new List<string>();
 
                 if (limit == 1)
                 {

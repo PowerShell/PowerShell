@@ -2460,7 +2460,7 @@ namespace System.Management.Automation
         private RunspacePool _runspacePool;
         private EventHandler<JobDataAddedEventArgs> _dataAddedHandler;
         private EventHandler<JobStateEventArgs> _stateChangedHandler;
-        private const String ResBaseName = "PowerShellStrings";
+        private const string ResBaseName = "PowerShellStrings";
         private Guid _remoteJobInstanceId = Guid.Empty;
         private string _remoteJobStatusMessage = String.Empty;
         private string _remoteJobLocation = String.Empty;

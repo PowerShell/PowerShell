@@ -440,7 +440,7 @@ namespace System.Management.Automation.Remoting
                 PSCredential cred = null;
                 try
                 {
-                    cred = new PSCredential((String)objAsPSObject.Properties["UserName"].Value,
+                    cred = new PSCredential((string)objAsPSObject.Properties["UserName"].Value,
                                             (SecureString)objAsPSObject.Properties["Password"].Value);
                 }
                 catch (GetValueException)

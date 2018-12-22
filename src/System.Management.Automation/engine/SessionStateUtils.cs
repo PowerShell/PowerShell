@@ -202,7 +202,7 @@ namespace System.Management.Automation
             {
                 // Loop through the patterns and construct a wildcard pattern for each one
 
-                foreach (String pattern in globPatterns)
+                foreach (string pattern in globPatterns)
                 {
                     if (!String.IsNullOrEmpty(pattern))
                     {

@@ -235,7 +235,7 @@ namespace System.Management.Automation
 
         // Cache of search paths that are currently active.
         // This will save a lot time when help providers do their searching
-        private Collection<String> _searchPaths = null;
+        private Collection<string> _searchPaths = null;
 
         /// <summary>
         /// Gets the search paths for external snapins/modules that are currently loaded.
@@ -250,7 +250,7 @@ namespace System.Management.Automation
             {
                 return _searchPaths;
             }
-            _searchPaths = new Collection<String>();
+            _searchPaths = new Collection<string>();
 
             // add loaded modules paths to the search path
             if (ExecutionContext.Modules != null)

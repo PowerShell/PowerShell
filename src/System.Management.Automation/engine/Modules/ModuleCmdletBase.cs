@@ -889,8 +889,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Two lists - one to hold Module Paths and one to hold Module Names
             // For Module Paths, we don't do any path resolution
-            List<String> modulePaths = new List<String>();
-            List<String> moduleNames = new List<String>();
+            List<string> modulePaths = new List<string>();
+            List<string> moduleNames = new List<string>();
 
             if (names != null)
             {
@@ -4228,7 +4228,7 @@ namespace Microsoft.PowerShell.Commands
                 stringBuilder.Append("\\");
                 stringBuilder.Append(file);
 
-                String filePath = stringBuilder.ToString();
+                string filePath = stringBuilder.ToString();
 
                 if (File.Exists(filePath))
                 {
@@ -4638,7 +4638,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The filename to resolve.</param>
         /// <param name="context">Execution context.</param>
         /// <returns>The resolved filename.</returns>
-        internal static String ResolveRootedFilePath(string filePath, ExecutionContext context)
+        internal static string ResolveRootedFilePath(string filePath, ExecutionContext context)
         {
             // If the path is not fully qualified or relative rooted, then
             // we need to do path-based resolution...
@@ -6100,7 +6100,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static void AnalyzeSnapinDomainHelper()
         {
-            String path = (string)AppDomain.CurrentDomain.GetData("PathToProcess");
+            string path = (string)AppDomain.CurrentDomain.GetData("PathToProcess");
             bool isModuleLoad = (bool)AppDomain.CurrentDomain.GetData("IsModuleLoad");
             Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
@@ -6834,7 +6834,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // The verbose output for Import-Module -NoClobber should state which members were skipped due to conflicts with existing names in the caller's environment.
-                    String message = StringUtil.Format(Modules.ImportModuleNoClobberForCmdlet, ssce.Name);
+                    string message = StringUtil.Format(Modules.ImportModuleNoClobberForCmdlet, ssce.Name);
                     WriteVerbose(message);
                 }
             }

@@ -636,7 +636,7 @@ namespace System.Management.Automation
             }
 
             string helpFileToLoad = _sections.MamlHelpFile;
-            Collection<String> searchPaths = new Collection<String>();
+            Collection<string> searchPaths = new Collection<string>();
             string scriptFile = ((IScriptCommandInfo)commandInfo).ScriptBlock.File;
             if (!string.IsNullOrEmpty(scriptFile))
             {

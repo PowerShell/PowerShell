@@ -218,7 +218,7 @@ namespace System.Management.Automation
 
             pattern += ".help.txt";
 
-            Collection<String> files = MUIFileSearcher.SearchFiles(pattern, GetExtendedSearchPaths());
+            Collection<string> files = MUIFileSearcher.SearchFiles(pattern, GetExtendedSearchPaths());
 
             var matchedFilesToRemove = FilterToLatestModuleVersion(files);
 
@@ -339,10 +339,10 @@ namespace System.Management.Automation
         /// <returns>a collection of string representing locations</returns>
         internal Collection<string> GetExtendedSearchPaths()
         {
-            Collection<String> searchPaths = GetSearchPaths();
+            Collection<string> searchPaths = GetSearchPaths();
 
             // Add $pshome at the top of the list
-            String defaultShellSearchPath = GetDefaultShellSearchPath();
+            string defaultShellSearchPath = GetDefaultShellSearchPath();
 
             int index = searchPaths.IndexOf(defaultShellSearchPath);
             if (index != 0)

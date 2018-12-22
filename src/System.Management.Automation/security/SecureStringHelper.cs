@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell
             if ((data.Length % 2) != 0)
             {
                 // If the data is not an even length, they supplied an invalid key
-                String error = Serialization.InvalidKey;
+                string error = Serialization.InvalidKey;
                 throw new PSArgumentException(error);
             }
 
@@ -394,12 +394,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Gets the encrypted data
         /// </summary>
-        internal String EncryptedData { get; }
+        internal string EncryptedData { get; }
 
         /// <summary>
         /// Gets the IV used to encrypt the data
         /// </summary>
-        internal String IV { get; }
+        internal string IV { get; }
     }
 
 #if CORECLR

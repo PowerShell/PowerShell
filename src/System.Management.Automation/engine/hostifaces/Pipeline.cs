@@ -675,7 +675,7 @@ namespace System.Management.Automation.Runspaces
         /// Sets the history string to the one that is specified
         /// </summary>
         /// <param name="historyString">history string to set</param>
-        internal abstract void SetHistoryString(String historyString);
+        internal abstract void SetHistoryString(string historyString);
 
         /// <summary>
         /// Invokes a remote command and immediately disconnects if

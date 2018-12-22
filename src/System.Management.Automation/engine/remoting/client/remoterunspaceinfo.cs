@@ -61,7 +61,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the computer target
         /// </summary>
-        public String ComputerName
+        public string ComputerName
         {
             get
             {
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Id of the container target
         /// </summary>
-        public String ContainerId
+        public string ContainerId
         {
             get
             {
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the virtual machine target
         /// </summary>
-        public String VMName
+        public string VMName
         {
             get
             {
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shell which is executed in the remote machine
         /// </summary>
-        public String ConfigurationName { get; }
+        public string ConfigurationName { get; }
 
         /// <summary>
         /// InstanceID that identifies this runspace
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Friendly name for identifying this runspace
         /// </summary>
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Indicates whether the specified runspace is available
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the transport used.
         /// </summary>
-        public String Transport => GetTransportName();
+        public string Transport => GetTransportName();
 
         #endregion Public Properties
 
@@ -377,7 +377,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="rtnId">Returned Id</param>
         /// <returns>Returned name</returns>
-        internal static String GenerateRunspaceName(out int rtnId)
+        internal static string GenerateRunspaceName(out int rtnId)
         {
             int id = GenerateRunspaceId();
             rtnId = id;

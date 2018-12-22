@@ -235,8 +235,8 @@ function __cmdletization_BindCommonParameters
             return verb + "-" + noun;
         }
 
-        private readonly List<String> _aliasesToExport = new List<string>();
-        private readonly List<String> _functionsToExport = new List<string>();
+        private readonly List<string> _aliasesToExport = new List<string>();
+        private readonly List<string> _functionsToExport = new List<string>();
 
         private string GetCmdletAttributes(CommonCmdletMetadata cmdletMetadata)
         {

@@ -1418,8 +1418,8 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
             WSManPluginErrorCodes error = WSManPluginErrorCodes.NoError;
-            String errorMessage = String.Empty;
-            String stackTrace = String.Empty;
+            string errorMessage = String.Empty;
+            string stackTrace = String.Empty;
 
             if (reasonForClose != null)
             {

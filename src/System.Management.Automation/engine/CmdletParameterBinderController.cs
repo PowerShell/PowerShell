@@ -2725,7 +2725,7 @@ namespace System.Management.Automation
         }
 
         internal static int ResolveParameterSetAmbiguityBasedOnMandatoryParameters(
-            Dictionary<String, MergedCompiledCommandParameter> boundParameters,
+            Dictionary<string, MergedCompiledCommandParameter> boundParameters,
             ICollection<MergedCompiledCommandParameter> unboundParameters,
             MergedCommandParameterMetadata bindableParameters,
             ref uint _currentParameterSetFlag,
@@ -2939,7 +2939,7 @@ namespace System.Management.Automation
 
                     Collection<FieldDescription> fieldDescriptionList = CreatePromptDataStructures(missingMandatoryParameters);
 
-                    Dictionary<String, PSObject> parameters =
+                    Dictionary<string, PSObject> parameters =
                         PromptForMissingMandatoryParameters(
                             fieldDescriptionList,
                             missingMandatoryParameters);

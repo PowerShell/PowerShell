@@ -1997,7 +1997,7 @@ namespace System.Management.Automation
             }
         }
 
-        private String ConstructLocation()
+        private string ConstructLocation()
         {
             if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;
@@ -2005,7 +2005,7 @@ namespace System.Management.Automation
             return location;
         }
 
-        private String ConstructStatusMessage()
+        private string ConstructStatusMessage()
         {
             if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;

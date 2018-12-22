@@ -261,7 +261,7 @@ namespace System.Management.Automation.Internal
             return false;
         }
 
-        private List<String> _eventLogBuffer = new List<string>();
+        private List<string> _eventLogBuffer = new List<string>();
         #endregion
 
         #region public_methods

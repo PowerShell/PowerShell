@@ -145,7 +145,7 @@ namespace System.Management.Automation
             return commandInfo.Name;
         }
 
-        private HelpInfo GetHelpInfoFromHelpFile(CommandInfo commandInfo, string helpFileToFind, Collection<String> searchPaths, bool reportErrors, out string helpFile)
+        private HelpInfo GetHelpInfoFromHelpFile(CommandInfo commandInfo, string helpFileToFind, Collection<string> searchPaths, bool reportErrors, out string helpFile)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
             Dbg.Assert(helpFileToFind != null, "Caller should verify that helpFileToFind != null");
@@ -499,7 +499,7 @@ namespace System.Management.Automation
             // 2. If PSSnapInInfo exists, then always look in the application base of the mshsnapin
             // Otherwise,
             //    Look in the default search path and cmdlet assembly path
-            Collection<String> searchPaths = new Collection<String>();
+            Collection<string> searchPaths = new Collection<string>();
 
             if (!File.Exists(helpFileToLoad))
             {
@@ -1359,7 +1359,7 @@ namespace System.Management.Automation
         {
         }
 
-        internal Dictionary<String, String> Properties { get; } = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, string> Properties { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         private string _name = null;
 

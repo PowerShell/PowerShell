@@ -722,7 +722,7 @@ namespace System.Management.Automation.Internal.Host
         /// </exception>
 
         public override
-        Dictionary<String, PSObject>
+        Dictionary<string, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
         {
             if (descriptions == null)
@@ -740,7 +740,7 @@ namespace System.Management.Automation.Internal.Host
                 ThrowPromptNotInteractive(message);
             }
 
-            Dictionary<String, PSObject> result = null;
+            Dictionary<string, PSObject> result = null;
 
             try
             {

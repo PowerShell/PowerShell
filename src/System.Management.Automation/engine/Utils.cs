@@ -1191,7 +1191,7 @@ namespace System.Management.Automation
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<String, Encoding> encodingMap =
+        internal static Dictionary<string, Encoding> encodingMap =
             new Dictionary<string, Encoding>()
             {
                 { "255-254", Encoding.Unicode },

@@ -837,7 +837,7 @@ namespace System.Management.Automation.Tracing
         {
         }
 
-        public bool WriteMessage(String message)
+        public bool WriteMessage(string message)
         {
             return false;
         }

@@ -138,7 +138,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the description for the provider
         /// </summary>
-        public String Description { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets the capabilities that are implemented by the provider.

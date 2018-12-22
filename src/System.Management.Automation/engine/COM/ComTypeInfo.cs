@@ -29,8 +29,8 @@ namespace System.Management.Automation
         /// <summary>
         ///  Member variables.
         /// </summary>
-        private Dictionary<String, ComProperty> _properties = null;
-        private Dictionary<String, ComMethod> _methods = null;
+        private Dictionary<string, ComProperty> _properties = null;
+        private Dictionary<string, ComMethod> _methods = null;
         private COM.ITypeInfo _typeinfo = null;
         private Guid _guid = Guid.Empty;
 
@@ -41,8 +41,8 @@ namespace System.Management.Automation
         internal ComTypeInfo(COM.ITypeInfo info)
         {
             _typeinfo = info;
-            _properties = new Dictionary<String, ComProperty>(StringComparer.OrdinalIgnoreCase);
-            _methods = new Dictionary<String, ComMethod>(StringComparer.OrdinalIgnoreCase);
+            _properties = new Dictionary<string, ComProperty>(StringComparer.OrdinalIgnoreCase);
+            _methods = new Dictionary<string, ComMethod>(StringComparer.OrdinalIgnoreCase);
 
             if (_typeinfo != null)
             {
@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Collection of properties in the COM object.
         /// </summary>
-        internal Dictionary<String, ComProperty> Properties
+        internal Dictionary<string, ComProperty> Properties
         {
             get
             {
@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Collection of methods in the COM object.
         /// </summary>
-        internal Dictionary<String, ComMethod> Methods
+        internal Dictionary<string, ComMethod> Methods
         {
             get
             {
@@ -118,7 +118,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    String strName = ComUtil.GetNameFromFuncDesc(_typeinfo, funcdesc);
+                    string strName = ComUtil.GetNameFromFuncDesc(_typeinfo, funcdesc);
 
                     switch (funcdesc.invkind)
                     {

@@ -354,7 +354,7 @@ namespace System.Management.Automation.Internal
         /// Constructor with just message but no inner exception
         /// </summary>
         /// <param name="message">error message associated with this failure</param>
-        public PSCryptoException(String message) : this(message, null) { }
+        public PSCryptoException(string message) : this(message, null) { }
 
         /// <summary>
         /// Constructor with inner exception
@@ -983,9 +983,9 @@ namespace System.Management.Automation.Internal
         /// secure string to be encrypted
         /// </param>
         /// <returns></returns>
-        protected String EncryptSecureStringCore(SecureString secureString)
+        protected string EncryptSecureStringCore(SecureString secureString)
         {
-            String encryptedDataAsString = null;
+            string encryptedDataAsString = null;
 
             if (_rsaCryptoProvider.CanEncrypt)
             {
@@ -1029,7 +1029,7 @@ namespace System.Management.Automation.Internal
         /// encrypted string to be decrypted
         /// </param>
         /// <returns></returns>
-        protected SecureString DecryptSecureStringCore(String encryptedString)
+        protected SecureString DecryptSecureStringCore(string encryptedString)
         {
             // removing an earlier assert from here. It is
             // possible to encrypt and decrypt empty
@@ -1101,7 +1101,7 @@ namespace System.Management.Automation.Internal
         /// <param name="secureString">secure string to encrypt</param>
         /// <returns>encrypted string</returns>
         /// <remarks>This method zeroes out all interim buffers used</remarks>
-        internal abstract String EncryptSecureString(SecureString secureString);
+        internal abstract string EncryptSecureString(SecureString secureString);
 
         /// <summary>
         /// Decrypt a string and construct a secure string from its
@@ -1110,7 +1110,7 @@ namespace System.Management.Automation.Internal
         /// <param name="encryptedString">encrypted string</param>
         /// <returns>secure string object</returns>
         /// <remarks>This method zeroes out any interim buffers used</remarks>
-        internal abstract SecureString DecryptSecureString(String encryptedString);
+        internal abstract SecureString DecryptSecureString(string encryptedString);
 
         /// <summary>
         /// Represents the session to be used for requesting public key
@@ -1219,7 +1219,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="publicKeyAsString">public key in its string representation</param>
         /// <returns>true on success</returns>
-        internal bool ImportRemotePublicKey(String publicKeyAsString)
+        internal bool ImportRemotePublicKey(string publicKeyAsString)
         {
             Dbg.Assert(!String.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
 
@@ -1339,7 +1339,7 @@ namespace System.Management.Automation.Internal
         /// <param name="publicKeyAsString">on execution will contain
         /// the public key as string</param>
         /// <returns>true on success</returns>
-        internal bool ExportLocalPublicKey(out String publicKeyAsString)
+        internal bool ExportLocalPublicKey(out string publicKeyAsString)
         {
             // generate keys - the method already takes of creating
             // only when its not already created

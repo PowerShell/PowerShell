@@ -1395,7 +1395,7 @@ namespace System.Management.Automation
         private void ProcessResolvedCertificates(ResolutionPurpose purpose, List<X509Certificate2> certificatesToProcess, out ErrorRecord error)
         {
             error = null;
-            HashSet<String> processedThumbprints = new HashSet<string>();
+            HashSet<string> processedThumbprints = new HashSet<string>();
 
             foreach (X509Certificate2 certificate in certificatesToProcess)
             {

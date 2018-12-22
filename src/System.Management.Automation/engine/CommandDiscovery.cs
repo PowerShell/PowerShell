@@ -310,7 +310,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Collection<String> GetPSSnapinNames(IEnumerable<PSSnapInSpecification> PSSnapins)
+        private static Collection<string> GetPSSnapinNames(IEnumerable<PSSnapInSpecification> PSSnapins)
         {
             Collection<string> result = new Collection<string>();
 
@@ -1563,7 +1563,7 @@ namespace System.Management.Automation
                 }
 
                 // check the environment variable
-                String psEnvironmentVariable = Environment.GetEnvironmentVariable(environmentVariable);
+                string psEnvironmentVariable = Environment.GetEnvironmentVariable(environmentVariable);
                 if (!String.IsNullOrEmpty(psEnvironmentVariable))
                 {
                     return LanguagePrimitives.ConvertTo<PSModuleAutoLoadingPreference>(psEnvironmentVariable);

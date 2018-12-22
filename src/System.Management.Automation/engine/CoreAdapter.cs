@@ -189,7 +189,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the return of GetMember</param>
         /// <returns></returns>
-        protected abstract Collection<String> MethodDefinitions(PSMethod method);
+        protected abstract Collection<string> MethodDefinitions(PSMethod method);
 
         /// <summary>
         /// Returns the string representation of the method in the object
@@ -265,7 +265,7 @@ namespace System.Management.Automation
         /// It is not necessary for derived methods to override this.
         /// This method is called only if ParameterizedProperties are present.
         /// </remarks>
-        protected virtual Collection<String> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
+        protected virtual Collection<string> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
         {
             Diagnostics.Assert(false, "adapter is not called for parameterized properties");
             throw PSTraceSource.NewNotSupportedException();
@@ -556,7 +556,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal Collection<String> BaseMethodDefinitions(PSMethod method)
+        internal Collection<string> BaseMethodDefinitions(PSMethod method)
         {
             try
             {
@@ -628,7 +628,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal Collection<String> BaseParameterizedPropertyDefinitions(PSParameterizedProperty property)
+        internal Collection<string> BaseParameterizedPropertyDefinitions(PSParameterizedProperty property)
         {
             try
             {
@@ -4194,7 +4194,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the return of GetMember</param>
         /// <returns></returns>
-        protected override Collection<String> MethodDefinitions(PSMethod method)
+        protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             MethodCacheEntry methodEntry = (MethodCacheEntry)method.adapterData;
             IList<string> uniqueValues = methodEntry
@@ -4269,7 +4269,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to return the overloads
         /// </summary>
-        protected override Collection<String> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
+        protected override Collection<string> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
         {
             var adapterData = (ParameterizedPropertyCacheEntry)property.adapterData;
             var returnValue = new Collection<string>();
@@ -4514,7 +4514,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the return of GetMember</param>
         /// <returns></returns>
-        protected override Collection<String> MethodDefinitions(PSMethod method)
+        protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             Diagnostics.Assert(false, "redirection adapter is not called for methods");
             throw PSTraceSource.NewNotSupportedException();

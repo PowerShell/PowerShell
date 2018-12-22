@@ -200,7 +200,7 @@ namespace System.Management.Automation
                                                 int eventId,
                                                 Exception exception,
                                                 Severity severity,
-                                                Dictionary<String, String> additionalInfo,
+                                                Dictionary<string, string> additionalInfo,
                                                 EngineState newEngineState)
         {
             if (executionContext == null)
@@ -278,7 +278,7 @@ namespace System.Management.Automation
                                                 int eventId,
                                                 Exception exception,
                                                 Severity severity,
-                                                Dictionary<String, String> additionalInfo)
+                                                Dictionary<string, string> additionalInfo)
         {
             LogEngineHealthEvent(executionContext, eventId, exception, severity, additionalInfo, EngineState.None);
         }
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         internal static void LogEngineHealthEvent(LogContext logContext,
                                                 int eventId,
                                                 Exception exception,
-                                                Dictionary<String, String> additionalInfo
+                                                Dictionary<string, string> additionalInfo
                                                 )
         {
             if (logContext == null)
@@ -524,7 +524,7 @@ namespace System.Management.Automation
         /// <param name="detail">detail to be logged for this pipeline execution detail</param>
         /// <param name="invocationInfo">invocation data for current command that is running</param>
         internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
-                                                            List<String> detail,
+                                                            List<string> detail,
                                                             InvocationInfo invocationInfo)
 
         {
@@ -555,7 +555,7 @@ namespace System.Management.Automation
         /// <param name="scriptName">script that is currently running</param>
         /// <param name="commandLine">command line that is currently running</param>
         internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
-                                                            List<String> detail,
+                                                            List<string> detail,
                                                             string scriptName,
                                                             string commandLine)
         {

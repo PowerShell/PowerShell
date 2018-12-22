@@ -62,7 +62,7 @@ namespace System.Management.Automation
             // Create the working directory stack. This
             // is used for the pushd and popd commands
 
-            _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
+            _workingLocationStack = new Dictionary<string, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
 
             // Conservative choice to limit the Set-Location history in order to limit memory impact in case of a regression.
             const uint locationHistoryLimit = 20;

@@ -1694,7 +1694,7 @@ namespace System.Management.Automation
             return _drives ?? (_drives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
         }
 
-        private Dictionary<String, PSDriveInfo> _drives;
+        private Dictionary<string, PSDriveInfo> _drives;
 
         /// <summary>
         /// Contains the drives that have been automounted by the system.
@@ -1707,7 +1707,7 @@ namespace System.Management.Automation
                    (_automountedDrives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
         }
 
-        private Dictionary<String, PSDriveInfo> _automountedDrives;
+        private Dictionary<string, PSDriveInfo> _automountedDrives;
 
         private Dictionary<string, PSVariable> _variables;
         private Dictionary<string, PSVariable> GetPrivateVariables()

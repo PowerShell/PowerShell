@@ -105,7 +105,7 @@ namespace System.Management.Automation
         internal static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
             //Get the method or property name.
-            String strName, strDoc, strHelp;
+            string strName, strDoc, strHelp;
             int id;
             typeinfo.GetDocumentation(funcdesc.memid, out strName, out strDoc, out id, out strHelp);
             return strName;
@@ -126,7 +126,7 @@ namespace System.Management.Automation
 
             if (custtypeinfo != null)
             {
-                String strName, strDoc, strHelp;
+                string strName, strDoc, strHelp;
                 int id;
                 custtypeinfo.GetDocumentation(-1, out strName, out strDoc, out id, out strHelp);
                 return strName;

@@ -724,7 +724,7 @@ namespace System.Management.Automation.Runspaces
         internal void LogEngineHealthEvent(Exception exception,
                              Severity severity,
                              int id,
-                             Dictionary<String, String> additionalInfo)
+                             Dictionary<string, string> additionalInfo)
         {
             Dbg.Assert(exception != null, "Caller should validate the parameter");
 

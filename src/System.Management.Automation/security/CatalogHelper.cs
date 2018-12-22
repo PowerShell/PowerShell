@@ -54,12 +54,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Dictionary mapping files relative paths to their hash values found from Catalog
         /// </summary>
-        public Dictionary<String, String> CatalogItems { get; set; }
+        public Dictionary<string, string> CatalogItems { get; set; }
 
         /// <summary>
         /// Dictionary mapping files relative paths to their hash values
         /// </summary>
-        public Dictionary<String, String> PathItems { get; set; }
+        public Dictionary<string, string> PathItems { get; set; }
 
         /// <summary>
         /// Signature for the catalog
@@ -475,11 +475,11 @@ namespace System.Management.Automation
         /// <param name="excludedPatterns"></param>
         /// <param name="catalogVersion"> The version of input catalog we read from catalog meta data after opening it.</param>
         /// <returns> Dictionary mapping files relative paths to HashValues </returns>
-        internal static Dictionary<String, String> GetHashesFromCatalog(string catalogFilePath, WildcardPattern[] excludedPatterns, out int catalogVersion)
+        internal static Dictionary<string, string> GetHashesFromCatalog(string catalogFilePath, WildcardPattern[] excludedPatterns, out int catalogVersion)
         {
             IntPtr resultCatalog = NativeMethods.CryptCATOpen(catalogFilePath, 0, IntPtr.Zero, 1, 0);
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-            Dictionary<String, String> catalogHashes = new Dictionary<String, String>(StringComparer.CurrentCultureIgnoreCase);
+            Dictionary<string, string> catalogHashes = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             catalogVersion = 0;
 
             if (resultCatalog != INVALID_HANDLE_VALUE)
@@ -573,7 +573,7 @@ namespace System.Management.Automation
         /// <param name="excludedPatterns"> skip file from validation if it matches these patterns </param>
         /// <param name="catalogHashes"> collection of hashes of catalog </param>
         /// <returns> void </returns>
-        internal static void ProcessCatalogFile(string relativePath, string fileHash, WildcardPattern[] excludedPatterns, ref Dictionary<String, String> catalogHashes)
+        internal static void ProcessCatalogFile(string relativePath, string fileHash, WildcardPattern[] excludedPatterns, ref Dictionary<string, string> catalogHashes)
         {
             // Found the attribute we are looking for
             _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.FoundFileHashInCatalogItem, relativePath, fileHash));
@@ -599,7 +599,7 @@ namespace System.Management.Automation
         /// <param name="excludedPatterns"> skip file if it matches these patterns </param>
         /// <param name="fileHashes"> collection of hashes of files </param>
         /// <returns> void </returns>
-        internal static void ProcessPathFile(FileInfo fileToHash, DirectoryInfo dirInfo, string hashAlgorithm, WildcardPattern[] excludedPatterns, ref Dictionary<String, String> fileHashes)
+        internal static void ProcessPathFile(FileInfo fileToHash, DirectoryInfo dirInfo, string hashAlgorithm, WildcardPattern[] excludedPatterns, ref Dictionary<string, string> fileHashes)
         {
             string relativePath = string.Empty;
             string exclude = string.Empty;
@@ -651,10 +651,10 @@ namespace System.Management.Automation
         /// <param name="hashAlgorithm"> Used to calculate Hash </param>
         /// <param name="excludedPatterns"></param>
         /// <returns> Dictionary mapping file relative paths to hashes. </returns>
-        internal static Dictionary<String, String> CalculateHashesFromPath(Collection<string> folderPaths, string catalogFilePath, string hashAlgorithm, WildcardPattern[] excludedPatterns)
+        internal static Dictionary<string, string> CalculateHashesFromPath(Collection<string> folderPaths, string catalogFilePath, string hashAlgorithm, WildcardPattern[] excludedPatterns)
         {
             // Create a HashTable of file Hashes
-            Dictionary<String, String> fileHashes = new Dictionary<String, String>(StringComparer.CurrentCultureIgnoreCase);
+            Dictionary<string, string> fileHashes = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (string folderPath in folderPaths)
             {
@@ -684,7 +684,7 @@ namespace System.Management.Automation
         /// <param name="catalogItems"> Hashes extracted from Catalog </param>
         /// <param name="pathItems"> Hashes created from folders path </param>
         /// <returns> True if both collections are same </returns>
-        internal static bool CompareDictionaries(Dictionary<String, String> catalogItems, Dictionary<String, String> pathItems)
+        internal static bool CompareDictionaries(Dictionary<string, string> catalogItems, Dictionary<string, string> pathItems)
         {
             bool Status = true;
 
@@ -702,7 +702,7 @@ namespace System.Management.Automation
                 Status = false;
             }
 
-            foreach (KeyValuePair<String, String> item in catalogItems)
+            foreach (KeyValuePair<string, string> item in catalogItems)
             {
                 string catalogHashValue = (string)catalogItems[item.Key];
                 if (pathItems.ContainsKey(item.Key))
@@ -728,16 +728,16 @@ namespace System.Management.Automation
         /// <param name="excludedPatterns"></param>
         /// <param name="cmdlet"> Instance of cmdlet calling this method  </param>
         /// <returns> Information about Catalog </returns>
-        internal static CatalogInformation ValidateCatalog(PSCmdlet cmdlet, Collection<string> catalogFolders, String catalogFilePath, WildcardPattern[] excludedPatterns)
+        internal static CatalogInformation ValidateCatalog(PSCmdlet cmdlet, Collection<string> catalogFolders, string catalogFilePath, WildcardPattern[] excludedPatterns)
         {
             _cmdlet = cmdlet;
             int catalogVersion = 0;
-            Dictionary<String, String> catalogHashes = GetHashesFromCatalog(catalogFilePath, excludedPatterns, out catalogVersion);
+            Dictionary<string, string> catalogHashes = GetHashesFromCatalog(catalogFilePath, excludedPatterns, out catalogVersion);
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
 
             if (!String.IsNullOrEmpty(hashAlgorithm))
             {
-                Dictionary<String, String> fileHashes = CalculateHashesFromPath(catalogFolders, catalogFilePath, hashAlgorithm, excludedPatterns);
+                Dictionary<string, string> fileHashes = CalculateHashesFromPath(catalogFolders, catalogFilePath, hashAlgorithm, excludedPatterns);
                 CatalogInformation catalog = new CatalogInformation();
                 catalog.CatalogItems = catalogHashes;
                 catalog.PathItems = fileHashes;

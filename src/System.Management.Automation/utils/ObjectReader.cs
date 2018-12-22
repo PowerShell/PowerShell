@@ -658,7 +658,7 @@ namespace System.Management.Automation.Internal
         /// <param name="computerName"></param>
         /// <param name="runspaceId"></param>
         internal PSDataCollectionPipelineReader(PSDataCollectionStream<DataStoreType> stream,
-            String computerName, Guid runspaceId)
+            string computerName, Guid runspaceId)
             : base(stream)
         {
             System.Management.Automation.Diagnostics.Assert(stream.ObjectStore != null,
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Internal
         /// Computer name passed in by the pipeline which
         /// created this reader
         /// </summary>
-        internal String ComputerName { get; }
+        internal string ComputerName { get; }
 
         /// <summary>
         /// Runspace Id passed in by the pipeline which

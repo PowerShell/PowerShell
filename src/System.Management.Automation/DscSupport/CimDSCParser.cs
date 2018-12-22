@@ -1967,7 +1967,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 var dscResourcesPath = Path.Combine(moduleInfo.ModuleBase, "DscResources");
 
-                var resourcesFound = new List<String>();
+                var resourcesFound = new List<string>();
                 LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, errorList, null, true, scriptExtent);
 
                 if (Directory.Exists(dscResourcesPath))
@@ -2161,7 +2161,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (moduleInfo != null && !string.IsNullOrEmpty(moduleInfo.Path))
             {
-                String asmToCheck = Path.GetDirectoryName(moduleInfo.Path) + "\\" + name.Name + ".dll";
+                string asmToCheck = Path.GetDirectoryName(moduleInfo.Path) + "\\" + name.Name + ".dll";
                 if (File.Exists(asmToCheck))
                 {
                     return Assembly.ReflectionOnlyLoadFrom(asmToCheck);
@@ -2490,7 +2490,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 if (errorList != null && extent != null)
                 {
-                    List<String> errorMessages = new List<string>();
+                    List<string> errorMessages = new List<string>();
                     foreach (var error in errors)
                     {
                         errorMessages.Add(error.ToString());
@@ -2694,7 +2694,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return true;
         }
 
-        internal static string MapTypeToMofType(Type type, String memberName, String className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
+        internal static string MapTypeToMofType(Type type, string memberName, string className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
         {
             isArrayType = false;
             if (type.IsValueType)

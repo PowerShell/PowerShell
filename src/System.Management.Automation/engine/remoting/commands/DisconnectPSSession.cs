@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// Disconnect-PSSession does not support ComputerName parameter set.
         /// This may change for later versions.
         /// </summary>
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         private PSSessionOption PSSessionOption
         {

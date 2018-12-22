@@ -738,7 +738,7 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         if ((object)_reader.LocalName == (object)_idName)
                                         {
-                                            if (referencedProperties == null) referencedProperties = new List<String>(8);
+                                            if (referencedProperties == null) referencedProperties = new List<string>(8);
                                             referencedProperties.Add(ReadElementString(_idName));
                                         }
                                         else
@@ -3431,7 +3431,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets the default types files available in PowerShell
         /// </summary>
         /// <returns>list of type files</returns>
-        public static List<String> GetDefaultTypeFiles()
+        public static List<string> GetDefaultTypeFiles()
         {
             string typesFilePath = string.Empty;
             string typesV3FilePath = string.Empty;
@@ -3500,13 +3500,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="types"></param>
         /// <returns>null if this should not be serialized with SpecificProperties</returns>
-        internal Collection<String> GetSpecificProperties(ConsolidatedString types)
+        internal Collection<string> GetSpecificProperties(ConsolidatedString types)
         {
             if (types == null || string.IsNullOrEmpty(types.Key))
             {
-                return new Collection<String>();
+                return new Collection<string>();
             }
-            Collection<String> result = _consolidatedSpecificProperties.GetOrAdd(types.Key, key =>
+            Collection<string> result = _consolidatedSpecificProperties.GetOrAdd(types.Key, key =>
             {
                 var retValueTable = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (string type in types)
@@ -3528,7 +3528,7 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
                 }
-                var retValue = new Collection<String>();
+                var retValue = new Collection<string>();
                 foreach (var value in retValueTable)
                 {
                     retValue.Add(value);

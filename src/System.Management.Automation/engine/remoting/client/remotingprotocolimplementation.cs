@@ -649,7 +649,7 @@ namespace System.Management.Automation.Remoting
 
                 case RemotingDataType.EncryptedSessionKey:
                     {
-                        String encryptedSessionKey = RemotingDecoder.GetEncryptedSessionKey(rcvdData.Data);
+                        string encryptedSessionKey = RemotingDecoder.GetEncryptedSessionKey(rcvdData.Data);
                         EncryptedSessionKeyReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(encryptedSessionKey));
                     }
                     break;

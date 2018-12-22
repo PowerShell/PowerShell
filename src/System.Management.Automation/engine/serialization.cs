@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
                     // is written. So we write the elements only if encryption succeeds
                     try
                     {
-                        String encryptedString;
+                        string encryptedString;
                         if (_context.cryptoHelper != null)
                         {
                             encryptedString = _context.cryptoHelper.EncryptSecureString(secureString);
@@ -4753,7 +4753,7 @@ namespace System.Management.Automation
 
         private object ReadSecureString()
         {
-            String encryptedString = _reader.ReadElementContentAsString();
+            string encryptedString = _reader.ReadElementContentAsString();
 
             try
             {

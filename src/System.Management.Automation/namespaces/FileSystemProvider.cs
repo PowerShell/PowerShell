@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                String error = StringUtil.Format(FileSystemProviderStrings.DriveRootError, drive.Root);
+                string error = StringUtil.Format(FileSystemProviderStrings.DriveRootError, drive.Root);
                 Exception e = new IOException(error);
                 WriteError(new ErrorRecord(e, "DriveRootError", ErrorCategory.ReadError, drive));
             }
@@ -1185,7 +1185,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    String error = StringUtil.Format(FileSystemProviderStrings.ItemNotFound, path);
+                    string error = StringUtil.Format(FileSystemProviderStrings.ItemNotFound, path);
                     Exception e = new IOException(error);
                     WriteError(new ErrorRecord(
                         e,
@@ -1540,7 +1540,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                 Exception e = new IOException(error);
                 WriteError(new ErrorRecord(
                     e,
@@ -2505,7 +2505,7 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord error = null;
             if (!Force && ItemExists(path, out error))
             {
-                String errorMessage = StringUtil.Format(FileSystemProviderStrings.DirectoryExist, path);
+                string errorMessage = StringUtil.Format(FileSystemProviderStrings.DirectoryExist, path);
                 Exception e = new IOException(errorMessage);
 
                 WriteError(new ErrorRecord(
@@ -2574,7 +2574,7 @@ namespace Microsoft.PowerShell.Commands
                 // Push the paths of the missing directories onto a stack such that the highest missing
                 // parent in the tree is at the top of the stack.
 
-                Stack<String> missingDirectories = new Stack<String>();
+                Stack<string> missingDirectories = new Stack<string>();
 
                 string previousParent = path;
 
@@ -2698,7 +2698,7 @@ namespace Microsoft.PowerShell.Commands
                 FileSystemInfo fsinfo = GetFileSystemInfo(path, out bool iscontainer);
                 if (fsinfo == null)
                 {
-                    String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                    string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                     Exception e = new IOException(error);
                     WriteError(new ErrorRecord(e, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
                     return;
@@ -2903,7 +2903,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (hasChildren && !force)
                 {
-                    String error = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, directory.FullName);
+                    string error = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, directory.FullName);
                     Exception e = new IOException(error);
                     WriteError(new ErrorRecord(e, "DirectoryNotEmpty", ErrorCategory.WriteError, directory));
                 }
@@ -2960,7 +2960,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Force &&
                 (fileSystemInfo.Attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly)) != 0)
             {
-                String error = StringUtil.Format(FileSystemProviderStrings.PermissionError);
+                string error = StringUtil.Format(FileSystemProviderStrings.PermissionError);
                 Exception e = new IOException(error);
 
                 ErrorDetails errorDetails =
@@ -3362,7 +3362,7 @@ namespace Microsoft.PowerShell.Commands
             // if the source and destination path are same (for a local copy) then flag it as error.
             if ((toSession == null) && (fromSession == null) && InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(path, destinationPath))
             {
-                String error = StringUtil.Format(FileSystemProviderStrings.CopyError, path);
+                string error = StringUtil.Format(FileSystemProviderStrings.CopyError, path);
                 Exception e = new IOException(error);
                 e.Data[SelfCopyDataKey] = destinationPath;
                 WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, path));
@@ -3674,7 +3674,7 @@ namespace Microsoft.PowerShell.Commands
                 //if the source and destination path are same then flag it as error.
                 if (InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(destinationPath, file.FullName))
                 {
-                    String error = StringUtil.Format(FileSystemProviderStrings.CopyError, destinationPath);
+                    string error = StringUtil.Format(FileSystemProviderStrings.CopyError, destinationPath);
                     Exception e = new IOException(error);
                     e.Data[SelfCopyDataKey] = file.FullName;
                     WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, destinationPath));
@@ -4137,10 +4137,10 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // To accomodate empty files
-                    String content = string.Empty;
+                    string content = string.Empty;
                     if (op["b64Fragment"] != null)
                     {
-                        content = (String)op["b64Fragment"];
+                        content = (string)op["b64Fragment"];
                     }
                     bool more = (bool)op["moreAvailable"];
                     currentIndex += fragmentSize;
@@ -4592,7 +4592,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(e, "FailedToCreateDirectory", ErrorCategory.WriteError, destination));
                 return null;
             }
-            string path = (String)(op["DirectoryPath"]);
+            string path = (string)(op["DirectoryPath"]);
 
             if ((!force) && (bool)op["PathExists"])
             {
@@ -4611,7 +4611,7 @@ namespace Microsoft.PowerShell.Commands
             if (Utils.IsReservedDeviceName(destinationPath))
             {
                 pathIsReservedDeviceName = true;
-                String error = StringUtil.Format(FileSystemProviderStrings.TargetCannotContainDeviceName, destinationPath);
+                string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotContainDeviceName, destinationPath);
                 Exception e = new IOException(error);
                 WriteError(new ErrorRecord(e, errorId, ErrorCategory.WriteError, destinationPath));
             }
@@ -4858,7 +4858,7 @@ namespace Microsoft.PowerShell.Commands
                             // results in this context.
                             if (!File.Exists(result) && !Directory.Exists(result))
                             {
-                                String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                                string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                                 Exception e = new IOException(error);
                                 WriteError(new ErrorRecord(
                                     e,
@@ -4882,7 +4882,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (files == null || !files.Any())
                             {
-                                String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                                string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                                 Exception e = new IOException(error);
                                 WriteError(new ErrorRecord(
                                     e,
@@ -4901,7 +4901,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                String error = StringUtil.Format(FileSystemProviderStrings.PathOutSideBasePath, path);
+                                string error = StringUtil.Format(FileSystemProviderStrings.PathOutSideBasePath, path);
                                 Exception e =
                                     new ArgumentException(error);
                                 WriteError(new ErrorRecord(
@@ -5263,7 +5263,7 @@ namespace Microsoft.PowerShell.Commands
         private Stack<string> NormalizeThePath(string basepath, Stack<string> tokenizedPathStack)
         {
             Stack<string> normalizedPathStack = new Stack<string>();
-            String currentPath = basepath;
+            string currentPath = basepath;
 
             while (tokenizedPathStack.Count > 0)
             {
@@ -5812,7 +5812,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ItemExists(destination) && !IsItemContainer(destination))
             {
-                String errorMessage = StringUtil.Format(FileSystemProviderStrings.DirectoryExist, destination);
+                string errorMessage = StringUtil.Format(FileSystemProviderStrings.DirectoryExist, destination);
                 Exception e = new IOException(errorMessage);
 
                 WriteError(new ErrorRecord(
@@ -5880,7 +5880,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (fileSystemObject == null)
                 {
-                    String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                    string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                     Exception e = new IOException(error);
                     WriteError(new ErrorRecord(
                         e,
@@ -5917,7 +5917,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     else
                                     {
-                                        String error =
+                                        string error =
                                             StringUtil.Format(
                                                 FileSystemProviderStrings.PropertyNotFound,
                                                 property);
@@ -6082,7 +6082,7 @@ namespace Microsoft.PowerShell.Commands
                                 if ((attributes & ~(FileAttributes.Archive | FileAttributes.Hidden |
                                                         FileAttributes.Normal | FileAttributes.ReadOnly | FileAttributes.System)) != 0)
                                 {
-                                    String error =
+                                    string error =
                                         StringUtil.Format(
                                             FileSystemProviderStrings.AttributesNotSupported,
                                             property);
@@ -6098,7 +6098,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            String error =
+                            string error =
                                 StringUtil.Format(
                                     FileSystemProviderStrings.PropertyNotFound,
                                     property);
@@ -6115,7 +6115,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                 Exception e = new IOException(error);
                 WriteError(new ErrorRecord(
                     e,
@@ -7265,7 +7265,7 @@ namespace Microsoft.PowerShell.Commands
         /// A parameter to return a stream of an item.
         /// </summary>
         [Parameter]
-        public String Stream { get; set; }
+        public string Stream { get; set; }
 #endif
 
         /// <summary>
@@ -7286,7 +7286,7 @@ namespace Microsoft.PowerShell.Commands
         /// A parameter to return a stream of an item.
         /// </summary>
         [Parameter]
-        public String Stream { get; set; }
+        public string Stream { get; set; }
 #endif
     }
 

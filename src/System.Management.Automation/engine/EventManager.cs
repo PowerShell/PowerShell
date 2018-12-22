@@ -2277,7 +2277,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the identifier associated with the source of this event
         /// </summary>
-        public String SourceIdentifier { get; }
+        public string SourceIdentifier { get; }
 
         /// <summary>
         /// Gets the time and date that this event was generated

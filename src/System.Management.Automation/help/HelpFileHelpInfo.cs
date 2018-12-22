@@ -114,7 +114,7 @@ namespace System.Management.Automation
         {
             StringReader reader = new StringReader(text);
 
-            String result = null;
+            string result = null;
 
             for (int i = 0; i < line; i++)
             {

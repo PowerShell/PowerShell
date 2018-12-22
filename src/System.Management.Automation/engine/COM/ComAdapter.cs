@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the return of GetMethodData</param>
         /// <returns></returns>
-        protected override Collection<String> MethodDefinitions(PSMethod method)
+        protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             ComMethod commethod = (ComMethod)method.adapterData;
             return commethod.MethodDefinitions();
@@ -316,7 +316,7 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to return the overloads
         /// </summary>
         /// <param name="property">the return of GetMember</param>
-        protected override Collection<String> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
+        protected override Collection<string> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
             Collection<string> returnValue = new Collection<string> { prop.GetDefinition() };

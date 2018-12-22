@@ -370,9 +370,9 @@ namespace System.Management.Automation.Language
                     (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource()));
         }
 
-        private static Dictionary<String, List<String>> s_excludeKeywords = new Dictionary<String, List<String>>(StringComparer.OrdinalIgnoreCase)
+        private static Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
         {
-            {@"Node", new List<String> {@"Node"}},
+            {@"Node", new List<string> {@"Node"}},
         };
 
         /// <summary>
@@ -2100,7 +2100,7 @@ namespace System.Management.Automation.Language
             }
 
             InternalScriptExtent currentExtent = CurrentExtent();
-            String tokenValue = currentExtent.Text;
+            string tokenValue = currentExtent.Text;
             return NewStringLiteralToken(tokenValue, TokenKind.Generic, TokenFlags.None);
         }
 
