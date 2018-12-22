@@ -128,7 +128,7 @@ namespace System.Management.Automation
         /// <returns>An object that represents the serialized content</returns>
         public static object Deserialize(string source)
         {
-            Object[] results = DeserializeAsList(source);
+            object[] results = DeserializeAsList(source);
 
             // Return the results
             if (results.Length == 0)

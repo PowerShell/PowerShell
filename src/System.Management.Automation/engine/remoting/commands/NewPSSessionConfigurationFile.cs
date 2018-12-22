@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Object[] VisibleCmdlets
+        public object[] VisibleCmdlets
         {
             get
             {
@@ -386,14 +386,14 @@ namespace Microsoft.PowerShell.Commands
                 _visibleCmdlets = value;
             }
         }
-        private Object[] _visibleCmdlets = null;
+        private object[] _visibleCmdlets = null;
 
         /// <summary>
         /// A list of visible functions
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Object[] VisibleFunctions
+        public object[] VisibleFunctions
         {
             get
             {
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
                 _visibleFunctions = value;
             }
         }
-        private Object[] _visibleFunctions = null;
+        private object[] _visibleFunctions = null;
 
         /// <summary>
         /// A list of visible external commands (scripts and applications)
@@ -1220,7 +1220,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Object[] VisibleCmdlets
+        public object[] VisibleCmdlets
         {
             get
             {
@@ -1231,14 +1231,14 @@ namespace Microsoft.PowerShell.Commands
                 _visibleCmdlets = value;
             }
         }
-        private Object[] _visibleCmdlets = null;
+        private object[] _visibleCmdlets = null;
 
         /// <summary>
         /// A list of visible functions
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Object[] VisibleFunctions
+        public object[] VisibleFunctions
         {
             get
             {
@@ -1249,7 +1249,7 @@ namespace Microsoft.PowerShell.Commands
                 _visibleFunctions = value;
             }
         }
-        private Object[] _visibleFunctions = null;
+        private object[] _visibleFunctions = null;
 
         /// <summary>
         /// A list of visible external commands (scripts and applications)

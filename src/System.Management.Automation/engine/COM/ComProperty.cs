@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// <param name="target">instance of the object from which to get the property value</param>
         /// <param name="arguments">parameters to get the property value</param>
         /// <returns>value of the property</returns>
-        internal object GetValue(Object target, Object[] arguments)
+        internal object GetValue(Object target, object[] arguments)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// <param name="target">instance of the object to which to set the property value</param>
         /// <param name="setValue">value to set this property</param>
         /// <param name="arguments">parameters to set this property.</param>
-        internal void SetValue(Object target, Object setValue, Object[] arguments)
+        internal void SetValue(Object target, Object setValue, object[] arguments)
         {
             object[] newarguments;
             var setterCollection = new Collection<int> { _hasSetterByRef ? _setterByRefIndex : _setterIndex };

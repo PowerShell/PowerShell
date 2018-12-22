@@ -2208,7 +2208,7 @@ namespace System.Management.Automation
         /// <param name="additionalData">
         /// Additional data attached by the user to this event.
         /// </param>
-        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, Object sender, Object[] originalArgs, PSObject additionalData)
+        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, Object sender, object[] originalArgs, PSObject additionalData)
         {
             // Capture the first EventArgs as SourceEventArgs
             if (originalArgs != null)
@@ -2272,7 +2272,7 @@ namespace System.Management.Automation
         /// Gets the list of arguments captured by the original event source
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Object[] SourceArgs { get; }
+        public object[] SourceArgs { get; }
 
         /// <summary>
         /// Gets the identifier associated with the source of this event

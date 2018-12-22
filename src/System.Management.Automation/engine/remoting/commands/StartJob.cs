@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateTrustedData]
         [Alias("Args")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public override Object[] ArgumentList
+        public override object[] ArgumentList
         {
             get { return base.ArgumentList; }
             set { base.ArgumentList = value; }

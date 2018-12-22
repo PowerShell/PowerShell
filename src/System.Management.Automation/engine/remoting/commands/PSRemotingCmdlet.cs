@@ -1211,7 +1211,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         [Alias("Args")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public virtual Object[] ArgumentList
+        public virtual object[] ArgumentList
         {
             get
             {
@@ -1222,7 +1222,7 @@ namespace Microsoft.PowerShell.Commands
                 _args = value;
             }
         }
-        private Object[] _args;
+        private object[] _args;
 
         /// <summary>
         /// Indicates that if a job/command is invoked remotely the connection should be severed
