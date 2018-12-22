@@ -691,7 +691,6 @@ namespace System.Management.Automation
         {
             Dbg.Assert(me != null, "caller should validate the parameter");
 
-            bool enclosingTagWritten = false;
             foreach (PSMemberInfo info in me)
             {
                 if (!info.ShouldSerialize)
@@ -705,15 +704,11 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                enclosingTagWritten = true;
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
                 WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, info.Name);
                 if (!_notypeinformation)
                     WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, info.GetType().ToString());
                 _writer.WriteString(property.Value.ToString());
-            }
-            if (enclosingTagWritten)
-            {
                 _writer.WriteEndElement();
             }
         }
