@@ -8472,7 +8472,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class PowerShellMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"PowerShellMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
         }
@@ -8491,7 +8491,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class ClassMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"ClassMetadata", string.Empty);
         }
@@ -8510,7 +8510,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class ClassMetadataInstanceCmdletsSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"ClassMetadataInstanceCmdlets", string.Empty);
         }
@@ -8529,7 +8529,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class GetCmdletParametersSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"GetCmdletParameters", string.Empty);
         }
@@ -8548,7 +8548,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class PropertyMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"PropertyMetadata", string.Empty);
         }
@@ -8567,7 +8567,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class TypeMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"TypeMetadata", string.Empty);
         }
@@ -8586,7 +8586,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class AssociationSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"Association", string.Empty);
         }
@@ -8605,7 +8605,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class AssociationAssociatedInstanceSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"AssociationAssociatedInstance", string.Empty);
         }
@@ -8624,7 +8624,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadata", string.Empty);
         }
@@ -8643,7 +8643,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataForGetCmdletParameterSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletParameter", string.Empty);
         }
@@ -8662,7 +8662,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataForGetCmdletFilteringParameterSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletFilteringParameter", string.Empty);
         }
@@ -8681,7 +8681,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataValidateCountSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateCount", string.Empty);
         }
@@ -8700,7 +8700,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataValidateLengthSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateLength", string.Empty);
         }
@@ -8719,7 +8719,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataValidateRangeSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateRange", string.Empty);
         }
@@ -8738,7 +8738,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class ObsoleteAttributeMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"ObsoleteAttributeMetadata", string.Empty);
         }
@@ -8757,7 +8757,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataForInstanceMethodParameterSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadataForInstanceMethodParameter", string.Empty);
         }
@@ -8776,7 +8776,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletParameterMetadataForStaticMethodParameterSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletParameterMetadataForStaticMethodParameter", string.Empty);
         }
@@ -8795,7 +8795,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class QueryOptionSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"QueryOption", string.Empty);
         }
@@ -8814,7 +8814,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class GetCmdletMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"GetCmdletMetadata", string.Empty);
         }
@@ -8833,7 +8833,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CommonCmdletMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CommonCmdletMetadata", string.Empty);
         }
@@ -8852,7 +8852,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class ConfirmImpactSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"ConfirmImpact", string.Empty);
         }
@@ -8871,7 +8871,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class StaticCmdletMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"StaticCmdletMetadata", string.Empty);
         }
@@ -8890,7 +8890,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class StaticCmdletMetadataCmdletMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"StaticCmdletMetadataCmdletMetadata", string.Empty);
         }
@@ -8909,7 +8909,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CommonMethodMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CommonMethodMetadata", string.Empty);
         }
@@ -8928,7 +8928,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class StaticMethodMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"StaticMethodMetadata", string.Empty);
         }
@@ -8947,7 +8947,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CommonMethodParameterMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CommonMethodParameterMetadata", string.Empty);
         }
@@ -8966,7 +8966,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class StaticMethodParameterMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"StaticMethodParameterMetadata", string.Empty);
         }
@@ -8985,7 +8985,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CmdletOutputMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CmdletOutputMetadata", string.Empty);
         }
@@ -9004,7 +9004,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class InstanceMethodParameterMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"InstanceMethodParameterMetadata", string.Empty);
         }
@@ -9023,7 +9023,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class CommonMethodMetadataReturnValueSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"CommonMethodMetadataReturnValue", string.Empty);
         }
@@ -9042,7 +9042,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class InstanceMethodMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"InstanceMethodMetadata", string.Empty);
         }
@@ -9061,7 +9061,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class InstanceCmdletMetadataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"InstanceCmdletMetadata", string.Empty);
         }
@@ -9080,7 +9080,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class PropertyQuerySerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"PropertyQuery", string.Empty);
         }
@@ -9099,7 +9099,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class WildcardablePropertyQuerySerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"WildcardablePropertyQuery", string.Empty);
         }
@@ -9118,7 +9118,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class ItemsChoiceTypeSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"ItemsChoiceType", string.Empty);
         }
@@ -9137,7 +9137,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class ClassMetadataDataSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"ClassMetadataData", string.Empty);
         }
@@ -9156,7 +9156,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class EnumMetadataEnumSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"EnumMetadataEnum", string.Empty);
         }
@@ -9175,7 +9175,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
     internal sealed class EnumMetadataEnumValueSerializer : XmlSerializer1
     {
-        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        public override bool CanDeserialize(System.Xml.XmlReader xmlReader)
         {
             return xmlReader.IsStartElement(@"EnumMetadataEnumValue", string.Empty);
         }
@@ -9349,7 +9349,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 return _typedSerializers;
             }
         }
-        public override System.Boolean CanSerialize(System.Type type)
+        public override bool CanSerialize(System.Type type)
         {
             if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata)) return true;
             if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)) return true;

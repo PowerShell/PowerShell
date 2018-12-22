@@ -149,12 +149,12 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies that the password will not expire.
         /// </summary>
         [Parameter]
-        public System.Boolean PasswordNeverExpires
+        public bool PasswordNeverExpires
         {
             get { return this.passwordneverexpires; }
             set { this.passwordneverexpires = value; }
         }
-        private System.Boolean passwordneverexpires;
+        private bool passwordneverexpires;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -179,12 +179,12 @@ namespace Microsoft.PowerShell.Commands
         /// account. The default value is True.
         /// </summary>
         [Parameter]
-        public System.Boolean UserMayChangePassword
+        public bool UserMayChangePassword
         {
             get { return this.usermaychangepassword;}
             set { this.usermaychangepassword = value; }
         }
-        private System.Boolean usermaychangepassword;
+        private bool usermaychangepassword;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
