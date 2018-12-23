@@ -413,6 +413,7 @@ namespace System.Management.Automation
                     _rsToUseForSteppablePipeline.Dispose();
                     _rsToUseForSteppablePipeline = null;
                 }
+
                 Closed.SafeInvoke(this, EventArgs.Empty);
             }
         }
@@ -721,6 +722,7 @@ namespace System.Management.Automation
                     {
                         DataStructureHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
                     }
+
                     break;
 
                 case RunspacePoolState.Opened:
@@ -728,6 +730,7 @@ namespace System.Management.Automation
                         SendApplicationPrivateDataToClient();
                         DataStructureHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
                     }
+
                     break;
             }
         }
@@ -1038,6 +1041,7 @@ namespace System.Management.Automation
             {
                 countingPipeline.AddParameter("ListImported", true);
             }
+
             countingPipeline
                 .AddParameter("ErrorAction", "SilentlyContinue")
                 .AddCommand("Measure-Object")
@@ -1049,6 +1053,7 @@ namespace System.Management.Automation
             {
                 mainPipeline.AddParameter("ListImported", true);
             }
+
             mainPipeline
                 .AddCommand("Select-Object")
                 .AddParameter("Property", new string[] {
@@ -1728,14 +1733,17 @@ namespace System.Management.Automation
             {
                 throw new PSArgumentNullException("driverInvoker");
             }
+
             if (runspace == null)
             {
                 throw new PSArgumentNullException("runspace");
             }
+
             if (debugger == null)
             {
                 throw new PSArgumentNullException("debugger");
             }
+
             _driverInvoker = driverInvoker;
             _runspace = runspace;
 
@@ -1964,6 +1972,7 @@ namespace System.Management.Automation
             {
                 return _wrappedDebugger.Value.UnhandledBreakpointMode;
             }
+
             set
             {
                 _wrappedDebugger.Value.UnhandledBreakpointMode = value;
@@ -2315,6 +2324,7 @@ namespace System.Management.Automation
                     {
                         _nestedDebugStopCompleteEvent = new ManualResetEventSlim(false);
                     }
+
                     _nestedDebugging = true;
                     OnEnterDebugMode(_nestedDebugStopCompleteEvent);
                 }
@@ -2500,6 +2510,7 @@ namespace System.Management.Automation
                 string script = @"
                     param ($Debugger, $Commands, $output)
                     trap { throw $_ }
+
                     $Debugger.ProcessCommand($Commands, $output)
                     ";
 

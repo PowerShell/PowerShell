@@ -253,6 +253,7 @@ namespace System.Management.Automation.Remoting.Server
                         // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
                         sessionTM.Close(null);
                     }
+
                     tracer.WriteMessage("END calling close on session transport manager");
                     sessionTM = null;
                 }
@@ -340,6 +341,7 @@ namespace System.Management.Automation.Remoting.Server
                             sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
                         }
                     }
+
                     if (string.IsNullOrEmpty(data))
                     {
                         lock (_syncObject)
@@ -349,6 +351,7 @@ namespace System.Management.Automation.Remoting.Server
                             sessionTM.Close(null);
                             sessionTM = null;
                         }
+
                         throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
                             RemotingErrorIdStrings.IPCUnknownElementReceived, string.Empty);
                     }
