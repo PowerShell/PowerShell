@@ -72,3 +72,5 @@ StyleCop.Cache
 # GitKracken Files
 .gk/
 gkconfig.yml
+test/tools/Modules/SelfSignedCertificate/SelfSignedCertificate.psd1
+test/tools/Modules/SelfSignedCertificate/SelfSignedCertificate.psm1

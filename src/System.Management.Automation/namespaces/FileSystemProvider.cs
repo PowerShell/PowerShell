@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //error.
+                        // error.
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.InvalidDriveName), "DriveNameNotSupportedForPersistence", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
@@ -1025,13 +1025,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override bool IsValidPath(string path)
         {
-            //Path passed should be fully qualified path.
+            // Path passed should be fully qualified path.
             if (String.IsNullOrEmpty(path))
             {
                 return false;
             }
 
-            //Normalize the path
+            // Normalize the path
             path = NormalizePath(path);
             path = EnsureDriveIsRooted(path);
 
@@ -1046,7 +1046,7 @@ namespace Microsoft.PowerShell.Commands
             }
 #endif
 
-            //Make sure the path is either drive rooted or UNC Path
+            // Make sure the path is either drive rooted or UNC Path
             if (!IsAbsolutePath(path) && !IsUNCPath(path))
             {
                 return false;
@@ -1196,7 +1196,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioError)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 ErrorRecord er = new ErrorRecord(ioError, "GetItemIOError", ErrorCategory.ReadError, path);
                 WriteError(er);
             }
@@ -1894,8 +1894,8 @@ namespace Microsoft.PowerShell.Commands
                 newName = Path.GetFileName(newName);
             }
 
-            //Check to see if the target specified is just filename. We dont allow rename to move the file to a different directory.
-            //If a path is specified for the newName then we flag that as an error.
+            // Check to see if the target specified is just filename. We dont allow rename to move the file to a different directory.
+            // If a path is specified for the newName then we flag that as an error.
             if (String.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
             {
                 throw PSTraceSource.NewArgumentException("newName", FileSystemProviderStrings.RenameError);
@@ -1973,7 +1973,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "RenameItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -1992,7 +1992,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the file or directory to create.
         /// </param>
-        ///<param name="type">
+        /// <param name="type">
         /// Specify "file" to create a file.
         /// Specify "directory" or "container" to create a directory.
         /// </param>
@@ -2047,7 +2047,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException exception)
                 {
-                    //IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occured and so no need for errordetails.
                     WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
                 }
                 catch (UnauthorizedAccessException accessException)
@@ -2100,7 +2100,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException exception)
                 {
-                    //IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occured and so no need for errordetails.
                     WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
                 }
                 catch (UnauthorizedAccessException accessException)
@@ -2158,7 +2158,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (itemType == ItemType.HardLink)
                     {
-                        //Hard links can only be to files, not directories.
+                        // Hard links can only be to files, not directories.
                         if (isDirectory == true)
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFile, strTargetPath);
@@ -2250,7 +2250,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         if (Platform.Unix.GetErrorCategory(errorCode) == ErrorCategory.PermissionDenied)
 #else
-                        if (errorCode == 1314) //ERROR_PRIVILEGE_NOT_HELD
+                        if (errorCode == 1314) // ERROR_PRIVILEGE_NOT_HELD
 #endif
                         {
                             string message = FileSystemProviderStrings.ElevationRequired;
@@ -2258,7 +2258,7 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        if (errorCode == 1) //ERROR_INVALID_FUNCTION
+                        if (errorCode == 1) // ERROR_INVALID_FUNCTION
                         {
                             string message = null;
                             if (itemType == ItemType.SymbolicLink)
@@ -2315,7 +2315,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    //Junctions can only be directories.
+                    // Junctions can only be directories.
                     if (!isDirectory)
                     {
                         string message = StringUtil.Format(FileSystemProviderStrings.ItemNotDirectory, value);
@@ -2340,7 +2340,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (pathExists)
                     {
-                        //Junctions can only be directories.
+                        // Junctions can only be directories.
                         if (!isPathDirectory)
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.ItemNotDirectory, path);
@@ -2348,7 +2348,7 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        //Junctions cannot have files
+                        // Junctions cannot have files
                         if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
@@ -2390,8 +2390,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteItemObject(pathDirInfo, path, true);
                         }
-                        else //rollback the directory creation if we created it.
+                        else
                         {
+                            // rollback the directory creation if we created it.
                             if (!pathExists)
                             {
                                 pathDirInfo.Delete();
@@ -2400,7 +2401,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception exception)
                     {
-                        //rollback the directory creation if it was created.
+                        // rollback the directory creation if it was created.
                         if (!pathExists)
                         {
                             pathDirInfo.Delete();
@@ -2562,7 +2563,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!Force)
                 {
-                    //IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occured and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
                 }
             }
@@ -2637,7 +2638,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "CreateIntermediateDirectoriesIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -2779,7 +2780,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException exception)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(exception, "RemoveItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -2968,7 +2969,7 @@ namespace Microsoft.PowerShell.Commands
                 fileSystemInfo != null,
                 "Caller should always check fileSystemInfo");
 
-            //First check if we can delete this file when force is not specified.
+            // First check if we can delete this file when force is not specified.
             if (!Force &&
                 (fileSystemInfo.Attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly)) != 0)
             {
@@ -3622,7 +3623,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (IOException ioException)
                             {
-                                //IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occured and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "CopyDirectoryInfoItemIOError", ErrorCategory.WriteError, file));
                             }
                             catch (UnauthorizedAccessException accessException)
@@ -3654,7 +3655,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (IOException ioException)
                             {
-                                //IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occured and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "CopyDirectoryInfoItemIOError", ErrorCategory.WriteError, childDir));
                             }
                             catch (UnauthorizedAccessException accessException)
@@ -3683,7 +3684,7 @@ namespace Microsoft.PowerShell.Commands
                     destinationPath = MakePath(destinationPath, file.Name);
                 }
 
-                //if the source and destination path are same then flag it as error.
+                // if the source and destination path are same then flag it as error.
                 if (InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(destinationPath, file.FullName))
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.CopyError, destinationPath);
@@ -4436,7 +4437,7 @@ namespace Microsoft.PowerShell.Commands
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
                     if (op == null || op["BytesWritten"] == null)
                     {
-                        //write error to stream
+                        // write error to stream
                         Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, file.FullName));
                         return false;
@@ -4938,7 +4939,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException ioError)
                 {
-                    //IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occured and so no need for errordetails.
                     WriteError(new ErrorRecord(ioError, "NormalizeRelativePathIOError", ErrorCategory.ReadError, path));
                     break;
                 }
@@ -5295,7 +5296,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Pop the result and continue processing
                         string poppedName = normalizedPathStack.Pop();
-                        //update our currentpath to reflect the change.
+                        // update our currentpath to reflect the change.
                         if (currentPath.Length > poppedName.Length)
                         {
                             currentPath = currentPath.Substring(0, currentPath.Length - poppedName.Length - 1);
@@ -5592,7 +5593,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "MoveItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -5678,7 +5679,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //check if destination file exists. if force is specified then we should delete the destination before moving
+                // check if destination file exists. if force is specified then we should delete the destination before moving
                 if (force && File.Exists(destination))
                 {
                     FileInfo destfile = new FileInfo(destination);
@@ -5686,7 +5687,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            //Make sure the file is not read only
+                            // Make sure the file is not read only
                             destfile.Attributes = destfile.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
                             destfile.Delete();
                             file.MoveTo(destination);
@@ -5708,7 +5709,7 @@ namespace Microsoft.PowerShell.Commands
                                 (exception is ArgumentNullException) ||
                                 (exception is IOException))
                             {
-                                //IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occured and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, destfile));
                             }
                             else
@@ -5717,13 +5718,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //IOException contains specific message about the error occured and so no need for errordetails.
+                        // IOException contains specific message about the error occured and so no need for errordetails.
                         WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, file));
                     }
                 }
                 else
                 {
-                    //IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occured and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, file));
                 }
             }
@@ -5811,7 +5812,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "MoveDirectoryItemIOError", ErrorCategory.WriteError, directory));
             }
         }
@@ -5952,7 +5953,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetPropertyIOError", ErrorCategory.ReadError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -6257,7 +6258,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "ClearPropertyIOError", ErrorCategory.WriteError, path));
             }
         }
@@ -6430,7 +6431,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetContentReaderIOError", ErrorCategory.ReadError, path));
             }
             catch (System.Security.SecurityException securityException)
@@ -6564,7 +6565,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetContentWriterIOError", ErrorCategory.WriteError, path));
             }
             catch (System.Security.SecurityException securityException)
@@ -6717,7 +6718,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                //IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occured and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "ClearContentIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -6735,7 +6736,7 @@ namespace Microsoft.PowerShell.Commands
                         FileStream fileStream = new FileStream(path, FileMode.Truncate, FileAccess.Write, FileShare.Write);
                         fileStream.Dispose();
 
-                        //For filesystem once content is cleared
+                        // For filesystem once content is cleared
                         WriteItemObject(string.Empty, path, false);
                     }
                     catch (UnauthorizedAccessException failure)
@@ -6891,7 +6892,7 @@ namespace Microsoft.PowerShell.Commands
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
             internal static extern int WNetGetConnection(string localName, StringBuilder remoteName, ref int remoteNameLength);
 
-#if CORECLR //TODO:CORECLR Win32 function 'PathIsNetworkPath' is in an extension API set which is currently not on CSS.
+#if CORECLR // TODO:CORECLR Win32 function 'PathIsNetworkPath' is in an extension API set which is currently not on CSS.
             /// <summary>
             /// Searches a path for a drive letter within the range of 'A' to 'Z' and returns the corresponding drive number.
             /// </summary>
@@ -7458,7 +7459,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class InternalSymbolicLinkLinkCodeMethods
     {
-        //This size comes from measuring the size of the header of REPARSE_GUID_DATA_BUFFER
+        // This size comes from measuring the size of the header of REPARSE_GUID_DATA_BUFFER
         private const int REPARSE_GUID_DATA_BUFFER_HEADER_SIZE = 24;
 
         // Maximum reparse buffer info size. The max user defined reparse
@@ -7480,7 +7481,7 @@ namespace Microsoft.PowerShell.Commands
         private const string NonInterpretedPathPrefix = @"\??\";
 
         [Flags]
-        //dwDesiredAccess of CreateFile
+        // dwDesiredAccess of CreateFile
         internal enum FileDesiredAccess : uint
         {
             GenericRead = 0x80000000,
@@ -7490,7 +7491,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [Flags]
-        //dwShareMode of CreateFile
+        // dwShareMode of CreateFile
         internal enum FileShareMode : uint
         {
             None = 0x00000000,
@@ -7499,7 +7500,7 @@ namespace Microsoft.PowerShell.Commands
             Delete = 0x00000004,
         }
 
-        //dwCreationDisposition of CreateFile
+        // dwCreationDisposition of CreateFile
         internal enum FileCreationDisposition : uint
         {
             New = 1,
@@ -7510,7 +7511,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [Flags]
-        //dwFlagsAndAttributes
+        // dwFlagsAndAttributes
         internal enum FileAttributes : uint
         {
             Readonly = 0x00000001,
@@ -7675,7 +7676,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
-#elif !CORECLR //FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr
+#elif !CORECLR // FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr
             UInt32 linkStringLength = 0;
             var linkName = new StringBuilder();
 
@@ -7703,11 +7704,11 @@ namespace Microsoft.PowerShell.Commands
                 do
                 {
                     StringBuilder fullName = new StringBuilder();
-                    fullName.Append(Path.GetPathRoot(filePath));    //hard link source and target must be on the same drive. So we can use the source for find the path root.
+                    fullName.Append(Path.GetPathRoot(filePath));    // hard link source and target must be on the same drive. So we can use the source for find the path root.
                     fullName.Append(linkName.ToString());
                     FileInfo fInfo = new FileInfo(fullName.ToString());
 
-                    //Don't add the target link to the list.
+                    // Don't add the target link to the list.
 
                     if (String.Compare(fInfo.FullName, filePath, StringComparison.OrdinalIgnoreCase) != 0)
                         links.Add(fInfo.FullName);
@@ -7722,7 +7723,7 @@ namespace Microsoft.PowerShell.Commands
                         continueFind = InternalSymbolicLinkLinkCodeMethods.FindNextFileName(fileHandle, ref linkStringLength, linkName);
                     }
 
-                    if (!continueFind && lastError != 38) //ERROR_HANDLE_EOF. No more links.
+                    if (!continueFind && lastError != 38) // ERROR_HANDLE_EOF. No more links.
                     {
                         throw new Win32Exception(lastError);
                     }
@@ -7769,12 +7770,12 @@ namespace Microsoft.PowerShell.Commands
                     int bytesReturned;
                     string linkType = null;
 
-                    //OACR warning 62001 about using DeviceIOControl has been disabled.
+                    // OACR warning 62001 about using DeviceIOControl has been disabled.
                     // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
 
                     handle.DangerousAddRef(ref success);
 
-                    //Get Buffer size
+                    // Get Buffer size
                     IntPtr dangerousHandle = handle.DangerousGetHandle();
 
                     bool result = DeviceIoControl(dangerousHandle, FSCTL_GET_REPARSE_POINT,
@@ -7981,7 +7982,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 int bytesReturned;
 
-                //OACR warning 62001 about using DeviceIOControl has been disabled.
+                // OACR warning 62001 about using DeviceIOControl has been disabled.
                 // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
 
                 handle.DangerousAddRef(ref success);
@@ -7998,7 +7999,7 @@ namespace Microsoft.PowerShell.Commands
                     throw new Win32Exception(lastError);
                 }
 
-                //Unmarshal to symbolic link to look for tags.
+                // Unmarshal to symbolic link to look for tags.
                 REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
                 if (reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_SYMLINK && reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_MOUNT_POINT)
@@ -8013,7 +8014,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
                 {
-                    //Since this is a junction we need to unmarshal to the correct structure.
+                    // Since this is a junction we need to unmarshal to the correct structure.
                     REPARSE_DATA_BUFFER_MOUNTPOINT reparseDataBufferMountPoint = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
 
                     targetDir = Encoding.Unicode.GetString(reparseDataBufferMountPoint.PathBuffer, reparseDataBufferMountPoint.SubstituteNameOffset, reparseDataBufferMountPoint.SubstituteNameLength);
@@ -8062,12 +8063,12 @@ namespace Microsoft.PowerShell.Commands
 
                         REPARSE_DATA_BUFFER_MOUNTPOINT mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT();
                         mountPoint.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
-                        mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); //Added space for the header and null endo
+                        mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); // Added space for the header and null endo
                         mountPoint.SubstituteNameOffset = 0;
                         mountPoint.SubstituteNameLength = (ushort)mountPointBytes.Length;
                         mountPoint.PrintNameOffset = (ushort)(mountPointBytes.Length + 2); // 2 as unicode null take 2 bytes.
                         mountPoint.PrintNameLength = 0;
-                        mountPoint.PathBuffer = new byte[0x3FF0]; //Buffer for max size.
+                        mountPoint.PathBuffer = new byte[0x3FF0]; // Buffer for max size.
                         Array.Copy(mountPointBytes, mountPoint.PathBuffer, mountPointBytes.Length);
 
                         int nativeBufferSize = Marshal.SizeOf(mountPoint);
@@ -8080,7 +8081,7 @@ namespace Microsoft.PowerShell.Commands
 
                             int bytesReturned = 0;
 
-                            //OACR warning 62001 about using DeviceIOControl has been disabled.
+                            // OACR warning 62001 about using DeviceIOControl has been disabled.
                             // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
 
                             handle.DangerousAddRef(ref success);
