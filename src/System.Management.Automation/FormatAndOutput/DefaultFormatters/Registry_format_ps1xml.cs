@@ -46,6 +46,7 @@ namespace System.Management.Automation.Runspaces
                                       Format-List | Out-String | Sort).Trim()
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 5000) )
                                   if($result.Length -eq 5000) { $result += ""`u{2026}"" }
+
                                   $result
                                 ")
                     .EndRowDefinition()
