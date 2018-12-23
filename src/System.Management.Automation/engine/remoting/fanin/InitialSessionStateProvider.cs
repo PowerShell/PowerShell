@@ -141,12 +141,14 @@ namespace System.Management.Automation.Remoting
                         AssertValueNotAssigned(SESSIONCONFIGTOKEN, SessionConfigurationData);
                         SessionConfigurationData = PSSessionConfigurationData.Create(optionValue);
                     }
+
                     break;
                 case CONFIGFILEPATH:
                     {
                         AssertValueNotAssigned(CONFIGFILEPATH, ConfigFilePath);
                         ConfigFilePath = optionValue.ToString();
                     }
+
                     break;
                 default:
                     // we dont need to evaluate PSVersion and other custom authz
@@ -672,6 +674,7 @@ namespace System.Management.Automation.Remoting
                 {
                     return result;
                 }
+
                 s_tracer.WriteLine("Loading assembly from path {0}", applicationBase);
                 try
                 {
@@ -692,6 +695,7 @@ namespace System.Management.Automation.Remoting
                         //Rooted path of dll is provided.
                         assemblyPath = assemblyName;
                     }
+
                     result = Assembly.LoadFrom(assemblyPath);
                 }
                 catch (FileLoadException e)
@@ -715,6 +719,7 @@ namespace System.Management.Automation.Remoting
                     Directory.SetCurrentDirectory(originalDirectory);
                 }
             }
+
             return result;
         }
 
@@ -2098,6 +2103,7 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     iss.ImportPSModule(modulesToImport);
                 }
             }
@@ -2567,6 +2573,7 @@ namespace System.Management.Automation.Remoting
                     {
                         currentParameterModification[parameterModification] = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     }
+
                     HashSet<string> currentParameterModificationValue = (HashSet<string>)currentParameterModification[parameterModification];
 
                     foreach (string parameterModificationValue in TryGetStringArray(parameter[parameterModification]))
@@ -2871,6 +2878,7 @@ namespace System.Management.Automation.Remoting
                         }
                     }
                 }
+
                 return null;
             }
 
@@ -2887,6 +2895,7 @@ namespace System.Management.Automation.Remoting
                     return null;
                 }
             }
+
             return result;
         }
     }

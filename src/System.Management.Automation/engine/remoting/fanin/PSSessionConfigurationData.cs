@@ -46,6 +46,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _privateData;
             }
+
             internal set
             {
                 _privateData = value;
@@ -206,11 +207,13 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "Unknown option specified");
                     }
+
                     break;
             }
         }
