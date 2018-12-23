@@ -29,6 +29,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 throw PSTraceSource.NewArgumentNullException("parentHost");
             }
+
             _parent = parentHost;
 
             PSHostRawUserInterface rawui = null;
@@ -112,6 +113,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     throw;
                 }
+
                 lpl.Stopper.Stop();
             }
 
@@ -150,6 +152,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     throw;
                 }
+
                 lpl.Stopper.Stop();
             }
 
@@ -397,6 +400,7 @@ namespace System.Management.Automation.Internal.Host
                     {
                         WriteDebugLineHelper(message);
                     }
+
                     break;
                 case ActionPreference.Stop:
                     WriteDebugLineHelper(message);
@@ -755,6 +759,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     throw;
                 }
+
                 lpl.Stopper.Stop();
             }
 
@@ -797,6 +802,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     throw;
                 }
+
                 lpl.Stopper.Stop();
             }
 
@@ -861,6 +867,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     throw;
                 }
+
                 lpl.Stopper.Stop();
             }
 
@@ -969,6 +976,7 @@ namespace System.Management.Automation.Internal.Host
                         "{0}{1}", prepend, defaultStr));
                     prepend = ",";
                 }
+
                 string defaultChoicesStr = defaultChoicesBuilder.ToString();
 
                 if (defaultChoiceKeys.Count == 1)
@@ -1014,6 +1022,7 @@ namespace System.Management.Automation.Internal.Host
                     // allow for no choice selection.
                     break;
                 }
+
                 int choicePicked = HostUIHelperMethods.DetermineChoicePicked(response.Trim(), choices, hotkeysAndPlainLabels);
 
                 if (choicePicked >= 0)

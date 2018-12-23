@@ -279,6 +279,7 @@ namespace System.Management.Automation.Runspaces.Internal
         public TimeSpan CleanupInterval
         {
             get { return _cleanupInterval; }
+
             set
             {
                 lock (this.syncObject)
@@ -831,6 +832,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     _initialSessionState = null;
                     host = null;
                 }
+
                 _isDisposed = true;
             }
         }

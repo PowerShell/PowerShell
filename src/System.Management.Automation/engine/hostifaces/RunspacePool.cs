@@ -463,6 +463,7 @@ namespace System.Management.Automation.Runspaces
                     return _isActive;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -713,6 +714,7 @@ namespace System.Management.Automation.Runspaces
         public TimeSpan CleanupInterval
         {
             get { return _internalPool.CleanupInterval; }
+
             set { _internalPool.CleanupInterval = value; }
         }
 

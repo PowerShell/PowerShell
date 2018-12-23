@@ -32,6 +32,7 @@ namespace System.Management.Automation.Host
         public int X
         {
             get { return x; }
+
             set { x = value; }
         }
 
@@ -41,6 +42,7 @@ namespace System.Management.Automation.Host
         public int Y
         {
             get { return y; }
+
             set { y = value; }
         }
 
@@ -222,6 +224,7 @@ namespace System.Management.Automation.Host
         public int Width
         {
             get { return width; }
+
             set { width = value; }
         }
 
@@ -231,6 +234,7 @@ namespace System.Management.Automation.Host
         public int Height
         {
             get { return height; }
+
             set { height = value; }
         }
 
@@ -516,6 +520,7 @@ namespace System.Management.Automation.Host
         public int VirtualKeyCode
         {
             get { return virtualKeyCode; }
+
             set { virtualKeyCode = value; }
         }
 
@@ -526,6 +531,7 @@ namespace System.Management.Automation.Host
         public char Character
         {
             get { return character; }
+
             set { character = value; }
         }
 
@@ -536,6 +542,7 @@ namespace System.Management.Automation.Host
         public ControlKeyStates ControlKeyState
         {
             get { return controlKeyState; }
+
             set { controlKeyState = value; }
         }
 
@@ -546,6 +553,7 @@ namespace System.Management.Automation.Host
         public bool KeyDown
         {
             get { return keyDown; }
+
             set { keyDown = value; }
         }
 
@@ -723,6 +731,7 @@ namespace System.Management.Automation.Host
         public int Left
         {
             get { return left; }
+
             set { left = value; }
         }
 
@@ -733,6 +742,7 @@ namespace System.Management.Automation.Host
         public int Top
         {
             get { return top; }
+
             set { top = value; }
         }
 
@@ -743,6 +753,7 @@ namespace System.Management.Automation.Host
         public int Right
         {
             get { return right; }
+
             set { right = value; }
         }
 
@@ -753,6 +764,7 @@ namespace System.Management.Automation.Host
         public int Bottom
         {
             get { return bottom; }
+
             set { bottom = value; }
         }
 
@@ -784,6 +796,7 @@ namespace System.Management.Automation.Host
                 // "right" and "left" are not localizable
                 throw PSTraceSource.NewArgumentException("right", MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "right", "left");
             }
+
             if (bottom < top)
             {
                 // "bottom" and "top" are not localizable
@@ -991,6 +1004,7 @@ namespace System.Management.Automation.Host
         public char Character
         {
             get { return character; }
+
             set { character = value; }
         }
 
@@ -1004,6 +1018,7 @@ namespace System.Management.Automation.Host
         public ConsoleColor ForegroundColor
         {
             get { return foregroundColor; }
+
             set { foregroundColor = value; }
         }
 
@@ -1014,6 +1029,7 @@ namespace System.Management.Automation.Host
         public ConsoleColor BackgroundColor
         {
             get { return backgroundColor; }
+
             set { backgroundColor = value; }
         }
 
@@ -1024,6 +1040,7 @@ namespace System.Management.Automation.Host
         public BufferCellType BufferCellType
         {
             get { return bufferCellType; }
+
             set { bufferCellType = value; }
         }
 
@@ -1164,6 +1181,7 @@ namespace System.Management.Automation.Host
         {
             return !(first == second);
         }
+
         private const string StringsBaseName = "MshHostRawUserInterfaceStrings";
     }
 
@@ -1704,6 +1722,7 @@ namespace System.Management.Automation.Host
             {
                 throw PSTraceSource.NewArgumentNullException("source");
             }
+
             return source.Length;
         }
 
@@ -1790,6 +1809,7 @@ namespace System.Management.Automation.Host
             {
                 throw PSTraceSource.NewArgumentNullException("contents");
             }
+
             byte[][] charLengths = new byte[contents.Length][];
             int maxStringLengthInBufferCells = 0;
             for (int i = 0; i < contents.Length; i++)
@@ -1798,6 +1818,7 @@ namespace System.Management.Automation.Host
                 {
                     continue;
                 }
+
                 int lengthInBufferCells = 0;
                 charLengths[i] = new byte[contents[i].Length];
                 for (int j = 0; j < contents[i].Length; j++)
@@ -1805,15 +1826,18 @@ namespace System.Management.Automation.Host
                     charLengths[i][j] = (byte)LengthInBufferCells(contents[i][j]);
                     lengthInBufferCells += charLengths[i][j];
                 }
+
                 if (maxStringLengthInBufferCells < lengthInBufferCells)
                 {
                     maxStringLengthInBufferCells = lengthInBufferCells;
                 }
             }
+
             if (maxStringLengthInBufferCells <= 0)
             {
                 throw PSTraceSource.NewArgumentException("contents", MshHostRawUserInterfaceStrings.AllNullOrEmptyStringsErrorTemplate);
             }
+
             BufferCell[,] results = new BufferCell[contents.Length, maxStringLengthInBufferCells];
             for (int i = 0; i < contents.Length; i++)
             {
@@ -1840,6 +1864,7 @@ namespace System.Management.Automation.Host
                     resultJ++;
                 }
             }
+
             return results;
 #pragma warning restore 56506
         }
@@ -1933,6 +1958,7 @@ namespace System.Management.Automation.Host
                             contents.ForegroundColor, contents.BackgroundColor,
                             BufferCellType.Trailing);
                     }
+
                     if (normalizedWidth < width)
                     {
                         buffer[i, normalizedWidth] = contents;
@@ -1940,6 +1966,7 @@ namespace System.Management.Automation.Host
                     }
                 }
             }
+
             return buffer;
         }
 

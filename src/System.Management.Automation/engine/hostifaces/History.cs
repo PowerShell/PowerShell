@@ -400,6 +400,7 @@ namespace Microsoft.PowerShell.Commands
                             if (_countEntriesAdded > _capacity)
                                 index = SmallestID;
                         }
+
                         for (long i = count - 1; i >= 0;)
                         {
                             if (index > _countEntriesAdded) break;
@@ -430,6 +431,7 @@ namespace Microsoft.PowerShell.Commands
                                         break;
                                 }
                             }
+
                             if (index < 1) break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
                                 (_buffer[GetIndexFromId(index)].Cleared == true))
@@ -443,6 +445,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 HistoryInfo[] entries = new HistoryInfo[entriesList.Count];
                 entriesList.CopyTo(entries);
                 return entries;
@@ -465,14 +468,17 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
                 }
+
                 if (newest.ToString() == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("newest");
                 }
+
                 if (count > _countEntriesAdded || count == -1)
                 {
                     count = _countEntriesInBuffer;
                 }
+
                 List<HistoryInfo> cmdlist = new List<HistoryInfo>();
                 long SmallestID = 1;
                 //if buffersize is changes,Get the smallest entry that's not cleared in the buffer
@@ -488,6 +494,7 @@ namespace Microsoft.PowerShell.Commands
                             if (_countEntriesAdded > _capacity)
                                 id = SmallestID;
                         }
+
                         for (long i = 0; i <= count - 1;)
                         {
                             if (id > _countEntriesAdded) break;
@@ -495,6 +502,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
                             }
+
                             id++;
                         }
                     }
@@ -512,11 +520,13 @@ namespace Microsoft.PowerShell.Commands
                                         break;
                                 }
                             }
+
                             if (id < 1) break;
                             if (_buffer[GetIndexFromId(id)].Cleared == false && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
                             {
                                 cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
                             }
+
                             id--;
                         }
                     }
@@ -531,6 +541,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 HistoryInfo[] entries = new HistoryInfo[cmdlist.Count];
                 cmdlist.CopyTo(entries);
                 return entries;
@@ -566,6 +577,7 @@ namespace Microsoft.PowerShell.Commands
                     entry.Cleared = true;
                     _countEntriesInBuffer--;
                 }
+
                 return;
             }
         }
@@ -627,6 +639,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("id", id);
             }
+
             if (_countEntriesInBuffer == 0)
                 return null;
             if (id > _countEntriesAdded)
@@ -664,6 +677,7 @@ namespace Microsoft.PowerShell.Commands
                     if (minID > _buffer[i].Id)
                         minID = _buffer[i].Id;
             }
+
             return minID;
         }
 
@@ -830,6 +844,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _id;
             }
+
             set
             {
                 _id = value;
@@ -857,6 +872,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _count;
             }
+
             set
             {
                 _countParameterSpecified = true;
@@ -942,6 +958,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _count = history.Buffercapacity();
                 }
+
                 HistoryInfo[] entries = history.GetEntries(0, _count, true);
                 for (long i = entries.Length - 1; i >= 0; i--)
                     WriteObject(entries[i]);
@@ -980,6 +997,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _id;
             }
+
             set
             {
                 if (_id != null)
@@ -987,6 +1005,7 @@ namespace Microsoft.PowerShell.Commands
                     //Id has been set already.
                     _multipleIdProvided = true;
                 }
+
                 _id = value;
             }
         }
@@ -1102,6 +1121,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(results, true);
                     }
+
                     pipeline.RemoveFromInvokeHistoryEntryList(entry);
                 }
                 finally
@@ -1173,6 +1193,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
                         }
                     }
+
                     if (entry == null)
                     {
                         Exception ex =
@@ -1241,6 +1262,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return entry;
         }
 
@@ -1314,6 +1336,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Passthru
         {
             get { return _passthru; }
+
             set { _passthru = value; }
         }
 
@@ -1424,6 +1447,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         break;
                     }
+
                     executionStatus = (PipelineState)baseObject;
                     if (executionStatus < PipelineState.NotStarted || executionStatus > PipelineState.Failed)
                     {
@@ -1566,6 +1590,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _id;
             }
+
             set
             {
                 _id = value;
@@ -1591,6 +1616,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _commandline;
             }
+
             set
             {
                 _commandline = value;
@@ -1614,6 +1640,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _count;
             }
+
             set
             {
                 _countParameterSpecified = true;
@@ -1642,6 +1669,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _newest;
             }
+
             set
             {
                 _newest = value;
@@ -1789,6 +1817,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return;
                     }
+
                     ClearHistoryEntries(0, -1, null, _newest);
                 }
                 else
@@ -1898,6 +1927,7 @@ namespace Microsoft.PowerShell.Commands
                             )
                         );
                     }
+
                     _entries = _history.GetEntries(id, count, newest);
                 }
                 else

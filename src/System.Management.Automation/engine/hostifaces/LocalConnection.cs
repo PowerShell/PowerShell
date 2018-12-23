@@ -169,6 +169,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
@@ -293,6 +294,7 @@ namespace System.Management.Automation.Runspaces
                 return _transcriptionData;
             }
         }
+
         private TranscriptionData _transcriptionData = null;
 
         private JobRepository _jobRepository;
@@ -544,6 +546,7 @@ namespace System.Management.Automation.Runspaces
                     debugPreferenceCache = psObjects[0].BaseObject as Hashtable;
                 }
             }
+
             return debugPreferenceCache;
         }
 
@@ -563,6 +566,7 @@ namespace System.Management.Automation.Runspaces
                     processDebugPreference = LanguagePrimitives.ConvertTo<DebugPreference>(debugPreferencePsObject);
                 }
             }
+
             return processDebugPreference;
         }
 
@@ -907,6 +911,7 @@ namespace System.Management.Automation.Runspaces
                     allRunspacesClosed = false;
                     break;
                 }
+
                 var localRunspace = r as LocalRunspace;
                 if (localRunspace != null && localRunspace.Host is IHostProvidesTelemetryData)
                 {
@@ -914,6 +919,7 @@ namespace System.Management.Automation.Runspaces
                     break;
                 }
             }
+
             if (allRunspacesClosed && !hostProvidesExitTelemetry)
             {
                 TelemetryAPI.ReportExitTelemetry(null);
@@ -945,6 +951,7 @@ namespace System.Management.Automation.Runspaces
                     IThrottleOperation operation = new CloseOrDisconnectRunspaceOperationHelper(remoteRunspace);
                     throttleManager.AddOperation(operation);
                 }
+
                 throttleManager.EndSubmitOperations();
 
                 remoteRunspaceCloseCompleted.WaitOne();
@@ -957,6 +964,7 @@ namespace System.Management.Automation.Runspaces
         private void StopOrDisconnectAllJobs()
         {
             if (JobRepository.Jobs.Count == 0) { return; }
+
             List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
 
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
@@ -1096,6 +1104,7 @@ namespace System.Management.Automation.Runspaces
 
                 return _engine.Context.SessionState.LanguageMode;
             }
+
             set
             {
                 if (_disposed)
@@ -1207,6 +1216,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     return;
                 }
+
                 lock (SyncRoot)
                 {
                     if (_disposed)
@@ -1549,6 +1559,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _errors; }
         }
+
         private PSDataCollection<ErrorRecord> _errors;
 
         #region Serialization
