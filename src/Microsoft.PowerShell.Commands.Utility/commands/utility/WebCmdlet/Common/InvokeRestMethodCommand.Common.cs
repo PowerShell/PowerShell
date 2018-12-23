@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         public override WebRequestMethod Method
         {
             get { return base.Method; }
+
             set { base.Method = value; }
         }
 
@@ -37,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
         public override string CustomMethod
         {
             get { return base.CustomMethod; }
+
             set { base.CustomMethod = value; }
         }
 
@@ -48,6 +50,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter FollowRelLink
         {
             get { return base._followRelLink; }
+
             set { base._followRelLink = value; }
         }
 
@@ -60,6 +63,7 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumFollowRelLink
         {
             get { return base._maximumFollowRelLink; }
+
             set { base._maximumFollowRelLink = value; }
         }
 
@@ -166,6 +170,7 @@ namespace Microsoft.PowerShell.Commands
                 exRef = ex;
                 doc = null;
             }
+
             return (doc != null);
         }
 
@@ -210,6 +215,7 @@ namespace Microsoft.PowerShell.Commands
                 exRef = new ArgumentException(msg, ex);
                 obj = null;
             }
+
             return converted;
         }
 
@@ -276,11 +282,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 get { return _length; }
             }
+
             private long _length;
 
             public override long Position
             {
                 get { return _streamBuffer.Position; }
+
                 set { _streamBuffer.Position = value; }
             }
 
