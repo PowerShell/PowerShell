@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public DateTime? At
         {
             get { return _time; }
+
             set { _time = value; }
         }
 
@@ -57,6 +58,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public List<DayOfWeek> DaysOfWeek
         {
             get { return _daysOfWeek; }
+
             set { _daysOfWeek = value; }
         }
 
@@ -66,6 +68,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 Interval
         {
             get { return _interval; }
+
             set { _interval = value; }
         }
 
@@ -75,6 +78,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TriggerFrequency Frequency
         {
             get { return _frequency; }
+
             set { _frequency = value; }
         }
 
@@ -84,6 +88,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RandomDelay
         {
             get { return _randomDelay; }
+
             set { _randomDelay = value; }
         }
 
@@ -93,6 +98,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan? RepetitionInterval
         {
             get { return _repInterval; }
+
             set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
@@ -107,6 +113,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan? RepetitionDuration
         {
             get { return _repDuration; }
+
             set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
@@ -121,6 +128,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string User
         {
             get { return _user; }
+
             set { _user = value; }
         }
 
@@ -130,6 +138,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 Id
         {
             get { return _id; }
+
             internal set { _id = value; }
         }
 
@@ -139,6 +148,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public bool Enabled
         {
             get { return _enabled; }
+
             set { _enabled = value; }
         }
 
@@ -148,6 +158,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition JobDefinition
         {
             get { return _jobDefAssociation; }
+
             internal set { _jobDefAssociation = value; }
         }
 
@@ -355,10 +366,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerTime, ScheduledJobErrorStrings.TriggerOnceType);
                         throw new ScheduledJobException(msg);
                     }
+
                     if (_repInterval != null || _repDuration != null)
                     {
                         ValidateOnceRepetitionParams(_repInterval, _repDuration);
                     }
+
                     break;
 
                 case TriggerFrequency.Daily:
@@ -367,10 +380,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerTime, ScheduledJobErrorStrings.TriggerDailyType);
                         throw new ScheduledJobException(msg);
                     }
+
                     if (_interval < 1)
                     {
                         throw new ScheduledJobException(ScheduledJobErrorStrings.InvalidDaysIntervalParam);
                     }
+
                     break;
 
                 case TriggerFrequency.Weekly:
@@ -379,15 +394,18 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerTime, ScheduledJobErrorStrings.TriggerWeeklyType);
                         throw new ScheduledJobException(msg);
                     }
+
                     if (_interval < 1)
                     {
                         throw new ScheduledJobException(ScheduledJobErrorStrings.InvalidWeeksIntervalParam);
                     }
+
                     if (_daysOfWeek == null || _daysOfWeek.Count == 0)
                     {
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingJobTriggerDaysOfWeek, ScheduledJobErrorStrings.TriggerWeeklyType);
                         throw new ScheduledJobException(msg);
                     }
+
                     break;
             }
         }
