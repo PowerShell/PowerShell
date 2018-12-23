@@ -21,14 +21,17 @@ namespace Microsoft.PowerShell.Cmdletization
             {
                 throw new ArgumentNullException("cmdlet");
             }
+
             if (string.IsNullOrEmpty(className))
             {
                 throw new ArgumentNullException("className");
             }
+
             if (classVersion == null) // possible and ok to have classVersion==string.Empty
             {
                 throw new ArgumentNullException("classVersion");
             }
+
             if (privateData == null)
             {
                 throw new ArgumentNullException("privateData");
@@ -161,6 +164,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 return _cmdlet;
             }
         }
+
         private PSCmdlet _cmdlet;
 
         /// <summary>
@@ -173,6 +177,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 return _className;
             }
         }
+
         private string _className;
 
         /// <summary>
@@ -186,6 +191,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 return _classVersion;
             }
         }
+
         private string _classVersion;
 
         /// <summary>
@@ -198,6 +204,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 return _moduleVersion;
             }
         }
+
         private Version _moduleVersion;
 
         /// <summary>
@@ -210,6 +217,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 return _privateData;
             }
         }
+
         private IDictionary<string, string> _privateData;
     }
 }
