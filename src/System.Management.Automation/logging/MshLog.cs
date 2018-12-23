@@ -507,6 +507,7 @@ namespace System.Management.Automation
                                 logContext = GetLogContext(executionContext, null);
                                 logContext.CommandName = commandName;
                             }
+
                             return logContext;
                         }, commandState);
                 }
