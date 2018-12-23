@@ -50,11 +50,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.context;
             }
+
             set
             {
                 this.context = value;
             }
         }
+
         private XOperationContextBase context;
     }//End Class
 
