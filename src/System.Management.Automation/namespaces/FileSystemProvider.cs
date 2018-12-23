@@ -2041,7 +2041,19 @@ namespace Microsoft.PowerShell.Commands
 
             if (itemType == ItemType.Directory)
             {
-                CreateDirectory(path, true);
+                try
+                {
+                    CreateDirectory(path, true);
+                }
+                catch (IOException exception)
+                {
+                    //IOException contains specific message about the error occured and so no need for errordetails.
+                    WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
+                }
+                catch (UnauthorizedAccessException accessException)
+                {
+                    WriteError(new ErrorRecord(accessException, "NewItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                }
             }
             else if (itemType == ItemType.File)
             {
