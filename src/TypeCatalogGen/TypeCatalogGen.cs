@@ -122,6 +122,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
 REPLACE '{fullName}' from '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})
   WITH '{strongAssemblyName}' (IsObsolete? {isTypeObsolete})");
                             }
+
                             typeNameToAssemblyMap[fullName] = new TypeMetadata(strongAssemblyName, isTypeObsolete);
                         }
                         else if (printDebugMessage)
@@ -157,6 +158,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -196,6 +198,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                             // constructor is global method, vararg method, or from a generic type.
                             return false;
                     }
+
                     break;
 
                 default:
@@ -444,6 +447,7 @@ namespace System.Management.Automation
             {
                 sourceCode.AppendLine(string.Format(CultureInfo.InvariantCulture, SourceFormat, pair.Key, pair.Value.AssemblyName));
             }
+
             sourceCode.Append(SourceEnd);
 
             using (FileStream stream = new FileStream(targetFilePath, FileMode.Create, FileAccess.Write))
