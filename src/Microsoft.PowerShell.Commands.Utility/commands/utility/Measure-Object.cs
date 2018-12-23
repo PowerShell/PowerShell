@@ -256,6 +256,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureStandardDeviation;
             }
+
             set
             {
                 _measureStandardDeviation = value;
@@ -275,11 +276,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureSum;
             }
+
             set
             {
                 _measureSum = value;
             }
         }
+
         private bool _measureSum;
 
         /// <summary>
@@ -313,11 +316,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureAverage;
             }
+
             set
             {
                 _measureAverage = value;
             }
         }
+
         private bool _measureAverage;
 
         /// <summary>
@@ -331,11 +336,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureMax;
             }
+
             set
             {
                 _measureMax = value;
             }
         }
+
         private bool _measureMax;
 
         /// <summary>
@@ -349,11 +356,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureMin;
             }
+
             set
             {
                 _measureMin = value;
             }
         }
+
         private bool _measureMin;
 
         #region TextMeasure ParameterSet
@@ -367,11 +376,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureLines;
             }
+
             set
             {
                 _measureLines = value;
             }
         }
+
         private bool _measureLines = false;
 
         /// <summary>
@@ -384,11 +395,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureWords;
             }
+
             set
             {
                 _measureWords = value;
             }
         }
+
         private bool _measureWords = false;
 
         /// <summary>
@@ -401,11 +414,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureCharacters;
             }
+
             set
             {
                 _measureCharacters = value;
             }
         }
+
         private bool _measureCharacters = false;
 
         /// <summary>
@@ -418,11 +433,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _ignoreWhiteSpace;
             }
+
             set
             {
                 _ignoreWhiteSpace = value;
             }
         }
+
         private bool _ignoreWhiteSpace;
 
         #endregion TextMeasure ParameterSet
@@ -642,10 +659,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return 0;
                 }
+
                 if (!ignoreWhiteSpace)
                 {
                     return inStr.Length;
                 }
+
                 int len = 0;
                 foreach (char c in inStr)
                 {
@@ -654,6 +673,7 @@ namespace Microsoft.PowerShell.Commands
                         len++;
                     }
                 }
+
                 return len;
             }
 
@@ -668,6 +688,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return 0;
                 }
+
                 int wordCount = 0;
                 bool wasAWhiteSpace = true;
                 foreach (char c in inStr)
@@ -682,9 +703,11 @@ namespace Microsoft.PowerShell.Commands
                         {
                             wordCount++;
                         }
+
                         wasAWhiteSpace = false;
                     }
                 }
+
                 return wordCount;
             }
 
@@ -699,6 +722,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return 0;
                 }
+
                 int numberOfLines = 0;
                 foreach (char c in inStr)
                 {
@@ -713,6 +737,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     numberOfLines++;
                 }
+
                 return numberOfLines;
             }
         }
@@ -744,6 +769,7 @@ namespace Microsoft.PowerShell.Commands
                 stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
             }
+
             if (_measureStandardDeviation && stat.count > 1)
             {
                 // Based off of iterative method of calculating variance on
@@ -889,6 +915,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     gmi.Maximum = (double)max;
                 }
+
                 if (min != null)
                 {
                     gmi.Minimum = (double)min;

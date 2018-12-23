@@ -24,11 +24,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _breakpoints;
             }
+
             set
             {
                 _breakpoints = value;
             }
         }
+
         private Breakpoint[] _breakpoints;
 
         /// <summary>
@@ -42,6 +44,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _ids;
             }
+
             set
             {
                 _ids = value;
@@ -130,6 +133,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;

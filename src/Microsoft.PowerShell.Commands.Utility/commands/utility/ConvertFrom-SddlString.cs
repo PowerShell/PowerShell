@@ -34,12 +34,14 @@ namespace Microsoft.PowerShell.Commands
         public AccessRightTypeNames Type
         { 
             get { return _type; }
+
             set
             {
                 _isTypeSet = true;
                 _type = value;
             } 
         }
+
         private AccessRightTypeNames _type;
         private bool _isTypeSet = false;
 
@@ -139,6 +141,7 @@ namespace Microsoft.PowerShell.Commands
                     string accessRights = String.Join(", ", accessRightList);
                     aceString.Append($" ({accessRights})");
                 }
+
                 aceStringList.Add(aceString.ToString());
             }
 

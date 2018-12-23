@@ -36,6 +36,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _delimiter;
             }
+
             set
             {
                 _delimiter = value;
@@ -98,10 +99,12 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
+
             if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)))
             {
                 NoTypeInformation = !IncludeTypeInformation;
             }
+
             _delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, _delimiter, UseCulture);
         }
     }
@@ -137,12 +140,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _specifiedPath = true;
             }
         }
+
         private string _path;
         private bool _specifiedPath = false;
 
@@ -159,12 +164,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -177,11 +184,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -195,11 +204,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -395,12 +406,14 @@ namespace Microsoft.PowerShell.Commands
                     _sw.Dispose();
                     _sw = null;
                 }
+
                 _fs.Dispose();
                 _fs = null;
                 // reset the read-only attribute
                 if (_readOnlyFileInfo != null)
                     _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
+
             if (_helper != null)
             {
                 _helper.Dispose();
@@ -482,6 +495,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
@@ -520,12 +534,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
                 _specifiedPath = true;
             }
         }
+
         private string[] _paths;
         private bool _specifiedPath = false;
 
@@ -542,12 +558,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -561,11 +579,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _useculture;
             }
+
             set
             {
                 _useculture = value;
             }
         }
+
         private bool _useculture;
 
         ///<summary>
@@ -823,6 +843,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Header = helper.Header.ToArray();
                     }
+
                     if ((_typeName == null) && (helper.TypeName != null))
                     {
                         _typeName = helper.TypeName;
@@ -864,6 +885,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException("cmdlet");
             }
+
             _cmdlet = cmdlet;
             _delimiter = delimiter;
         }
@@ -892,6 +914,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 propertyNames.Add(prop.Name);
             }
+
             return propertyNames;
         }
 
@@ -921,8 +944,10 @@ namespace Microsoft.PowerShell.Commands
                     //changed to delimiter
                     dest.Append(_delimiter);
                 }
+
                 EscapeAndAppendString(dest, propertyName);
             }
+
             return dest.ToString();
         }
 
@@ -953,6 +978,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     dest.Append(_delimiter);
                 }
+
                 PSPropertyInfo property = mshObject.Properties[propertyName] as PSPropertyInfo;
                 string value = null;
                 //If property is not present, assume value is null
@@ -960,8 +986,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = GetToStringValueForProperty(property);
                 }
+
                 EscapeAndAppendString(dest, value);
             }
+
             return dest.ToString();
         }
 
@@ -992,6 +1020,7 @@ namespace Microsoft.PowerShell.Commands
             catch (Exception)
             {
             }
+
             return value;
         }
 
@@ -1026,6 +1055,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     temp = temp.Substring(4);
                 }
+
                 type = string.Format(System.Globalization.CultureInfo.InvariantCulture, "#TYPE {0}", temp);
             }
 
@@ -1055,8 +1085,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     dest.Append('"');
                 }
+
                 dest.Append(c);
             }
+
             dest.Append('"');
         }
         #region IDisposable Members
@@ -1077,6 +1109,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 GC.SuppressFinalize(this);
             }
+
             _disposed = true;
         }
 
@@ -1197,6 +1230,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return false;
             }
+
             return (c == (char)i);
         }
 
@@ -1285,6 +1319,7 @@ namespace Microsoft.PowerShell.Commands
                 prevalidated = true;
                 _cmdlet.WriteObject(result);
             }
+
             alreadyWriteOutWarning = _alreadyWarnedUnspecifiedName;
         }
 
@@ -1348,6 +1383,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return type;
         }
 
@@ -1505,6 +1541,7 @@ namespace Microsoft.PowerShell.Commands
                     current.Append(ch);
                 }
             }
+
             if (current.Length != 0)
             {
                 result.Add(current.ToString());
@@ -1585,6 +1622,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             if (eatTrailingBlanks && !nonWhiteSpace)
             {
                 string s = temp.ToString();
@@ -1678,13 +1716,16 @@ namespace Microsoft.PowerShell.Commands
                         // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
                         Delimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
                     }
+
                     break;
                 default:
                     {
                         Delimiter = ImportExportCSVHelper.CSVDelimiter;
                     }
+
                     break;
             }
+
             return Delimiter;
         }
     }
