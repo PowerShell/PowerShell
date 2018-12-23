@@ -526,6 +526,7 @@ namespace System.Management.Automation
                 Marshal.DestroyStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
                 Marshal.FreeCoTaskMem(wtdBuffer);
             }
+
             return dwResult;
         }
 

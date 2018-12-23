@@ -172,6 +172,7 @@ namespace System.Management.Automation.Security
                 return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
         }
+
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
         private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
@@ -277,6 +278,7 @@ namespace System.Management.Automation.Security
                     finally
                     {
                         if (IO.File.Exists(testPathScript)) { IO.File.Delete(testPathScript); }
+
                         if (IO.File.Exists(testPathModule)) { IO.File.Delete(testPathModule); }
                     }
 
@@ -304,6 +306,7 @@ namespace System.Management.Automation.Security
                 return SystemEnforcementMode.None;
             }
         }
+
         private static SaferPolicy? s_cachedSaferSystemPolicy = null;
 
         private static string GetKnownFolderPath(Guid knownFolderId)
@@ -335,6 +338,7 @@ namespace System.Management.Automation.Security
             {
                 result = SecuritySupport.GetSaferPolicy(testPathModule, null);
             }
+
             return result;
         }
 
@@ -395,6 +399,7 @@ namespace System.Management.Automation.Security
             // If the system-wide debug policy had no preference, then there is no enforcement.
             return SystemEnforcementMode.None;
         }
+
         private static bool s_hadMissingWldpAssembly = false;
 
         /// <summary>
