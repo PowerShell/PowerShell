@@ -1578,7 +1578,7 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        #endregion object reuse
+        #endregion Object reuse
 
         #region Comments
 
