@@ -42,11 +42,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _providerName;
             }
+
             set
             {
                 _providerName = value;
             }
         }
+
         private string _providerName;
 
         /// <summary>
@@ -62,12 +64,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _id;
             }
+
             set
             {
                 _id = value;
                 _idSpecified = true;
             }
         }
+
         private int _id;
         private bool _idSpecified = false;
 
@@ -83,12 +87,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _version;
             }
+
             set
             {
                 _version = value;
                 _versionSpecified = true;
             }
         }
+
         private byte _version;
         private bool _versionSpecified = false;
 
@@ -109,11 +115,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _payload;
             }
+
             set
             {
                 _payload = value;
             }
         }
+
         private object[] _payload;
 
         /// <summary>
@@ -149,6 +157,7 @@ namespace Microsoft.PowerShell.Commands
                             string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("ProviderMetadataUnavailable"), providerName, exc.Message);
                             throw new Exception(msg, exc);
                         }
+
                         break;
                     }
                 }
@@ -200,6 +209,7 @@ namespace Microsoft.PowerShell.Commands
                                 break;
                             }
                         }
+
                         if (matchedEvent == null)
                         {
                             string msg = string.Format(CultureInfo.InvariantCulture,
@@ -268,6 +278,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -315,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                             _payload[i] = string.Empty;
                         }
                     }
+
                     provider.WriteEvent(ref ed, _payload);
                 }
                 else
@@ -322,6 +334,7 @@ namespace Microsoft.PowerShell.Commands
                     provider.WriteEvent(ref ed);
                 }
             }
+
             base.ProcessRecord();
         }
 
