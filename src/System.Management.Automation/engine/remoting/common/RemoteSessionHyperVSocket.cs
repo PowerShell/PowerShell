@@ -44,12 +44,14 @@ namespace System.Management.Automation.Remoting
         public Guid VmId
         {
             get { return _vmId; }
+
             set { _vmId = value; }
         }
 
         public Guid ServiceId
         {
             get { return _serviceId; }
+
             set { _vmId = value; }
         }
 
@@ -293,6 +295,7 @@ namespace System.Management.Automation.Remoting
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -300,6 +303,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -307,6 +311,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -440,6 +445,7 @@ namespace System.Management.Automation.Remoting
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -447,6 +453,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -454,6 +461,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
