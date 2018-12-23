@@ -62,6 +62,7 @@ namespace Microsoft.PowerShell.Commands
             get => _suppressWildcardExpansion;
             set => _suppressWildcardExpansion = value;
         }
+
         private bool _suppressWildcardExpansion;
 
         /// <summary>
@@ -130,6 +131,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 
@@ -373,6 +375,7 @@ namespace Microsoft.PowerShell.Commands
             get => _stackSwitch;
             set => _stackSwitch = value;
         }
+
         private bool _stackSwitch;
 
         /// <summary>
@@ -573,6 +576,7 @@ namespace Microsoft.PowerShell.Commands
                         // Get the current working directory using the core command API.
                         WriteObject(SessionState.Path.CurrentLocation);
                     }
+
                     break;
 
                 case StackParameterSet:
@@ -609,6 +613,7 @@ namespace Microsoft.PowerShell.Commands
                                     argException));
                         }
                     }
+
                     break;
 
                 default:
@@ -759,6 +764,7 @@ namespace Microsoft.PowerShell.Commands
                                 argException.ErrorRecord,
                                 argException));
                     }
+
                     break;
 
                 case StackParameterSet:
@@ -1135,6 +1141,7 @@ namespace Microsoft.PowerShell.Commands
             get => _persist;
             set => _persist = value;
         }
+
         private bool _persist = false;
 #endif
         /// <summary>
@@ -1457,6 +1464,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             results.Sort();
             return results;
         }
@@ -1610,6 +1618,7 @@ namespace Microsoft.PowerShell.Commands
                                         invalidOperation));
                                 continue;
                             }
+
                             SessionState.Drive.Remove(drive.Name, Force, Scope, CmdletProviderContext);
                         }
                     }
@@ -1930,6 +1939,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Item.GetItemDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Item.GetItemDynamicParameters(".", context);
         }
 
@@ -2074,6 +2084,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                     return InvokeProvider.Item.NewItemDynamicParameters(Path[0], ItemType, Value, context);
             }
+
             return InvokeProvider.Item.NewItemDynamicParameters(".", ItemType, Value, context);
         }
 
@@ -2266,6 +2277,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Item.SetItemDynamicParameters(Path[0], Value, context);
             }
+
             return InvokeProvider.Item.SetItemDynamicParameters(".", Value, context);
         }
 
@@ -2460,6 +2472,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Item.RemoveItemDynamicParameters(Path[0], Recurse, context);
             }
+
             return InvokeProvider.Item.RemoveItemDynamicParameters(".", Recurse, context);
         }
 
@@ -2517,6 +2530,7 @@ namespace Microsoft.PowerShell.Commands
                             new Collection<string>(),
                             null);
                     }
+
                     try
                     {
                         resolvedPSPaths = SessionState.Path.GetResolvedPSPathFromPSPath(path, currentContext);
@@ -2710,6 +2724,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             continue;
                         }
+
                         shouldRecurse = true;
                     }
 
@@ -2893,6 +2908,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Item.MoveItemDynamicParameters(Path[0], Destination, context);
             }
+
             return InvokeProvider.Item.MoveItemDynamicParameters(".", Destination, context);
         }
 
@@ -3295,6 +3311,7 @@ namespace Microsoft.PowerShell.Commands
                         pathNotFound.ErrorRecord,
                         pathNotFound));
             }
+
             return results;
         }
 
@@ -3308,11 +3325,13 @@ namespace Microsoft.PowerShell.Commands
                 RenameItem(Path, literalPath: true);
                 return;
             }
+
             Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
             if (resolvedPaths == null)
             {
                 return;
             }
+
             if (resolvedPaths.Count == 1)
             {
                 RenameItem(resolvedPaths[0].Path, literalPath: true);
@@ -3641,6 +3660,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Item.CopyItemDynamicParameters(Path[0], Destination, Recurse, context);
             }
+
             return InvokeProvider.Item.CopyItemDynamicParameters(".", Destination, Recurse, context);
         }
 
@@ -3846,6 +3866,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Item.ClearItemDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Item.ClearItemDynamicParameters(".", context);
         }
 
@@ -4015,6 +4036,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Item.InvokeItemDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Item.InvokeItemDynamicParameters(".", context);
         }
 

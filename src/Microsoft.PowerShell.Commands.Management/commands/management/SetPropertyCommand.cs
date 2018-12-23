@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path
         {
             get { return paths; }
+
             set { paths = value; }
         }
 
@@ -45,6 +46,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -123,6 +125,7 @@ namespace Microsoft.PowerShell.Commands
                         mshObject = new PSObject();
                         mshObject.Properties.Add(new PSNoteProperty(Name, Value));
                     }
+
                     break;
 
                 default:
@@ -134,6 +137,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.SetPropertyDynamicParameters(Path[0], mshObject, context);
             }
+
             return InvokeProvider.Property.SetPropertyDynamicParameters(".", mshObject, context);
         }
 

@@ -411,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
                     // consider there to be no license.
                 }
             }
+
             return false;
         }
 
@@ -442,6 +443,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         status = (DeviceGuardSmartStatus)smartStatus;
                     }
+
                     guard = wmiGuard.AsOutputType;
                 }
             }
@@ -1538,6 +1540,7 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listHardware.Add(temp.Value);
                     }
+
                     guard.RequiredSecurityProperties = listHardware.ToArray();
 
                     listHardware.Clear();
@@ -1548,6 +1551,7 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listHardware.Add(temp.Value);
                     }
+
                     guard.AvailableSecurityProperties = listHardware.ToArray();
 
                     var listSoftware = new List<DeviceGuardSoftwareSecure>();
@@ -1558,6 +1562,7 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listSoftware.Add(temp.Value);
                     }
+
                     guard.SecurityServicesConfigured = listSoftware.ToArray();
 
                     listSoftware.Clear();
@@ -1568,6 +1573,7 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listSoftware.Add(temp.Value);
                     }
+
                     guard.SecurityServicesRunning = listSoftware.ToArray();
                 }
 
@@ -2481,6 +2487,7 @@ namespace Microsoft.PowerShell.Commands
         /// System hardware security settings for administrator password status
         /// </summary>
         //public AdminPasswordStatus? CsAdminPasswordStatus { get; internal set; }
+
         public HardwareSecurity? CsAdminPasswordStatus { get; internal set; }
 
         /// <summary>
@@ -2534,6 +2541,7 @@ namespace Microsoft.PowerShell.Commands
         /// Boot up state of the chassis
         /// </summary>
         //public ChassisBootupState? CsChassisBootupState { get; internal set; }
+
         public SystemElementState? CsChassisBootupState { get; internal set; }
 
         /// <summary>
@@ -2590,6 +2598,7 @@ namespace Microsoft.PowerShell.Commands
         /// Hardware security setting for the reset button on a computer
         /// </summary>
         //public FrontPanelResetStatus? CsFrontPanelResetStatus { get; internal set; }
+
         public HardwareSecurity? CsFrontPanelResetStatus { get; internal set; }
 
         /// <summary>
@@ -2616,6 +2625,7 @@ namespace Microsoft.PowerShell.Commands
         /// System hardware security setting for Keyboard Password Status
         /// </summary>
         //public KeyboardPasswordStatus? CsKeyboardPasswordStatus { get; internal set; }
+
         public HardwareSecurity? CsKeyboardPasswordStatus { get; internal set; }
 
         /// <summary>
@@ -2727,6 +2737,7 @@ namespace Microsoft.PowerShell.Commands
         /// System hardware security setting for Power-On Password Status
         /// </summary>
         //public PowerOnPasswordStatus? CsPowerOnPasswordStatus { get; internal set; }
+
         public HardwareSecurity? CsPowerOnPasswordStatus { get; internal set; }
 
         /// <summary>
@@ -2738,6 +2749,7 @@ namespace Microsoft.PowerShell.Commands
         /// State of the power supply or supplies when last booted
         /// </summary>
         //public PowerSupplyState? CsPowerSupplyState { get; internal set; }
+
         public SystemElementState? CsPowerSupplyState { get; internal set; }
 
         /// <summary>
@@ -2808,6 +2820,7 @@ namespace Microsoft.PowerShell.Commands
         /// Thermal state of the system when last booted
         /// </summary>
         //public ThermalState? CsThermalState { get; internal set; }
+
         public SystemElementState? CsThermalState { get; internal set; }
 
         /// <summary>

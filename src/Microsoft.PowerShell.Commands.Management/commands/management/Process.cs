@@ -91,12 +91,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _input;
             }
+
             set
             {
                 myMode = MatchMode.ByInput;
                 _input = value;
             }
         }
+
         private Process[] _input = null;
         #endregion Parameters
 
@@ -170,6 +172,7 @@ namespace Microsoft.PowerShell.Commands
                 _matchingProcesses = new List<Process>(AllProcesses);
                 return;
             }
+
             foreach (string pattern in processNames)
             {
                 WildcardPattern wildcard =
@@ -182,6 +185,7 @@ namespace Microsoft.PowerShell.Commands
                     found = true;
                     AddIdempotent(process);
                 }
+
                 if (!found &&
                     !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
@@ -211,6 +215,7 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, "null processIds");
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             foreach (int processId in processIds)
             {
                 Process process;
@@ -246,6 +251,7 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             foreach (Process process in InputObject)
             {
                 SafeRefresh(process);
@@ -272,9 +278,11 @@ namespace Microsoft.PowerShell.Commands
                     processes.AddRange(Process.GetProcesses());
                     _allProcesses = processes.ToArray();
                 }
+
                 return _allProcesses;
             }
         }
+
         private Process[] _allProcesses = null;
 
         /// <summary>
@@ -463,6 +471,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return processNames; }
+
             set
             {
                 myMode = MatchMode.ByName;
@@ -482,6 +491,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -500,6 +510,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.InputObject;
             }
+
             set
             {
                 base.InputObject = value;
@@ -515,8 +526,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IncludeUserName
         {
             get { return _includeUserName; }
+
             set { _includeUserName = value; }
         }
+
         private bool _includeUserName = false;
 
         ///<summary>
@@ -845,6 +858,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -865,6 +879,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return processNames; }
+
             set
             {
                 myMode = MatchMode.ByName;
@@ -885,12 +900,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _timeout;
             }
+
             set
             {
                 _timeout = value;
                 _timeOutSpecified = true;
             }
         }
+
         private int _timeout = 0;
         private bool _timeOutSpecified;
 
@@ -911,6 +928,7 @@ namespace Microsoft.PowerShell.Commands
                     _waitHandle.Dispose();
                     _waitHandle = null;
                 }
+
                 _disposed = true;
             }
         }
@@ -961,6 +979,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteNonTerminatingError(process, null, ProcessResources.WaitOnItself, "WaitOnItself", ErrorCategory.ObjectNotFound);
                     continue;
                 }
+
                 _processList.Add(process);
             }
         }
@@ -1002,6 +1021,7 @@ namespace Microsoft.PowerShell.Commands
                     _waitHandle.WaitOne();
                 }
             }
+
             foreach (Process process in _processList)
             {
                 try
@@ -1064,6 +1084,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processNames;
             }
+
             set
             {
                 processNames = value;
@@ -1085,6 +1106,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -1107,6 +1129,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.InputObject;
             }
+
             set
             {
                 base.InputObject = value;
@@ -1121,6 +1144,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
         }
 
@@ -1428,6 +1452,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -1448,6 +1473,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return processNames; }
+
             set
             {
                 myMode = MatchMode.ByName;
@@ -1564,6 +1590,7 @@ namespace Microsoft.PowerShell.Commands
                 case 21: errorMessage = ProcessResources.AttachDebuggerReturnCode21; break;
                 default: Diagnostics.Assert(false, "Unreachable code."); break;
             }
+
             return errorMessage;
         }
     }
@@ -1609,12 +1636,14 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _credential; }
+
             set
             {
                 _credential = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private PSCredential _credential;
 
         /// <summary>
@@ -1632,12 +1661,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter LoadUserProfile
         {
             get { return _loaduserprofile; }
+
             set
             {
                 _loaduserprofile = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private SwitchParameter _loaduserprofile = SwitchParameter.Present;
 
         /// <summary>
@@ -1648,12 +1679,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoNewWindow
         {
             get { return _nonewwindow; }
+
             set
             {
                 _nonewwindow = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private SwitchParameter _nonewwindow;
 
         /// <summary>
@@ -1671,12 +1704,14 @@ namespace Microsoft.PowerShell.Commands
         public string RedirectStandardError
         {
             get { return _redirectstandarderror; }
+
             set
             {
                 _redirectstandarderror = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private string _redirectstandarderror;
 
         /// <summary>
@@ -1688,12 +1723,14 @@ namespace Microsoft.PowerShell.Commands
         public string RedirectStandardInput
         {
             get { return _redirectstandardinput; }
+
             set
             {
                 _redirectstandardinput = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private string _redirectstandardinput;
 
         /// <summary>
@@ -1705,12 +1742,14 @@ namespace Microsoft.PowerShell.Commands
         public string RedirectStandardOutput
         {
             get { return _redirectstandardoutput; }
+
             set
             {
                 _redirectstandardoutput = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private string _redirectstandardoutput;
 
         /// <summary>
@@ -1731,12 +1770,14 @@ namespace Microsoft.PowerShell.Commands
         public ProcessWindowStyle WindowStyle
         {
             get { return _windowstyle; }
+
             set
             {
                 _windowstyle = value;
                 _windowstyleSpecified = true;
             }
         }
+
         private ProcessWindowStyle _windowstyle = ProcessWindowStyle.Normal;
         private bool _windowstyleSpecified = false;
 
@@ -1753,12 +1794,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter UseNewEnvironment
         {
             get { return _UseNewEnvironment; }
+
             set
             {
                 _UseNewEnvironment = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private SwitchParameter _UseNewEnvironment;
 
         #endregion
@@ -1827,6 +1870,7 @@ namespace Microsoft.PowerShell.Commands
                 startInfo.UseShellExecute = (ArgumentList == null);
 #endif
             }
+
             if (ArgumentList != null)
             {
                 StringBuilder sb = new StringBuilder();
@@ -1835,6 +1879,7 @@ namespace Microsoft.PowerShell.Commands
                     sb.Append(str);
                     sb.Append(' ');
                 }
+
                 startInfo.Arguments = sb.ToString(); ;
             }
 
@@ -1849,6 +1894,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(er);
                     return;
                 }
+
                 startInfo.WorkingDirectory = WorkingDirectory;
             }
             else
@@ -1892,6 +1938,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         startInfo.Domain = nwcredential.Domain;
                     }
+
                     startInfo.Password = _credential.Password;
                 }
 
@@ -1953,6 +2000,7 @@ namespace Microsoft.PowerShell.Commands
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
                 if (Verb != null) { startInfo.Verb = Verb; }
+
                 startInfo.WindowStyle = _windowstyle;
             }
 
@@ -2074,6 +2122,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     processEnvironment.Remove(entry.Key.ToString());
                 }
+
                 if (entry.Key.ToString().Equals("PATH"))
                 {
                     processEnvironment.Add(entry.Key.ToString(), Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.Machine) + ";" + Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.User));
@@ -2102,10 +2151,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     process.BeginOutputReadLine();
                 }
+
                 if (process.StartInfo.RedirectStandardError)
                 {
                     process.BeginErrorReadLine();
                 }
+
                 if (process.StartInfo.RedirectStandardInput)
                 {
                     WriteToStandardInput(process);
@@ -2114,6 +2165,7 @@ namespace Microsoft.PowerShell.Commands
                 process = StartWithCreateProcess(startInfo);
 #endif
             }
+
             return process;
         }
 
@@ -2156,6 +2208,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _outputWriter.Dispose();
             }
+
             if (_errorWriter != null)
             {
                 _errorWriter.Dispose();
@@ -2216,6 +2269,7 @@ namespace Microsoft.PowerShell.Commands
                 string line = reader.ReadToEnd();
                 writer.WriteLine(line);
             }
+
             writer.Dispose();
         }
 #else
@@ -2239,6 +2293,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
+
             SafeFileHandle sf = new SafeFileHandle(hFileHandle, true);
             return sf;
         }
@@ -2252,16 +2307,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 builder.Append("\"");
             }
+
             builder.Append(str);
             if (!flag)
             {
                 builder.Append("\"");
             }
+
             if (!string.IsNullOrEmpty(arguments))
             {
                 builder.Append(" ");
                 builder.Append(arguments);
             }
+
             return builder;
         }
 
@@ -2281,6 +2339,7 @@ namespace Microsoft.PowerShell.Commands
                 builder.Append(strArray2[i]);
                 builder.Append('\0');
             }
+
             builder.Append('\0');
 
             // Use Unicode encoding
@@ -2289,6 +2348,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new InvalidOperationException("EnvironmentBlockTooLong");
             }
+
             return bytes;
         }
 
@@ -2395,6 +2455,7 @@ namespace Microsoft.PowerShell.Commands
                         AddressOfEnvironmentBlock = pinnedEnvironmentBlock.AddrOfPinnedObject();
                     }
                 }
+
                 bool flag;
 
                 if (_credential != null)
@@ -2435,6 +2496,7 @@ namespace Microsoft.PowerShell.Commands
                             er = er ?? new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                             ThrowTerminatingError(er);
                         }
+
                         goto Label_03AE;
                     }
                     finally
@@ -2496,6 +2558,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
+
             return result;
         }
         #endregion
@@ -2687,12 +2750,14 @@ namespace Microsoft.PowerShell.Commands
                 : base(true)
             {
             }
+
             [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
             internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
             }
+
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
             protected override bool ReleaseHandle()
@@ -2743,11 +2808,13 @@ namespace Microsoft.PowerShell.Commands
                         this.hStdInput.Dispose();
                         this.hStdInput = null;
                     }
+
                     if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
                     {
                         this.hStdOutput.Dispose();
                         this.hStdOutput = null;
                     }
+
                     if ((this.hStdError != null) && !this.hStdError.IsInvalid)
                     {
                         this.hStdError.Dispose();
@@ -2911,8 +2978,10 @@ namespace Microsoft.PowerShell.Commands
         public string ProcessName
         {
             get { return _processName; }
+
             set { _processName = value; }
         }
+
         private string _processName = String.Empty;
         #endregion Properties
     }
