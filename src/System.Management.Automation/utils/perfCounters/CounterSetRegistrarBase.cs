@@ -124,6 +124,7 @@ namespace System.Management.Automation.PerformanceData
                         counterInfoArray[i].Name
                         );
             }
+
             this._counterSetInstanceBase = null;
         }
 
@@ -137,6 +138,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 throw new ArgumentNullException("srcCounterSetRegistrarBase");
             }
+
             ProviderId = srcCounterSetRegistrarBase.ProviderId;
             CounterSetId = srcCounterSetRegistrarBase.CounterSetId;
             CounterSetInstType = srcCounterSetRegistrarBase.CounterSetInstType;

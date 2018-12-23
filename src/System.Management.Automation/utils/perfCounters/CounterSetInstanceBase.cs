@@ -96,6 +96,7 @@ namespace System.Management.Automation.PerformanceData
                         isDenominatorValid = true;
                         break;
                 }
+
                 if (isDenominatorValid == false)
                 {
                     InvalidOperationException invalidOperationException =
@@ -107,8 +108,10 @@ namespace System.Management.Automation.PerformanceData
                     _tracer.TraceException(invalidOperationException);
                     return false;
                 }
+
                 targetCounterId = counterId + 1;
             }
+
             return true;
         }
 
@@ -485,6 +488,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(argNullException);
                 return false;
             }
+
             try
             {
                 int targetCounterId = this._counterNameToIdMapping[counterName];
@@ -517,6 +521,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(objectDisposedException);
                 return false;
             }
+
             int targetCounterId;
             if (base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
             {
@@ -567,6 +572,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(argNullException);
                 return false;
             }
+
             try
             {
                 int targetCounterId = this._counterNameToIdMapping[counterName];
