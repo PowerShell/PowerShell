@@ -349,6 +349,7 @@ namespace System.Management.Automation.Internal
                     versionFolders.Add(version);
                 }
             }
+
             if (versionFolders.Count > 1)
             {
                 versionFolders.Sort((x, y) => y.CompareTo(x));
@@ -364,6 +365,7 @@ namespace System.Management.Automation.Internal
                 folderName = Path.GetFileName(folderName);
                 return Version.TryParse(folderName, out version);
             }
+
             return false;
         }
 
@@ -524,6 +526,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Cmdlet) == CommandTypes.Cmdlet)
                                 {
                                     yield return new CmdletInfo(commandName, implementingType: null, helpFile: null, PSSnapin: null, context: context)
@@ -531,6 +534,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Function) == CommandTypes.Function)
                                 {
                                     yield return new FunctionInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
@@ -538,6 +542,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Configuration) == CommandTypes.Configuration)
                                 {
                                     yield return new ConfigurationInfo(commandName, ScriptBlock.EmptyScriptBlock, context)

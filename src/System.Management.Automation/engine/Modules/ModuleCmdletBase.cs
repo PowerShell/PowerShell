@@ -220,9 +220,11 @@ namespace Microsoft.PowerShell.Commands
                     _matchAll = new List<WildcardPattern>();
                     _matchAll.Add(WildcardPattern.Get("*", WildcardOptions.IgnoreCase));
                 }
+
                 return _matchAll;
             }
         }
+
         private List<WildcardPattern> _matchAll;
 
         // The list of commands permitted in a module manifest
@@ -328,6 +330,7 @@ namespace Microsoft.PowerShell.Commands
 
                             module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
                         }
+
                         if (found)
                         {
                             break;
@@ -335,6 +338,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                     }
                 }
+
                 if (found)
                 {
                     break;
@@ -350,6 +354,7 @@ namespace Microsoft.PowerShell.Commands
                     AnalysisCache.CacheModuleExports(module, Context);
                 }
             }
+
             return found;
         }
 
@@ -431,6 +436,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ResourceUnavailable, scriptInfo.Path);
                     WriteError(er);
                 }
+
                 containedErrors = true;
                 return null;
             }
@@ -471,6 +477,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ResourceUnavailable, moduleManifestPath);
                     WriteError(er);
                 }
+
                 containedErrors = true;
                 return null;
             }
@@ -514,6 +521,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ResourceUnavailable, moduleManifestPath);
                     WriteError(er);
                 }
+
                 containedErrors = true;
                 return null;
             }
@@ -564,6 +572,7 @@ namespace Microsoft.PowerShell.Commands
                     badKeys.Append("'");
                 }
             }
+
             if (badKeys.Length > 0)
             {
                 result = false;
@@ -597,6 +606,7 @@ namespace Microsoft.PowerShell.Commands
                             validMembersString.Append("', '");
                             validMembersString.Append(validMembers[i]);
                         }
+
                         validMembersString.Append("'");
                         message = StringUtil.Format(Modules.InvalidModuleManifestMember, moduleManifestPath, validMembersString, badKeys);
                         InvalidOperationException ioe = new InvalidOperationException(message);
@@ -606,6 +616,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 
@@ -660,6 +671,7 @@ namespace Microsoft.PowerShell.Commands
                         invalidOperation.SetErrorId("Modules_InvalidModuleExtension");
                         throw invalidOperation;
                     }
+
                     extension = null;
                 }
 
@@ -905,6 +917,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleNames.Add(n);
                     }
                 }
+
                 modulesToReturn.AddRange(GetModuleForRootedPaths(modulePaths, all, refresh));
             }
 
@@ -1221,6 +1234,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             moduleInfo.SetModuleType(ModuleType.Manifest);
                         }
+
                         moduleInfo.RootModule = moduleInfo.RootModuleForManifest;
                     }
                     else
@@ -1346,6 +1360,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return false;
             }
+
             ExternalScriptInfo localizedScriptInfo = FindLocalizedModuleManifest(scriptInfo.Path);
             localizedData = null;
             if (localizedScriptInfo != null)
@@ -1356,6 +1371,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -1373,6 +1389,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     fakeModuleInfo.SetGuid(moduleSpec.Guid.Value);
                 }
+
                 fakeModuleInfo.SetVersion(moduleSpec.RequiredVersion ?? moduleSpec.Version);
                 yield return fakeModuleInfo;
             }
@@ -1387,10 +1404,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
+
             if (!rootModulePath.EndsWith(StringLiterals.PowerShellCmdletizationFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
+
             if (!data.ContainsKey("NestedModules"))
             {
                 return null;
@@ -1468,6 +1487,7 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
+
             string rootModule = null;
             if (
                 !GetScalarFromData<string>(data, moduleManifestPath, "RootModule", manifestProcessingFlags,
@@ -1514,6 +1534,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(er);
                     }
                 }
+
                 if (bailOnFirstError) return null;
             }
 
@@ -1676,6 +1697,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.ResourceUnavailable, moduleManifestPath);
                         WriteError(er);
                     }
+
                     if (bailOnFirstError) return null;
                 }
                 else if (!ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
@@ -1757,6 +1779,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.ResourceUnavailable, moduleManifestPath);
                         WriteError(er);
                     }
+
                     if (bailOnFirstError) return null;
                 }
             }
@@ -1793,6 +1816,7 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.ResourceUnavailable, moduleManifestPath);
                             WriteError(er);
                         }
+
                         if (bailOnFirstError) return null;
                     }
                 }
@@ -1831,6 +1855,7 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.ResourceUnavailable, moduleManifestPath);
                             WriteError(er);
                         }
+
                         if (bailOnFirstError) return null;
                     }
                 }
@@ -1870,6 +1895,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.ResourceUnavailable, moduleManifestPath);
                         WriteError(er);
                     }
+
                     if (bailOnFirstError) return null;
                 }
             }
@@ -1899,6 +1925,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.ResourceUnavailable, moduleManifestPath);
                         WriteError(er);
                     }
+
                     if (bailOnFirstError) return null;
                 }
             }
@@ -1931,6 +1958,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.ResourceUnavailable, moduleManifestPath);
                         WriteError(er);
                     }
+
                     if (bailOnFirstError) return null;
                 }
                 else if (higherThanKnownHighestVersion)
@@ -1974,6 +2002,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         fakeManifestInfo.SetGuid(manifestGuid.Value);
                     }
+
                     if (moduleVersion != null)
                     {
                         fakeManifestInfo.SetVersion(moduleVersion);
@@ -2059,6 +2088,7 @@ namespace Microsoft.PowerShell.Commands
                         nestedModules.Add(s);
                     }
                 }
+
                 Array.Clear(tmpNestedModules, 0, tmpNestedModules.Length);
             }
 
@@ -2316,6 +2346,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 continue;
                             }
+
                             if (entry.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                             {
                                 isAlreadyLoaded = true;
@@ -2371,6 +2402,7 @@ namespace Microsoft.PowerShell.Commands
                     description = (string)LanguagePrimitives.ConvertTo(localizedData["Description"],
                         typeof(string), CultureInfo.InvariantCulture);
                 }
+
                 if (string.IsNullOrEmpty(description))
                 {
                     description = (string)LanguagePrimitives.ConvertTo(data["Description"],
@@ -2522,18 +2554,22 @@ namespace Microsoft.PowerShell.Commands
                 {
                     exportedFunctions = MatchAll;
                 }
+
                 if (exportedCmdlets == null)
                 {
                     exportedCmdlets = MatchAll;
                 }
+
                 if (exportedVariables == null)
                 {
                     exportedVariables = MatchAll;
                 }
+
                 if (exportedAliases == null)
                 {
                     exportedAliases = MatchAll;
                 }
+
                 if (exportedDscResources == null)
                 {
                     exportedDscResources = MatchAll;
@@ -2572,6 +2608,7 @@ namespace Microsoft.PowerShell.Commands
                     manifestInfo.AddRequiredAssembly(a);
                 }
             }
+
             if (fileList != null)
             {
                 foreach (var f in fileList)
@@ -2580,6 +2617,7 @@ namespace Microsoft.PowerShell.Commands
                     manifestInfo.AddToFileList(absoluteFilePath);
                 }
             }
+
             if (moduleList != null)
             {
                 foreach (var m in moduleList)
@@ -2601,20 +2639,24 @@ namespace Microsoft.PowerShell.Commands
                     manifestInfo.AddScript(s);
                 }
             }
+
             manifestInfo.RootModule = savedActualRootModule;
             manifestInfo.RootModuleForManifest = savedActualRootModule;
             if (manifestGuid != null)
             {
                 manifestInfo.SetGuid((Guid)manifestGuid);
             }
+
             if (helpInfoUri != null)
             {
                 manifestInfo.SetHelpInfoUri(helpInfoUri);
             }
+
             foreach (PSModuleInfo module in requiredModulesLoaded)
             {
                 manifestInfo.AddRequiredModule(module);
             }
+
             if (requiredModules != null)
             {
                 foreach (ModuleSpecification moduleSpecification in requiredModules)
@@ -3142,18 +3184,22 @@ namespace Microsoft.PowerShell.Commands
                 {
                     newManifestInfo.Description = description;
                 }
+
                 if (newManifestInfo.Version.Equals(new Version(0, 0)))
                 {
                     newManifestInfo.SetVersion(moduleVersion);
                 }
+
                 if (newManifestInfo.Guid.Equals(Guid.Empty) && (manifestGuid != null))
                 {
                     newManifestInfo.SetGuid((Guid)manifestGuid);
                 }
+
                 if (newManifestInfo.HelpInfoUri == null && (helpInfoUri != null))
                 {
                     newManifestInfo.SetHelpInfoUri(helpInfoUri);
                 }
+
                 if (requiredModules != null)
                 {
                     foreach (ModuleSpecification moduleSpecification in requiredModules)
@@ -3161,6 +3207,7 @@ namespace Microsoft.PowerShell.Commands
                         newManifestInfo.AddRequiredModuleSpecification(moduleSpecification);
                     }
                 }
+
                 if (newManifestInfo.RootModule == null)
                 {
                     newManifestInfo.RootModule = manifestInfo.RootModule;
@@ -3177,6 +3224,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     newManifestInfo.AddToTags(tag);
                 }
+
                 newManifestInfo.ReleaseNotes = manifestInfo.ReleaseNotes;
                 newManifestInfo.ProjectUri = manifestInfo.ProjectUri;
                 newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
@@ -3353,6 +3401,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     newManifestInfo.SetExportedTypeFiles(manifestInfo.ExportedTypeFiles);
                 }
+
                 if (manifestInfo.ExportedFormatFiles.Count > 0)
                 {
                     newManifestInfo.SetExportedFormatFiles(manifestInfo.ExportedFormatFiles);
@@ -3599,6 +3648,7 @@ namespace Microsoft.PowerShell.Commands
                             return true;
                         }
                     }
+
                     return false;
                 });
                 foreach (var exportedResource in exportedClassDscResources)
@@ -3618,6 +3668,7 @@ namespace Microsoft.PowerShell.Commands
                     updated.Add(element);
                 }
             }
+
             list.Clear();
             list.AddRange(updated);
         }
@@ -3652,6 +3703,7 @@ namespace Microsoft.PowerShell.Commands
                     updated.Add(element);
                 }
             }
+
             list.Clear();
 
             foreach (string element in updated)
@@ -3748,6 +3800,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return LoadRequiredModule(Context, currentModule, requiredModule, moduleManifestPath, manifestProcessingFlags, out error);
             }
+
             return null;
         }
 
@@ -3799,6 +3852,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         requiredModules.Add(new ModuleSpecification(currentModule), new List<ModuleSpecification> { requiredModuleSpecification });
                     }
+
                     if (requiredModuleSpecification != null)
                     {
                         requiredModules.Add(requiredModuleSpecification, new List<ModuleSpecification>(requiredModuleInfo.RequiredModulesSpecification));
@@ -3825,6 +3879,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 mm = new MissingMemberException(error.Exception.Message);
                             }
+
                             error = new ErrorRecord(mm, "Modules_InvalidManifest",
                                                     ErrorCategory.ResourceUnavailable, moduleManifestPath);
                         }
@@ -3865,6 +3920,7 @@ namespace Microsoft.PowerShell.Commands
                                             requiredModuleSpecification.Version,
                                             requiredModuleSpecification.MaximumVersion);
                                     }
+
                                     break;
 
                                 case ModuleMatchFailure.MaximumVersion:
@@ -3886,6 +3942,7 @@ namespace Microsoft.PowerShell.Commands
                                             requiredModuleSpecification.Version,
                                             requiredModuleSpecification.MaximumVersion);
                                     }
+
                                     break;
 
                                 case ModuleMatchFailure.Guid:
@@ -3979,14 +4036,17 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ms.Guid = requiredModule.Guid.Value;
                     }
+
                     if (requiredModule.RequiredVersion != null)
                     {
                         ms.RequiredVersion = requiredModule.RequiredVersion;
                     }
+
                     if (requiredModule.Version != null)
                     {
                         ms.Version = requiredModule.Version;
                     }
+
                     if (requiredModule.MaximumVersion != null)
                     {
                         ms.MaximumVersion = requiredModule.MaximumVersion;
@@ -4016,6 +4076,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 
@@ -4052,6 +4113,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     tempModuleName = rootedModulePath + StringLiterals.PowerShellDataFileExtension;
                 }
+
                 ModuleSpecification tempSpec = new ModuleSpecification(
                     string.IsNullOrEmpty(rootedModulePath) ? nestedModuleSpec.Name : tempModuleName);
                 if (nestedModuleSpec.Guid.HasValue)
@@ -4140,6 +4202,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Add(module);
                 }
             }
+
             return result;
         }
 
@@ -4176,6 +4239,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
                         }
                     }
+
                     Dbg.Assert(mo != null, "The moduleInfo should be present");
                     string message = StringUtil.Format(Modules.RequiredModulesCyclicDependency, currentModuleSpecification.ToString(), requiredModuleSpecification.ToString(), mo.Path);
                     MissingMemberException mm = new MissingMemberException(message);
@@ -4283,6 +4347,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return true;
         }
 
@@ -4402,6 +4467,7 @@ namespace Microsoft.PowerShell.Commands
                             string message = StringUtil.Format(SessionStateStrings.PathNotFound, fixedFileName);
                             throw new FileNotFoundException(message, fixedFileName);
                         }
+
                         list.Add(fixedFileName);
                     }
                     catch (Exception e)
@@ -4410,6 +4476,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             this.ThrowTerminatingError(GenerateInvalidModuleMemberErrorRecord(key, moduleManifestPath, e));
                         }
+
                         list = null;
                         WriteInvalidManifestMemberError(this, key, moduleManifestPath, e, manifestProcessingFlags);
                         return false;
@@ -4537,6 +4604,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ResourceUnavailable, moduleManifestPath);
                     WriteError(er);
                 }
+
                 return false;
             }
         }
@@ -4829,6 +4897,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 module.Path = module.Name;
             }
+
             bool shouldModuleBeRemoved = ShouldModuleBeRemoved(module, moduleNameInRemoveModuleCmdlet, out isTopLevelModule);
 
             if (shouldModuleBeRemoved)
@@ -4877,6 +4946,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 continue;
                             }
+
                             if (matches[i].Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
                                 string name = matches[i].Name;
@@ -4890,6 +4960,7 @@ namespace Microsoft.PowerShell.Commands
                             keysToRemoveFromCmdletCache.Add(cmdlet.Key);
                         }
                     }
+
                     foreach (string keyToRemove in keysToRemoveFromCmdletCache)
                     {
                         Context.EngineSessionState.RemoveCmdletEntry(keyToRemove, true);
@@ -4968,6 +5039,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 continue;
                             }
+
                             if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
                                 try
@@ -5010,6 +5082,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 continue;
                             }
+
                             if (ai.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
                                 // Remove the alias with force...
@@ -5040,6 +5113,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     if (isTopLevelModule)
                     {
                         // Remove it from the top level session state
@@ -5088,6 +5162,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             return false;
         }
 
@@ -5294,6 +5369,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(module);
                     }
+
                     found = true;
                     return module;
                 }
@@ -5305,6 +5381,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         RemoveModule(module);
                     }
+
                     module = LoadModule(parentModule, fileName, moduleBase, prefix, ss, null, ref options, manifestProcessingFlags, out found, out moduleFileFound);
                     if (found)
                     {
@@ -5340,6 +5417,7 @@ namespace Microsoft.PowerShell.Commands
                             prefix = (string)LanguagePrimitives.ConvertTo(localizedData["DefaultCommandPrefix"],
                                 typeof(string), CultureInfo.InvariantCulture);
                         }
+
                         if (string.IsNullOrEmpty(prefix))
                         {
                             prefix = (string)LanguagePrimitives.ConvertTo(data["DefaultCommandPrefix"],
@@ -5348,6 +5426,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return prefix;
         }
 
@@ -5461,6 +5540,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ext = Path.GetExtension(fileName);
             }
+
             PSModuleInfo module = null;
 
             // Block ps1 files from being imported in constrained language.
@@ -5708,6 +5788,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 e.ErrorRecord.PreserveInvocationInfoOnce = true;
                             }
+
                             if (e.WasThrownFromThrowStatement)
                             {
                                 ThrowTerminatingError(e.ErrorRecord);
@@ -6125,6 +6206,7 @@ namespace Microsoft.PowerShell.Commands
                         Exception ignored = null;
                         assembly = ExecutionContext.LoadAssembly(path, null, out ignored);
                     }
+
                     if (assembly != null)
                     {
                         assemblyVersion = GetAssemblyVersionNumber(assembly);
@@ -6209,14 +6291,17 @@ namespace Microsoft.PowerShell.Commands
                         {
                             module.AddDetectedAliasExport(commandName, null);
                         }
+
                         if ((commandType & CommandTypes.Function) == CommandTypes.Function)
                         {
                             module.AddDetectedFunctionExport(commandName);
                         }
+
                         if ((commandType & CommandTypes.Cmdlet) == CommandTypes.Cmdlet)
                         {
                             module.AddDetectedCmdletExport(commandName);
                         }
+
                         if ((commandType & CommandTypes.Configuration) == CommandTypes.Configuration)
                         {
                             module.AddDetectedFunctionExport(commandName);
@@ -6549,6 +6634,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             iss.Formats.Reset();
                         }
+
                         foreach (var a in ClrFacade.GetAssemblies())
                         {
                             if (a.GetName().FullName.Equals(snapin.AssemblyName, StringComparison.Ordinal))
@@ -6634,6 +6720,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 typesFileNames.Add(sste.FileName);
             }
+
             if (typesFileNames.Count > 0)
             {
                 module.SetExportedTypeFiles(new ReadOnlyCollection<string>(typesFileNames));
@@ -6646,6 +6733,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 formatsFileNames.Add(ssfe.FileName);
             }
+
             if (formatsFileNames.Count > 0)
             {
                 module.SetExportedFormatFiles(new ReadOnlyCollection<string>(formatsFileNames));
@@ -6682,6 +6770,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         aliasEntry = commandEntry as SessionStateAliasEntry;
                     }
+
                     Dbg.Assert((cmdletEntry != null || aliasEntry != null), "When importing a binary module, the commands entry should only have cmdlets/aliases in it");
                     if (ss != null)
                     {
@@ -6768,6 +6857,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Context.EngineSessionState = ss.Internal;
                     }
+
                     if (disableFormatUpdates)
                         iss.DisableFormatUpdates = true;
 
@@ -6784,6 +6874,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         allTypes = assemblyToLoad.ExportedTypes;
                     }
+
                     foreach (Type type in allTypes)
                     {
                         // If it derives from JobSourceAdapter and it's not already registered, register it...
@@ -6845,6 +6936,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
             }
+
             return module;
         }
 
@@ -6862,6 +6954,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 assemblyVersion = new Version(0, 0);
             }
+
             return assemblyVersion;
         }
 
@@ -6882,6 +6975,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 commandName = prefix + commandName;
             }
+
             return commandName;
         }
 
@@ -6951,14 +7045,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 moduleTableKey = module.Name;
             }
+
             if (!context.Modules.ModuleTable.ContainsKey(moduleTableKey))
             {
                 context.Modules.ModuleTable.Add(moduleTableKey, module);
             }
+
             if (context.previousModuleImported.ContainsKey(module.Name))
             {
                 context.previousModuleImported.Remove(module.Name);
             }
+
             context.previousModuleImported.Add(module.Name, module.Path);
 
             if (!targetSessionState.ModuleTable.ContainsKey(moduleTableKey))
@@ -7056,6 +7153,7 @@ namespace Microsoft.PowerShell.Commands
                     if (m.Path.Equals(sourceModule.Path, StringComparison.OrdinalIgnoreCase))
                         present = true;
                 }
+
                 if (!present)
                 {
                     targetSessionState.Module.AddNestedModule(sourceModule);
@@ -7090,6 +7188,7 @@ namespace Microsoft.PowerShell.Commands
                         cmdlet.WriteVerbose(message);
                         continue;
                     }
+
                     CmdletInfo prefixedCmdlet = new CmdletInfo(
                         AddPrefixToCommandName(cmdletToImport.Name, prefix),
                         cmdletToImport.ImplementingType,
@@ -7319,6 +7418,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return false;
                 }
+
                 return true;
             }
             finally
@@ -7394,6 +7494,7 @@ namespace Microsoft.PowerShell.Commands
                         message = StringUtil.Format(Modules.ImportingNonStandardVerb, moduleName);
                         cmdlet.WriteWarning(message);
                     }
+
                     string[] alternates = Verbs.SuggestedAlternates(verb);
                     if (alternates == null)
                     {
@@ -7417,6 +7518,7 @@ namespace Microsoft.PowerShell.Commands
                     cmdlet.WriteWarning(message);
                     checkNoun = false;
                 }
+
                 message = StringUtil.Format(Modules.ImportingNonStandardNounVerbose, commandName, moduleName);
                 cmdlet.WriteVerbose(message);
                 return;

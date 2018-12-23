@@ -93,6 +93,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SkipEditionCheck
         {
             get { return (SwitchParameter)BaseSkipEditionCheck; }
+
             set { BaseSkipEditionCheck = value; }
         }
 
