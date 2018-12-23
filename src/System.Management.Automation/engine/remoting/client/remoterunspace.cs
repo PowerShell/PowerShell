@@ -91,6 +91,7 @@ namespace System.Management.Automation
             {
                 return _bypassRunspaceStateCheck;
             }
+
             set
             {
                 _bypassRunspaceStateCheck = value;
@@ -309,6 +310,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
@@ -317,8 +319,10 @@ namespace System.Management.Automation
         public override RunspaceAvailability RunspaceAvailability
         {
             get { return _runspaceAvailability; }
+
             protected set { _runspaceAvailability = value; }
         }
+
         private RunspaceAvailability _runspaceAvailability = RunspaceAvailability.None;
 
         /// <summary>
@@ -468,6 +472,7 @@ namespace System.Management.Automation
         internal string PSSessionName
         {
             get { return RunspacePool.RemoteRunspacePoolInternal.Name; }
+
             set { RunspacePool.RemoteRunspacePoolInternal.Name = value; }
         }
 
@@ -1139,6 +1144,7 @@ namespace System.Management.Automation
                     {
                         e.Source = this.ConnectionInfo.ComputerName;
                     }
+
                     throw e;
                 }
 
@@ -1247,8 +1253,10 @@ namespace System.Management.Automation
                                 _applicationPrivateData = GetApplicationPrivateData();
                                 SetDebugInfo(_applicationPrivateData);
                             }
+
                             break;
                     }
+
                     break;
 
                 case RunspaceState.Disconnected:
@@ -1848,6 +1856,7 @@ namespace System.Management.Automation
             {
                 throw new PSArgumentNullException("runspace");
             }
+
             _runspace = runspace;
 
             _unhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
@@ -2041,6 +2050,7 @@ namespace System.Management.Automation
                     foreach (var item in output)
                     {
                         if (item == null) { continue; }
+
                         rtnArgs = item.BaseObject as DebuggerStopEventArgs;
                         if (rtnArgs != null) { break; }
                     }
@@ -2166,6 +2176,7 @@ namespace System.Management.Automation
             {
                 return _unhandledBreakpointMode;
             }
+
             set
             {
                 CheckForValidateState();
@@ -2565,6 +2576,7 @@ namespace System.Management.Automation
             {
                 // Debugger is always inactive if RemoteScript is not selected.
                 if (_isActive) { _isActive = false; }
+
                 return;
             }
 
@@ -2649,6 +2661,7 @@ namespace System.Management.Automation
                 }
                 else throw;
             }
+
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
@@ -2708,6 +2721,7 @@ namespace System.Management.Automation
                 }
                 else throw;
             }
+
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
@@ -2876,6 +2890,7 @@ namespace System.Management.Automation
 
                 return (PSLanguageMode)LanguagePrimitives.ConvertTo(result[0], typeof(PSLanguageMode), CultureInfo.InvariantCulture);
             }
+
             set
             {
                 throw new PSNotSupportedException();

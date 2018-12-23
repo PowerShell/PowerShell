@@ -584,11 +584,13 @@ namespace System.Management.Automation.Remoting
                     {
                         StateMachine.RaiseEvent(msgRcvArg);
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "we should not be encountering this");
                     }
+
                     break;
             }
         }
@@ -652,12 +654,14 @@ namespace System.Management.Automation.Remoting
                         string encryptedSessionKey = RemotingDecoder.GetEncryptedSessionKey(rcvdData.Data);
                         EncryptedSessionKeyReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(encryptedSessionKey));
                     }
+
                     break;
 
                 case RemotingDataType.PublicKeyRequest:
                     {
                         PublicKeyRequestReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(String.Empty));
                     }
+
                     break;
 
                 default:

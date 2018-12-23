@@ -140,6 +140,7 @@ namespace System.Management.Automation.Internal
                         RemoteHostCall remoteHostCall = RemoteHostCall.Decode(receivedData.Data);
                         RemoteHostCallReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostCall>(remoteHostCall));
                     }
+
                     break;
 
                 case RemotingDataType.RunspacePoolInitData:
@@ -151,6 +152,7 @@ namespace System.Management.Automation.Internal
                         RSPoolInitInfoReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<RunspacePoolInitInfo>(initInfo));
                     }
+
                     break;
 
                 case RemotingDataType.RunspacePoolStateInfo:
@@ -165,6 +167,7 @@ namespace System.Management.Automation.Internal
 
                         NotifyAssociatedPowerShells(stateInfo);
                     }
+
                     break;
 
                 case RemotingDataType.ApplicationPrivateData:
@@ -175,6 +178,7 @@ namespace System.Management.Automation.Internal
                         ApplicationPrivateDataReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<PSPrimitiveDictionary>(applicationPrivateData));
                     }
+
                     break;
 
                 case RemotingDataType.RunspacePoolOperationResponse:
@@ -184,6 +188,7 @@ namespace System.Management.Automation.Internal
 
                         SetMaxMinRunspacesResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.PSEventArgs:
@@ -195,6 +200,7 @@ namespace System.Management.Automation.Internal
 
                         PSEventArgsReceived.SafeInvoke(this, new RemoteDataEventArgs<PSEventArgs>(psEventArgs));
                     }
+
                     break;
             }
         }
@@ -227,6 +233,7 @@ namespace System.Management.Automation.Internal
             {
                 _associatedPowerShellDSHandlers.Add(shell.InstanceId, shell.DataStructureHandler);
             }
+
             shell.DataStructureHandler.RemoveAssociation +=
                 new EventHandler(HandleRemoveAssociation);
 
@@ -494,6 +501,7 @@ namespace System.Management.Automation.Internal
                         // occur multiple time in v2 remoting.
                         return;
                     }
+
                     _createRunspaceCalled = true;
                 }
 
@@ -505,6 +513,7 @@ namespace System.Management.Automation.Internal
                     _clientRunspacePoolId, _minRunspaces, _maxRunspaces, RemoteSession.RemoteRunspacePoolInternal, _host,
                     argumentsWithVersionTable));
             }
+
             if (e.SessionStateInfo.State == RemoteSessionState.NegotiationSendingOnConnect)
             {
                 // send connect message to the server.
@@ -527,6 +536,7 @@ namespace System.Management.Automation.Internal
                 {
                     dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
                 }
+
                 foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
                 {
                     dsHandler.CloseConnectionAsync(_closingReason);
@@ -615,6 +625,7 @@ namespace System.Management.Automation.Internal
                 {
                     dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
                 }
+
                 foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
                 {
                     dsHandler.ProcessDisconnect(stateInfo);
@@ -745,6 +756,7 @@ namespace System.Management.Automation.Internal
                 {
                     dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
                 }
+
                 foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
                 {
                     dsHandler.TransportManager.PrepareForDisconnect();
@@ -763,6 +775,7 @@ namespace System.Management.Automation.Internal
             {
                 dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
             }
+
             foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
             {
                 dsHandler.TransportManager.ReadyForDisconnect -= HandleReadyForDisconnect;
@@ -834,6 +847,7 @@ namespace System.Management.Automation.Internal
             {
                 dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
             }
+
             foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
             {
                 dsHandler.ProcessRobustConnectionNotification(e);
@@ -1214,6 +1228,7 @@ namespace System.Management.Automation.Internal
                         InvocationStateInfoReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<PSInvocationStateInfo>(stateInfo));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellOutput:
@@ -1231,6 +1246,7 @@ namespace System.Management.Automation.Internal
                         OutputReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<object>(outputObject));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellErrorRecord:
@@ -1251,6 +1267,7 @@ namespace System.Management.Automation.Internal
                         ErrorReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<ErrorRecord>(errorRecord));
                     }
+
                     break;
                 case RemotingDataType.PowerShellDebug:
                     {
@@ -1260,6 +1277,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellDebug)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellVerbose:
@@ -1270,6 +1288,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellVerbose)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellWarning:
@@ -1280,6 +1299,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellWarning)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellProgress:
@@ -1290,6 +1310,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellProgress)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellInformationStream:
@@ -1300,6 +1321,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellInformationStream)));
                     }
+
                     break;
 
                 case RemotingDataType.RemoteHostCallUsingPowerShellHost:
@@ -1307,12 +1329,14 @@ namespace System.Management.Automation.Internal
                         RemoteHostCall remoteHostCall = RemoteHostCall.Decode(receivedData.Data);
                         HostCallReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostCall>(remoteHostCall));
                     }
+
                     break;
 
                 default:
                     {
                         Dbg.Assert(false, "we should not be encountering this");
                     }
+
                     break;
             }
         }
