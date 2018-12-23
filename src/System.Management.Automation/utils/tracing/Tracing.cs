@@ -38,6 +38,7 @@ namespace System.Management.Automation.Tracing
             {
                 exception = exception.InnerException;
             }
+
             return sb.ToString();
         }
 
