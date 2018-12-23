@@ -554,6 +554,7 @@ namespace System.Management.Automation
                                 break;
                             }
                         }
+
                         SessionStateScope scopeToRestore = null;
                         if (tupleForFrameToSkipPast != null)
                         {
@@ -564,11 +565,13 @@ namespace System.Management.Automation
                             {
                                 scope = scope.Parent;
                             }
+
                             if (scope != null)
                             {
                                 context.EngineSessionState.CurrentScope = scope.Parent;
                             }
                         }
+
                         try
                         {
                         */
@@ -664,8 +667,10 @@ namespace System.Management.Automation
                                 oldResultStr = quote + oldResultStr + quote;
                             }
                         }
+
                         completionResult = new CompletionResult(oldResultStr);
                     }
+
                     results.Add(completionResult);
                 }
             }
@@ -716,6 +721,7 @@ namespace System.Management.Automation
                 {
                     return s_cmdletTabRegex.IsMatch(lastWord);
                 }
+
                 if (cmdletParts.Length == 2)
                 {
                     isSnapinSpecified = PSSnapInInfo.IsPSSnapinIdValid(cmdletParts[0]);
@@ -724,6 +730,7 @@ namespace System.Management.Automation
                         return s_cmdletTabRegex.IsMatch(cmdletParts[1]);
                     }
                 }
+
                 return false;
             }
 
@@ -854,6 +861,7 @@ namespace System.Management.Automation
                         AddCommandResult(commandAndName, previousMatched, completingAtStartOfLine, quote, results);
                         previousMatched = false;
                     }
+
                     i++;
                 }
             }
@@ -989,6 +997,7 @@ namespace System.Management.Automation
                         ++j;
                         continue;
                     }
+
                     result.Add(s2[i]);
                 }
 
@@ -1287,6 +1296,7 @@ namespace System.Management.Automation
             private int ReplacementIndex
             {
                 get { return _replacementIndex; }
+
                 set
                 {
                     Diagnostics.Assert(value >= 0 && value < _sentence.Length + 1, "value out of range");
