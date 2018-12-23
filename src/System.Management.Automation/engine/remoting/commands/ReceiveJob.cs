@@ -84,11 +84,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
@@ -107,11 +109,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _computerNames;
             }
+
             set
             {
                 _computerNames = value;
             }
         }
+
         private string[] _computerNames;
 
         /// <summary>
@@ -129,11 +133,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _locations;
             }
+
             set
             {
                 _locations = value;
             }
         }
+
         private string[] _locations;
 
         /// <summary>
@@ -151,11 +157,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _remoteRunspaceInfos;
             }
+
             set
             {
                 _remoteRunspaceInfos = value;
             }
         }
+
         private PSSession[] _remoteRunspaceInfos;
 
         /// <summary>
@@ -169,12 +177,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return !_flush;
             }
+
             set
             {
                 _flush = !value;
                 ValidateWait();
             }
         }
+
         private bool _flush = true;
 
         /// <summary>
@@ -186,11 +196,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return !_recurse;
             }
+
             set
             {
                 _recurse = !value;
             }
         }
+
         private bool _recurse = true;
 
         /// <summary>
@@ -239,6 +251,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _wait;
             }
+
             set
             {
                 _wait = value;
@@ -255,6 +268,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _autoRemoveJob;
             }
+
             set
             {
                 _autoRemoveJob = value;
@@ -267,6 +281,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter WriteEvents
         {
             get { return _writeStateChangedEvents; }
+
             set
             {
                 _writeStateChangedEvents = value;
@@ -279,6 +294,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter WriteJobInResults
         {
             get { return _outputJobFirst; }
+
             set
             {
                 _outputJobFirst = value;
@@ -358,6 +374,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     break;
 
                 case ComputerNameParameterSet:
@@ -393,6 +410,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     break;
 
                 case "Location":
@@ -417,6 +435,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     break;
 
                 case ReceiveJobCommand.InstanceIdParameterSet:
@@ -427,6 +446,7 @@ namespace Microsoft.PowerShell.Commands
                         checkForRecurse = true;
                         //WriteResultsForJobsInCollection(jobs, true);
                     }
+
                     break;
 
                 case ReceiveJobCommand.SessionIdParameterSet:
@@ -436,6 +456,7 @@ namespace Microsoft.PowerShell.Commands
                         checkForRecurse = true;
                         //WriteResultsForJobsInCollection(jobs, true);
                     }
+
                     break;
 
                 case ReceiveJobCommand.NameParameterSet:
@@ -445,6 +466,7 @@ namespace Microsoft.PowerShell.Commands
                         checkForRecurse = true;
                         //WriteResultsForJobsInCollection(jobs, true);
                     }
+
                     break;
             }
 
@@ -646,6 +668,7 @@ namespace Microsoft.PowerShell.Commands
                             job.Debug.DataAdded -= Debug_DataAdded;
                             job.Information.DataAdded -= Information_DataAdded;
                         }
+
                         job.StateChanged -= HandleJobStateChanged;
                     }
                 }
@@ -911,6 +934,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 collection.Add(t);
             }
+
             return collection;
         }
 
@@ -928,6 +952,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             duplicate.Add(job, job);
 
             //Write the results of child jobs
@@ -1053,6 +1078,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             PSDataCollection<PSStreamObject> results = sender as PSDataCollection<PSStreamObject>;
 
@@ -1092,6 +1118,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
             }
+
             if (e.JobStateInfo.State == JobState.Blocked)
             {
                 DoUnblockJob(job);
@@ -1122,6 +1149,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1148,6 +1176,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1174,6 +1203,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1200,6 +1230,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1226,6 +1257,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1252,6 +1284,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1278,6 +1311,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1312,6 +1346,7 @@ namespace Microsoft.PowerShell.Commands
                 // the data got written
                 return default(T);
             }
+
             return collection[index];
         }
 
@@ -1352,6 +1387,7 @@ namespace Microsoft.PowerShell.Commands
                 job.Debug.DataAdded -= Debug_DataAdded;
                 job.Information.DataAdded -= Information_DataAdded;
             }
+
             job.StateChanged -= HandleJobStateChanged;
         }
 
@@ -1368,6 +1404,7 @@ namespace Microsoft.PowerShell.Commands
                 _tracer.WriteMessage(ClassNameTrace, "AutoRemoveJobIfRequired", Guid.Empty, job,
                                      "Job has data and is being removed.");
             }
+
             Job2 job2 = job as Job2;
             if (job2 != null)
             {
