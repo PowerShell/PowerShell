@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return Length(str, 0);
         }
+
         internal virtual int Length(string str, int offset)
         {
             return str.Length - offset;
@@ -37,6 +38,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetHeadSplitLength(str, 0, displayCells);
         }
+
         internal virtual int GetHeadSplitLength(string str, int offset, int displayCells)
         {
             int len = str.Length - offset;
@@ -47,6 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetTailSplitLength(str, 0, displayCells);
         }
+
         internal virtual int GetTailSplitLength(string str, int offset, int displayCells)
         {
             int len = str.Length - offset;
@@ -99,6 +102,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 k = (head) ? (k + 1) : (k - 1);
             }
+
             return charactersAdded;
         }
         #endregion
@@ -186,6 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             _isStopping = true;
         }
+
         private bool _isStopping;
 
         internal void CheckStopProcessing()

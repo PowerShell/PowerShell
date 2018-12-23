@@ -168,6 +168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 for (int k = 0; k < info.Count; k++)
                     _ctxManager.Process(info[k]);
             }
+
             return true;
         }
 
@@ -270,6 +271,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we allow out of band data in any state
                     ValidateCurrentFormattingState(FormattingState.InsideGroup, o);
                 }
+
                 return false;
             }
             else if (o is FormatStartData)
@@ -430,8 +432,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             Diagnostics.Assert(false, "Invalid shape. This should never happen");
                         }
+
                         break;
                 }
+
                 goc.Initialize();
                 return goc;
             }
@@ -478,6 +482,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 writer.Initialize(_lo, _lo.ColumnNumber);
                 writer.WriteObject(goc.Data.groupingEntry.formatValueList);
             }
+
             goc.GroupStart();
         }
 
@@ -506,6 +511,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 PSTraceSource.NewArgumentNullException("fed");
             }
+
             if (fed.formatEntryInfo == null)
             {
                 PSTraceSource.NewArgumentNullException("fed.formatEntryInfo");
@@ -592,6 +598,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal LineOutput LineOutput
         {
             set { _lo = value; }
+
             get { return _lo; }
         }
 
@@ -1003,6 +1010,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = tci.alignment;
                     k++;
                 }
+
                 this.Writer.Initialize(0, _consoleWidth, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
             }
 
@@ -1024,6 +1032,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     properties[k++] = tci.label ?? tci.propertyName;
                 }
+
                 _rowCount += this.Writer.GenerateHeader(properties, this.InnerCommand._lo);
             }
 
@@ -1067,6 +1076,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         alignment[k] = TextAlignment.Left; // hard coded default
                     }
                 }
+
                 this.Writer.GenerateRow(values, this.InnerCommand._lo, tre.multiLine, alignment, InnerCommand._lo.DisplayCells, generatedRows: null);
                 _rowCount++;
             }
@@ -1115,6 +1125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     props.Add(lvf.label ?? lvf.propertyName);
                 }
+
                 if (props.Count == 0)
                     return null;
                 string[] retVal = new string[props.Count];
@@ -1130,6 +1141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     vals.Add(lvf.formatPropertyField.propertyValue);
                 }
+
                 if (vals.Count == 0)
                     return null;
                 string[] retVal = new string[vals.Count];
@@ -1278,6 +1290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     else
                         values[k] = string.Empty;
                 }
+
                 this.Writer.GenerateRow(values, this.InnerCommand._lo, false, null, InnerCommand._lo.DisplayCells, generatedRows: null);
                 _buffer.Reset();
             }

@@ -88,19 +88,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             GenerateFormatEntryDisplay(feChild, currentDepth + 1);
                         }
                     }
+
                     continue;
                 }
+
                 if (obj is FormatNewLine)
                 {
                     this.WriteToScreen();
                     continue;
                 }
+
                 FormatTextField ftf = obj as FormatTextField;
                 if (ftf != null)
                 {
                     this.AddToBuffer(ftf.text);
                     continue;
                 }
+
                 FormatPropertyField fpf = obj as FormatPropertyField;
                 if (fpf != null)
                 {
@@ -292,6 +296,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 val += fi.rightIndentation;
             }
+
             return val;
         }
 
@@ -302,6 +307,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 val += fi.leftIndentation;
             }
+
             return val;
         }
 
@@ -490,6 +496,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _addedFirstLine = true;
                 }
+
                 _retVal.Add(s);
             }
 

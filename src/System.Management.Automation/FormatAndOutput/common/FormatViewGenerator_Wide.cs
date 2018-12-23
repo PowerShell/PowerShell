@@ -98,6 +98,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return x;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return match.BestMatch as WideControlEntryDefinition;
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return x;
                         }
                     }
+
                     if (match.BestMatch != null)
                     {
                         return match.BestMatch as WideControlEntryDefinition;
