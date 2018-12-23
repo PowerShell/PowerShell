@@ -176,6 +176,7 @@ namespace System.Management.Automation.Language
             // This way, we can support types that refer to each other, e.g.
             //     class C1 { [C2]$x }
             //     class C2 { [C1]$c1 }
+
             var types = ast.FindAll(x => x is TypeDefinitionAst, searchNestedScriptBlocks: false);
             foreach (var type in types)
             {
@@ -231,6 +232,7 @@ namespace System.Management.Automation.Language
                 if (result != null)
                     break;
             }
+
             return result;
         }
 
@@ -243,6 +245,7 @@ namespace System.Management.Automation.Language
                 if (result != null)
                     break;
             }
+
             return result;
         }
 
@@ -353,6 +356,7 @@ namespace System.Management.Automation.Language
             {
                 _symbolTable.EnterScope(functionDefinitionAst.Body, ScopeType.Function);
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -389,6 +393,7 @@ namespace System.Management.Automation.Language
                             break;
                         }
                     }
+
                     if (variableExpressionAst != null && variableExpressionAst.VariablePath.IsVariable)
                     {
                         var ast = _symbolTable.LookupVariable(variableExpressionAst.VariablePath);
@@ -420,6 +425,7 @@ namespace System.Management.Automation.Language
                 }
                 // TODO: static look for alias and function.
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -611,6 +617,7 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
+
             return false;
         }
 
@@ -670,6 +677,7 @@ namespace System.Management.Automation.Language
                                 errorId = nameof(ParserStrings.TypeNotFound);
                                 errorMsg = ParserStrings.TypeNotFound;
                             }
+
                             _parser.ReportError(typeName.Extent, errorId, errorMsg, typeName.Name);
                         }
                     }
@@ -731,6 +739,7 @@ namespace System.Management.Automation.Language
             {
                 _symbolResolver._symbolTable.LeaveScope();
             }
+
             return null;
         }
 
