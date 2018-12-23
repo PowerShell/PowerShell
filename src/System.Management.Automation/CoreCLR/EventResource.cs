@@ -617,6 +617,7 @@ namespace System.Management.Automation.Tracing
                     parameterCount = 3;
                     return "PS_PROVIDEReventE_O_REMOTE_NAMEDPIPE_DISCONNECT";
             }
+
             parameterCount = 0;
             return null;
         }
