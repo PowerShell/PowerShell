@@ -112,6 +112,7 @@ namespace System.Management.Automation
             {
                 scriptEndPosition = scriptPosition;
             }
+
             _scriptPosition = new ScriptExtent(scriptPosition, scriptEndPosition);
 
             MyCommand = RemoteCommandInfo.FromPSObjectForRemoting(psObject);
@@ -202,6 +203,7 @@ namespace System.Management.Automation
                 return _boundParameters ??
                        (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }
+
             internal set { _boundParameters = value; }
         }
 
@@ -211,6 +213,7 @@ namespace System.Management.Automation
         public List<object> UnboundArguments
         {
             get { return _unboundArguments ?? (_unboundArguments = new List<object>()); }
+
             internal set { _unboundArguments = value; }
         }
 
@@ -309,6 +312,7 @@ namespace System.Management.Automation
         public string InvocationName
         {
             get { return _invocationName ?? string.Empty; }
+
             internal set { _invocationName = value; }
         }
 
@@ -376,6 +380,7 @@ namespace System.Management.Automation
                     return _scriptPosition;
                 }
             }
+
             set { _scriptPosition = value; }
         }
 
@@ -478,6 +483,7 @@ namespace System.Management.Automation
                 commandInfo._definition = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Definition");
                 commandInfo.Visibility = RemotingDecoder.GetPropertyValue<SessionStateEntryVisibility>(psObject, "CommandInfo_Visibility");
             }
+
             return commandInfo;
         }
 

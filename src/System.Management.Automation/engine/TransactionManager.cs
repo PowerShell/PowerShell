@@ -77,8 +77,10 @@ namespace System.Management.Automation
 
                 return _subscriberCount;
             }
+
             set { _subscriberCount = value; }
         }
+
         private int _subscriberCount;
 
         /// <summary>
@@ -148,11 +150,13 @@ namespace System.Management.Automation
 
                 return _isRolledBack;
             }
+
             set
             {
                 _isRolledBack = value;
             }
         }
+
         private bool _isRolledBack = false;
 
         /// <summary>
@@ -210,6 +214,7 @@ namespace System.Management.Automation
             _transactionManager = transactionManager;
             transactionManager.SetActive();
         }
+
         private PSTransactionManager _transactionManager;
 
         /// <summary>
@@ -310,6 +315,7 @@ namespace System.Management.Automation.Internal
         {
             s_engineProtectionEnabled = true;
         }
+
         private static bool s_engineProtectionEnabled = false;
 
         /// <summary>
@@ -578,6 +584,7 @@ namespace System.Management.Automation.Internal
             _previousActiveTransaction = Transaction.Current;
             currentTransaction.Activate();
         }
+
         private Transaction _previousActiveTransaction;
 
         /// <summary>

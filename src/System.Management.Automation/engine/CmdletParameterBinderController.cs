@@ -384,6 +384,7 @@ namespace System.Management.Automation
 
                 s_tracer.WriteLine("BIND DEFAULT after [{0}] result [{1}]", bindingStage, isSuccess);
             }
+
             return;
         }
 
@@ -465,6 +466,7 @@ namespace System.Management.Automation
                         _commandRuntime.WriteWarning(message);
                         _warningSet.Add(_commandMetadata.Name + Separator + parameterName);
                     }
+
                     continue;
                 }
             }
@@ -550,6 +552,7 @@ namespace System.Management.Automation
             {
                 return result;
             }
+
             return null;
         }
 
@@ -653,6 +656,7 @@ namespace System.Management.Automation
                     {
                         keysToRemove.Add(entry.Key);
                     }
+
                     continue;
                 }
 
@@ -730,6 +734,7 @@ namespace System.Management.Automation
                             String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.MultipleParametersMatched, parameterName));
                         _warningSet.Add(cmdletName + Separator + parameterName);
                     }
+
                     continue;
                 }
 
@@ -749,6 +754,7 @@ namespace System.Management.Automation
                                 String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, parameterName));
                             _warningSet.Add(cmdletName + Separator + parameterName);
                         }
+
                         parametersToRemove.Add(matches[0]);
                     }
                 }
@@ -943,6 +949,7 @@ namespace System.Management.Automation
                                 "PositionalParameterNotFound");
                     }
                 }
+
                 if (!DefaultParameterBindingInUse)
                 {
                     throw bindingException;
@@ -1049,6 +1056,7 @@ namespace System.Management.Automation
                     {
                         _dynamicParameterBinder.BindParameter(argumentToBind.ParameterName, argumentToBind.ArgumentValue, parameter.Parameter);
                     }
+
                     break;
             }
 
@@ -1182,6 +1190,7 @@ namespace System.Management.Automation
                     result.Add(argument);
                 }
             }
+
             return result;
         }
 
@@ -1395,9 +1404,11 @@ namespace System.Management.Automation
                                 rethrow = false;
                                 break;
                             }
+
                             e = e.InnerException;
                         }
                     }
+
                     if (rethrow)
                     {
                         throw;
@@ -1499,6 +1510,7 @@ namespace System.Management.Automation
                                 parameter.Parameter,
                                 flags);
                     }
+
                     break;
             }
 
@@ -1597,6 +1609,7 @@ namespace System.Management.Automation
                                 ThrowElaboratedBindingException(bindingException);
                             }
                         }
+
                         varargsParameter = parameter;
                     }
                 }
@@ -1662,6 +1675,7 @@ namespace System.Management.Automation
                                 ThrowElaboratedBindingException(pbex);
                             }
                         }
+
                         UnboundArguments.Clear();
                     }
                 }
@@ -1917,6 +1931,7 @@ namespace System.Management.Automation
                     {
                         availableParameterSetFlags = uint.MaxValue;
                     }
+
                     commandMandatorySets = (_currentParameterSetFlag & availableParameterSetFlags);
                 }
 
@@ -2111,6 +2126,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     if (!latchOnToDefault)
                     {
                         // When we select a mandatory set to latch on, we should try to preserve other parameter sets that contain no mandatory parameters or contain only common mandatory parameters
@@ -2327,6 +2343,7 @@ namespace System.Management.Automation
                                         setThatTakesPipelineInputByPropertyName = 0;
                                         break;
                                     }
+
                                     setThatTakesPipelineInputByPropertyName = promptingSetData.ParameterSet;
                                     foundSetThatTakesPipelineInputByPropertyName = true;
                                 }
@@ -2542,6 +2559,7 @@ namespace System.Management.Automation
             {
                 parameterSetFlag = uint.MaxValue;
             }
+
             bool isDefaultSet = (defaultParameterSet != 0) && ((defaultParameterSet & parameterSetFlag) != 0);
 
             bool isMandatory = false;
@@ -2670,6 +2688,7 @@ namespace System.Management.Automation
                     {
                         ThrowAmbiguousParameterSetException(_currentParameterSetFlag, BindableParameters);
                     }
+
                     validParameterSetCount = resolvedParameterSetCount;
                 }
             }
@@ -2710,9 +2729,11 @@ namespace System.Management.Automation
                         {
                             ThrowAmbiguousParameterSetException(_currentParameterSetFlag, BindableParameters);
                         }
+
                         validParameterSetCount = resolvedParameterSetCount;
                     }
                 }
+
                 Command.SetParameterSetName(CurrentParameterSetName);
             }
 
@@ -2742,6 +2763,7 @@ namespace System.Management.Automation
             {
                 allParameterSetFlags |= parameterSetMetadata.ParameterSetFlag;
             }
+
             remainingParameterSetsWithNoMandatoryUnboundParameters &= allParameterSetFlags;
 
             Diagnostics.Assert(
@@ -2766,8 +2788,10 @@ namespace System.Management.Automation
                     string currentParameterSetName = bindableParameters.GetParameterSetName(_currentParameterSetFlag);
                     command.SetParameterSetName(currentParameterSetName);
                 }
+
                 return finalParameterSetCount;
             }
+
             return -1;
         }
 
@@ -2965,6 +2989,7 @@ namespace System.Management.Automation
                                 result,
                                 "Any error in binding the parameter with type coercion should result in an exception");
                         }
+
                         result = true;
                     }
                 }
@@ -3100,6 +3125,7 @@ namespace System.Management.Automation
                 {
                     fDesc.HelpMessage = helpInfo;
                 }
+
                 fDesc.SetParameterType(parameter.Parameter.Type);
                 fDesc.Label = BuildLabel(parameter.Parameter.Name, usedHotKeys);
 
@@ -3155,6 +3181,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (!built)
             {
                 // try Lower case
@@ -3169,6 +3196,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             if (!built)
             {
                 // try non-letters
@@ -3183,11 +3211,13 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             if (!built)
             {
                 // use first char
                 label.Insert(0, hotKeyPrefix);
             }
+
             return label.ToString();
         }
 
@@ -3284,6 +3314,7 @@ namespace System.Management.Automation
                 // if it failed some post binding verification step.
                 this.RestoreDefaultParameterValues(ParametersBoundThroughPipelineInput);
             }
+
             return result;
         }
 
@@ -3337,6 +3368,7 @@ namespace System.Management.Automation
 
                 ParameterBinderBase.bindingTracer.WriteLine("RESTORING pipeline parameter's original values");
             }
+
             bool result = false;
 
             // Reset the default values
@@ -3541,6 +3573,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return aParameterWasBound;
         }
 
@@ -3576,6 +3609,7 @@ namespace System.Management.Automation
                 {
                     invalidCast = e.InnerException as PSInvalidCastException;
                 }
+
                 if (invalidCast == null)
                 {
                     parameterBindingException = e;
@@ -3857,6 +3891,7 @@ namespace System.Management.Automation
                     parameterSetFlags >>= 1;
                 }
             }
+
             return result;
         }
 
@@ -3910,6 +3945,7 @@ namespace System.Management.Automation
                         {
                             result = _dynamicParameterBinder.GetDefaultParameterValue(name);
                         }
+
                         break;
                 }
             }
@@ -3991,6 +4027,7 @@ namespace System.Management.Automation
                        (_boundObsoleteParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase));
             }
         }
+
         private HashSet<string> _boundObsoleteParameterNames;
 
         /// <summary>
@@ -4019,9 +4056,11 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _shouldProcessParameterBinder;
             }
         }
+
         private ReflectionParameterBinder _shouldProcessParameterBinder;
 
         /// <summary>
@@ -4044,9 +4083,11 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _pagingParameterBinder;
             }
         }
+
         private ReflectionParameterBinder _pagingParameterBinder;
 
         /// <summary>
@@ -4069,9 +4110,11 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _transactionParameterBinder;
             }
         }
+
         private ReflectionParameterBinder _transactionParameterBinder;
 
         /// <summary>
@@ -4094,9 +4137,11 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _commonParametersBinder;
             }
         }
+
         private ReflectionParameterBinder _commonParametersBinder;
 
         private class DelayedScriptBlockArgument
@@ -4518,6 +4563,7 @@ namespace System.Management.Automation
                 string keyAfterTrim = strKey.Trim();
                 return base[keyAfterTrim];
             }
+
             set
             {
                 AddImpl(key, value, isSelfIndexing: true);
@@ -4651,6 +4697,7 @@ namespace System.Management.Automation
                         builder.Append(key[index]);
                         continue;
                     }
+
                     name = builder.ToString().Trim();
                     return name.Length == 0 ? -1 : index;
                 }
@@ -4666,6 +4713,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(name.Length > 0, "name should not be empty at this point");
                 return index;
             }
+
             return -1;
         }
 
@@ -4686,6 +4734,7 @@ namespace System.Management.Automation
                     continue;
                 return index;
             }
+
             return -1;
         }
 

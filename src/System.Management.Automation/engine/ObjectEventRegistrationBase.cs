@@ -23,11 +23,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
             }
         }
+
         private string _sourceIdentifier = Guid.NewGuid().ToString();
 
         /// <summary>
@@ -40,11 +42,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _action;
             }
+
             set
             {
                 _action = value;
             }
         }
+
         private ScriptBlock _action = null;
 
         /// <summary>
@@ -57,11 +61,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _messageData;
             }
+
             set
             {
                 _messageData = value;
             }
         }
+
         private PSObject _messageData = null;
 
         /// <summary>
@@ -75,11 +81,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _supportEvent;
             }
+
             set
             {
                 _supportEvent = value;
             }
         }
+
         private SwitchParameter _supportEvent = new SwitchParameter();
 
         /// <summary>
@@ -93,11 +101,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _forward;
             }
+
             set
             {
                 _forward = value;
             }
         }
+
         private SwitchParameter _forward = new SwitchParameter();
 
         /// <summary>
@@ -111,11 +121,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _maxTriggerCount;
             }
+
             set
             {
                 _maxTriggerCount = value <= 0 ? 0 : value;
             }
         }
+
         private int _maxTriggerCount = 0;
 
         #endregion parameters
@@ -137,6 +149,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _newSubscriber; }
         }
+
         private PSEventSubscriber _newSubscriber;
 
         /// <summary>

@@ -54,6 +54,7 @@ namespace System.Management.Automation
                     throw bindingException;
                 }
             }
+
             this.CommandLineParameters = commandLineParameters;
         }
 
@@ -97,6 +98,7 @@ namespace System.Management.Automation
             {
                 result = parameter.Value;
             }
+
             return result;
         }
 

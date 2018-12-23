@@ -124,6 +124,7 @@ namespace System.Management.Automation
                     result.Add(element);
                 }
             }
+
             return result;
         }
 
@@ -175,6 +176,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 

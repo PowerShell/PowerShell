@@ -63,6 +63,7 @@ namespace System.Management.Automation
                     // called with the .ps1 extension, so that 'script.ps1' can be called by 'script'.
                     commandPatterns = new[] { commandName, commandName + ".ps1" };
                 }
+
                 _postProcessEnumeratedFiles = CheckAgainstAcceptableCommandNames;
                 _acceptableCommandNames = acceptableCommandNames;
             }

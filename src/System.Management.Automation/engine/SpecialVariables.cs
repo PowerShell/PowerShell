@@ -91,6 +91,7 @@ namespace System.Management.Automation
         internal static readonly VariablePath LastTokenVarPath = new VariablePath("global:" + LastToken);
 
         internal static bool IsUnderbar(string name) { return name.Length == 1 && name[0] == '_'; }
+
         internal const string PSItem = "PSItem";  // simple alias for $_
         internal const string Underbar = "_";
         internal static readonly VariablePath UnderbarVarPath = new VariablePath(Underbar);

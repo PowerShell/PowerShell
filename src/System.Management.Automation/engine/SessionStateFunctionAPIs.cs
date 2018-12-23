@@ -116,6 +116,7 @@ namespace System.Management.Automation
         internal bool FunctionsExportedWithWildcard
         {
             get { return _functionsExportedWithWildcard; }
+
             set
             {
                 Dbg.Assert((value == true), "This property should never be set/reset to false");
@@ -125,6 +126,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _functionsExportedWithWildcard;
 
         /// <summary>
@@ -650,6 +652,7 @@ namespace System.Management.Automation
                     result = scope.SetFunction(name, function, force, origin, ExecutionContext);
                 }
             }
+
             return result;
         }
 
@@ -726,6 +729,7 @@ namespace System.Management.Automation
             {
                 scope = searcher.CurrentLookupScope;
             }
+
             scope.RemoveFunction(name, force);
         }
 

@@ -96,6 +96,7 @@ namespace System.Management.Automation
                     result = true;
                     break;
                 }
+
                 result = false;
 
                 if (_isSingleScopeLookup)
@@ -181,6 +182,7 @@ namespace System.Management.Automation
         {
             get { return _initialScope; }
         }
+
         private SessionStateScope _initialScope;
 
         #region private members
@@ -425,6 +427,7 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
 
@@ -432,6 +435,7 @@ namespace System.Management.Automation
         {
             get { return _name; }
         }
+
         private string _name = String.Empty;
     }
 
@@ -477,6 +481,7 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
     }

@@ -173,8 +173,10 @@ namespace System.Management.Automation
         {
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
+
             get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
         }
+
         private CommandLineParameters _commandLineParameters;
 
         /// <summary>
@@ -525,6 +527,7 @@ namespace System.Management.Automation
                                             e.Message);
                                     throw bindingException;
                                 }
+
                                 s_tracer.WriteLine("Validation attribute on {0} returned {1}.", parameterMetadata.Name, result);
                             }
                         }
@@ -641,6 +644,7 @@ namespace System.Management.Automation
                                         break;
                                     }
                                 }
+
                                 stringToPrint = sb.ToString();
                             }
                             else if (parameterValue != null)
@@ -651,6 +655,7 @@ namespace System.Management.Automation
                         catch (Exception) // Catch-all OK, 3rd party callout
                         {
                         }
+
                         if (stringToPrint != null)
                         {
                             cmdRuntime.PipelineProcessor.LogExecutionParameterBinding(this.InvocationInfo, parameter.ParameterName, stringToPrint);
@@ -706,6 +711,7 @@ namespace System.Management.Automation
                             "ParameterArgumentValidationErrorNullNotAllowed");
                     throw bindingException;
                 }
+
                 return;
             }
 
@@ -734,6 +740,7 @@ namespace System.Management.Automation
                             "ParameterArgumentValidationErrorEmptyStringNotAllowed");
                     throw bindingException;
                 }
+
                 return;
             }
 
@@ -881,6 +888,7 @@ namespace System.Management.Automation
                     // type for the parameter.
                     return false;
                 }
+
                 parameterValue = encodedValue;
                 return true;
             }
@@ -1159,6 +1167,7 @@ namespace System.Management.Automation
 
                                 throw pbe;
                             }
+
                             break;
                         }
 
@@ -1327,6 +1336,7 @@ namespace System.Management.Automation
             {
                 result = true;
             }
+
             return result;
         }
 
@@ -1574,6 +1584,7 @@ namespace System.Management.Automation
                                     "ArgumentException matching Add(T) for type {0}: {1}", toType.FullName, e.Message);
                                 getMethodError = e;
                             }
+
                             if (addMethod == null)
                             {
                                 ParameterBindingException bindingException =
@@ -1970,6 +1981,7 @@ namespace System.Management.Automation
         private static readonly IDictionary s_emptyUsingParameters = new ReadOnlyDictionary<object, object>(new Dictionary<object, object>());
 
         public List<string> BoundPositionally { get; private set; }
+
         internal IDictionary ImplicitUsingParameters { get; set; }
     }
 

@@ -218,6 +218,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("writer");
             }
+
             if (context == null)
             {
                 throw PSTraceSource.NewArgumentException("context");
@@ -239,6 +240,7 @@ namespace System.Management.Automation
         internal TypeTable TypeTable
         {
             get { return _serializer.TypeTable; }
+
             set { _serializer.TypeTable = value; }
         }
 
@@ -365,6 +367,7 @@ namespace System.Management.Automation
             {
                 _cimClassIdToClass.Clear();
             }
+
             _cimClassIdToClass.Add(key, cimClass);
 
             /* PRINTF DEBUG
@@ -414,6 +417,7 @@ namespace System.Management.Automation
             {
                 _cimClassesHeldByDeserializer.Clear();
             }
+
             _cimClassesHeldByDeserializer.Add(key);
 
             /* PRINTF DEBUG
@@ -435,8 +439,11 @@ namespace System.Management.Automation
         }
 
         public string ClassName { get { return this.Item1; } }
+
         public string NamespaceName { get { return this.Item2; } }
+
         public string ComputerName { get { return this.Item3; } }
+
         public int ClassHashCode { get { return this.Item4; } }
     }
 
@@ -515,6 +522,7 @@ namespace System.Management.Automation
         internal TypeTable TypeTable
         {
             get { return _deserializer.TypeTable; }
+
             set { _deserializer.TypeTable = value; }
         }
 
@@ -553,6 +561,7 @@ namespace System.Management.Automation
                     _done = true;
                 }
             }
+
             _deserializer.ValidateVersion(version);
         }
 
@@ -577,10 +586,12 @@ namespace System.Management.Automation
                             ReportExceptionForETW(exception);
                             throw;
                         }
+
                         _done = true;
                     }
                 }
             }
+
             return _done;
         }
 
@@ -655,6 +666,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("type");
             }
+
             if (o == null)
             {
                 return false;
@@ -675,6 +687,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("type");
             }
+
             if (o == null)
             {
                 return false;
@@ -825,6 +838,7 @@ namespace System.Management.Automation
             {
                 objectRefIdDictionary = new WeakReferenceDictionary<UInt64>();
             }
+
             _objectRefIdHandler = new ReferenceIdHandlerForSerializer<object>(objectRefIdDictionary);
 
             _typeRefIdHandler = new ReferenceIdHandlerForSerializer<ConsolidatedString>(
@@ -841,6 +855,7 @@ namespace System.Management.Automation
         internal TypeTable TypeTable
         {
             get { return _typeTable; }
+
             set { _typeTable = value; }
         }
 
@@ -865,6 +880,7 @@ namespace System.Management.Automation
             {
                 _writer.WriteEndElement();
             }
+
             _writer.Flush();
         }
 
@@ -1027,6 +1043,7 @@ namespace System.Management.Automation
                 WriteOnePrimitiveKnownType(this, streamName, property, source, pktInfo);
                 return true;
             }
+
             return false;
         }
 
@@ -1056,6 +1073,7 @@ namespace System.Management.Automation
                 PSObject pktInfoPSObject = PSObject.AsPSObject(source);
                 return HandlePrimitiveKnownTypePSObject(pktInfoPSObject, streamName, property, depth);
             }
+
             return false;
         }
 
@@ -1170,6 +1188,7 @@ namespace System.Management.Automation
                     sourceHandled = true;
                 }
             }
+
             return sourceHandled;
         }
 
@@ -1276,10 +1295,12 @@ namespace System.Management.Automation
             {
                 WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
+
             if (property != null)
             {
                 WriteNameAttribute(property);
             }
+
             WriteAttribute(SerializationStrings.ReferenceIdAttribute, refId);
             _writer.WriteEndElement();
         }
@@ -1561,6 +1582,7 @@ namespace System.Management.Automation
                 string miXmlString = Encoding.Unicode.GetString(miXmlBytes, 0, miXmlBytes.Length);
                 psoClass.Properties.Add(new PSNoteProperty(InternalDeserializer.CimMiXmlProperty, miXmlString));
             }
+
             psoClasses.Reverse();
 
             //
@@ -1677,6 +1699,7 @@ namespace System.Management.Automation
                         {
                             WriteEncodedElementString(SerializationStrings.TypeNamesItemTag, type);
                         }
+
                         _writer.WriteEndElement();
                     }
                     else
@@ -1709,6 +1732,7 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             return false;
         }
 
@@ -1755,6 +1779,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 int depthOfMember = info.IsInstance ? depth : depth - 1;
 
                 if (info.MemberType == (info.MemberType & PSMemberTypes.Properties))
@@ -1779,9 +1804,11 @@ namespace System.Management.Automation
                         enclosingTagWritten = true;
                         WriteStartElement(SerializationStrings.MemberSet);
                     }
+
                     WriteMemberSet((PSMemberSet)info, depthOfMember);
                 }
             }
+
             if (enclosingTagWritten)
             {
                 _writer.WriteEndElement();
@@ -1803,6 +1830,7 @@ namespace System.Management.Automation
             {
                 return;
             }
+
             WriteStartElement(SerializationStrings.MemberSet);
             WriteNameAttribute(set.Name);
             WriteMemberInfoCollection(set.Members, depth, false);
@@ -2061,6 +2089,7 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                     WriteOneObject(item, null, null, depth);
                 }
             }
@@ -2330,6 +2359,7 @@ namespace System.Management.Automation
             {
                 WriteNameAttribute(property);
             }
+
             _writer.WriteEndElement();
         }
 
@@ -2682,6 +2712,7 @@ namespace System.Management.Automation
             {
                 serializer.WriteNameAttribute(property);
             }
+
             if (streamName != null)
             {
                 serializer.WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
@@ -2860,6 +2891,7 @@ namespace System.Management.Automation
                     rlen += 7;
                 }
             }
+
             return new String(result, 0, rlen);
         }
 
@@ -3009,6 +3041,7 @@ namespace System.Management.Automation
         internal TypeTable TypeTable
         {
             get { return _typeTable; }
+
             set { _typeTable = value; }
         }
 
@@ -3037,6 +3070,7 @@ namespace System.Management.Automation
             {
                 exceptionToRethrow = e;
             }
+
             if (exceptionToRethrow != null)
             {
                 throw NewXmlException(Serialization.InvalidVersion, exceptionToRethrow);
@@ -3177,6 +3211,7 @@ namespace System.Management.Automation
                 {
                     cimInstance.SetCimSessionComputerName(psComputerNameValue);
                 }
+
                 return true;
             }
 
@@ -3197,27 +3232,33 @@ namespace System.Management.Automation
                     {
                         return false;
                     }
+
                     string originalArrayTypeName = Deserializer.MaskDeserializationPrefix(psoPropertyValue.InternalTypeNames[0]);
                     if (originalArrayTypeName == null)
                     {
                         return false;
                     }
+
                     Type originalArrayType;
                     if (!LanguagePrimitives.TryConvertTo(originalArrayTypeName, CultureInfo.InvariantCulture, out originalArrayType))
                     {
                         return false;
                     }
+
                     if (!originalArrayType.IsArray || !s_knownCimArrayTypes.Value.Contains(originalArrayType.GetElementType()))
                     {
                         return false;
                     }
+
                     object newPropertyValue;
                     if (!LanguagePrimitives.TryConvertTo(propertyValue, originalArrayType, CultureInfo.InvariantCulture, out newPropertyValue))
                     {
                         return false;
                     }
+
                     psoPropertyValue = PSObject.AsPSObject(newPropertyValue);
                 }
+
                 propertyValue = psoPropertyValue.BaseObject;
             }
 
@@ -3286,6 +3327,7 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 PSObject psoDeserializedClass = PSObject.AsPSObject(deserializedClass);
 
                 PSPropertyInfo namespaceProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] as PSPropertyInfo;
@@ -3293,6 +3335,7 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 string cimNamespace = namespaceProperty.Value as string;
 
                 PSPropertyInfo classNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] as PSPropertyInfo;
@@ -3300,6 +3343,7 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 string cimClassName = classNameProperty.Value as string;
 
                 PSPropertyInfo computerNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] as PSPropertyInfo;
@@ -3307,6 +3351,7 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 string computerName = computerNameProperty.Value as string;
 
                 PSPropertyInfo hashCodeProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] as PSPropertyInfo;
@@ -3314,19 +3359,23 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 var hashCodeObject = hashCodeProperty.Value;
                 if (hashCodeObject == null)
                 {
                     return null;
                 }
+
                 if (hashCodeObject is PSObject)
                 {
                     hashCodeObject = ((PSObject)hashCodeObject).BaseObject;
                 }
+
                 if (!(hashCodeObject is int))
                 {
                     return null;
                 }
+
                 int hashCode = (int)hashCodeObject;
 
                 CimClassSerializationId cimClassSerializationId = new CimClassSerializationId(cimClassName, cimNamespace, computerName, hashCode);
@@ -3341,6 +3390,7 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 string miXmlString = miXmlProperty.Value.ToString();
                 byte[] miXmlBytes = Encoding.Unicode.GetBytes(miXmlString);
                 uint offset = 0;
@@ -3386,6 +3436,7 @@ namespace System.Management.Automation
             {
                 return deserializedObject;
             }
+
             CimInstance cimInstance;
             try
             {
@@ -3395,6 +3446,7 @@ namespace System.Management.Automation
             {
                 return deserializedObject;
             }
+
             PSObject psoCimInstance = PSObject.AsPSObject(cimInstance);
 
             // process __InstanceMetadata
@@ -3642,6 +3694,7 @@ namespace System.Management.Automation
                             throw NewXmlException(Serialization.InvalidElementTag, null, _reader.LocalName);
                         }
                     }
+
                     if (baseObject != null)
                     {
                         dso.SetCoreOnDeserialization(baseObject, overrideTypeInfo);
@@ -3676,6 +3729,7 @@ namespace System.Management.Automation
                 s_trace.WriteLine("Read PSObject with refId: {0}", refId);
                 _objectRefIdHandler.SetRefId(sh, refId, this.DuplicateRefIdsAllowed);
             }
+
             return sh;
         }
 
@@ -3717,8 +3771,10 @@ namespace System.Management.Automation
                             throw NewXmlException(Serialization.InvalidElementTag, null, _reader.LocalName);
                         }
                     }
+
                     ReadEndElement();
                 }
+
                 dso.InternalTypeNames = new ConsolidatedString(typeNames);
 
                 if (refId != null)
@@ -3791,6 +3847,7 @@ namespace System.Management.Automation
                     PSProperty prop = new PSProperty(property, value);
                     dso.adaptedMembers.Add(prop);
                 }
+
                 ReadEndElement();
             }
         }
@@ -3918,8 +3975,10 @@ namespace System.Management.Automation
                 {
                     list.Add(ReadOneObject());
                 }
+
                 ReadEndElement();
             }
+
             if (ct == ContainerType.Stack)
             {
                 list.Reverse();
@@ -3929,6 +3988,7 @@ namespace System.Management.Automation
             {
                 return new Queue(list);
             }
+
             return list;
         }
 
@@ -3956,11 +4016,13 @@ namespace System.Management.Automation
                     {
                         throw NewXmlException(Serialization.DictionaryKeyNotSpecified, null);
                     }
+
                     string name = ReadNameAttribute();
                     if (string.Compare(name, SerializationStrings.DictionaryKey, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         throw NewXmlException(Serialization.InvalidDictionaryKeyName, null);
                     }
+
                     object key = ReadOneObject();
 
                     if (key == null)
@@ -3972,11 +4034,13 @@ namespace System.Management.Automation
                     {
                         throw NewXmlException(Serialization.DictionaryValueNotSpecified, null);
                     }
+
                     name = ReadNameAttribute();
                     if (string.Compare(name, SerializationStrings.DictionaryValue, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         throw NewXmlException(Serialization.InvalidDictionaryValueName, null);
                     }
+
                     object value = ReadOneObject();
 
                     // On the first collision, copy the hash table to one that uses the default comparer.
@@ -4019,6 +4083,7 @@ namespace System.Management.Automation
 
                     ReadEndElement();
                 }
+
                 ReadEndElement();
             }
 
@@ -4107,6 +4172,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(byte).FullName);
         }
 
@@ -4126,6 +4192,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(char).FullName);
         }
 
@@ -4158,6 +4225,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(decimal).FullName);
         }
 
@@ -4177,6 +4245,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(double).FullName);
         }
 
@@ -4199,6 +4268,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Guid).FullName);
         }
 
@@ -4222,6 +4292,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Version).FullName);
         }
 
@@ -4245,6 +4316,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Version).FullName);
         }
 
@@ -4264,6 +4336,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Int16).FullName);
         }
 
@@ -4283,6 +4356,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Int32).FullName);
         }
 
@@ -4302,6 +4376,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Int64).FullName);
         }
 
@@ -4321,6 +4396,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(sbyte).FullName);
         }
 
@@ -4340,6 +4416,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(float).FullName);
         }
 
@@ -4393,6 +4470,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt16).FullName);
         }
 
@@ -4412,6 +4490,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt32).FullName);
         }
 
@@ -4431,6 +4510,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt64).FullName);
         }
 
@@ -4503,6 +4583,7 @@ namespace System.Management.Automation
                 {
                     settings.MaxCharactersInDocument = maxCharactersInDocument.Value;
                 }
+
                 if (preserveNonElements)
                 {
                     settings.IgnoreWhitespace = false;
@@ -4593,6 +4674,7 @@ namespace System.Management.Automation
             {
                 recognizedException = e;
             }
+
             if (recognizedException != null)
             {
                 throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt64).FullName);
@@ -4684,6 +4766,7 @@ namespace System.Management.Automation
                 ReadEndElement();
                 isEmpty = true;
             }
+
             return !isEmpty;
         }
 
@@ -4699,6 +4782,7 @@ namespace System.Management.Automation
             {
                 _reader.ReadStartElement(element, SerializationStrings.MonadNamespace);
             }
+
             _reader.MoveToContent();
         }
 
@@ -4722,6 +4806,7 @@ namespace System.Management.Automation
             {
                 temp = _reader.ReadElementContentAsString(element, SerializationStrings.MonadNamespace);
             }
+
             _reader.MoveToContent();
             temp = DecodeString(temp);
             return temp;
@@ -4823,6 +4908,7 @@ namespace System.Management.Automation
             {
                 throw NewXmlException(Serialization.AttributeExpected, null, SerializationStrings.NameAttribute);
             }
+
             return DecodeString(encodedName);
         }
 
@@ -5033,6 +5119,7 @@ namespace System.Management.Automation
             {
                 temp = s_xdInfo;
             }
+
             return temp;
         }
 
@@ -5379,8 +5466,10 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
+
                 derived = derived.BaseType;
             }
+
             return false;
         }
 
@@ -5618,6 +5707,7 @@ namespace System.Management.Automation
                         alive.Add(weakKeyValuePair.Key, weakKeyValuePair.Value);
                     }
                 }
+
                 _dictionary = alive;
                 _cleanupTriggerSize = initialCleanupTriggerSize + this.Count * 2;
             }
@@ -5649,6 +5739,7 @@ namespace System.Management.Automation
                         keys.Add(key);
                     }
                 }
+
                 return keys;
             }
         }
@@ -5678,6 +5769,7 @@ namespace System.Management.Automation
             {
                 return _dictionary[new WeakReference(key)];
             }
+
             set
             {
                 _dictionary[new WeakReference(key)] = value;
@@ -5725,6 +5817,7 @@ namespace System.Management.Automation
             {
                 rawList.Add(keyValuePair);
             }
+
             rawList.CopyTo(array, arrayIndex);
         }
 
@@ -5922,6 +6015,7 @@ namespace System.Management.Automation
                 {
                     VerifyValue(o);
                 }
+
                 return;
             }
 
@@ -5967,6 +6061,7 @@ namespace System.Management.Automation
             {
                 return base[key];
             }
+
             set
             {
                 string keyAsString = this.VerifyKey(key);
@@ -5995,6 +6090,7 @@ namespace System.Management.Automation
             {
                 return base[key];
             }
+
             set
             {
                 this.VerifyValue(value);
@@ -6423,6 +6519,7 @@ namespace System.Management.Automation
             {
                 result = new PSPrimitiveDictionary();
             }
+
             PSPrimitiveDictionary versionTable = new PSPrimitiveDictionary(PSVersionInfo.GetPSVersionTableForDownLevel())
             {
                 {"PSSemanticVersion", PSVersionInfo.PSVersion.ToString()}
@@ -6800,6 +6897,7 @@ namespace Microsoft.PowerShell
                     ItemType item = (ItemType)LanguagePrimitives.ConvertTo(deserializedItem, typeof(ItemType), CultureInfo.InvariantCulture);
                     newList.Add(item);
                 }
+
                 return newList;
             }
         }
@@ -6880,6 +6978,7 @@ namespace Microsoft.PowerShell
             {
                 completions.Add((CompletionResult)match);
             }
+
             var currentMatchIndex = GetPropertyValue<int>(pso, "CurrentMatchIndex");
             var replacementIndex = GetPropertyValue<int>(pso, "ReplacementIndex");
             var replacementLength = GetPropertyValue<int>(pso, "ReplacementLength");
@@ -7377,6 +7476,7 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentException("deserializedItem");
             }
+
             return result;
         }
 
@@ -7505,6 +7605,7 @@ namespace Microsoft.PowerShell
                     result.TypeNames.Add(typeNames[i]);
                 }
             }
+
             return result;
         }
 

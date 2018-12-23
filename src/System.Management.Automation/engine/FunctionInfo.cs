@@ -170,6 +170,7 @@ namespace System.Management.Automation
         {
             get { return _scriptBlock; }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -367,6 +368,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
@@ -391,6 +393,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private string _description = null;
 
         /// <summary>
@@ -403,6 +406,7 @@ namespace System.Management.Automation
                 return _verb;
             }
         }
+
         private string _verb = String.Empty;
 
         /// <summary>
@@ -415,6 +419,7 @@ namespace System.Management.Automation
                 return _noun;
             }
         }
+
         private string _noun = String.Empty;
 
         /// <summary>
@@ -426,11 +431,13 @@ namespace System.Management.Automation
             {
                 return _helpFile;
             }
+
             internal set
             {
                 _helpFile = value;
             }
         }
+
         private string _helpFile = String.Empty;
 
         /// <summary>
@@ -477,6 +484,7 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
+
         private CommandMetadata _commandMetadata;
 
         /// <summary>

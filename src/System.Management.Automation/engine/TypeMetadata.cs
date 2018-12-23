@@ -94,6 +94,7 @@ namespace System.Management.Automation
             {
                 return _position;
             }
+
             set
             {
                 _position = value;
@@ -109,6 +110,7 @@ namespace System.Management.Automation
             {
                 return _valueFromPipeline;
             }
+
             set
             {
                 _valueFromPipeline = value;
@@ -125,6 +127,7 @@ namespace System.Management.Automation
             {
                 return _valueFromPipelineByPropertyName;
             }
+
             set
             {
                 _valueFromPipelineByPropertyName = value;
@@ -142,6 +145,7 @@ namespace System.Management.Automation
             {
                 return _valueFromRemainingArguments;
             }
+
             set
             {
                 _valueFromRemainingArguments = value;
@@ -157,6 +161,7 @@ namespace System.Management.Automation
             {
                 return _helpMessage;
             }
+
             set
             {
                 _helpMessage = value;
@@ -172,6 +177,7 @@ namespace System.Management.Automation
             {
                 return _helpMessageBaseName;
             }
+
             set
             {
                 _helpMessageBaseName = value;
@@ -187,6 +193,7 @@ namespace System.Management.Automation
             {
                 return _helpMessageResourceId;
             }
+
             set
             {
                 _helpMessageResourceId = value;
@@ -257,11 +264,16 @@ namespace System.Management.Automation
             {
                 ParameterFlags flags = 0;
                 if (IsMandatory) { flags = flags | ParameterFlags.Mandatory; }
+
                 if (ValueFromPipeline) { flags = flags | ParameterFlags.ValueFromPipeline; }
+
                 if (ValueFromPipelineByPropertyName) { flags = flags | ParameterFlags.ValueFromPipelineByPropertyName; }
+
                 if (ValueFromRemainingArguments) { flags = flags | ParameterFlags.ValueFromRemainingArguments; }
+
                 return flags;
             }
+
             set
             {
                 this.IsMandatory = (ParameterFlags.Mandatory == (value & ParameterFlags.Mandatory));
@@ -553,6 +565,7 @@ namespace System.Management.Automation
         public bool IsDynamic
         {
             get { return _isDynamic; }
+
             set { _isDynamic = value; }
         }
         /// <summary>
@@ -691,6 +704,7 @@ namespace System.Management.Automation
                 {
                     return parameterAcceptsObjects;
                 }
+
                 if (parameterAcceptsObjects)
                 {
                     return (psTypeName.Type != null) && (psTypeName.Type.Equals(typeof(object)));
@@ -716,10 +730,12 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             if (this.ParameterType.IsArray && wildcardPattern.IsMatch((this.ParameterType.GetElementType().FullName)))
             {
                 return true;
             }
+
             if (this.Attributes != null)
             {
                 PSTypeNameAttribute typeNameAttribute = this.Attributes.OfType<PSTypeNameAttribute>().FirstOrDefault();
@@ -728,6 +744,7 @@ namespace System.Management.Automation
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -792,11 +809,13 @@ namespace System.Management.Automation
                                 CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                             separator = ", ";
                         }
+
                         if (!string.IsNullOrEmpty(paramSetData))
                         {
                             result.Append(separator);
                             result.Append(paramSetData);
                         }
+
                         result.Append(")]");
                     }
                 }
@@ -900,6 +919,7 @@ namespace System.Management.Automation
                 {
                     format = ValidateRangeFormat;
                 }
+
                 result = string.Format(CultureInfo.InvariantCulture,
                     format, prefix,
                     validRangeAttrib.MinRange, validRangeAttrib.MaxRange);
@@ -1138,6 +1158,7 @@ namespace System.Management.Automation
                     s_parameterMetadataCache.TryAdd(type.AssemblyQualifiedName, result);
                 }
             }
+
             return result;
         }
 
@@ -1169,6 +1190,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("runtimeDefinedParameters");
             }
+
             ConstructCompiledParametersUsingRuntimeDefinedParameters(runtimeDefinedParameters, processingDynamicParameters, checkNames);
         }
 
@@ -1216,6 +1238,7 @@ namespace System.Management.Automation
         /// the values are the compiled parameter metadata.
         /// </summary>
         internal Dictionary<string, CompiledCommandParameter> BindableParameters { get; }
+
             = new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1223,6 +1246,7 @@ namespace System.Management.Automation
         /// the alias name and the value is the CompiledCommandParameter metadata.
         /// </summary>
         internal Dictionary<string, CompiledCommandParameter> AliasedParameters { get; }
+
             = new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1423,6 +1447,7 @@ namespace System.Management.Automation
                             DiscoveryExceptions.AliasDeclaredMultipleTimes,
                             alias);
                 }
+
                 AliasedParameters.Add(alias, parameter);
             }
         }
@@ -1468,6 +1493,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 return hasAnyVisibleParamAttributes;
             }
             catch (MetadataException metadataException)

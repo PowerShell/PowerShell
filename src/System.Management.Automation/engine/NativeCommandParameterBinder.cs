@@ -75,6 +75,7 @@ namespace System.Management.Automation
                 {
                     _arguments.Append(' ');
                 }
+
                 first = false;
 
                 if (parameter.ParameterNameSpecified)
@@ -139,6 +140,7 @@ namespace System.Management.Automation
                 return _arguments.ToString();
             }
         }
+
         private readonly StringBuilder _arguments = new StringBuilder();
 
         #endregion internal members
@@ -178,6 +180,7 @@ namespace System.Management.Automation
                     {
                         break;
                     }
+
                     arg = PSObject.ToStringParser(context, ParserOps.Current(null, list));
 
                     currentElement += 1;
@@ -221,6 +224,7 @@ namespace System.Management.Automation
                             {
                                 _arguments.Append('\\');
                             }
+
                             _arguments.Append('"');
                         }
                         else
@@ -293,6 +297,7 @@ namespace System.Management.Automation
                             {
                                 _arguments.Append(expandedPath);
                             }
+
                             argExpanded = true;
                         }
                     }
@@ -342,8 +347,10 @@ namespace System.Management.Automation
                 {
                     needQuotes = true;
                 }
+
                 followingBackslash = stringToCheck[i] == '\\';
             }
+
             return needQuotes;
         }
 

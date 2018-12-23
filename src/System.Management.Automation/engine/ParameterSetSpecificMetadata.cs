@@ -205,6 +205,7 @@ namespace System.Management.Automation
             {
                 helpInfo = HelpMessage;
             }
+
             return helpInfo;
         }
 

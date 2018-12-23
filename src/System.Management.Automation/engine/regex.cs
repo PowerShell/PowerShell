@@ -275,6 +275,7 @@ namespace System.Management.Automation
                     ++index;
                 }
             }
+
             return result;
         }
 
@@ -317,6 +318,7 @@ namespace System.Management.Automation
                     {
                         prevCharWasEscapeChar = true;
                     }
+
                     continue;
                 }
 
@@ -408,8 +410,10 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("errorRecord");
             }
+
             _errorRecord = errorRecord;
         }
+
         [NonSerialized]
         private ErrorRecord _errorRecord;
 
@@ -728,10 +732,12 @@ namespace System.Management.Automation
             {
                 regexOptions |= RegexOptions.Compiled;
             }
+
             if ((options & WildcardOptions.IgnoreCase) != 0)
             {
                 regexOptions |= RegexOptions.IgnoreCase;
             }
+
             if ((options & WildcardOptions.CultureInvariant) == WildcardOptions.CultureInvariant)
             {
                 regexOptions |= RegexOptions.CultureInvariant;
@@ -754,6 +760,7 @@ namespace System.Management.Automation
             {
                 regexPattern.Append('\\');
             }
+
             regexPattern.Append(c);
         }
 
@@ -790,6 +797,7 @@ namespace System.Management.Automation
                 {
                     _regexPattern.Remove(0, 3);
                 }
+
                 if (regexPatternString.EndsWith(".*$", StringComparison.Ordinal))
                 {
                     _regexPattern.Remove(_regexPattern.Length - 3, 3);
@@ -821,6 +829,7 @@ namespace System.Management.Automation
                 AppendLiteralCharacter(regexPattern, c);
             }
         }
+
         protected override void AppendLiteralCharacterToBracketExpression(char c)
         {
             AppendLiteralCharacterToBracketExpression(_regexPattern, c);

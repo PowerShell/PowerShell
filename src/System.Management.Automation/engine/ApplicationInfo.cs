@@ -51,6 +51,7 @@ namespace System.Management.Automation
             Extension = System.IO.Path.GetExtension(path);
             _context = context;
         }
+
         private ExecutionContext _context;
         #endregion ctor
 
@@ -111,6 +112,7 @@ namespace System.Management.Automation
             {
                 return _context.EngineSessionState.CheckApplicationVisibility(Path);
             }
+
             set { throw PSTraceSource.NewNotImplementedException(); }
         }
 
@@ -127,9 +129,11 @@ namespace System.Management.Automation
                     l.Add(new PSTypeName(typeof(string)));
                     _outputType = new ReadOnlyCollection<PSTypeName>(l);
                 }
+
                 return _outputType;
             }
         }
+
         private ReadOnlyCollection<PSTypeName> _outputType = null;
     }
 }

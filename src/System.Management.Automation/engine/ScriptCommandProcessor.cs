@@ -78,6 +78,7 @@ namespace System.Management.Automation
                     _scriptParameterBinderController.CommandLineParameters.UpdateInvocationInfo(this.Command.MyInvocation);
                     this.Command.MyInvocation.UnboundArguments = _scriptParameterBinderController.DollarArgs;
                 }
+
                 return _scriptParameterBinderController;
             }
         }
@@ -280,6 +281,7 @@ namespace System.Management.Automation
         {
             get { return _obsoleteAttribute; }
         }
+
         private ObsoleteAttribute _obsoleteAttribute;
 
         internal override void Prepare(IDictionary psDefaultParameterValues)

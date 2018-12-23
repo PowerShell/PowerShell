@@ -30,6 +30,7 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
+
             _commandRuntime = commandRuntime;
         }
 
@@ -49,6 +50,7 @@ namespace System.Management.Automation.Internal
         public SwitchParameter Verbose
         {
             get { return _commandRuntime.Verbose; }
+
             set { _commandRuntime.Verbose = value; }
         }
 
@@ -65,6 +67,7 @@ namespace System.Management.Automation.Internal
         public SwitchParameter Debug
         {
             get { return _commandRuntime.Debug; }
+
             set { _commandRuntime.Debug = value; }
         }
 
@@ -79,6 +82,7 @@ namespace System.Management.Automation.Internal
         public ActionPreference ErrorAction
         {
             get { return _commandRuntime.ErrorAction; }
+
             set { _commandRuntime.ErrorAction = value; }
         }
 
@@ -94,6 +98,7 @@ namespace System.Management.Automation.Internal
         public ActionPreference WarningAction
         {
             get { return _commandRuntime.WarningPreference; }
+
             set { _commandRuntime.WarningPreference = value; }
         }
 
@@ -108,6 +113,7 @@ namespace System.Management.Automation.Internal
         public ActionPreference InformationAction
         {
             get { return _commandRuntime.InformationPreference; }
+
             set { _commandRuntime.InformationPreference = value; }
         }
 
@@ -128,6 +134,7 @@ namespace System.Management.Automation.Internal
         public string ErrorVariable
         {
             get { return _commandRuntime.ErrorVariable; }
+
             set { _commandRuntime.ErrorVariable = value; }
         }
 
@@ -144,6 +151,7 @@ namespace System.Management.Automation.Internal
         public string WarningVariable
         {
             get { return _commandRuntime.WarningVariable; }
+
             set { _commandRuntime.WarningVariable = value; }
         }
 
@@ -160,6 +168,7 @@ namespace System.Management.Automation.Internal
         public string InformationVariable
         {
             get { return _commandRuntime.InformationVariable; }
+
             set { _commandRuntime.InformationVariable = value; }
         }
 
@@ -178,6 +187,7 @@ namespace System.Management.Automation.Internal
         public string OutVariable
         {
             get { return _commandRuntime.OutVariable; }
+
             set { _commandRuntime.OutVariable = value; }
         }
 
@@ -193,6 +203,7 @@ namespace System.Management.Automation.Internal
         public int OutBuffer
         {
             get { return _commandRuntime.OutBuffer; }
+
             set { _commandRuntime.OutBuffer = value; }
         }
 
@@ -211,6 +222,7 @@ namespace System.Management.Automation.Internal
         public string PipelineVariable
         {
             get { return _commandRuntime.PipelineVariable; }
+
             set { _commandRuntime.PipelineVariable = value; }
         }
 
@@ -229,6 +241,7 @@ namespace System.Management.Automation.Internal
                     {
                         varName = varName.Substring(1);
                     }
+
                     VariablePath silp = new VariablePath(varName);
                     if (!silp.IsVariable)
                     {

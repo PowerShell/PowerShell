@@ -68,6 +68,7 @@ namespace System.Management.Automation
                             this.ModuleName,
                             this.Name);
                 }
+
                 return result;
             }
         }
@@ -89,6 +90,7 @@ namespace System.Management.Automation
                 {
                     result = PSSnapIn.Name;
                 }
+
                 return result;
             }
         }
@@ -106,6 +108,7 @@ namespace System.Management.Automation
                 {
                     psHome = null;
                 }
+
                 return psHome;
             }
         }
@@ -169,9 +172,11 @@ namespace System.Management.Automation
                         // Assume no capabilities for now
                     }
                 }
+
                 return _capabilities;
             }
         }
+
         private ProviderCapabilities _capabilities = ProviderCapabilities.None;
         private bool _capabilitiesRead;
 
@@ -442,6 +447,7 @@ namespace System.Management.Automation
                 // If only the provider name is specified, then only the name must match
                 result = String.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
             }
+
             return result;
         }
 
@@ -482,6 +488,7 @@ namespace System.Management.Automation
                     result = true;
                 }
             }
+
             return result;
         }
 
@@ -586,6 +593,7 @@ namespace System.Management.Automation
                             "ProviderNotFoundInAssembly",
                             SessionStateStrings.ProviderNotFoundInAssembly);
                 }
+
                 throw e;
             }
 
@@ -613,12 +621,14 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     List<PSTypeName> l;
                     if (!_providerOutputType.TryGetValue(outputType.ProviderCmdlet, out l))
                     {
                         l = new List<PSTypeName>();
                         _providerOutputType[outputType.ProviderCmdlet] = l;
                     }
+
                     l.AddRange(outputType.Type);
                 }
             }
@@ -629,6 +639,7 @@ namespace System.Management.Automation
                 listToAppend.AddRange(cmdletOutputType);
             }
         }
+
         private Dictionary<string, List<PSTypeName>> _providerOutputType;
 
         private PSNoteProperty _noteProperty;
@@ -639,6 +650,7 @@ namespace System.Management.Automation
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);
             }
+
             return _noteProperty;
         }
     }
