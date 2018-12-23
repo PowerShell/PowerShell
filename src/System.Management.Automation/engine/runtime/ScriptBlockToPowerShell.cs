@@ -17,6 +17,7 @@ namespace System.Management.Automation
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
         internal bool UsesParameter { get; private set; }
+
         internal bool HasUsingExpr { get; private set; }
 
         public override AstVisitAction VisitParameter(ParameterAst parameterAst)
@@ -251,6 +252,7 @@ namespace System.Management.Automation
                     parameter.InternalVisit(checker);
                 }
             }
+
             body.InternalVisit(checker);
 
             // When the context is null (or they haven't supplied any variables), throw, but only if we really need the
@@ -298,6 +300,7 @@ namespace System.Management.Automation
                     converter._powershell.AddStatement();
                     converter.ConvertPipeline(pipeline, isTrustedInput);
                 }
+
                 return converter._powershell;
             }
             finally
@@ -630,6 +633,7 @@ namespace System.Management.Automation
                         {
                             _powershell.AddArgument(usingValue);
                         }
+
                         continue;
                     }
 
@@ -676,6 +680,7 @@ namespace System.Management.Automation
                                 argument = GetExpressionValue(exprAst, isTrustedInput);
                             }
                         }
+
                         _powershell.AddArgument(argument);
                     }
                 }
@@ -757,10 +762,12 @@ namespace System.Management.Automation
                 rs.Open();
                 _context = rs.ExecutionContext;
             }
+
             if (!isTrustedInput) // if it's not trusted, call the safe value visitor
             {
                 return GetSafeValueVisitor.GetSafeValue(exprAst, _context, GetSafeValueVisitor.SafeValueContext.GetPowerShell);
             }
+
             return Compiler.GetExpressionValue(exprAst, isTrustedInput, _context, _usingValueMap);
         }
 
