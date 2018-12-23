@@ -54,6 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 staleObject.Properties.Add(new PSNoteProperty(column.StaleObjectPropertyName(),
                                            column.GetValue(liveObject)));
             }
+
             return staleObject;
         }
     }

@@ -60,10 +60,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException("propertyNames");
             }
+
             if (displayNames == null)
             {
                 throw new ArgumentNullException("displayNames");
             }
+
             if (types == null)
             {
                 throw new ArgumentNullException("types");
