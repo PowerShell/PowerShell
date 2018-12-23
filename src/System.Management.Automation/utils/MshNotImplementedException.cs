@@ -108,9 +108,11 @@ namespace System.Management.Automation
                         ErrorCategory.NotImplemented,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "NotImplemented";
     }
