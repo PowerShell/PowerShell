@@ -73,6 +73,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return fastCtor;
                 }
+
                 return MakeRunDelegateCtor(delegateType);
             }
         }
@@ -285,6 +286,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.Data[i] = arguments[i];
             }
+
             var currentFrame = frame.Enter();
             try
             {
@@ -294,6 +296,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.Leave(currentFrame);
             }
+
             return frame.Pop();
         }
     }
