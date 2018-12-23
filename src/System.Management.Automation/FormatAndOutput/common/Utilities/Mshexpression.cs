@@ -74,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("s");
             }
+
             _stringValue = s;
             _isResolved = isResolved;
         }
@@ -89,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("scriptBlock");
             }
+
             Script = scriptBlock;
         }
 
@@ -180,11 +182,13 @@ namespace Microsoft.PowerShell.Commands
                     // to attempt the binding whether it's in there or not.
                     x = new PSDynamicMember(_stringValue);
                 }
+
                 List<PSMemberInfo> temp = new List<PSMemberInfo>();
                 if (x != null)
                 {
                     temp.Add(x);
                 }
+
                 members = temp;
             }
 
@@ -322,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                                         classScope: (Type) null,
                                         @static: false));
                     }
+
                     result = _getValueDynamicSite.Target.Invoke(_getValueDynamicSite, target);
                 }
 
@@ -348,6 +353,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 target = (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
             }
+
             return target;
         }
 

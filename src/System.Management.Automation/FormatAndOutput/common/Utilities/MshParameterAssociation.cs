@@ -142,6 +142,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 retVal.Add(member.Name);
             }
+
             return retVal;
         }
 
@@ -165,6 +166,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     retVal.Add(new MshResolvedExpressionParameterAssociation(null, expr));
                 }
             }
+
             return retVal;
         }
 
