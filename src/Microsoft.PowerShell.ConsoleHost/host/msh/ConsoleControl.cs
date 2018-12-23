@@ -770,6 +770,7 @@ namespace Microsoft.PowerShell
                     ErrorCategory.ReadError, ConsoleControlStrings.ReadConsoleExceptionTemplate);
                 throw e;
             }
+
             if (charsReadUnused > (uint)buffer.Length)
                 charsReadUnused = (uint)buffer.Length;
             return buffer.ToString(0, (int)charsReadUnused);
@@ -812,6 +813,7 @@ namespace Microsoft.PowerShell
                     ErrorCategory.ReadError, ConsoleControlStrings.ReadConsoleInputExceptionTemplate);
                 throw e;
             }
+
             return (int)recordsRead;
         }
 
@@ -1011,6 +1013,7 @@ namespace Microsoft.PowerShell
                 case ConsoleColor.Yellow:
                     return true;
             }
+
             return false;
         }
 
@@ -1063,6 +1066,7 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("contents");
             }
+
             uint codePage;
             if (IsCJKOutputCodePage(out codePage))
             {
@@ -1148,10 +1152,12 @@ namespace Microsoft.PowerShell
                 {
                     firstLeftTrailingRow = r;
                 }
+
                 if (firstRightLeadingRow == -1 && ((range.Type & BufferCellArrayRowType.RightLeading) != 0))
                 {
                     firstRightLeadingRow = r;
                 }
+
                 for (;;)
                 {
                     r++;
@@ -1161,6 +1167,7 @@ namespace Microsoft.PowerShell
                         sameEdgeAreas.Add(range);
                         return;
                     }
+
                     edgeType = GetEdgeType(contents[r, contentsRegion.Left], contents[r, contentsRegion.Right]);
                     if (edgeType != range.Type)
                     {
@@ -1179,10 +1186,12 @@ namespace Microsoft.PowerShell
             {
                 edgeType |= BufferCellArrayRowType.LeftTrailing;
             }
+
             if (right.BufferCellType == BufferCellType.Leading)
             {
                 edgeType |= BufferCellArrayRowType.RightLeading;
             }
+
             return edgeType;
         }
 
@@ -1305,6 +1314,7 @@ namespace Microsoft.PowerShell
                         {
                             break;
                         }
+
                         if (contents[r, c].Character != 0 || contents[r, c].BufferCellType != BufferCellType.Trailing)
                         {
                             // for a 2 cell character, either there is no trailing BufferCell or
@@ -1385,6 +1395,7 @@ namespace Microsoft.PowerShell
                         bufferSize.X--;
                         writeRegion.Right--;
                     }
+
                     CHAR_INFO[] characterBuffer = new CHAR_INFO[bufferSize.Y * bufferSize.X];
 
                     // copy characterBuffer to contents;
@@ -1444,6 +1455,7 @@ namespace Microsoft.PowerShell
                                     // We don't output anything for this cell if Raster font is in use, or if the last cell is not a leading byte
                                     characterBufferIndex--;
                                 }
+
                                 lastCharIsLeading = false;
                             }
                         }
@@ -1481,6 +1493,7 @@ namespace Microsoft.PowerShell
                             bufferCoord,
                             ref writeRegion);
                     }
+
                     if (result == false)
                     {
                         // When WriteConsoleOutput fails, half bufferLimit
@@ -1491,6 +1504,7 @@ namespace Microsoft.PowerShell
                                 ErrorCategory.WriteError, ConsoleControlStrings.WriteConsoleOutputExceptionTemplate);
                             throw e;
                         }
+
                         bufferLimit /= 2;
                         if (cols == colsRemaining)
                         {
@@ -1531,6 +1545,7 @@ namespace Microsoft.PowerShell
                 tracer.WriteLine("contents passed in has 0 rows and columns");
                 return;
             }
+
             int bufferLimit = 2 * 1024; // Limit is 8K bytes as each CHAR_INFO takes 4 bytes
 
             COORD bufferCoord;
@@ -1617,6 +1632,7 @@ namespace Microsoft.PowerShell
                                 ErrorCategory.WriteError, ConsoleControlStrings.WriteConsoleOutputExceptionTemplate);
                             throw e;
                         }
+
                         bufferLimit /= 2;
                         if (cols == colsRemaining)
                         {
@@ -1713,6 +1729,7 @@ namespace Microsoft.PowerShell
                     {
                         cellArray = new BufferCell[cellArrayRegion.Bottom + 1, 2];
                     }
+
                     checkOrigin = new Coordinates(origin.X +
                         (contentsRegion.Right - contentsRegion.Left), origin.Y);
                     ReadConsoleOutputCJK(consoleHandle, codePage, checkOrigin,
@@ -1750,6 +1767,7 @@ namespace Microsoft.PowerShell
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -1787,6 +1805,7 @@ namespace Microsoft.PowerShell
             {
                 return false;
             }
+
             int characterBufferIndex = 0;
 
             for (int r = contentsRegion.Top; r <= contentsRegion.Bottom; r++)
@@ -1840,6 +1859,7 @@ namespace Microsoft.PowerShell
                     }
                 }
             }
+
             return true;
         }
 
@@ -1964,6 +1984,7 @@ namespace Microsoft.PowerShell
                             }
                         }
                     }
+
                     colsRemaining -= bufferSize.X;
                     readRegion.Left += bufferSize.X;
                     if (colsRemaining > 0 && (bufferSize.Y == 1) &&
@@ -1972,6 +1993,7 @@ namespace Microsoft.PowerShell
                         colsRemaining++;
                         readRegion.Left--;
                     }
+
                     bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                 }  // column iteration
 
@@ -2015,10 +2037,12 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+
                     contents[rowIndex, colIndex] = new BufferCell(
                         ' ', foreground, background, BufferCellType.Complete);
                     colIndex++;
                 }
+
                 rowIndex++;
             }
         }
@@ -2149,6 +2173,7 @@ namespace Microsoft.PowerShell
                             contents[r, c].BackgroundColor = bgColor;
                         }
                     }
+
                     colsRemaining -= bufferSize.X;
                     readRegion.Left += bufferSize.X;
                     bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
@@ -2194,11 +2219,13 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+
                     contents[rowIndex, colIndex].Character = ' ';
                     contents[rowIndex, colIndex].ForegroundColor = foreground;
                     contents[rowIndex, colIndex].BackgroundColor = background;
                     colIndex++;
                 }
+
                 rowIndex++;
             }
         }
@@ -2742,6 +2769,7 @@ namespace Microsoft.PowerShell
                     ErrorCategory.ResourceUnavailable, ConsoleControlStrings.GetConsoleCursorInfoExceptionTemplate);
                 throw e;
             }
+
             return cursorInfo;
         }
 
@@ -2762,6 +2790,7 @@ namespace Microsoft.PowerShell
                     ErrorCategory.ResourceUnavailable, ConsoleControlStrings.GetConsoleFontInfoExceptionTemplate);
                 throw e;
             }
+
             return fontInfo;
         }
 

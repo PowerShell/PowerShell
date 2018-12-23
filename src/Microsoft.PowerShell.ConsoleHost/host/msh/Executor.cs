@@ -123,6 +123,7 @@ namespace Microsoft.PowerShell
             {
                 er = new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
             }
+
             _parent.ErrorSerializer.Serialize(er);
         }
 
@@ -243,6 +244,7 @@ namespace Microsoft.PowerShell
                     };
                     des.End();
                 }
+
                 tempPipeline.Input.Close();
 
                 pipelineWaiter.Wait();
@@ -451,6 +453,7 @@ namespace Microsoft.PowerShell
                 {
                     break;
                 }
+
                 if (result == null)
                 {
                     break;
@@ -693,6 +696,7 @@ namespace Microsoft.PowerShell
 
                 return result;
             }
+
             set
             {
                 lock (s_staticStateLock)

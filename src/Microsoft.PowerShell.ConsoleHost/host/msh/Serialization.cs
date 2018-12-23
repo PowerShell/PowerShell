@@ -107,6 +107,7 @@ namespace Microsoft.PowerShell
                         _firstCall = false;
                         textWriter.WriteLine(Serialization.XmlCliTag);
                     }
+
                     _xmlSerializer.Serialize(o, streamName);
                     break;
                 case DataFormat.Text:
@@ -204,6 +205,7 @@ namespace Microsoft.PowerShell
                     {
                         return null;
                     }
+
                     if (_firstLine != null)
                     {
                         o = _firstLine;
@@ -217,8 +219,10 @@ namespace Microsoft.PowerShell
                             _atEnd = true;
                         }
                     }
+
                     break;
             }
+
             return o;
         }
 
@@ -245,6 +249,7 @@ namespace Microsoft.PowerShell
                         result = _atEnd;
                         break;
                 }
+
                 return result;
             }
         }
