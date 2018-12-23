@@ -209,6 +209,7 @@ namespace System.Management.Automation
             {
                 return (Script == null || Script.Equals(invocationInfo.ScriptName, StringComparison.OrdinalIgnoreCase));
             }
+
             return false;
         }
     }
@@ -519,6 +520,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             debugger.RemoveLineBreakpoint(this);
         }
     }
