@@ -241,6 +241,7 @@ namespace System.Management.Automation
                         {
                             Marshal.FreeBSTR(info.bstrSource);
                         }
+
                         if (info.bstrHelpFile != IntPtr.Zero)
                         {
                             Marshal.FreeBSTR(info.bstrHelpFile);
@@ -280,6 +281,7 @@ namespace System.Management.Automation
                     {
                         VariantClear(variantArgArray + s_variantSize * i);
                     }
+
                     Marshal.FreeCoTaskMem(variantArgArray);
                 }
 
@@ -296,6 +298,7 @@ namespace System.Management.Automation
                     {
                         VariantClear(tmpVariants + s_variantSize * i);
                     }
+
                     Marshal.FreeCoTaskMem(tmpVariants);
                 }
             }
