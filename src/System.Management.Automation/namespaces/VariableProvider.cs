@@ -192,6 +192,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = var.Value;
             }
+
             return value;
         }
 

@@ -304,6 +304,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.GetPropertyDynamicParameters(path, providerSpecificPickList);
         }
 
@@ -374,6 +375,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.SetPropertyDynamicParameters(path, propertyValue);
         }
 
@@ -447,6 +449,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.ClearPropertyDynamicParameters(path, providerSpecificPickList);
         }
 
@@ -539,6 +542,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.NewPropertyDynamicParameters(path, propertyName, propertyTypeName, value);
         }
 
@@ -611,6 +615,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.RemovePropertyDynamicParameters(path, propertyName);
         }
 
@@ -691,6 +696,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.RenamePropertyDynamicParameters(path, sourceProperty, destinationProperty);
         }
 
@@ -779,6 +785,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.CopyPropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
         }
 
@@ -867,6 +874,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.MovePropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
         }
 
@@ -934,6 +942,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return contentProvider.GetContentReaderDynamicParameters(path);
         }
 
@@ -997,6 +1006,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return contentProvider.GetContentWriterDynamicParameters(path);
         }
 
@@ -1057,6 +1067,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return contentProvider.ClearContentDynamicParameters(path);
         }
 
@@ -1422,6 +1433,7 @@ namespace System.Management.Automation.Provider
                 {
                     throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
                 }
+
                 if (retValue == null)
                 {
                     throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
@@ -1775,6 +1787,7 @@ namespace System.Management.Automation.Provider
             {
                 throw PSTraceSource.NewArgumentNullException("item");
             }
+
             PSObject result = new PSObject(item);
 
             Diagnostics.Assert(
@@ -1823,6 +1836,7 @@ namespace System.Management.Automation.Provider
                     providerQualifiedParentPath =
                         LocationGlobber.GetProviderQualifiedPath(parentPath, ProviderInfo);
                 }
+
                 result.AddOrSetProperty("PSParentPath", providerQualifiedParentPath);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSParentPath", providerQualifiedParentPath);
 

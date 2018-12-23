@@ -452,6 +452,7 @@ namespace Microsoft.PowerShell.Commands
                 _reader.Peek();
                 _alreadyDetectEncoding = true;
             }
+
             Seek(0, SeekOrigin.End);
 
             if (backCount == 0)
@@ -466,6 +467,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 builder.Insert(0, character);
             }
+
             string actualDelimiter = builder.ToString();
             long currentBlock = 0;
             string lastDelimiterMatch = null;
@@ -697,6 +699,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return true;
                 }
+
                 return false;
             }
         }
@@ -789,6 +792,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     attributesToClear |= FileAttributes.ReadOnly;
                 }
+
                 File.SetAttributes(_path, (File.GetAttributes(filePath) & ~attributesToClear));
             }
 
@@ -948,6 +952,7 @@ namespace Microsoft.PowerShell.Commands
             // Seek to the place we last left off.
             _stream.Seek(_fileOffset, SeekOrigin.Begin);
             if (_reader != null) { _reader.DiscardBufferedData(); }
+
             if (_backReader != null) { _backReader.DiscardBufferedData(); }
         }
 
@@ -967,7 +972,9 @@ namespace Microsoft.PowerShell.Commands
             _stream.Seek(offset, origin);
 
             if (_writer != null) { _writer.Flush(); }
+
             if (_reader != null) { _reader.DiscardBufferedData(); }
+
             if (_backReader != null) { _backReader.DiscardBufferedData(); }
         }
 
@@ -1042,6 +1049,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(line);
                 }
             }
+
             return content;
         }
 

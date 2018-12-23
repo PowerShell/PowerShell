@@ -88,6 +88,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = new DictionaryEntry(name, value);
             }
+
             return result;
         }
 
@@ -132,6 +133,7 @@ namespace Microsoft.PowerShell.Commands
                     PSObject wrappedObject = PSObject.AsPSObject(value);
                     stringValue = wrappedObject.ToString();
                 }
+
                 Environment.SetEnvironmentVariable(name, stringValue);
 
                 DictionaryEntry item = new DictionaryEntry(name, stringValue);
@@ -234,6 +236,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = ((DictionaryEntry)item).Value;
             }
+
             return value;
         }
 

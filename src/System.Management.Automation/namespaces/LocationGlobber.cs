@@ -242,6 +242,7 @@ namespace System.Management.Automation
                     throw pathNotFound;
                 }
             }
+
             return result;
         }
 
@@ -476,6 +477,7 @@ namespace System.Management.Automation
                 userPath = GetDriveQualifiedPath(relativePath, drive);
                 itemPath = GetProviderPath(path, context);
             }
+
             s_pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
 
             Collection<string> stringResult = new Collection<string>();
@@ -870,6 +872,7 @@ namespace System.Management.Automation
                     throw errorRecord.Exception;
                 }
             }
+
             return results;
         }
 
@@ -1294,6 +1297,7 @@ namespace System.Management.Automation
                 {
                     result = GetProviderSpecificPath(drive, relativePath, context);
                 }
+
                 provider = drive.Provider;
             }
 
@@ -1525,6 +1529,7 @@ namespace System.Management.Automation
                     {
                         separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index-1);
                     }
+
                     if (separator == -1 || index < separator)
                     {
                         // We must have a drive specified
@@ -2642,6 +2647,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
+
             s_tracer.WriteLine("path = {0}", path);
 
             NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
@@ -2726,6 +2732,7 @@ namespace System.Management.Automation
                                             path);
                                     throw invalidOperation;
                                 }
+
                                 path = newParentPath;
                             }
                             else
@@ -3160,6 +3167,7 @@ namespace System.Management.Automation
                 {
                     separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
                 }
+
                 if (separator == -1 || index < separator)
                 {
                     // Remove the \ or / if it follows the drive indicator
@@ -3697,6 +3705,7 @@ namespace System.Management.Automation
                                             path);
                                     throw invalidOperation;
                                 }
+
                                 path = newParentPath;
                             }
                             else
@@ -3735,6 +3744,7 @@ namespace System.Management.Automation
                             {
                                 path = String.Empty;
                             }
+
                             leafElements.Push(leafElement);
                             s_pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
                         }
@@ -3868,6 +3878,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             Dbg.Diagnostics.Assert(
                 result != null,
                 "This method should at least return the path or more if it has glob characters");
@@ -4675,6 +4686,7 @@ namespace System.Management.Automation
                         throw e;
                     }
                 }
+
                 result = path;
             }
 
@@ -4696,6 +4708,7 @@ namespace System.Management.Automation
                     {
                         includeString.AppendFormat("{0} ", includeFilter);
                     }
+
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
                 }
 
@@ -4707,6 +4720,7 @@ namespace System.Management.Automation
                     {
                         excludeString.AppendFormat("{0} ", excludeFilter);
                     }
+
                     s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());
                 }
             }

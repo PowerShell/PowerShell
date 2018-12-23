@@ -115,6 +115,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.InvalidArgument,
                     drive.Root));
             }
+
             return drive;
         }
 
@@ -1011,6 +1012,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 return;
                             }
+
                             SetRegistryValue(newKey, String.Empty, newItem, kind, path, false);
                         }
                     }
@@ -1552,6 +1554,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.InvalidArgument,
                     destinationPath));
             }
+
             return result;
         }
 
@@ -1808,9 +1811,11 @@ namespace Microsoft.PowerShell.Commands
 
                     notePropertyName = GetLocalizedDefaultToken();
                 }
+
                 propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
                 valueAdded = true;
             }
+
             key.Close();
 
             if (valueAdded)
@@ -2011,10 +2016,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         propertyNameToAdd = GetLocalizedDefaultToken();
                     }
+
                     result.Properties.Add(new PSNoteProperty(propertyNameToAdd, defaultValue));
                     addedOnce = true;
                 }
             }
+
             key.Close();
 
             if (addedOnce)
@@ -2246,6 +2253,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
                 hadAMatch = true;
                 // Confirm the set item with the user
 
@@ -2411,6 +2419,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("sourcePath");
             }
+
             if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException("destinationPath");
@@ -2510,6 +2519,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("sourcePath");
             }
+
             if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException("destinationPath");
@@ -3053,6 +3063,7 @@ namespace Microsoft.PowerShell.Commands
 
                             valueNameToMatch = GetLocalizedDefaultToken();
                         }
+
                         hadAMatch = true;
                         filteredCollection.Add(valueName);
                     }
@@ -3107,27 +3118,32 @@ namespace Microsoft.PowerShell.Commands
                     {
                         defaultValue = new byte[0];
                     }
+
                     break;
                 case RegistryValueKind.DWord:
                     {
                         defaultValue = (int)0;
                     }
+
                     break;
                 case RegistryValueKind.ExpandString:
                 case RegistryValueKind.String:
                     {
                         defaultValue = string.Empty;
                     }
+
                     break;
                 case RegistryValueKind.MultiString:
                     {
                         defaultValue = new string[0];
                     }
+
                     break;
                 case RegistryValueKind.QWord:
                     {
                         defaultValue = (long)0;
                     }
+
                     break;
             }
 
@@ -3156,6 +3172,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, valueName));
             }
+
             return defaultValue;
         }
 
@@ -3182,6 +3199,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = true;
             }
+
             return result;
         }
 
@@ -3201,6 +3219,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, path));
                 return false;
             }
+
             return true;
         }
 
@@ -3219,6 +3238,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, sourcePath));
                 return false;
             }
+
             if (IsHiveContainer(destinationPath))
             {
                 string message =
@@ -3227,6 +3247,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, destinationPath));
                 return false;
             }
+
             return true;
         }
 
@@ -3269,6 +3290,7 @@ namespace Microsoft.PowerShell.Commands
                         return new RegistryWrapper(s_wellKnownHives[k]);
                 }
             }
+
             return null;
         }
 
@@ -3449,6 +3471,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, path));
                 return result;
             }
+
             return result;
         }
 
@@ -3752,6 +3775,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 propertyNameToAdd = GetLocalizedDefaultToken();
             }
+
             result.Properties.Add(new PSNoteProperty(propertyNameToAdd, value));
 
             WritePropertyObject(result, path);
@@ -3850,6 +3874,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If kind is Unknown then just leave the value as-is.
             }
+
             return value;
         }
 
@@ -3876,18 +3901,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = RegistryValueKind.DWord;
             }
+
             if (valueType == typeof(string))
             {
                 result = RegistryValueKind.String;
             }
+
             if (valueType == typeof(string[]))
             {
                 result = RegistryValueKind.MultiString;
             }
+
             if (valueType == typeof(long))
             {
                 result = RegistryValueKind.QWord;
             }
+
             return result;
         }
 
@@ -3947,6 +3976,7 @@ namespace Microsoft.PowerShell.Commands
             catch (System.UnauthorizedAccessException)
             {
             }
+
             return null;
         }
 
