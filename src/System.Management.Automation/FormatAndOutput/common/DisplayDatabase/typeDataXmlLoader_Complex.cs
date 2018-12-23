@@ -52,6 +52,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.ReportMissingNode(XmlTags.ComplexEntriesNode);
                     return null; // fatal error
                 }
+
                 return complexBody;
             }
         }
@@ -99,6 +100,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 if (complexBody.defaultEntry == null)
                 {
                     //Error at XPath {0} in file {1}: There must be at least one default {2}.
@@ -138,6 +140,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; //fatal
                         }
+
                         bodyNodeFound = true;
                         cced.itemDefinition.formatTokenList = LoadComplexControlTokenListDefinitions(n);
                     }
@@ -259,6 +262,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessDuplicateNode(n);
                         return false; // fatal error
                     }
+
                     expressionNodeFound = true;
                     if (!expressionMatch.ProcessNode(n))
                         return false; // fatal error
@@ -282,6 +286,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessDuplicateNode(n);
                         return false;
                     }
+
                     itemSelectionConditionNodeFound = true;
                     condition = LoadItemSelectionCondition(n);
                     if (condition == null)
@@ -367,6 +372,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.ComplexControlNode, XmlTags.ComplexControlNameNode);
                             return null;
                         }
+
                         complexControlFound = true;
                         if (!controlMatch.ProcessNode(n))
                             return null; // fatal error
@@ -378,6 +384,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.ComplexControlNode, XmlTags.ComplexControlNameNode);
                             return null; // fatal error
                         }
+
                         fieldControlFound = true;
                         fieldControlBody = new FieldControlBody();
                         fieldControlBody.fieldFormattingDirective.formatString = GetMandatoryInnerText(n);
@@ -426,6 +433,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return null;
                 }
+
                 NewLineToken nlt = new NewLineToken();
 
                 return nlt;
@@ -458,6 +466,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return retVal;
                 }
+
                 string val = this.GetMandatoryInnerText(node);
 
                 if (val == null)
@@ -492,6 +501,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectNaturalNumber, ComputeCurrentXPath(), FilePath));
                     success = false;
                 }
+
                 return val;
             }
         }
@@ -550,6 +560,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.FirstLineIndentNode, XmlTags.FirstLineHangingNode);
                             return null;
                         }
+
                         firstLineIndentFound = true;
 
                         frame.frameInfoDefinition.firstLine = LoadPositiveOrZeroIntegerValue(n, out success);
@@ -563,6 +574,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.FirstLineIndentNode, XmlTags.FirstLineHangingNode);
                             return null;
                         }
+
                         firstLineHangingFound = true;
 
                         frame.frameInfoDefinition.firstLine = LoadPositiveOrZeroIntegerValue(n, out success);
@@ -578,6 +590,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; //fatal
                         }
+
                         itemNodeFound = true;
                         frame.itemDefinition.formatTokenList = LoadComplexControlTokenListDefinitions(n);
                     }
@@ -592,12 +605,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.ProcessDuplicateAlternateNode(XmlTags.FirstLineIndentNode, XmlTags.FirstLineHangingNode);
                     return null; // fatal error
                 }
+
                 if (frame.itemDefinition.formatTokenList == null)
                 {
                     //MissingNode=Error at XPath {0} in file {1}: Missing Node {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingNode, ComputeCurrentXPath(), FilePath, XmlTags.ComplexItemNode));
                     return null;
                 }
+
                 return frame;
             }
         }
@@ -610,6 +625,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return false;
             }
+
             string s = collectionElement.InnerText;
 
             if (string.IsNullOrEmpty(s))

@@ -34,12 +34,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.AutoSizeNode, XmlTags.ColumnNumberNode);
                             return null; // fatal error
                         }
+
                         autosizeNodeFound = true;
                         bool tempVal;
                         if (!this.ReadBooleanNode(n, out tempVal))
                         {
                             return null; // fatal error
                         }
+
                         wideBody.autosize = tempVal;
                     }
                     else if (MatchNodeName(n, XmlTags.ColumnNumberNode))
@@ -49,6 +51,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.AutoSizeNode, XmlTags.ColumnNumberNode);
                             return null; // fatal error
                         }
+
                         columnsNodeFound = true;
 
                         if (!ReadPositiveIntegerValue(n, out wideBody.columns))
@@ -85,11 +88,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.ProcessDuplicateAlternateNode(XmlTags.AutoSizeNode, XmlTags.ColumnNumberNode);
                     return null; // fatal error
                 }
+
                 if (!wideViewEntriesFound)
                 {
                     this.ReportMissingNode(XmlTags.WideEntriesNode);
                     return null; // fatal error
                 }
+
                 return wideBody;
             }
         }
@@ -136,6 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 if (wideBody.defaultEntryDefinition == null)
                 {
                     //Error at XPath {0} in file {1}: There must be at least one default {2}.
@@ -195,6 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.ReportMissingNode(XmlTags.WideItemNode);
                     return null; //fatal error
                 }
+
                 return wved;
             }
         }
@@ -233,6 +240,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
                     formatTokenList.Add(fpt);
                 }
+
                 return formatTokenList;
             }
         }
