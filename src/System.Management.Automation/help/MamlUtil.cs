@@ -37,6 +37,7 @@ namespace System.Management.Automation
                     return;
                 }
             }
+
             maml1.TypeNames.Clear();
             // User request at the top..
             foreach (string typeName in maml2.TypeNames)

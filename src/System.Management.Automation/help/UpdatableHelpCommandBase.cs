@@ -54,8 +54,10 @@ namespace Microsoft.PowerShell.Commands
                         result[index] = new CultureInfo(_language[index]);
                     }
                 }
+
                 return result;
             }
+
             set
             {
                 if (value == null) return;
@@ -66,6 +68,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         internal string[] _language;
 
         /// <summary>
@@ -76,8 +79,10 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _credential; }
+
             set { _credential = value; }
         }
+
         internal PSCredential _credential;
 
         /// <summary>
@@ -90,11 +95,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _useDefaultCredentials;
             }
+
             set
             {
                 _useDefaultCredentials = value;
             }
         }
+
         internal bool _useDefaultCredentials = false;
 
         /// <summary>
@@ -107,11 +114,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         internal bool _force;
 
         /// <summary>
@@ -234,8 +243,10 @@ namespace Microsoft.PowerShell.Commands
                         "HelpInfoUriNotFound", StringUtil.Format(HelpDisplayStrings.HelpInfoUriNotFound),
                         ErrorCategory.NotSpecified, new Uri("HelpInfoUri", UriKind.Relative), null));
                 }
+
                 return;
             }
+
             if (!(module.HelpInfoUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || module.HelpInfoUri.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
             {
                 if (!noErrors)
@@ -244,6 +255,7 @@ namespace Microsoft.PowerShell.Commands
                         "InvalidHelpInfoUriFormat", StringUtil.Format(HelpDisplayStrings.InvalidHelpInfoUriFormat, module.HelpInfoUri),
                         ErrorCategory.NotSpecified, new Uri("HelpInfoUri", UriKind.Relative), null));
                 }
+
                 return;
             }
 

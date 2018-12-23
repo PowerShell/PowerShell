@@ -142,6 +142,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return (String[])result.ToArray(typeof(string));
 #else
             return Directory.GetFiles(path, pattern);
@@ -181,6 +182,7 @@ namespace System.Management.Automation
                                 _result.Add(path);
                                 _uniqueMatches[uniqueToDirectory] = true;
                             }
+
                             break;
 
                         case SearchMode.First:
@@ -211,6 +213,7 @@ namespace System.Management.Automation
                 cultureNameList.Add(culture.Name);
                 culture = culture.Parent;
             }
+
             cultureNameList.Add(string.Empty);
 
             // Add en-US and en as fallback languages
@@ -218,6 +221,7 @@ namespace System.Management.Automation
             {
                 cultureNameList.Add("en-US");
             }
+
             if (!cultureNameList.Contains("en"))
             {
                 cultureNameList.Add("en");
@@ -234,6 +238,7 @@ namespace System.Management.Automation
                     return;
                 }
             }
+
             return;
         }
 

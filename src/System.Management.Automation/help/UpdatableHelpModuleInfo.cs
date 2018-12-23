@@ -53,6 +53,7 @@ namespace System.Management.Automation.Help
                 return _moduleGuid;
             }
         }
+
         private Guid _moduleGuid;
 
         /// <summary>
