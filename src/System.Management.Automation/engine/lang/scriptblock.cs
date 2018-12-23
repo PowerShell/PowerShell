@@ -94,6 +94,7 @@ namespace System.Management.Automation
             {
                 sb.SessionStateInternal = context.EngineSessionState;
             }
+
             return sb;
         }
 
@@ -231,6 +232,7 @@ namespace System.Management.Automation
                 suppliedVariables = new Dictionary<string, object>(variables, StringComparer.OrdinalIgnoreCase);
                 context = null;
             }
+
             return GetPowerShellImpl(context, suppliedVariables, false, false, null, args);
         }
 
@@ -570,6 +572,7 @@ namespace System.Management.Automation
         public bool IsFilter
         {
             get { return _scriptBlockData.IsFilter; }
+
             set { throw new PSInvalidOperationException(); }
         }
 
@@ -579,6 +582,7 @@ namespace System.Management.Automation
         public bool IsConfiguration
         {
             get { return _scriptBlockData.GetIsConfiguration(); }
+
             set { throw new PSInvalidOperationException(); }
         }
 
@@ -631,6 +635,7 @@ namespace System.Management.Automation
                         result.AddRange(outputType.Type);
                     }
                 }
+
                 return new ReadOnlyCollection<PSTypeName>(result);
             }
         }
@@ -693,6 +698,7 @@ namespace System.Management.Automation
 
                 return SessionStateInternal != null ? SessionStateInternal.PublicSessionState : null;
             }
+
             set
             {
                 if (value == null)
@@ -764,6 +770,7 @@ namespace System.Management.Automation
             {
                 call = DynamicExpression.Dynamic(PSConvertBinder.Get(invokeMethod.ReturnType), invokeMethod.ReturnType, call);
             }
+
             return Expression.Lambda(delegateType, call, parameterExprs).Compile();
         }
 
@@ -1020,6 +1027,7 @@ namespace System.Management.Automation
                 psScriptRoot = Path.GetDirectoryName(File);
                 psCommandPath = File;
             }
+
             locals.SetAutomaticVariable(AutomaticVariable.PSScriptRoot, psScriptRoot, context);
             locals.SetAutomaticVariable(AutomaticVariable.PSCommandPath, psCommandPath, context);
         }
@@ -1103,11 +1111,13 @@ namespace System.Management.Automation
                     {
                         _pipeline.LinkPipelineSuccessOutput(crt.OutputPipe);
                     }
+
                     if (crt.ErrorOutputPipe != null)
                     {
                         _pipeline.LinkPipelineErrorOutput(crt.ErrorOutputPipe);
                     }
                 }
+
                 _pipeline.StartStepping(_expectInput);
             }
             finally
