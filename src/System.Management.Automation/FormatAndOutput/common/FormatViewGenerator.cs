@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// update the current value of the grouping key
         /// </summary>
-        /// <param name="so">object to use for the update.</param>
+        /// <param name="so">Object to use for the update.</param>
         /// <returns>true if the value of the key changed</returns>
         internal bool UpdateGroupingKeyValue(PSObject so)
         {

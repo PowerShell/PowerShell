@@ -1827,7 +1827,7 @@ namespace System.Management.Automation
         /// <param name="extent"></param>
         /// <param name="rte"></param>
         /// <param name="context">The execution context.</param>
-        /// <param name="outputPipe">the output pipe of the statement.</param>
+        /// <param name="outputPipe">The output pipe of the statement.</param>
         internal static void SetErrorVariables(IScriptExtent extent, RuntimeException rte, ExecutionContext context, Pipe outputPipe)
         {
             string stack = null;

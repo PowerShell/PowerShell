@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// test if an object coming from the pipeline needs to be
         /// preprocessed by the default formatter
         /// </summary>
-        /// <param name="o">object to examine for formatting.</param>
+        /// <param name="o">Object to examine for formatting.</param>
         /// <returns>whether the object needs to be shunted to preprocessing</returns>
         private bool NeedsPreprocessing(object o)
         {
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// shunt object to the formatting pipeline for preprocessing
         /// </summary>
-        /// <param name="o">object to be preprocessed.</param>
+        /// <param name="o">Object to be preprocessed.</param>
         /// <returns>array of objects returned by the preprocessing step</returns>
         private Array ApplyFormatting(object o)
         {
@@ -380,8 +380,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// class factory for output context
         /// </summary>
-        /// <param name="parentContext">parent context in the stack.</param>
-        /// <param name="formatInfoData">fromat info data received from the pipeline.</param>
+        /// <param name="parentContext">Parent context in the stack.</param>
+        /// <param name="formatInfoData">Fromat info data received from the pipeline.</param>
         /// <returns></returns>
         private FormatMessagesContextManager.OutputContext CreateOutputContext(
                                         FormatMessagesContextManager.OutputContext parentContext,
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// callback for Fs processing
         /// </summary>
-        /// <param name="c">the context containing the Fs entry.</param>
+        /// <param name="c">The context containing the Fs entry.</param>
         private void ProcessFormatStart(FormatMessagesContextManager.OutputContext c)
         {
             // we just add an empty line to the display
@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback for Fe processing
         /// </summary>
         /// <param name="fe">Fe notification message.</param>
-        /// <param name="c">current context, with Fs in it.</param>
+        /// <param name="c">Current context, with Fs in it.</param>
         private void ProcessFormatEnd(FormatEndData fe, FormatMessagesContextManager.OutputContext c)
         {
             //Console.WriteLine("ProcessFormatEnd");
@@ -468,7 +468,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// callback for Gs processing
         /// </summary>
-        /// <param name="c">the context containing the Gs entry.</param>
+        /// <param name="c">The context containing the Gs entry.</param>
         private void ProcessGroupStart(FormatMessagesContextManager.OutputContext c)
         {
             //Console.WriteLine("ProcessGroupStart");
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback for Ge processing
         /// </summary>
         /// <param name="ge">Ge notification message.</param>
-        /// <param name="c">current context, with Gs in it.</param>
+        /// <param name="c">Current context, with Gs in it.</param>
         private void ProcessGroupEnd(GroupEndData ge, FormatMessagesContextManager.OutputContext c)
         {
             //Console.WriteLine("ProcessGroupEnd");
@@ -503,7 +503,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// process the current payload object
         /// </summary>
         /// <param name="fed">FormatEntryData to process.</param>
-        /// <param name="c">currently active context.</param>
+        /// <param name="c">Currently active context.</param>
         private void ProcessPayload(FormatEntryData fed, FormatMessagesContextManager.OutputContext c)
         {
             // we assume FormatEntryData as a standard wrapper
@@ -858,8 +858,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// construct a context to push on the stack
             /// </summary>
-            /// <param name="parentContext">parent context in the stack.</param>
-            /// <param name="formatData">format data to put in the context.</param>
+            /// <param name="parentContext">Parent context in the stack.</param>
+            /// <param name="formatData">Format data to put in the context.</param>
             internal FormatOutputContext(FormatMessagesContextManager.OutputContext parentContext, FormatStartData formatData)
                 : base(parentContext)
             {
@@ -927,9 +927,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// construct a context to push on the stack
             /// </summary>
-            /// <param name="cmd">reference to the OutCommandInner instance who owns this instance.</param>
-            /// <param name="parentContext">parent context in the stack.</param>
-            /// <param name="formatData">format data to put in the context.</param>
+            /// <param name="cmd">Reference to the OutCommandInner instance who owns this instance.</param>
+            /// <param name="parentContext">Parent context in the stack.</param>
+            /// <param name="formatData">Format data to put in the context.</param>
             internal TableOutputContextBase(OutCommandInner cmd,
                 FormatMessagesContextManager.OutputContext parentContext,
                 GroupStartData formatData)
@@ -959,9 +959,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// construct a context to push on the stack
             /// </summary>
-            /// <param name="cmd">reference to the OutCommandInner instance who owns this instance.</param>
-            /// <param name="parentContext">parent context in the stack.</param>
-            /// <param name="formatData">format data to put in the context.</param>
+            /// <param name="cmd">Reference to the OutCommandInner instance who owns this instance.</param>
+            /// <param name="parentContext">Parent context in the stack.</param>
+            /// <param name="formatData">Format data to put in the context.</param>
             internal TableOutputContext(OutCommandInner cmd,
                 FormatMessagesContextManager.OutputContext parentContext,
                 GroupStartData formatData)
@@ -1095,9 +1095,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// construct a context to push on the stack
             /// </summary>
-            /// <param name="cmd">reference to the OutCommandInner instance who owns this instance.</param>
-            /// <param name="parentContext">parent context in the stack.</param>
-            /// <param name="formatData">format data to put in the context.</param>
+            /// <param name="cmd">Reference to the OutCommandInner instance who owns this instance.</param>
+            /// <param name="parentContext">Parent context in the stack.</param>
+            /// <param name="formatData">Format data to put in the context.</param>
             internal ListOutputContext(OutCommandInner cmd,
                 FormatMessagesContextManager.OutputContext parentContext,
                 GroupStartData formatData)
@@ -1185,9 +1185,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// construct a context to push on the stack
             /// </summary>
-            /// <param name="cmd">reference to the OutCommandInner instance who owns this instance.</param>
-            /// <param name="parentContext">parent context in the stack.</param>
-            /// <param name="formatData">format data to put in the context.</param>
+            /// <param name="cmd">Reference to the OutCommandInner instance who owns this instance.</param>
+            /// <param name="parentContext">Parent context in the stack.</param>
+            /// <param name="formatData">Format data to put in the context.</param>
             internal WideOutputContext(OutCommandInner cmd,
                 FormatMessagesContextManager.OutputContext parentContext,
                 GroupStartData formatData)
@@ -1304,7 +1304,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 /// <summary>
                 /// construct the buffer
                 /// </summary>
-                /// <param name="size">number of entries to cache.</param>
+                /// <param name="size">Number of entries to cache.</param>
                 internal StringValuesBuffer(int size)
                 {
                     _arr = new string[size];
@@ -1344,7 +1344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 /// <summary>
                 /// add an item to the buffer
                 /// </summary>
-                /// <param name="s">string to add.</param>
+                /// <param name="s">String to add.</param>
                 internal void Add(string s)
                 {
                     _arr[_lastEmptySpot++] = s;
@@ -1370,9 +1370,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// construct a context to push on the stack
             /// </summary>
-            /// <param name="cmd">reference to the OutCommandInner instance who owns this instance.</param>
-            /// <param name="parentContext">parent context in the stack.</param>
-            /// <param name="formatData">format data to put in the context.</param>
+            /// <param name="cmd">Reference to the OutCommandInner instance who owns this instance.</param>
+            /// <param name="parentContext">Parent context in the stack.</param>
+            /// <param name="formatData">Format data to put in the context.</param>
             internal ComplexOutputContext(OutCommandInner cmd,
                 FormatMessagesContextManager.OutputContext parentContext,
                 GroupStartData formatData)

@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// execute formatting on a single object
         /// </summary>
-        /// <param name="so">object to process.</param>
+        /// <param name="so">Object to process.</param>
         private void ProcessObject(PSObject so)
         {
             // we do protect against reentrancy, assuming
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// compute the group transition, given an input object
         /// </summary>
-        /// <param name="so">object received from the input pipeline.</param>
+        /// <param name="so">Object received from the input pipeline.</param>
         /// <returns>GroupTransition enumeration</returns>
         private GroupTransition ComputeGroupTransition(PSObject so)
         {
@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// write a payplad object by properly wrapping it into
         /// a FormatEntry object
         /// </summary>
-        /// <param name="so">object to process.</param>
+        /// <param name="so">Object to process.</param>
         private void WritePayloadObject(PSObject so)
         {
             Diagnostics.Assert(so != null, "object so cannot be null");
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// inject the start group information
         /// and push group context on stack
         /// </summary>
-        /// <param name="firstObjectInGroup">current pipeline object
+        /// <param name="firstObjectInGroup">Current pipeline object
         /// that is starting the group.</param>
         private void PushGroup(PSObject firstObjectInGroup)
         {

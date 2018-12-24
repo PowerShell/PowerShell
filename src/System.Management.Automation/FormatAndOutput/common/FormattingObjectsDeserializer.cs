@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// If the object is not one of the well known ones (i.e. derived from FormatInfoData)
         /// it just returns the object unchanged
         /// </summary>
-        /// <param name="so">object to deserialize.</param>
+        /// <param name="so">Object to deserialize.</param>
         /// <returns>deserialized object or null</returns>
         internal object Deserialize(PSObject so)
         {
@@ -164,8 +164,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// ERS helper to reconstitute a string[] out of IEnumerable property
         /// </summary>
-        /// <param name="rawObject">object to process.</param>
-        /// <param name="propertyName">property to look up.</param>
+        /// <param name="rawObject">Object to process.</param>
+        /// <param name="propertyName">Property to look up.</param>
         /// <returns>string[] representation of the property</returns>
         private static string[] ReadStringArrayHelper (object rawObject, string propertyName)
         {
@@ -262,8 +262,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Deserialization of string without TAB expansion (RAW)
         /// </summary>
-        /// <param name="so">object whose the property belongs to.</param>
-        /// <param name="property">name of the string property.</param>
+        /// <param name="so">Object whose the property belongs to.</param>
+        /// <param name="property">Name of the string property.</param>
         /// <returns>string out of the MsObject</returns>
         internal string DeserializeStringMemberVariableRaw(PSObject so, string property)
         {
@@ -273,8 +273,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Deserialization of string performing TAB expansion
         /// </summary>
-        /// <param name="so">object whose the property belongs to.</param>
-        /// <param name="property">name of the string property.</param>
+        /// <param name="so">Object whose the property belongs to.</param>
+        /// <param name="property">Name of the string property.</param>
         /// <returns>string out of the MsObject</returns>
         internal string DeserializeStringMemberVariable(PSObject so, string property)
         {

@@ -61,9 +61,9 @@ namespace System.Management.Automation
         /// <summary>
         /// determine if we should run the specified file
         /// </summary>
-        /// <param name="commandInfo">info on entity to be run.</param>
-        /// <param name="origin">the dispatch origin of a command .</param>
-        /// <param name="host">allows access to the host.</param>
+        /// <param name="commandInfo">Info on entity to be run.</param>
+        /// <param name="origin">The dispatch origin of a command .</param>
+        /// <param name="host">Allows access to the host.</param>
         /// <remarks>
         /// This method throws SecurityException in case running is not allowed.
         /// </remarks>

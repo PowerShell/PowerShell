@@ -935,7 +935,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Copy the Providers from another session state instance...
         /// </summary>
-        /// <param name="ss">the session state instance to copy from...</param>
+        /// <param name="ss">The session state instance to copy from...</param>
         internal void CopyProviders(SessionStateInternal ss)
         {
             if (ss == null || ss.Providers == null)
