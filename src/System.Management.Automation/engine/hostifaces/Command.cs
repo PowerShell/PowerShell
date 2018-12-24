@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of Command class using specified command parameter.
         /// </summary>
-        /// <param name="command">Name of the command or script contents </param>
+        /// <param name="command">Name of the command or script contents</param>
         /// <exception cref="ArgumentNullException">command is null</exception>
         public Command(string command)
             : this(command, false, null)

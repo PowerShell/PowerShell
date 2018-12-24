@@ -1675,7 +1675,7 @@ namespace Microsoft.PowerShell
         /// color to a region of the screen buffer. In this example this
         /// functionality is not needed so the method throws a
         /// NotImplementException exception./// </summary>
-        /// <param name="rectangle">Defines the area to be filled. </param>
+        /// <param name="rectangle">Defines the area to be filled.</param>
         /// <param name="fill">Defines the fill character.</param>
         public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
         {

@@ -929,8 +929,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateLengthAttribute class
         /// </summary>
-        /// <param name="minLength">Minimum required length </param>
-        /// <param name="maxLength">Maximum required length </param>
+        /// <param name="minLength">Minimum required length</param>
+        /// <param name="maxLength">Maximum required length</param>
         /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
         /// <exception cref="ValidationMetadataException">if maxLength is less than minLength</exception>
         public ValidateLengthAttribute(int minLength, int maxLength) : base()
@@ -1049,8 +1049,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateRangeAttribute class
         /// </summary>
-        /// <param name="minRange">Minimum value of the range allowed. </param>
-        /// <param name="maxRange">Maximum value of the range allowed. </param>
+        /// <param name="minRange">Minimum value of the range allowed.</param>
+        /// <param name="maxRange">Maximum value of the range allowed.</param>
         /// <exception cref="ArgumentNullException">for invalid arguments</exception>
         /// <exception cref="ValidationMetadataException">
         /// if maxRange has a different type than minRange
@@ -2199,7 +2199,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the transformation is being
         /// made.
         /// </param>
-        /// <param name="inputData"> parameter argument to mutate </param>
+        /// <param name="inputData"> parameter argument to mutate</param>
         /// <returns> mutated object(s) </returns>
         /// <remarks>
         /// Return the transformed value of <paramref name="inputData"/>.

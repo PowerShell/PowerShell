@@ -4041,7 +4041,7 @@ namespace System.Management.Automation
         /// <param name="target">object to call the method on</param>
         /// <param name="methodInformation">method information corresponding to methods</param>
         /// <param name="invocationConstraints">invocation constraints</param>
-        /// <param name="arguments">arguments of the call </param>
+        /// <param name="arguments">arguments of the call</param>
         /// <returns>the return of the method</returns>
         /// <exception cref="MethodInvocationException">if the method throws an exception</exception>
         /// <exception cref="MethodException">if we could not find a method for the given arguments</exception>
@@ -4070,7 +4070,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="type">the type being constructed, used for diagnostics and caching</param>
         /// <param name="constructors">all overloads for the constructors</param>
-        /// <param name="arguments">arguments of the call </param>
+        /// <param name="arguments">arguments of the call</param>
         /// <returns>the return of the method</returns>
         /// <exception cref="MethodInvocationException">if the method throws an exception</exception>
         /// <exception cref="MethodException">if we could not find a method for the given arguments</exception>

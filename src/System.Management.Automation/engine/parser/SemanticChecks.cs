@@ -1601,7 +1601,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasGet">True if it is a Get method with qualified return type and signature; otherwise, false. </param>
+        /// <param name="hasGet">True if it is a Get method with qualified return type and signature; otherwise, false.</param>
         private static void CheckGet(Parser parser, FunctionMemberAst functionMemberAst, ref bool hasGet)
         {
             if (hasGet)

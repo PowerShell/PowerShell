@@ -1315,8 +1315,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info"> serialization information</param>
+        /// <param name="context"> streaming context</param>
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

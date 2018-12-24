@@ -122,7 +122,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns false to indicate that ResetValue has no effect.
         /// </summary>
-        /// <param name="component">The component to test for reset capability. </param>
+        /// <param name="component">The component to test for reset capability.</param>
         /// <returns>false</returns>
         public override bool CanResetValue(object component) { return false; }
 
@@ -153,7 +153,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the current value of the property on a component.
         /// </summary>
-        /// <param name="component">The component with the property for which to retrieve the value. </param>
+        /// <param name="component">The component with the property for which to retrieve the value.</param>
         /// <returns>The value of a property for a given component.</returns>
         /// <exception cref="ExtendedTypeSystemException">
         /// If the property has not been found in the component or an exception has
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of the component to a different value.
         /// </summary>
-        /// <param name="component">The component with the property value that is to be set. </param>
+        /// <param name="component">The component with the property value that is to be set.</param>
         /// <param name="value">The new value.</param>
         /// <exception cref="ExtendedTypeSystemException">
         /// If the property has not been found in the component or an exception has
@@ -623,7 +623,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the events for this instance of a component using the attribute array as a filter.
         /// </summary>
-        /// <param name="attributes">An array of type <see cref="Attribute"/> that is used as a filter. </param>
+        /// <param name="attributes">An array of type <see cref="Attribute"/> that is used as a filter.</param>
         /// <returns>An <see cref="EventDescriptorCollection"/> that represents the events for this component instance that match the given set of attributes.</returns>
         public override EventDescriptorCollection GetEvents(Attribute[] attributes)
         {

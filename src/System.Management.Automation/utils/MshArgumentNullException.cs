@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
-        /// <param name="paramName">  </param>
+        /// <param name="paramName"> </param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// Per MSDN, the parameter is paramName and not message.
@@ -48,8 +48,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
+        /// <param name="message"> </param>
+        /// <param name="innerException"> </param>
         /// <returns> constructed object </returns>
         public PSArgumentNullException(string message, Exception innerException)
             : base(message, innerException)
@@ -60,8 +60,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
-        /// <param name="paramName">  </param>
-        /// <param name="message">  </param>
+        /// <param name="paramName"> </param>
+        /// <param name="message"> </param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// ArgumentNullException has this ctor form and we imitate it here.
@@ -78,8 +78,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info"> serialization information</param>
+        /// <param name="context"> streaming context</param>
         /// <returns> constructed object </returns>
         protected PSArgumentNullException(SerializationInfo info,
                            StreamingContext context)
@@ -92,8 +92,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info"> serialization information</param>
+        /// <param name="context"> streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

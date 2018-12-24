@@ -1566,8 +1566,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of RunspaceOpenModuleLoadException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info"> serialization information</param>
+        /// <param name="context"> streaming context</param>
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
