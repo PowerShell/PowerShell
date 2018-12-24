@@ -119,9 +119,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Get a reference to an assembly object by looking up the currently loaded assemblies
         /// </summary>
         /// <param name="resourceReference">the string resource reference object containing
-        /// the name of the assembly to load</param>
+        /// the name of the assembly to load.</param>
         /// <param name="foundInGac"> true if assembly was found in the GAC. NOTE: the current
-        /// implementation always return FALSE</param>
+        /// implementation always return FALSE.</param>
         /// <returns></returns>
         private Assembly LoadAssemblyFromResourceReference(StringResourceReference resourceReference, out bool foundInGac)
         {

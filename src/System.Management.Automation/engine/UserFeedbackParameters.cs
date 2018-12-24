@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// of objects that the cmdlet would return without paging
         /// (this can be more than the size of the page specified in the <see cref="First"/> cmdlet parameter).
         /// </summary>
-        /// <param name="totalCount">a total count of objects that the cmdlet would return without paging</param>
+        /// <param name="totalCount">a total count of objects that the cmdlet would return without paging.</param>
         /// <param name="accuracy">
         /// accuracy of the <paramref name="totalCount"/> parameter.
         /// <c>1.0</c> means 100% accurate;

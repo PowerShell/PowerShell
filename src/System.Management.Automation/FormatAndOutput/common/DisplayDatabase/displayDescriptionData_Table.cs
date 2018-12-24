@@ -349,9 +349,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Public constructor for TableControlColumnHeader.
         /// </summary>
-        /// <param name="label">Could be null if no label to specify</param>
-        /// <param name="width">The Value should be non-negative</param>
-        /// <param name="alignment">The default value is Alignment.Undefined</param>
+        /// <param name="label">Could be null if no label to specify.</param>
+        /// <param name="width">The Value should be non-negative.</param>
+        /// <param name="alignment">The default value is Alignment.Undefined.</param>
         public TableControlColumnHeader(string label, int width, Alignment alignment)
         {
             if (width < 0)

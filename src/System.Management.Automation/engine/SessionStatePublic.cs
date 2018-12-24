@@ -180,7 +180,7 @@ namespace System.Management.Automation
         /// then the check will be made. If the check fails, then an exception will be thrown...
         /// </summary>
         /// <param name="origin">The command origin value to check against...</param>
-        /// <param name="valueToCheck">The object to check</param>
+        /// <param name="valueToCheck">The object to check.</param>
         public static void ThrowIfNotVisible(CommandOrigin origin, object valueToCheck)
         {
             SessionStateException exception;
@@ -245,8 +245,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="valueToCheck">The object to check</param>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="valueToCheck">The object to check.</param>
         /// <returns>Returns true if the object is visible, false otherwise</returns>
         public static bool IsVisible(CommandOrigin origin, object valueToCheck)
         {
@@ -263,8 +263,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="variable">The variable to check</param>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="variable">The variable to check.</param>
         /// <returns>Returns true if the object is visible, false otherwise</returns>
         public static bool IsVisible(CommandOrigin origin, PSVariable variable)
         {
@@ -280,8 +280,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="commandInfo">The command to check</param>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="commandInfo">The command to check.</param>
         /// <returns>Returns true if the object is visible, false otherwise</returns>
         public static bool IsVisible(CommandOrigin origin, CommandInfo commandInfo)
         {

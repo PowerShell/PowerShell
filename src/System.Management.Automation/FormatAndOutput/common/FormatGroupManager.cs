@@ -18,8 +18,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Initialize with the grouping property data
         /// </summary>
-        /// <param name="groupingExpression">name of the grouping property</param>
-        /// <param name="displayLabel">display name of the property</param>
+        /// <param name="groupingExpression">name of the grouping property.</param>
+        /// <param name="displayLabel">display name of the property.</param>
         internal void Initialize(PSPropertyExpression groupingExpression, string displayLabel)
         {
             _groupingKeyExpression = groupingExpression;
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// compute the string value of the grouping property
         /// </summary>
-        /// <param name="so">object to use to compute the property value</param>
+        /// <param name="so">object to use to compute the property value.</param>
         /// <returns>true if there was an update</returns>
         internal bool UpdateGroupingKeyValue(PSObject so)
         {

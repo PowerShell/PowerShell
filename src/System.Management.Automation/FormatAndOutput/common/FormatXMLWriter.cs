@@ -23,13 +23,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes a collection of format view definitions to XML file
         /// </summary>
-        /// <param name="typeDefinitions">collection of PSTypeDefinition</param>
-        /// <param name="filepath">path to XML file</param>
-        /// <param name="cmdlet">cmdlet from which this si used</param>
-        /// <param name="force">true - to force write the file</param>
-        /// <param name="writeScriptBlock">true - to export scriptblocks</param>
-        /// <param name="noclobber">true - do not overwrite the file</param>
-        /// <param name="isLiteralPath">true - bypass wildcard expansion on the file name</param>
+        /// <param name="typeDefinitions">collection of PSTypeDefinition.</param>
+        /// <param name="filepath">path to XML file.</param>
+        /// <param name="cmdlet">cmdlet from which this si used.</param>
+        /// <param name="force">true - to force write the file.</param>
+        /// <param name="writeScriptBlock">true - to export scriptblocks.</param>
+        /// <param name="noclobber">true - do not overwrite the file.</param>
+        /// <param name="isLiteralPath">true - bypass wildcard expansion on the file name.</param>
         internal static void WriteToPs1Xml(PSCmdlet cmdlet, List<ExtendedTypeDefinition> typeDefinitions,
             string filepath, bool force, bool noclobber, bool writeScriptBlock, bool isLiteralPath)
         {

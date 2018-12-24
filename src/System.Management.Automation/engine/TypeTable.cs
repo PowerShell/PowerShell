@@ -1647,8 +1647,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -2544,8 +2544,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// MemberSetData constructor
         /// </summary>
-        /// <param name="name">The name of the MemberSet</param>
-        /// <param name="members">The members of the MemberSet</param>
+        /// <param name="name">The name of the MemberSet.</param>
+        /// <param name="members">The members of the MemberSet.</param>
         public MemberSetData(string name, Collection<TypeMemberData> members)
             : base(name)
         {
@@ -3626,7 +3626,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets the MemberInfoCollection for types. This method will cache its
         /// return value for future reference to the same types.
         /// </summary>
-        /// <param name="types">list of types to get the member from</param>
+        /// <param name="types">list of types to get the member from.</param>
         /// <returns></returns>
         internal PSMemberInfoInternalCollection<T> GetMembers<T>(ConsolidatedString types) where T : PSMemberInfo
         {
@@ -3702,7 +3702,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the type converter for the typeName
         /// </summary>
-        /// <param name="typeName">type name with the converter</param>
+        /// <param name="typeName">type name with the converter.</param>
         /// <returns>the type converter for the typeName or null, if there is no type converter</returns>
         internal object GetTypeConverter(string typeName)
         {
@@ -4045,8 +4045,8 @@ namespace System.Management.Automation.Runspaces
         /// this TypeTable instance itself is a shared TypeTable.
         /// </param>
         /// <returns>
-        /// If <param>unshared</param> is True, return an unshared clone of this TypeTable instance
-        /// If <param>unshared</param> is False, return a clone that is exactly the same as this TypeTable instance.
+        /// If <param>unshared.</param> is True, return an unshared clone of this TypeTable instance
+        /// If <param>unshared.</param> is False, return a clone that is exactly the same as this TypeTable instance.
         /// </returns>
         public TypeTable Clone(bool unshared)
         {
@@ -4144,7 +4144,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
         /// </param>
-        /// <param name="failToLoadFile">Indicate if the file failed to be loaded</param>
+        /// <param name="failToLoadFile">Indicate if the file failed to be loaded.</param>
         internal void Initialize(
             string snapinName,
             string fileToLoad,
@@ -4237,12 +4237,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Helper method to update with module file contents.
         /// </summary>
-        /// <param name="fileContents">Module contents</param>
-        /// <param name="moduleName">Module name</param>
-        /// <param name="fileToLoad">Module file path</param>
-        /// <param name="isFullyTrusted">Whether the module contents are fully trusted</param>
-        /// <param name="isProductCode">Whether the module contents are considered part of Windows (e.g. catalog signed)</param>
-        /// <param name="errors">Errors</param>
+        /// <param name="fileContents">Module contents.</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="fileToLoad">Module file path.</param>
+        /// <param name="isFullyTrusted">Whether the module contents are fully trusted.</param>
+        /// <param name="isProductCode">Whether the module contents are considered part of Windows (e.g. catalog signed).</param>
+        /// <param name="errors">Errors.</param>
         private void UpdateWithModuleContents(
             string fileContents,
             string moduleName,
@@ -4286,7 +4286,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <exception cref="PSArgumentNullException">throw when the argument is null</exception>
         /// <exception cref="RuntimeException">throw when there were failures during the update</exception>
-        /// <param name="typeData">a TypeData instance to update the TypeTable</param>
+        /// <param name="typeData">a TypeData instance to update the TypeTable.</param>
         public void AddType(TypeData typeData)
         {
             if (typeData == null)
@@ -4311,7 +4311,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <exception cref="PSArgumentNullException">throw when the argument is null or empty</exception>
         /// <exception cref="RuntimeException">throw if there were failures when remove the type</exception>
-        /// <param name="typeName">the name of the type to remove from TypeTable</param>
+        /// <param name="typeName">the name of the type to remove from TypeTable.</param>
         public void RemoveType(string typeName)
         {
             if (String.IsNullOrEmpty(typeName))
@@ -4380,7 +4380,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Entry created to make reflection-based test suites happy. DO NOT USE THIS ENTRY
         /// </summary>
-        /// <param name="filePath">The path to the file to load</param>
+        /// <param name="filePath">The path to the file to load.</param>
         /// <param name="errors">A place to put the errors...</param>
         /// <param name="clearTable">If true, reset the table to empty...</param>
         /// <param name="authorizationManager">
@@ -4389,7 +4389,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
         /// </param>
-        /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to the security reason</param>
+        /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to the security reason.</param>
         /// <exception cref="InvalidOperationException">
         /// 1. The TypeTable cannot be updated because the TypeTable might have
         /// been created outside of the Runspace.
@@ -4409,7 +4409,7 @@ namespace System.Management.Automation.Runspaces
         /// Update type data from a specific file...
         /// </summary>
         /// <param name="moduleName">The name of the module or snapin that this file is associated with.</param>
-        /// <param name="filePath">The path to the file to load</param>
+        /// <param name="filePath">The path to the file to load.</param>
         /// <param name="errors">A place to put the errors...</param>
         /// <param name="authorizationManager">
         /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
@@ -4417,7 +4417,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
         /// </param>
-        /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to security reason</param>
+        /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to security reason.</param>
         /// <exception cref="InvalidOperationException">
         /// 1. The TypeTable cannot be updated because the TypeTable might have
         /// been created outside of the Runspace.

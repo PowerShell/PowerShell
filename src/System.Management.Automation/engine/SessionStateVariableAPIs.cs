@@ -24,7 +24,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionStateVariable entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateVariableEntry entry)
         {
             PSVariable v = new PSVariable(entry.Name, entry.Value,
