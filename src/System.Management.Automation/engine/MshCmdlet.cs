@@ -81,7 +81,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Implicit cast operator for casting SwitchParameter to bool.
         /// </summary>
-        /// <param name="switchParameter">The SwitchParameter object to convert to bool</param>
+        /// <param name="switchParameter">The SwitchParameter object to convert to bool.</param>
         /// <returns>The corresponding boolean value.</returns>
         public static implicit operator bool (SwitchParameter switchParameter)
         {
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Implicit cast operator for casting bool to SwitchParameter.
         /// </summary>
-        /// <param name="value">The bool to convert to SwitchParameter</param>
+        /// <param name="value">The bool to convert to SwitchParameter.</param>
         /// <returns>The corresponding boolean value.</returns>
         public static implicit operator SwitchParameter(bool value)
         {
@@ -130,7 +130,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Compare this switch parameter to another object.
         /// </summary>
-        /// <param name="obj">An object to compare against</param>
+        /// <param name="obj">An object to compare against.</param>
         /// <returns>True if the objects are the same value.</returns>
         public override bool Equals(object obj)
         {
@@ -159,8 +159,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the == operator for switch parameters objects.
         /// </summary>
-        /// <param name="first">first object to compare</param>
-        /// <param name="second">second object to compare</param>
+        /// <param name="first">first object to compare.</param>
+        /// <param name="second">second object to compare.</param>
         /// <returns>True if they are the same</returns>
         public static bool operator ==(SwitchParameter first, SwitchParameter second)
         {
@@ -169,8 +169,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the != operator for switch parameters
         /// </summary>
-        /// <param name="first">first object to compare</param>
-        /// <param name="second">second object to compare</param>
+        /// <param name="first">first object to compare.</param>
+        /// <param name="second">second object to compare.</param>
         /// <returns>True if they are different</returns>
         public static bool operator !=(SwitchParameter first, SwitchParameter second)
         {
@@ -179,8 +179,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the == operator for switch parameters and booleans.
         /// </summary>
-        /// <param name="first">first object to compare</param>
-        /// <param name="second">second object to compare</param>
+        /// <param name="first">first object to compare.</param>
+        /// <param name="second">second object to compare.</param>
         /// <returns>True if they are the same</returns>
         public static bool operator ==(SwitchParameter first, bool second)
         {
@@ -189,8 +189,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the != operator for switch parameters and booleans.
         /// </summary>
-        /// <param name="first">first object to compare</param>
-        /// <param name="second">second object to compare</param>
+        /// <param name="first">first object to compare.</param>
+        /// <param name="second">second object to compare.</param>
         /// <returns>True if they are different</returns>
         public static bool operator !=(SwitchParameter first, bool second)
         {
@@ -199,8 +199,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the == operator for bool and switch parameters
         /// </summary>
-        /// <param name="first">first object to compare</param>
-        /// <param name="second">second object to compare</param>
+        /// <param name="first">first object to compare.</param>
+        /// <param name="second">second object to compare.</param>
         /// <returns>True if they are the same</returns>
         public static bool operator ==(bool first, SwitchParameter second)
         {
@@ -209,8 +209,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the != operator for bool and switch parameters
         /// </summary>
-        /// <param name="first">first object to compare</param>
-        /// <param name="second">second object to compare</param>
+        /// <param name="first">first object to compare.</param>
+        /// <param name="second">second object to compare.</param>
         /// <returns>True if they are different</returns>
         public static bool operator !=(bool first, SwitchParameter second)
         {
@@ -297,9 +297,9 @@ namespace System.Management.Automation
         /// Returns a command info for a given command name and type, using the specified arguments
         /// to resolve dynamic parameters.
         /// </summary>
-        /// <param name="commandName">The command name to search for</param>
-        /// <param name="type">The command type to search for</param>
-        /// <param name="arguments">The command arguments used to resolve dynamic parameters</param>
+        /// <param name="commandName">The command name to search for.</param>
+        /// <param name="type">The command type to search for.</param>
+        /// <param name="arguments">The command arguments used to resolve dynamic parameters.</param>
         /// <returns>A CommandInfo result that represents the resolved command</returns>
         public CommandInfo GetCommand(string commandName, CommandTypes type, object[] arguments)
         {
@@ -365,7 +365,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the CmdletInfo object that corresponds to the name argument
         /// </summary>
-        /// <param name="commandName">The name of the cmdlet to look for</param>
+        /// <param name="commandName">The name of the cmdlet to look for.</param>
         /// <returns>The cmdletInfo object if found, null otherwise</returns>
         public CmdletInfo GetCmdlet(string commandName)
         {
@@ -375,8 +375,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the CmdletInfo object that corresponds to the name argument
         /// </summary>
-        /// <param name="commandName">The name of the cmdlet to look for</param>
-        /// <param name="context">The execution context instance to use for lookup</param>
+        /// <param name="commandName">The name of the cmdlet to look for.</param>
+        /// <param name="context">The execution context instance to use for lookup.</param>
         /// <returns>The cmdletInfo object if found, null otherwise</returns>
         internal static CmdletInfo GetCmdlet(string commandName, ExecutionContext context)
         {
@@ -428,7 +428,7 @@ namespace System.Management.Automation
         /// session state and retrieves the command directly. Note that the help file and snapin/module
         /// info will both be null on returned object.
         /// </summary>
-        /// <param name="cmdletTypeName">the type name of the class implementing this cmdlet</param>
+        /// <param name="cmdletTypeName">the type name of the class implementing this cmdlet.</param>
         /// <returns>CmdletInfo for the cmdlet if found, null otherwise</returns>
         public CmdletInfo GetCmdletByTypeName(string cmdletTypeName)
         {
@@ -539,9 +539,9 @@ namespace System.Management.Automation
         /// and optionally return the full path to applications and scripts rather than
         /// the simple command name.
         /// </summary>
-        /// <param name="name">The name of the command to use</param>
-        /// <param name="nameIsPattern">If true treat the name as a pattern to search for</param>
-        /// <param name="returnFullName">If true, return the full path to scripts and applications</param>
+        /// <param name="name">The name of the command to use.</param>
+        /// <param name="nameIsPattern">If true treat the name as a pattern to search for.</param>
+        /// <param name="returnFullName">If true, return the full path to scripts and applications.</param>
         /// <returns>A list of command names...</returns>
         public List<string> GetCommandName(string name, bool nameIsPattern, bool returnFullName)
         {
@@ -599,9 +599,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Searches for PowerShell commands, optionally using wildcard patterns
         /// </summary>
-        /// <param name="name">The name of the command to use</param>
-        /// <param name="commandTypes">Type of commands to support</param>
-        /// <param name="nameIsPattern">If true treat the name as a pattern to search for</param>
+        /// <param name="name">The name of the command to use.</param>
+        /// <param name="commandTypes">Type of commands to support.</param>
+        /// <param name="nameIsPattern">If true treat the name as a pattern to search for.</param>
         /// <returns>Collection of command names...</returns>
         public IEnumerable<CommandInfo> GetCommands(string name, CommandTypes commandTypes, bool nameIsPattern)
         {
@@ -671,7 +671,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Executes a piece of text as a script synchronously.
         /// </summary>
-        /// <param name="script">The script text to evaluate</param>
+        /// <param name="script">The script text to evaluate.</param>
         /// <returns>A collection of MshCobjects generated by the script.</returns>
         /// <exception cref="ParseException">Thrown if there was a parsing error in the script.</exception>
         /// <exception cref="RuntimeException">Represents a script-level exception</exception>
@@ -684,8 +684,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Executes a piece of text as a script synchronously.
         /// </summary>
-        /// <param name="script">The script text to evaluate</param>
-        /// <param name="args">The arguments to the script</param>
+        /// <param name="script">The script text to evaluate.</param>
+        /// <param name="args">The arguments to the script.</param>
         /// <returns>A collection of MshCobjects generated by the script.</returns>
         /// <exception cref="ParseException">Thrown if there was a parsing error in the script.</exception>
         /// <exception cref="RuntimeException">Represents a script-level exception</exception>
@@ -734,10 +734,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke a scriptblock in the current runspace, controlling if it gets a new scope.
         /// </summary>
-        /// <param name="useLocalScope">If true, a new scope will be created</param>
-        /// <param name="scriptBlock">The scriptblock to execute</param>
-        /// <param name="input">Optionall input to the command</param>
-        /// <param name="args">Arguments to pass to the scriptblock</param>
+        /// <param name="useLocalScope">If true, a new scope will be created.</param>
+        /// <param name="scriptBlock">The scriptblock to execute.</param>
+        /// <param name="input">Optionall input to the command.</param>
+        /// <param name="args">Arguments to pass to the scriptblock.</param>
         /// <returns>The result of the evaluation</returns>
         public Collection<PSObject> InvokeScript(
             bool useLocalScope, ScriptBlock scriptBlock, IList input, params object[] args)
@@ -766,7 +766,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="script">The script to evaluate.</param>
         /// <param name="useNewScope">If true, evaluate the script in its own scope.
-        /// If false, the script will be evaluated in the current scope i.e. it will be "dotted"</param>
+        /// If false, the script will be evaluated in the current scope i.e. it will be "dotted".</param>
         /// <param name="writeToPipeline">If set to Output, all output will be streamed
         /// to the output pipe of the calling cmdlet. If set to None, the result will be returned
         /// to the caller as a collection of PSObjects. No other flags are supported at this time and
@@ -881,7 +881,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Compile a string into a script block.
         /// </summary>
-        /// <param name="scriptText">The source text to compile</param>
+        /// <param name="scriptText">The source text to compile.</param>
         /// <returns>The compiled script block</returns>
         /// <exception cref="ParseException"></exception>
         public ScriptBlock NewScriptBlock(string scriptText)

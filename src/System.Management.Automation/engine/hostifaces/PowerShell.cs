@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the InvalidPowerShellStateException and defines value of
         /// CurrentState.
         /// </summary>
-        /// <param name="currentState">Current state of powershell</param>
+        /// <param name="currentState">Current state of powershell.</param>
         internal InvalidPowerShellStateException(PSInvocationState currentState)
         : base
         (StringUtil.Format(PowerShellStrings.InvalidPowerShellStateGeneral))
@@ -821,7 +821,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
         /// </summary>
-        /// <param name="runspace">runspace mode</param>
+        /// <param name="runspace">runspace mode.</param>
         /// <returns>An instance of PowerShell.</returns>
         public static PowerShell Create(RunspaceMode runspace)
         {
@@ -852,7 +852,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
         /// </summary>
-        /// <param name="initialSessionState">InitialSessionState with which to create the runspace</param>
+        /// <param name="initialSessionState">InitialSessionState with which to create the runspace.</param>
         /// <returns>An instance of PowerShell.</returns>
         public static PowerShell Create(InitialSessionState initialSessionState)
         {
@@ -898,9 +898,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Method needed when deserializing PowerShell object coming from a RemoteDataObject
         /// </summary>
-        /// <param name="isNested">Indicates if PowerShell object is nested</param>
-        /// <param name="psCommand">Commands that the PowerShell pipeline is built of</param>
-        /// <param name="extraCommands">Extra commands to run</param>
+        /// <param name="isNested">Indicates if PowerShell object is nested.</param>
+        /// <param name="psCommand">Commands that the PowerShell pipeline is built of.</param>
+        /// <param name="extraCommands">Extra commands to run.</param>
         private static PowerShell Create(bool isNested, PSCommand psCommand, Collection<PSCommand> extraCommands)
         {
             PowerShell powerShell = new PowerShell(psCommand, extraCommands, null);
@@ -1110,7 +1110,7 @@ namespace System.Management.Automation
         /// <summary>
         /// CommandInfo object for the command to add.
         /// </summary>
-        /// <param name="commandInfo">The CommandInfo object for the command to add</param>
+        /// <param name="commandInfo">The CommandInfo object for the command to add.</param>
         /// <returns>
         /// A PSCommand instance with the command added.
         /// </returns>
@@ -2121,9 +2121,9 @@ namespace System.Management.Automation
         /// If the debugger evaluated a command then DebuggerCommand.ResumeAction
         /// value will be set appropriately.
         /// </summary>
-        /// <param name="input">Input</param>
-        /// <param name="output">Output collection</param>
-        /// <param name="settings">PS invocation settings</param>
+        /// <param name="input">Input.</param>
+        /// <param name="output">Output collection.</param>
+        /// <param name="settings">PS invocation settings.</param>
         /// <param name="invokeMustRun">True if PowerShell Invoke must run regardless
         /// of whether debugger handles the command.
         /// </param>
@@ -3666,8 +3666,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the steppable pipeline from the powershell object
         /// </summary>
-        /// <param name="context">engine execution context</param>
-        /// <param name="commandOrigin">command origin</param>
+        /// <param name="context">engine execution context.</param>
+        /// <param name="commandOrigin">command origin.</param>
         /// <returns>steppable pipeline object</returns>
         private SteppablePipeline GetSteppablePipeline(ExecutionContext context, CommandOrigin commandOrigin)
         {
@@ -3920,7 +3920,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the state of this powershell instance.
         /// </summary>
-        /// <param name="stateInfo">the state info to set</param>
+        /// <param name="stateInfo">the state info to set.</param>
         internal void SetStateChanged(PSInvocationStateInfo stateInfo)
         {
             PSInvocationStateInfo copyStateInfo = stateInfo;
@@ -4233,9 +4233,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects</param>
-        /// <param name="output">output object</param>
-        /// <param name="settings">invocation settings</param>
+        /// <param name="input">input objects.</param>
+        /// <param name="output">output object.</param>
+        /// <param name="settings">invocation settings.</param>
         private void CoreInvokeHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             RunspacePool pool = _rsConnection as RunspacePool;
@@ -4318,9 +4318,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects</param>
-        /// <param name="output">output object</param>
-        /// <param name="settings">invocation settings</param>
+        /// <param name="input">input objects.</param>
+        /// <param name="output">output object.</param>
+        /// <param name="settings">invocation settings.</param>
         private void CoreInvokeRemoteHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             RunspacePool pool = _rsConnection as RunspacePool;
@@ -4352,9 +4352,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects</param>
-        /// <param name="output">output object</param>
-        /// <param name="settings">invocation settings</param>
+        /// <param name="input">input objects.</param>
+        /// <param name="output">output object.</param>
+        /// <param name="settings">invocation settings.</param>
         private void CoreInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             bool isRemote = false;
@@ -5453,7 +5453,7 @@ namespace System.Management.Automation
         /// Creates a PowerShell object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
-        /// <param name="powerShellAsPSObject">PSObject to rehydrate</param>
+        /// <param name="powerShellAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
         /// PowerShell rehydrated from a PSObject property bag
         /// </returns>

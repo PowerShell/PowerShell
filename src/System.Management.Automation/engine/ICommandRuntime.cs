@@ -31,7 +31,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display debug information
         /// </summary>
-        /// <param name="text">debug output</param>
+        /// <param name="text">debug output.</param>
         /// <remarks>
         /// This API is called by the cmdlet to display debug information on the inner workings
         /// of the Cmdlet. An implementation of this interface should display this information in
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// a <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>
         /// rather than the real exception.
         /// </remarks>
-        /// <param name="errorRecord">error</param>
+        /// <param name="errorRecord">error.</param>
         void WriteError(ErrorRecord errorRecord);
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called by the cmdlet to display progress information
         /// </summary>
-        /// <param name="progressRecord">progress information</param>
+        /// <param name="progressRecord">progress information.</param>
         /// <remarks>
         /// Use WriteProgress to display progress information about
         /// the activity of your Task, when the operation of your Task
@@ -126,7 +126,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called when the cmdlet want to display verbose information
         /// </summary>
-        /// <param name="text">verbose output</param>
+        /// <param name="text">verbose output.</param>
         /// <remarks>
         /// Cmdlets use WriteVerbose to display more detailed information about
         /// the activity of the Cmdlet.  By default, verbose output will
@@ -146,7 +146,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called by the cmdlet to display warning information
         /// </summary>
-        /// <param name="text">warning output</param>
+        /// <param name="text">warning output.</param>
         /// <remarks>
         /// Use WriteWarning to display warnings about
         /// the activity of your Cmdlet.  By default, warning output will
@@ -166,7 +166,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Write text into pipeline execution log.
         /// </summary>
-        /// <param name="text">text to be written to log</param>
+        /// <param name="text">text to be written to log.</param>
         /// <remarks>
         /// Use WriteCommandDetail to write important information about cmdlet execution to
         /// pipeline execution log.

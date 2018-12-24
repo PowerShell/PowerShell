@@ -133,8 +133,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Parse a script into a collection of tokens.
         /// </summary>
-        /// <param name="script">script to parse</param>
-        /// <param name="errors">errors happened during parsing</param>
+        /// <param name="script">script to parse.</param>
+        /// <param name="errors">errors happened during parsing.</param>
         /// <returns>collection of tokens generated during parsing</returns>
         /// <exception cref="System.Management.Automation.RuntimeException">
         /// Although this API returns most parse-time exceptions in the errors
@@ -160,8 +160,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Parse a script into a collection of tokens.
         /// </summary>
-        /// <param name="script">script to parse, as an array of lines</param>
-        /// <param name="errors">errors happened during parsing</param>
+        /// <param name="script">script to parse, as an array of lines.</param>
+        /// <param name="errors">errors happened during parsing.</param>
         /// <returns>collection of tokens generated during parsing</returns>
         /// <exception cref="System.Management.Automation.RuntimeException">
         /// Although this API returns most parse-time exceptions in the errors

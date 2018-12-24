@@ -25,9 +25,9 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline initialized with a command string
         /// </summary>
         /// <param name="runspace">The associated Runspace/>.</param>
-        /// <param name="command">command string</param>
-        /// <param name="addToHistory">if true, add pipeline to history</param>
-        /// <param name="isNested">True for nested pipeline</param>
+        /// <param name="command">command string.</param>
+        /// <param name="addToHistory">if true, add pipeline to history.</param>
+        /// <param name="isNested">True for nested pipeline.</param>
         /// <exception cref="ArgumentNullException">
         /// Command is null and add to history is true
         /// </exception>
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Copy constructor to support cloning
         /// </summary>
-        /// <param name="pipeline">The source pipeline</param>
+        /// <param name="pipeline">The source pipeline.</param>
         /// <remarks>
         /// The copy constructor's intent is to support the scenario
         /// where a host needs to run the same set of commands multiple
@@ -353,7 +353,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stop execution of pipeline
         /// </summary>
-        /// <param name="syncCall">If false, call is asynchronous</param>
+        /// <param name="syncCall">If false, call is asynchronous.</param>
         protected abstract void ImplementStop(bool syncCall);
 
         #endregion stop
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Runspaces
         /// array of objects.
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
-        /// Array may be empty but may not be null</param>
+        /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects</returns>
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
@@ -437,9 +437,9 @@ namespace System.Management.Automation.Runspaces
         /// Invoke the pipeline asynchronously with input.
         /// </summary>
         /// <param name="input">input to provide to pipeline. Input is
-        /// used only for synchronous execution</param>
+        /// used only for synchronous execution.</param>
         /// <param name="syncCall">True if this method is called from
-        /// synchronous invoke else false</param>
+        /// synchronous invoke else false.</param>
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
         /// </remarks>
@@ -601,9 +601,9 @@ namespace System.Management.Automation.Runspaces
         /// from currently executing pipeline's thread.
         /// </summary>
         /// <param name="syncCall">True if method is called from Invoke, false
-        /// if called from InvokeAsync</param>
-        /// <param name="syncObject">The sync object on which the lock is acquired</param>
-        /// <param name="isInLock">True if the method is invoked in a critical section</param>
+        /// if called from InvokeAsync.</param>
+        /// <param name="syncObject">The sync object on which the lock is acquired.</param>
+        /// <param name="isInLock">True if the method is invoked in a critical section.</param>
         /// <exception cref="InvalidOperationException">
         /// 1) A pipeline is already executing. Pipeline cannot execute
         /// concurrently.
@@ -783,7 +783,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the new execution state.
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         /// <param name="reason">
         /// An exception indicating that state change is the result of an error,
         /// otherwise; null.
@@ -823,7 +823,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the new execution state
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         protected void SetPipelineState(PipelineState state)
         {
             SetPipelineState(state, null);

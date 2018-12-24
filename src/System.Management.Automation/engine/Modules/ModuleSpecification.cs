@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initialize moduleSpecification from hashtable. Return exception object, if hashtable cannot be converted.
         /// Return null, in the success case.
         /// </summary>
-        /// <param name="moduleSpecification">object to initialize</param>
+        /// <param name="moduleSpecification">object to initialize.</param>
         /// <param name="hashtable">contains info about object to initialize.</param>
         /// <returns></returns>
         internal static Exception ModuleSpecificationInitHelper(ModuleSpecification moduleSpecification, Hashtable hashtable)
@@ -228,8 +228,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Parse the specified string into a ModuleSpecification object
         /// </summary>
-        /// <param name="input">The module specification string</param>
-        /// <param name="result">the ModuleSpecification object</param>
+        /// <param name="input">The module specification string.</param>
+        /// <param name="result">the ModuleSpecification object.</param>
         /// <returns></returns>
         public static bool TryParse(string input, out ModuleSpecification result)
         {
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return this;
             }
-            
+
             return new ModuleSpecification()
             {
                 Guid = Guid,

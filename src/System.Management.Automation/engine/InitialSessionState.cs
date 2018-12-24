@@ -387,8 +387,8 @@ namespace System.Management.Automation.Runspaces
         /// Create a named entry for the assembly to load with both the
         /// name and the path to the assembly as a backup.
         /// </summary>
-        /// <param name="name">The name of the assembly to load</param>
-        /// <param name="fileName">The path to the assembly to use as an alternative</param>
+        /// <param name="name">The name of the assembly to load.</param>
+        /// <param name="fileName">The path to the assembly to use as an alternative.</param>
         public SessionStateAssemblyEntry(string name, string fileName)
             : base(name)
         {
@@ -399,7 +399,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a named entry for the assembly to load, specifying
         /// just the name.
         /// </summary>
-        /// <param name="name">The name of the assembly to load</param>
+        /// <param name="name">The name of the assembly to load.</param>
         public SessionStateAssemblyEntry(string name)
             : base(name)
         {
@@ -527,7 +527,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a session state command entry instance.
         /// </summary>
-        /// <param name="path">The path to the script</param>
+        /// <param name="path">The path to the script.</param>
         public SessionStateScriptEntry(string path)
             : base(path, SessionStateEntryVisibility.Public)
         {
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a session state command entry instance with the specified visibility.
         /// </summary>
-        /// <param name="path">The path to the script</param>
+        /// <param name="path">The path to the script.</param>
         /// <param name="visibility">Visibility of the script.</param>
         internal SessionStateScriptEntry(string path, SessionStateEntryVisibility visibility)
             : base(path, visibility)
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Runspaces
         /// Used to define a permitted script in this session state. If the path is
         /// "*", then any path is permitted.
         /// </summary>
-        /// <param name="path">The full path to the application</param>
+        /// <param name="path">The full path to the application.</param>
         /// <param name="visibility">Sets the external visibility of the path.</param>
         internal SessionStateApplicationEntry(string path, SessionStateEntryVisibility visibility)
             : base(path, visibility)
@@ -706,10 +706,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Represents a function definition in an Initial session state object.
         /// </summary>
-        /// <param name="name">The name of the function</param>
-        /// <param name="definition">The definition of the function</param>
-        /// <param name="options">Options controlling scope-related elements of this object</param>
-        /// <param name="helpFile">The name of the help file associated with the function</param>
+        /// <param name="name">The name of the function.</param>
+        /// <param name="definition">The definition of the function.</param>
+        /// <param name="options">Options controlling scope-related elements of this object.</param>
+        /// <param name="helpFile">The name of the help file associated with the function.</param>
         public SessionStateFunctionEntry(string name, string definition, ScopedItemOptions options, string helpFile)
             : base(name, SessionStateEntryVisibility.Public)
         {
@@ -827,8 +827,8 @@ namespace System.Management.Automation.Runspaces
         /// then the clone will contain a reference to the original object
         /// not a clone of it.
         /// </summary>
-        /// <param name="name">The name of the variable</param>
-        /// <param name="value">The value to set the variable to</param>
+        /// <param name="name">The name of the variable.</param>
+        /// <param name="value">The value to set the variable to.</param>
         /// <param name="description">A descriptive string to attach to the variable.</param>
         public SessionStateVariableEntry(string name, object value, string description)
             : base(name, SessionStateEntryVisibility.Public)
@@ -843,8 +843,8 @@ namespace System.Management.Automation.Runspaces
         /// then the clone will contain a reference to the original object
         /// not a clone of it.
         /// </summary>
-        /// <param name="name">The name of the variable</param>
-        /// <param name="value">The value to set the variable to</param>
+        /// <param name="name">The name of the variable.</param>
+        /// <param name="value">The value to set the variable to.</param>
         /// <param name="description">A descriptive string to attach to the variable.</param>
         /// <param name="options">Options like readonly, constant, allscope, etc.</param>
         public SessionStateVariableEntry(string name, object value, string description, ScopedItemOptions options)
@@ -861,8 +861,8 @@ namespace System.Management.Automation.Runspaces
         /// then the clone will contain a reference to the original object
         /// not a clone of it.
         /// </summary>
-        /// <param name="name">The name of the variable</param>
-        /// <param name="value">The value to set the variable to</param>
+        /// <param name="name">The name of the variable.</param>
+        /// <param name="value">The value to set the variable to.</param>
         /// <param name="description">A descriptive string to attach to the variable.</param>
         /// <param name="options">Options like readonly, constant, allscope, etc.</param>
         /// <param name="attributes">A list of attributes to attach to the variable.</param>
@@ -882,8 +882,8 @@ namespace System.Management.Automation.Runspaces
         /// then the clone will contain a reference to the original object
         /// not a clone of it.
         /// </summary>
-        /// <param name="name">The name of the variable</param>
-        /// <param name="value">The value to set the variable to</param>
+        /// <param name="name">The name of the variable.</param>
+        /// <param name="value">The value to set the variable to.</param>
         /// <param name="description">A descriptive string to attach to the variable.</param>
         /// <param name="options">Options like readonly, constant, allscope, etc.</param>
         /// <param name="attribute">A single attribute to attach to the variable.</param>
@@ -904,8 +904,8 @@ namespace System.Management.Automation.Runspaces
         /// then the clone will contain a reference to the original object
         /// not a clone of it.
         /// </summary>
-        /// <param name="name">The name of the variable</param>
-        /// <param name="value">The value to set the variable to</param>
+        /// <param name="name">The name of the variable.</param>
+        /// <param name="value">The value to set the variable to.</param>
         /// <param name="description">A descriptive string to attach to the variable.</param>
         /// <param name="options">Options like readonly, constant, allscope, etc.</param>
         /// <param name="attributes">A single attribute to attach to the variable.</param>
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation.Runspaces
         /// and the type hasn't been specified.
         /// BUGBUG - brucepay - the throw thing is not implemented yet...
         /// </summary>
-        /// <param name="name">The name of the element to remove</param>
+        /// <param name="name">The name of the element to remove.</param>
         /// <param name="type">The type of object to remove, can be null to remove any type.</param>
         public void Remove(string name, object type)
         {
@@ -1850,7 +1850,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Add a list of modules to import when the runspace is created.
         /// </summary>
-        /// <param name="name">The modules to add</param>
+        /// <param name="name">The modules to add.</param>
         /// <returns></returns>
         public void ImportPSModule(params string[] name)
         {
@@ -2638,9 +2638,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Process a command modification for a specific parameter.
         /// </summary>
-        /// <param name="commandModification">The hashtable of command modifications for this command</param>
-        /// <param name="metadata">The metadata for the command being processed</param>
-        /// <param name="parameterName">The parameter being modified</param>
+        /// <param name="commandModification">The hashtable of command modifications for this command.</param>
+        /// <param name="metadata">The metadata for the command being processed.</param>
+        /// <param name="parameterName">The parameter being modified.</param>
         private static void ProcessCommandModification(Hashtable commandModification, CommandMetadata metadata, string parameterName)
         {
             // If the metadata doesn't actually contain the parameter, then we need to create one.

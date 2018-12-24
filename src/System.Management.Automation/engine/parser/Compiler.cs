@@ -2395,7 +2395,7 @@ namespace System.Management.Automation.Language
         /// This method should be called only for rootAsts (i.e. script file root ScriptBlockAst).
         /// </summary>
         /// <param name="rootForDefiningTypes"></param>
-        /// <param name="typeAsts">non-empty array of TypeDefinitionAst</param>
+        /// <param name="typeAsts">non-empty array of TypeDefinitionAst.</param>
         /// <returns>Assembly with defined types</returns>
         internal static Assembly DefinePowerShellTypes(Ast rootForDefiningTypes, TypeDefinitionAst[] typeAsts)
         {

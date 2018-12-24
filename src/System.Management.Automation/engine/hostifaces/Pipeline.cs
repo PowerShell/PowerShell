@@ -59,8 +59,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="message">The error message that explains the reason for the exception.
         /// </param>
-        /// <param name="currentState">Current state of pipeline</param>
-        /// <param name="expectedState">Expected state of pipeline</param>
+        /// <param name="currentState">Current state of pipeline.</param>
+        /// <param name="expectedState">Expected state of pipeline.</param>
         internal InvalidPipelineStateException(string message, PipelineState currentState, PipelineState expectedState)
         : base(message)
         {
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor for state changes not resulting from an error.
         /// </summary>
-        /// <param name="state">Execution state</param>
+        /// <param name="state">Execution state.</param>
         internal PipelineStateInfo(PipelineState state)
             : this(state, null)
         {
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Copy constructor to support cloning
         /// </summary>
-        /// <param name="pipelineStateInfo">source information</param>
+        /// <param name="pipelineStateInfo">source information.</param>
         /// <throws>
         /// ArgumentNullException when <paramref name="pipelineStateInfo"/> is null.
         /// </throws>
@@ -534,7 +534,7 @@ namespace System.Management.Automation.Runspaces
         /// Invoke the pipeline, synchronously, returning the results as an array of objects.
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
-        /// Array may be empty but may not be null</param>
+        /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects</returns>
         /// <remarks>If using synchronous exectute, do not close
         /// input objectWriter. Synchronous invoke will always close the input
@@ -666,7 +666,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the command collection.
         /// </summary>
-        /// <param name="commands">command collection to set</param>
+        /// <param name="commands">command collection to set.</param>
         /// <remarks>called by ClientRemotePipeline</remarks>
         internal void SetCommandCollection(CommandCollection commands)
         {
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the history string to the one that is specified
         /// </summary>
-        /// <param name="historyString">history string to set</param>
+        /// <param name="historyString">history string to set.</param>
         internal abstract void SetHistoryString(string historyString);
 
         /// <summary>

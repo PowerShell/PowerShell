@@ -22,7 +22,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the InformationRecord class.
         /// </summary>
         /// <param name="messageData">The object to be transmitted to the host.</param>
-        /// <param name="source">The source of the message (i.e.: script path, function name, etc.)</param>
+        /// <param name="source">The source of the message (i.e.: script path, function name, etc.).</param>
         public InformationRecord(Object messageData, string source)
         {
             this.MessageData = messageData;

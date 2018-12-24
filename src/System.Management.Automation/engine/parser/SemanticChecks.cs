@@ -568,8 +568,8 @@ namespace System.Management.Automation.Language
         /// Check that label exists inside the method.
         /// Only call it, when label is present and can be calculated in compile time.
         /// </summary>
-        /// <param name="ast">BreakStatementAst or ContinueStatementAst</param>
-        /// <param name="label">label name. Can be null</param>
+        /// <param name="ast">BreakStatementAst or ContinueStatementAst.</param>
+        /// <param name="label">label name. Can be null.</param>
         private void CheckLabelExists(StatementAst ast, string label)
         {
             if (String.IsNullOrEmpty(label))
@@ -716,7 +716,7 @@ namespace System.Management.Automation.Language
         /// Check if the ast is a valid target for assignment.  If not, the action reportError is called.
         /// </summary>
         /// <param name="ast">The target of an assignment.</param>
-        /// <param name="simpleAssignment">True if the operator '=' is used, false otherwise (e.g. false on '+=' or '++'.)</param>
+        /// <param name="simpleAssignment">True if the operator '=' is used, false otherwise (e.g. false on '+=' or '++'.).</param>
         /// <param name="reportError">The action called to report any errors.</param>
         private void CheckAssignmentTarget(ExpressionAst ast, bool simpleAssignment, Action<Ast> reportError)
         {
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation.Language
         /// Look up all the way up until find all the required members
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type</param>
+        /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type.</param>
         /// <param name="hasSet">flag to indicate if the class contains Set method.</param>
         /// <param name="hasGet">flag to indicate if the class contains Get method.</param>
         /// <param name="hasTest">flag to indicate if the class contains Test method.</param>
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation.Language
         /// Check if it is a Get method with correct return type and signature
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="functionMemberAst">The function member AST</param>
+        /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasGet">True if it is a Get method with qualified return type and signature; otherwise, false.</param>
         private static void CheckGet(Parser parser, FunctionMemberAst functionMemberAst, ref bool hasGet)
         {
@@ -1644,7 +1644,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Check if it is a Test method with correct return type and signature
         /// </summary>
-        /// <param name="functionMemberAst">The function member AST</param>
+        /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
         private static void CheckTest(FunctionMemberAst functionMemberAst, ref bool hasTest)
         {
@@ -1657,7 +1657,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Check if it is a Set method with correct return type and signature
         /// </summary>
-        /// <param name="functionMemberAst">The function member AST</param>
+        /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>
         private static void CheckSet(FunctionMemberAst functionMemberAst, ref bool hasSet)
         {
@@ -1671,7 +1671,7 @@ namespace System.Management.Automation.Language
         /// True if it is a key property.
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="propertyMemberAst">The property member AST</param>
+        /// <param name="propertyMemberAst">The property member AST.</param>
         /// <param name="hasKey">True if it is a key property; otherwise, false.</param>
         private static void CheckKey(Parser parser, PropertyMemberAst propertyMemberAst, ref bool hasKey)
         {

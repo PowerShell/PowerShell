@@ -197,7 +197,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
+        /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
@@ -209,7 +209,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
+        /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
+        /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
@@ -233,7 +233,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
+        /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
@@ -253,7 +253,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
+        /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
+        /// <param name="valueToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
@@ -283,7 +283,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="arrayToConvert">The value to convert</param>
+        /// <param name="arrayToConvert">The value to convert.</param>
         /// <returns>New collection of value, marked as Complete</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
@@ -326,8 +326,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a PSDataCollection from an ISerializable context
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         protected PSDataCollection(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
         /// <returns>
         /// A new collection with a copy of all the elements in the current collection.
         /// </returns>
-        /// <param name="readCount">maximum number of elements to read</param>
+        /// <param name="readCount">maximum number of elements to read.</param>
         internal Collection<T> ReadAndRemove(int readCount)
         {
             Dbg.Assert(_data != null, "Collection cannot be null");
@@ -1292,8 +1292,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implements the ISerializable contract for serializing a PSDataCollection
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -1775,7 +1775,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Release all the resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -1934,7 +1934,7 @@ namespace System.Management.Automation
         /// true if the enumerator successfully advanced to the next element;
         /// otherwise, false.
         /// </returns>
-        /// <param name="block">true - to block when no elements are available</param>
+        /// <param name="block">true - to block when no elements are available.</param>
         public bool MoveNext(bool block)
         {
             lock (_collToEnumerate.SyncObject)

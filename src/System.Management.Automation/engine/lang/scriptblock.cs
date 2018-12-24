@@ -85,7 +85,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a script block object based on a script string to be parsed immediately.
         /// </summary>
-        /// <param name="context">Engine context for this script block</param>
+        /// <param name="context">Engine context for this script block.</param>
         /// <param name="script">The string to compile.</param>
         internal static ScriptBlock Create(ExecutionContext context, string script)
         {
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <param>variables</param> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the <param>variables.</param> that actually get used by the 'using:' prefix variables
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
@@ -283,7 +283,7 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <param>variables</param> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the <param>variables.</param> that actually get used by the 'using:' prefix variables
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
@@ -385,9 +385,9 @@ namespace System.Management.Automation
         /// This overload of the function takes a hashtable and converts it to the
         /// required dictionary which makes the API easier to use from within a PowerShell script.
         /// </summary>
-        /// <param name="functionsToDefine">A dictionary of functions to define</param>
-        /// <param name="variablesToDefine">A list of variables to define</param>
-        /// <param name="args">The arguments to the actual scriptblock</param>
+        /// <param name="functionsToDefine">A dictionary of functions to define.</param>
+        /// <param name="variablesToDefine">A list of variables to define.</param>
+        /// <param name="args">The arguments to the actual scriptblock.</param>
         /// <returns></returns>
         public Collection<PSObject> InvokeWithContext(
             IDictionary functionsToDefine,
@@ -427,9 +427,9 @@ namespace System.Management.Automation
         /// set of local functions and variables to be defined in the scriptblock's scope. The list of
         /// variables may include the special variables $input, $_ and $this.
         /// </summary>
-        /// <param name="functionsToDefine">A dictionary of functions to define</param>
-        /// <param name="variablesToDefine">A list of variables to define</param>
-        /// <param name="args">The arguments to the actual scriptblock</param>
+        /// <param name="functionsToDefine">A dictionary of functions to define.</param>
+        /// <param name="variablesToDefine">A list of variables to define.</param>
+        /// <param name="args">The arguments to the actual scriptblock.</param>
         /// <returns></returns>
         public Collection<PSObject> InvokeWithContext(
             Dictionary<string, ScriptBlock> functionsToDefine,
@@ -1054,7 +1054,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise</param>
+        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise.</param>
         public void Begin(bool expectInput)
         {
             Begin(expectInput, (ICommandRuntime)null);
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise</param>
+        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise.</param>
         /// <param name="contextToRedirectTo">context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
@@ -1084,7 +1084,7 @@ namespace System.Management.Automation
         /// out how to route the output and errors. This is the most effective
         /// way to start stepping.
         /// </summary>
-        /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable)</param>
+        /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable).</param>
         public void Begin(InternalCommand command)
         {
             if (command == null || command.MyInvocation == null)
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Process a single input object.
         /// </summary>
-        /// <param name="input">The object to process</param>
+        /// <param name="input">The object to process.</param>
         /// <returns>a collection of 0 or more result objects</returns>
         public Array Process(object input)
         {
@@ -1157,7 +1157,7 @@ namespace System.Management.Automation
         /// that the PowerShell runtime will PSBase an object before passing it to
         /// a .NET API call with argument type object.
         /// </summary>
-        /// <param name="input">The input object to process</param>
+        /// <param name="input">The input object to process.</param>
         /// <returns></returns>
         public Array Process(PSObject input)
         {
@@ -1278,7 +1278,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message)
             : base(message)
         {
@@ -1287,8 +1287,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1297,10 +1297,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="message">The error message</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="message">The error message.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal ScriptBlockToPowerShellNotSupportedException(
             string errorId,
             Exception innerException,
@@ -1315,8 +1315,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

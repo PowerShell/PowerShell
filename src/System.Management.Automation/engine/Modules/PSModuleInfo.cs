@@ -43,8 +43,8 @@ namespace System.Management.Automation
         /// <summary>
         /// This object describes a PowerShell module...
         /// </summary>
-        /// <param name="path">The absolute path to the module</param>
-        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="path">The absolute path to the module.</param>
+        /// <param name="context">The execution context for this engine instance.</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
         internal PSModuleInfo(string path, ExecutionContext context, SessionState sessionState)
             : this(null, path, context, sessionState)
@@ -54,11 +54,11 @@ namespace System.Management.Automation
         /// <summary>
         /// This object describes a PowerShell module...
         /// </summary>
-        /// <param name="name">The name to use for the module. If null, get it from the path name</param>
-        /// <param name="path">The absolute path to the module</param>
-        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="name">The name to use for the module. If null, get it from the path name.</param>
+        /// <param name="path">The absolute path to the module.</param>
+        /// <param name="context">The execution context for this engine instance.</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
-        /// <param name="languageMode">Language mode for script based modules</param>
+        /// <param name="languageMode">Language mode for script based modules.</param>
         internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState, PSLanguageMode? languageMode)
             : this(name, path, context, sessionState)
         {
@@ -68,9 +68,9 @@ namespace System.Management.Automation
         /// <summary>
         /// This object describes a PowerShell module...
         /// </summary>
-        /// <param name="name">The name to use for the module. If null, get it from the path name</param>
-        /// <param name="path">The absolute path to the module</param>
-        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="name">The name to use for the module. If null, get it from the path name.</param>
+        /// <param name="path">The absolute path to the module.</param>
+        /// <param name="context">The execution context for this engine instance.</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
         internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState)
         {
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the name property of the PSModuleInfo object
         /// </summary>
-        /// <param name="name">The name to set it to</param>
+        /// <param name="name">The name to set it to.</param>
         internal void SetName(string name)
         {
             Name = name;
@@ -679,7 +679,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add function to the fixed exports list
         /// </summary>
-        /// <param name="name">the function to add</param>
+        /// <param name="name">the function to add.</param>
         internal void AddDetectedFunctionExport(string name)
         {
             Dbg.Assert(name != null, "AddDetectedFunctionExport should not be called with a null value");
@@ -928,7 +928,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a module to the list of child modules.
         /// </summary>
-        /// <param name="nestedModule">The module to add</param>
+        /// <param name="nestedModule">The module to add.</param>
         internal void AddNestedModule(PSModuleInfo nestedModule)
         {
             AddModuleToList(nestedModule, _nestedModules);
@@ -1020,7 +1020,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a module to the list of required modules.
         /// </summary>
-        /// <param name="requiredModule">The module to add</param>
+        /// <param name="requiredModule">The module to add.</param>
         internal void AddRequiredModule(PSModuleInfo requiredModule)
         {
             AddModuleToList(requiredModule, _requiredModules);
@@ -1046,7 +1046,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a module to the list of required modules specification
         /// </summary>
-        /// <param name="requiredModuleSpecification">The module to add</param>
+        /// <param name="requiredModuleSpecification">The module to add.</param>
         internal void AddRequiredModuleSpecification(ModuleSpecification requiredModuleSpecification)
         {
             _requiredModulesSpecification.Add(requiredModuleSpecification);
@@ -1194,8 +1194,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Add alias to the detected alias list
         /// </summary>
-        /// <param name="name">the alias to add</param>
-        /// <param name="value">the command it resolves to</param>
+        /// <param name="name">the alias to add.</param>
+        /// <param name="value">the command it resolves to.</param>
         internal void AddDetectedAliasExport(string name, string value)
         {
             Dbg.Assert(name != null, "AddDetectedAliasExport should not be called with a null value");
@@ -1236,7 +1236,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a new scriptblock bound to this module instance.
         /// </summary>
-        /// <param name="scriptBlockToBind">The original scriptblock</param>
+        /// <param name="scriptBlockToBind">The original scriptblock.</param>
         /// <returns>The new bound scriptblock</returns>
         public ScriptBlock NewBoundScriptBlock(ScriptBlock scriptBlockToBind)
         {
@@ -1276,8 +1276,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke a scriptblock in the context of this module...
         /// </summary>
-        /// <param name="sb">The scriptblock to invoke</param>
-        /// <param name="args">Arguments to the scriptblock</param>
+        /// <param name="sb">The scriptblock to invoke.</param>
+        /// <param name="args">Arguments to the scriptblock.</param>
         /// <returns>The result of the invocation</returns>
         public object Invoke(ScriptBlock sb, params object[] args)
         {
@@ -1546,7 +1546,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If there is an entry for the named module in the appdomain level module path cache, remove it.
         /// </summary>
-        /// <param name="moduleName">The name of the module to remove from the cache</param>
+        /// <param name="moduleName">The name of the module to remove from the cache.</param>
         /// <returns>True if the module was remove.</returns>
         internal static bool RemoveFromAppDomainLevelCache(string moduleName)
         {
