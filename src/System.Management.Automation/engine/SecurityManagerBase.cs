@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// <param name="origin"> The origin of the command </param>
         /// <param name="host"> The host running the command </param>
         /// <param name="reason"> The reason for preventing execution, if applicable </param>
-        /// <returns> True if the host should run the command.  False otherwise </returns>
+        /// <returns>True if the host should run the command.  False otherwise.</returns>
         protected internal virtual bool ShouldRun(CommandInfo commandInfo,
                                                   CommandOrigin origin,
                                                   PSHost host,

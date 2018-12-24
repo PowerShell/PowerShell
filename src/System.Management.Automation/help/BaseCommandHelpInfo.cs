@@ -373,7 +373,7 @@ namespace System.Management.Automation
         /// Returns help information for a parameter(s) identified by pattern
         /// </summary>
         /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>
+        /// <returns>A collection of parameters that match pattern.</returns>
         internal override PSObject[] GetParameter(string pattern)
         {
             // this object knows Maml format...

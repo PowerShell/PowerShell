@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="offset">offset inside the string</param>
         /// <param name="displayCells">number of display cells</param>
         /// <param name="head">if true compute from the head (i.e. k++) else from the tail (i.e. k--)</param>
-        /// <returns>number of characters that would fit</returns>
+        /// <returns>Number of characters that would fit.</returns>
         protected int GetSplitLengthInternalHelper(string str, int offset, int displayCells, bool head)
         {
             int filledDisplayCellsCount = 0; // number of cells that are filled in

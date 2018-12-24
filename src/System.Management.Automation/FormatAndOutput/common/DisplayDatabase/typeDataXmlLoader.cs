@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// True if the format data has been pre-validated (build time, manual testing, etc) so that validation can be
         /// skipped at runtime.
         /// </param>
-        /// <returns>true if successful</returns>
+        /// <returns>True if successful.</returns>
         internal bool LoadXmlFile(
             XmlFileLoadInfo info,
             TypeInfoDataBase db,
@@ -1919,7 +1919,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// log an error if an exception is thrown
         /// </summary>
         /// <param name="scriptBlockText">script block string to verify</param>
-        /// <returns>true if parsed correctly, false if failed</returns>
+        /// <returns>True if parsed correctly, false if failed.</returns>
         internal bool VerifyScriptBlock(string scriptBlockText)
         {
             try

@@ -90,7 +90,7 @@ namespace System.Management.Automation
         /// Indicates if this control does not have
         /// any script blocks and is safe to export
         /// </summary>
-        /// <returns>true if exportable, false otherwise</returns>
+        /// <returns>True if exportable, false otherwise.</returns>
         internal override bool SafeForExport()
         {
             if (!base.SafeForExport())

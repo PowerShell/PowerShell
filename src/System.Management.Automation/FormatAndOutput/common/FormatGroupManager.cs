@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// compute the string value of the grouping property
         /// </summary>
         /// <param name="so">object to use to compute the property value</param>
-        /// <returns>true if there was an update</returns>
+        /// <returns>True if there was an update.</returns>
         internal bool UpdateGroupingKeyValue(PSObject so)
         {
             if (_groupingKeyExpression == null)

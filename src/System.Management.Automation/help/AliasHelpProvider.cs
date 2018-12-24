@@ -91,7 +91,7 @@ namespace System.Management.Automation
         ///     b. Create AliasHelpInfo object based on AliasInfo object
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>help info found</returns>
+        /// <returns>Help info found.</returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             CommandInfo commandInfo = null;
@@ -133,7 +133,7 @@ namespace System.Management.Automation
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns>a IEnumerable of helpinfo object</returns>
+        /// <returns>A IEnumerable of helpinfo object.</returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             // aliases do not have help content...so doing nothing in that case

@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// True if the format data has been pre-validated (build time, manual testing, etc) so that validation can be
         /// skipped at runtime.
         /// </param>
-        /// <returns> database instance</returns>
+        /// <returns>Database instance.</returns>
         internal void UpdateDataBase(
             Collection<PSSnapInTypeAndFormatErrors> mshsnapins,
             AuthorizationManager authorizationManager,
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// skipped at runtime.
         /// </param>
         /// <param name="logEntries">Trace and error logs from loading the format Xml files.</param>
-        /// <returns>true if we had a successful load</returns>
+        /// <returns>True if we had a successful load.</returns>
         internal bool LoadFromFile(
             Collection<PSSnapInTypeAndFormatErrors> files,
             PSPropertyExpressionFactory expressionFactory,
@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </param>
         /// <param name="logEntries">list of logger entries (errors, etc.) to return to the caller</param>
         /// <param name="success"> true if no error occurred</param>
-        /// <returns>a database instance loaded from file(s)</returns>
+        /// <returns>A database instance loaded from file(s).</returns>
         private static TypeInfoDataBase LoadFromFileHelper(
             Collection<PSSnapInTypeAndFormatErrors> files,
             PSPropertyExpressionFactory expressionFactory,

@@ -1991,20 +1991,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns a script block that corresponds to the version deserialized
+        /// Returns a script block that corresponds to the version deserialized.
         /// </summary>
-        /// <param name="context">The streaming context for this instance</param>
-        /// <returns>A script block that corresponds to the version deserialized</returns>
+        /// <param name="context">The streaming context for this instance.</param>
+        /// <returns>A script block that corresponds to the version deserialized.</returns>
         public object GetRealObject(StreamingContext context)
         {
             return ScriptBlock.Create(_scriptText);
         }
 
         /// <summary>
-        /// Implements the ISerializable contract for serializing a scriptblock
+        /// Implements the ISerializable contract for serializing a scriptblock.
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();

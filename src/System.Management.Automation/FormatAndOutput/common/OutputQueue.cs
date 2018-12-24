@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// add an object to the cache
         /// </summary>
         /// <param name="o">object to add</param>
-        /// <returns>objects the cache needs to return. It can be null</returns>
+        /// <returns>Objects the cache needs to return. It can be null.</returns>
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
             FormatStartData fsd = o as FormatStartData;
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// remove a single object from the queue
         /// </summary>
-        /// <returns>object retrieved, null if queue is empty</returns>
+        /// <returns>Object retrieved, null if queue is empty.</returns>
         internal PacketInfoData Dequeue()
         {
             if (_queue.Count == 0)
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// objects already in the cache and the cache settings
         /// </summary>
         /// <param name="o">object to add</param>
-        /// <returns>list of objects the cache is flushing</returns>
+        /// <returns>List of objects the cache is flushing.</returns>
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
             // if neither there, pass thru
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// remove all the objects from the cache
         /// </summary>
-        /// <returns>all the objects that were in the cache</returns>
+        /// <returns>All the objects that were in the cache.</returns>
         internal List<PacketInfoData> Drain()
         {
             // if neither there,we did not cache at all

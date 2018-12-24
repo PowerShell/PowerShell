@@ -1249,7 +1249,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpInfo">HelpInfo that is forwarded over</param>
         /// <param name="helpRequest">Help request object</param>
-        /// <returns>The result helpInfo objects after processing</returns>
+        /// <returns>The result helpInfo objects after processing.</returns>
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             HelpCategory categoriesHandled = (HelpCategory.Alias
