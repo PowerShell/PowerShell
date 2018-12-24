@@ -140,8 +140,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles help system progress events
         /// </summary>
-        /// <param name="sender">event sender.</param>
-        /// <param name="e">event arguments.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HandleProgressChanged(object sender, UpdatableHelpProgressEventArgs e)
         {
             Debug.Assert(e.CommandType == UpdatableHelpCommandType.UpdateHelpCommand
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         /// Checks if a module is a system module, a module is a system module
         /// if it exists in the metadata cache.
         /// </summary>
-        /// <param name="module">module name.</param>
+        /// <param name="module">Module name.</param>
         /// <returns>true if system module, false if not</returns>
         internal static bool IsSystemModule(string module)
         {
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="commandType">command type.</param>
+        /// <param name="commandType">Command type.</param>
         internal UpdatableHelpCommandBase(UpdatableHelpCommandType commandType)
         {
             _commandType = commandType;
@@ -269,10 +269,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a list of modules from the given pattern
         /// </summary>
-        /// <param name="context">execution context.</param>
-        /// <param name="pattern">pattern to search.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="pattern">Pattern to search.</param>
         /// <param name="fullyQualifiedName">Module Specification.</param>
-        /// <param name="noErrors">do not generate errors for modules without HelpInfoUri.</param>
+        /// <param name="noErrors">Do not generate errors for modules without HelpInfoUri.</param>
         /// <returns>a list of modules</returns>
         private Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo> GetModuleInfo(ExecutionContext context, string pattern, ModuleSpecification fullyQualifiedName, bool noErrors)
         {
@@ -393,8 +393,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Main cmdlet logic for processing module names or fully qualified module names
         /// </summary>
-        /// <param name="moduleNames">module names given by the user.</param>
-        /// <param name="fullyQualifiedNames">fullyQualifiedNames.</param>
+        /// <param name="moduleNames">Module names given by the user.</param>
+        /// <param name="fullyQualifiedNames">FullyQualifiedNames.</param>
         internal void Process(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> fullyQualifiedNames)
         {
             _helpSystem.WebClient.UseDefaultCredentials = _useDefaultCredentials;
@@ -440,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Processing module objects for Save-Help
         /// </summary>
-        /// <param name="modules">module objects given by the user.</param>
+        /// <param name="modules">Module objects given by the user.</param>
         internal void Process(IEnumerable<PSModuleInfo> modules)
         {
             if (modules == null || !modules.Any()) { return; }
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Processes a module with potential globbing
         /// </summary>
-        /// <param name="name">module name with globbing.</param>
+        /// <param name="name">Module name with globbing.</param>
         private void ProcessModuleWithGlobbing(string name)
         {
             if (String.IsNullOrEmpty(name))
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Processes a single module with multiple cultures
         /// </summary>
-        /// <param name="module">module to process.</param>
+        /// <param name="module">Module to process.</param>
         private void ProcessModule(UpdatableHelpModuleInfo module)
         {
             _helpSystem.CurrentModule = module.ModuleName;
@@ -593,8 +593,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Process a single module with a given culture
         /// </summary>
-        /// <param name="module">module to process.</param>
-        /// <param name="culture">culture to use.</param>
+        /// <param name="module">Module to process.</param>
+        /// <param name="culture">Culture to use.</param>
         /// <returns>true if the module has been processed, false if not</returns>
         internal virtual bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
@@ -608,9 +608,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a list of modules from the given pattern or ModuleSpecification
         /// </summary>
-        /// <param name="pattern">pattern to match.</param>
+        /// <param name="pattern">Pattern to match.</param>
         /// <param name="fullyQualifiedName">ModuleSpecification.</param>
-        /// <param name="noErrors">skip errors.</param>
+        /// <param name="noErrors">Skip errors.</param>
         /// <returns>a list of modules</returns>
         internal Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo> GetModuleInfo(string pattern, ModuleSpecification fullyQualifiedName, bool noErrors)
         {
@@ -634,10 +634,10 @@ namespace Microsoft.PowerShell.Commands
         /// Checks if it is necessary to update help
         /// </summary>
         /// <param name="module">ModuleInfo.</param>
-        /// <param name="currentHelpInfo">current HelpInfo.xml.</param>
-        /// <param name="newHelpInfo">new HelpInfo.xml.</param>
-        /// <param name="culture">current culture.</param>
-        /// <param name="force">force update.</param>
+        /// <param name="currentHelpInfo">Current HelpInfo.xml.</param>
+        /// <param name="newHelpInfo">New HelpInfo.xml.</param>
+        /// <param name="culture">Current culture.</param>
+        /// <param name="force">Force update.</param>
         /// <returns>true if it is necessary to update help, false if not</returns>
         internal bool IsUpdateNecessary(UpdatableHelpModuleInfo module, UpdatableHelpInfo currentHelpInfo,
             UpdatableHelpInfo newHelpInfo, CultureInfo culture, bool force)
@@ -671,11 +671,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks if the user has attempted to update more than once per day per module
         /// </summary>
-        /// <param name="moduleName">module name.</param>
-        /// <param name="path">path to help info.</param>
-        /// <param name="filename">help info file name.</param>
-        /// <param name="time">current time (UTC).</param>
-        /// <param name="force">if -Force is specified.</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="path">Path to help info.</param>
+        /// <param name="filename">Help info file name.</param>
+        /// <param name="time">Current time (UTC).</param>
+        /// <param name="force">If -Force is specified.</param>
         /// <returns>true if we are okay to update, false if not</returns>
         internal bool CheckOncePerDayPerModule(string moduleName, string path, string filename, DateTime time, bool force)
         {
@@ -716,8 +716,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves a given path to a list of directories
         /// </summary>
-        /// <param name="path">path to resolve.</param>
-        /// <param name="recurse">resolve recursively?.</param>
+        /// <param name="path">Path to resolve.</param>
+        /// <param name="recurse">Resolve recursively?.</param>
         /// <param name="isLiteralPath">Treat the path / start path as a literal path?.</param>///
         /// <returns>a list of directories</returns>
         internal IEnumerable<string> ResolvePath(string path, bool recurse, bool isLiteralPath)
@@ -776,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves a given path to a list of directories recursively
         /// </summary>
-        /// <param name="path">path to resolve.</param>
+        /// <param name="path">Path to resolve.</param>
         /// <returns>a list of directories</returns>
         private IEnumerable<string> RecursiveResolvePathHelper(string path)
         {
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Validates the provider of the path, only FileSystem provider is accepted.
         /// </summary>
-        /// <param name="path">path to validate.</param>
+        /// <param name="path">Path to validate.</param>
         internal void ValidatePathProvider(PathInfo path)
         {
             if (path.Provider == null || path.Provider.Name != FileSystemProvider.ProviderName)
@@ -820,7 +820,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Logs a command message
         /// </summary>
-        /// <param name="message">message to log.</param>
+        /// <param name="message">Message to log.</param>
         internal void LogMessage(string message)
         {
             List<string> details = new List<string>();
@@ -838,9 +838,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Processes an exception for help cmdlets
         /// </summary>
-        /// <param name="moduleName">module name.</param>
-        /// <param name="culture">culture info.</param>
-        /// <param name="e">exception to check.</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="culture">Culture info.</param>
+        /// <param name="e">Exception to check.</param>
         internal void ProcessException(string moduleName, string culture, Exception e)
         {
             UpdatableHelpSystemException except = null;

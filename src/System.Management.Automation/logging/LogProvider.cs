@@ -163,8 +163,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Appends exception information.
         /// </summary>
-        /// <param name="sb">string builder.</param>
-        /// <param name="except">exception.</param>
+        /// <param name="sb">String builder.</param>
+        /// <param name="except">Exception.</param>
         protected static void AppendException(StringBuilder sb, Exception except)
         {
             sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordMessage, except.Message));
@@ -192,8 +192,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Appends additional information.
         /// </summary>
-        /// <param name="sb">string builder.</param>
-        /// <param name="additionalInfo">additional information.</param>
+        /// <param name="sb">String builder.</param>
+        /// <param name="additionalInfo">Additional information.</param>
         protected static void AppendAdditionalInfo(StringBuilder sb, Dictionary<string, string> additionalInfo)
         {
             if (additionalInfo != null)
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets PSLevel from severity.
         /// </summary>
-        /// <param name="severity">error severity.</param>
+        /// <param name="severity">Error severity.</param>
         /// <returns>PS log level.</returns>
         protected static PSLevel GetPSLevelFromSeverity(string severity)
         {
@@ -233,7 +233,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts log context to string
         /// </summary>
-        /// <param name="context">log context.</param>
+        /// <param name="context">Log context.</param>
         /// <returns>string representation</returns>
         protected static string LogContextToString(LogContext context)
         {

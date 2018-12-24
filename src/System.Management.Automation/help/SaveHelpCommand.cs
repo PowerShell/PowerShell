@@ -163,8 +163,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Process a single module with a given culture
         /// </summary>
-        /// <param name="module">module to process.</param>
-        /// <param name="culture">culture to use.</param>
+        /// <param name="module">Module to process.</param>
+        /// <param name="culture">Culture to use.</param>
         /// <returns>true if the module has been processed, false if not</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {

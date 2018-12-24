@@ -371,9 +371,9 @@ namespace System.Management.Automation
         /// "attrib1" will be lost. This seems to be OK with current practice of authoring
         /// monad command help.
         /// </summary>
-        /// <param name="properties">property hashtable.</param>
-        /// <param name="name">property name.</param>
-        /// <param name="mshObject">property value.</param>
+        /// <param name="properties">Property hashtable.</param>
+        /// <param name="name">Property name.</param>
+        /// <param name="mshObject">Property value.</param>
         private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
             ArrayList propertyValues = (ArrayList)properties[name];
@@ -1142,7 +1142,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Trim empty lines from the either end of an string array.
         /// </summary>
-        /// <param name="lines">lines to trim.</param>
+        /// <param name="lines">Lines to trim.</param>
         /// <returns>an string array with empty lines trimed on either end</returns>
         private static string[] TrimLines(string[] lines)
         {

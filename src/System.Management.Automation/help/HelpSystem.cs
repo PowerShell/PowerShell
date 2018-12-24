@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// Variants of this function are defined below, which will create help request
         /// object on fly.
         /// </summary>
-        /// <param name="helpRequest">helpRequest object.</param>
+        /// <param name="helpRequest">HelpRequest object.</param>
         /// <returns>An array of HelpInfo object</returns>
         internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get help that exactly match the target
         /// </summary>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>An IEnumerable of HelpInfo object</returns>
         private IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest)
         {
@@ -821,9 +821,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="assemblyName">assembly that contains this help provider.</param>
-        /// <param name="className">the class that implements this help provider.</param>
-        /// <param name="helpCategory">help category of this help provider.</param>
+        /// <param name="assemblyName">Assembly that contains this help provider.</param>
+        /// <param name="className">The class that implements this help provider.</param>
+        /// <param name="helpCategory">Help category of this help provider.</param>
         internal HelpProviderInfo(string assemblyName, string className, HelpCategory helpCategory)
         {
             this.AssemblyName = assemblyName;

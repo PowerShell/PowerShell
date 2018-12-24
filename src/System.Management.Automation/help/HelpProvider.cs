@@ -139,14 +139,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieve help info that exactly match the target.
         /// </summary>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>List of HelpInfo objects retrieved</returns>
         internal abstract IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest);
 
         /// <summary>
         /// Search help info that match the target search pattern.
         /// </summary>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
@@ -168,8 +168,8 @@ namespace System.Management.Automation
         ///        since the helpInfo object passed in is usually stored in cache, which can
         ///        used in later queries.
         /// </summary>
-        /// <param name="helpInfo">helpInfo passed over by another HelpProvider.</param>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpInfo">HelpInfo passed over by another HelpProvider.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns></returns>
         internal virtual IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
