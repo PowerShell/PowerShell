@@ -650,8 +650,8 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count chars in inStr.
             /// </summary>
-            /// <param name="inStr">string whose chars are counted.</param>
-            /// <param name="ignoreWhiteSpace">true to discount white space.</param>
+            /// <param name="inStr">String whose chars are counted.</param>
+            /// <param name="ignoreWhiteSpace">True to discount white space.</param>
             /// <returns>number of chars in inStr</returns>
             internal static int CountChar(string inStr, bool ignoreWhiteSpace)
             {
@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count words in inStr.
             /// </summary>
-            /// <param name="inStr">string whose words are counted.</param>
+            /// <param name="inStr">String whose words are counted.</param>
             /// <returns>number of words in inStr</returns>
             internal static int CountWord(string inStr)
             {
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count lines in inStr.
             /// </summary>
-            /// <param name="inStr">string whose lines are counted.</param>
+            /// <param name="inStr">String whose lines are counted.</param>
             /// <returns>number of lines in inStr</returns>
             internal static int CountLine(string inStr)
             {

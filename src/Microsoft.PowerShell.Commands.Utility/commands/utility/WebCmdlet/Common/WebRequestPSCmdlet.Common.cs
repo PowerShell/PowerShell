@@ -1844,8 +1844,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use.</param>
         /// <param name="fieldValue">The Field Value to use.</param>
-        /// <param name="formData">The <see cref="MultipartFormDataContent" />>to update.</param>
-        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" />will be enumerated. If false, collections will be treated as single value.</param>
+        /// <param name="formData">The <see cref="MultipartFormDataContent" />>To update.</param>
+        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" />Will be enumerated. If false, collections will be treated as single value.</param>
         private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
             if (formData == null)
@@ -1916,7 +1916,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(Object)" /> to convert the fieldname to a string.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
-        /// <param name="stream">The <see cref="Stream" />to use for the <see cref="StreamContent" />.</param>
+        /// <param name="stream">The <see cref="Stream" />To use for the <see cref="StreamContent" />.</param>
         private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");

@@ -55,9 +55,9 @@ namespace Microsoft.PowerShell.Commands
         /// Internal Constructor
         /// </summary>
         /// <param name="childJob">Job associated with this operation.</param>
-        /// <param name="wmiObject">object associated with this operation.</param>
-        /// <param name="computerName">computer on which the operation is invoked.</param>
-        /// <param name="results">sink to get wmi objects.</param>
+        /// <param name="wmiObject">Object associated with this operation.</param>
+        /// <param name="computerName">Computer on which the operation is invoked.</param>
+        /// <param name="results">Sink to get wmi objects.</param>
         internal WmiAsyncCmdletHelper(PSWmiChildJob childJob, Cmdlet wmiObject, string computerName, ManagementOperationObserver results)
         {
             _wmiObject = wmiObject;
@@ -1735,8 +1735,8 @@ namespace Microsoft.PowerShell.Commands
         /// count of blocked child jobs. When count reaches 0, sets the
         /// state of the parent job to running
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">event arguments, should be empty in this
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Event arguments, should be empty in this
         /// case.</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
         {
@@ -2050,8 +2050,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handle a throttle complete event
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="eventArgs">not used in this method.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Not used in this method.</param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
             if (_helper.State == WmiState.NotStarted)

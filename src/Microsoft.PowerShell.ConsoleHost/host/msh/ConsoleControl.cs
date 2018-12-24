@@ -1214,7 +1214,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle"></param>
         /// <param name="codePage"></param>
-        /// <param name="origin">must be within the screen buffer.</param>
+        /// <param name="origin">Must be within the screen buffer.</param>
         /// <param name="contents"></param>
         /// <param name="contentsRegion"></param>
         /// <param name="bufferInfo"></param>

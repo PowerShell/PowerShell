@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Create a list of MshParameter from properties.
         /// </summary>
-        /// <param name="properties">can be a string, ScriptBlock, or Hashtable.</param>
+        /// <param name="properties">Can be a string, ScriptBlock, or Hashtable.</param>
         /// <returns></returns>
         private List<MshParameter> ProcessParameter(object[] properties)
         {

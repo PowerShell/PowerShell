@@ -920,7 +920,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <param>namespace.</param>
+            /// <param>Namespace.</param>
             /// </summary>
             internal CimSessionWrapper CimSessionWrapper
             {

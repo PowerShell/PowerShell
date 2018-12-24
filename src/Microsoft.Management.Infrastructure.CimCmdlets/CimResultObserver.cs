@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </param>
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/>object.</param>
+        /// <param name="session"><see cref="CimSession"/>Object.</param>
         /// <param name="cancellationDisposable"></param>
         public AsyncResultCompleteEventArgs(
             CimSession session,
@@ -220,7 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles new cmdlet action come from
         /// the operations related to the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="cimSession">CimSession object, which raised the event.</param>
         /// <param name="actionArgs">Event args.</param>
         public delegate void ResultEventHandler(
             object observer,
@@ -234,7 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/>object that issued the operation.</param>
+        /// <param name="session"><see cref="CimSession"/>Object that issued the operation.</param>
         /// <param name="observable">Operation that can be observed.</param>
         public CimResultObserver(CimSession session, IObservable<object> observable)
         {
@@ -245,7 +245,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/>object that issued the operation.</param>
+        /// <param name="session"><see cref="CimSession"/>Object that issued the operation.</param>
         /// <param name="observable">Operation that can be observed.</param>
         public CimResultObserver(CimSession session,
             IObservable<object> observable,
@@ -285,7 +285,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Operation completed with an error
         /// </param>
         /// </summary>
-        /// <param name="error">error object.</param>
+        /// <param name="error">Error object.</param>
         public virtual void OnError(Exception error)
         {
             try
@@ -326,7 +326,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Operation got a new result object
         /// </param>
         /// </summary>
-        /// <param name="value">result object.</param>
+        /// <param name="value">Result object.</param>
         public virtual void OnNext(T value)
         {
             DebugHelper.WriteLogEx("value = {0}.", 1, value);

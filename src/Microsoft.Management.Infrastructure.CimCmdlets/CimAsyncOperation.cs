@@ -50,7 +50,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
         /// </param>
-        /// <param name="actionArgs">event argument.</param>
+        /// <param name="actionArgs">Event argument.</param>
         protected void NewCmdletActionHandler(object cimSession, CmdletActionEventArgs actionArgs)
         {
             DebugHelper.WriteLogEx("Disposed {0}, action type = {1}", 0, this._disposed, actionArgs.Action);
@@ -83,7 +83,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
         /// </param>
-        /// <param name="actionArgs">event argument.</param>
+        /// <param name="actionArgs">Event argument.</param>
         protected void OperationCreatedHandler(object cimSession, OperationEventArgs actionArgs)
         {
             DebugHelper.WriteLogEx();
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
         /// </param>
-        /// <param name="actionArgs">event argument.</param>
+        /// <param name="actionArgs">Event argument.</param>
         protected void OperationDeletedHandler(object cimSession, OperationEventArgs actionArgs)
         {
             DebugHelper.WriteLogEx();
@@ -190,7 +190,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Get action object from action queue
         /// </param>
         /// </summary>
-        /// <param name="action">next action to execute.</param>
+        /// <param name="action">Next action to execute.</param>
         /// <returns>true indicates there is an valid action, otherwise false</returns>
         protected bool GetActionAndRemove(out CimBaseAction action)
         {
@@ -203,7 +203,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </param>
         /// </summary>
         /// <param name="computerName">Computer name of the cimsession.</param>
-        /// <param name="sessionproxy">cimsession wrapper object.</param>
+        /// <param name="sessionproxy">Cimsession wrapper object.</param>
         protected void AddCimSessionProxy(CimSessionProxy sessionproxy)
         {
             lock (cimSessionProxyCacheLock)
@@ -382,7 +382,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// if not thrown exception.
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="referenceType">output the cimtype of the value, either Reference or ReferenceArray.</param>
+        /// <param name="referenceType">Output the cimtype of the value, either Reference or ReferenceArray.</param>
         /// <returns></returns>
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {

@@ -334,12 +334,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Called by Prompt. Reads user input and processes tilde commands.
         /// </summary>
-        /// <param name="fieldPrompt">prompt written to host for the field.</param>
-        /// <param name="desc">the field to be read.</param>
-        /// <param name="fieldEchoOnPrompt">true to echo user input.</param>
-        /// <param name="listInput">true if the field is a list.</param>
-        /// <param name="endListInput">valid only if listInput is true. set to true if the input signals end of list input.</param>
-        /// <param name="cancelled">true iff the input is canceled, e.g., by Ctrl-C or Ctrl-Break.</param>
+        /// <param name="fieldPrompt">Prompt written to host for the field.</param>
+        /// <param name="desc">The field to be read.</param>
+        /// <param name="fieldEchoOnPrompt">True to echo user input.</param>
+        /// <param name="listInput">True if the field is a list.</param>
+        /// <param name="endListInput">Valid only if listInput is true. set to true if the input signals end of list input.</param>
+        /// <param name="cancelled">True iff the input is canceled, e.g., by Ctrl-C or Ctrl-Break.</param>
         /// <returns>processed input string to be converted with LanguagePrimitives.ConvertTo </returns>
         private string PromptReadInput(string fieldPrompt, FieldDescription desc, bool fieldEchoOnPrompt,
                         bool listInput, out bool endListInput, out bool cancelled)
@@ -398,10 +398,10 @@ namespace Microsoft.PowerShell
         /// Uses LanguagePrimitives.ConvertTo to parse inputString for fieldType. Handles two most common parse
         ///  exceptions: OverflowException and FormatException.
         /// </summary>
-        /// <param name="fieldType">the type that inputString is to be interpreted.</param>
-        /// <param name="isFromRemoteHost">is the call coming from a remote host.</param>
-        /// <param name="inputString">the string to be converted.</param>
-        /// <param name="convertedObj">if there's no error in the conversion, the converted object will be assigned here;
+        /// <param name="fieldType">The type that inputString is to be interpreted.</param>
+        /// <param name="isFromRemoteHost">Is the call coming from a remote host.</param>
+        /// <param name="inputString">The string to be converted.</param>
+        /// <param name="convertedObj">If there's no error in the conversion, the converted object will be assigned here;
         /// otherwise, this will be the same as the inputString.</param>
         /// <returns>an object of type fieldType that inputString represents</returns>
         private PromptCommonInputErrors PromptTryConvertTo(Type fieldType, bool isFromRemoteHost, string inputString, out object convertedObj)

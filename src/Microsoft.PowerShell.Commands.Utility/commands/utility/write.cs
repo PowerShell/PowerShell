@@ -469,8 +469,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serialization constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         /// <returns> constructed object </returns>
         protected WriteErrorException(SerializationInfo info,
                                       StreamingContext context)

@@ -883,7 +883,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes IDictionary.
         /// </summary>
-        /// <param name="dictionary">dictionary which is serialized.</param>
+        /// <param name="dictionary">Dictionary which is serialized.</param>
         /// <param name="depth"></param>
         private void WriteDictionary(IDictionary dictionary, int depth)
         {
@@ -1009,7 +1009,7 @@ namespace System.Management.Automation
         /// Compute the serialization depth for an PSObject instance subtree.
         /// </summary>
         /// <param name="source">PSObject whose serialization depth has to be computed.</param>
-        /// <param name="depth">current depth.</param>
+        /// <param name="depth">Current depth.</param>
         /// <returns></returns>
         private static int GetDepthOfSerialization(PSObject source, int depth)
         {
@@ -1100,9 +1100,9 @@ namespace System.Management.Automation
         /// Writes an item or property in Monad namespace.
         /// </summary>
         /// <param name="writer">The XmlWriter stream to which the object is serialized.</param>
-        /// <param name="property">name of property. Pass null for item.</param>
-        /// <param name="source">object to be written.</param>
-        /// <param name="entry">serialization information about source.</param>
+        /// <param name="property">Name of property. Pass null for item.</param>
+        /// <param name="source">Object to be written.</param>
+        /// <param name="entry">Serialization information about source.</param>
 
         private void WriteOnePrimitiveKnownType(
             XmlWriter writer, string property, object source, TypeSerializationInfo entry)
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation
         /// Writes start element in Monad namespace.
         /// </summary>
         /// <param name="writer"></param>
-        /// <param name="elementTag">tag of element.</param>
+        /// <param name="elementTag">Tag of element.</param>
         internal static void WriteStartElement(XmlWriter writer, string elementTag)
         {
             writer.WriteStartElement(elementTag);
@@ -1128,8 +1128,8 @@ namespace System.Management.Automation
         /// Writes attribute in monad namespace.
         /// </summary>
         /// <param name="writer"></param>
-        /// <param name="name">name of attribute.</param>
-        /// <param name="value">value of attribute.</param>
+        /// <param name="name">Name of attribute.</param>
+        /// <param name="value">Value of attribute.</param>
         internal static void WriteAttribute(XmlWriter writer, string name, string value)
         {
             writer.WriteAttributeString(name, value);

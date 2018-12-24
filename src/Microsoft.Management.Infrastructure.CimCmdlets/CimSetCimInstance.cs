@@ -41,7 +41,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <param>property value.</param>
+        /// <param>Property value.</param>
         /// </summary>
         internal IDictionary Property
         {
@@ -54,7 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IDictionary property;
 
         /// <summary>
-        /// <param>parameter set name.</param>
+        /// <param>Parameter set name.</param>
         /// </summary>
         internal string ParameterSetName
         {
@@ -102,7 +102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to set ciminstances
         /// </param>
         /// </summary>
-        /// <param name="cmdlet"><see cref="SetCimInstanceCommand"/>object.</param>
+        /// <param name="cmdlet"><see cref="SetCimInstanceCommand"/>Object.</param>
         public void SetCimInstance(SetCimInstanceCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(

@@ -59,7 +59,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// either remotely or locally
         /// </param>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/>object.</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/>Object.</param>
         public void NewCimInstance(NewCimInstanceCommand cmdlet)
         {
             DebugHelper.WriteLogEx();

@@ -276,8 +276,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="psobj">The containing PSObject, or null if the base object was not contained in a PSObject.</param>
         /// <param name="obj">The base object that might have been decorated with additional properties.</param>
         /// <param name="depth">The current depth into the object graph.</param>
-        /// <param name="isPurePSObj">the processed object is a pure PSObject.</param>
-        /// <param name="isCustomObj">the processed object is a custom object.</param>
+        /// <param name="isPurePSObj">The processed object is a pure PSObject.</param>
+        /// <param name="isCustomObj">The processed object is a custom object.</param>
         /// <returns>
         /// The original base object if no additional properties had been added,
         /// otherwise a dictionary containing the value of the original base object in the "value" key
