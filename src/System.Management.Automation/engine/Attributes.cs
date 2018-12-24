@@ -121,7 +121,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Overridden by subclasses to implement the validation of the parameter arguments
         /// </summary>
-        /// <param name="arguments">argument value to validate</param>
+        /// <param name="arguments">argument value to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
@@ -137,7 +137,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Method that the command processor calls for data validate processing
         /// </summary>
-        /// <param name="o">object to validate</param>
+        /// <param name="o">object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
@@ -218,14 +218,14 @@ namespace System.Management.Automation
         /// <see cref="ValidationMetadataException"/>
         /// if it is invalid.
         /// </remarks>
-        /// <param name="element">one of the parameter arguments</param>
+        /// <param name="element">one of the parameter arguments.</param>
         /// <exception cref="ValidationMetadataException">should be thrown for any validation failure</exception>
         protected abstract void ValidateElement(object element);
 
         /// <summary>
         /// Calls ValidateElement in each element in the enumeration argument value.
         /// </summary>
-        /// <param name="arguments">object to validate</param>
+        /// <param name="arguments">object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
@@ -424,8 +424,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the CmdletAttribute class
         /// </summary>
-        /// <param name="verbName">verb for the command</param>
-        /// <param name="nounName">noun for the command</param>
+        /// <param name="verbName">verb for the command.</param>
+        /// <param name="nounName">noun for the command.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public CmdletAttribute(string verbName, string nounName)
         {
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct the attribute from an array of <see>System.Type</see>
         /// </summary>
-        /// <param name="type">The types output by the cmdlet</param>
+        /// <param name="type">The types output by the cmdlet.</param>
         public OutputTypeAttribute(params Type[] type)
         {
             if (type != null && type.Length > 0)
@@ -507,7 +507,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct the attribute from an array of names of types.
         /// </summary>
-        /// <param name="type">The types output by the cmdlet</param>
+        /// <param name="type">The types output by the cmdlet.</param>
         public OutputTypeAttribute(params string[] type)
         {
             if (type != null && type.Length > 0)
@@ -592,7 +592,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the AliasAttribute class
         /// </summary>
-        /// <param name="aliasNames">The name for this alias</param>
+        /// <param name="aliasNames">The name for this alias.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public AliasAttribute(params string[] aliasNames)
         {
@@ -896,7 +896,7 @@ namespace System.Management.Automation
         /// Validates that the length of each parameter argument's Length falls in the range
         /// specified by MinLength and MaxLength
         /// </summary>
-        /// <param name="element">object to validate</param>
+        /// <param name="element">object to validate.</param>
         /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string
         /// with length between minLength and maxLength</exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
@@ -929,8 +929,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateLengthAttribute class
         /// </summary>
-        /// <param name="minLength">Minimum required length</param>
-        /// <param name="maxLength">Maximum required length</param>
+        /// <param name="minLength">Minimum required length.</param>
+        /// <param name="maxLength">Maximum required length.</param>
         /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
         /// <exception cref="ValidationMetadataException">if maxLength is less than minLength</exception>
         public ValidateLengthAttribute(int minLength, int maxLength) : base()
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         /// Validates that each parameter argument falls in the range
         /// specified by MinRange and MaxRange
         /// </summary>
-        /// <param name="element">object to validate</param>
+        /// <param name="element">object to validate.</param>
         /// <exception cref="ValidationMetadataException">
         /// Thrown if the object to be validated does not implement IComparable,
         /// if the element type is not the same of MinRange, MaxRange,
@@ -1334,7 +1334,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Validates that each parameter argument matches the RegexPattern
         /// </summary>
-        /// <param name="element">object to validate</param>
+        /// <param name="element">object to validate.</param>
         /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string
         ///  that matches the pattern
         ///  and for invalid arguments</exception>
@@ -1364,7 +1364,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidatePatternAttribute class
         /// </summary>
-        /// <param name="regexPattern">Pattern string to match</param>
+        /// <param name="regexPattern">Pattern string to match.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ValidatePatternAttribute(string regexPattern)
         {
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Validates that each parameter argument matches the scriptblock
         /// </summary>
-        /// <param name="element">object to validate</param>
+        /// <param name="element">object to validate.</param>
         /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is invalid</exception>
         protected override void ValidateElement(object element)
         {
@@ -1435,7 +1435,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateScriptBlockAttribute class
         /// </summary>
-        /// <param name="scriptBlock">Scriptblock to match</param>
+        /// <param name="scriptBlock">Scriptblock to match.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ValidateScriptAttribute(ScriptBlock scriptBlock)
         {
@@ -1467,7 +1467,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Validates that the parameter argument count is in the specified range
         /// </summary>
-        /// <param name="arguments">Object to validate</param>
+        /// <param name="arguments">Object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the validation is being
         /// evaluated.
@@ -1538,8 +1538,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateCountAttribute class
         /// </summary>
-        /// <param name="minLength">Minimum number of values required</param>
-        /// <param name="maxLength">Maximum number of values required</param>
+        /// <param name="minLength">Minimum number of values required.</param>
+        /// <param name="maxLength">Maximum number of values required.</param>
         /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
         /// <exception cref="ValidationMetadataException">
         /// if minLength is greater than maxLength
@@ -1685,7 +1685,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Validates that each parameter argument is present in the specified set
         /// </summary>
-        /// <param name="element">Object to validate</param>
+        /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">
         /// if element is not in the set
         /// for invalid argument
@@ -1726,7 +1726,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateSetAttribute class
         /// </summary>
-        /// <param name="validValues">list of valid values</param>
+        /// <param name="validValues">list of valid values.</param>
         /// <exception cref="ArgumentNullException">for null arguments</exception>
         /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
         public ValidateSetAttribute(params string[] validValues)
@@ -1748,7 +1748,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ValidateSetAttribute class.
         /// Valid values is returned dynamically from a custom class implementing 'IValidateSetValuesGenerator' interface.
         /// </summary>
-        /// <param name="valuesGeneratorType">class that implements the 'IValidateSetValuesGenerator' interface</param>
+        /// <param name="valuesGeneratorType">class that implements the 'IValidateSetValuesGenerator' interface.</param>
         /// <exception cref="ArgumentException">for null arguments</exception>
         public ValidateSetAttribute(Type valuesGeneratorType)
         {
@@ -1785,7 +1785,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Validates that the parameter argument is not untrusted
         /// </summary>
-        /// <param name="arguments">Object to validate</param>
+        /// <param name="arguments">Object to validate.</param>
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the validation is being
         /// evaluated.
@@ -1870,7 +1870,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateDrivePath class
         /// </summary>
-        /// <param name="validRootDrives">List of approved root drives for path</param>
+        /// <param name="validRootDrives">List of approved root drives for path.</param>
         public ValidateDriveAttribute(params string[] validRootDrives)
         {
             if (validRootDrives == null)
@@ -1884,8 +1884,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Validates path argument
         /// </summary>
-        /// <param name="arguments">Object to validate</param>
-        /// <param name="engineIntrinsics">Engine intrinsics</param>
+        /// <param name="arguments">Object to validate.</param>
+        /// <param name="engineIntrinsics">Engine intrinsics.</param>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
             if (arguments == null)
@@ -2199,7 +2199,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the transformation is being
         /// made.
         /// </param>
-        /// <param name="inputData">parameter argument to mutate</param>
+        /// <param name="inputData">parameter argument to mutate.</param>
         /// <returns> mutated object(s) </returns>
         /// <remarks>
         /// Return the transformed value of <paramref name="inputData"/>.

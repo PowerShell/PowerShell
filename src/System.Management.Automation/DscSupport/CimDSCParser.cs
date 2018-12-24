@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Initialize the class cache with the default classes in $ENV:SystemDirectory\Configuration.
         /// </summary>
         /// <param name="errors">Collection of any errors encountered during initialization.</param>
-        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded</param>
+        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
             s_tracer.WriteLine("Initializing DSC class cache force={0}");
@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Load DSC resources into Cache from moduleFolderPath.
         /// </summary>
         /// <param name="errors">Collection of any errors encountered during initialization.</param>
-        /// <param name="modulePathList">Module path from where DSC PS modules will be loaded</param>
+        /// <param name="modulePathList">Module path from where DSC PS modules will be loaded.</param>
         /// <param name="isInboxResource">
         /// if module is inbox.
         /// </param>
@@ -987,7 +987,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// get text from SecureString
         /// </summary>
-        /// <param name="value">value of SecureString</param>
+        /// <param name="value">value of SecureString.</param>
         /// <returns>decoded string</returns>
         public static string GetStringFromSecureString(SecureString value)
         {
@@ -1031,8 +1031,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Finds resources in the that which matches the specified class and module name.
         /// </summary>
-        /// <param name="moduleName">Module name</param>
-        /// <param name="className">Resource type name</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="className">Resource type name.</param>
         /// <returns>List of found resources in the form of Dictionary{moduleQualifiedName, cimClass}, otherwise empty list.</returns>
         private static List<KeyValuePair<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>>> FindResourceInCache(string moduleName, string className)
         {
@@ -1253,7 +1253,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleVersion"></param>
         /// <param name="cimClass"></param>
         /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
-        /// <param name="runAsBehavior">To Specify RunAsBehavior of the class</param>
+        /// <param name="runAsBehavior">To Specify RunAsBehavior of the class.</param>
         private static void CreateAndRegisterKeywordFromCimClass(string moduleName, Version moduleVersion, Microsoft.Management.Infrastructure.CimClass cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
             var keyword = CreateKeywordFromCimClass(moduleName, moduleVersion, cimClass, functionsToDefine, runAsBehavior);
@@ -1291,7 +1291,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleVersion"></param>
         /// <param name="cimClass"></param>
         /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
-        /// <param name="runAsBehavior">To specify RunAs behavior of the class</param>
+        /// <param name="runAsBehavior">To specify RunAs behavior of the class.</param>
         private static DynamicKeyword CreateKeywordFromCimClass(string moduleName, Version moduleVersion, Microsoft.Management.Infrastructure.CimClass cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
             var resourceName = cimClass.CimSystemProperties.ClassName;
@@ -1521,7 +1521,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
         /// </summary>
-        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded</param>
+        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void LoadDefaultCimKeywords(List<string> modulePathList)
         {
             LoadDefaultCimKeywords(null, null, modulePathList, false);
@@ -1538,7 +1538,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null</param>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// </summary>
         public static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine)
         {
@@ -1558,10 +1558,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
         /// </summary>
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null</param>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// <param name="errors">Collection of any errors encountered while loading keywords.</param>
-        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded</param>
-        /// <param name="cacheResourcesFromMultipleModuleVersions">Allow caching the resources from multiple versions of modules</param>
+        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
+        /// <param name="cacheResourcesFromMultipleModuleVersions">Allow caching the resources from multiple versions of modules.</param>
         private static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors,
                                                    List<string> modulePathList, bool cacheResourcesFromMultipleModuleVersions)
         {
@@ -1907,10 +1907,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Load DSC resources from specified module.
         /// </summary>
-        /// <param name="scriptExtent">Script statement loading the module, can be null</param>
+        /// <param name="scriptExtent">Script statement loading the module, can be null.</param>
         /// <param name="moduleSpecifications">Module information, can be null.</param>
-        /// <param name="resourceNames">Name of the resource to be loaded from module</param>
-        /// <param name="errorList">List of errors reported by the method</param>
+        /// <param name="resourceNames">Name of the resource to be loaded from module.</param>
+        /// <param name="errorList">List of errors reported by the method.</param>
         public static void LoadResourcesFromModule(IScriptExtent scriptExtent,
                                                            ModuleSpecification[] moduleSpecifications,
                                                            string[] resourceNames,
@@ -3141,7 +3141,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="resourceName"></param>
         /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
         /// <param name="functionsToDefine"></param>
-        /// <param name="errors">error reported during deserialization</param>
+        /// <param name="errors">error reported during deserialization.</param>
         /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
@@ -3278,8 +3278,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list
         /// </summary>
-        /// <param name="badDependsOnReference">the malformed resource</param>
-        /// <param name="definingResource">The referencing resource instance</param>
+        /// <param name="badDependsOnReference">the malformed resource.</param>
+        /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedRequiredResourceIdErrorRecord(string badDependsOnReference, string definingResource)
         {
@@ -3293,8 +3293,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use in the case of a malformed resource reference in the exclusive resources list
         /// </summary>
-        /// <param name="badExclusiveResourcereference">the malformed resource</param>
-        /// <param name="definingResource">The referencing resource instance</param>
+        /// <param name="badExclusiveResourcereference">the malformed resource.</param>
+        /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedExclusiveResourceIdErrorRecord(string badExclusiveResourcereference, string definingResource)
         {
@@ -3336,7 +3336,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         ///  Returns an error record to use in the case of a malformed resource reference in the DependsOn list
         /// </summary>
-        /// <param name="duplicateResourceId">The duplicate resource identifier</param>
+        /// <param name="duplicateResourceId">The duplicate resource identifier.</param>
         /// <param name="nodeName">the node being defined.</param>
         /// <returns>The error record to use.</returns>
         public static ErrorRecord DuplicateResourceIdInNodeStatementErrorRecord(string duplicateResourceId, string nodeName)
@@ -3461,7 +3461,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value
         /// </summary>
-        /// <param name="resourceId">resourceId of resource</param>
+        /// <param name="resourceId">resourceId of resource.</param>
         /// <returns></returns>
         public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
         {

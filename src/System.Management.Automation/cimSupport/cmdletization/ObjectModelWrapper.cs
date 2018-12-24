@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Queries for object instances in the object model.
         /// </summary>
-        /// <param name="query">Query parameters</param>
+        /// <param name="query">Query parameters.</param>
         /// <returns>A lazy evaluated collection of object instances</returns>
         public virtual void ProcessRecord(QueryBuilder query)
         {
@@ -125,9 +125,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Invokes an instance method in the object model.
         /// </summary>
-        /// <param name="objectInstance">The object on which to invoke the method</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/>being operated on</param>
+        /// <param name="objectInstance">The object on which to invoke the method.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
+        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/>being operated on.</param>
         public virtual void ProcessRecord(TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             throw new NotImplementedException();
@@ -136,9 +136,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Combines <see cref="ProcessRecord(QueryBuilder)"/> and <see cref="ProcessRecord(TObjectInstance,Microsoft.PowerShell.Cmdletization.MethodInvocationInfo,bool)"/>.
         /// </summary>
-        /// <param name="query">Query parameters</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
-        /// <param name="passThru"><c>true</c>if successful method invocations should emit downstream the object instance being operated on</param>
+        /// <param name="query">Query parameters.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
+        /// <param name="passThru"><c>true</c>if successful method invocations should emit downstream the object instance being operated on.</param>
         public virtual void ProcessRecord(QueryBuilder query, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             throw new NotImplementedException();
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Invokes a static method in the object model.
         /// </summary>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
         public virtual void ProcessRecord(
             MethodInvocationInfo methodInvocationInfo)
         {

@@ -609,8 +609,8 @@ namespace Microsoft.PowerShell
         /// gets into a broken or closed state, writes a message and pops out the
         /// runspace
         /// </summary>
-        /// <param name="sender">not sure</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">not sure.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleRemoteRunspaceStateChanged(object sender, RunspaceStateEventArgs eventArgs)
         {
             RunspaceState state = eventArgs.RunspaceStateInfo.State;
@@ -2311,8 +2311,8 @@ namespace Microsoft.PowerShell
             /// When a runspace is popped, we need to reevaluate the
             /// prompt
             /// </summary>
-            /// <param name="sender">sender of this event, unused</param>
-            /// <param name="eventArgs">arguments describing this event, unused</param>
+            /// <param name="sender">sender of this event, unused.</param>
+            /// <param name="eventArgs">arguments describing this event, unused.</param>
             private void HandleRunspacePopped(object sender, EventArgs eventArgs)
             {
                 lock (_syncObject)
@@ -2884,7 +2884,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Constructs RunspaceCreationEventArgs
         /// </summary>
-        /// <param name="initialCommand"> </param>
+        /// <param name="initialCommand"> .</param>
         /// <param name="skipProfiles"></param>
         /// <param name="staMode"></param>
         /// <param name="configurationName"></param>

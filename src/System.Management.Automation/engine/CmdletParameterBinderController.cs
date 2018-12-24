@@ -391,8 +391,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Bind the default parameter value pairs
         /// </summary>
-        /// <param name="validParameterSetFlag">validParameterSetFlag</param>
-        /// <param name="defaultParameterValues">default value pairs</param>
+        /// <param name="validParameterSetFlag">validParameterSetFlag.</param>
+        /// <param name="defaultParameterValues">default value pairs.</param>
         /// <returns>
         /// true if there is at least one default parameter bound successfully
         /// false if there is no default parameter bound successfully
@@ -2496,9 +2496,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Preserve potential parameter sets as much as possible
         /// </summary>
-        /// <param name="chosenMandatorySet">The mandatory set we choose to latch on</param>
-        /// <param name="otherMandatorySetsToBeIgnored">Other mandatory parameter sets to be ignored</param>
-        /// <param name="chosenSetContainsNonpipelineableMandatoryParameters">Indicate if the chosen mandatory set contains any non-pipelineable mandatory parameters</param>
+        /// <param name="chosenMandatorySet">The mandatory set we choose to latch on.</param>
+        /// <param name="otherMandatorySetsToBeIgnored">Other mandatory parameter sets to be ignored.</param>
+        /// <param name="chosenSetContainsNonpipelineableMandatoryParameters">Indicate if the chosen mandatory set contains any non-pipelineable mandatory parameters.</param>
         private void PreservePotentialParameterSets(uint chosenMandatorySet, uint otherMandatorySetsToBeIgnored, bool chosenSetContainsNonpipelineableMandatoryParameters)
         {
             // If the chosen set contains nonpipelineable mandatory parameters, then we set it as the only valid parameter set since we will prompt for those mandatory parameters
@@ -2527,7 +2527,7 @@ namespace System.Management.Automation
         /// This method is used only when we try to preserve parameter sets during the mandatory parameter checking.
         /// In cases where this method is used, there must be at least one parameter set declared.
         /// </remarks>
-        /// <param name="otherMandatorySetsToBeIgnored">the mandatory parameter sets to be ignored</param>
+        /// <param name="otherMandatorySetsToBeIgnored">the mandatory parameter sets to be ignored.</param>
         private void IgnoreOtherMandatoryParameterSets(uint otherMandatorySetsToBeIgnored)
         {
             if (otherMandatorySetsToBeIgnored == 0)
@@ -4403,7 +4403,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// Check for the keys' formats and make it versionable
         /// </remarks>
-        /// <param name="dictionary">a hashtable instance</param>
+        /// <param name="dictionary">a hashtable instance.</param>
         public DefaultParameterDictionary(IDictionary dictionary)
             : this()
         {
@@ -4494,8 +4494,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Override the Add to check for key's format and make it versionable
         /// </summary>
-        /// <param name="key">key</param>
-        /// <param name="value">value</param>
+        /// <param name="key">key.</param>
+        /// <param name="value">value.</param>
         public override void Add(object key, object value)
         {
             AddImpl(key, value, isSelfIndexing: false);
@@ -4573,7 +4573,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Override the Remove to make it versionable
         /// </summary>
-        /// <param name="key">key</param>
+        /// <param name="key">key.</param>
         public override void Remove(object key)
         {
             if (key == null)
@@ -4651,10 +4651,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the cmdlet name and the parameter name
         /// </summary>
-        /// <param name="index">point to a non-whitespace character</param>
-        /// <param name="key">the key to iterate over</param>
+        /// <param name="index">point to a non-whitespace character.</param>
+        /// <param name="key">the key to iterate over.</param>
         /// <param name="name"></param>
-        /// <param name="getCmdletName">Specify whether to get the cmdlet name or parameter name</param>
+        /// <param name="getCmdletName">Specify whether to get the cmdlet name or parameter name.</param>
         /// <returns>
         /// For cmdletName:
         /// When the name is enclosed by quotes, the index returned should be the index of the character right after the second quote;
@@ -4720,8 +4720,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Skip whitespace characters
         /// </summary>
-        /// <param name="index">start index</param>
-        /// <param name="key">the string to iterate over</param>
+        /// <param name="index">start index.</param>
+        /// <param name="key">the string to iterate over.</param>
         /// <returns>
         /// Return -1 if we reach the end of the key, otherwise return the index of the first
         /// non-whitespace character we encounter.

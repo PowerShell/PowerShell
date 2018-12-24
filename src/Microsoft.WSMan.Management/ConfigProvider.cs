@@ -5093,7 +5093,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="host">Name of the Host.</param>
         /// <param name="Operation">Type of Operation.</param>
         ///<param name="resources">List of Resources.</param>
-        ///<param name="securities">List of Securities</param>
+        ///<param name="securities">List of Securities.</param>
         ///<param name="initParams">List of initialization parameters.</param>
         /// <returns>An Configuration XML, ready to send to server.</returns>
         private string ConstructPluginXml(PSObject objinputparam, string ResourceURI, string host, string Operation, ArrayList resources, ArrayList securities, ArrayList initParams)
@@ -5224,7 +5224,7 @@ namespace Microsoft.WSMan.Management
         /// Appends the plain text value of a SecureString variable to the StringBuilder.
         /// if the propertyValue provided is not SecureString appends empty string.
         /// </summary>
-        /// <param name="propertyValue">Value to append</param>
+        /// <param name="propertyValue">Value to append.</param>
         private string GetStringFromSecureString(object propertyValue)
         {
             SecureString value = propertyValue as SecureString;

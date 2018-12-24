@@ -843,8 +843,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for HttpResponseException.
         /// </summary>
-        /// <param name="message">Message for the exception</param>
-        /// <param name="response">Response from the HTTP server</param>
+        /// <param name="message">Message for the exception.</param>
+        /// <param name="response">Response from the HTTP server.</param>
         public HttpResponseException(string message, HttpResponseMessage response) : base(message)
         {
             Response = response;
@@ -891,7 +891,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read the supplied WebResponse object and push the resulting output into the pipeline.
         /// </summary>
-        /// <param name="response">Instance of a WebResponse object to be processed</param>
+        /// <param name="response">Instance of a WebResponse object to be processed.</param>
         internal abstract void ProcessResponse(HttpResponseMessage response);
 
         #endregion Abstract Methods
@@ -1633,7 +1633,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A byte array containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
         /// <remarks>
@@ -1656,7 +1656,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A String object containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
         /// <remarks>
@@ -1742,7 +1742,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="contentStream">A Stream object containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
         /// <remarks>
@@ -1765,7 +1765,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
         /// <remarks>

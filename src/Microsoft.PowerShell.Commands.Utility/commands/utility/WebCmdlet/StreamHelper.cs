@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>
-        /// <param name="cmdlet">Owner cmdlet if any</param>
+        /// <param name="cmdlet">Owner cmdlet if any.</param>
         internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet)
             : base(initialCapacity)
         {

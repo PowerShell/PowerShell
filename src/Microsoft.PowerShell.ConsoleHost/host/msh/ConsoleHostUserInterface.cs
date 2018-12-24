@@ -503,7 +503,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Blank out at and move rawui.CursorPosition to <paramref name="cursorPosition"/>
         /// </summary>
-        /// <param name="cursorPosition">Position to blank out</param>
+        /// <param name="cursorPosition">Position to blank out.</param>
         private void BlankAtCursor(Coordinates cursorPosition)
         {
             _rawui.CursorPosition = cursorPosition;
@@ -1717,7 +1717,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Get the character at the cursor when the user types 'tab' in the middle of line.
         /// </summary>
-        /// <param name="cursorPosition">the cursor position where 'tab' is hit</param>
+        /// <param name="cursorPosition">the cursor position where 'tab' is hit.</param>
         /// <returns></returns>
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
@@ -1746,7 +1746,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Strip nulls from a string...
         /// </summary>
-        /// <param name="input">The string to process</param>
+        /// <param name="input">The string to process.</param>
         /// <returns>The string with any \0 characters removed...</returns>
         private string RemoveNulls(string input)
         {

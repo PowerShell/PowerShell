@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the signature from the specified file contents.
         /// </summary>
-        /// <param name="sourcePathOrExtension">The file type associated with the contents</param>
+        /// <param name="sourcePathOrExtension">The file type associated with the contents.</param>
         /// <param name="content">
         /// The contents of the file on which to perform the action.
         /// </param>
@@ -615,7 +615,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get SigningOption value corresponding to a string name
         /// </summary>
-        /// <param name="optionName">name of option</param>
+        /// <param name="optionName">name of option.</param>
         /// <returns> SigningOption </returns>
         private static SigningOption GetSigningOption(string optionName)
         {

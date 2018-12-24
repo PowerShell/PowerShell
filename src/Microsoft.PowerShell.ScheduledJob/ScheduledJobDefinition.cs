@@ -200,10 +200,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="invocationInfo">Information to invoke Job</param>
-        /// <param name="triggers">ScheduledJobTriggers</param>
-        /// <param name="options">ScheduledJobOptions</param>
-        /// <param name="credential">Credential</param>
+        /// <param name="invocationInfo">Information to invoke Job.</param>
+        /// <param name="triggers">ScheduledJobTriggers.</param>
+        /// <param name="options">ScheduledJobOptions.</param>
+        /// <param name="credential">Credential.</param>
         public ScheduledJobDefinition(
             JobInvocationInfo invocationInfo,
             IEnumerable<ScheduledJobTrigger> triggers,
@@ -233,8 +233,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialization constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJobDefinition(
             SerializationInfo info,
@@ -273,8 +273,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialization constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Updates definition file permissions for provided user account.
         /// </summary>
-        /// <param name="user">Account user name</param>
+        /// <param name="user">Account user name.</param>
         private void UpdateFilePermissions(string user)
         {
             Exception ex = null;
@@ -658,7 +658,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Handles known Task Scheduler COM error codes.
         /// </summary>
-        /// <param name="e">COMException</param>
+        /// <param name="e">COMException.</param>
         /// <returns>Error message</returns>
         private string ConvertCOMErrorCode(System.Runtime.InteropServices.COMException e)
         {
@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Renames scheduled job definition, store directory and task scheduler task.
         /// </summary>
-        /// <param name="newName">New name of job definition</param>
+        /// <param name="newName">New name of job definition.</param>
         internal void RenameAndSave(string newName)
         {
             if (InvocationInfo.Name.Equals(newName, StringComparison.OrdinalIgnoreCase))
@@ -1236,8 +1236,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Adds new ScheduledJobTriggers.
         /// </summary>
-        /// <param name="triggers">Collection of ScheduledJobTrigger objects</param>
-        /// <param name="save">Update Windows Task Scheduler and save to store</param>
+        /// <param name="triggers">Collection of ScheduledJobTrigger objects.</param>
+        /// <param name="save">Update Windows Task Scheduler and save to store.</param>
         public void AddTriggers(
             IEnumerable<ScheduledJobTrigger> triggers,
             bool save)
@@ -1272,8 +1272,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Removes triggers matching passed in trigger Ids.
         /// </summary>
-        /// <param name="triggerIds">Trigger Ids to remove</param>
-        /// <param name="save">Update Windows Task Scheduler and save to store</param>
+        /// <param name="triggerIds">Trigger Ids to remove.</param>
+        /// <param name="save">Update Windows Task Scheduler and save to store.</param>
         /// <returns>Trigger Ids not found.</returns>
         public List<Int32> RemoveTriggers(
             IEnumerable<Int32> triggerIds,
@@ -1332,8 +1332,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Updates triggers with provided trigger objects, matching passed in
         /// trigger Id with existing trigger Id.
         /// </summary>
-        /// <param name="triggers">Collection of ScheduledJobTrigger objects to update</param>
-        /// <param name="save">Update Windows Task Scheduler and save to store</param>
+        /// <param name="triggers">Collection of ScheduledJobTrigger objects to update.</param>
+        /// <param name="save">Update Windows Task Scheduler and save to store.</param>
         /// <returns>Trigger Ids not found.</returns>
         public List<Int32> UpdateTriggers(
             IEnumerable<ScheduledJobTrigger> triggers,
@@ -1382,8 +1382,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a new set of ScheduledJobTriggers for this object.
         /// </summary>
-        /// <param name="newTriggers">Array of ScheduledJobTrigger objects to set</param>
-        /// <param name="save">Update Windows Task Scheduler and save to store</param>
+        /// <param name="newTriggers">Array of ScheduledJobTrigger objects to set.</param>
+        /// <param name="save">Update Windows Task Scheduler and save to store.</param>
         public void SetTriggers(
             IEnumerable<ScheduledJobTrigger> newTriggers,
             bool save)
@@ -1424,8 +1424,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// to the passed in trigger Ids.  Also returns an array of trigger Ids
         /// that were not found in an out parameter.
         /// </summary>
-        /// <param name="triggerIds">List of trigger Ids</param>
-        /// <param name="notFoundIds">List of not found trigger Ids</param>
+        /// <param name="triggerIds">List of trigger Ids.</param>
+        /// <param name="notFoundIds">List of not found trigger Ids.</param>
         /// <returns>List of ScheduledJobTrigger objects</returns>
         public List<ScheduledJobTrigger> GetTriggers(
             IEnumerable<Int32> triggerIds,
@@ -1476,7 +1476,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Finds and returns a copy of the ScheduledJobTrigger corresponding to
         /// the passed in trigger Id.
         /// </summary>
-        /// <param name="triggerId">Trigger Id</param>
+        /// <param name="triggerId">Trigger Id.</param>
         /// <returns>ScheduledJobTrigger object</returns>
         public ScheduledJobTrigger GetTrigger(
             Int32 triggerId)
@@ -1498,8 +1498,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Updates scheduled job options.
         /// </summary>
-        /// <param name="options">ScheduledJobOptions or null for default</param>
-        /// <param name="save">Update Windows Task Scheduler and save to store</param>
+        /// <param name="options">ScheduledJobOptions or null for default.</param>
+        /// <param name="save">Update Windows Task Scheduler and save to store.</param>
         public void UpdateOptions(
             ScheduledJobOptions options,
             bool save)
@@ -1524,8 +1524,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Sets the execution history length property.
         /// </summary>
-        /// <param name="executionHistoryLength">execution history length</param>
-        /// <param name="save">Save to store</param>
+        /// <param name="executionHistoryLength">execution history length.</param>
+        /// <param name="save">Save to store.</param>
         public void SetExecutionHistoryLength(
             int executionHistoryLength,
             bool save)
@@ -1554,8 +1554,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Updates the JobInvocationInfo object.
         /// </summary>
-        /// <param name="jobInvocationInfo">JobInvocationInfo</param>
-        /// <param name="save">Save to store</param>
+        /// <param name="jobInvocationInfo">JobInvocationInfo.</param>
+        /// <param name="save">Save to store.</param>
         public void UpdateJobInvocationInfo(
             JobInvocationInfo jobInvocationInfo,
             bool save)
@@ -1579,8 +1579,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Sets the enabled state of this object.
         /// </summary>
-        /// <param name="enabled">True if enabled</param>
-        /// <param name="save">Update Windows Task Scheduler and save to store</param>
+        /// <param name="enabled">True if enabled.</param>
+        /// <param name="save">Update Windows Task Scheduler and save to store.</param>
         public void SetEnabled(
             bool enabled,
             bool save)
@@ -1598,8 +1598,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Sets the name of this scheduled job definition.
         /// </summary>
-        /// <param name="name">Name</param>
-        /// <param name="save">Update Windows Task Scheduler and save to store</param>
+        /// <param name="name">Name.</param>
+        /// <param name="save">Update Windows Task Scheduler and save to store.</param>
         public void SetName(
             string name,
             bool save)
@@ -1721,8 +1721,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Reads a ScheduledJobDefinition object from file and
         /// returns object.
         /// </summary>
-        /// <param name="definitionName">Name of definition to load</param>
-        /// <param name="definitionPath">Path to definition file</param>
+        /// <param name="definitionName">Name of definition to load.</param>
+        /// <param name="definitionPath">Path to definition file.</param>
         /// <returns>ScheduledJobDefinition object</returns>
         internal static ScheduledJobDefinition LoadDefFromStore(
             string definitionName,
@@ -1851,7 +1851,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Internal helper method to remove a scheduled job definition
         /// by name from job store and Task Scheduler.
         /// </summary>
-        /// <param name="definitionName">Scheduled job definition name</param>
+        /// <param name="definitionName">Scheduled job definition name.</param>
         internal static void RemoveDefinition(
             string definitionName)
         {
@@ -2216,7 +2216,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Checks to see if a ScheduledJobDefinition object exists with
         /// the provided definition name.
         /// </summary>
-        /// <param name="jobDefName">Definition name</param>
+        /// <param name="jobDefName">Definition name.</param>
         /// <returns>True if definition exists</returns>
         public bool Contains(string jobDefName)
         {
@@ -2342,8 +2342,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="definition">JobDefinition</param>
-        /// <param name="parameters">Dictionary of parameters</param>
+        /// <param name="definition">JobDefinition.</param>
+        /// <param name="parameters">Dictionary of parameters.</param>
         public ScheduledJobInvocationInfo(JobDefinition definition, Dictionary<string, object> parameters)
             : base(definition, parameters)
         {
@@ -2396,8 +2396,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialization constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         internal ScheduledJobInvocationInfo(
             SerializationInfo info,
             StreamingContext context)
@@ -2413,8 +2413,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialization implementation.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
