@@ -23,7 +23,7 @@ namespace System.Management.Automation
         /// <summary>
         /// calls the base class with message and sets the stack frame
         /// </summary>
-        /// <param name="message">repassed to the base class.</param>
+        /// <param name="message">Repassed to the base class.</param>
         internal AssertException(string message) : base(message)
         {
             // 3 will skip the assertion caller, this method and AssertException.StackTrace

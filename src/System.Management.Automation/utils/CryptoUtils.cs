@@ -341,9 +341,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructor that will be used from within CryptoUtils
         /// </summary>
-        /// <param name="errorCode">error code returned by native
+        /// <param name="errorCode">Error code returned by native
         /// crypto application.</param>
-        /// <param name="message">error message associated with this failure.</param>
+        /// <param name="message">Error message associated with this failure.</param>
         public PSCryptoException(uint errorCode, StringBuilder message)
             : base(message.ToString())
         {
@@ -353,14 +353,14 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructor with just message but no inner exception
         /// </summary>
-        /// <param name="message">error message associated with this failure.</param>
+        /// <param name="message">Error message associated with this failure.</param>
         public PSCryptoException(string message) : this(message, null) { }
 
         /// <summary>
         /// Constructor with inner exception
         /// </summary>
-        /// <param name="message">error message.</param>
-        /// <param name="innerException">inner exception.</param>
+        /// <param name="message">Error message.</param>
+        /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
         /// explicitly from crypto utils</remarks>
         public PSCryptoException(string message, Exception innerException) :
@@ -372,8 +372,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructor which has type specific serialization logic
         /// </summary>
-        /// <param name="info">serialization info.</param>
-        /// <param name="context">context in which this constructor is called.</param>
+        /// <param name="info">Serialization info.</param>
+        /// <param name="context">Context in which this constructor is called.</param>
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
@@ -390,8 +390,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns base implementation
         /// </summary>
-        /// <param name="info">serialization info.</param>
-        /// <param name="context">context.</param>
+        /// <param name="info">Serialization info.</param>
+        /// <param name="context">Context.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
@@ -435,7 +435,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Private constructor
         /// </summary>
-        /// <param name="serverMode">indicates if this service
+        /// <param name="serverMode">Indicates if this service
         /// provider is operating in server mode.</param>
         private PSRSACryptoServiceProvider(bool serverMode)
         {
@@ -567,7 +567,7 @@ namespace System.Management.Automation.Internal
         /// Import a public key into the provider whose context
         /// has been obtained
         /// </summary>
-        /// <param name="publicKey">base64 encoded public key to import.</param>
+        /// <param name="publicKey">Base64 encoded public key to import.</param>
         internal void ImportPublicKeyFromBase64EncodedString(string publicKey)
         {
             Dbg.Assert(!string.IsNullOrEmpty(publicKey), "key cannot be null or empty");
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Internal
         /// Import a session key from the remote side into
         /// the current CSP
         /// </summary>
-        /// <param name="sessionKey">encrypted session key as a
+        /// <param name="sessionKey">Encrypted session key as a
         /// base64 encoded string.</param>
         internal void ImportSessionKeyFromBase64EncodedString(string sessionKey)
         {
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Encrypt the specified byte array
         /// </summary>
-        /// <param name="data">data to encrypt.</param>
+        /// <param name="data">Data to encrypt.</param>
         /// <returns>encrypted byte array</returns>
         internal byte[] EncryptWithSessionKey(byte[] data)
         {
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Decrypt the specified buffer
         /// </summary>
-        /// <param name="data">data to decrypt.</param>
+        /// <param name="data">Data to decrypt.</param>
         /// <returns>decrypted buffer</returns>
         internal byte[] DecryptWithSessionKey(byte[] data)
         {
@@ -828,7 +828,7 @@ namespace System.Management.Automation.Internal
         /// then obtains the last error, wraps it in an exception and
         /// throws the same
         /// </summary>
-        /// <param name="value">value to examine.</param>
+        /// <param name="value">Value to examine.</param>
         private void CheckStatus(bool value)
         {
             if (value)
@@ -1104,7 +1104,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Encrypt a secure string
         /// </summary>
-        /// <param name="secureString">secure string to encrypt.</param>
+        /// <param name="secureString">Secure string to encrypt.</param>
         /// <returns>encrypted string</returns>
         /// <remarks>This method zeroes out all interim buffers used</remarks>
         internal abstract string EncryptSecureString(SecureString secureString);
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation.Internal
         /// Decrypt a string and construct a secure string from its
         /// contents
         /// </summary>
-        /// <param name="encryptedString">encrypted string.</param>
+        /// <param name="encryptedString">Encrypted string.</param>
         /// <returns>secure string object</returns>
         /// <remarks>This method zeroes out any interim buffers used</remarks>
         internal abstract SecureString DecryptSecureString(string encryptedString);
@@ -1224,7 +1224,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Imports a public key from its base64 encoded string representation
         /// </summary>
-        /// <param name="publicKeyAsString">public key in its string representation.</param>
+        /// <param name="publicKeyAsString">Public key in its string representation.</param>
         /// <returns>true on success</returns>
         internal bool ImportRemotePublicKey(string publicKeyAsString)
         {
@@ -1344,7 +1344,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Export the public key as a base64 encoded string
         /// </summary>
-        /// <param name="publicKeyAsString">on execution will contain
+        /// <param name="publicKeyAsString">On execution will contain
         /// the public key as string.</param>
         /// <returns>true on success</returns>
         internal bool ExportLocalPublicKey(out string publicKeyAsString)

@@ -3102,7 +3102,7 @@ namespace Microsoft.PowerShell.Commands
         /// IT resets the a registry key value to its default
         /// </summary>
         /// <param name="key">Key whose value has to be reset.</param>
-        /// <param name="valueName">name of the value to reset.</param>
+        /// <param name="valueName">Name of the value to reset.</param>
         /// <returns>default value the key was set to</returns>
         private object ResetRegistryKeyValue(IRegistryWrapper key, string valueName)
         {
@@ -3207,7 +3207,7 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="path">path to check.</param>
+        /// <param name="path">Path to check.</param>
         /// <returns>false if the operation is not allowed</returns>
         private bool CheckOperationNotAllowedOnHiveContainer(string path)
         {
@@ -3227,8 +3227,8 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="sourcePath">source path to check.</param>
-        /// <param name="destinationPath">destination path to check.</param>
+        /// <param name="sourcePath">Source path to check.</param>
+        /// <param name="destinationPath">Destination path to check.</param>
         private bool CheckOperationNotAllowedOnHiveContainer(string sourcePath, string destinationPath)
         {
             if (IsHiveContainer(sourcePath))
@@ -3881,7 +3881,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// helper to infer the RegistryValueKind from an object
         /// </summary>
-        /// <param name="value">object whose RegistryValueKind has to be determined.</param>
+        /// <param name="value">Object whose RegistryValueKind has to be determined.</param>
         /// <returns>corresponding RegistryValueKind</returns>
         private static RegistryValueKind GetValueKindFromObject(object value)
         {
@@ -3952,8 +3952,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// helper to read back an existing registry key value
         /// </summary>
-        /// <param name="key">key to read the value from.</param>
-        /// <param name="valueName">name of the value to read.</param>
+        /// <param name="key">Key to read the value from.</param>
+        /// <param name="valueName">Name of the value to read.</param>
         /// <returns>value of the key, null if it could not retrieve
         /// it because known exceptions were thrown, else an exception is percolated up
         /// </returns>
@@ -4037,7 +4037,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="type">
         /// The type as specified by the user that should be parsed into a RegistryValueKind enum.
         /// </param>
-        /// <param name="kind">output for the RegistryValueKind for the string.</param>
+        /// <param name="kind">Output for the RegistryValueKind for the string.</param>
         /// <returns>
         /// true if the conversion succeeded
         /// </returns>

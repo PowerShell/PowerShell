@@ -552,7 +552,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts string to base64 encoded string
         /// </summary>
-        /// <param name="input">string to encode.</param>
+        /// <param name="input">String to encode.</param>
         /// <returns>base64 encoded string</returns>
         internal static string StringToBase64String(string input)
         {
@@ -573,7 +573,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Decodes base64 encoded string
         /// </summary>
-        /// <param name="base64">base64 string to decode.</param>
+        /// <param name="base64">Base64 string to decode.</param>
         /// <returns>decoded string</returns>
         internal static string Base64ToString(string base64)
         {
