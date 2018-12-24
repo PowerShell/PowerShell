@@ -83,8 +83,10 @@ namespace System.Management.Automation
         public List<string> Tags
         {
             get { return _tags ?? (_tags = new List<string>()); }
+
             internal set { _tags = value; }
         }
+
         private List<string> _tags;
 
         /// <summary>
@@ -104,10 +106,13 @@ namespace System.Management.Automation
                     this._user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 #endif
                 }
+
                 return _user;
             }
+
             set { _user = value; }
         }
+
         private string _user;
 
         /// <summary>
@@ -117,8 +122,10 @@ namespace System.Management.Automation
         public string Computer
         {
             get { return this._computerName ?? (this._computerName = PsUtils.GetHostName()); }
+
             set { this._computerName = value; }
         }
+
         private string _computerName;
 
         /// <summary>
@@ -133,10 +140,13 @@ namespace System.Management.Automation
                 {
                     this._processId = (uint) System.Diagnostics.Process.GetCurrentProcess().Id;
                 }
+
                 return this._processId.Value;
             }
+
             set { _processId = value; }
         }
+
         private uint? _processId;
 
         /// <summary>

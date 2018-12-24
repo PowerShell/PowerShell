@@ -334,6 +334,7 @@ namespace Microsoft.PowerShell.Commands
                     ((IDisposable)reader).Dispose();
                 }
             }
+
             return String.Empty;
         }
 
@@ -371,6 +372,7 @@ namespace Microsoft.PowerShell.Commands
                         s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
                 }
             }
+
             return providerInfo;
         }
 
@@ -706,6 +708,7 @@ namespace Microsoft.PowerShell.Commands
                     uncBuffer = new StringBuilder(bufferSize);
                     errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
                 }
+
                 if (errorCode != 0)
                 {
                     throw new System.ComponentModel.Win32Exception(errorCode);
@@ -948,6 +951,7 @@ namespace Microsoft.PowerShell.Commands
                                 break;
                             }
                         }
+
                         if (skipDuplicate)
                             continue;
 
@@ -995,6 +999,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return results;
         }
 
@@ -1234,6 +1239,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
             }
+
             if (switchEvaluator != null)
             {
                 switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
@@ -1268,6 +1274,7 @@ namespace Microsoft.PowerShell.Commands
                     return new DirectoryInfo(path);
                 }
             }
+
             return null;
         }
 
@@ -1513,6 +1520,7 @@ namespace Microsoft.PowerShell.Commands
                         attributeFilter = evaluator.Evaluate(fsinfo.Attributes);  // expressions
                         filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                     }
+
                     if (switchEvaluator != null)
                     {
                         switchAttributeFilter = switchEvaluator.Evaluate(fsinfo.Attributes);  // switch parameters
@@ -1639,6 +1647,7 @@ namespace Microsoft.PowerShell.Commands
                                 attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);
                                 filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                             }
+
                             if (switchEvaluator != null)
                             {
                                 switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);
@@ -1696,6 +1705,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     isFilterHiddenSpecified = evaluator.ExistsInExpression(FileAttributes.Hidden);
                 }
+
                 if (switchEvaluator != null)
                 {
                     isSwitchFilterHiddenSpecified = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
@@ -1786,18 +1796,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 sb.Append("+Directory");
             }
+
             if (((GetChildDynamicParameters)DynamicParameters).File)
             {
                 sb.Append("+!Directory");
             }
+
             if (((GetChildDynamicParameters)DynamicParameters).System)
             {
                 sb.Append("+System");
             }
+
             if (((GetChildDynamicParameters)DynamicParameters).ReadOnly)
             {
                 sb.Append("+ReadOnly");
             }
+
             if (((GetChildDynamicParameters)DynamicParameters).Hidden)
             {
                 sb.Append("+Hidden");
@@ -2608,6 +2622,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         break;
                     }
+
                     previousParent = parentPath;
                 } while (!String.IsNullOrEmpty(previousParent));
 
@@ -2617,6 +2632,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     CreateDirectory(directoryPath, false);
                 }
+
                 result = true;
             }
             catch (ArgumentException argException)
@@ -2732,6 +2748,7 @@ namespace Microsoft.PowerShell.Commands
                             foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(fsinfo.FullName))
                             {
                                 if (!p.IsMatch(stream.Stream)) { continue; }
+
                                 foundStream = true;
 
                                 string action = String.Format(
@@ -3096,6 +3113,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(error);
             }
+
             return result;
         }
 
@@ -3146,6 +3164,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
                     }
+
                     if (itemExistsDynamicParameters.NewerThan.HasValue)
                     {
                         result = lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
@@ -3959,6 +3978,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     destinationFile.LastWriteTimeUtc = (DateTime)metadata["LastWriteTimeUtc"];
                 }
+
                 if (metadata["LastWriteTime"] != null)
                 {
                     destinationFile.LastWriteTime = (DateTime)metadata["LastWriteTime"];
@@ -4079,6 +4099,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         destinationFile.Attributes = destinationFile.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System);
                     }
+
                     wStream = new FileStream(destinationFile.FullName, FileMode.Create);
                 }
 
@@ -4142,6 +4163,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         content = (string)op["b64Fragment"];
                     }
+
                     bool more = (bool)op["moreAvailable"];
                     currentIndex += fragmentSize;
                     byte[] bytes = System.Convert.FromBase64String(content);
@@ -4205,6 +4227,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return success;
         }
 
@@ -4270,10 +4293,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     isDirectoryInfo = (bool)op["IsDirectoryInfo"];
                 }
+
                 if (op["IsFileInfo"] != null)
                 {
                     isFileInfo = (bool)op["IsFileInfo"];
                 }
+
                 if (op["ParentIsDirectoryInfo"] != null)
                 {
                     parentIsDirectoryInfo = (bool)op["ParentIsDirectoryInfo"];
@@ -4370,6 +4395,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         toRead = (int)remainingFileSize;
                     }
+
                     if (fragment == null)
                     {
                         fragment = new byte[toRead];
@@ -4384,6 +4410,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         readSoFar += fStream.Read(fragment, 0, toRead);
                     }
+
                     remainingFileSize -= readSoFar;
 
                     string b64Fragment = System.Convert.ToBase64String(fragment);
@@ -4473,6 +4500,7 @@ namespace Microsoft.PowerShell.Commands
                     fStream.Dispose();
                 }
             }
+
             return success;
         }
 
@@ -4592,6 +4620,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(e, "FailedToCreateDirectory", ErrorCategory.WriteError, destination));
                 return null;
             }
+
             string path = (string)(op["DirectoryPath"]);
 
             if ((!force) && (bool)op["PathExists"])
@@ -4716,11 +4745,13 @@ namespace Microsoft.PowerShell.Commands
                         {
                             break;
                         }
+
                         --lastIndex;
                         if (lastIndex < 3)
                         {
                             break;
                         }
+
                         ++separatorsFound;
                     } while (lastIndex > 3);
 
@@ -4730,6 +4761,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 
@@ -5237,8 +5269,10 @@ namespace Microsoft.PowerShell.Commands
                         s_tracer.WriteLine("tokenizedPathStack.Push({0})", tempPath);
                         tokenizedPathStack.Push(tempPath);
                     }
+
                     break;
                 }
+
                 previousParent = tempPath;
             }
 
@@ -5334,6 +5368,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 s_tracer.WriteLine("normalizedPathStack.Push({0})", childName);
                 normalizedPathStack.Push(childName);
             }
@@ -5371,6 +5406,7 @@ namespace Microsoft.PowerShell.Commands
                     leafElement = MakePath(parentElement, leafElement);
                 }
             }
+
             return leafElement;
         }
 
@@ -5913,6 +5949,7 @@ namespace Microsoft.PowerShell.Commands
                                         {
                                             result = new PSObject();
                                         }
+
                                         result.Properties.Add(new PSNoteProperty(property, value));
                                     }
                                     else
@@ -6936,6 +6973,7 @@ namespace Microsoft.PowerShell.Commands
                         return true;
                     }
                 }
+
                 return false;
             }
 #else
@@ -7072,6 +7110,7 @@ namespace Microsoft.PowerShell.Commands
         {
             return Invoke(ps, fileSystemContext, cmdletContext, true);
         }
+
         public static Hashtable Invoke(System.Management.Automation.PowerShell ps, FileSystemProvider fileSystemContext, CmdletProviderContext cmdletContext, bool shouldHaveOutput)
         {
             bool useFileSystemProviderContext = (cmdletContext == null);
@@ -7098,6 +7137,7 @@ namespace Microsoft.PowerShell.Commands
                     cmdletContext.WriteError(new ErrorRecord(e, "CopyFileRemoteExecutionError", ErrorCategory.InvalidOperation, ps));
                     ps.Commands.Clear();
                 }
+
                 return null;
             }
 
@@ -7126,6 +7166,7 @@ namespace Microsoft.PowerShell.Commands
                     Dbg.Diagnostics.Assert(output[0] != null, "Expected an output from the remote call.");
                     return null;
                 }
+
                 return (Hashtable)output[0];
             }
 
@@ -7173,8 +7214,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Directory
         {
             get { return _attributeDirectory; }
+
             set { _attributeDirectory = value; }
         }
+
         private bool _attributeDirectory;
 
         /// <summary>
@@ -7185,8 +7228,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter File
         {
             get { return _attributeFile; }
+
             set { _attributeFile = value; }
         }
+
         private bool _attributeFile;
 
         /// <summary>
@@ -7197,8 +7242,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Hidden
         {
             get { return _attributeHidden; }
+
             set { _attributeHidden = value; }
         }
+
         private bool _attributeHidden;
 
         /// <summary>
@@ -7209,8 +7256,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter ReadOnly
         {
             get { return _attributeReadOnly; }
+
             set { _attributeReadOnly = value; }
         }
+
         private bool _attributeReadOnly;
 
         /// <summary>
@@ -7221,8 +7270,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter System
         {
             get { return _attributeSystem; }
+
             set { _attributeSystem = value; }
         }
+
         private bool _attributeSystem;
     }
 
@@ -7245,6 +7296,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _encoding;
             }
+
             set
             {
                 _encoding = value;
@@ -7252,6 +7304,7 @@ namespace Microsoft.PowerShell.Commands
                 WasStreamTypeSpecified = true;
             }
         }
+
         private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
@@ -7306,6 +7359,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _suppressNewline;
             }
+
             set
             {
                 _suppressNewline = value;
@@ -7338,6 +7392,7 @@ namespace Microsoft.PowerShell.Commands
                 _delimiter = value;
             }
         }
+
         private string _delimiter = "\n";
 
         /// <summary>
@@ -7358,6 +7413,7 @@ namespace Microsoft.PowerShell.Commands
                 _wait = value;
             }
         }
+
         private bool _wait;
 
         /// <summary>
@@ -7371,11 +7427,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _isRaw;
             }
+
             set
             {
                 _isRaw = value;
             }
         }
+
         private bool _isRaw;
 
         /// <summary>
@@ -8296,6 +8354,7 @@ namespace System.Management.Automation.Internal
             {
                 adjustedStreamName = ":" + adjustedStreamName;
             }
+
             string resultPath = path + adjustedStreamName;
 
             File.Delete(resultPath);
@@ -8397,6 +8456,7 @@ namespace System.Management.Automation.Internal
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
             [Parameter(ParameterSetName=""PSCopyAlternateStreamToRemoteSession"")]
             {0}
+
             [string] $copyToFilePath,
 
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"", Mandatory=$false)]
@@ -8416,10 +8476,12 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSTargetSupportsAlternateStreams"", Mandatory=$true)]
             {0}
+
             [string] $supportAltStreamPath,
 
             [Parameter(ParameterSetName=""PSSetFileMetadata"", Mandatory=$true)]
             {0}
+
             [string] $metaDataFilePath,
 
             [Parameter(ParameterSetName=""PSSetFileMetadata"", Mandatory=$true)]
@@ -8428,14 +8490,17 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSRemoteDestinationPathIsFile"", Mandatory=$true)]
             {0}
+
             [string] $isFilePath,
 
             [Parameter(ParameterSetName=""PSGetRemotePathInfo"", Mandatory=$true)]
             {0}
+
             [string] $remotePath,
 
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"", Mandatory=$true)]
             {0}
+
             [string] $createDirectoryPath,
 
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"")]
@@ -8458,6 +8523,7 @@ namespace System.Management.Automation.Internal
                 Microsoft.PowerShell.Management\Get-ChildItem -LiteralPath ($resolvedPath.Drive.Name + "":"") -Recurse | ForEach-Object {{
                     Microsoft.PowerShell.Management\Get-Item -LiteralPath $_.FullName -Stream * | ForEach-Object {{ $dirSize += $_.Length }}
                 }}
+
                 if (($dirSize + $fragmentLength) -gt $maxUserSize)
                 {{
                     $msg = ""{1}"" -f $maxUserSize
@@ -8641,6 +8707,7 @@ namespace System.Management.Automation.Internal
                 {{
                     $item.LastWriteTimeUtc = $metaDataToSet['LastWriteTimeUtc']
                 }}
+
                 if ($metaDataToSet['LastWriteTime'])
                 {{
                     $item.LastWriteTime = $metaDataToSet['LastWriteTime']
@@ -8853,6 +8920,7 @@ namespace System.Management.Automation.Internal
         param (
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
             {0}
+
             [string] $copyFromFilePath,
 
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
@@ -8875,18 +8943,22 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSSourceSupportsAlternateStreams"", Mandatory=$true)]
             {0}
+
             [string] $supportAltStreamPath,
 
             [Parameter(ParameterSetName=""PSGetFileMetadata"", Mandatory=$true)]
             {0}
+
             [string] $getMetaFilePath,
 
             [Parameter(ParameterSetName=""PSGetPathItems"", Mandatory=$true)]
             {0}
+
             [string] $getPathItems,
 
             [Parameter(ParameterSetName=""PSGetPathDirAndFiles"", Mandatory=$true)]
             {0}
+
             [string] $getPathDir
         )
 
@@ -8962,6 +9034,7 @@ namespace System.Management.Automation.Internal
                             $op['moreAvailable'] = $true
                         }}
                     }}
+
                     $op
                 }}
                 finally
@@ -9046,6 +9119,7 @@ namespace System.Management.Automation.Internal
                         {{
                             WriteException $e
                         }}
+
                         $finalResult.ExceptionThrown = $true
                     }}
                 }}
@@ -9335,10 +9409,12 @@ namespace System.Management.Automation.Internal
         param (
             [Parameter(ParameterSetName=""PSRemoteDirectoryExist"", Mandatory=$true)]
             {0}
+
             [string] $dirPathExists,
 
             [Parameter(ParameterSetName=""PSValidatePath"", Mandatory=$true)]
             {0}
+
             [string] $pathToValidate,
 
             [Parameter(ParameterSetName=""PSValidatePath"")]
@@ -9355,6 +9431,7 @@ namespace System.Management.Automation.Internal
             )
 
             $result = @{{ Exists = (Microsoft.PowerShell.Management\Test-Path $dirPathExists -PathType Container) }}
+
             return $result
         }}
 

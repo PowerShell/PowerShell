@@ -43,8 +43,10 @@ namespace Microsoft.PowerShell.Commands
         public string Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
+
         private string _path;
 
         /// <summary>
@@ -258,6 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.ModuleBeingProcessed = _origModuleBeingProcessed;
                 }
+
                 DirectoryInfo parent = null;
                 try
                 {
@@ -324,6 +327,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath", ErrorCategory.InvalidArgument, path);
                     ThrowTerminatingError(er);
                 }
+
                 path = pathInfos[0].Path;
 
                 // First, we validate if the path does exist.
@@ -367,6 +371,7 @@ namespace Microsoft.PowerShell.Commands
                 assemblyFile = assemblyName + StringLiterals.PowerShellILAssemblyExtension;
                 ngenAssemblyFile = assemblyName + StringLiterals.PowerShellNgenAssemblyExtension;
             }
+
             try
             {
                 var allFiles = Directory.GetFiles(gacPath, assemblyFile, SearchOption.AllDirectories);

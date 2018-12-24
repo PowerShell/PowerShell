@@ -58,12 +58,14 @@ namespace Microsoft.PowerShell.Commands
         public TextDataFormat TextFormatType
         {
             get { return _textFormat; }
+
             set
             {
                 _isTextFormatTypeSet = true;
                 _textFormat = value;
             }
         }
+
         private TextDataFormat _textFormat = TextDataFormat.UnicodeText;
         private bool _isTextFormatTypeSet = false;
 
@@ -74,12 +76,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Raw
         {
             get { return _raw; }
+
             set
             {
                 _isRawSet = true;
                 _raw = value;
             }
         }
+
         private bool _raw;
         private bool _isRawSet = false;
 
@@ -140,6 +144,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
+
             List<string> result = new List<string>();
 
             // TextFormat default value is Text, by default it is same as Clipboard.GetText()
@@ -153,6 +158,7 @@ namespace Microsoft.PowerShell.Commands
                 string[] splitSymbol = { Environment.NewLine };
                 result.AddRange(textContent.Split(splitSymbol, StringSplitOptions.None));
             }
+
             return result;
         }
 
@@ -166,12 +172,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
+
             List<PSObject> result = new List<PSObject>();
             foreach (string filePath in Clipboard.GetFileDropList())
             {
                 FileInfo file = new FileInfo(filePath);
                 result.Add(WrapOutputInPSObject(file, filePath));
             }
+
             return result;
         }
 
@@ -199,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
                 string childName = item.Name;
                 result.AddOrSetProperty("PSChildName", childName);
             }
+
             return result;
         }
     }

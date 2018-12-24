@@ -304,6 +304,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     throw new PipelineStoppedException();
                                 }
+
                                 if (enumerationLimit >= 0)
                                 {
                                     if (enumCount == enumerationLimit)
@@ -311,6 +312,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         sb.Append(Ellipsis);
                                         break;
                                     }
+
                                     enumCount++;
                                 }
 
@@ -318,6 +320,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     sb.Append(", ");
                                 }
+
                                 sb.Append(GetObjectName(be.Current, expressionFactory));
                                 if (first)
                                     first = false;
@@ -331,6 +334,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     throw new PipelineStoppedException();
                                 }
+
                                 if (enumerationLimit >= 0)
                                 {
                                     if (enumCount == enumerationLimit)
@@ -338,6 +342,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         sb.Append(Ellipsis);
                                         break;
                                     }
+
                                     enumCount++;
                                 }
 
@@ -345,12 +350,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     sb.Append(", ");
                                 }
+
                                 sb.Append(GetObjectName(x, expressionFactory));
                                 if (first)
                                     first = false;
                             }
                         }
                     }
+
                     sb.Append("}");
                     return sb.ToString();
                 }
@@ -367,6 +374,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatErrorObject.sourceObject = so;
                     formatErrorObject.exception = e;
                 }
+
                 return string.Empty;
             }
         }
@@ -466,6 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             retVal.Add(new PSPropertyExpression(prop));
                         }
                     }
+
                     return retVal;
                 }
             }
@@ -553,6 +562,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return string.Empty;
             }
+
             return PSObjectHelper.FormatField(directive, result.Result, enumerationLimit, formatErrorObject, expressionFactory);
         }
 

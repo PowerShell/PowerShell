@@ -32,6 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return context;
             }
         }
+
         protected object context;
     }
 
@@ -54,6 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return result;
             }
         }
+
         private CimSubscriptionResult result;
 
         /// <summary>
@@ -87,6 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return exception;
             }
         }
+
         private Exception exception;
 
         /// <summary>
@@ -169,6 +172,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 throw new ArgumentNullException(String.Format(CultureInfo.CurrentUICulture, Strings.NullArgument, @"cimSession"));
             }
+
             this.TargetComputerName = cimSession.ComputerName;
             CimSessionProxy proxy = CreateSessionProxy(cimSession, operationTimeout);
             proxy.SubscribeAsync(nameSpace, queryDialect, queryExpression);
@@ -224,6 +228,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     this.ackedEvent.Set();
                     return;
                 }
+
                 EventHandler<CimSubscriptionEventArgs> temp = this.OnNewSubscriptionResult;
                 if (temp != null)
                 {
@@ -231,6 +236,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                     temp(this, new CimSubscriptionExceptionEventArgs(this.exception));
                 }
+
                 DebugHelper.WriteLog("Got an exception: {0}", 2, exception);
             }
 
@@ -290,6 +296,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     throw this.exception;
                 }
             }
+
             DebugHelper.WriteLogEx("ACK happened", 0);
         }
         #endregion
@@ -364,6 +371,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return exception;
             }
         }
+
         private Exception exception;
 
         #endregion

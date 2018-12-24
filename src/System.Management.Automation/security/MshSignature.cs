@@ -347,6 +347,7 @@ namespace System.Management.Automation
                     {
                         resourceString = MshSignature.MshSignature_Incompatible;
                     }
+
                     arg = filePath;
                     break;
 
@@ -374,6 +375,7 @@ namespace System.Management.Automation
                         resourceString = MshSignature.MshSignature_NotSupportedFileFormat_NoExtension;
                         arg = null;
                     }
+
                     break;
             }
 

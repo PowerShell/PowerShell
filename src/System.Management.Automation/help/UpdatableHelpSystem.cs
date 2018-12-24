@@ -647,6 +647,7 @@ namespace System.Management.Automation.Help
                         ErrorCategory.InvalidData, null, e);
                 }
             }
+
             return document;
         }
 
@@ -823,9 +824,11 @@ namespace System.Management.Automation.Help
                             }
                         }
                     }
+
                     SendProgressEvents(commandType);
                 }
             }
+
             return (Errors.Count == 0);
         }
 

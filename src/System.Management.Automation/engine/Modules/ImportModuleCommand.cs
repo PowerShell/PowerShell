@@ -57,6 +57,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Global
         {
             set { base.BaseGlobal = value; }
+
             get { return base.BaseGlobal; }
         }
 
@@ -68,6 +69,7 @@ namespace Microsoft.PowerShell.Commands
         public string Prefix
         {
             set { BasePrefix = value; }
+
             get { return BasePrefix; }
         }
 
@@ -119,8 +121,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseFunctionPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _functionImportList; }
         }
+
         private string[] _functionImportList = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -145,8 +149,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseCmdletPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _cmdletImportList; }
         }
+
         private string[] _cmdletImportList = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -170,8 +176,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseVariablePatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _variableExportList; }
         }
+
         private string[] _variableExportList;
 
         /// <summary>
@@ -196,8 +204,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseAliasPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _aliasExportList; }
         }
+
         private string[] _aliasExportList;
 
         /// <summary>
@@ -207,6 +217,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return (SwitchParameter)BaseForce; }
+
             set { BaseForce = value; }
         }
 
@@ -217,6 +228,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SkipEditionCheck
         {
             get { return (SwitchParameter)BaseSkipEditionCheck; }
+
             set { BaseSkipEditionCheck = value; }
         }
 
@@ -227,6 +239,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             get { return (SwitchParameter)BasePassThru; }
+
             set { BasePassThru = value; }
         }
 
@@ -237,6 +250,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsCustomObject
         {
             get { return (SwitchParameter)BaseAsCustomObject; }
+
             set { BaseAsCustomObject = value; }
         }
 
@@ -250,6 +264,7 @@ namespace Microsoft.PowerShell.Commands
         public Version MinimumVersion
         {
             get { return BaseMinimumVersion; }
+
             set { BaseMinimumVersion = value; }
         }
 
@@ -268,6 +283,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                     return BaseMaximumVersion.ToString();
             }
+
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -290,6 +306,7 @@ namespace Microsoft.PowerShell.Commands
         public Version RequiredVersion
         {
             get { return BaseRequiredVersion; }
+
             set { BaseRequiredVersion = value; }
         }
 
@@ -310,6 +327,7 @@ namespace Microsoft.PowerShell.Commands
         public object[] ArgumentList
         {
             get { return BaseArgumentList; }
+
             set { BaseArgumentList = value; }
         }
 
@@ -321,6 +339,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter DisableNameChecking
         {
             get { return BaseDisableNameChecking; }
+
             set { BaseDisableNameChecking = value; }
         }
 
@@ -338,12 +357,14 @@ namespace Microsoft.PowerShell.Commands
         public string Scope
         {
             get { return _scope; }
+
             set
             {
                 _scope = value;
                 _isScopeSpecified = true;
             }
         }
+
         private string _scope = string.Empty;
         private bool _isScopeSpecified = false;
 
@@ -500,6 +521,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 WriteObject(pair.Value);
                             }
+
                             break;
                         }
                         else
@@ -515,6 +537,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteObject(pair.Value);
                         }
+
                         break;
                     }
                 }
@@ -614,6 +637,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 WriteObject(module);
                             }
+
                             found = true;
                             foundModule = module;
                         }
@@ -739,6 +763,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         message = StringUtil.Format(Modules.MaximumVersionNotFound, name, BaseMaximumVersion);
                     }
+
                     if (BaseRequiredVersion != null || BaseMinimumVersion != null || BaseMaximumVersion != null)
                     {
                         FileNotFoundException fnf = new FileNotFoundException(message);
@@ -752,6 +777,7 @@ namespace Microsoft.PowerShell.Commands
                         er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
                                              ErrorCategory.ResourceUnavailable, name);
                     }
+
                     WriteError(er);
                 }
 
@@ -829,19 +855,23 @@ namespace Microsoft.PowerShell.Commands
                     {
                         powerShell.AddParameter("Version", this.MinimumVersion);
                     }
+
                     if (this.RequiredVersion != null)
                     {
                         powerShell.AddParameter("RequiredVersion", this.RequiredVersion);
                     }
+
                     if (this.MaximumVersion != null)
                     {
                         powerShell.AddParameter("MaximumVersion", this.MaximumVersion);
                     }
                 }
+
                 if (this.ArgumentList != null)
                 {
                     powerShell.AddParameter("ArgumentList", this.ArgumentList);
                 }
+
                 if (this.BaseForce)
                 {
                     powerShell.AddParameter("Force", true);
@@ -984,6 +1014,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     File.Delete(localPsd1File);
                 }
+
                 File.Move(
                     sourceFileName: Path.Combine(temporaryModulePath, Path.GetFileName(temporaryModulePath) + ".psd1"),
                     destFileName: localPsd1File);
@@ -1027,6 +1058,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Directory.Delete(temporaryModulePath, recursive: true);
                     }
+
                     return null;
                 }
 
@@ -1056,6 +1088,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Directory.Delete(temporaryModulePath, recursive: true);
                 }
+
                 throw;
             }
         }
@@ -1092,6 +1125,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             Hashtable manifestData = RemoteDiscoveryHelper.ConvertCimModuleFileToManifestHashtable(
                     mainManifestFile,
                     temporaryModuleManifestPath,
@@ -1245,6 +1279,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 goodEntries = new List<string>();
             }
+
             if (goodEntries == null)
             {
                 goodEntries = new List<string>();
@@ -1255,6 +1290,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 badEntries = new List<string>();
             }
+
             if (badEntries == null)
             {
                 badEntries = new List<string>();
@@ -1393,6 +1429,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return null;
                     }
+
                     localizedData = data;
                 }
 
@@ -1406,6 +1443,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleVersion = null;
                 }
+
                 temporaryModuleDirectory = RemoteDiscoveryHelper.GetModulePath(
                     remoteCimModule.ModuleName,
                     moduleVersion,
@@ -1421,6 +1459,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return alreadyImportedModule;
                 }
+
                 try
                 {
                     Directory.CreateDirectory(temporaryModuleDirectory);
@@ -1468,6 +1507,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return null;
                     }
+
                     foreach (PSModuleInfo nestedModule in moduleInfo.NestedModules)
                     {
                         Type cmdletAdapter;
@@ -1491,6 +1531,7 @@ namespace Microsoft.PowerShell.Commands
                             this.ThrowTerminatingError(errorRecord);
                         }
                     }
+
                     if (IsMixedModePsCimModule(remoteCimModule))
                     {
                         // warn that some commands have not been imported
@@ -1561,6 +1602,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Directory.Delete(temporaryModuleDirectory, recursive: true);
                     }
+
                     throw;
                 }
                 finally
@@ -1656,6 +1698,7 @@ namespace Microsoft.PowerShell.Commands
                                                  ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
+
             if (!string.IsNullOrEmpty(Scope) && Scope.Equals(StringLiterals.Global, StringComparison.OrdinalIgnoreCase))
             {
                 base.BaseGlobal = true;
@@ -1684,6 +1727,7 @@ namespace Microsoft.PowerShell.Commands
                 string message = StringUtil.Format(Modules.MinimumVersionAndMaximumVersionInvalidRange, BaseMinimumVersion, BaseMaximumVersion);
                 throw new PSArgumentOutOfRangeException(message);
             }
+
             ImportModuleOptions importModuleOptions = new ImportModuleOptions();
             importModuleOptions.NoClobber = NoClobber;
             if (!string.IsNullOrEmpty(Scope) && Scope.Equals(StringLiterals.Local, StringComparison.OrdinalIgnoreCase))

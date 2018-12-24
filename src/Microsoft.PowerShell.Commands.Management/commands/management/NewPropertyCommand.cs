@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Force;
             }
+
             set
             {
                 base.Force = value;
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.NewPropertyDynamicParameters(Path[0], Name, PropertyType, Value, context);
             }
+
             return InvokeProvider.Property.NewPropertyDynamicParameters(".", Name, PropertyType, Value, context);
         }
 

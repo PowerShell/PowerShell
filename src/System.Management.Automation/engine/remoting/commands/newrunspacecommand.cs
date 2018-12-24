@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         public override PSCredential Credential
         {
             get { return base.Credential; }
+
             set
             {
                 base.Credential = value;
@@ -112,11 +113,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _remoteRunspaceInfos;
             }
+
             set
             {
                 _remoteRunspaceInfos = value;
             }
         }
+
         private PSSession[] _remoteRunspaceInfos;
 
         /// <summary>
@@ -207,18 +210,21 @@ namespace Microsoft.PowerShell.Commands
                     {
                         remoteRunspaces = CreateRunspacesWhenRunspaceParameterSpecified();
                     }
+
                     break;
 
                 case "Uri":
                     {
                         remoteRunspaces = CreateRunspacesWhenUriParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.ComputerNameParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesWhenComputerNameParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.VMIdParameterSet:
@@ -226,24 +232,28 @@ namespace Microsoft.PowerShell.Commands
                     {
                         remoteRunspaces = CreateRunspacesWhenVMParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.ContainerIdParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesWhenContainerParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.SSHHostParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesForSSHHostParameterSet();
                     }
+
                     break;
 
                 case NewPSSessionCommand.SSHHostHashParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesForSSHHostHashParameterSet();
                     }
+
                     break;
 
                 default:
@@ -251,6 +261,7 @@ namespace Microsoft.PowerShell.Commands
                         Dbg.Assert(false, "Missing parameter set in switch statement");
                         remoteRunspaces = new List<RemoteRunspace>(); // added to avoid prefast warning
                     }
+
                     break;
             }
 
@@ -436,6 +447,7 @@ namespace Microsoft.PowerShell.Commands
                             writer.Write(outputWriter);
                         }
                     }
+
                     break;
 
                 case RunspaceState.Broken:
@@ -516,6 +528,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             errorDetails += System.Environment.NewLine + String.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
                         }
+
                         ErrorRecord errorRecord = new ErrorRecord(reason,
                              remoteRunspace, fullyQualifiedErrorId,
                                    ErrorCategory.OpenError, null, null,
@@ -549,6 +562,7 @@ namespace Microsoft.PowerShell.Commands
 
                         _toDispose.Add(remoteRunspace);
                     }
+
                     break;
 
                 case RunspaceState.Closed:
@@ -591,6 +605,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     break;
             }
         }
@@ -804,6 +819,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 
@@ -1281,6 +1297,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _startComplete = false;
             }
+
             OperatedRunspace.OpenAsync();
         }
 
@@ -1334,6 +1351,7 @@ namespace Microsoft.PowerShell.Commands
                     _internalCallbacks.Add(value);
                 }
             }
+
             remove
             {
                 lock (_internalCallbacks)
@@ -1413,6 +1431,7 @@ namespace Microsoft.PowerShell.Commands
                 copyCallbacks = new EventHandler<OperationStateEventArgs>[_internalCallbacks.Count];
                 _internalCallbacks.CopyTo(copyCallbacks);
             }
+
             foreach (var callbackDelegate in copyCallbacks)
             {
                 // Ensure all callbacks get called to prevent ThrottleManager from not responding.

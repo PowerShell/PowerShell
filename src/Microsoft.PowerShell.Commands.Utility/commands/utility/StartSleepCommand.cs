@@ -29,6 +29,7 @@ namespace Microsoft.PowerShell.Commands
                     _waitHandle.Dispose();
                     _waitHandle = null;
                 }
+
                 _disposed = true;
             }
         }
@@ -79,6 +80,7 @@ namespace Microsoft.PowerShell.Commands
                     _waitHandle = new ManualResetEvent(false);
                 }
             }
+
             if (_waitHandle != null)
             {
                 _waitHandle.WaitOne(milliSecondsToSleep, true);

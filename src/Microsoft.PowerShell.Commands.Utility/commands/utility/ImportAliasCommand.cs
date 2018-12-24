@@ -73,6 +73,7 @@ namespace Microsoft.PowerShell.Commands
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         /// <summary>
@@ -92,6 +93,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         #endregion Parameters
@@ -250,6 +252,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 return _existingCommands;
             }
         }
@@ -373,8 +376,10 @@ namespace Microsoft.PowerShell.Commands
 
                     result.Add(newAlias);
                 }
+
                 reader.Dispose();
             }
+
             return result;
         }
 
@@ -469,6 +474,7 @@ namespace Microsoft.PowerShell.Commands
                 result = false;
                 break;
             }
+
             return result;
         }
         #endregion Command code

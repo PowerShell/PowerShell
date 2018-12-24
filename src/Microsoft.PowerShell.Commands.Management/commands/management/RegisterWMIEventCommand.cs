@@ -67,6 +67,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _timeOut;
             }
+
             set
             {
                 _timeOut = value;
@@ -85,6 +86,7 @@ namespace Microsoft.PowerShell.Commands
             returnValue.Append(objectName);
             return returnValue.ToString();
         }
+
         private string GetScopeString(string computer, string namespaceParameter)
         {
             StringBuilder returnValue = new StringBuilder("\\\\");
@@ -140,6 +142,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     conOptions.Username = cred.Domain + "\\" + cred.UserName;
                 }
+
                 conOptions.Password = cred.Password;
             }
 

@@ -43,25 +43,30 @@ namespace System.Management.Automation
         {
             return (c == enDash || c == emDash || c == horizontalBar || c == '-');
         }
+
         public static bool IsSingleQuote(char c)
         {
             return (c == quoteSingleLeft || c == quoteSingleRight || c == quoteSingleBase ||
                 c == quoteReversed || c == '\'');
         }
+
         public static bool IsDoubleQuote(char c)
         {
             return (c == '"' || c == quoteDoubleLeft || c == quoteDoubleRight || c == quoteLowDoubleLeft);
         }
+
         public static bool IsQuote(char c)
         {
             return (IsSingleQuote(c) || IsDoubleQuote(c));
         }
+
         public static bool IsDelimiter(char c, char delimiter)
         {
             if (delimiter == '"') return IsDoubleQuote(c);
             if (delimiter == '\'') return IsSingleQuote(c);
             return (c == delimiter);
         }
+
         public static bool IsCurlyBracket(char c)
         {
             return (c == '{' || c == '}');
@@ -367,6 +372,7 @@ namespace System.Management.Automation
             {
                 return s_integerCache[value - _MinCache];
             }
+
             return (object)value;
         }
 
@@ -416,6 +422,7 @@ namespace System.Management.Automation
                 re.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorPosition));
                 throw re;
             }
+
             return result;
         }
 
@@ -534,22 +541,27 @@ namespace System.Management.Automation
             {
                 result |= RegexOptions.CultureInvariant;
             }
+
             if ((options & SplitOptions.IgnorePatternWhitespace) != 0)
             {
                 result |= RegexOptions.IgnorePatternWhitespace;
             }
+
             if ((options & SplitOptions.Multiline) != 0)
             {
                 result |= RegexOptions.Multiline;
             }
+
             if ((options & SplitOptions.Singleline) != 0)
             {
                 result |= RegexOptions.Singleline;
             }
+
             if ((options & SplitOptions.IgnoreCase) != 0)
             {
                 result |= RegexOptions.IgnoreCase;
             }
+
             if ((options & SplitOptions.ExplicitCapture) != 0)
             {
                 result |= RegexOptions.ExplicitCapture;
@@ -603,6 +615,7 @@ namespace System.Management.Automation
                 throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException), errorPosition,
                     "BadOperatorArgument", ParserStrings.BadOperatorArgument, "-split", rval);
             }
+
             if (args.Length >= 2)
                 limit = FixNum(args[1], errorPosition);
             if (args.Length >= 3 && args[2] != null)
@@ -616,6 +629,7 @@ namespace System.Management.Automation
                         throw InterpreterError.NewInterpreterException(null, typeof(ParseException),
                             errorPosition, "InvalidSplitOptionWithPredicate", ParserStrings.InvalidSplitOptionWithPredicate);
                     }
+
                     if (ignoreCase && (options & SplitOptions.IgnoreCase) == 0)
                     {
                         options |= SplitOptions.IgnoreCase;
@@ -682,6 +696,7 @@ namespace System.Management.Automation
                             {
                                 split.Add(string.Empty);
                             }
+
                             break;
                         }
 
@@ -1204,6 +1219,7 @@ namespace System.Management.Automation
                         {
                             resultList.Add(val);
                         }
+
                         if (check++ > 1000)
                         {
                             // Check to see if we're stopping every one in a while...
@@ -1345,6 +1361,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private static Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>();
         private const int MaxRegexCache = 1000;
 
@@ -1428,15 +1445,18 @@ namespace System.Management.Automation
             {
                 return String.Empty;
             }
+
             PSObject mshObj = obj as PSObject;
             if (mshObj == null)
             {
                 return obj.GetType().FullName;
             }
+
             if (mshObj.InternalTypeNames.Count == 0)
             {
                 return typeof(PSObject).FullName;
             }
+
             return mshObj.InternalTypeNames[0];
         }
 
@@ -1476,6 +1496,7 @@ namespace System.Management.Automation
                     // "you can't call a method on null"
                     throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), errorPosition, "InvokeMethodOnNull", ParserStrings.InvokeMethodOnNull);
                 }
+
                 targetBase = PSObject.Base(target);
                 targetAsPSObject = PSObject.AsPSObject(target);
 
@@ -1537,6 +1558,7 @@ namespace System.Management.Automation
                         throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), errorPosition,
                                                                        "ParameterizedPropertyAssignmentFailed", ParserStrings.ParameterizedPropertyAssignmentFailed, GetTypeFullName(target), methodName);
                     }
+
                     propertyToSet.InvokeSet(valueToSet, paramArray);
                     return valueToSet;
                 }
@@ -1598,6 +1620,7 @@ namespace System.Management.Automation
         {
             get { return _lowerBound; }
         }
+
         private int _upperBound;
         internal int UpperBound
         {
@@ -1647,6 +1670,7 @@ namespace System.Management.Automation
                 _firstElement = false;
                 return true;
             }
+
             if (_current == _upperBound)
                 return false;
 
@@ -1781,6 +1805,7 @@ namespace System.Management.Automation
                 {
                     message = StringUtil.Format(resourceString, args);
                 }
+
                 if (String.IsNullOrEmpty(message))
                 {
                     Dbg.Assert(false,
@@ -1817,6 +1842,7 @@ namespace System.Management.Automation
                     + "' due to FormatException " + e.Message);
                 rte = NewBackupInterpreterException(exceptionType, errorPosition, resourceIdAndErrorId, e);
             }
+
             rte.SetTargetObject(targetObject);
 
             return rte;
@@ -1940,6 +1966,7 @@ namespace System.Management.Automation
                 {
                     message = StringUtil.Format(resourceString, args);
                 }
+
                 if (String.IsNullOrEmpty(message))
                 {
                     message = "Could not load text for msh script tracing message id '" + messageId + "'";

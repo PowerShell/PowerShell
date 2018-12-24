@@ -141,6 +141,7 @@ namespace System.Management.Automation.Runspaces
                         ErrorCategory.NotSpecified,
                         null);
                 }
+
                 return _errorRecord;
             }
         }

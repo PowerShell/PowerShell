@@ -90,6 +90,7 @@ namespace System.Management.Automation
                     matchListSB.Append(separator);
                     matchListSB.Append(namesWithMatchingPrefix[i]);
                 }
+
                 throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                     null, "MultipleEnumNameMatch", EnumExpressionEvaluatorStrings.MultipleEnumNameMatch,
                     text, matchListSB.ToString());
@@ -113,8 +114,10 @@ namespace System.Management.Automation
                     returnValue.Append(names[i]);
                     returnValue.Append(separator);
                 }
+
                 returnValue.Remove(returnValue.Length - separator.Length, separator.Length);
             }
+
             return returnValue.ToString();
         }
 

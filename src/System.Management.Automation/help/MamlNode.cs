@@ -658,6 +658,7 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     ++i;
                 }
             }
@@ -768,6 +769,7 @@ namespace System.Management.Automation
                 {
                     innerText = innerText.Trim();
                 }
+
                 sb.Append(innerText);
             }
 

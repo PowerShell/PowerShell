@@ -33,6 +33,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 len += this.Length(str[k]);
             }
+
             return len;
         }
 
@@ -47,6 +48,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, true);
         }
+
         internal override int GetTailSplitLength(string str, int offset, int displayCells)
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, false);
@@ -62,8 +64,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     sb.Append('_');
                 }
+
                 sb.Append(ch);
             }
+
             return sb.ToString();
         }
 
@@ -94,8 +98,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 //thrown when external host rawui is not implemented, in which case
                 //we will fallback to the default value.
             }
+
             return string.IsNullOrEmpty(str) ? 0 : str.Length - offset;
         }
+
         internal override int Length(string str)
         {
             try
@@ -107,8 +113,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 //thrown when external host rawui is not implemented, in which case
                 //we will fallback to the default value.
             }
+
             return string.IsNullOrEmpty(str) ? 0 : str.Length;
         }
+
         internal override int Length(char character)
         {
             try
@@ -120,6 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 //thrown when external host rawui is not implemented, in which case
                 //we will fallback to the default value.
             }
+
             return 1;
         }
 
@@ -127,6 +136,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, true);
         }
+
         internal override int GetTailSplitLength(string str, int offset, int displayCells)
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, false);
@@ -173,6 +183,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     //thrown when external host rawui is not implemented, in which case
                     //we will fallback to the default value.
                 }
+
                 return _forceNewLine ? _fallbackRawConsoleColumnNumber - 1 : _fallbackRawConsoleColumnNumber;
             }
         }
@@ -198,6 +209,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     //thrown when external host rawui is not implemented, in which case
                     //we will fallback to the default value.
                 }
+
                 return _fallbackRawConsoleRowNumber;
             }
         }
@@ -396,12 +408,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             // reset the counter, since we are starting a new page
                             _linesWritten = 0;
                         }
+
                         break;
                     case PromptHandler.PromptResponse.NextLine:
                         {
                             // roll back the counter by one, since we allow one more line
                             _linesWritten--;
                         }
+
                         break;
                     case PromptHandler.PromptResponse.Quit:
                         // 1021203-2005/05/09-JonN

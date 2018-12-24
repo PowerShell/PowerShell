@@ -334,6 +334,7 @@ namespace System.Management.Automation
             {
                 newParameters[i + 1] = parameters[i];
             }
+
             Exception ex = e as TargetInvocationException;
             if (ex != null)
             {
@@ -344,6 +345,7 @@ namespace System.Management.Automation
                     resourceString,
                     newParameters);
             }
+
             newParameters[0] = e.Message;
             return new ExtendedTypeSystemException(errorId,
                 e,
@@ -739,6 +741,7 @@ namespace System.Management.Automation
                 {
                     LanguagePrimitives.FigureCastConversion(fromType, parameterType, ref rank);
                 }
+
                 return rank;
             }
 
@@ -968,10 +971,12 @@ namespace System.Management.Automation
                 {
                     result -= 1;
                 }
+
                 if (type2.IsGenericParameter)
                 {
                     result += 1;
                 }
+
                 return result;
             }
 
@@ -1257,6 +1262,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return methodInfo;
         }
 
@@ -1311,6 +1317,7 @@ namespace System.Management.Automation
                             {
                                 argumentTypesForTypeInference[parameterIndex] = typeConstraintFromCallSite;
                             }
+
                             parameterIndex++;
                         }
                     }
@@ -1406,6 +1413,7 @@ namespace System.Management.Automation
                             {
                                 candidate.conversionRanks[j] = arrayConv;
                             }
+
                             if (candidate.conversionRanks[j] == ConversionRank.None)
                             {
                                 candidate = null;
@@ -1512,11 +1520,13 @@ namespace System.Management.Automation
                             break;
                         }
                     }
+
                     if (allSameType)
                     {
                         return firstType.MakeArrayType();
                     }
                 }
+
                 return arg.GetType();
             }
             else
@@ -1542,17 +1552,20 @@ namespace System.Management.Automation
                         {
                             continue;
                         }
+
                         originalArgumentReference = originalArgumentObj.BaseObject as PSReference;
                         if (originalArgumentReference == null)
                         {
                             continue;
                         }
                     }
+
                     ParameterInformation parameter = parameters[i];
                     if (!parameter.isByRef)
                     {
                         continue;
                     }
+
                     object argument = arguments[i];
                     PSObject.memberResolution.WriteLine("Argument '{0}' was a reference so it will be set to \"{1}\".", i + 1, argument);
                     originalArgumentReference.Value = argument;
@@ -1595,6 +1608,7 @@ namespace System.Management.Automation
             {
                 throw new MethodException(errorId, null, errorMsg, methodName, arguments.Length);
             }
+
             newArguments = GetMethodArgumentsBase(methodName, bestMethod.parameters, arguments, expandParamsOnBest);
             return bestMethod;
         }
@@ -1612,12 +1626,14 @@ namespace System.Management.Automation
             {
                 return Utils.EmptyArray<object>();
             }
+
             object[] retValue = new object[parametersLength];
             for (int i = 0; i < parametersLength - 1; i++)
             {
                 ParameterInformation parameter = parameters[i];
                 SetNewArgument(methodName, arguments, retValue, parameter, i);
             }
+
             ParameterInformation lastParameter = parameters[parametersLength - 1];
             if (!expandParamsOnBest)
             {
@@ -1745,6 +1761,7 @@ namespace System.Management.Automation
                     throw new MethodException("RefArgumentToNonRefParameterMsg", null,
                         ExtendedTypeSystem.RefArgumentToNonRefParameter, parameterIndex + 1, typeof(PSReference).FullName, "[ref]");
                 }
+
                 return PropertySetAndMethodArgumentConvertTo(valueToConvert, resultType, formatProvider);
             }
         }
@@ -1759,17 +1776,20 @@ namespace System.Management.Automation
                 isArgumentByRef = true;
                 return reference.Value;
             }
+
             PSObject mshObj = obj as PSObject;
             if (mshObj != null)
             {
                 reference = mshObj.BaseObject as PSReference;
             }
+
             if (reference != null)
             {
                 PSObject.memberResolution.WriteLine("Parameter was an PSObject containing a reference.");
                 isArgumentByRef = true;
                 return reference.Value;
             }
+
             return obj;
         }
 
@@ -1782,6 +1802,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("resultType");
                 }
+
                 PSObject mshObj = valueToConvert as PSObject;
                 if (mshObj != null)
                 {
@@ -1863,11 +1884,13 @@ namespace System.Management.Automation
             memberCollection = new Collection<object>();
             _indexes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         }
+
         internal void Add(string name, object member)
         {
             _indexes[name] = memberCollection.Count;
             memberCollection.Add(member);
         }
+
         internal object this[string name]
         {
             get
@@ -1877,6 +1900,7 @@ namespace System.Management.Automation
                 {
                     return null;
                 }
+
                 return this.memberCollection[indexObj];
             }
         }
@@ -1903,6 +1927,7 @@ namespace System.Management.Automation
                     var methodDefn = DotNetAdapter.GetMethodInfoOverloadDefinition(name, method, method.GetParameters().Length - parameters.Length);
                     Interlocked.CompareExchange(ref _cachedMethodDefinition, methodDefn, null);
                 }
+
                 return _cachedMethodDefinition;
             }
         }
@@ -2141,6 +2166,7 @@ namespace System.Management.Automation
                     localCount += 1;
                     mustStoreRetVal = true;
                 }
+
                 locals = new LocalBuilder[localCount];
 
                 cLocal = 0;
@@ -2166,6 +2192,7 @@ namespace System.Management.Automation
                         {
                             type = type.GetElementType();
                         }
+
                         locals[cLocal] = emitter.DeclareLocal(type);
 
                         emitter.Emit(OpCodes.Ldarg_1);
@@ -2179,6 +2206,7 @@ namespace System.Management.Automation
                         {
                             emitter.Emit(OpCodes.Castclass, type);
                         }
+
                         emitter.Emit(OpCodes.Stloc, locals[cLocal]);
 
                         cLocal += 1;
@@ -2205,6 +2233,7 @@ namespace System.Management.Automation
                             _useReflection = true;
                             return null;
                         }
+
                         emitter.Emit(OpCodes.Ldarg_0);
                         emitter.Emit(OpCodes.Castclass, type);
                     }
@@ -2271,6 +2300,7 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     if (type.IsByRef)
                     {
                         type = type.GetElementType();
@@ -2493,13 +2523,16 @@ namespace System.Management.Automation
                         {
                             definition.Append(DotNetAdapter.GetMethodInfoOverloadDefinition(this.propertyName, propertySetter, 1));
                         }
+
                         setterList.Add(propertySetter);
                     }
+
                     definition.Append(" {");
                     definition.Append(extraDefinition);
                     definition.Append("}");
                     definitionArray.Add(definition.ToString());
                 }
+
                 propertyDefinition = definitionArray.ToArray();
 
                 this.writeOnly = getterList.Count == 0;
@@ -2613,6 +2646,7 @@ namespace System.Management.Automation
                             instance = parameter.Cast(declaringType);
                         }
                     }
+
                     Expression getterExpr;
 
                     if (declaringType.IsGenericTypeDefinition)
@@ -2705,6 +2739,7 @@ namespace System.Management.Automation
                     {
                         setterExpr = Expression.Assign(Expression.Field(instance, field), Expression.Convert(value, field.FieldType));
                     }
+
                     _setterDelegate = Expression.Lambda<SetterDelegate>(setterExpr, parameter, value).Compile();
                     return;
                 }
@@ -2729,9 +2764,11 @@ namespace System.Management.Automation
                     {
                         InitGetter();
                     }
+
                     return _getterDelegate;
                 }
             }
+
             private GetterDelegate _getterDelegate;
 
             internal SetterDelegate setterDelegate
@@ -2746,6 +2783,7 @@ namespace System.Management.Automation
                     return _setterDelegate;
                 }
             }
+
             private SetterDelegate _setterDelegate;
 
             internal bool useReflection;
@@ -2765,6 +2803,7 @@ namespace System.Management.Automation
                         var objAttributes = this.member.GetCustomAttributes(true);
                         _attributes = new AttributeCollection(objAttributes.Cast<Attribute>().ToArray());
                     }
+
                     return _attributes;
                 }
             }
@@ -2780,12 +2819,14 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             ParameterInfo[] parameters1 = method1.GetParameters();
             ParameterInfo[] parameters2 = method2.GetParameters();
             if (parameters1.Length != parameters2.Length)
             {
                 return false;
             }
+
             for (int i = 0; i < parameters1.Length; ++i)
             {
                 if (parameters1[i].ParameterType != parameters2[i].ParameterType
@@ -2917,6 +2958,7 @@ namespace System.Management.Automation
                     InterfaceMapping interfaceMapping = type.GetInterfaceMap(interfaceType);
                     methods = interfaceMapping.InterfaceMethods;
                 }
+
                 for (int methodIndex = 0; methodIndex < methods.Length; methodIndex++)
                 {
                     MethodInfo interfaceMethodDefinition = methods[methodIndex];
@@ -3036,6 +3078,7 @@ namespace System.Management.Automation
                             break;
                         }
                     }
+
                     if (parametersAreSame)
                     {
                         returnValue = true;
@@ -3209,6 +3252,7 @@ namespace System.Management.Automation
                 {
                     return parent;
                 }
+
                 parent = parent.BaseType;
             }
 
@@ -3275,6 +3319,7 @@ namespace System.Management.Automation
                 {
                     return typeTable;
                 }
+
                 typeTable = new Dictionary<string, EventCacheEntry>();
                 PopulateEventReflectionTable(type, typeTable, staticBindingFlags);
                 s_staticEventCacheTable[type] = typeTable;
@@ -3297,6 +3342,7 @@ namespace System.Management.Automation
                 {
                     return typeTable;
                 }
+
                 typeTable = new CacheTable();
                 PopulatePropertyReflectionTable(type, typeTable, instanceBindingFlags);
                 s_instancePropertyCacheTable[type] = typeTable;
@@ -3317,6 +3363,7 @@ namespace System.Management.Automation
                 {
                     return typeTable;
                 }
+
                 typeTable = new CacheTable();
                 PopulateMethodReflectionTable(type, typeTable, instanceBindingFlags);
                 s_instanceMethodCacheTable[type] = typeTable;
@@ -3362,6 +3409,7 @@ namespace System.Management.Automation
                 {
                     return typeTable;
                 }
+
                 typeTable = new Dictionary<string, EventCacheEntry>(StringComparer.OrdinalIgnoreCase);
                 PopulateEventReflectionTable(type, typeTable, instanceBindingFlags);
                 s_instanceEventCacheTable[type] = typeTable;
@@ -3420,6 +3468,7 @@ namespace System.Management.Automation
                 return new PSParameterizedProperty(parameterizedPropertyEntry.propertyName,
                     this, obj, parameterizedPropertyEntry) as T;
             }
+
             return null;
         }
 
@@ -3439,6 +3488,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             var isCtor = methods[0].method is ConstructorInfo;
             bool isSpecial = !isCtor && methods[0].method.IsSpecialName;
             bool isHidden = false;
@@ -3450,6 +3500,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
         }
 
@@ -3526,6 +3577,7 @@ namespace System.Management.Automation
                             break;
                         }
                     }
+
                     members.Add(PSMethod.Create(name, this, obj, method, isSpecial, isHidden) as T);
                 }
             }
@@ -3558,6 +3610,7 @@ namespace System.Management.Automation
             {
                 return;
             }
+
             if (!typeof(T).IsAssignableFrom(typeof(PSDynamicMember)))
             {
                 return;
@@ -3576,6 +3629,7 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             return entry.isStatic;
         }
 
@@ -3685,10 +3739,12 @@ namespace System.Management.Automation
             {
                 returnValue.Append("get;");
             }
+
             if (PropertyIsSettable(property))
             {
                 returnValue.Append("set;");
             }
+
             returnValue.Append("}");
             return returnValue.ToString();
         }
@@ -3781,6 +3837,7 @@ namespace System.Management.Automation
                 {
                     setValue = PropertySetAndMethodArgumentConvertTo(setValue, propertyInfo.PropertyType, CultureInfo.InvariantCulture);
                 }
+
                 if (adapterData.useReflection)
                 {
                     propertyInfo.SetValue(property.baseObject, setValue, null);
@@ -3789,6 +3846,7 @@ namespace System.Management.Automation
                 {
                     adapterData.setterDelegate(property.baseObject, setValue);
                 }
+
                 return;
             }
 
@@ -3797,6 +3855,7 @@ namespace System.Management.Automation
             {
                 setValue = PropertySetAndMethodArgumentConvertTo(setValue, field.FieldType, CultureInfo.InvariantCulture);
             }
+
             if (adapterData.useReflection)
             {
                 field.SetValue(property.baseObject, setValue);
@@ -3878,6 +3937,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.MethodInvocationException,
                     ".ctor", arguments.Length, e.Message);
             }
+
             SetReferences(arguments, methodInformation, originalArguments);
             return returnValue;
 #pragma warning restore 56500
@@ -3970,6 +4030,7 @@ namespace System.Management.Automation
             {
                 returnValue[i] = new MethodInformation(methods[i], 0);
             }
+
             return returnValue;
         }
 
@@ -4028,6 +4089,7 @@ namespace System.Management.Automation
                 PSObject.memberResolution.WriteLine("Calling Constructor: {0}", DotNetAdapter.GetMethodInfoOverloadDefinition(null,
                     bestMethod.method, 0));
             }
+
             return AuxiliaryConstructorInvoke(bestMethod, newArguments, arguments);
         }
 
@@ -4072,6 +4134,7 @@ namespace System.Management.Automation
             {
                 finalArguments[i] = newArguments[i];
             }
+
             finalArguments[newArguments.Length] = lastArgument;
 
             AuxiliaryMethodInvoke(target, finalArguments, bestMethod, arguments);
@@ -4084,6 +4147,7 @@ namespace System.Management.Automation
             {
                 builder.Append("static ");
             }
+
             MethodInfo method = methodEntry as MethodInfo;
             if (method != null)
             {
@@ -4099,11 +4163,13 @@ namespace System.Management.Automation
                     builder.Append(" ");
                 }
             }
+
             if (methodEntry.DeclaringType.IsInterface)
             {
                 builder.Append(ToStringCodeMethods.Type(methodEntry.DeclaringType, dropNamespaces: true));
                 builder.Append(".");
             }
+
             builder.Append(memberName ?? methodEntry.Name);
             if (methodEntry.IsGenericMethodDefinition)
             {
@@ -4113,11 +4179,13 @@ namespace System.Management.Automation
                 for (int i = 0; i < genericArgs.Length; i++)
                 {
                     if (i > 0) { builder.Append(", "); }
+
                     builder.Append(ToStringCodeMethods.Type(genericArgs[i]));
                 }
 
                 builder.Append("]");
             }
+
             builder.Append("(");
             System.Reflection.ParameterInfo[] parameters = methodEntry.GetParameters();
             int parametersLength = parameters.Length - parametersToIgnore;
@@ -4132,6 +4200,7 @@ namespace System.Management.Automation
                         builder.Append("[ref] ");
                         parameterType = parameterType.GetElementType();
                     }
+
                     if (parameterType.IsArray && (i == parametersLength - 1))
                     {
                         // The extension method 'CustomAttributeExtensions.GetCustomAttributes(ParameterInfo, Type, Boolean)' has inconsistent
@@ -4144,13 +4213,16 @@ namespace System.Management.Automation
                         if (paramArrayAttrs != null && paramArrayAttrs.Any())
                             builder.Append("Params ");
                     }
+
                     builder.Append(ToStringCodeMethods.Type(parameterType));
                     builder.Append(" ");
                     builder.Append(parameter.Name);
                     builder.Append(", ");
                 }
+
                 builder.Remove(builder.Length - 2, 2);
             }
+
             builder.Append(")");
 
             return builder.ToString();
@@ -4277,6 +4349,7 @@ namespace System.Management.Automation
             {
                 returnValue.Add(adapterData.propertyDefinition[i]);
             }
+
             return returnValue;
         }
 
@@ -4294,6 +4367,7 @@ namespace System.Management.Automation
                 returnValue.Append(definitions[i]);
                 returnValue.Append(", ");
             }
+
             returnValue.Remove(returnValue.Length - 2, 2);
             return returnValue.ToString();
         }
@@ -4370,6 +4444,7 @@ namespace System.Management.Automation
                     return parameterizedProperty as T;
                 }
             }
+
             return null;
         }
     }
@@ -4395,6 +4470,7 @@ namespace System.Management.Automation
                 {
                     yield return ComAdapter.GetComTypeName(_comTypeInfo.Clsid);
                 }
+
                 yield return type.FullName;
             }
         }
@@ -4576,6 +4652,7 @@ namespace System.Management.Automation
                     returnValue.Add(memberAsT);
                 }
             }
+
             return returnValue;
         }
 
@@ -4633,6 +4710,7 @@ namespace System.Management.Automation
                     returnValue.Add(memberAsT);
                 }
             }
+
             return returnValue;
         }
 
@@ -4711,6 +4789,7 @@ namespace System.Management.Automation
                     return returnValue;
                 }
             }
+
             if (IsTypeParameterizedProperty(typeof(T)))
             {
                 PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
@@ -4721,6 +4800,7 @@ namespace System.Management.Automation
                     return parameterizedProperty as T;
                 }
             }
+
             return null;
         }
 
@@ -4743,6 +4823,7 @@ namespace System.Management.Automation
             {
                 DoAddAllProperties<T>(obj, returnValue);
             }
+
             base.AddAllMethods(obj, returnValue, true);
             if (IsTypeParameterizedProperty(typeof(T)))
             {
@@ -4760,6 +4841,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return returnValue;
         }
     }
@@ -4800,6 +4882,7 @@ namespace System.Management.Automation
                         firstType.Append(node.LocalName);
                         yield return firstType.ToString();
                     }
+
                     yield return baseType;
                 }
             }
@@ -4826,6 +4909,7 @@ namespace System.Management.Automation
                         nodeList = new List<XmlNode>();
                         nodeArrays[attribute.LocalName] = nodeList;
                     }
+
                     nodeList.Add(attribute);
                 }
             }
@@ -4846,6 +4930,7 @@ namespace System.Management.Automation
                         nodeList = new List<XmlNode>();
                         nodeArrays[childNode.LocalName] = nodeList;
                     }
+
                     nodeList.Add(childNode);
                 }
             }
@@ -4870,6 +4955,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return new PSProperty(nodes[0].LocalName, this, obj, nodes);
         }
 
@@ -4886,20 +4972,24 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             XmlNode node = nodes[0];
             if (node is XmlText)
             {
                 return true;
             }
+
             if (node is XmlAttribute)
             {
                 return true;
             }
+
             XmlAttributeCollection nodeAttributes = node.Attributes;
             if ((nodeAttributes != null) && (nodeAttributes.Count != 0))
             {
                 return false;
             }
+
             XmlNodeList nodeChildren = node.ChildNodes;
             if ((nodeChildren == null) || (nodeChildren.Count == 0))
             {
@@ -4910,6 +5000,7 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             return false;
         }
 
@@ -5063,6 +5154,7 @@ namespace System.Management.Automation
             catch (GetValueException)
             {
             }
+
             var type = value == null ? typeof(object) : value.GetType();
             return forDisplay ? ToStringCodeMethods.Type(type) : type.FullName;
         }
@@ -5259,6 +5351,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             string columnName = dataRowView.Row.Table.Columns[propertyName].ColumnName;
             return new PSProperty(columnName, this, obj, columnName);
         }
@@ -5579,6 +5672,7 @@ namespace System.Management.Automation
                     inferenceCandidates = new HashSet<Type>();
                     _typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition] = inferenceCandidates;
                 }
+
                 inferenceCandidates.Add(argumentType);
                 s_tracer.WriteLine("Inferred {0} => {1}", parameterType, argumentType);
                 return true;
@@ -5675,6 +5769,7 @@ namespace System.Management.Automation
                 {
                     return UnifyConstructedType(parameterType, baseType);
                 }
+
                 baseType = baseType.BaseType;
             }
 

@@ -62,6 +62,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     // unblock the thread waiting for response
                     (actionArgs.Action as CimSyncAction).OnComplete();
                 }
+
                 return;
             }
 
@@ -164,6 +165,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     DebugHelper.WriteLogEx("Either disposed or all operations completed.", 2);
                     break;
                 }
+
                 try
                 {
                     this.moreActionEvent.Wait();
@@ -177,6 +179,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
                 }
             }
+
             ProcessActions(cmdletOperation);
         }
 
@@ -209,6 +212,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     this.cimSessionProxyCache = new List<CimSessionProxy>();
                 }
+
                 if (!this.cimSessionProxyCache.Contains(sessionproxy))
                 {
                     this.cimSessionProxyCache.Add(sessionproxy);
@@ -366,6 +370,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         arraybaseObject[i] = GetBaseObject(arrayObject[i]);
                     }
+
                     return arraybaseObject;
                 }
             }
@@ -390,6 +395,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     return null;
                 }
+
                 referenceType = CimType.Reference;
                 return cimInstance;
             }
@@ -404,6 +410,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     return null;
                 }
+
                 CimInstance[] cimInstanceArray = new CimInstance[cimReferenceArray.Length];
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
@@ -412,6 +419,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         return null;
                     }
+
                     object baseObject = GetBaseObject(tempCimReference.Value);
                     cimInstanceArray[i] = baseObject as CimInstance;
                     if (cimInstanceArray[i] == null)
@@ -419,6 +427,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         return null;
                     }
                 }
+
                 referenceType = CimType.ReferenceArray;
                 return cimInstanceArray;
             }
@@ -439,6 +448,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return (Interlocked.Read(ref this._disposed) == 1);
             }
         }
+
         private long _disposed;
 
         /// <summary>
@@ -506,6 +516,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     (action as CimSyncAction).OnComplete();
                 }
             }
+
             if (this.cimSessionProxyCache != null)
             {
                 List<CimSessionProxy> temporaryProxy;
@@ -527,6 +538,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.ackedEvent.Dispose();
             }
+
             DebugHelper.WriteLog("Cleanup complete.", 2);
         }
 

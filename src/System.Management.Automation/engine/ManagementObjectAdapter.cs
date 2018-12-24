@@ -87,6 +87,7 @@ namespace System.Management.Automation
                 type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
                 type.Append("\\");
             }
+
             type.Append(managementObj.SystemProperties["__CLASS"].Value);
             yield return type.ToString();
 
@@ -115,6 +116,7 @@ namespace System.Management.Automation
                             type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
                             type.Append("\\");
                         }
+
                         type.Append(t);
                         yield return type.ToString();
                     }
@@ -152,6 +154,7 @@ namespace System.Management.Automation
                         yield return typeFromDerivation;
                     }
                 }
+
                 yield return baseType;
             }
         }
@@ -359,6 +362,7 @@ namespace System.Management.Automation
                     property.Name, property.baseObject.GetType().FullName,
                     typeof(ManagementBaseObject).FullName);
             }
+
             if (!PropertyIsSettable(property))
             {
                 throw new SetValueException("ReadOnlyWMIProperty",
@@ -366,6 +370,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.ReadOnlyProperty,
                         property.Name);
             }
+
             PropertyData pd = property.adapterData as PropertyData;
 
             if ((convertIfPossible) && (setValue != null))
@@ -392,6 +397,7 @@ namespace System.Management.Automation
             // {
             //    returnValue.Append("static ");
             // }
+
             returnValue.Append(PropertyType(property, forDisplay: true));
             returnValue.Append(" ");
             returnValue.Append(property.Name);
@@ -400,10 +406,12 @@ namespace System.Management.Automation
             {
                 returnValue.Append("get;");
             }
+
             if (PropertyIsSettable(property))
             {
                 returnValue.Append("set;");
             }
+
             returnValue.Append("}");
             return returnValue.ToString();
         }

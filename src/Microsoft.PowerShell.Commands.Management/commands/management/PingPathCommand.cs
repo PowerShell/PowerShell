@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path
         {
             get { return _paths; }
+
             set { _paths = value; }
         }
 
@@ -63,6 +64,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return _paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -77,6 +79,7 @@ namespace Microsoft.PowerShell.Commands
         public override string Filter
         {
             get { return base.Filter; }
+
             set { base.Filter = value; }
         }
 
@@ -87,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] Include
         {
             get { return base.Include; }
+
             set { base.Include = value; }
         }
 
@@ -97,6 +101,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] Exclude
         {
             get { return base.Exclude; }
+
             set { base.Exclude = value; }
         }
 

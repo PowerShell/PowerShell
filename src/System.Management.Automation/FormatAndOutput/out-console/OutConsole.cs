@@ -135,6 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.CurrentCommandProcessor.CommandRuntime.OutVarList.Add(item);
                 }
+
                 _outVarResults = null;
             }
 
@@ -196,6 +197,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Paging
         {
             get { return _paging; }
+
             set { _paging = value; }
         }
 

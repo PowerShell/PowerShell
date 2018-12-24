@@ -19,6 +19,7 @@ namespace Application.Test
                 var results = ps.AddScript("Get-Command Write-Output").Invoke();
                 Console.WriteLine(results[0].ToString());
             }
+
             return 0;
         }
     }

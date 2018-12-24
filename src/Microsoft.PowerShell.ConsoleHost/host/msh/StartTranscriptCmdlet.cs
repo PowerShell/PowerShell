@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _outFilename;
             }
+
             set
             {
                 _isFilenameSet = true;
@@ -51,6 +52,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _outFilename;
             }
+
             set
             {
                 _isFilenameSet = true;
@@ -58,6 +60,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -82,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _shouldAppend;
             }
+
             set
             {
                 _shouldAppend = value;
@@ -103,11 +107,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -121,11 +127,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -298,6 +306,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 path = null;
             }
+
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(this);
@@ -312,6 +321,7 @@ namespace Microsoft.PowerShell.Commands
                     ReportWrongProviderType(provider.FullName);
                 }
             }
+
             return path;
         }
 

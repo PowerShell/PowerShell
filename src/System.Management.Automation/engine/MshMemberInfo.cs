@@ -591,6 +591,7 @@ namespace System.Management.Automation
 
                 return returnValue;
             }
+
             set => this.ReferencedMember.Value = value;
         }
 
@@ -915,6 +916,7 @@ namespace System.Management.Automation
                         e.Message);
                 }
             }
+
             set
             {
                 if (SetterCodeReference == null)
@@ -1797,6 +1799,7 @@ namespace System.Management.Automation
 
                 return InvokeGetter(this.instance);
             }
+
             set
             {
                 if (this.SetterScript == null)

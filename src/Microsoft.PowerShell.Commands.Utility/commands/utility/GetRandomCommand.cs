@@ -124,6 +124,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         GetRandomCommand.s_runspaceGeneratorMapLock.ExitWriteLock();
                     }
+
                     break;
             }
         }
@@ -160,6 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return _generator;
             }
+
             set
             {
                 _generator = value;
@@ -173,6 +175,7 @@ namespace Microsoft.PowerShell.Commands
                         // make sure we won't leave the generator around after runspace exits
                         myRunspace.StateChanged += CurrentRunspace_StateChanged;
                     }
+
                     GetRandomCommand.s_runspaceGeneratorMap[myRunspace.InstanceId] = _generator;
                 }
                 finally
@@ -215,6 +218,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             return false;
         }
 
@@ -224,6 +228,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             return false;
         }
 

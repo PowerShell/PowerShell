@@ -76,6 +76,7 @@ namespace System.Management.Automation
                 return _providerPath;
             }
         }
+
         private string _providerPath;
         private SessionState _sessionState;
 

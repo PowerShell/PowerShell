@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return ColumnInfo.LimitString(baseObject);
             }
+
             return null;
         }
     }

@@ -97,6 +97,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
+
             get { return OutputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
         }
 
@@ -226,6 +227,7 @@ namespace Microsoft.PowerShell.Commands
                         liveObject)
                     );
             }
+
             return smartToString;
         }
 
@@ -249,6 +251,7 @@ namespace Microsoft.PowerShell.Commands
                     // Stop the pipeline cleanly.
                     pipeline.StopAsync();
                 }
+
                 return;
             }
 
@@ -313,6 +316,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return new ScalarTypeHeader(parentCmd, input);
                 }
+
                 return new NonscalarTypeHeader(parentCmd, input);
             }
 
@@ -381,6 +385,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             break;
                         }
+
                         _appliesTo.AddAppliesToType(typeName);
                         index++;
                     }

@@ -55,12 +55,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String ClassName
         {
             get { return className; }
+
             set
             {
                 className = value;
                 base.SetParameter(value, nameClassName);
             }
         }
+
         private String className;
 
         /// <summary>
@@ -82,12 +84,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Uri ResourceUri
         {
             get { return resourceUri; }
+
             set
             {
                 this.resourceUri = value;
                 base.SetParameter(value, nameResourceUri);
             }
         }
+
         private Uri resourceUri;
 
         /// <summary>
@@ -105,12 +109,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimClass CimClass
         {
             get { return cimClass; }
+
             set
             {
                 cimClass = value;
                 base.SetParameter(value, nameCimClass);
             }
         }
+
         private CimClass cimClass;
 
         /// <summary>
@@ -126,12 +132,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public string Query
         {
             get { return query; }
+
             set
             {
                 query = value;
                 base.SetParameter(value, nameQuery);
             }
         }
+
         private string query;
 
         /// <summary>
@@ -148,12 +156,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String QueryDialect
         {
             get { return queryDialect; }
+
             set
             {
                 queryDialect = value;
                 base.SetParameter(value, nameQueryDialect);
             }
         }
+
         private String queryDialect;
 
         /// <summary>
@@ -173,6 +183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimInstance InputObject
         {
             get { return cimInstance; }
+
             set
             {
                 cimInstance = value;
@@ -187,6 +198,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return cimInstance; }
         }
+
         private CimInstance cimInstance;
 
         /// <summary>
@@ -218,6 +230,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] ComputerName
         {
             get { return computerName; }
+
             set
             {
                 DebugHelper.WriteLogEx();
@@ -225,6 +238,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 base.SetParameter(value, nameComputerName);
             }
         }
+
         private String[] computerName;
 
         /// <summary>
@@ -256,12 +270,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession[] CimSession
         {
             get { return cimSession; }
+
             set
             {
                 cimSession = value;
                 base.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession[] cimSession;
 
         /// <summary>
@@ -274,8 +290,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public IDictionary Arguments
         {
             get { return arguments; }
+
             set { arguments = value; }
         }
+
         private IDictionary arguments;
 
         /// <summary>
@@ -289,12 +307,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String MethodName
         {
             get { return methodName; }
+
             set
             {
                 methodName = value;
                 base.SetParameter(value, nameMethodName);
             }
         }
+
         private String methodName;
 
         /// <summary>
@@ -318,12 +338,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Namespace
         {
             get { return nameSpace; }
+
             set
             {
                 nameSpace = value;
                 base.SetParameter(value, nameNamespace);
             }
         }
+
         private String nameSpace;
 
         /// <summary>
@@ -336,8 +358,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32 OperationTimeoutSec
         {
             get { return operationTimeout; }
+
             set { operationTimeout = value; }
         }
+
         private UInt32 operationTimeout;
 
         #endregion
@@ -354,6 +378,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimInvokeMethod = CreateOperationAgent();
             }
+
             this.CmdletOperation = new CmdletOperationInvokeCimMethod(this, cimInvokeMethod);
             this.AtBeginProcess = false;
         }//End BeginProcessing()

@@ -117,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             // notify for Fe, passing the Fe info, before a Pop()
                             this.ge(ged, oc);
                         }
+
                         _stack.Pop();
                     }
                 }

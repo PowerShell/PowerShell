@@ -140,6 +140,7 @@ $result
                                     break;
                                 }
                             }
+
                             if (match)
                                 continue;
                         }
@@ -148,9 +149,11 @@ $result
                             _allControlPanelItems.Add(item);
                     }
                 }
+
                 return _allControlPanelItems;
             }
         }
+
         private List<ShellFolderItem> _allControlPanelItems;
 
         #region Cmdlet Overrides
@@ -199,6 +202,7 @@ $result
                     break;
                 }
             }
+
             return result;
         }
 
@@ -433,6 +437,7 @@ $result
                                                         ErrorCategory.InvalidArgument, CanonicalNames);
                     WriteError(error);
                 }
+
                 return list;
             }
 
@@ -559,12 +564,14 @@ $result
         public string[] Name
         {
             get { return RegularNames; }
+
             set
             {
                 RegularNames = value;
                 _nameSpecified = true;
             }
         }
+
         private bool _nameSpecified = false;
 
         /// <summary>
@@ -576,12 +583,14 @@ $result
         public string[] CanonicalName
         {
             get { return CanonicalNames; }
+
             set
             {
                 CanonicalNames = value;
                 _canonicalNameSpecified = true;
             }
         }
+
         private bool _canonicalNameSpecified = false;
 
         /// <summary>
@@ -593,12 +602,14 @@ $result
         public string[] Category
         {
             get { return CategoryNames; }
+
             set
             {
                 CategoryNames = value;
                 _categorySpecified = true;
             }
         }
+
         private bool _categorySpecified = false;
 
         #endregion "Parameters"
@@ -690,6 +701,7 @@ $result
         public string[] Name
         {
             get { return RegularNames; }
+
             set { RegularNames = value; }
         }
 
@@ -702,6 +714,7 @@ $result
         public string[] CanonicalName
         {
             get { return CanonicalNames; }
+
             set { CanonicalNames = value; }
         }
 
@@ -714,6 +727,7 @@ $result
         public ControlPanelItem[] InputObject
         {
             get { return ControlPanelItems; }
+
             set { ControlPanelItems = value; }
         }
 

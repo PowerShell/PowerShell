@@ -65,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // ignore
             }
+
             return null;
         }
     }

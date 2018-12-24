@@ -32,8 +32,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             set { _name = value; }
+
             get { return _name; }
         }
+
         private string[] _name = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace Microsoft.PowerShell.Commands
         public PSModuleInfo[] ModuleInfo
         {
             set { _moduleInfo = value; }
+
             get { return _moduleInfo; }
         }
+
         private PSModuleInfo[] _moduleInfo = Utils.EmptyArray<PSModuleInfo>();
 
         /// <summary>
@@ -62,6 +66,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return BaseForce; }
+
             set { BaseForce = value; }
         }
 
@@ -175,6 +180,7 @@ namespace Microsoft.PowerShell.Commands
                                                              ErrorCategory.PermissionDenied, module);
                             WriteError(er);
                         }
+
                         continue;
                     }
 
@@ -194,6 +200,7 @@ namespace Microsoft.PowerShell.Commands
                                 string message = StringUtil.Format(Modules.CoreModuleCannotBeRemoved, module.Name);
                                 this.WriteWarning(message);
                             }
+
                             continue;
                         }
                         // Specify the overall module name if there is only one.
@@ -211,6 +218,7 @@ namespace Microsoft.PowerShell.Commands
                     // Add module to remove list.
                     moduleList.Add(module);
                 }
+
                 actualModulesToRemove[entry.Key] = moduleList;
             }
 
@@ -348,6 +356,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         isEngineModule = false;
                     }
+
                     if (!WildcardPattern.ContainsWildcardCharacters(n))
                         hasWildcards = false;
                 }

@@ -98,6 +98,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _completionText;
             }
         }
@@ -113,6 +114,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _listItemText;
             }
         }
@@ -128,6 +130,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _resultType;
             }
         }
@@ -143,6 +146,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _toolTip;
             }
         }

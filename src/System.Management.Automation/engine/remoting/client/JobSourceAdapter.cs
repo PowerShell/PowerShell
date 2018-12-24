@@ -31,6 +31,7 @@ namespace System.Management.Automation
         public string Name
         {
             get { return _name; }
+
             set { _name = value; }
         }
 
@@ -50,6 +51,7 @@ namespace System.Management.Automation
         public string ModuleName
         {
             get { return _moduleName; }
+
             set { _moduleName = value; }
         }
 
@@ -61,6 +63,7 @@ namespace System.Management.Automation
         public string JobSourceAdapterTypeName
         {
             get { return _jobSourceAdapterTypeName; }
+
             set { _jobSourceAdapterTypeName = value; }
         }
 
@@ -81,6 +84,7 @@ namespace System.Management.Automation
             {
                 return _instanceId;
             }
+
             set
             {
                 _instanceId = value;
@@ -132,6 +136,7 @@ namespace System.Management.Automation
             {
                 _jobSourceAdapterTypeName = jobSourceAdapterType.Name;
             }
+
             Command = command;
             _name = name;
             _instanceId = Guid.NewGuid();
@@ -179,6 +184,7 @@ namespace System.Management.Automation
             {
                 return _name;
             }
+
             set
             {
                 if (value == null)
@@ -186,6 +192,7 @@ namespace System.Management.Automation
                 _name = value;
             }
         }
+
         private string _name = string.Empty;
 
         private string _command;
@@ -199,6 +206,7 @@ namespace System.Management.Automation
             {
                 return _command ?? _definition.Command;
             }
+
             set
             {
                 _command = value;
@@ -216,6 +224,7 @@ namespace System.Management.Automation
             {
                 return _definition;
             }
+
             set
             {
                 _definition = value;
@@ -356,6 +365,7 @@ namespace System.Management.Automation
             {
                 paramCollection.Add(paramItem);
             }
+
             return paramCollection;
         }
     }
@@ -397,6 +407,7 @@ namespace System.Management.Automation
             {
                 PSTraceSource.NewArgumentNullException("job", RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
             }
+
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
             if (recurse && job.ChildJobs != null && job.ChildJobs.Count > 0)
             {

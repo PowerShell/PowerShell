@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
@@ -60,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>

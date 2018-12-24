@@ -110,6 +110,7 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append(element);
                         }
                     }
+
                     promptString = sb.ToString();
                 }
                 else
@@ -152,6 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     result = Host.UI.ReadLine();
                 }
+
                 WriteObject(result);
             }
         }

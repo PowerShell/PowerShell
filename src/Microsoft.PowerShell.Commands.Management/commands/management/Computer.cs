@@ -239,12 +239,14 @@ namespace Microsoft.PowerShell.Commands
         public int Timeout
         {
             get { return _timeout; }
+
             set
             {
                 _timeout = value;
                 _timeoutSpecified = true;
             }
         }
+
         private int _timeout = -1;
         private bool _timeoutSpecified = false;
 
@@ -256,12 +258,14 @@ namespace Microsoft.PowerShell.Commands
         public WaitForServiceTypes For
         {
             get { return _waitFor; }
+
             set
             {
                 _waitFor = value;
                 _waitForSpecified = true;
             }
         }
+
         private WaitForServiceTypes _waitFor = WaitForServiceTypes.PowerShell;
         private bool _waitForSpecified = false;
 
@@ -274,12 +278,14 @@ namespace Microsoft.PowerShell.Commands
         public Int16 Delay
         {
             get { return (Int16)_delay; }
+
             set
             {
                 _delay = value;
                 _delaySpecified = true;
             }
         }
+
         private int _delay = 5;
         private bool _delaySpecified = false;
 
@@ -295,13 +301,16 @@ foreach ($computerName in $array[1])
     $arguments = @{
         ComputerName = $computerName
         ScriptBlock = { $true }
+
         SessionOption = NewPSSessionOption -NoMachineProfile
         ErrorAction = 'SilentlyContinue'
     }
+
     if ( $null -ne $array[0] )
     {
         $arguments['Credential'] = $array[0]
     }
+
     $result[$computerName] = (Invoke-Command @arguments) -as [bool]
 }
 $result
@@ -418,6 +427,7 @@ $result
                     {
                         WriteError(error);
                     }
+
                     continue;
                 }
 
@@ -527,6 +537,7 @@ $result
                 try
                 {
                     if (token.IsCancellationRequested) { break; }
+
                     using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, token, this))
                     {
                         bool itemRetrieved = false;
@@ -668,6 +679,7 @@ $result
                 try
                 {
                     if (token.IsCancellationRequested) { break; }
+
                     using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, token, cmdlet))
                     {
                         bool itemRetrieved = false;
@@ -924,6 +936,7 @@ $result
                             // We check if the target machine has already rebooted by querying the LastBootUpTime from the Win32_OperatingSystem object.
                             // So after this step, we are sure that both the Network and the WMI or WinRM service have already come up.
                             if (_exit) { break; }
+
                             if (restartStageTestList.Count > 0)
                             {
                                 if (_waitOnComputers.Count == 1)
@@ -932,12 +945,14 @@ $result
                                     _percent = CalculateProgressPercentage(StageVerification);
                                     WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                 }
+
                                 List<string> nextTestList = (isForWmi || isForPowershell) ? wmiTestList : winrmTestList;
                                 restartStageTestList = TestRestartStageUsingWsman(restartStageTestList, nextTestList, _cancel.Token);
                             }
 
                             // Test WMI service
                             if (_exit) { break; }
+
                             if (wmiTestList.Count > 0)
                             {
                                 // This statement block executes for both CLRs.
@@ -949,13 +964,16 @@ $result
                                         _percent = CalculateProgressPercentage(WmiConnectionTest);
                                         WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                     }
+
                                     wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, _cancel.Token, Credential, WsmanAuthentication, this);
                                 }
                             }
+
                             if (isForWmi) { break; }
 
                             // Test WinRM service
                             if (_exit) { break; }
+
                             if (winrmTestList.Count > 0)
                             {
                                 // This statement block executes for both CLRs.
@@ -984,10 +1002,12 @@ $result
                                     }
                                 }
                             }
+
                             if (isForWinRm) { break; }
 
                             // Test PowerShell
                             if (_exit) { break; }
+
                             if (psTestList.Count > 0)
                             {
                                 if (_waitOnComputers.Count == 1)
@@ -996,6 +1016,7 @@ $result
                                     _percent = CalculateProgressPercentage(PowerShellConnectionTest);
                                     WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                 }
+
                                 psTestList = TestPowerShell(psTestList, allDoneList, _powershell, this.Credential);
                             }
                         } while (false);
@@ -1029,6 +1050,7 @@ $result
                                 WriteProgress(_indicator[indicatorIndex % 4] + _activity, _status, 100, ProgressRecordType.Completed);
                                 _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
                             }
+
                             break;
                         }
 
@@ -1045,12 +1067,14 @@ $result
                         do
                         {
                             if (restartStageTestList.Count > 0) { WriteOutTimeoutError(restartStageTestList); }
+
                             if (wmiTestList.Count > 0) { WriteOutTimeoutError(wmiTestList); }
                             // Wait for WMI. All computers that finished restarting are put in "winrmTestList"
                             if (isForWmi) { break; }
 
                             // Wait for WinRM. All computers that finished restarting are put in "psTestList"
                             if (winrmTestList.Count > 0) { WriteOutTimeoutError(winrmTestList); }
+
                             if (isForWinRm) { break; }
 
                             if (psTestList.Count > 0) { WriteOutTimeoutError(psTestList); }
@@ -1312,8 +1336,10 @@ $result
         public SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
+
         private bool _force;
 
         /// <summary>
@@ -1323,8 +1349,10 @@ $result
         public SwitchParameter Restart
         {
             get { return _restart; }
+
             set { _restart = value; }
         }
+
         private bool _restart;
 
         /// <summary>
@@ -1359,6 +1387,7 @@ $result
                 {
                     WriteError(targetError);
                 }
+
                 return null;
             }
 
@@ -1833,6 +1862,7 @@ $result
             {
                 returnValue.Append(computer);
             }
+
             returnValue.Append(namespaceParameter);
             return returnValue.ToString();
         }
@@ -1853,6 +1883,7 @@ $result
                         return true;
                 }
             }
+
             return false;
         }
 
@@ -1876,6 +1907,7 @@ $result
                 if (driveApp.Equals(sysdrive, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
+
             return false;
         }
 
@@ -1937,6 +1969,7 @@ $result
             {
                 computerchangeinfo.HasSucceeded = true;
             }
+
             return computerchangeinfo;
         }
 
@@ -1953,6 +1986,7 @@ $result
             {
                 renamecomputerchangeinfo.HasSucceeded = true;
             }
+
             return renamecomputerchangeinfo;
         }
 
@@ -1964,6 +1998,7 @@ $result
             {
                 additionalmessage = StringUtil.Format(ComputerResources.NetworkPathNotFound, computername);
             }
+
             string message = StringUtil.Format(ComputerResources.OperationFailed, ex.Message, computername, additionalmessage);
             ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, computername);
             cmdlet.WriteError(er);
@@ -2022,6 +2057,7 @@ $result
                 cmdlet.WriteError(er);
                 retValue = true;
             }
+
             return retValue;
         }
 
@@ -2211,6 +2247,7 @@ $result
 
                         return null;
                     }
+
                     validatedComputerName = nameToCheck;
                 }
             }

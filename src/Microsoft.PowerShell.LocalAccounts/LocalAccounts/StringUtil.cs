@@ -38,6 +38,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             return string.Format(CultureInfo.CurrentCulture, fmt, p0);
         }
+
         internal static string Format(string fmt, int p0)
         {
             return string.Format(CultureInfo.CurrentCulture, fmt, p0);

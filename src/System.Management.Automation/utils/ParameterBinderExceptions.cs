@@ -109,11 +109,13 @@ namespace System.Management.Automation
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
+
             if (errorPosition != null)
             {
                 _line = errorPosition.StartLineNumber;
                 _offset = errorPosition.StartColumnNumber;
             }
+
             _resourceString = resourceString;
             _errorId = errorId;
 
@@ -215,6 +217,7 @@ namespace System.Management.Automation
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
+
             if (errorPosition != null)
             {
                 _line = errorPosition.StartLineNumber;
@@ -258,6 +261,7 @@ namespace System.Management.Automation
             {
                 _commandName = _invocationInfo.MyCommand.Name;
             }
+
             IScriptExtent errorPosition = null;
             if (_invocationInfo != null)
             {
@@ -398,6 +402,7 @@ namespace System.Management.Automation
                 return _parameterName;
             }
         }
+
         private string _parameterName = String.Empty;
 
         /// <summary>
@@ -410,6 +415,7 @@ namespace System.Management.Automation
                 return _parameterType;
             }
         }
+
         private Type _parameterType;
 
         /// <summary>
@@ -422,6 +428,7 @@ namespace System.Management.Automation
                 return _typeSpecified;
             }
         }
+
         private Type _typeSpecified;
 
         /// <summary>
@@ -434,6 +441,7 @@ namespace System.Management.Automation
                 return _errorId;
             }
         }
+
         private string _errorId;
 
         /// <summary>
@@ -446,6 +454,7 @@ namespace System.Management.Automation
                 return _line;
             }
         }
+
         private Int64 _line = Int64.MinValue;
 
         /// <summary>
@@ -458,6 +467,7 @@ namespace System.Management.Automation
                 return _offset;
             }
         }
+
         private Int64 _offset = Int64.MinValue;
 
         /// <summary>
@@ -470,6 +480,7 @@ namespace System.Management.Automation
                 return _invocationInfo;
             }
         }
+
         private InvocationInfo _invocationInfo;
         #endregion Properties
 
@@ -501,6 +512,7 @@ namespace System.Management.Automation
             {
                 result = StringUtil.Format(_resourceString, messageArgs);
             }
+
             return result;
         }
 
@@ -697,6 +709,7 @@ namespace System.Management.Automation
         {
             get { return _swallowException; }
         }
+
         private readonly bool _swallowException = false;
 
         #endregion Property

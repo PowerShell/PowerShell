@@ -556,6 +556,7 @@ namespace System.Management.Automation
                 result = ((IEnumerator<PSVariable>)searcher).Current;
                 scope = searcher.CurrentLookupScope;
             }
+
             return result;
         }
 
@@ -1138,6 +1139,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("variablePath");
             }
+
             CmdletProviderContext context = null;
             SessionStateScope scope = null;
 
@@ -1178,6 +1180,7 @@ namespace System.Management.Automation
                 {
                     varResult.Options = varResult.Options | ScopedItemOptions.Private;
                 }
+
                 result = varResult;
             }
             else
@@ -1359,6 +1362,7 @@ namespace System.Management.Automation
                     }
 #endif
             }
+
             return result;
         }
 

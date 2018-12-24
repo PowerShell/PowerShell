@@ -780,6 +780,7 @@ namespace System.Management.Automation
                         subscribers = new List<PSEventSubscriber>();
                         _engineEventSubscribers.Add(engineEventSourceIdentifier, subscribers);
                     }
+
                     subscribers.Add(subscriber);
 
                     // This subscriber is the only one in the idle event list, we enable the timer
@@ -828,6 +829,7 @@ namespace System.Management.Automation
                     // Already unsubscribed by another thread or the subscriber doesn't exist
                     return;
                 }
+
                 subscriber.IsBeingUnsubscribed = true;
             }
 
@@ -944,6 +946,7 @@ namespace System.Management.Automation
                     {
                         this.ProcessPendingActions();
                     }
+
                     waitHandle.Dispose();
                 }
             }
@@ -986,6 +989,7 @@ namespace System.Management.Automation
                     {
                         actionsHandledInCurrentThread.Add(subscriber);
                     }
+
                     capturedEvent = true;
                 }
                 else
@@ -1030,6 +1034,7 @@ namespace System.Management.Automation
                 // This mutex will get set after the event is processed.
                 action.Args.EventProcessed = new ManualResetEventSlim();
             }
+
             lock (((System.Collections.ICollection)_actionQueue).SyncRoot)
             {
                 // If the engine isn't active, pulse the pipeline.
@@ -1236,6 +1241,7 @@ namespace System.Management.Automation
                 {
                     _context.EngineSessionState = nextAction.Sender.Action.ScriptBlock.SessionStateInternal;
                 }
+
                 Runspace oldDefault = Runspace.DefaultRunspace;
 
                 try
@@ -1275,6 +1281,7 @@ namespace System.Management.Automation
                     {
                         eventProcessed.Set();
                     }
+
                     Runspace.DefaultRunspace = oldDefault;
                     _context.EngineSessionState = oldSessionState;
                     _processingAction = null;
@@ -2523,6 +2530,7 @@ namespace System.Management.Automation
                 return _moreData;
             }
         }
+
         private bool _moreData = false;
 
         /// <summary>

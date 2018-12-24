@@ -405,6 +405,7 @@ namespace System.Management.Automation.Remoting.Client
                 /// </summary>
                 internal IntPtr reserved;
             }
+
             private MarshalledObject _data;
 
             /// <summary>
@@ -699,6 +700,7 @@ namespace System.Management.Automation.Remoting.Client
             internal uint Type
             {
                 get { return _internalData.type; }
+
                 set { _internalData.type = value; }
             }
 
@@ -708,6 +710,7 @@ namespace System.Management.Automation.Remoting.Client
             internal int BufferLength
             {
                 get { return _internalData.binaryOrTextData.bufferLength; }
+
                 set { _internalData.binaryOrTextData.bufferLength = value; }
             }
 
@@ -731,6 +734,7 @@ namespace System.Management.Automation.Remoting.Client
                     Marshal.FreeHGlobal(_marshalledBuffer);
                     _marshalledBuffer = IntPtr.Zero;
                 }
+
                 if (_marshalledObject != IntPtr.Zero)
                 {
                     Marshal.FreeHGlobal(_marshalledObject);
@@ -765,6 +769,7 @@ namespace System.Management.Automation.Remoting.Client
             internal uint Type
             {
                 get { return _type; }
+
                 set { _type = value; }
             }
 
@@ -775,6 +780,7 @@ namespace System.Management.Automation.Remoting.Client
             internal int BufferLength
             {
                 get { return _bufferLength; }
+
                 set { _bufferLength = value; }
             }
 
@@ -822,6 +828,7 @@ namespace System.Management.Automation.Remoting.Client
                             string tempText = Marshal.PtrToStringUni(dataStruct.binaryOrTextData.data, dataStruct.binaryOrTextData.bufferLength);
                             newData._text = tempText;
                         }
+
                         break;
                     case (uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_BINARY:
                         if (dataStruct.binaryOrTextData.bufferLength > 0)
@@ -835,10 +842,12 @@ namespace System.Management.Automation.Remoting.Client
                                 dataStruct.binaryOrTextData.bufferLength);
                             newData._data = dataRecvd;
                         }
+
                         break;
                     default:
                         throw new NotSupportedException();
                 }
+
                 return newData;
             }
 
@@ -1032,6 +1041,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.streamIDs = idsArray;
                     result.streamIDsCount = resultInternal.streamIDsCount;
                 }
+
                 return result;
             }
         }
@@ -1208,6 +1218,7 @@ namespace System.Management.Automation.Remoting.Client
                 [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr args;
             }
+
             private WSManCommandArgSetInternal _internalData;
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private MarshalledObject _data;
@@ -1297,6 +1308,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.argsCount = resultInternal.argsCount;
                     result.args = tempArgs;
                 }
+
                 return result;
             }
 
@@ -1473,6 +1485,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.environmentVariableSet = WSManEnvironmentVariableSet.UnMarshal(resultInternal.environmentVariableSet);
                     result.name = resultInternal.name;
                 }
+
                 return result;
             }
         }
@@ -1518,6 +1531,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.vars = varsArray;
                     result.varsCount = resultInternal.varsCount;
                 }
+
                 return result;
             }
 
@@ -1549,6 +1563,7 @@ namespace System.Management.Automation.Remoting.Client
                 public int proxyAccessType;
                 public WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct proxyAuthCredentialsStruct;
             }
+
             private MarshalledObject _data;
 
             /// <summary>
@@ -1738,6 +1753,7 @@ namespace System.Management.Automation.Remoting.Client
                 internal IntPtr operationContext;
                 internal IntPtr asyncCallback;
             }
+
             private MarshalledObject _data;
             private WSManShellAsyncInternal _internalData;
 
@@ -1822,6 +1838,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     result.data = connectData;
                 }
+
                 return result;
             }
 
@@ -2035,6 +2052,7 @@ namespace System.Management.Automation.Remoting.Client
                     result._internalDetails = resultInternal;
                     result.unmanagedHandle = unmanagedData;
                 }
+
                 return result;
             }
 
@@ -2089,6 +2107,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.clientToken = resultInternal.clientToken; // TODO: UnMarshaling needed here!!!!
                     result.httpUrl = resultInternal.httpUrl;
                 }
+
                 return result;
             }
 
@@ -2138,6 +2157,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.issuerThumbprint = resultInternal.issuerThumbprint;
                     result.subjectName = resultInternal.subjectName;
                 }
+
                 return result;
             }
             /// <summary>
@@ -2183,6 +2203,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.selectorSet = WSManSelectorSet.UnMarshal(resultInternal.selectorSet);
                     result.optionSet = WSManOptionSet.UnMarshal(resultInternal.optionSet);
                 }
+
                 return result;
             }
             /// <summary>

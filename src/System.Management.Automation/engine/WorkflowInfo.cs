@@ -248,6 +248,7 @@ namespace System.Management.Automation
         {
             get { return _definition; }
         }
+
         private string _definition = string.Empty;
 
         /// <summary>
@@ -268,6 +269,7 @@ namespace System.Management.Automation
         {
             get { return _workflowsCalled ?? Utils.EmptyReadOnlyCollection<WorkflowInfo>(); }
         }
+
         private ReadOnlyCollection<WorkflowInfo> _workflowsCalled;
 
         internal override HelpCategory HelpCategory

@@ -100,6 +100,7 @@ namespace Microsoft.WSMan.Management
                 ReleaseSessions();
             }
         }
+
         internal static Sessions AutoSession = new Sessions();
         //
         //
@@ -121,8 +122,10 @@ namespace Microsoft.WSMan.Management
                     {
                         //Somehow the object was a null reference. Ignore the error
                     }
+
                     sessionobj=null;
                 }
+
                 Sessions.SessionObjCache.Clear();
             }
         }
@@ -192,6 +195,7 @@ namespace Microsoft.WSMan.Management
                 result = String.Format(CultureInfo.CurrentCulture,
                     template, args);
             }
+
             return result;
         }
 
@@ -221,6 +225,7 @@ namespace Microsoft.WSMan.Management
                     {
                         //Somehow the object was a null reference. Ignore the error
                     }
+
                     Sessions.SessionObjCache.Remove(key);
                     Sessions.SessionObjCache.Add(key, value);
                 }
@@ -245,9 +250,11 @@ namespace Microsoft.WSMan.Management
                     {
                         //Somehow the object was a null reference. Ignore the error
                     }
+
                     Sessions.SessionObjCache.Remove(computer);
                 }
             }
+
             return objsession;
         }
 
@@ -277,6 +284,7 @@ namespace Microsoft.WSMan.Management
             catch (COMException)
             {
             }
+
             return Sessions.SessionObjCache;
         }
 
@@ -307,6 +315,7 @@ namespace Microsoft.WSMan.Management
                     //error
                 }
             }
+
             return resultStr;
         }
 
@@ -325,6 +334,7 @@ namespace Microsoft.WSMan.Management
             {
                 throw new ArgumentException(GetResourceMsgFromResourcetext("InvalidFileName"));
             }
+
             string strOut = null;
             try
             {
@@ -367,12 +377,14 @@ namespace Microsoft.WSMan.Management
                    // _sr.Close();
                     _sr.Dispose();
                 }
+
                 if (_fs != null)
                 {
                     //_fs.Close();
                     _fs.Dispose();
                 }
             }
+
             return strOut;
         }
 
@@ -388,6 +400,7 @@ namespace Microsoft.WSMan.Management
                 {
                     throw new FileNotFoundException(_resourceMgr.GetString("InvalidFileName"));
                 }
+
                 resultString = ReadFile(filepath);
                 return resultString;
             }
@@ -411,9 +424,11 @@ namespace Microsoft.WSMan.Management
                                 parameters = parameters + " " + ATTR_NIL;
                                 nilns = " " + NS_XSI;
                             }
+
                             parameters = parameters + ">" + entry.Value.ToString() + "</p:" + entry.Key.ToString() + ">";
                         }
                     }
+
                     resultString = "<p:" + root + " " + xmlns + nilns + ">" + parameters + "</p:" + root + ">";
 
                     break;
@@ -462,6 +477,7 @@ namespace Microsoft.WSMan.Management
                                         }
                                     }
                                 }
+
                                 if (string.IsNullOrEmpty(entry.Key.ToString()))
                                 {
                                     //XmlNode newnode = xmlfile.CreateNode(XmlNodeType.Attribute, ATTR_NIL_NAME, NS_XSI_URI);
@@ -501,6 +517,7 @@ namespace Microsoft.WSMan.Management
             {
                 nsmgr.AddNamespace("cfg", xmlnamespace);
             }
+
             node = xDoc.SelectSingleNode(xpathpattern, nsmgr);
             return node;
         }
@@ -527,11 +544,13 @@ namespace Microsoft.WSMan.Management
                 {
                     ConnectionString = ConnectionString + ":" + port;
                 }
+
                 if (applicationname != null)
                 {
                     ConnectionString = ConnectionString + "/" + applicationname;
                 }
             }
+
             return ConnectionString;
 
         }
@@ -544,6 +563,7 @@ namespace Microsoft.WSMan.Management
             {
                 resource = resourceuri.ToString();
             }
+
             if (selectorset != null)
             {
                 resource = resource + "?";
@@ -556,6 +576,7 @@ namespace Microsoft.WSMan.Management
                         resource += "+";
                 }
             }
+
             IWSManResourceLocator m_resource = null;
             try
             {
@@ -590,6 +611,7 @@ namespace Microsoft.WSMan.Management
             {
                 AssertError(ex.Message, false, null);
             }
+
             return m_resource;
         }
 
@@ -640,26 +662,32 @@ namespace Microsoft.WSMan.Management
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseNoAuthentication;
                 }
+
                 if (authentication.Equals(AuthenticationMechanism.Basic))
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseBasic | (int)WSManSessionFlags.WSManFlagCredUserNamePassword;
                 }
+
                 if (authentication.Equals(AuthenticationMechanism.Negotiate))
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseNegotiate;
                 }
+
                 if (authentication.Equals(AuthenticationMechanism.Kerberos))
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseKerberos;
                 }
+
                 if (authentication.Equals(AuthenticationMechanism.Digest))
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseDigest | (int)WSManSessionFlags.WSManFlagCredUserNamePassword;
                 }
+
                 if (authentication.Equals(AuthenticationMechanism.Credssp))
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseCredSsp | (int)WSManSessionFlags.WSManFlagCredUserNamePassword;
                 }
+
                 if (authentication.Equals(AuthenticationMechanism.ClientCertificate))
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseClientCertificate;
@@ -691,6 +719,7 @@ namespace Microsoft.WSMan.Management
                     {
                         connObject.UserName = nwCredential.Domain + "\\" + nwCredential.UserName;
                     }
+
                     connObject.Password = nwCredential.Password;
                     if (!authentication.Equals(AuthenticationMechanism.Credssp) || !authentication.Equals(AuthenticationMechanism.Digest) || authentication.Equals(AuthenticationMechanism.Basic))
                     {
@@ -741,6 +770,7 @@ namespace Microsoft.WSMan.Management
                     {
                         ProxyAuthenticationFlags = connObject.ProxyAuthenticationUseDigest();
                     }
+
                     if (sessionoption.ProxyCredential != null)
                     {
                         try
@@ -758,18 +788,22 @@ namespace Microsoft.WSMan.Management
                     }
 
                 }
+
                 if (sessionoption.SkipCACheck)
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagSkipCACheck;
                 }
+
                 if (sessionoption.SkipCNCheck)
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagSkipCNCheck;
                 }
+
                 if (sessionoption.SPNPort > 0)
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagEnableSpnServerPort;
                 }
+
                 if (sessionoption.UseUtf16)
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUtf16;
@@ -779,10 +813,12 @@ namespace Microsoft.WSMan.Management
                     //If UseUtf16 is false, then default Encoding is Utf8
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUtf8;
                 }
+
                 if (!sessionoption.UseEncryption)
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagNoEncryption;
                 }
+
                 if (sessionoption.SkipRevocationCheck)
                 {
                     sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagSkipRevocationCheck;
@@ -815,6 +851,7 @@ namespace Microsoft.WSMan.Management
             {
                 AssertError(ex.Message, false, null);
             }
+
             return m_SessionObj;
         }
 
@@ -826,6 +863,7 @@ namespace Microsoft.WSMan.Management
                 _sr.Dispose();
                 _sr = null;
             }
+
             if (_fs != null)
             {
                 _fs.Dispose();
@@ -847,6 +885,7 @@ namespace Microsoft.WSMan.Management
                     filter.Append("+");
                 }
             }
+
             filter.Remove(filter.ToString().Length - 1, 1);
             return filter.ToString();
         }
@@ -927,6 +966,7 @@ namespace Microsoft.WSMan.Management
                     string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
+
                 IWSManSession m_session = CreateSessionObject(m_wsmanObject, authentication, sessionoption, credential, connectionStr, certificateThumbprint, usessl);
                 m_session.Identify(0);
                 string key = computername;
@@ -934,6 +974,7 @@ namespace Microsoft.WSMan.Management
                 {
                     key = "localhost";
                 }
+
                 AddtoDictionary(key, m_session);
             }
             catch (IndexOutOfRangeException)
@@ -1098,11 +1139,13 @@ namespace Microsoft.WSMan.Management
             {
                 LoadResourceData();
             }
+
             string value = string.Empty;
             if (ResourceValueCache.ContainsKey(Key.Trim()))
             {
                 ResourceValueCache.TryGetValue(Key.Trim(), out value);
             }
+
             return value.Trim();
         }
 

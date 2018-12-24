@@ -24,6 +24,7 @@ namespace System.Management.Automation.Runspaces
                 return _originInfo;
             }
         }
+
         private OriginInfo _originInfo;
 
         /// <summary>
@@ -114,6 +115,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
@@ -159,6 +161,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
@@ -199,6 +202,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
@@ -226,6 +230,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
@@ -253,6 +258,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
@@ -295,6 +301,7 @@ namespace System.Management.Automation.Remoting
                 return _computerName;
             }
         }
+
         [DataMemberAttribute()]
         private string _computerName;
 
@@ -309,6 +316,7 @@ namespace System.Management.Automation.Remoting
                 return _runspaceID;
             }
         }
+
         [DataMemberAttribute()]
         private Guid _runspaceID;
 
@@ -328,6 +336,7 @@ namespace System.Management.Automation.Remoting
                 _instanceId = value;
             }
         }
+
         [DataMemberAttribute()]
         private Guid _instanceId;
 

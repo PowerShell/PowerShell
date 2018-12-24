@@ -45,6 +45,7 @@ namespace System.Management.Automation
                 return s_commonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -66,6 +67,7 @@ namespace System.Management.Automation
                 return s_optionalCommonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -117,6 +119,7 @@ namespace System.Management.Automation
         {
             _parameterSetName = parameterSetName;
         }
+
         private string _parameterSetName = string.Empty;
 
         #region Override Internal
@@ -265,6 +268,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
                 }
+
                 if (retValue == null)
                 {
                     throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
@@ -291,6 +295,7 @@ namespace System.Management.Automation
                     return commandRuntime;
                 }
             }
+
             set
             {
                 using (PSTransactionManager.GetEngineProtectionScope())

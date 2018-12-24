@@ -44,10 +44,12 @@ namespace System.Management.Automation
 
                 throw PSTraceSource.NewArgumentOutOfRangeException("activityId", activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
             }
+
             if (String.IsNullOrEmpty(activity))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
             }
+
             if (String.IsNullOrEmpty(statusDescription))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
@@ -113,12 +115,14 @@ namespace System.Management.Automation
             {
                 return parentId;
             }
+
             set
             {
                 if (value == ActivityId)
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ParentActivityIdCantBeActivityId);
                 }
+
                 parentId = value;
             }
         }
@@ -139,12 +143,14 @@ namespace System.Management.Automation
             {
                 return activity;
             }
+
             set
             {
                 if (String.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
+
                 activity = value;
             }
         }
@@ -161,12 +167,14 @@ namespace System.Management.Automation
             {
                 return status;
             }
+
             set
             {
                 if (String.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
+
                 status = value;
             }
         }
@@ -185,6 +193,7 @@ namespace System.Management.Automation
             {
                 return currentOperation;
             }
+
             set
             {
                 // null or empty string is allowed
@@ -206,6 +215,7 @@ namespace System.Management.Automation
             {
                 return percent;
             }
+
             set
             {
                 // negative values are allowed
@@ -239,6 +249,7 @@ namespace System.Management.Automation
             {
                 return secondsRemaining;
             }
+
             set
             {
                 // negative values are allowed
@@ -259,6 +270,7 @@ namespace System.Management.Automation
             {
                 return type;
             }
+
             set
             {
                 if (value != ProgressRecordType.Completed && value != ProgressRecordType.Processing)
@@ -331,6 +343,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             TimeSpan remainingTime = totalTime - elapsedTime;
 
             return (int)(remainingTime.TotalSeconds);
@@ -361,6 +374,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentOutOfRangeException("startTime");
             }
+
             if (expectedDuration <= TimeSpan.Zero)
             {
                 throw new ArgumentOutOfRangeException("expectedDuration");

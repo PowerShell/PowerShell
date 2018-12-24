@@ -118,6 +118,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessObject(PSObjectHelper.AsPSObject(obj));
                         }
                     }
+
                     break;
                 case EnumerableExpansion.Both:
                     {
@@ -129,12 +130,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessObject(PSObjectHelper.AsPSObject(obj));
                         }
                     }
+
                     break;
                 default:
                     {
                         // do not enumerate at all (CoreOnly)
                         ProcessObject(so);
                     }
+
                     break;
             }
         }
@@ -169,18 +172,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         msg = FormatAndOut_format_xxx.IEnum_NoObjects;
                     }
+
                     break;
                 case 1:
                     {
                         msg = FormatAndOut_format_xxx.IEnum_OneObject;
                     }
+
                     break;
                 default:
                     {
                         msg = StringUtil.Format(FormatAndOut_format_xxx.IEnum_ManyObjects, count);
                     }
+
                     break;
             }
+
             SendCommentOutOfBand(msg);
         }
 
@@ -274,6 +281,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return true;
                 }
+
                 return !_parameters.forceFormattingAlsoOnOutOfBand;
             }
         }
@@ -547,8 +555,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return showErrorsAsMessages.Value;
                 return false;
             }
+
             set { showErrorsAsMessages = value; }
         }
+
         internal bool? showErrorsAsMessages = null;
 
         /// <summary>
@@ -564,8 +574,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return showErrorsInFormattedOutput.Value;
                 return false;
             }
+
             set { showErrorsInFormattedOutput = value; }
         }
+
         internal bool? showErrorsInFormattedOutput = null;
 
         /// <summary>
@@ -576,8 +588,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public SwitchParameter Force
         {
             get { return _forceFormattingAlsoOnOutOfBand; }
+
             set { _forceFormattingAlsoOnOutOfBand = value; }
         }
+
         private bool _forceFormattingAlsoOnOutOfBand;
 
         /// <summary>
@@ -608,6 +622,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // NOTE: this is an exception that should never be triggered
                 throw PSTraceSource.NewArgumentException("Expand", FormatAndOut_MshParameter.IllegalEnumerableExpansionValue);
             }
+
             retVal = temp;
             return retVal;
         }
@@ -731,6 +746,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }
+
                 parameters.viewName = this.View;
             }
         }
@@ -755,8 +771,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return _autosize.Value;
                 return false;
             }
+
             set { _autosize = value; }
         }
+
         private bool? _autosize = null;
 
         /// <summary>
@@ -778,8 +796,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return _hideHeaders.Value;
                 return false;
             }
+
             set { _hideHeaders = value; }
         }
+
         private bool? _hideHeaders = null;
 
         /// <summary>
@@ -795,8 +815,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return _multiLine.Value;
                 return false;
             }
+
             set { _multiLine = value; }
         }
+
         private bool? _multiLine = null;
 
         #endregion
@@ -835,6 +857,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 tableParameters.multiLine = _multiLine.Value;
             }
+
             return parameters;
         }
     }

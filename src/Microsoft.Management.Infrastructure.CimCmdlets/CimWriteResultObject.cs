@@ -46,6 +46,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return result;
             }
         }
+
         private object result;
         #endregion
     }//End Class

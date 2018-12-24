@@ -34,6 +34,7 @@ namespace Microsoft.PowerShell.Commands
         public object Property
         {
             get { return _prop; }
+
             set { _prop = value; }
         }
 
@@ -52,8 +53,10 @@ namespace Microsoft.PowerShell.Commands
                     return _autosize.Value;
                 return false;
             }
+
             set { _autosize = value; }
         }
+
         private bool? _autosize = null;
 
         /// <summary>
@@ -70,8 +73,10 @@ namespace Microsoft.PowerShell.Commands
                     return _column.Value;
                 return -1;
             }
+
             set { _column = value; }
         }
+
         private int? _column = null;
 
         #endregion
@@ -94,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }
+
                 parameters.viewName = this.View;
             }
 
@@ -134,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 wideSpecific.columns = _column.Value;
             }
+
             return parameters;
         }
     }

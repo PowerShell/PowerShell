@@ -61,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return _property; }
+
             set { _property = value ?? Utils.EmptyArray<string>(); }
         }
 
@@ -80,6 +81,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter Force
         {
             get { return base.Force; }
+
             set { base.Force = value; }
         }
 
@@ -107,6 +109,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.RemovePropertyDynamicParameters(Path[0], propertyName, context);
             }
+
             return InvokeProvider.Property.RemovePropertyDynamicParameters(".", propertyName, context);
         }
 

@@ -36,6 +36,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return base.NameInternal; }
+
             set { base.NameInternal = value; }
         }
 
@@ -47,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public PSTraceSourceOptions Option
         {
             get { return base.OptionsInternal; }
+
             set
             {
                 base.OptionsInternal = value;
@@ -82,6 +84,7 @@ namespace Microsoft.PowerShell.Commands
         public TraceOptions ListenerOption
         {
             get { return base.ListenerOptionsInternal; }
+
             set
             {
                 base.ListenerOptionsInternal = value;
@@ -97,6 +100,7 @@ namespace Microsoft.PowerShell.Commands
         public string FilePath
         {
             get { return base.FileListener; }
+
             set { base.FileListener = value; }
         }
 
@@ -107,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return base.ForceWrite; }
+
             set { base.ForceWrite = value; }
         }
 
@@ -118,6 +123,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Debugger
         {
             get { return base.DebuggerListener; }
+
             set { base.DebuggerListener = value; }
         }
 
@@ -129,6 +135,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PSHost
         {
             get { return base.PSHostListener; }
+
             set { base.PSHostListener = value; }
         }
 
@@ -177,6 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 _pipeline.ExternalErrorOutput = new TracePipelineWriter(this, true, _matchingSources);
                 _pipeline.ExternalSuccessOutput = new TracePipelineWriter(this, false, _matchingSources);
             }
+
             ResetTracing(_matchingSources);
         }
 
@@ -199,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
                     result = StepCommand();
                     break;
             }
+
             ResetTracing(_matchingSources);
 
             if (result == null)
@@ -228,6 +237,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(results, true);
             }
+
             this.Dispose();
         }
 
@@ -261,6 +271,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _pipeline.Step(InputObject);
             }
+
             return null;
         }
 
@@ -299,9 +310,11 @@ namespace Microsoft.PowerShell.Commands
                         fileStream.Dispose();
                     }
                 }
+
                 GC.SuppressFinalize(this);
             }
         }
+
         private bool _disposed;
         #endregion IDisposable
     }

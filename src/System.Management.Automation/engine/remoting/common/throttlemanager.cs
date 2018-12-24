@@ -123,11 +123,13 @@ namespace System.Management.Automation.Remoting
             {
                 return _ignoreStop;
             }
+
             set
             {
                 _ignoreStop = true;
             }
         }
+
         private bool _ignoreStop = false;
 
         #region Runspace Debug
@@ -209,11 +211,13 @@ namespace System.Management.Automation.Remoting
                     _throttleLimit = value;
                 }
             }
+
             get
             {
                 return _throttleLimit;
             }
         }
+
         private int _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
 
         #endregion Public (internal) Properties
@@ -732,6 +736,7 @@ namespace System.Management.Automation.Remoting
                     OperationComplete += new EventHandler<OperationStateEventArgs>(Operation_OperationComplete);
                 }
             }
+
             remove
             {
                 InternalEvent -= value;

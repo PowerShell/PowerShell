@@ -37,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return columnValue.GetType();
             }
+
             return typeof(string); // Use the String type as default.
         }
 

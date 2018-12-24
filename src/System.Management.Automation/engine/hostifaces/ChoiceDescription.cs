@@ -127,6 +127,7 @@ namespace System.Management.Automation.Host
 
                 return this.helpMessage;
             }
+
             set
             {
                 if (value == null)

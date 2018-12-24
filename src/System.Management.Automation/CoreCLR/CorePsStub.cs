@@ -22,6 +22,7 @@ namespace System.Management.Automation
     public sealed class PSTransactionContext : IDisposable
     {
         internal PSTransactionContext(Internal.PSTransactionManager transactionManager) { }
+
         public void Dispose() { }
     }
 
@@ -396,6 +397,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             throw new NotImplementedException("SetValue(string name, obj value, RegistryValueKind valueKind) is not implemented. TransactedRegistry related APIs should not be used.");
         }
+
         public string[] GetValueNames()
         {
             throw new NotImplementedException("GetValueNames() is not implemented. TransactedRegistry related APIs should not be used.");
@@ -447,6 +449,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         public abstract string Name { get; }
+
         public abstract int SubKeyCount { get; }
 
         public void SetAccessControl(ObjectSecurity securityDescriptor)

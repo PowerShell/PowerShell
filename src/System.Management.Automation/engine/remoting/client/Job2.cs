@@ -305,31 +305,37 @@ namespace System.Management.Automation
                     {
                         handler = StartJobCompleted;
                     }
+
                     break;
                 case StopJobOperation:
                     {
                         handler = StopJobCompleted;
                     }
+
                     break;
                 case SuspendJobOperation:
                     {
                         handler = SuspendJobCompleted;
                     }
+
                     break;
                 case ResumeJobOperation:
                     {
                         handler = ResumeJobCompleted;
                     }
+
                     break;
                 case UnblockJobOperation:
                     {
                         handler = UnblockJobCompleted;
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "this condition should not be hit, check the value of operation that you passed");
                     }
+
                     break;
             }
 #pragma warning disable 56500
@@ -527,6 +533,7 @@ namespace System.Management.Automation
         internal PSEventManager EventManager
         {
             get { return _eventManager; }
+
             set
             {
                 _tracer.WriteMessage("Setting event manager for Job ", InstanceId);
@@ -577,6 +584,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return _jobSuspendedOrAborted;
             }
         }
@@ -697,6 +705,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("childJob");
             }
+
             _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
 
             JobStateInfo childJobStateInfo;
@@ -707,6 +716,7 @@ namespace System.Management.Automation
                 childJobStateInfo = childJob.JobStateInfo;
                 childJob.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
             }
+
             ChildJobs.Add(childJob);
             ParentJobStateCalculation(new JobStateEventArgs(childJobStateInfo, new JobStateInfo(JobState.NotStarted)));
         }
@@ -850,6 +860,7 @@ namespace System.Management.Automation
                 ScriptDebugger.SetDebugJobAsync(job as IJobDebugger, false);
                 job.StartJobAsync();
             }
+
             completed.WaitOne();
             foreach (Job2 job in ChildJobs)
             {
@@ -884,6 +895,7 @@ namespace System.Management.Automation
                 OnStartJobCompleted(new AsyncCompletedEventArgs(new ObjectDisposedException(TraceClassName), false, null));
                 return;
             }
+
             _tracer.WriteMessage(TraceClassName, "StartJobAsync", Guid.Empty, this, "Entering method", null);
             s_structuredTracer.BeginContainerParentJobExecution(InstanceId);
             foreach (Job2 job in this.ChildJobs)
@@ -1025,6 +1037,7 @@ namespace System.Management.Automation
                     "Child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
                 job.ResumeJobAsync();
             }
+
             completed.WaitOne();
             Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
@@ -1033,6 +1046,7 @@ namespace System.Management.Automation
 
                 job.ResumeJobCompleted -= eventHandler;
             }
+
             _tracer.WriteMessage(TraceClassName, "ResumeJob", Guid.Empty, this, "Exiting method", null);
 
             // Errors are taken from the Error collection by the cmdlet for ContainerParentJob.
@@ -1048,6 +1062,7 @@ namespace System.Management.Automation
                 OnResumeJobCompleted(new AsyncCompletedEventArgs(new ObjectDisposedException(TraceClassName), false, null));
                 return;
             }
+
             _tracer.WriteMessage(TraceClassName, "ResumeJobAsync", Guid.Empty, this, "Entering method", null);
             foreach (Job2 job in this.ChildJobs)
             {
@@ -1260,6 +1275,7 @@ namespace System.Management.Automation
                     "Child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
                 job.UnblockJobAsync();
             }
+
             completed.WaitOne();
             Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
@@ -1268,6 +1284,7 @@ namespace System.Management.Automation
 
                 job.UnblockJobCompleted -= eventHandler;
             }
+
             _tracer.WriteMessage(TraceClassName, "UnblockJob", Guid.Empty, this, "Exiting method", null);
 
             // Errors are taken from the Error collection by the cmdlet for ContainerParentJob.
@@ -1284,6 +1301,7 @@ namespace System.Management.Automation
                 OnUnblockJobCompleted(new AsyncCompletedEventArgs(new ObjectDisposedException(TraceClassName), false, null));
                 return;
             }
+
             _tracer.WriteMessage(TraceClassName, "UnblockJobAsync", Guid.Empty, this, "Entering method", null);
             foreach (Job2 job in this.ChildJobs)
             {
@@ -1433,6 +1451,7 @@ namespace System.Management.Automation
                 else
                     job.SuspendJobAsync();
             }
+
             completed.WaitOne();
             Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
@@ -1441,6 +1460,7 @@ namespace System.Management.Automation
 
                 job.SuspendJobCompleted -= eventHandler;
             }
+
             _tracer.WriteMessage(TraceClassName, "SuspendJob", Guid.Empty, this, "Exiting method", null);
 
             // Errors are taken from the Error collection by the cmdlet for ContainerParentJob.
@@ -1458,6 +1478,7 @@ namespace System.Management.Automation
                 OnSuspendJobCompleted(new AsyncCompletedEventArgs(new ObjectDisposedException(TraceClassName), false, null));
                 return;
             }
+
             _tracer.WriteMessage(TraceClassName, "SuspendJobAsync", Guid.Empty, this, "Entering method", null);
             foreach (Job2 job in this.ChildJobs)
             {
@@ -1607,6 +1628,7 @@ namespace System.Management.Automation
                 else
                     job.StopJobAsync();
             }
+
             completed.WaitOne();
             Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
@@ -1615,6 +1637,7 @@ namespace System.Management.Automation
 
                 job.StopJobCompleted -= eventHandler;
             }
+
             _tracer.WriteMessage(TraceClassName, "StopJob", Guid.Empty, this, "Exiting method", null);
 
             // Errors are taken from the Error collection by the cmdlet for ContainerParentJob.
@@ -1632,6 +1655,7 @@ namespace System.Management.Automation
                 OnStopJobCompleted(new AsyncCompletedEventArgs(new ObjectDisposedException(TraceClassName), false, null));
                 return;
             }
+
             _tracer.WriteMessage(TraceClassName, "StopJobAsync", Guid.Empty, this, "Entering method", null);
 
             foreach (Job2 job in this.ChildJobs)
@@ -1707,6 +1731,7 @@ namespace System.Management.Automation
                                 JobSuspendedOrAborted.Reset();
                         }
                     }
+
                     break;
 
                 case JobState.Suspended:
@@ -1717,6 +1742,7 @@ namespace System.Management.Automation
                             JobRunning.Reset();
                         }
                     }
+
                     break;
                 case JobState.Failed:
                 case JobState.Completed:
@@ -1732,6 +1758,7 @@ namespace System.Management.Automation
                             JobRunning.Set();
                         }
                     }
+
                     break;
             }
         }
@@ -1758,6 +1785,7 @@ namespace System.Management.Automation
                     {
                         PSBeginTime = DateTime.Now;
                     }
+
                     if (!IsFinishedState(JobStateInfo.State) && IsPersistentState(computedState))
                     {
                         PSEndTime = DateTime.Now;
@@ -1893,6 +1921,7 @@ namespace System.Management.Automation
                     // if the job state is blocked, we have already returned.
                     return false;
                 }
+
                 if (e.JobStateInfo.State == JobState.Failed)
                 {
                     // If any of the child job failed, we set status to failed
@@ -1928,12 +1957,14 @@ namespace System.Management.Automation
                         computedJobState = JobState.Failed;
                         return true;
                     }
+
                     if (stoppedChildJobsCount > 0)
                     {
                         tracer.WriteMessage(traceClassName, ": JobState is stopped, stop is called.");
                         computedJobState = JobState.Stopped;
                         return true;
                     }
+
                     tracer.WriteMessage(traceClassName, ": JobState is completed.");
                     computedJobState = JobState.Completed;
                     return true;
@@ -2131,12 +2162,14 @@ namespace System.Management.Automation
         /// The actual exception that caused this error.
         /// </summary>
         public Exception Reason { get { return _reason; } }
+
         private Exception _reason;
 
         /// <summary>
         /// The user-focused location from where this error originated.
         /// </summary>
         public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
+
         private ScriptExtent _displayScriptPosition;
 
         /// <summary>

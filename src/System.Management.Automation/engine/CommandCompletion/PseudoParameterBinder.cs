@@ -341,6 +341,7 @@ namespace System.Management.Automation.Language
                     s_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
                     s_bindCommandRunspace.Open();
                 }
+
                 Runspace.DefaultRunspace = s_bindCommandRunspace;
                 // Static binding always does argument binding (not argument or parameter completion).
                 pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
@@ -354,6 +355,7 @@ namespace System.Management.Automation.Language
 
             return new StaticBindingResult(commandAst, pseudoBinding);
         }
+
         [ThreadStatic]
         static Runspace s_bindCommandRunspace = null;
     }
@@ -593,6 +595,7 @@ namespace System.Management.Automation.Language
                 BindingExceptions.Add(duplicateParameter.ParameterName, new StaticBindingError(duplicateParameter, bindingException));
             }
         }
+
         private PseudoBindingInfo _bindingInfo = null;
 
         private void CreateBindingResultForSyntacticBind(CommandAst commandAst)
@@ -727,6 +730,7 @@ namespace System.Management.Automation.Language
         public object ConstantValue
         {
             get { return _constantValue; }
+
             internal set
             {
                 if (value != null)
@@ -735,6 +739,7 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
         private object _constantValue;
 
         /// <summary>
@@ -742,6 +747,7 @@ namespace System.Management.Automation.Language
         public CommandElementAst Value
         {
             get { return _value; }
+
             internal set
             {
                 _value = value;
@@ -753,6 +759,7 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
         private CommandElementAst _value;
     }
 
@@ -968,6 +975,7 @@ namespace System.Management.Automation.Language
                             previousLanguageMode = executionContext.LanguageMode;
                             executionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                         }
+
                         _bindingEffective = PrepareCommandElements(executionContext);
                     }
                     finally
@@ -986,6 +994,7 @@ namespace System.Management.Automation.Language
             {
                 _pipelineInputType = pipeArgumentType;
             }
+
             _bindingEffective = ParseParameterArguments(paramAstAtCursor);
 
             if (_bindingEffective)
@@ -1325,6 +1334,7 @@ namespace System.Management.Automation.Language
                             _pipelineInputType = typeof(object);
                         break;
                     }
+
                     preCmdBaseAst = cmdBase;
                 }
             }
@@ -1341,6 +1351,7 @@ namespace System.Management.Automation.Language
             {
                 ast = ast.Parent;
             }
+
             ast.Visit(exportVisitor);
 
             CommandProcessorBase commandProcessor = null;
@@ -1366,6 +1377,7 @@ namespace System.Management.Automation.Language
                     commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, true, context.EngineSessionState);
                 }
             }
+
             return commandProcessor;
         }
 
@@ -1830,6 +1842,7 @@ namespace System.Management.Automation.Language
             {
                 result = true;
             }
+
             return result;
         }
 
@@ -1849,6 +1862,7 @@ namespace System.Management.Automation.Language
                     result = argument;
                     break;
                 }
+
                 nonPositionalArguments.Add(argument);
             }
 
@@ -1905,6 +1919,7 @@ namespace System.Management.Automation.Language
                         _boundArguments.Add(parameterName, new AstArrayPair(parameterName, argList));
                         unboundArguments.Clear();
                     }
+
                     result = true;
                     break;
                 }
@@ -1962,6 +1977,7 @@ namespace System.Management.Automation.Language
                     {
                         _boundArguments.Add(parameterName, new PipeObjectPair(parameterName, _pipelineInputType));
                     }
+
                     result = true;
                     break;
                 }

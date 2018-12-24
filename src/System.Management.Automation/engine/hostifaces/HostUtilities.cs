@@ -148,6 +148,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 command = new PSCommand();
                 command.AddCommand(profilePath, false);
                 commands.Add(command);
@@ -485,6 +486,7 @@ namespace System.Management.Automation
                 message = message.Remove(0, partToRemove.Length);
                 matchPattern = true;
             }
+
             return message;
         }
 
@@ -502,6 +504,7 @@ namespace System.Management.Automation
                 message = message.Remove(0, partToRemove.Length);
                 matchPattern = true;
             }
+
             return message;
         }
 
@@ -912,6 +915,7 @@ namespace System.Management.Automation
                 // Local runspace.  Make a nested PowerShell object as needed.
                 ps.SetIsNested(runspace.GetCurrentlyRunningPipeline() != null);
             }
+
             using (ps)
             {
                 ps.Commands = command;

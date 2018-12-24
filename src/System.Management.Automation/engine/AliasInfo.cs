@@ -161,6 +161,7 @@ namespace System.Management.Automation
                                 result = null;
                                 break;
                             }
+
                             cyclePrevention.Add(result.Name);
 
                             commandNameToResolve = result.Definition;
@@ -191,6 +192,7 @@ namespace System.Management.Automation
                 return _definition;
             }
         }
+
         private string _definition = String.Empty;
 
         /// <summary>
@@ -323,6 +325,7 @@ namespace System.Management.Automation
 
             _options = newOptions;
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
@@ -351,6 +354,7 @@ namespace System.Management.Automation
                 {
                     return resolvedCommand.OutputType;
                 }
+
                 return null;
             }
         }

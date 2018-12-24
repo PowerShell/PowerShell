@@ -38,11 +38,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _column ?? 0;
             }
+
             set
             {
                 _column = value;
             }
         }
+
         private int? _column = null;
 
         /// <summary>

@@ -134,14 +134,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 hash.Add("Add", Add);
             }
+
             if (Remove != null)
             {
                 hash.Add("Remove", Remove);
             }
+
             if (Replace != null)
             {
                 hash.Add("Replace", Replace);
             }
+
             return hash;
         }
 
@@ -155,6 +158,7 @@ namespace Microsoft.PowerShell.Commands
                     listModifier.Add.Add(obj);
                 }
             }
+
             if (Remove != null)
             {
                 foreach (object obj in Remove)
@@ -162,6 +166,7 @@ namespace Microsoft.PowerShell.Commands
                     listModifier.Remove.Add(obj);
                 }
             }
+
             if (Replace != null)
             {
                 foreach (object obj in Replace)
@@ -169,6 +174,7 @@ namespace Microsoft.PowerShell.Commands
                     listModifier.Replace.Add(obj);
                 }
             }
+
             return listModifier;
         }
 

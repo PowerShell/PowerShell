@@ -50,11 +50,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _module;
             }
+
             set
             {
                 _module = value;
             }
         }
+
         private string[] _module;
 
         /// <summary>
@@ -79,11 +81,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
@@ -99,12 +103,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -117,11 +123,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _recurse;
             }
+
             set
             {
                 _recurse = value;
             }
         }
+
         private bool _recurse;
 
         #endregion
@@ -173,6 +181,7 @@ namespace Microsoft.PowerShell.Commands
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
                         ThrowTerminatingError(e.ErrorRecord);
                     }
+
                     _isInitialized = true;
                 }
 

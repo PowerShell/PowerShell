@@ -67,6 +67,7 @@ namespace Microsoft.PowerShell.Commands
         public int IdleTimeoutSec
         {
             get { return this.PSSessionOption.IdleTimeout.Seconds; }
+
             set { this.PSSessionOption.IdleTimeout = TimeSpan.FromSeconds(value); }
         }
 
@@ -80,6 +81,7 @@ namespace Microsoft.PowerShell.Commands
         public OutputBufferingMode OutputBufferingMode
         {
             get { return this.PSSessionOption.OutputBufferingMode; }
+
             set { this.PSSessionOption.OutputBufferingMode = value; }
         }
 
@@ -109,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 return _sessionOption ?? (_sessionOption = new PSSessionOption());
             }
         }
+
         private PSSessionOption _sessionOption;
 
         /// <summary>
@@ -499,6 +502,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailed, _remoteSession.InstanceId);
                     }
+
                     Exception reason = new RuntimeException(msg, e);
                     ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)

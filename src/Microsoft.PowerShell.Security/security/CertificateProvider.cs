@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CodeSigningCert
         {
             get { return _codeSigningCert; }
+
             set { _codeSigningCert = value; }
         }
 
@@ -113,6 +114,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 match = true;
             }
+
             return match;
         }
 
@@ -213,12 +215,14 @@ namespace Microsoft.PowerShell.Commands
                 fResult = Security.NativeMethods.CertCloseStore(handle, 0);
                 handle = IntPtr.Zero;
             }
+
             return fResult;
         }
 
         public IntPtr Handle
         {
             get { return handle; }
+
             set { handle = value; }
         }
     }
@@ -245,6 +249,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _storeHandle = null;        // release the old handle
             }
+
             if (_storeHandle == null)
             {
                 _valid = false;
@@ -325,6 +330,7 @@ namespace Microsoft.PowerShell.Commands
                 throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.CRYPT_E_NOT_FOUND);
             }
+
             if (Valid)
             {
                 certContext = Security.NativeMethods.CertEnumCertificatesInStore(
@@ -335,6 +341,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 certContext = IntPtr.Zero;
             }
+
             return certContext;
         }
 
@@ -347,6 +354,7 @@ namespace Microsoft.PowerShell.Commands
                 throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.CRYPT_E_NOT_FOUND);
             }
+
             if (Valid)
             {
                 if (DownLevelHelper.HashLookupSupported())
@@ -375,6 +383,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             break;
                         }
+
                         X509Certificate2 cert = new X509Certificate2(certContext);
                         if (String.Equals(
                                     cert.Thumbprint,
@@ -386,6 +395,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return certContext;
         }
 
@@ -567,6 +577,7 @@ namespace Microsoft.PowerShell.Commands
                         s_certPathRegex = new Regex(certPathPattern, options);
                     }
                 }
+
                 return s_certPathRegex;
             }
         }
@@ -903,6 +914,7 @@ namespace Microsoft.PowerShell.Commands
                 string errorId = "CannotCreateUserStore";
                 ThrowInvalidOperation(errorId, message);
             }
+
             Security.NativeMethods.CertOpenStoreFlags StoreFlags =
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_CREATE_NEW_FLAG |
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
@@ -1019,6 +1031,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 
@@ -1654,6 +1667,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ThrowErrorRemoting(stat);
                     }
+
                     hCNGKey = IntPtr.Zero;
                 }
                 finally
@@ -1993,6 +2007,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             ThrowItemNotFound(path, CertificateProviderItem.StoreLocation);
                         }
+
                         break;
 
                     case 2:
@@ -2051,6 +2066,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             item = new X509Certificate2(certContext);
                         }
+
                         store.FreeCert(certContext);
 
                         break;
@@ -2297,6 +2313,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteItemObject(thingToReturn, l.LocationName, true);
                     }
+
                     childPath = l.LocationName;
                     if (recurse)
                     {
@@ -2398,8 +2415,10 @@ namespace Microsoft.PowerShell.Commands
                         PSObject myPsObj = new PSObject(cert);
                         thingToReturn = (object)myPsObj;
                     }
+
                     WriteItemObject(thingToReturn, certPath, false);
                 }
+
                 certContext = store.GetNextCert(certContext);
             }
         }
@@ -2469,6 +2488,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowItemNotFound(storePath, CertificateProviderItem.Store);
             }
+
             if (s_storeCache != null)
             {
                 if (s_storeCache.Location != storeLocation ||
@@ -2598,6 +2618,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return filter;
         }
 
@@ -2609,6 +2630,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 includeArchivedCerts = true;
             }
+
             return includeArchivedCerts;
         }
 
@@ -2635,6 +2657,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     break;
 
                 case CertificatePurpose.DocumentEncryption:
@@ -2642,6 +2665,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     break;
 
                 default:
@@ -2825,6 +2849,7 @@ namespace Microsoft.PowerShell.Commands
                 _location = value;
             }
         }
+
         private StoreLocation _location = StoreLocation.CurrentUser;
 
         /// <summary>
@@ -2908,6 +2933,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 match = true;
             }
+
             return match;
         }
 
@@ -3258,6 +3284,7 @@ namespace Microsoft.PowerShell.Commands
 
                 s_isWin8Set = true;
             }
+
             return s_isWin8;
         }
 

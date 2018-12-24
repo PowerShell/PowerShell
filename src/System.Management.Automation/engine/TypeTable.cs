@@ -50,6 +50,7 @@ namespace System.Management.Automation.Runspaces
                 _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.NodeShouldHaveInnerText, nodeName);
                 return null;
             }
+
             if (!_reader.IsEmptyElement)
             {
                 _reader.Read();
@@ -61,11 +62,13 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
                 }
+
                 if (_reader.NodeType != XmlNodeType.EndElement)
                 {
                     _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.NodeShouldHaveInnerText, nodeName);
                     return null;
                 }
+
                 result = result.Trim();
                 _reader.Read();
             }
@@ -73,11 +76,13 @@ namespace System.Management.Automation.Runspaces
             {
                 _reader.Read();
             }
+
             if (string.IsNullOrWhiteSpace(result))
             {
                 _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.NodeShouldHaveInnerText, nodeName);
                 return null;
             }
+
             return result;
         }
 
@@ -195,6 +200,7 @@ namespace System.Management.Automation.Runspaces
             {
                 _context.AddError(line, ParserStrings.TypeNotFound, typeName);
             }
+
             return type;
         }
 
@@ -244,6 +250,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     value = (T)note.Value;
                 }
+
                 setter(typeData, value);
             }
             else
@@ -318,8 +325,10 @@ namespace System.Management.Automation.Runspaces
                 {
                     UnknownNode(_idTypes, "Type");
                 }
+
                 _reader.MoveToContent();
             }
+
             ReadEndElement();
         }
 
@@ -377,8 +386,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idType, "Name,Members,TypeConverter,TypeAdapter");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -404,6 +415,7 @@ namespace System.Management.Automation.Runspaces
                     typeData.Members.Add(m.Name, m);
                 }
             }
+
             typeData.TypeAdapter = typeAdapter;
             typeData.TypeConverter = typeConverter;
 
@@ -470,6 +482,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
+
             return typeData;
         }
 
@@ -510,8 +523,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(elementName, "TypeName");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -608,8 +623,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idMembers, "NoteProperty,AliasProperty,ScriptProperty,CodeProperty,ScriptMethod,CodeMethod,PropertySet,MemberSet");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -670,8 +687,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idMemberSet, "Name,InheritMembers,Members");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -692,6 +711,7 @@ namespace System.Management.Automation.Runspaces
             {
                 result.InheritMembers = inheritMembers.Value;
             }
+
             return result;
         }
 
@@ -750,8 +770,10 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         UnknownNode(_idPropertySet, "Name");
                                     }
+
                                     _reader.MoveToContent();
                                 }
+
                                 ReadEndElement();
                             }
                         }
@@ -764,8 +786,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idPropertySet, "Name,ReferencedProperties");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -829,8 +853,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idCodeMethod, "Name,CodeReference");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -892,8 +918,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idCodeReference, "TypeName,MethodName");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -965,8 +993,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idScriptMethod, "Name,Script");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -974,6 +1004,7 @@ namespace System.Management.Automation.Runspaces
             {
                 NodeNotFound(lineNumber, _idName, _idScriptMethod);
             }
+
             if (string.IsNullOrWhiteSpace(script))
             {
                 NodeNotFound(lineNumber, _idScript, _idScriptMethod);
@@ -1042,8 +1073,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idCodeProperty, "Name,GetCodeReference,SetCodeReference");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -1116,8 +1149,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idScriptProperty, "Name,GetScriptBlock,SetScriptBlock");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -1125,6 +1160,7 @@ namespace System.Management.Automation.Runspaces
             {
                 NodeNotFound(lineNumber, _idName, _idScriptProperty);
             }
+
             if (string.IsNullOrWhiteSpace(getScriptBlock) && string.IsNullOrWhiteSpace(setScriptBlock))
             {
                 _context.AddError(lineNumber, TypesXmlStrings.ScriptPropertyShouldHaveGetterOrSetter);
@@ -1191,6 +1227,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idAliasProperty, "Name,ReferencedMemberName,TypeName");
                     }
+
                     _reader.MoveToContent();
                 }
 
@@ -1201,10 +1238,12 @@ namespace System.Management.Automation.Runspaces
             {
                 NodeNotFound(lineNumber, _idName, _idAliasProperty);
             }
+
             if (string.IsNullOrWhiteSpace(referencedMemberName))
             {
                 NodeNotFound(lineNumber, _idReferencedMemberName, _idAliasProperty);
             }
+
             Type convertToType = (typeName != null) ? ResolveType(typeName, typeLineNumber) : null;
 
             if (_context.errors.Count != errorCount) return null;
@@ -1264,8 +1303,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         UnknownNode(_idNoteProperty, "Name,Value,TypeName");
                     }
+
                     _reader.MoveToContent();
                 }
+
                 ReadEndElement();
             }
 
@@ -1273,6 +1314,7 @@ namespace System.Management.Automation.Runspaces
             {
                 NodeNotFound(lineNumber, _idName, _idNoteProperty);
             }
+
             if (string.IsNullOrWhiteSpace(valueAsString))
             {
                 NodeNotFound(lineNumber, _idValue, _idNoteProperty);
@@ -1375,6 +1417,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
+
             base.SetItem(index, item);
             UpdateKey();
         }
@@ -1391,6 +1434,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
+
             base.InsertItem(index, item);
             UpdateKey();
         }
@@ -1402,6 +1446,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         internal string Key { get; private set; }
+
         internal bool IsReadOnly { get { return ((ICollection<string>)this).IsReadOnly; } }
 
         private void UpdateKey()
@@ -1439,6 +1484,7 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewArgumentException("strings");
                 }
             }
+
             UpdateKey();
         }
 
@@ -1480,6 +1526,7 @@ namespace System.Management.Automation.Runspaces
         internal bool IsFullyTrusted
         {
             get { return isFullyTrusted; }
+
             set { isFullyTrusted = value; }
         }
 
@@ -1735,6 +1782,7 @@ namespace System.Management.Automation.Runspaces
         public string SerializationMethod
         {
             get { return _serializationMethod; }
+
             set
             {
                 _serializationMethod = value;
@@ -1763,6 +1811,7 @@ namespace System.Management.Automation.Runspaces
         public Type TargetTypeForDeserialization
         {
             get { return _targetTypeForDeserialization; }
+
             set
             {
                 _targetTypeForDeserialization = value;
@@ -1791,6 +1840,7 @@ namespace System.Management.Automation.Runspaces
         public uint SerializationDepth
         {
             get { return _serializationDepth; }
+
             set
             {
                 _serializationDepth = value;
@@ -1814,6 +1864,7 @@ namespace System.Management.Automation.Runspaces
         public string DefaultDisplayProperty
         {
             get { return _defaultDisplayProperty; }
+
             set
             {
                 _defaultDisplayProperty = value;
@@ -1842,6 +1893,7 @@ namespace System.Management.Automation.Runspaces
         public bool InheritPropertySerializationSet
         {
             get { return _inheritPropertySerializationSet; }
+
             set
             {
                 _inheritPropertySerializationSet = value;
@@ -1864,6 +1916,7 @@ namespace System.Management.Automation.Runspaces
         public string StringSerializationSource
         {
             get { return _stringSerializationSource; }
+
             set
             {
                 if (value == null)
@@ -1875,6 +1928,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         StandardMembers.Remove(TypeTable.StringSerializationSource);
                     }
+
                     _stringSerializationSource = null;
                     return;
                 }
@@ -1907,6 +1961,7 @@ namespace System.Management.Automation.Runspaces
         public TypeMemberData StringSerializationSourceProperty
         {
             get { return _stringSerializationSourceProperty; }
+
             set
             {
                 if (value == null)
@@ -1918,6 +1973,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         StandardMembers.Remove(TypeTable.StringSerializationSource);
                     }
+
                     _stringSerializationSourceProperty = null;
                     return;
                 }
@@ -1943,6 +1999,7 @@ namespace System.Management.Automation.Runspaces
         public PropertySetData DefaultDisplayPropertySet
         {
             get { return _defaultDisplayPropertySet; }
+
             set
             {
                 _defaultDisplayPropertySet = value;
@@ -1959,6 +2016,7 @@ namespace System.Management.Automation.Runspaces
         public PropertySetData DefaultKeyPropertySet
         {
             get { return _defaultKeyPropertySet; }
+
             set
             {
                 _defaultKeyPropertySet = value;
@@ -1975,6 +2033,7 @@ namespace System.Management.Automation.Runspaces
         public PropertySetData PropertySerializationSet
         {
             get { return _propertySerializationSet; }
+
             set
             {
                 _propertySerializationSet = value;
@@ -2049,6 +2108,7 @@ namespace System.Management.Automation.Runspaces
                         break;
                 }
             }
+
             newTypeData.DefaultDisplayPropertySet = this.DefaultDisplayPropertySet == null
                                                         ? null
                                                         : (PropertySetData)this.DefaultDisplayPropertySet.Copy();
@@ -2633,11 +2693,13 @@ namespace System.Management.Automation.Runspaces
                 AddError(errors, typeName, TypesXmlStrings.ReservedNameMember, member.name);
                 return;
             }
+
             if (membersCollection[member.name] != null && !isOverride)
             {
                 AddError(errors, typeName, TypesXmlStrings.DuplicateMember, member.name);
                 return;
             }
+
             member.IsInstance = false;
 
             if (membersCollection[member.name] == null)
@@ -2690,9 +2752,11 @@ namespace System.Management.Automation.Runspaces
                     {
                         note.noteValue = String.Compare(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase) != 0;
                     }
+
                     return true;
                 }
             }
+
             try
             {
                 note.noteValue = LanguagePrimitives.ConvertTo(sourceValue, noteType, CultureInfo.InvariantCulture);
@@ -2702,6 +2766,7 @@ namespace System.Management.Automation.Runspaces
                 AddError(errors, typeName, TypesXmlStrings.ErrorConvertingNote, note.Name, e.Message);
                 return false;
             }
+
             return true;
         }
 
@@ -2716,6 +2781,7 @@ namespace System.Management.Automation.Runspaces
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -2777,6 +2843,7 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
                 }
+
                 if (!found)
                 {
                     membersToBeIgnored.Add(memberName);
@@ -2801,6 +2868,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     serializationMethod = (SerializationMethod)serializationMethodNote.Value;
                 }
+
                 if (serializationMethod == SerializationMethod.String)
                 {
                     serializationSettingsOk = EnsureNotPresent(errors, typeName, members, InheritPropertySerializationSet);
@@ -2830,6 +2898,7 @@ namespace System.Management.Automation.Runspaces
                         serializationSettingsOk = false;
                         break;
                     }
+
                     PSNoteProperty noteProperty;
                     serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out noteProperty);
                     if (!serializationSettingsOk) break;
@@ -2866,17 +2935,20 @@ namespace System.Management.Automation.Runspaces
             {
                 members.Remove(DefaultDisplayPropertySet);
             }
+
             if (!GetCheckMemberType(errors, typeName, members,
                 DefaultKeyPropertySet, typeof(PSPropertySet), out otherMember))
             {
                 members.Remove(DefaultKeyPropertySet);
             }
+
             PSNoteProperty defaultDisplayProperty;
             if (!GetCheckNote(errors, typeName, members,
                 DefaultDisplayProperty, typeof(string), out defaultDisplayProperty))
             {
                 members.Remove(DefaultDisplayProperty);
             }
+
             PSNoteProperty targetTypeForDeserialization;
             if (!GetCheckNote(errors, typeName, members,
                 TargetTypeForDeserialization, typeof(Type), out targetTypeForDeserialization))
@@ -3049,6 +3121,7 @@ namespace System.Management.Automation.Runspaces
                 AddError(errors, typeName, TypesXmlStrings.Exception, exception.Message);
                 return;
             }
+
             AddMember(errors, typeName, codeMethod, membersCollection, isOverride);
         }
 
@@ -3069,6 +3142,7 @@ namespace System.Management.Automation.Runspaces
                     AddError(errors, typeName, TypesXmlStrings.TypeDataShouldNotBeNullOrEmpty, "PropertySetData", "ReferencedProperties");
                     continue;
                 }
+
                 referencedProperties.Add(name);
             }
 
@@ -3091,6 +3165,7 @@ namespace System.Management.Automation.Runspaces
             {
                 m.Process(errors, typeName, memberSetMembers, isOverride);
             }
+
             var memberSet = new PSMemberSet(memberSetData.Name, memberSetMembers)
             {
                 IsHidden = memberSetData.IsHidden,
@@ -3164,6 +3239,7 @@ namespace System.Management.Automation.Runspaces
                         oldMembersCopy.Add(member);
                     }
                 }
+
                 PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, oldMembersCopy)
                 {
                     inheritMembers = true,
@@ -3184,10 +3260,12 @@ namespace System.Management.Automation.Runspaces
             {
                 propertySets.Add(typeData.DefaultDisplayPropertySet);
             }
+
             if (typeData.DefaultKeyPropertySet != null)
             {
                 propertySets.Add(typeData.DefaultKeyPropertySet);
             }
+
             if (typeData.PropertySerializationSet != null)
             {
                 propertySets.Add(typeData.PropertySerializationSet);
@@ -3219,6 +3297,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
                 }
+
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
             }
 
@@ -3382,6 +3461,7 @@ namespace System.Management.Automation.Runspaces
             {
                 PSGetMemberBinder.TypeTableMemberAdded(sm);
             }
+
             PSGetMemberBinder.TypeTableMemberAdded(PSStandardMembers);
         }
 
@@ -3506,6 +3586,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return new Collection<string>();
             }
+
             Collection<string> result = _consolidatedSpecificProperties.GetOrAdd(types.Key, key =>
             {
                 var retValueTable = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -3521,6 +3602,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         retValueTable.Add(reference);
                     }
+
                     bool inherit = (bool)PSObject.GetNoteSettingValue(settings, InheritPropertySerializationSet,
                         defaultInheritPropertySerializationSet, typeof(bool), false, null);
                     if (!inherit)
@@ -3528,11 +3610,13 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
                 }
+
                 var retValue = new Collection<string>();
                 foreach (var value in retValueTable)
                 {
                     retValue.Add(value);
                 }
+
                 return retValue;
             });
             return result;
@@ -3728,6 +3812,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     membersData.Add(GetTypeMemberDataFromPSMemberInfo(m));
                 }
+
                 return new MemberSetData(memberSet.Name, membersData);
             }
 
@@ -3913,6 +3998,7 @@ namespace System.Management.Automation.Runspaces
                     PSMemberInfo newMember = member.Copy();
                     LoadMembersToTypeData(newMember, typeData);
                 }
+
                 return true;
             }
 
@@ -4007,6 +4093,7 @@ namespace System.Management.Automation.Runspaces
             {
                 LanguagePrimitives.UpdateTypeConvertFromTypeTable(conv);
             }
+
             _typeConverters.Clear();
 
             foreach (var ml in _extendedMembers.Values)
@@ -4016,6 +4103,7 @@ namespace System.Management.Automation.Runspaces
                     PSGetMemberBinder.TypeTableMemberPossiblyUpdated(m.Name);
                 }
             }
+
             _extendedMembers.Clear();
 
             StandardMembersUpdated();
@@ -4038,6 +4126,7 @@ namespace System.Management.Automation.Runspaces
             {
                 PSGetMemberBinder.TypeTableMemberPossiblyUpdated(sm);
             }
+
             PSGetMemberBinder.TypeTableMemberPossiblyUpdated(PSStandardMembers);
         }
 
@@ -4369,6 +4458,7 @@ namespace System.Management.Automation.Runspaces
                     UpdateWithModuleContents(fileContents, moduleName, filePath, isFullyTrusted, isProductCode, errors);
                 }
             }
+
             if (etwEnabled) RunspaceEventSource.Log.ProcessTypeFileStop(filePath);
         }
 

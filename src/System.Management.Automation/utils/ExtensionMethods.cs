@@ -43,6 +43,7 @@ namespace System.Management.Automation
             {
                 return 82460653; // random number
             }
+
             unchecked
             {
                 int hash = 41; // 41 is a random prime number
@@ -54,6 +55,7 @@ namespace System.Management.Automation
                         hash = hash + x.GetHashCode();
                     }
                 }
+
                 return hash;
             }
         }

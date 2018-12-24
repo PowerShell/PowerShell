@@ -58,6 +58,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
                         new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
+
                 return;
             }
 
@@ -209,6 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 thi.tableColumnInfoList.Add(ci);
                 col++;
             }
+
             return thi;
         }
 
@@ -230,6 +232,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (key != AutomationNull.Value)
                         ci.propertyName = (string)key;
                 }
+
                 if (ci.propertyName == null)
                 {
                     ci.propertyName = this.activeAssociationList[k].ResolvedExpression.ToString();
@@ -269,6 +272,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 thi.tableColumnInfoList.Add(ci);
             }
+
             return thi;
         }
 
@@ -290,6 +294,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _tableBody.header.hideHeader;
                 }
+
                 return false;
             }
         }
@@ -345,6 +350,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // get the global setting for multiline
                 tre.multiLine = this.dataBaseInfo.db.defaultSettingsSection.MultilineTables;
             }
+
             fed.formatEntryInfo = tre;
 
             // override from command line, if there
@@ -356,6 +362,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     tre.multiLine = tableSpecific.multiLine.Value;
                 }
             }
+
             return fed;
         }
 
@@ -383,6 +390,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 }
             }
+
             if (matchingRowDefinition == null)
             {
                 matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -403,6 +411,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             break;
                         }
                     }
+
                     if (matchingRowDefinition == null)
                     {
                         matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -436,6 +445,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // use the override
                     activeRowItemDefinitionList.Add(rowItem);
                 }
+
                 col++;
             }
 
@@ -472,9 +482,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
+
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);
             }
+
             return tre;
         }
     }

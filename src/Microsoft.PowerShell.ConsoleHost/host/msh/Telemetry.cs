@@ -77,6 +77,7 @@ namespace Microsoft.PowerShell
                 {
                     _telemetryClient = new TelemetryClient();
                 }
+
                 _telemetryClient.TrackEvent(eventName, payload, null);
             }
             catch (Exception)

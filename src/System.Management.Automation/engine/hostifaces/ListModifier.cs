@@ -150,6 +150,7 @@ namespace System.Management.Automation
         {
             get { return _itemsToAdd; }
         }
+
         private Collection<object> _itemsToAdd;
 
         /// <summary>
@@ -159,6 +160,7 @@ namespace System.Management.Automation
         {
             get { return _itemsToRemove; }
         }
+
         private Collection<object> _itemsToRemove;
 
         /// <summary>
@@ -168,6 +170,7 @@ namespace System.Management.Automation
         {
             get { return _replacementItems; }
         }
+
         private Collection<Object> _replacementItems;
 
         /// <summary>
@@ -195,6 +198,7 @@ namespace System.Management.Automation
                 {
                     collectionToUpdate.Remove(PSObject.Base(obj));
                 }
+
                 foreach (object obj in _itemsToAdd)
                 {
                     collectionToUpdate.Add(PSObject.Base(obj));
@@ -220,6 +224,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewInvalidOperationException(PSListModifierStrings.UpdateFailed);
             }
+
             ApplyTo(list);
         }
 

@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.SourceIdentifier;
             }
+
             set
             {
                 base.SourceIdentifier = value;

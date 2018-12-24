@@ -224,6 +224,7 @@ namespace System.Management.Automation.Remoting.Client
                             {
                                 msgSB.Insert(currentToken.EndColumn - 1, ",", 1);
                             }
+
                             break;
                     }
                 }
@@ -563,6 +564,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSRemotingTransportException(
                     StringUtil.Format(RemotingErrorIdStrings.WSManInitFailed, WSManAPIData.ErrorCode));
             }
+
             Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");
 
             CryptoHelper = cryptoHelper;
@@ -1220,6 +1222,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     RemoveSessionTransportManager(_sessionContextID);
                 }
+
                 return;
             }
 
@@ -1376,6 +1379,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 additionalUriSuffixString = ";MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8";
             }
+
             if (string.IsNullOrEmpty(connectionUri.Query))
             {
                 // if there is no query string already, create one..see RFC 3986
@@ -1549,6 +1553,7 @@ namespace System.Management.Automation.Remoting.Client
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_ALLOW_NEGOTIATE_IMPLICIT_CREDENTIALS,
                     new WSManNativeApi.WSManDataDWord(1));
             }
+
             if (connectionInfo.UseUTF16)
             {
                 SetWSManSessionOption(WSManNativeApi.WSManSessionOption.WSMAN_OPTION_UTF16, 1);
@@ -2557,6 +2562,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             WSManAPIDataCommon tempWSManApiData = WSManAPIData;
             if (tempWSManApiData == null) { return; }
+
             WSManAPIData = null;
 
             // Dispose and de-initialize the WSManAPIData instance object on separate worker thread to ensure
@@ -2642,9 +2648,13 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             internal int ErrorCode { get; }
+
             internal WSManNativeApi.WSManStreamIDSet_ManToUn InputStreamSet { get { return _inputStreamSet; } }
+
             internal WSManNativeApi.WSManStreamIDSet_ManToUn OutputStreamSet { get { return _outputStreamSet; } }
+
             internal List<WSManNativeApi.WSManOption> CommonOptionSet { get; }
+
             internal IntPtr WSManAPIHandle { get { return _handle; } }
 
             /// <summary>
@@ -2659,6 +2669,7 @@ namespace System.Management.Automation.Remoting.Client
                 lock (_syncObject)
                 {
                     if (_isDisposed) { return; }
+
                     _isDisposed = true;
                 }
 
@@ -3100,6 +3111,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     RemoveCmdTransportManager(_cmdContextId);
                 }
+
                 return;
             }
 

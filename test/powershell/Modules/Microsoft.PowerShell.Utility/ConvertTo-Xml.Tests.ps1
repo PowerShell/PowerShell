@@ -108,5 +108,20 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
         $x.Objects.Object[1].Property.Name | Should -BeExactly "name"
         $x.Objects.Object[1].Property."#text" | Should -BeExactly "banana"
     }
+
+    It "Serialize nested pscustomobject properties" {
+        $nestedObject = [pscustomobject]@{
+            Prop1 = [pscustomobject]@{
+                Prop1 = [pscustomobject]@{
+                    Prop1 = 111
+                    Prop2 = 222
+                }
+                Prop2 = 22
+            }
+            Prop2 = 2
+        }
+        $x = $nestedObject | ConvertTo-Xml -Depth 1
+        $x.OuterXml | Should -Be '<?xml version="1.0" encoding="utf-8"?><Objects><Object Type="System.Management.Automation.PSCustomObject"><Property Name="Prop1" Type="System.Management.Automation.PSCustomObject"><Property Type="System.String">@{Prop1=; Prop2=22}</Property><Property Name="Prop1" Type="System.Management.Automation.PSNoteProperty">@{Prop1=111; Prop2=222}</Property><Property Name="Prop2" Type="System.Management.Automation.PSNoteProperty">22</Property></Property><Property Name="Prop2" Type="System.Int32">2</Property></Object></Objects>'
+    }
 }
 

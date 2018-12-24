@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return base.Session;
             }
+
             set
             {
                 base.Session = value;
@@ -64,12 +65,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 return this.CmdletDefinitionContext.DefaultThrottleLimit;
             }
+
             set
             {
                 base.ThrottleLimit = value;
                 _throttleLimitIsSetExplicitly = true;
             }
         }
+
         private bool _throttleLimitIsSetExplicitly;
 
         #endregion
@@ -96,6 +99,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         this.GetDynamicNamespace()));
             }
         }
+
         private CimCmdletInvocationContext _cmdletInvocationContext;
 
         internal CimCmdletDefinitionContext CmdletDefinitionContext
@@ -111,9 +115,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                             this.Cmdlet.CommandInfo.CommandMetadata.SupportsShouldProcess,
                             this.PrivateData);
                 }
+
                 return _cmdletDefinitionContext;
             }
         }
+
         private CimCmdletDefinitionContext _cmdletDefinitionContext;
 
         internal InvocationInfo CmdletInvocationInfo
@@ -175,6 +181,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -201,6 +208,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -301,6 +309,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -344,6 +353,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 s_cimInstanceToSessionOfOrigin.TryGetValue(instance, out result);
             }
+
             return result;
         }
 

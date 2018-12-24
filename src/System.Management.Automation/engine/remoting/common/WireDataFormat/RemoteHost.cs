@@ -283,11 +283,17 @@ namespace System.Management.Automation.Remoting
         private object SelectTargetObject(PSHost host)
         {
             if (host == null || host.UI == null) { return null; }
+
             if (_methodInfo.InterfaceType == typeof(PSHost)) { return host; }
+
             if (_methodInfo.InterfaceType == typeof(IHostSupportsInteractiveSession)) { return host; }
+
             if (_methodInfo.InterfaceType == typeof(PSHostUserInterface)) { return host.UI; }
+
             if (_methodInfo.InterfaceType == typeof(IHostUISupportsMultipleChoiceSelection)) { return host.UI; }
+
             if (_methodInfo.InterfaceType == typeof(PSHostRawUserInterface)) { return host.UI.RawUI; }
+
             throw RemoteHostExceptions.NewUnknownTargetClassException(_methodInfo.InterfaceType.ToString());
         }
 
@@ -611,7 +617,9 @@ namespace System.Management.Automation.Remoting
         {
             object result = RemoteHostEncoder.DecodePropertyValue(psObject, RemoteDataNameStrings.MethodException, typeof(Exception));
             if (result == null) { return null; }
+
             if (result is Exception) { return (Exception)result; }
+
             throw RemoteHostExceptions.NewDecodingFailedException();
         }
 

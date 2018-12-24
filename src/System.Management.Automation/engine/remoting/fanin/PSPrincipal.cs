@@ -149,6 +149,7 @@ namespace System.Management.Automation.Remoting
         public PSPrimitiveDictionary ApplicationArguments
         {
             get { return _applicationArguments; }
+
             internal set { _applicationArguments = value; }
         }
 

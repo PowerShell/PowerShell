@@ -113,10 +113,12 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 throw PSTraceSource.NewArgumentNullException("RunspacePool Guid");
             }
+
             if (connectCommands == null)
             {
                 throw PSTraceSource.NewArgumentNullException("ConnectCommandInfo[]");
             }
+
             if (connectionInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException("WSManConnectionInfo");
@@ -229,6 +231,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal string Name
         {
             get { return _friendlyName; }
+
             set { _friendlyName = value ?? string.Empty; }
         }
 
@@ -1315,6 +1318,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                     throw;
                 }
+
                 foreach (PSObject cmdObject in commandItems)
                 {
                     PSPropertyInfo pspCommandId = cmdObject.Properties["CommandId"];
@@ -1376,6 +1380,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     wsmanConnectionInfo.IdleTimeout = idleTimeout;
                 }
             }
+
             if (pspBufferMode != null)
             {
                 string bufferingMode = pspBufferMode.Value as string;
@@ -1389,6 +1394,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     }
                 }
             }
+
             if (pspResourceUri != null)
             {
                 string strShellUri = pspResourceUri.Value as string;
@@ -1397,6 +1403,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     wsmanConnectionInfo.ShellUri = strShellUri;
                 }
             }
+
             if (pspLocale != null)
             {
                 string localString = pspLocale.Value as string;
@@ -1410,6 +1417,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     { }
                 }
             }
+
             if (pspDataLocale != null)
             {
                 string dataLocalString = pspDataLocale.Value as string;
@@ -1423,6 +1431,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     { }
                 }
             }
+
             if (pspCompressionMode != null)
             {
                 string compressionModeString = pspCompressionMode.Value as string;
@@ -1432,6 +1441,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         ? false : true;
                 }
             }
+
             if (pspEncoding != null)
             {
                 string encodingString = pspEncoding.Value as string;
@@ -1441,6 +1451,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         ? true : false;
                 }
             }
+
             if (pspProfile != null)
             {
                 string machineProfileLoadedString = pspProfile.Value as string;
@@ -1450,6 +1461,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         ? false : true;
                 }
             }
+
             if (pspMaxIdleTimeout != null)
             {
                 int maxIdleTimeout;
@@ -1994,24 +2006,29 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     powerShell.AddParameter("Credential", wsmanConnectionInfo.Credential);
                 }
+
                 if (wsmanConnectionInfo.CertificateThumbprint != null)
                 {
                     powerShell.AddParameter("CertificateThumbprint", wsmanConnectionInfo.CertificateThumbprint);
                 }
+
                 if (wsmanConnectionInfo.PortSetting != -1)
                 {
                     powerShell.AddParameter("Port", wsmanConnectionInfo.Port);
                 }
+
                 if (CheckForSSL(wsmanConnectionInfo))
                 {
                     powerShell.AddParameter("UseSSL", true);
                 }
+
                 if (!string.IsNullOrEmpty(wsmanConnectionInfo.AppName))
                 {
                     // Remove prepended path character.
                     string appName = wsmanConnectionInfo.AppName.TrimStart('/');
                     powerShell.AddParameter("ApplicationName", appName);
                 }
+
                 powerShell.AddParameter("SessionOption", GetSessionOptions(wsmanConnectionInfo));
 
                 result = powerShell.Invoke();
@@ -2049,24 +2066,29 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     powerShell.AddParameter("Credential", wsmanConnectionInfo.Credential);
                 }
+
                 if (wsmanConnectionInfo.CertificateThumbprint != null)
                 {
                     powerShell.AddParameter("CertificateThumbprint", wsmanConnectionInfo.CertificateThumbprint);
                 }
+
                 if (wsmanConnectionInfo.PortSetting != -1)
                 {
                     powerShell.AddParameter("Port", wsmanConnectionInfo.Port);
                 }
+
                 if (CheckForSSL(wsmanConnectionInfo))
                 {
                     powerShell.AddParameter("UseSSL", true);
                 }
+
                 if (!string.IsNullOrEmpty(wsmanConnectionInfo.AppName))
                 {
                     // Remove prepended path character.
                     string appName = wsmanConnectionInfo.AppName.TrimStart('/');
                     powerShell.AddParameter("ApplicationName", appName);
                 }
+
                 powerShell.AddParameter("SessionOption", GetSessionOptions(wsmanConnectionInfo));
 
                 result = powerShell.Invoke();

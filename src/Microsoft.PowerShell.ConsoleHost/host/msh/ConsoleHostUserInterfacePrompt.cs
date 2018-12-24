@@ -121,6 +121,7 @@ namespace Microsoft.PowerShell
                     WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                     WriteLineToConsole();
                 }
+
                 if (!String.IsNullOrEmpty(message))
                 {
                     WriteLineToConsole(WrapToCurrentWindowWidth(message));
@@ -142,6 +143,7 @@ namespace Microsoft.PowerShell
                             ConsoleHostUserInterfaceStrings.NullErrorTemplate,
                             string.Format(CultureInfo.InvariantCulture, "descriptions[{0}]", descIndex));
                     }
+
                     PSObject inputPSObject = null;
                     string fieldPrompt = null;
                     fieldPrompt = desc.Name;
@@ -251,6 +253,7 @@ namespace Microsoft.PowerShell
                             inputPSObject = PSObject.AsPSObject(convertedObj);
                         }
                     }
+
                     if (cancelInput)
                     {
                         s_tracer.WriteLine("Prompt canceled");
@@ -258,8 +261,10 @@ namespace Microsoft.PowerShell
                         results.Clear();
                         break;
                     }
+
                     results.Add(desc.Name, PSObject.AsPSObject(inputPSObject));
                 }
+
                 return results;
             }
         }
@@ -362,6 +367,7 @@ namespace Microsoft.PowerShell
                     System.Management.Automation.Diagnostics.Assert(userInputString != null, "ReadLineSafe did not return a string");
                     rawInputString = userInputString;
                 }
+
                 if (rawInputString == null)
                 {
                     // processedInputString is null as well. No need to assign null to it.
@@ -379,10 +385,12 @@ namespace Microsoft.PowerShell
                     {
                         endListInput = true;
                     }
+
                     processedInputString = rawInputString;
                     break;
                 }
             }
+
             return processedInputString;
         }
 
@@ -437,6 +445,7 @@ namespace Microsoft.PowerShell
                                 WrapToCurrentWindowWidth(
                                     string.Format(CultureInfo.CurrentCulture, errMsgTemplate, fieldType, inputString)));
                         }
+
                         return PromptCommonInputErrors.Format;
                     }
                     else
@@ -447,6 +456,7 @@ namespace Microsoft.PowerShell
                 {
                 }
             }
+
             return PromptCommonInputErrors.None;
         }
 
@@ -478,6 +488,7 @@ namespace Microsoft.PowerShell
             {
                 return command;
             }
+
             if (command.Length == 1)
             {
                 if (command[0] == '?')
@@ -498,9 +509,11 @@ namespace Microsoft.PowerShell
                 {
                     ReportUnrecognizedPromptCommand(input);
                 }
+
                 inputDone = false;
                 return null;
             }
+
             if (command.Length == 2)
             {
                 if (0 == string.Compare(command, "\"\"", StringComparison.OrdinalIgnoreCase))
@@ -508,6 +521,7 @@ namespace Microsoft.PowerShell
                     return string.Empty;
                 }
             }
+
             if (0 == string.Compare(command, "$null", StringComparison.OrdinalIgnoreCase))
             {
                 return null;

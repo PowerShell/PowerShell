@@ -274,10 +274,12 @@ namespace System.Management.Automation
             {
                 return version.Minor == s_psV6Version.Minor;
             }
+
             if (version.Major == s_psV5Version.Major)
             {
                 return (version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor);
             }
+
             if (version.Major == s_psV4Version.Major)
             {
                 return (version.Minor == s_psV4Version.Minor);
@@ -550,6 +552,7 @@ namespace System.Management.Automation
             {
                 PreReleaseLabel = preLabelNote.Value as string;
             }
+
             var buildLabelNote = psobj.Properties[BuildLabelPropertyName];
             if (buildLabelNote != null)
             {
@@ -941,6 +944,7 @@ namespace System.Management.Automation
             // A larger set of pre-release fields has a higher precedence than a smaller set,
             // if all of the preceding identifiers are equal.
             if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
+
             if (String.IsNullOrEmpty(preLabel2)) { return -1; }
 
             var units1 = preLabel1.Split('.');
@@ -963,6 +967,7 @@ namespace System.Management.Automation
                 else
                 {
                     if (isNumber1) { return -1; }
+
                     if (isNumber2) { return 1; }
 
                     int result = String.CompareOrdinal(ac, bc);
@@ -1031,8 +1036,10 @@ namespace System.Management.Automation
                         {
                             return e;
                         }
+
                         break;
                 }
+
                 return PSTraceSource.NewArgumentException("version");
             }
         }

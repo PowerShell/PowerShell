@@ -151,6 +151,7 @@ namespace System.Management.Automation
                     LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
                 }
             }
+
             return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
         }
 
@@ -228,6 +229,7 @@ namespace System.Management.Automation
             {
                 action = (action == ExperimentAction.Hide) ? ExperimentAction.Show : ExperimentAction.Hide;
             }
+
             return action;
         }
 
@@ -334,9 +336,11 @@ namespace System.Management.Automation
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
                 }
+
                 return _effectiveAction;
             }
         }
+
         private ExperimentAction _effectiveAction = ExperimentAction.None;
     }
 }

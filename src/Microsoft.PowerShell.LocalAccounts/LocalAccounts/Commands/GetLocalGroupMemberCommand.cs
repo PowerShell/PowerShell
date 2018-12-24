@@ -40,8 +40,10 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalGroup Group
         {
             get { return this.group;}
+
             set { this.group = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalGroup group;
 
         /// <summary>
@@ -55,8 +57,10 @@ namespace Microsoft.PowerShell.Commands
         public string Member
         {
             get { return this.member;}
+
             set { this.member = value; }
         }
+
         private string member;
 
         /// <summary>
@@ -72,8 +76,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
 
         /// <summary>
@@ -89,8 +95,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier SID
         {
             get { return this.sid;}
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 

@@ -130,6 +130,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     var tmp = new PSNoteProperty(element.Key, element.Value.Value);
                     propertyBag.Properties.Add(tmp);
                 }
+
                 this.WriteObject(propertyBag);
             }
         }
@@ -179,6 +180,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     pso.TypeNames.Insert(0, methodParameter.ParameterTypeName);
                 }
             }
+
             this.WriteObject(cmdletOutput);
         }
 

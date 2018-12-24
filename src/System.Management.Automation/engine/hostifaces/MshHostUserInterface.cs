@@ -266,6 +266,7 @@ namespace System.Management.Automation.Host
                 return temporaryTranscriptionData;
             }
         }
+
         private TranscriptionData _volatileTranscriptionData;
 
         /// <summary>
@@ -401,6 +402,7 @@ namespace System.Management.Automation.Host
                 _ui=ui;
                 Interlocked.Increment(ref _ui._transcribeOnlyCount);
             }
+
             public void Dispose()
             {
                 if (!_disposed)
@@ -410,6 +412,7 @@ namespace System.Management.Automation.Host
                     GC.SuppressFinalize(this);
                 }
             }
+
             ~TranscribeOnlyCookie() => Dispose();
         }
 
@@ -544,6 +547,7 @@ namespace System.Management.Automation.Host
                 {
                     stoppedTranscript.OutputToLog.Add(message);
                 }
+
                 TranscribeCommandComplete(null);
             }
             catch (Exception)
@@ -720,10 +724,12 @@ namespace System.Management.Automation.Host
                             transcript.Path);
                         throw new ArgumentException(errorMessage);
                     }
+
                     if(!Directory.Exists(baseDirectory))
                     {
                         Directory.CreateDirectory(baseDirectory);
                     }
+
                     if(!File.Exists(transcript.Path))
                     {
                         File.Create(transcript.Path).Dispose();
@@ -938,6 +944,7 @@ namespace System.Management.Automation.Host
 
             return systemTranscript;
         }
+
         internal static TranscriptionOption systemTranscript = null;
         private static object s_systemTranscriptLock = new Object();
 
@@ -1068,6 +1075,7 @@ namespace System.Management.Automation.Host
                 Encoding = Utils.GetEncoding(value);
             }
         }
+
         private string _path;
 
         /// <summary>
@@ -1122,6 +1130,7 @@ namespace System.Management.Automation.Host
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
                                 this.Encoding);
                         }
+
                         _contentWriter.AutoFlush = true;
                     }
 
@@ -1134,6 +1143,7 @@ namespace System.Management.Automation.Host
                 OutputBeingLogged.Clear();
             }
         }
+
         private StreamWriter _contentWriter = null;
 
         /// <summary>
@@ -1163,6 +1173,7 @@ namespace System.Management.Automation.Host
 
             _disposed = true;
         }
+
         private bool _disposed = false;
     }
 
@@ -1232,6 +1243,7 @@ namespace System.Management.Automation.Host
                         splitLabel.Append(choices[i].Label.Substring(andPos + 1));
                         hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.Substring(andPos + 1, 1).Trim());
                     }
+
                     hotkeysAndPlainLabels[1, i] = splitLabel.ToString().Trim();
                 }
                 else

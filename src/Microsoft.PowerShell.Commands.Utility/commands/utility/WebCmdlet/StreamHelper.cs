@@ -211,6 +211,7 @@ namespace Microsoft.PowerShell.Commands
         private void Initialize()
         {
             if (_isInitialized) { return; }
+
             _isInitialized = true;
             try
             {
@@ -396,6 +397,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 encoding = null;
             }
+
             return DecodeStream(stream, ref encoding);
         }
 
@@ -411,6 +413,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 encoding = null;
             }
+
             return result;
         }
 

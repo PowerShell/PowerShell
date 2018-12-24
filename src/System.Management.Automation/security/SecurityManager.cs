@@ -84,6 +84,7 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("shellId");
             }
+
             _shellId = shellId;
         }
 
@@ -620,6 +621,7 @@ namespace Microsoft.PowerShell
                         allowRun = CheckPolicy(si, host, out reason);
                         if (etwEnabled) ParserEventSource.Log.CheckSecurityStop(si.Path);
                     }
+
                     break;
 
                 case CommandTypes.Application:

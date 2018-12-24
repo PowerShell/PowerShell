@@ -118,6 +118,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
 
@@ -163,6 +164,7 @@ namespace System.Management.Automation
                     members.Add(new PSProperty(property.PropertyName, this, obj, property) as T);
                 }
             }
+
             return members;
         }
 
@@ -284,6 +286,7 @@ namespace System.Management.Automation
             catch (GetValueException)
             {
             }
+
             var type = value == null ? typeof(object) : value.GetType();
             return forDisplay ? ToStringCodeMethods.Type(type) : type.FullName;
         }
@@ -371,6 +374,7 @@ namespace System.Management.Automation
                 returnValue.Append(overload);
                 returnValue.Append(", ");
             }
+
             returnValue.Remove(returnValue.Length - 2, 2);
             return returnValue.ToString();
         }

@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Property
         {
             get { return (string[])_property.Clone(); }
+
             set { _property = value; }
         }
 
@@ -101,6 +102,7 @@ namespace Microsoft.PowerShell.Commands
                 returnValue.Append(" where ");
                 returnValue.Append(Filter);
             }
+
             return returnValue.ToString();
         }
         /// <summary>
@@ -124,6 +126,7 @@ namespace Microsoft.PowerShell.Commands
             filterClass = filterClass.Replace('?', '_');
             return filterClass;
         }
+
         internal bool IsLocalizedNamespace(string sNamespace)
         {
             bool toReturn = false;
@@ -131,8 +134,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 toReturn = true;
             }
+
             return toReturn;
         }
+
         internal bool ValidateClassFormat()
         {
             string filterClass = this.Class;
@@ -156,8 +161,10 @@ namespace Microsoft.PowerShell.Commands
                     newClassName.Append(']');
                     continue;
                 }
+
                 return false;
             }
+
             this.Class = newClassName.ToString();
             return true;
         }
@@ -181,6 +188,7 @@ namespace Microsoft.PowerShell.Commands
                 queryStringBuilder.Append(filterClass);
                 queryStringBuilder.Append("'");
             }
+
             ObjectQuery classQuery = new ObjectQuery(queryStringBuilder.ToString());
 
             EnumerationOptions enumOptions = new EnumerationOptions();
@@ -219,6 +227,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(errorRecord);
                         return;
                     }
+
                     foreach (string name in ComputerName)
                     {
                         if (this.Recurse.IsPresent)
@@ -325,6 +334,7 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(errorRecord);
                                 continue;
                             }
+
                             ManagementObjectSearcher searcher = this.GetObjectList(scope);
                             if (searcher == null)
                                 continue;
@@ -334,6 +344,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     return;
                 }
 

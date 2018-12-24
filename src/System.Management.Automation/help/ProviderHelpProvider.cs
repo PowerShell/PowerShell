@@ -245,6 +245,7 @@ namespace System.Management.Automation
                                     helpInfo.FullHelp.TypeNames.Insert(1, string.Format(CultureInfo.InvariantCulture,
                                         "ProviderHelpInfo#{0}", providerInfo.PSSnapInName));
                                 }
+
                                 AddCache(providerInfo.PSSnapInName + "\\" + helpInfo.Name, helpInfo);
                             }
                         }

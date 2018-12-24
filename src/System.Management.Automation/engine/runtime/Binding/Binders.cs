@@ -276,6 +276,7 @@ namespace System.Management.Automation.Language
                 {
                     return conversionResult;
                 }
+
                 rank = ConversionRank.None;
             }
 
@@ -416,6 +417,7 @@ namespace System.Management.Automation.Language
                 expr = arg.Expression;
                 restrictions = restrictions.Merge(arg.PSGetTypeRestriction());
             }
+
             return expr;
         }
 
@@ -937,6 +939,7 @@ namespace System.Management.Automation.Language
                 {
                     s_binders.Add(null);
                 }
+
                 return s_binders[i] ?? (s_binders[i] = new PSArrayAssignmentRHSBinder(i));
             }
         }
@@ -996,6 +999,7 @@ namespace System.Management.Automation.Language
                         newArrayElements[i] =
                             Expression.Call(temp, CachedReflectionInfo.IList_get_Item, ExpressionCache.Constant(i));
                     }
+
                     for (; i < _elements; ++i)
                     {
                         newArrayElements[i] = ExpressionCache.NullConstant;
@@ -1136,6 +1140,7 @@ namespace System.Management.Automation.Language
             {
                 ilistExpr = Expression.Convert(ilistExpr, typeof(IList));
             }
+
             var countExpr = Expression.Property(
                 Expression.Convert(ilistExpr, typeof(ICollection)), CachedReflectionInfo.ICollection_Count);
 
@@ -1203,6 +1208,7 @@ namespace System.Management.Automation.Language
                     s_binderCache.Add(key, result);
                 }
             }
+
             return result;
         }
 
@@ -1380,6 +1386,7 @@ namespace System.Management.Automation.Language
                 throw new PropertyNotFoundException("PropertyNotFoundStrict", null, ParserStrings.PropertyNotFoundStrict,
                                                     LanguagePrimitives.ConvertTo<string>(key));
             }
+
             return null;
         }
     }
@@ -1611,6 +1618,7 @@ namespace System.Management.Automation.Language
                     binder = new PSAttributeGenerator(callInfo);
                     s_binderCache.Add(callInfo, binder);
                 }
+
                 return binder;
             }
         }
@@ -1731,6 +1739,7 @@ namespace System.Management.Automation.Language
                             return target.ThrowRuntimeError(args, BindingRestrictions.Empty, "PropertyIsReadOnly",
                                                             ParserStrings.PropertyIsReadOnly, Expression.Constant(name));
                         }
+
                         propertyType = propertyInfo.PropertyType;
                         lhs = Expression.Property(tmp.Cast(propertyInfo.DeclaringType), propertyInfo);
                     }
@@ -1974,30 +1983,35 @@ namespace System.Management.Automation.Language
             {
                 restrictions = restrictions.Merge(GetVersionCheck(s_mutableValueWithInstanceMemberVersion));
             }
+
             return expr;
         }
 
         private static object EnumRule(CallSite site, object obj)
         {
             if (obj is Enum) { return obj; }
+
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
         private static object BoolRule(CallSite site, object obj)
         {
             if (obj is bool) { return obj; }
+
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
         private static object IntRule(CallSite site, object obj)
         {
             if (obj is int) { return obj; }
+
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
         private static object ObjectRule(CallSite site, object obj)
         {
             if (!(obj is ValueType) && !(obj is PSObject)) { return obj; }
+
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
@@ -2112,6 +2126,7 @@ namespace System.Management.Automation.Language
                     s_binderCache.Add(key, result);
                 }
             }
+
             return result;
         }
 
@@ -2146,6 +2161,7 @@ namespace System.Management.Automation.Language
                     lvalExpr, rvalExpr).Compile();
                 Interlocked.CompareExchange(ref _compareDelegate, compareDelegate, null);
             }
+
             return _compareDelegate;
         }
 
@@ -2252,6 +2268,7 @@ namespace System.Management.Automation.Language
                 case ExpressionType.LeftShift: return TokenKind.Shl.Text();
                 case ExpressionType.RightShift: return TokenKind.Shr.Text();
             }
+
             Diagnostics.Assert(false, "Unexpected operator");
             return string.Empty;
         }
@@ -2439,6 +2456,7 @@ namespace System.Management.Automation.Language
                             target.CombineRestrictions(arg));
                     }
                 }
+
                 opImplType = typeof(DecimalOps);
                 argType = typeof(decimal);
             }
@@ -2568,6 +2586,7 @@ namespace System.Management.Automation.Language
                 // would string.  Fall back to int if Parser.ScanNumber fails.
                 toType = typeof(int);
             }
+
             return Expression.Call(CachedReflectionInfo.Parser_ScanNumber, expr.Cast(typeof(string)), Expression.Constant(toType, typeof(Type)));
         }
 
@@ -2612,6 +2631,7 @@ namespace System.Management.Automation.Language
             else if ((int)opTypeCode <= (int)TypeCode.Int64) { opType = typeof(long); }
             // Because we use unsigned for -bnot, to be consistent, we promote to unsigned here too (-band,-bor,-xor)
             else { opType = typeof(ulong); }
+
             return opType;
         }
 
@@ -2850,6 +2870,7 @@ namespace System.Management.Automation.Language
             {
                 return PSConvertBinder.ThrowNoConversion(arg, typeof(int), this, _version);
             }
+
             var numericArg = PSConvertBinder.InvokeConverter(conversion, arg.Expression, resultType, debase, ExpressionCache.InvariantCulture);
 
             if (typeCode == TypeCode.Decimal || typeCode == TypeCode.Double || typeCode == TypeCode.Single)
@@ -2939,6 +2960,7 @@ namespace System.Management.Automation.Language
                     numericTarget = target;
                     numericArg = arg;
                 }
+
                 if (opTypeCode == TypeCode.Decimal)
                 {
                     opImplType = typeof(DecimalOps);
@@ -3357,6 +3379,7 @@ namespace System.Management.Automation.Language
                         case ExpressionType.LessThan: numericMethod = "CompareLt"; break;
                         case ExpressionType.LessThanOrEqual: numericMethod = "CompareLe"; break;
                     }
+
                     return BinaryNumericOp(numericMethod, target, numericArg);
                 }
 
@@ -3413,6 +3436,7 @@ namespace System.Management.Automation.Language
                         Interlocked.CompareExchange(ref s_decrementBinder, new PSUnaryOperationBinder(operation), null);
                     return s_decrementBinder;
             }
+
             throw new NotImplementedException("Unimplemented unary operation");
         }
 
@@ -3447,6 +3471,7 @@ namespace System.Management.Automation.Language
                 case ExpressionType.Decrement:
                     return IncrDecr(target, -1, errorSuggestion).WriteToDebugLog(this);
             }
+
             throw new NotImplementedException();
         }
 
@@ -3556,6 +3581,7 @@ namespace System.Management.Automation.Language
                     {
                         targetConvertType = Enum.GetUnderlyingType(targetConvertType);
                     }
+
                     targetExpr = target.Expression.Cast(targetConvertType);
                 }
                 else
@@ -3576,6 +3602,7 @@ namespace System.Management.Automation.Language
                 {
                     result = result.Cast(target.LimitType);
                 }
+
                 return new DynamicMetaObject(result.Cast(typeof(object)), target.PSGetTypeRestriction());
             }
 
@@ -3602,6 +3629,7 @@ namespace System.Management.Automation.Language
                     // promote to int, unary plus doesn't support byte directly.
                     expr = expr.Cast(typeof(int));
                 }
+
                 return new DynamicMetaObject(
                     Expression.UnaryPlus(expr).Cast(typeof(object)),
                     target.PSGetTypeRestriction());
@@ -3634,6 +3662,7 @@ namespace System.Management.Automation.Language
                     // promote to int, unary plus doesn't support byte directly.
                     expr = expr.Cast(typeof(int));
                 }
+
                 return new DynamicMetaObject(
                     Expression.Negate(expr).Cast(typeof(object)),
                     target.PSGetTypeRestriction());
@@ -3702,6 +3731,7 @@ namespace System.Management.Automation.Language
                     s_binderCache.Add(type, result);
                 }
             }
+
             return result;
         }
 
@@ -3847,6 +3877,7 @@ namespace System.Management.Automation.Language
                     valueToConvert = value.Cast(typeof(object));
                     valueAsPSObject = ExpressionCache.NullPSObject;
                 }
+
                 conv = Expression.Call(
                     Expression.Constant(conversion.Converter),
                     conversion.Converter.GetType().GetMethod("Invoke"),
@@ -3863,10 +3894,12 @@ namespace System.Management.Automation.Language
             {
                 return conv;
             }
+
             if (resultType.IsValueType && Nullable.GetUnderlyingType(resultType) == null)
             {
                 return Expression.Unbox(conv, resultType);
             }
+
             return Expression.Convert(conv, resultType);
         }
 
@@ -3900,6 +3933,7 @@ namespace System.Management.Automation.Language
                     binder = new PSGetIndexBinder(tuple);
                     s_binderCache.Add(tuple, binder);
                 }
+
                 return binder;
             }
         }
@@ -4068,6 +4102,7 @@ namespace System.Management.Automation.Language
                 // slicing, or possibly just invoke the indexer.
                 return null;
             }
+
             if (indexes[0].LimitType.IsArray && !keyType.IsArray)
             {
                 // There was a conversion, but it's far more likely (and backwards compatible) that we want to do slicing
@@ -4156,6 +4191,7 @@ namespace System.Management.Automation.Language
             //        if (StrictMode(3)) { throw }
             //        $null
             //    }
+
             var targetTmp = Expression.Parameter(target.LimitType, "target");
             var lenTmp = Expression.Parameter(typeof(int), "len");
             var indexTmp = Expression.Parameter(typeof(int), "index");
@@ -4487,6 +4523,7 @@ namespace System.Management.Automation.Language
                     binder = new PSSetIndexBinder(tuple);
                     s_binderCache.Add(tuple, binder);
                 }
+
                 return binder;
             }
         }
@@ -4892,6 +4929,7 @@ namespace System.Management.Automation.Language
                         targetExpr = target.Expression.Convert(typeof(PSObject));
                         break;
                 }
+
                 Diagnostics.Assert(mi != null, "ReservedMemberBinder doesn't support member Name");
 
                 return new DynamicMetaObject(WrapGetMemberInTry(Expression.Call(mi, targetExpr)), target.PSGetTypeRestriction());
@@ -4928,6 +4966,7 @@ namespace System.Management.Automation.Language
 
         private bool _hasInstanceMember;
         internal bool HasInstanceMember { get { return _hasInstanceMember; } }
+
         internal static void SetHasInstanceMember(string memberName)
         {
             // We must invalidate dynamic sites (if any) when the first instance member (for this binder)
@@ -5061,6 +5100,7 @@ namespace System.Management.Automation.Language
                                     result._hasInstanceMember = binderList[0]._hasInstanceMember;
                                     result._hasTypeTableMember = binderList[0]._hasTypeTableMember;
                                 }
+
                                 binderList.Add(result);
 
                                 Diagnostics.Assert(binderList.All(b => b._hasInstanceMember == result._hasInstanceMember),
@@ -5070,9 +5110,11 @@ namespace System.Management.Automation.Language
                             }
                         }
                     }
+
                     s_binderCache.Add(tuple, result);
                 }
             }
+
             return result;
         }
 
@@ -5325,6 +5367,7 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
+
             return isGeneric;
         }
 
@@ -5371,6 +5414,7 @@ namespace System.Management.Automation.Language
                                   : Expression.Unbox(expr, type))
                            : expr.Cast(type);
             }
+
             return expr;
         }
 
@@ -5514,6 +5558,7 @@ namespace System.Management.Automation.Language
                 {
                     throw new ExtendedTypeSystemException("CycleInAliasLookup", null, ExtendedTypeSystem.CycleInAlias, alias.Name);
                 }
+
                 aliases.Add(alias.Name);
             }
 
@@ -5692,6 +5737,7 @@ namespace System.Management.Automation.Language
                                     {
                                         candidateMethods = new List<MethodBase>();
                                     }
+
                                     candidateMethods.Add(methodInfo);
                                 }
                             }
@@ -5809,6 +5855,7 @@ namespace System.Management.Automation.Language
                 throw new PropertyNotFoundException("PropertyNotFoundStrict", null, ParserStrings.PropertyNotFoundStrict,
                                                     LanguagePrimitives.ConvertTo<string>(member));
             }
+
             return null;
         }
 
@@ -5859,6 +5906,7 @@ namespace System.Management.Automation.Language
                 value = result;
                 return true;
             }
+
             value = null;
             return false;
         }
@@ -5892,6 +5940,7 @@ namespace System.Management.Automation.Language
                     obj.Item3.GetHashCode());
             }
         }
+
         private static readonly Dictionary<PSSetMemberBinderKeyType, PSSetMemberBinder> s_binderCache
             = new Dictionary<PSSetMemberBinderKeyType, PSSetMemberBinder>(new KeyComparer());
 
@@ -5904,6 +5953,7 @@ namespace System.Management.Automation.Language
             var classScope = classScopeAst != null ? classScopeAst.Type : null;
             return Get(memberName, classScope, @static);
         }
+
         public static PSSetMemberBinder Get(string memberName, Type classScope, bool @static)
         {
             PSSetMemberBinder result;
@@ -5917,6 +5967,7 @@ namespace System.Management.Automation.Language
                     s_binderCache.Add(tuple, result);
                 }
             }
+
             return result;
         }
 
@@ -5939,11 +5990,13 @@ namespace System.Management.Automation.Language
             {
                 return originalExpression;
             }
+
             var attributesArray = transformationAttributes.ToArray();
             if (attributesArray.Length == 0)
             {
                 return originalExpression;
             }
+
             Expression transformedExpression = originalExpression.Convert(typeof(object));
             var engineIntrinsicsTempVar = Expression.Variable(typeof(EngineIntrinsics));
             // apply transformation attributes from right to left
@@ -5954,6 +6007,7 @@ namespace System.Management.Automation.Language
                                                 engineIntrinsicsTempVar,
                                                 transformedExpression);
             }
+
             return Expression.Block(new[] { engineIntrinsicsTempVar },
                 Expression.Assign(
                     engineIntrinsicsTempVar,
@@ -6199,6 +6253,7 @@ namespace System.Management.Automation.Language
                             {
                                 return GeneratePropertyAssignmentException(restrictions).WriteToDebugLog(this);
                             }
+
                             lhsType = propertyInfo.PropertyType;
                             lhs = Expression.Property(targetExpr, propertyInfo);
                         }
@@ -6233,6 +6288,7 @@ namespace System.Management.Automation.Language
                                 {
                                     assignmentExpression = value.CastOrConvert(nullableUnderlyingType);
                                 }
+
                                 expr = Expression.Block(
                                     new[] { tmp },
                                     Expression.Assign(tmp, assignmentExpression),
@@ -6255,6 +6311,7 @@ namespace System.Management.Automation.Language
                                                            ? Expression.Call(CachedReflectionInfo.PSObject_Base, value.Expression.Cast(typeof(PSObject)))
                                                            : value.CastOrConvert(lhsType);
                             }
+
                             expr = Expression.Block(
                                 new[] { tmp },
                                 Expression.Assign(tmp, assignedValue),
@@ -6395,6 +6452,7 @@ namespace System.Management.Automation.Language
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                                                    null, "PropertyAssignmentException", ParserStrings.PropertyNotFound, member);
                 }
+
                 return value;
             }
             catch (SetValueException)
@@ -6501,6 +6559,7 @@ namespace System.Management.Automation.Language
                     s_binderCache.Add(key, result);
                 }
             }
+
             return result;
         }
 
@@ -6740,6 +6799,7 @@ namespace System.Management.Automation.Language
                 {
                     expr = expr.Cast(typeof(object));
                 }
+
                 return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
             }
 
@@ -6806,6 +6866,7 @@ namespace System.Management.Automation.Language
             {
                 numArgs -= 1;
             }
+
             object[] argValues = new object[numArgs];
             for (int i = 0; i < numArgs; ++i)
             {
@@ -6936,6 +6997,7 @@ namespace System.Management.Automation.Language
                     result = (MethodInfo)mi.method;
                 }
             }
+
             return result;
         }
 
@@ -7186,6 +7248,7 @@ namespace System.Management.Automation.Language
                         Expression.NewArrayInit(typeof(object), target.Expression.Cast(typeof(object))),
                         target.GetSimpleTypeRestriction()));
             }
+
             return enumerableTarget;
         }
 
@@ -7263,6 +7326,7 @@ namespace System.Management.Automation.Language
                         this.ReturnType),
                     targetEnumerator.Restrictions.Merge(restrictions));
             }
+
             var lhsEnumerator = PSEnumerableBinder.IsEnumerable(targetEnumerator).Expression;
             Expression argsToPass;
             if (args.Length > 1)
@@ -7411,6 +7475,7 @@ namespace System.Management.Automation.Language
                 throw InterpreterError.NewInterpreterException(memberName, typeof(RuntimeException), null,
                     "MethodNotFound", ParserStrings.MethodNotFound, ParserOps.GetTypeFullName(value), memberName);
             }
+
             return true;
         }
 
@@ -7470,8 +7535,10 @@ namespace System.Management.Automation.Language
                     s_binderCache.Add(key, result);
                 }
             }
+
             return result;
         }
+
         internal static void InvalidateCache()
         {
             // Invalidate binders
@@ -7645,6 +7712,7 @@ namespace System.Management.Automation.Language
                     s_binderCache.Add(key, result);
                 }
             }
+
             return result;
         }
 

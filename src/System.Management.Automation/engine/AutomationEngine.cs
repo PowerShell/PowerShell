@@ -84,6 +84,7 @@ namespace System.Management.Automation
                 {
                     throw new IncompleteParseException(errors[0].Message, errors[0].ErrorId);
                 }
+
                 throw new ParseException(errors);
             }
 

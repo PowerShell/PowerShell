@@ -451,10 +451,12 @@ namespace Microsoft.PowerShell
             {
                 ++lines;
             }
+
             if (SecondsRemaining >= 0)
             {
                 ++lines;
             }
+
             if (!String.IsNullOrEmpty(CurrentOperation))
             {
                 if (isFullPlus)

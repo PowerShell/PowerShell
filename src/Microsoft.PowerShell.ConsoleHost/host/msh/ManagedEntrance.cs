@@ -58,6 +58,7 @@ namespace Microsoft.PowerShell
                 while (!System.Diagnostics.Debugger.IsAttached) {
                     Thread.Sleep(100);
                 }
+
                 System.Diagnostics.Debugger.Break();
             }
 #endif
@@ -87,12 +88,14 @@ namespace Microsoft.PowerShell
                         return exitCode;
                     }
                 }
+
                 System.Environment.FailFast(e.Message, e);
             }
             catch (Exception e)
             {
                 System.Environment.FailFast(e.Message, e);
             }
+
             return exitCode;
         }
     }

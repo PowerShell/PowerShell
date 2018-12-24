@@ -42,6 +42,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             InitialSessionState = InitialSessionState.CreateDefault();
             Host = host;
         }
@@ -67,6 +68,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("initialSessionState");
@@ -107,6 +109,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("initialSessionState");
@@ -121,6 +124,7 @@ namespace System.Management.Automation.Runspaces
             {
                 InitialSessionState = initialSessionState.Clone();
             }
+
             this.ThreadOptions = initialSessionState.ThreadOptions;
 
 #if !CORECLR // No ApartmentState In CoreCLR
@@ -170,8 +174,10 @@ namespace System.Management.Automation.Runspaces
         public override RunspaceAvailability RunspaceAvailability
         {
             get { return _runspaceAvailability; }
+
             protected set { _runspaceAvailability = value; }
         }
+
         private RunspaceAvailability _runspaceAvailability = RunspaceAvailability.None;
 
         /// <summary>
@@ -402,6 +408,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     WaitForFinishofPipelines();
                 }
+
                 return;
             }
 
@@ -980,11 +987,13 @@ namespace System.Management.Automation.Runspaces
                     shouldRunAction = true;
                 }
             }
+
             if (shouldRunAction)
             {
                 action();
                 ranit = true;
             }
+
             return ranit;
         }
 
@@ -996,6 +1005,7 @@ namespace System.Management.Automation.Runspaces
         {
             return _currentlyRunningPipeline;
         }
+
         private Pipeline _currentlyRunningPipeline = null;
 
         /// <summary>
@@ -1341,8 +1351,10 @@ namespace System.Management.Automation.Runspaces
                         );
                     throw e;
                 }
+
                 return DoLanguageMode;
             }
+
             set
             {
                 if (RunspaceState != RunspaceState.Opened)
@@ -1356,6 +1368,7 @@ namespace System.Management.Automation.Runspaces
                         );
                     throw e;
                 }
+
                 DoLanguageMode = value;
             }
         }

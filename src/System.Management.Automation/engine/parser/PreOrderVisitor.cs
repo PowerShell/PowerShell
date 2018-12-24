@@ -41,6 +41,7 @@ namespace System.Management.Automation.Language
             {
                 postActionHandler.PostVisit(ast);
             }
+
             return action;
         }
 

@@ -125,9 +125,11 @@ namespace System.Management.Automation
                         _errorCategory,
                         _target);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "InvalidOperation";
         internal void SetErrorId(string errorId)

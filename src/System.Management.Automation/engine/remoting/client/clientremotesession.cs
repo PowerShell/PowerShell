@@ -144,6 +144,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _remoteRunspacePool;
             }
+
             set
             {
                 Dbg.Assert(_remoteRunspacePool == null, @"RunspacePool should be
@@ -592,6 +593,7 @@ namespace System.Management.Automation.Remoting
                     _waitHandleForConfigurationReceived.Dispose();
                     _waitHandleForConfigurationReceived = null;
                 }
+
                 ((ClientRemoteSessionDSHandlerImpl)SessionDataStructureHandler).Dispose();
                 SessionDataStructureHandler = null;
                 _cryptoHelper.Dispose();

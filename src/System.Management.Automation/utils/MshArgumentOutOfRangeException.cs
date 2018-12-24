@@ -127,9 +127,11 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidArgument,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "ArgumentOutOfRange";
     }

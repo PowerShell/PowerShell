@@ -88,6 +88,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public PSCredential Credential
         {
             get { return _credential; }
+
             internal set { _credential = value; }
         }
 
@@ -762,6 +763,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 ex = e;
             }
+
             if (ex != null)
             {
                 string msg;
@@ -773,6 +775,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorRenamingScheduledJob, oldName, newName);
                 }
+
                 throw new ScheduledJobException(msg, ex);
             }
 
@@ -846,6 +849,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     msg = StringUtil.Format(ScheduledJobErrorStrings.BrokenRenamingScheduledJob, oldName, newName);
                 }
+
                 throw new ScheduledJobException(msg, ex);
             }
         }
@@ -977,6 +981,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 ex = e;
             }
+
             if (ex != null)
             {
                 // Clean up job store.
@@ -1036,6 +1041,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 ex = e;
             }
+
             if (ex != null)
             {
                 // We want this object to remain synchronized with what is in WTS.
@@ -1071,6 +1077,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 ex = e;
             }
+
             if (ex != null)
             {
                 // Remove this from WTS for consistency.
@@ -2158,6 +2165,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.DefinitionAlreadyExistsInLocal, jobDef.Name, jobDef.GlobalId);
                     throw new ScheduledJobException(msg);
                 }
+
                 _definitions.Add(jobDef.Name, jobDef);
             }
         }
@@ -2179,6 +2187,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     _definitions.Remove(jobDef.Name);
                 }
+
                 _definitions.Add(jobDef.Name, jobDef);
             }
         }
@@ -2283,8 +2292,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         internal string FQEID
         {
             get { return _fqeid; }
+
             set { _fqeid = value ?? string.Empty; }
         }
+
         private string _fqeid = string.Empty;
     }
 

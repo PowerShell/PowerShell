@@ -125,6 +125,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     errorId: "CimJob_" + inner.GetType().Name,
                     errorCategory: ErrorCategory.NotSpecified);
             }
+
             return cimJobException;
         }
 
@@ -352,6 +353,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get { return _errorRecord; }
         }
+
         private ErrorRecord _errorRecord;
 
         internal bool IsTerminatingError

@@ -82,6 +82,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(argNullException);
                 return false;
             }
+
             return _CounterSetNameToIdMapping.TryGetValue(counterSetName, out counterSetId);
         }
 
@@ -138,8 +139,10 @@ namespace System.Management.Automation.PerformanceData
                         _tracer.TraceException(invalidOperationException);
                         return false;
                     }
+
                     _CounterSetNameToIdMapping.TryAdd(counterSetName, counterSetId);
                 }
+
                 _CounterSetIdToInstanceMapping.TryAdd(
                     counterSetId,
                     counterSetRegistrarInstance.CounterSetInstance);
@@ -149,6 +152,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(overflowException);
                 return false;
             }
+
             return true;
         }
 
@@ -234,6 +238,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(argNullException);
                 return false;
             }
+
             Guid counterSetId;
             if (this.IsCounterSetRegistered(counterSetName, out counterSetId))
             {
@@ -451,6 +456,7 @@ namespace System.Management.Automation.PerformanceData
                 CounterSetInstanceBase currentCounterSetInstance = _CounterSetIdToInstanceMapping[counterSetId];
                 currentCounterSetInstance.Dispose();
             }
+
             _CounterSetIdToInstanceMapping.Clear();
             _CounterSetNameToIdMapping.Clear();
         }

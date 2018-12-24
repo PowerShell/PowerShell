@@ -78,11 +78,13 @@ namespace Microsoft.PowerShell.Commands
         public string ApplicationName
         {
             get { return _appName; }
+
             set
             {
                 _appName = ResolveAppName(value);
             }
         }
+
         private string _appName;
 
         /// <summary>
@@ -139,8 +141,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AllowRedirection
         {
             get { return _allowRedirection; }
+
             set { _allowRedirection = value; }
         }
+
         private bool _allowRedirection = false;
 
         /// <summary>
@@ -157,6 +161,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] Name
         {
             get { return base.Name; }
+
             set { base.Name = value; }
         }
 
@@ -180,6 +185,7 @@ namespace Microsoft.PowerShell.Commands
         public override Guid[] InstanceId
         {
             get { return base.InstanceId; }
+
             set { base.InstanceId = value; }
         }
 
@@ -196,6 +202,7 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _psCredential; }
+
             set
             {
                 _psCredential = value;
@@ -203,6 +210,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private PSCredential _psCredential;
 
         /// <summary>
@@ -215,6 +223,7 @@ namespace Microsoft.PowerShell.Commands
         public AuthenticationMechanism Authentication
         {
             get { return _authentication; }
+
             set
             {
                 _authentication = value;
@@ -222,6 +231,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private AuthenticationMechanism _authentication;
 
         /// <summary>
@@ -235,6 +245,7 @@ namespace Microsoft.PowerShell.Commands
         public string CertificateThumbprint
         {
             get { return _thumbprint; }
+
             set
             {
                 _thumbprint = value;
@@ -242,6 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private string _thumbprint;
 
         /// <summary>
@@ -434,6 +446,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 
@@ -456,6 +469,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 

@@ -367,6 +367,7 @@ namespace System.Management.Automation
                     {
                         CloseHandle(tokenHandler);
                     }
+
                     CloseHandle(processHandler);
                 }
             }
@@ -422,6 +423,7 @@ namespace System.Management.Automation
                     {
                         CloseHandle(tokenHandler);
                     }
+
                     CloseHandle(processHandler);
                 }
             }
@@ -649,11 +651,13 @@ namespace System.Management.Automation
                         this.hStdInput.Dispose();
                         this.hStdInput = null;
                     }
+
                     if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
                     {
                         this.hStdOutput.Dispose();
                         this.hStdOutput = null;
                     }
+
                     if ((this.hStdError != null) && !this.hStdError.IsInvalid)
                     {
                         this.hStdError.Dispose();
@@ -775,6 +779,7 @@ namespace System.Management.Automation
             Inherit = 0x80000000,
             NoHeaps = 0x40000000
         }
+
         [StructLayout(LayoutKind.Sequential)]
         internal struct PROCESSENTRY32
         {
