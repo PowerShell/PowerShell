@@ -263,7 +263,7 @@ namespace System.Management.Automation.Remoting
             int result = WSManPluginConstants.ExitCodeSuccess;
             WSManPluginShellSession mgdShellSession;
             WSManPluginOperationShutdownContext context;
-            System.Byte[] convertedBase64 = null;
+            byte[] convertedBase64 = null;
 
             try
             {

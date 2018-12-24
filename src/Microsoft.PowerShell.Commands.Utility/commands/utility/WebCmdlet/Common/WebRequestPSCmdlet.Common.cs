@@ -805,7 +805,7 @@ namespace Microsoft.PowerShell.Commands
         private string GetBasicAuthorizationHeader()
         {
             string unencoded = String.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
-            Byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
+            byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
             return String.Format("Basic {0}", Convert.ToBase64String(bytes));
         }
 
@@ -1640,7 +1640,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, Byte[] content)
+        internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             if (request == null)
                 throw new ArgumentNullException("request");
@@ -1705,7 +1705,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
+            byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
             var byteArrayContent = new ByteArrayContent(bytes);
             request.Content = byteArrayContent;
 
@@ -1720,7 +1720,7 @@ namespace Microsoft.PowerShell.Commands
             if (xmlNode == null)
                 return 0;
 
-            Byte[] bytes = null;
+            byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
             if (doc != null && (doc.FirstChild as XmlDeclaration) != null)
             {

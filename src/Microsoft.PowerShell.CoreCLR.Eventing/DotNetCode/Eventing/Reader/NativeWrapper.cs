@@ -1227,8 +1227,8 @@ namespace System.Diagnostics.Eventing.Reader
                     else return false;
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBinary:
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeByte):
-                    if (val.Reference == IntPtr.Zero) return new Byte[0];
-                    Byte[] arByte = new Byte[val.Count];
+                    if (val.Reference == IntPtr.Zero) return new byte[0];
+                    byte[] arByte = new byte[val.Count];
                     Marshal.Copy(val.Reference, arByte, 0, (int)val.Count);
                     return arByte;
                 case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt16):

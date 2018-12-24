@@ -796,8 +796,8 @@ namespace System.Management.Automation.Remoting.Client
                 }
             }
 
-            private System.Byte[] _data;
-            internal System.Byte[] Data
+            private byte[] _data;
+            internal byte[] Data
             {
                 get
                 {
@@ -834,7 +834,7 @@ namespace System.Management.Automation.Remoting.Client
                         if (dataStruct.binaryOrTextData.bufferLength > 0)
                         {
                             // copy data from unmanaged heap to managed heap.
-                            System.Byte[] dataRecvd = new System.Byte[dataStruct.binaryOrTextData.bufferLength];
+                            byte[] dataRecvd = new byte[dataStruct.binaryOrTextData.bufferLength];
                             Marshal.Copy(
                                 dataStruct.binaryOrTextData.data,
                                 dataRecvd,
