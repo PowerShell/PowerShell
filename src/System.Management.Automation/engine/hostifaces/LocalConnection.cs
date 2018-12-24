@@ -1566,8 +1566,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of RunspaceOpenModuleLoadException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation.Runspaces
         /// Populates a <see cref="SerializationInfo"/> with the
         /// data needed to serialize the RunspaceOpenModuleLoadException object.
         /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> to populate with data.</param>
+        /// <param name="info">The <see cref="SerializationInfo"/>to populate with data.</param>
         /// <param name="context">The destination for this serialization.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

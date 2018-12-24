@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         /// Populates a <see cref="System.Runtime.Serialization.SerializationInfo"/> with the
         /// data needed to serialize the HelpNotFoundException object.
         /// </summary>
-        /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
+        /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/>to populate with data.</param>
         /// <param name="context">The destination for this serialization.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

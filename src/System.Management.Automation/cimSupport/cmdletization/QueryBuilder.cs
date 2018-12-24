@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         /// <param name="associatedInstance">object that query results have to be associated with</param>
         /// <param name="associationName">name of the association</param>
-        /// <param name="resultRole">name of the role that <paramref name="associatedInstance"/> has in the association</param>
+        /// <param name="resultRole">name of the role that <paramref name="associatedInstance"/>has in the association</param>
         /// <param name="sourceRole">name of the role that query results have in the association</param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects

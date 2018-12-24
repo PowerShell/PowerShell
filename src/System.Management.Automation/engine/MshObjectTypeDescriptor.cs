@@ -354,7 +354,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the <see cref="PSObjectTypeDescriptor"/> that provides
         /// property information about <paramref name="instance"/>.
         /// </summary>
-        /// <param name="instance">The <see cref="PSObject"/> this class retrieves property information from.</param>
+        /// <param name="instance">The <see cref="PSObject"/>this class retrieves property information from.</param>
         public PSObjectTypeDescriptor(PSObject instance)
         {
             Instance = instance;
@@ -570,7 +570,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the object that this value is a member of.
         /// </summary>
-        /// <param name="pd">A <see cref="PropertyDescriptor"/> that represents the property whose owner is to be found.</param>
+        /// <param name="pd">A <see cref="PropertyDescriptor"/>that represents the property whose owner is to be found.</param>
         /// <returns>An object that represents the owner of the specified property.</returns>
         public override object GetPropertyOwner(PropertyDescriptor pd)
         {
@@ -623,7 +623,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the events for this instance of a component using the attribute array as a filter.
         /// </summary>
-        /// <param name="attributes">An array of type <see cref="Attribute"/> that is used as a filter.</param>
+        /// <param name="attributes">An array of type <see cref="Attribute"/>that is used as a filter.</param>
         /// <returns>An <see cref="EventDescriptorCollection"/> that represents the events for this component instance that match the given set of attributes.</returns>
         public override EventDescriptorCollection GetEvents(Attribute[] attributes)
         {
@@ -680,7 +680,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an editor of the specified type for this object.
         /// </summary>
-        /// <param name="editorBaseType">A <see cref="Type"/> that represents the editor for this object.</param>
+        /// <param name="editorBaseType">A <see cref="Type"/>that represents the editor for this object.</param>
         /// <returns>An object of the specified type that is the editor for this object, or a null reference (Nothing in Visual Basic) if the editor cannot be found.</returns>
         public override object GetEditor(Type editorBaseType)
         {

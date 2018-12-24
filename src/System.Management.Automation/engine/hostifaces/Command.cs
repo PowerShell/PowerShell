@@ -96,7 +96,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Copy constructor for clone operations
         /// </summary>
-        /// <param name="command">The source <see cref="Command"/> instance.</param>
+        /// <param name="command">The source <see cref="Command"/>instance.</param>
         internal Command(Command command)
         {
             IsScript = command.IsScript;

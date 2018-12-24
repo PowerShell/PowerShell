@@ -252,7 +252,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param>Wrapper function to remove CimSession from cache</param>
         /// </summary>
         /// <param name="session"></param>
-        /// <param name="dispose">Whether need to dispose the <see cref="CimSession"/> object</param>
+        /// <param name="dispose">Whether need to dispose the <see cref="CimSession"/>object</param>
         private static void RemoveCimSessionFromTemporaryCache(CimSession session,
             bool dispose)
         {
@@ -2287,7 +2287,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Create <see cref="CimSession"/> by given <see cref="CimSessionProxy"/> object.
         /// Then create wrapper object.
         /// </summary>
-        /// <param name="originalProxy"><see cref="CimSessionProxy"/> object to clone.</param>
+        /// <param name="originalProxy"><see cref="CimSessionProxy"/>object to clone.</param>
         /// <param name="passThru">PassThru, true means output the modified instance; otherwise does not output</param>
         public CimSessionProxySetCimInstance(CimSessionProxy originalProxy, bool passThru)
             : base(originalProxy)

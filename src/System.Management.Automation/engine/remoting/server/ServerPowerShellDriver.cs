@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
         /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/>completes</param>
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
@@ -81,7 +81,7 @@ namespace System.Management.Automation
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
         /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/>completes</param>
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
         /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/>completes</param>
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
         /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/>completes</param>
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>

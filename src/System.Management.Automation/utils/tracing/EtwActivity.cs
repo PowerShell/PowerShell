@@ -544,7 +544,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// Provides interop access to creating, querying and setting the current activity identifier
             /// </summary>
-            /// <param name="controlCode">The <see cref="ActivityControlCode"/> indicating the type of operation to perform.</param>
+            /// <param name="controlCode">The <see cref="ActivityControlCode"/>indicating the type of operation to perform.</param>
             /// <param name="activityId">The activity id to set or retrieve.</param>
             /// <returns>Zero on success.</returns>
             [DllImport(PinvokeDllNames.EventActivityIdControlDllName, ExactSpelling = true, EntryPoint = "EventActivityIdControl", CharSet = CharSet.Unicode)]

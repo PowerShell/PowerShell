@@ -1253,7 +1253,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleVersion"></param>
         /// <param name="cimClass"></param>
         /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
-        /// <param name="runAsBehavior"> To Specify RunAsBehavior of the class</param>
+        /// <param name="runAsBehavior">To Specify RunAsBehavior of the class</param>
         private static void CreateAndRegisterKeywordFromCimClass(string moduleName, Version moduleVersion, Microsoft.Management.Infrastructure.CimClass cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
             var keyword = CreateKeywordFromCimClass(moduleName, moduleVersion, cimClass, functionsToDefine, runAsBehavior);
@@ -1291,7 +1291,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleVersion"></param>
         /// <param name="cimClass"></param>
         /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
-        /// <param name="runAsBehavior"> To specify RunAs behavior of the class</param>
+        /// <param name="runAsBehavior">To specify RunAs behavior of the class</param>
         private static DynamicKeyword CreateKeywordFromCimClass(string moduleName, Version moduleVersion, Microsoft.Management.Infrastructure.CimClass cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
             var resourceName = cimClass.CimSystemProperties.ClassName;

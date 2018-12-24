@@ -1951,7 +1951,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="output">The output buffer to return from EndInvoke.</param>
         /// <param name="invocationCallback">An AsyncCallback to be called once the previous invocation has completed.</param>
-        /// <param name="state">A user supplied state to call the <paramref name="invocationCallback"/> with.</param>
+        /// <param name="state">A user supplied state to call the <paramref name="invocationCallback"/>with.</param>
         /// <returns>IAsyncResult</returns>
         public IAsyncResult ConnectAsync(
             PSDataCollection<PSObject> output,

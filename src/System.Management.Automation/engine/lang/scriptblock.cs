@@ -1054,7 +1054,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise</param>
+        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise</param>
         public void Begin(bool expectInput)
         {
             Begin(expectInput, (ICommandRuntime)null);
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise</param>
+        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise</param>
         /// <param name="contextToRedirectTo">context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
@@ -1315,8 +1315,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

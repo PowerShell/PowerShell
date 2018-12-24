@@ -120,8 +120,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected CmdletInvocationException(SerializationInfo info,
                                             StreamingContext context)
@@ -135,8 +135,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -228,8 +228,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected CmdletProviderInvocationException(SerializationInfo info,
                                                     StreamingContext context)
@@ -342,8 +342,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected PipelineStoppedException(SerializationInfo info,
                                            StreamingContext context)
@@ -427,8 +427,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected PipelineClosedException(SerializationInfo info,
                                           StreamingContext context)
@@ -513,8 +513,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected ActionPreferenceStopException(SerializationInfo info,
                                                 StreamingContext context)
@@ -535,8 +535,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -694,8 +694,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> doesn't return </returns>
         /// <exception cref="NotImplementedException">always</exception>
         protected ParentContainsErrorRecordException(
@@ -796,8 +796,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected RedirectedException(SerializationInfo info,
                                       StreamingContext context)
@@ -864,8 +864,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected ScriptCallDepthException(SerializationInfo info,
                                            StreamingContext context)
@@ -973,8 +973,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected PipelineDepthException(SerializationInfo info,
                                            StreamingContext context)
@@ -1090,8 +1090,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected HaltCommandException(SerializationInfo info,
                                        StreamingContext context)

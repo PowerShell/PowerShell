@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// skipped at runtime.
         /// </param>
         /// <param name="logEntries">list of logger entries (errors, etc.) to return to the caller</param>
-        /// <param name="success"> true if no error occurred</param>
+        /// <param name="success">true if no error occurred</param>
         /// <returns>a database instance loaded from file(s)</returns>
         private static TypeInfoDataBase LoadFromFileHelper(
             Collection<PSSnapInTypeAndFormatErrors> files,

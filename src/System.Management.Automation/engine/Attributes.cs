@@ -2199,7 +2199,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the transformation is being
         /// made.
         /// </param>
-        /// <param name="inputData"> parameter argument to mutate</param>
+        /// <param name="inputData">parameter argument to mutate</param>
         /// <returns> mutated object(s) </returns>
         /// <remarks>
         /// Return the transformed value of <paramref name="inputData"/>.

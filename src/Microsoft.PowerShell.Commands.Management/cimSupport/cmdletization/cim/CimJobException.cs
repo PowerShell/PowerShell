@@ -46,8 +46,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Initializes a new instance of the <see cref="CimJobException"/> class with serialized data.
         /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        /// <param name="info">The <see cref="SerializationInfo"/>that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/>that contains contextual information about the source or destination.</param>
         protected CimJobException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
@@ -63,8 +63,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Sets the SerializationInfo with information about the exception.
         /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        /// <param name="info">The <see cref="SerializationInfo"/>that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/>that contains contextual information about the source or destination.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 case NativeErrorCode.Ok:
                     return ErrorCategory.NotSpecified;
                 case NativeErrorCode.Failed:
-                    return ErrorCategory.NotSpecified; 
+                    return ErrorCategory.NotSpecified;
                 case NativeErrorCode.AccessDenied:
                     return ErrorCategory.PermissionDenied;
                 case NativeErrorCode.InvalidNamespace:

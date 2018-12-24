@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="directive">format directive to use for formatting</param>
         /// <param name="formatErrorObject"></param>
         /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
-        /// <param name="result"> not null if an error condition arose</param>
+        /// <param name="result">not null if an error condition arose</param>
         /// <returns>formatted string</returns>
         internal static string GetExpressionDisplayValue(
             PSObject so,

@@ -57,8 +57,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ExtendedTypeSystemException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected ExtendedTypeSystemException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -124,8 +124,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected MethodException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -189,8 +189,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected MethodInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -252,8 +252,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected GetValueException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -316,8 +316,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected PropertyNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -379,8 +379,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected GetValueInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -440,8 +440,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected SetValueException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -501,8 +501,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected SetValueInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         /// Populates a <see cref="System.Runtime.Serialization.SerializationInfo"/> with the
         /// data needed to serialize the PSInvalidCastException object.
         /// </summary>
-        /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
+        /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/>to populate with data.</param>
         /// <param name="context">The destination for this serialization.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -541,8 +541,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected PSInvalidCastException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             _errorId = info.GetString("ErrorId");

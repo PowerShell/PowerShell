@@ -31,8 +31,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serialization constructor for class PSSecurityException
         /// </summary>
-        /// <param name="info"> serialization information</param>
-        /// <param name="context"> streaming context</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns> constructed object </returns>
         protected PSSecurityException(SerializationInfo info,
                            StreamingContext context)

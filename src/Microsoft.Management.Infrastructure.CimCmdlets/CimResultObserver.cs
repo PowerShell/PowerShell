@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </param>
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/> object</param>
+        /// <param name="session"><see cref="CimSession"/>object</param>
         /// <param name="cancellationDisposable"></param>
         public AsyncResultCompleteEventArgs(
             CimSession session,
@@ -234,7 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/> object that issued the operation</param>
+        /// <param name="session"><see cref="CimSession"/>object that issued the operation</param>
         /// <param name="observable">Operation that can be observed</param>
         public CimResultObserver(CimSession session, IObservable<object> observable)
         {
@@ -245,7 +245,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/> object that issued the operation</param>
+        /// <param name="session"><see cref="CimSession"/>object that issued the operation</param>
         /// <param name="observable">Operation that can be observed</param>
         public CimResultObserver(CimSession session,
             IObservable<object> observable,

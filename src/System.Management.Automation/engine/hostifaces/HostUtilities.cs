@@ -228,7 +228,7 @@ namespace System.Management.Automation
         /// Gets the first <paramref name="maxLines"/> lines of <paramref name="source"/>.
         /// </summary>
         /// <param name="source">string we want to limit the number of lines</param>
-        /// <param name="maxLines"> maximum number of lines to be returned</param>
+        /// <param name="maxLines">maximum number of lines to be returned</param>
         /// <returns>The first lines of <paramref name="source"/>.</returns>
         internal static string GetMaxLines(string source, int maxLines)
         {

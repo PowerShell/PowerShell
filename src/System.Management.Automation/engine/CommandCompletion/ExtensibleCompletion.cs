@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// <summary/>
         public ScriptBlock ScriptBlock { get; private set; }
 
-        /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
+        /// <param name="type">The type must implement <see cref="IArgumentCompleter"/>and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
             if (type == null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))

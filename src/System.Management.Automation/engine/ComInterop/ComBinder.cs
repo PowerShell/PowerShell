@@ -44,9 +44,9 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic get member operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="GetMemberBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="GetMemberBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <param name="delayInvocation">true if member evaluation may be delayed.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation)
@@ -75,9 +75,9 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic get member operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="GetMemberBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="GetMemberBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
         {
@@ -87,10 +87,10 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic set member operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="SetMemberBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="SetMemberBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set member operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="value">The <see cref="DynamicMetaObject"/>representing the value for the set member operation.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindSetMember(SetMemberBinder binder, DynamicMetaObject instance, DynamicMetaObject value, out DynamicMetaObject result)
         {
@@ -110,10 +110,10 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic invoke operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="InvokeBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="InvokeBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="args">An array of <see cref="DynamicMetaObject"/>instances - arguments to the invoke member operation.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindInvoke(InvokeBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
@@ -132,11 +132,11 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic invoke member operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="InvokeMemberBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="InvokeMemberBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="isSetProperty">True if this is for setting a property, false otherwise..</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="args">An array of <see cref="DynamicMetaObject"/>instances - arguments to the invoke member operation.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindInvokeMember(InvokeMemberBinder binder, bool isSetProperty, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
@@ -173,10 +173,10 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic get index operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="GetIndexBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="GetIndexBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="args">An array of <see cref="DynamicMetaObject"/>instances - arguments to the invoke member operation.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindGetIndex(GetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
@@ -195,11 +195,11 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic set index operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="SetIndexBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="SetIndexBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
-        /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set index operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="args">An array of <see cref="DynamicMetaObject"/>instances - arguments to the invoke member operation.</param>
+        /// <param name="value">The <see cref="DynamicMetaObject"/>representing the value for the set index operation.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindSetIndex(SetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, DynamicMetaObject value, out DynamicMetaObject result)
         {
@@ -220,9 +220,9 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Tries to perform binding of the dynamic Convert operation.
         /// </summary>
-        /// <param name="binder">An instance of the <see cref="ConvertBinder"/> that represents the details of the dynamic operation.</param>
+        /// <param name="binder">An instance of the <see cref="ConvertBinder"/>that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
-        /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
+        /// <param name="result">The new <see cref="DynamicMetaObject"/>representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryConvert(ConvertBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
         {

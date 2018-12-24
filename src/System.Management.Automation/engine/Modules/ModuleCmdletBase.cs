@@ -4415,7 +4415,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements</param>
         /// <param name="moduleBase">base directory of a module</param>
         /// <param name="extension">expected file extension (added to strings that didn't have an extension)</param>
-        /// <param name="verifyFilesExist">if <c>true</c> then we want to error out if the specified files don't exist</param>
+        /// <param name="verifyFilesExist">if <c>true</c>then we want to error out if the specified files don't exist</param>
         /// <param name="list">Returns the extracted version</param>
         /// <returns></returns>
         private bool GetListOfFilesFromData(
