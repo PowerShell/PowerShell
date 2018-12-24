@@ -2041,18 +2041,40 @@ namespace Microsoft.PowerShell.Commands
 
             if (itemType == ItemType.Directory)
             {
+                bool isContainer = false;
+                bool exists = false;
+
                 try
                 {
-                    CreateDirectory(path, true);
+                    exists = GetFileSystemInfo(path, out isContainer) != null;
                 }
-                catch (IOException exception)
+                catch (UnauthorizedAccessException e)
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
-                    WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
+                    WriteError(new ErrorRecord(e, "NewItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                    return;
                 }
-                catch (UnauthorizedAccessException accessException)
+
+                if (exists && !isContainer)
                 {
-                    WriteError(new ErrorRecord(accessException, "NewItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                    string message = StringUtil.Format(FileSystemProviderStrings.DirectoryExist, path);
+                    WriteError(new ErrorRecord(new IOException(message), "NewItemIOError", ErrorCategory.WriteError, path));
+                    return; 
+                }
+                else
+                {
+                    try
+                    {
+                        CreateDirectory(path, true);
+                    }
+                    catch (IOException e)
+                    {
+                        // IOException contains specific message about the error occured and so no need for errordetails.
+                        WriteError(new ErrorRecord(e, "NewItemIOError", ErrorCategory.WriteError, path));
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        WriteError(new ErrorRecord(e, "NewItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                    }
                 }
             }
             else if (itemType == ItemType.File)
