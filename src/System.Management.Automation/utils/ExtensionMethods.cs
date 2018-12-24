@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// Check does the type have an instance default constructor with visibility that allows calling it from subclass.
         /// </summary>
         /// <param name="type">type</param>
-        /// <returns>true when type has a default ctor.</returns>
+        /// <returns>True when type has a default ctor.</returns>
         internal static bool HasDefaultCtor(this Type type)
         {
             var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);

@@ -115,7 +115,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.  Note that
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single object from the stream
         /// </summary>
-        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached</returns>
+        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         internal virtual object Read()
         {
@@ -163,7 +163,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
         /// </exception>
@@ -281,7 +281,7 @@ namespace System.Management.Automation.Internal
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is closed
         /// </exception>
@@ -765,7 +765,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.  Note that
@@ -814,7 +814,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Wait for data to be readable
         /// </summary>
-        /// <returns>true if EndOfPipeline is not reached.</returns>
+        /// <returns>True if EndOfPipeline is not reached.</returns>
         /// <remarks>
         /// WaitRead does not guarantee that data is present in the stream,
         /// only that data was added when the event was signaled.  Since there may be
@@ -1081,7 +1081,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single object from the stream
         /// </summary>
-        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached</returns>
+        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         internal override object Read()
         {
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
         /// </exception>
@@ -1311,7 +1311,7 @@ namespace System.Management.Automation.Internal
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is closed
         /// </exception>
@@ -1648,7 +1648,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.

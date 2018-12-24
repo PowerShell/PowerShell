@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// <param name="name">help topic name</param>
         /// <param name="text">help text</param>
         /// <param name="filename">file name that contains the help text</param>
-        /// <returns>HelpFileHelpInfo object created based on information provided</returns>
+        /// <returns>HelpFileHelpInfo object created based on information provided.</returns>
         internal static HelpFileHelpInfo GetHelpInfo(string name, string text, string filename)
         {
             if (String.IsNullOrEmpty(name))
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="text">text to get the line for</param>
         /// <param name="line">line number</param>
-        /// <returns>the part of string in text that is in specified line</returns>
+        /// <returns>The part of string in text that is in specified line.</returns>
         private static string GetLine(string text, int line)
         {
             StringReader reader = new StringReader(text);

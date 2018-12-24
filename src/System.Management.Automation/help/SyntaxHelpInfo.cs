@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// <param name="name">help topic name</param>
         /// <param name="text">help text</param>
         /// <param name="category">help category</param>
-        /// <returns>SyntaxHelpInfo object created based on information provided</returns>
+        /// <returns>SyntaxHelpInfo object created based on information provided.</returns>
         internal static SyntaxHelpInfo GetHelpInfo(string name, string text, HelpCategory category)
         {
             if (String.IsNullOrEmpty(name))

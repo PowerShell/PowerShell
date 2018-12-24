@@ -144,7 +144,7 @@ namespace System.Management.Automation.Internal
         /// Used to escape characters that are not friendly to WPF binding
         /// </summary>
         /// <param name="propertyName">property name to be used in binding</param>
-        /// <returns>string with escaped characters</returns>
+        /// <returns>String with escaped characters.</returns>
         internal static string EscapeBinding(string propertyName)
         {
             return propertyName.Replace("/", " ").Replace(".", " ");
@@ -155,7 +155,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="methodName">name of the method to call</param>
         /// <param name="arguments">arguments to call the method with</param>
-        /// <returns>The method return value</returns>
+        /// <returns>The method return value.</returns>
         internal object CallMethod(string methodName, params object[] arguments)
         {
             Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to call an instance method");
@@ -169,7 +169,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="methodName">name of the method to call</param>
         /// <param name="arguments">arguments to call the method with</param>
-        /// <returns>The method return value</returns>
+        /// <returns>The method return value.</returns>
         internal object CallStaticMethod(string methodName, params object[] arguments)
         {
             MethodInfo method = _graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Internal
         /// Gets the value of an instance property with name <paramref name="propertyName"/>
         /// </summary>
         /// <param name="propertyName">name of the instance property to get the value from</param>
-        /// <returns>the value of an instance property with name <paramref name="propertyName"/></returns>
+        /// <returns>The value of an instance property with name <paramref name="propertyName"/></returns>
         internal object GetPropertyValue(string propertyName)
         {
             Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to get an instance property value");
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Internal
         /// Gets the value of a static property with name <paramref name="propertyName"/>
         /// </summary>
         /// <param name="propertyName">name of the static property to get the value from</param>
-        /// <returns>the value of a static property with name <paramref name="propertyName"/></returns>
+        /// <returns>The value of a static property with name <paramref name="propertyName"/></returns>
         internal object GetStaticPropertyValue(string propertyName)
         {
             PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static);
@@ -206,7 +206,7 @@ namespace System.Management.Automation.Internal
         /// Returns true if the <paramref name="parentCmdlet"/> is being run remotely
         /// </summary>
         /// <param name="parentCmdlet">cmdlet we want to see if is running remotely</param>
-        /// <returns>true if the <paramref name="parentCmdlet"/> is being run remotely</returns>
+        /// <returns>True if the <paramref name="parentCmdlet"/> is being run remotely.</returns>
         private static bool IsInputFromRemoting(PSCmdlet parentCmdlet)
         {
             Diagnostics.Assert(parentCmdlet.SessionState != null, "SessionState should always be available.");

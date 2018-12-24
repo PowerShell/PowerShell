@@ -137,7 +137,7 @@ namespace System.Management.Automation
         /// Returns processor architecture for the current process.
         /// If powershell is running inside Wow64, then <see cref="ProcessorArchitecture.X86"/> is returned.
         /// </summary>
-        /// <returns>processor architecture for the current process</returns>
+        /// <returns>Processor architecture for the current process.</returns>
         internal static ProcessorArchitecture GetProcessorArchitecture(out bool isRunningOnArm)
         {
             var sysInfo = new NativeMethods.SYSTEM_INFO();
@@ -283,7 +283,7 @@ namespace System.Management.Automation
         /// is used to generate the key.
         /// </summary>
         /// <param name="usingAst">A using expression</param>
-        /// <returns>Base64 encoded string as the key of the UsingExpressionAst</returns>
+        /// <returns>Base64 encoded string as the key of the UsingExpressionAst.</returns>
         internal static string GetUsingExpressionKey(Language.UsingExpressionAst usingAst)
         {
             Diagnostics.Assert(usingAst != null, "Caller makes sure the parameter is not null");
@@ -479,7 +479,7 @@ namespace System.Management.Automation
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
         internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
-        { 
+        {
             "AliasesToExport",
             "CmdletsToExport",
             "CompatiblePSEditions",
@@ -553,7 +553,7 @@ namespace System.Management.Automation
         /// Converts string to base64 encoded string
         /// </summary>
         /// <param name="input">string to encode</param>
-        /// <returns>base64 encoded string</returns>
+        /// <returns>Base64 encoded string.</returns>
         internal static string StringToBase64String(string input)
         {
             // NTRAID#Windows Out Of Band Releases-926471-2005/12/27-JonN
@@ -574,7 +574,7 @@ namespace System.Management.Automation
         /// Decodes base64 encoded string
         /// </summary>
         /// <param name="base64">base64 string to decode</param>
-        /// <returns>decoded string</returns>
+        /// <returns>Decoded string.</returns>
         internal static string Base64ToString(string base64)
         {
             if (string.IsNullOrEmpty(base64))

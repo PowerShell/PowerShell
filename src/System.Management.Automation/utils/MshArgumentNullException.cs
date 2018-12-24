@@ -25,7 +25,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PSArgumentNullException()
             : base()
         {
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
         /// <param name="paramName">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// Per MSDN, the parameter is paramName and not message.
         /// I confirm this experimentally as well.
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PSArgumentNullException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="paramName">  </param>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// ArgumentNullException has this ctor form and we imitate it here.
         /// </remarks>
@@ -80,7 +80,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected PSArgumentNullException(SerializationInfo info,
                            StreamingContext context)
                 : base(info, context)

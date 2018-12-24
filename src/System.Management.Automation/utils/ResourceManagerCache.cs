@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// <param name="assemblyToUse">
         /// The main Assembly for the resources
         /// </param>
-        /// <returns>Resource Manager instance</returns>
+        /// <returns>Resource Manager instance.</returns>
         /// <exception cref="ArgumentException">
         /// Thrown if the resource manager instance could not be created
         /// </exception>

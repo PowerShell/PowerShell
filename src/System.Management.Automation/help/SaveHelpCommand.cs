@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="module">module to process</param>
         /// <param name="culture">culture to use</param>
-        /// <returns>true if the module has been processed, false if not</returns>
+        /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             Collection<string> resolvedPaths = new Collection<string>();

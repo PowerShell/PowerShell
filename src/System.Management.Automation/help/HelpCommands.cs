@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public string[] Role { get; set; }
-        
+
         /// <summary>
         /// This parameter,if true, will direct get-help cmdlet to
         /// navigate to a URL (stored in the command MAML file under

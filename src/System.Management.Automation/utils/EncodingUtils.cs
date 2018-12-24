@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// retrieve the encoding parameter from the command line
         /// it throws if the encoding does not match the known ones
         /// </summary>
-        /// <returns>a System.Text.Encoding object (null if no encoding specified)</returns>
+        /// <returns>A System.Text.Encoding object (null if no encoding specified).</returns>
         internal static Encoding Convert(Cmdlet cmdlet, string encoding)
         {
             if (string.IsNullOrEmpty(encoding))

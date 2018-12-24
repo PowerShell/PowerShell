@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
         /// Trim empty lines from the either end of an string array.
         /// </summary>
         /// <param name="lines">lines to trim</param>
-        /// <returns>an string array with empty lines trimed on either end</returns>
+        /// <returns>An string array with empty lines trimed on either end.</returns>
         private static string[] TrimLines(string[] lines)
         {
             if (lines == null || lines.Length == 0)

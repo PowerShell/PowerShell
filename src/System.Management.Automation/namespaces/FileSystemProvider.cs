@@ -7668,7 +7668,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the target of the specified reparse point.
         /// </summary>
         /// <param name="instance">The object of FileInfo or DirectoryInfo type.</param>
-        /// <returns>The target of the reparse point</returns>
+        /// <returns>The target of the reparse point.</returns>
         public static IEnumerable<string> GetTarget(PSObject instance)
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
@@ -8308,7 +8308,7 @@ namespace System.Management.Automation.Internal
         /// <param name="access">The FileAccess of the file.</param>
         /// <param name="share">The FileShare of the file.</param>
         /// <param name="stream">A FileStream that can be used to interact with the file.</param>
-        /// <returns>true if the stream was successfully created, otherwise false.</returns>
+        /// <returns>True if the stream was successfully created, otherwise false.</returns>
         internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
         {
             if (path == null)
