@@ -311,7 +311,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.
@@ -342,10 +342,10 @@ namespace System.Management.Automation.Runspaces
         /// pool. Should be greater than or equal to 1.
         /// </param>
         /// <param name="host">Host associated with this
-        /// runspace pool</param>
+        /// runspace pool.</param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.
@@ -389,10 +389,10 @@ namespace System.Management.Automation.Runspaces
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
         /// <param name="host">Host associated with this
-        /// runspace pool</param>
+        /// runspace pool.</param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.
@@ -436,13 +436,13 @@ namespace System.Management.Automation.Runspaces
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
         /// <param name="host">Host associated with this
-        /// runspace pool</param>
+        /// runspace pool.</param>
         /// <param name="applicationArguments">
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.

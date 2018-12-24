@@ -29,7 +29,7 @@ namespace System.Management.Automation.Runspaces
         /// Construct an instance of an Runspace using a custom
         /// implementation of PSHost.
         /// </summary>
-        /// <param name="host">The explicit PSHost implementation</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Host is null.
         /// </exception>
@@ -51,7 +51,7 @@ namespace System.Management.Automation.Runspaces
         /// Construct an instance of an Runspace using a custom
         /// implementation of PSHost.
         /// </summary>
-        /// <param name="host">The explicit PSHost implementation</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Host is null.
         /// </exception>
@@ -530,7 +530,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        /// <param name="command">A valid command string</param>
+        /// <param name="command">A valid command string.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -550,8 +550,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -584,8 +584,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a nested pipeline.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -606,8 +606,8 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline from a command string
         /// </summary>
         /// <param name="command">A valid command string or String.Empty.</param>
-        /// <param name="addToHistory">if true command is added to history</param>
-        /// <param name="isNested">True for nested pipeline</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="isNested">True for nested pipeline.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the new runspace state.
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
@@ -735,7 +735,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the current runspace state - no error
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         protected void SetRunspaceState(RunspaceState state)
         {
             this.SetRunspaceState(state, null);
@@ -821,7 +821,7 @@ namespace System.Management.Automation.Runspaces
         /// Add the pipeline to list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
@@ -859,7 +859,7 @@ namespace System.Management.Automation.Runspaces
         /// Remove the pipeline from list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>
@@ -1515,8 +1515,8 @@ namespace System.Management.Automation.Runspaces
         /// Protected methods to be implemented by derived class.
         /// This does the actual work of setting variable.
         /// </summary>
-        /// <param name="name">Name of the variable to set</param>
-        /// <param name="value">The value to set it to</param>
+        /// <param name="name">Name of the variable to set.</param>
+        /// <param name="value">The value to set it to.</param>
         protected abstract void DoSetVariable(string name, object value);
 
         /// <summary>

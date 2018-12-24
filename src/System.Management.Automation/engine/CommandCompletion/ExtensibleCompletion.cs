@@ -169,7 +169,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ArgumentCompletionsAttribute class
         /// </summary>
-        /// <param name="completions">list of complete values</param>
+        /// <param name="completions">list of complete values.</param>
         /// <exception cref="ArgumentNullException">for null arguments</exception>
         /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
         public ArgumentCompletionsAttribute(params string[] completions)

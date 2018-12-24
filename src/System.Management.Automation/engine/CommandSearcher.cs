@@ -1160,7 +1160,7 @@ namespace System.Management.Automation
         /// <param name="name">
         /// The name of the command to search for.
         /// </param>
-        /// <param name="commandDiscovery">get names for command discovery</param>
+        /// <param name="commandDiscovery">get names for command discovery.</param>
         /// <returns>
         /// A collection of the patterns used to find the command.
         /// The patterns are as follows:

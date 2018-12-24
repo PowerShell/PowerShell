@@ -783,7 +783,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get completion results for operators that start with <paramref name="wordToComplete"/>
         /// </summary>
-        /// <param name="wordToComplete">The starting text of the operator to complete</param>
+        /// <param name="wordToComplete">The starting text of the operator to complete.</param>
         /// <returns>A list of completion results</returns>
         public static List<CompletionResult> CompleteOperator(string wordToComplete)
         {
@@ -3969,8 +3969,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="prev">the argument that is right before the 'tab' location</param>
-        /// <param name="position">the number of positional arguments before the 'tab' location</param>
+        /// <param name="prev">the argument that is right before the 'tab' location.</param>
+        /// <param name="position">the number of positional arguments before the 'tab' location.</param>
         /// <returns></returns>
         private static ArgumentLocation GenerateArgumentLocation(AstParameterArgumentPair prev, int position)
         {
@@ -5795,8 +5795,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle namespace when initializing the type cache
         /// </summary>
-        /// <param name="entryCache">The TypeCompletionMapping dictionary</param>
-        /// <param name="namespace">The namespace</param>
+        /// <param name="entryCache">The TypeCompletionMapping dictionary.</param>
+        /// <param name="namespace">The namespace.</param>
         private static void HandleNamespace(Dictionary<string, TypeCompletionMapping> entryCache, string @namespace)
         {
             if (string.IsNullOrEmpty(@namespace))
@@ -5832,10 +5832,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle a type when initializing the type cache
         /// </summary>
-        /// <param name="entryCache">The TypeCompletionMapping dictionary</param>
-        /// <param name="fullTypeName">The full type name</param>
-        /// <param name="shortTypeName">The short type name</param>
-        /// <param name="actualType">The actual type object. It may be null if we are handling type information from the CoreCLR TypeCatalog</param>
+        /// <param name="entryCache">The TypeCompletionMapping dictionary.</param>
+        /// <param name="fullTypeName">The full type name.</param>
+        /// <param name="shortTypeName">The short type name.</param>
+        /// <param name="actualType">The actual type object. It may be null if we are handling type information from the CoreCLR TypeCatalog.</param>
         private static void HandleType(Dictionary<string, TypeCompletionMapping> entryCache, string fullTypeName, string shortTypeName, Type actualType)
         {
             if (string.IsNullOrEmpty(fullTypeName)) { return; }

@@ -1576,8 +1576,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an event manager for the given runspace
         /// </summary>
-        /// <param name="computerName">Computer on which the event was generated</param>
-        /// <param name="runspaceId">Runspace on which the event was generated</param>
+        /// <param name="computerName">Computer on which the event was generated.</param>
+        /// <param name="runspaceId">Runspace on which the event was generated.</param>
         internal PSRemoteEventManager(string computerName, Guid runspaceId)
         {
             _computerName = computerName;
@@ -2179,7 +2179,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="args">event arguments</param>
+        /// <param name="args">event arguments.</param>
         public PSEventArgs(T args)
         {
             Args = args;

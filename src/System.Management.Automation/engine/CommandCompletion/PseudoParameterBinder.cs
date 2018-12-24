@@ -771,8 +771,8 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Creates a StaticBindingException
         /// </summary>
-        /// <param name="commandElement">The element associated with the exception</param>
-        /// <param name="exception">The parameter binding exception that got raised</param>
+        /// <param name="commandElement">The element associated with the exception.</param>
+        /// <param name="exception">The parameter binding exception that got raised.</param>
         internal StaticBindingError(CommandElementAst commandElement, ParameterBindingException exception)
         {
             this.CommandElement = commandElement;
@@ -941,8 +941,8 @@ namespace System.Management.Automation.Language
         /// Get the parameter binding metadata
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="pipeArgumentType">Indicate the type of the piped-in argument</param>
-        /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at</param>
+        /// <param name="pipeArgumentType">Indicate the type of the piped-in argument.</param>
+        /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at.</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
         /// <returns>PseudoBindingInfo</returns>
         internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Sets a temporary default host on the ExecutionContext
         /// </summary>
-        /// <param name="executionContext">ExecutionContext</param>
+        /// <param name="executionContext">ExecutionContext.</param>
         private void SetTemporaryDefaultHost(ExecutionContext executionContext)
         {
             if (executionContext.EngineHostInterface.IsHostRefSet)
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Restores original ExecutionContext host state.
         /// </summary>
-        /// <param name="executionContext">ExecutionContext</param>
+        /// <param name="executionContext">ExecutionContext.</param>
         private void RestoreHost(ExecutionContext executionContext)
         {
             // Remove temporary host and revert to original.
