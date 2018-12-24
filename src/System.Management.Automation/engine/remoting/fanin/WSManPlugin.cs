@@ -535,7 +535,7 @@ namespace System.Management.Automation.Remoting
         /// Retrieves a WSManPluginShellSession if matched.
         /// </summary>
         /// <param name="key">Shell context (WSManPluginRequest.unmanagedHandle)</param>
-        /// <returns>null WSManPluginShellSession if not matched. The object if matched.</returns>
+        /// <returns>Null WSManPluginShellSession if not matched. The object if matched.</returns>
         private WSManPluginShellSession GetFromActiveShellSessions(
             IntPtr key)
         {
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation.Remoting
         /// Helper method to retrieve the WSMan client token from the __WINRM_RUNAS_CLIENT_TOKEN__
         /// environment variable, which is set in the WSMan layer for Virtual or RunAs accounts.
         /// </summary>
-        /// <returns>ClientToken IntPtr</returns>
+        /// <returns>ClientToken IntPtr.</returns>
         private IntPtr GetRunAsClientToken()
         {
             string clientTokenStr = System.Environment.GetEnvironmentVariable(WSManRunAsClientTokenName);

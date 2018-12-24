@@ -210,7 +210,7 @@ namespace System.Management.Automation.Internal
         /// with this runspace pool data structure handler
         /// </summary>
         /// <param name="shell">associated powershell</param>
-        /// <returns>PowerShell data structure handler object</returns>
+        /// <returns>PowerShell data structure handler object.</returns>
         internal ClientPowerShellDataStructureHandler CreatePowerShellDataStructureHandler(
             ClientRemotePowerShell shell)
         {
@@ -668,7 +668,7 @@ namespace System.Management.Automation.Internal
         /// Gets the ClientPowerShellDataStructureHandler instance for the specified id
         /// </summary>
         /// <param name="clientPowerShellId">id of the client remote powershell</param>
-        /// <returns>ClientPowerShellDataStructureHandler object</returns>
+        /// <returns>ClientPowerShellDataStructureHandler object.</returns>
         private ClientPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
             (Guid clientPowerShellId)
         {

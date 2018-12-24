@@ -919,7 +919,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns all the results from supplied PSDataCollection.
         /// </summary>
         /// <param name="psDataCollection">data collection to read from</param>
-        /// <returns>collection with copy of data</returns>
+        /// <returns>Collection with copy of data.</returns>
         private Collection<T> ReadAll<T>(PSDataCollection<T> psDataCollection)
         {
             if (_flush)

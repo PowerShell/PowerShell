@@ -294,7 +294,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Clones this object
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal JobStateInfo Clone()
         {
             return new JobStateInfo(this);
@@ -1335,7 +1335,7 @@ namespace System.Management.Automation
         /// Returns runspaces associated with the Job, including
         /// child jobs.
         /// </summary>
-        /// <returns>IEnumerable of RemoteRunspaces</returns>
+        /// <returns>IEnumerable of RemoteRunspaces.</returns>
         internal virtual IEnumerable<RemoteRunspace> GetRunspaces()
         {
             return null;
@@ -1474,7 +1474,7 @@ namespace System.Management.Automation
         /// after clearing up all the internal
         /// structures
         /// </summary>
-        /// <returns>collection of stream objects</returns>
+        /// <returns>Collection of stream objects.</returns>
         internal Collection<PSStreamObject> ReadAll()
         {
             Output.Clear();
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation
         /// Automatically generate a job name if the user
         /// does not supply one
         /// </summary>
-        /// <returns>auto generated job name</returns>
+        /// <returns>Auto generated job name.</returns>
         /// <remarks>Since the user can script/program against the
         /// job name, the auto generated name will not be
         /// localizable</remarks>
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation
         /// Gets the job for the specified location
         /// </summary>
         /// <param name="location">location to filter on</param>
-        /// <returns>collection of jobs</returns>
+        /// <returns>Collection of jobs.</returns>
         internal List<Job> GetJobsForLocation(string location)
         {
             List<Job> returnJobList = new List<Job>();
@@ -1900,7 +1900,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="computerName">computername for which entity
         /// result is required</param>
-        /// <returns>entity result</returns>
+        /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForComputer(string computerName)
         {
             List<Job> returnJobList = new List<Job>();
@@ -1924,7 +1924,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspace">runspace for which entity
         /// result is required</param>
-        /// <returns>entity result</returns>
+        /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForRunspace(PSSession runspace)
         {
             List<Job> returnJobList = new List<Job>();
@@ -1947,7 +1947,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="operation">helper for which entity
         /// result is required</param>
-        /// <returns>entity result</returns>
+        /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForOperation(IThrottleOperation operation)
         {
             List<Job> returnJobList = new List<Job>();
@@ -2622,7 +2622,7 @@ namespace System.Management.Automation
         /// Returns runspaces associated with the Job, including
         /// child jobs.
         /// </summary>
-        /// <returns>IEnumerable of RemoteRunspaces</returns>
+        /// <returns>IEnumerable of RemoteRunspaces.</returns>
         internal override IEnumerable<RemoteRunspace> GetRunspaces()
         {
             List<RemoteRunspace> runspaces = new List<RemoteRunspace>();
@@ -3528,7 +3528,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pipeline">remote pipeline</param>
         /// <param name="instanceId">instance as described in event args</param>
-        /// <returns>PowerShell instance</returns>
+        /// <returns>PowerShell instance.</returns>
         private PowerShell GetPipelinePowerShell(RemotePipeline pipeline, Guid instanceId)
         {
             if (pipeline != null)
@@ -3764,7 +3764,7 @@ namespace System.Management.Automation
         /// Returns the PowerShell for the specified instance id
         /// </summary>
         /// <param name="instanceId">instance id of powershell</param>
-        /// <returns>powershell instance</returns>
+        /// <returns>Powershell instance.</returns>
         internal virtual PowerShell GetPowerShell(Guid instanceId)
         {
             // this should be called only in the derived implementation
@@ -3895,7 +3895,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">PowerShell command</param>
         /// <param name="output">Output</param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <returns>DebuggerCommandResults.</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
             // Special handling for the prompt command.
@@ -3928,7 +3928,7 @@ namespace System.Management.Automation
         /// Returns current debugger stop event arguments if debugger is in
         /// debug stop state.  Otherwise returns null.
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             return _wrappedDebugger.GetDebuggerStopArgs();
@@ -4313,7 +4313,7 @@ namespace System.Management.Automation
         /// Returns the PowerShell instance for the specified id
         /// </summary>
         /// <param name="instanceId">instance id of PowerShell</param>
-        /// <returns>PowerShell instance</returns>
+        /// <returns>PowerShell instance.</returns>
         internal override PowerShell GetPowerShell(Guid instanceId)
         {
             PowerShell powershell = null;
@@ -4368,8 +4368,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the job is in a terminal state
         /// </summary>
-        /// <returns>true, if job in terminal state
-        /// false otherwise</returns>
+        /// <returns>True, if job in terminal state
+        /// false otherwise.</returns>
         internal bool IsTerminalState()
         {
             return (IsFinishedState(this.JobStateInfo.State) ||

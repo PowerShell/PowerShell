@@ -649,7 +649,7 @@ namespace System.Management.Automation
         /// <param name="applicationArguments">
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data      |        Type         |
@@ -704,7 +704,7 @@ namespace System.Management.Automation
         /// to be created at the server</param>
         /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
         /// to be created at the server</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data      |        Type         |
@@ -761,7 +761,7 @@ namespace System.Management.Automation
         /// to be created at the server</param>
         /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
         /// to be created at the server</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data      |        Type         |
@@ -795,7 +795,7 @@ namespace System.Management.Automation
         /// <param name="maxRunspaces">new value of maxRunspaces for the
         /// specified RunspacePool  </param>
         /// <param name="callId">call id of the call at client</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -826,7 +826,7 @@ namespace System.Management.Automation
         /// <param name="minRunspaces">new value of minRunspaces for the
         /// specified RunspacePool  </param>
         /// <param name="callId">call id of the call at client</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -856,7 +856,7 @@ namespace System.Management.Automation
         /// <param name="clientRunspacePoolId">id of the clientRunspacePool</param>
         /// <param name="callId">call id of the call at client</param>
         /// <param name="response">response to the call</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -886,7 +886,7 @@ namespace System.Management.Automation
         /// <param name="clientRunspacePoolId">guid of the runspace pool on which
         /// this needs to be queried</param>
         /// <param name="callId">call id of the call at the client</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
@@ -915,7 +915,7 @@ namespace System.Management.Automation
         /// <param name="publicKey">public key to send across</param>
         /// <param name="destination">destination that this message is
         /// targeted to</param>
-        /// <returns>data structure message</returns>
+        /// <returns>Data structure message.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
@@ -941,7 +941,7 @@ namespace System.Management.Automation
         /// requesting a public key from the client to the server
         /// </summary>
         /// <param name="runspacePoolId">runspace pool id</param>
-        /// <returns>data structure message</returns>
+        /// <returns>Data structure message.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
@@ -964,7 +964,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspacePoolId">runspace pool id</param>
         /// <param name="encryptedSessionKey">encrypted session key</param>
-        /// <returns>data structure message</returns>
+        /// <returns>Data structure message.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
@@ -994,7 +994,7 @@ namespace System.Management.Automation
         /// message needs to be generated.
         /// The data is extracted from parameters of the first command named "Get-Command".
         /// </param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// -------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |     Data      |        Type         |
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="shell">The client remote powershell from which the
         /// create powershell message needs to be generated</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// -------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |     Data      |        Type         |
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the client RunspacePool</param>
         /// <param name="applicationPrivateData">application private data</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1183,7 +1183,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the client RunspacePool</param>
         /// <param name="stateInfo">State information object</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1227,7 +1227,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the client RunspacePool</param>
         /// <param name="e">PowerShell event</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1261,7 +1261,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId"></param>
         /// <param name="callId">Caller Id</param>
-        /// <returns>Data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action          |      Data     |        Type        |
@@ -1285,7 +1285,7 @@ namespace System.Management.Automation
         /// Returns the PS remoting protocol version associated with the provided
         /// </summary>
         /// <param name="rsPool">RunspacePool</param>
-        /// <returns>PS remoting protocol version</returns>
+        /// <returns>PS remoting protocol version.</returns>
         internal static Version GetPSRemotingProtocolVersion(RunspacePool rsPool)
         {
             return (rsPool != null && rsPool.RemoteRunspacePoolInternal != null) ?
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation
         /// <param name="data">input data to send</param>
         /// <param name="clientRemoteRunspacePoolId">client runspace pool id</param>
         /// <param name="clientPowerShellId">client powershell id</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1327,7 +1327,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRemoteRunspacePoolId">client runspace pool id</param>
         /// <param name="clientPowerShellId">client powershell id</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1354,7 +1354,7 @@ namespace System.Management.Automation
         /// to which this information need to be delivered</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
         /// associated with this powershell</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation
         /// associated with this powershell</param>
         /// <param name="dataType">data type of this informational
         /// message</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1412,7 +1412,7 @@ namespace System.Management.Automation
         /// to which this information need to be delivered</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
         /// associated with this powershell</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1445,7 +1445,7 @@ namespace System.Management.Automation
         /// to which this information need to be delivered</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
         /// associated with this powershell</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// -----------------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type                 |
@@ -1477,7 +1477,7 @@ namespace System.Management.Automation
         /// to which this information need to be delivered</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
         /// associated with this powershell</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1504,7 +1504,7 @@ namespace System.Management.Automation
         /// to which this information need to be delivered</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
         /// associated with this powershell</param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="capability">RemoteSession capability object to encode</param>
         /// <param name="runspacePoolId"></param>
-        /// <returns>data structure handler message encoded as RemoteDataObject</returns>
+        /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
@@ -1842,7 +1842,7 @@ namespace System.Management.Automation
         /// data object specified
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>RunspacePoolStateInfo</returns>
+        /// <returns>RunspacePoolStateInfo.</returns>
         internal static RunspacePoolStateInfo GetRunspacePoolStateInfo(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1861,7 +1861,7 @@ namespace System.Management.Automation
         /// data object specified
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>application private data</returns>
+        /// <returns>Application private data.</returns>
         internal static PSPrimitiveDictionary GetApplicationPrivateData(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1876,7 +1876,7 @@ namespace System.Management.Automation
         /// Gets the public key from the encoded message
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>public key as string</returns>
+        /// <returns>Public key as string.</returns>
         internal static string GetPublicKey(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1891,7 +1891,7 @@ namespace System.Management.Automation
         /// Gets the encrypted session key from the encoded message
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>encrypted session key as string</returns>
+        /// <returns>Encrypted session key as string.</returns>
         internal static string GetEncryptedSessionKey(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1907,7 +1907,7 @@ namespace System.Management.Automation
         /// data object specified
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>RunspacePoolStateInfo</returns>
+        /// <returns>RunspacePoolStateInfo.</returns>
         internal static PSEventArgs GetPSEventArgs(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1947,7 +1947,7 @@ namespace System.Management.Automation
         /// runspace pool from the data object specified
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>minimum runspaces</returns>
+        /// <returns>Minimum runspaces.</returns>
         internal static int GetMinRunspaces(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1963,7 +1963,7 @@ namespace System.Management.Automation
         /// runspace pool from the data object specified
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>maximum runspaces</returns>
+        /// <returns>Maximum runspaces.</returns>
         internal static int GetMaxRunspaces(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation
         /// runspace pool from the data object specified
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>thread options</returns>
+        /// <returns>Thread options.</returns>
         internal static PSPrimitiveDictionary GetApplicationArguments(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -1996,7 +1996,7 @@ namespace System.Management.Automation
         /// Generates RunspacePoolInitInfo object from a received PSObject
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>RunspacePoolInitInfo generated</returns>
+        /// <returns>RunspacePoolInitInfo generated.</returns>
         internal static RunspacePoolInitInfo GetRunspacePoolInitInfo(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -2015,7 +2015,7 @@ namespace System.Management.Automation
         /// runspace pool from the data object specified
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
-        /// <returns>thread options</returns>
+        /// <returns>Thread options.</returns>
         internal static PSThreadOptions GetThreadOptions(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -2031,7 +2031,7 @@ namespace System.Management.Automation
         /// associated with the runspace pool
         /// </summary>
         /// <param name="dataAsPSObject">dataAsPSObject object to decode</param>
-        /// <returns>host information</returns>
+        /// <returns>Host information.</returns>
         internal static HostInfo GetHostInfo(PSObject dataAsPSObject)
         {
             if (dataAsPSObject == null)
@@ -2083,7 +2083,7 @@ namespace System.Management.Automation
         /// Gets the output from the message
         /// </summary>
         /// <param name="data">object to decode</param>
-        /// <returns>output object</returns>
+        /// <returns>Output object.</returns>
         /// <remarks>the current implementation does nothing,
         /// however this method is there in place as the
         /// packaging of output data may change in the future</remarks>
@@ -2096,7 +2096,7 @@ namespace System.Management.Automation
         /// Gets the PSInvocationStateInfo from the data
         /// </summary>
         /// <param name="data">object to decode</param>
-        /// <returns>PSInvocationInfo</returns>
+        /// <returns>PSInvocationInfo.</returns>
         internal static PSInvocationStateInfo GetPowerShellStateInfo(object data)
         {
             PSObject dataAsPSObject = data as PSObject;
@@ -2115,7 +2115,7 @@ namespace System.Management.Automation
         /// Gets the ErrorRecord from the message
         /// </summary>
         /// <param name="data">data to decode</param>
-        /// <returns>error record</returns>
+        /// <returns>Error record.</returns>
         internal static ErrorRecord GetPowerShellError(object data)
         {
             if (data == null)
@@ -2201,7 +2201,7 @@ namespace System.Management.Automation
         /// Gets the PowerShell object from the specified data
         /// </summary>
         /// <param name="data">data to decode</param>
-        /// <returns>Deserialized PowerShell object</returns>
+        /// <returns>Deserialized PowerShell object.</returns>
         internal static PowerShell GetPowerShell(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2218,7 +2218,7 @@ namespace System.Management.Automation
         /// Gets the PowerShell object from the specified data
         /// </summary>
         /// <param name="data">data to decode</param>
-        /// <returns>Deserialized PowerShell object</returns>
+        /// <returns>Deserialized PowerShell object.</returns>
         internal static PowerShell GetCommandDiscoveryPipeline(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2292,7 +2292,7 @@ namespace System.Management.Automation
         /// Gets the NoInput setting from the specified data
         /// </summary>
         /// <param name="data">data to decode</param>
-        /// <returns><c>true</c> if there is no pipeline input; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if there is no pipeline input; <c>false</c> otherwise.</returns>
         internal static bool GetNoInput(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2309,7 +2309,7 @@ namespace System.Management.Automation
         /// Gets the AddToHistory setting from the specified data
         /// </summary>
         /// <param name="data">data to decode</param>
-        /// <returns><c>true</c> if there is addToHistory data; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if there is addToHistory data; <c>false</c> otherwise.</returns>
         internal static bool GetAddToHistory(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2326,7 +2326,7 @@ namespace System.Management.Automation
         /// Gets the IsNested setting from the specified data
         /// </summary>
         /// <param name="data">data to decode</param>
-        /// <returns><c>true</c> if there is IsNested data; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if there is IsNested data; <c>false</c> otherwise.</returns>
         internal static bool GetIsNested(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2366,7 +2366,7 @@ namespace System.Management.Automation
         /// Decodes a RemoteSessionCapability object
         /// </summary>
         /// <param name="data">data to decode</param>
-        /// <returns>RemoteSessionCapability object</returns>
+        /// <returns>RemoteSessionCapability object.</returns>
         internal static RemoteSessionCapability GetSessionCapability(object data)
         {
             PSObject dataAsPSObject = data as PSObject;
@@ -2411,7 +2411,7 @@ namespace System.Management.Automation
         /// Checks if the server supports batch invocation
         /// </summary>
         /// <param name="runspace">runspace instance</param>
-        /// <returns>true if batch invocation is supported, false if not</returns>
+        /// <returns>True if batch invocation is supported, false if not.</returns>
         internal static bool ServerSupportsBatchInvocation(Runspace runspace)
         {
             if (runspace == null || runspace.RunspaceStateInfo.State == RunspaceState.BeforeOpen)

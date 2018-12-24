@@ -86,7 +86,7 @@ namespace System.Management.Automation
         /// for the specified wildcard pattern.
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match</param>
-        /// <returns>The constructed WildcardPattern object</returns>
+        /// <returns>The constructed WildcardPattern object.</returns>
         /// <remarks> if wildCardType == None, the pattern does not have wild cards</remarks>
         public WildcardPattern(string pattern)
         {
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
         /// <param name="options">Wildcard options</param>
-        /// <returns>The constructed WildcardPattern object</returns>
+        /// <returns>The constructed WildcardPattern object.</returns>
         /// <remarks> if wildCardType == None, the pattern does not have wild cards  </remarks>
         public WildcardPattern(string pattern,
                                WildcardOptions options)
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiate internal regex member if not already done.
         /// </summary>
-        /// <returns> true on success, false otherwise </returns>
+        /// <returns>True on success, false otherwise.</returns>
         /// <remarks>  </remarks>
         private void Init()
         {
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// constructor finds a match in the input string.
         /// </summary>
         /// <param name="input">The string to search for a match.</param>
-        /// <returns>true if the wildcard pattern finds a match; otherwise, false</returns>
+        /// <returns>True if the wildcard pattern finds a match; otherwise, false.</returns>
         public bool IsMatch(string input)
         {
             Init();
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         /// <param name="pattern">
         /// String which needs to be checked for the presence of wildcard chars
         /// </param>
-        /// <returns> true if the string has wild card chars, false otherwise. </returns>
+        /// <returns>True if the string has wild card chars, false otherwise..</returns>
         /// <remarks>
         /// Currently { '*', '?', '[' } are considered wild card chars and
         /// '`' is the escape character.
@@ -402,7 +402,7 @@ namespace System.Management.Automation
         /// <param name="errorRecord">
         /// ErrorRecord object containing additional information about the error condition.
         /// </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal WildcardPatternException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord))
         {

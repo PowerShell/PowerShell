@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         /// its assumed to be localhost
         /// </summary>
         /// <param name="computerName">computer name to resolve</param>
-        /// <returns>resolved computer name</returns>
+        /// <returns>Resolved computer name.</returns>
         protected string ResolveComputerName(string computerName)
         {
             Diagnostics.Assert(computerName != null, "Null ComputerName");
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="resourceString">resource String which holds the message
         /// </param>
-        /// <returns>Error message loaded from appropriate resource cache</returns>
+        /// <returns>Error message loaded from appropriate resource cache.</returns>
         internal string GetMessage(string resourceString)
         {
             string message = GetMessage(resourceString, null);
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         ///     2. DEFAULTREMOTESHELLNAME variable set
         ///     3. PowerShell
         /// </summary>
-        /// <returns>The shell to launch in the remote machine</returns>
+        /// <returns>The shell to launch in the remote machine.</returns>
         protected string ResolveShell(string shell)
         {
             string resolvedShell;
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
         ///     3. WSMan
         /// </summary>
         /// <param name="appName">application name to resolve</param>
-        /// <returns>resolved appname</returns>
+        /// <returns>Resolved appname.</returns>
         protected string ResolveAppName(string appName)
         {
             string resolvedAppName;
@@ -886,7 +886,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Parse the Connection parameter HashTable array.
         /// </summary>
-        /// <returns>Array of SSHConnection objects</returns>
+        /// <returns>Array of SSHConnection objects.</returns>
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
             List<SSHConnection> connections = new List<SSHConnection>();
@@ -1056,7 +1056,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates parameter value and returns as string
         /// </summary>
         /// <param name="param">Parameter value to be validated</param>
-        /// <returns>Parameter value as string</returns>
+        /// <returns>Parameter value as string.</returns>
         private static string GetSSHConnectionStringParameter(object param)
         {
             if (param is string paramValue && !string.IsNullOrEmpty(paramValue))
@@ -1071,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates parameter value and returns as integer
         /// </summary>
         /// <param name="param">Parameter value to be validated</param>
-        /// <returns>Parameter value as integer</returns>
+        /// <returns>Parameter value as integer.</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
             if (param is int paramValue)
@@ -1826,7 +1826,7 @@ namespace Microsoft.PowerShell.Commands
         /// Creates a pipeline from the powershell
         /// </summary>
         /// <param name="remoteRunspace">runspace on which to create the pipeline</param>
-        /// <returns>a pipeline</returns>
+        /// <returns>A pipeline.</returns>
         internal Pipeline CreatePipeline(RemoteRunspace remoteRunspace)
         {
             // The fix to WinBlue#475223 changed how UsingExpression is handled on the client/server sides, if the remote end is PSv5
@@ -2402,7 +2402,7 @@ namespace Microsoft.PowerShell.Commands
         /// Get all Using expressions that we care about
         /// </summary>
         /// <param name="localScriptBlock"></param>
-        /// <returns>a list of UsingExpressionAsts ordered by the StartOffset</returns>
+        /// <returns>A list of UsingExpressionAsts ordered by the StartOffset.</returns>
         private List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
         {
             if (localScriptBlock == null)
@@ -2578,7 +2578,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
             bool writeErrorOnNoMatch)
@@ -2595,7 +2595,7 @@ namespace Microsoft.PowerShell.Commands
         /// the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
             bool writeErrorOnNoMatch,
@@ -2697,7 +2697,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByComputerName(bool writeobject,
             bool writeErrorOnNoMatch)
         {
@@ -2759,7 +2759,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspacesByName(bool writeobject,
@@ -2818,7 +2818,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspacesByRunspaceId(bool writeobject,
@@ -2876,7 +2876,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesBySessionId(bool writeobject,
             bool writeErrorOnNoMatch)
         {
@@ -2931,7 +2931,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerId(bool writeobject,
             SessionFilterState filterState,
             string configurationName,
@@ -2999,7 +2999,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
             string configurationName,
@@ -3056,7 +3056,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMId(bool writeobject,
             SessionFilterState filterState,
             string configurationName)
@@ -3101,7 +3101,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
             string configurationName)
@@ -4056,7 +4056,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="e">Exception</param>
         /// <param name="errorCode">Returned WSMan error code</param>
-        /// <returns>WSMan message</returns>
+        /// <returns>WSMan message.</returns>
         internal static string ExtractMessage(
             Exception e,
             out int errorCode)

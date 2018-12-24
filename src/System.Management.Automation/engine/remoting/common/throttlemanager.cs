@@ -291,8 +291,8 @@ namespace System.Management.Automation.Remoting
         /// <remarks>Calling this method will also affect other cmdlets which
         /// could have potentially submitComplete operations for processing
         /// </remarks>
-        /// <returns>number of objects cleared from queue without being
-        /// stopped</returns>
+        /// <returns>Number of objects cleared from queue without being
+        /// stopped.</returns>
         internal void StopAllOperations()
         {
             // if stopping is already in progress, make it a no op

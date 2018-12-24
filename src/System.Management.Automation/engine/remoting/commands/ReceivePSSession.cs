@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.Commands
         /// from the server, based on the provided session object.
         /// </summary>
         /// <param name="session">PSSession</param>
-        /// <returns>PSSession</returns>
+        /// <returns>PSSession.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
             RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;

@@ -1785,7 +1785,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns debugger stop event args if in debugger stop state.
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             return _wrappedDebugger.Value.GetDebuggerStopArgs();

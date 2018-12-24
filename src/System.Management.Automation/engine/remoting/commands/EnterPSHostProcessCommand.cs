@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Commands
         ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell
         /// </summary>
         /// <param name="procIds">Process Ids or null</param>
-        /// <returns>Collection of process AppDomain info</returns>
+        /// <returns>Collection of process AppDomain info.</returns>
         internal static IReadOnlyCollection<PSHostProcessInfo> GetAppDomainNamesFromProcessId(int[] procIds)
         {
             var procAppDomainInfo = new List<PSHostProcessInfo>();

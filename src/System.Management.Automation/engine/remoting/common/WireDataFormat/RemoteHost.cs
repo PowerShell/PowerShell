@@ -329,9 +329,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="computerName">computer name to use in
         /// warning messages</param>
-        /// <returns>a collection of remote host calls which will
+        /// <returns>A collection of remote host calls which will
         /// have to be executed before this host call can be
-        /// executed</returns>
+        /// executed.</returns>
         internal Collection<RemoteHostCall> PerformSecurityChecksOnHostMessage(string computerName)
         {
             Dbg.Assert(!String.IsNullOrEmpty(computerName),
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Remoting
         /// tagged with "Windows PowerShell Credential Request"
         /// </summary>
         /// <param name="caption">caption to modify</param>
-        /// <returns>new modified caption</returns>
+        /// <returns>New modified caption.</returns>
         private string ModifyCaption(string caption)
         {
             string pscaption = CredUI.PromptForCredential_DefaultCaption;
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="message">original message to modify</param>
         /// <param name="computerName">computername to include in the
         /// message</param>
-        /// <returns>message which contains a warning as well</returns>
+        /// <returns>Message which contains a warning as well.</returns>
         private string ModifyMessage(string message, string computerName)
         {
             string modifiedMessage = PSRemotingErrorInvariants.FormatResourceString(
@@ -482,8 +482,8 @@ namespace System.Management.Automation.Remoting
         /// <param name="computerName">computer name to include
         /// in warning</param>
         /// <param name="resourceString">resource string to use</param>
-        /// <returns>a constructed remote host call message
-        /// which will display the warning</returns>
+        /// <returns>A constructed remote host call message
+        /// which will display the warning.</returns>
         private RemoteHostCall ConstructWarningMessageForSecureString(string computerName,
             string resourceString)
         {
@@ -503,8 +503,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="computerName">computer name to include
         /// in warning</param>
-        /// <returns>a constructed remote host call message
-        /// which will display the warning</returns>
+        /// <returns>A constructed remote host call message
+        /// which will display the warning.</returns>
         private RemoteHostCall ConstructWarningMessageForGetBufferContents(string computerName)
         {
             string warning = PSRemotingErrorInvariants.FormatResourceString(

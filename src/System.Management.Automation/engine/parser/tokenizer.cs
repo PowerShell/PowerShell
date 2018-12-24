@@ -226,7 +226,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Duplicates the DynamicKeyword
         /// </summary>
-        /// <returns>A copy of the DynamicKeyword</returns>
+        /// <returns>A copy of the DynamicKeyword.</returns>
         public DynamicKeyword Copy()
         {
             DynamicKeyword keyword = new DynamicKeyword()

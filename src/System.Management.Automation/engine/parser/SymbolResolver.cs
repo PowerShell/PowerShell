@@ -252,7 +252,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Return the most deep typeDefinitionAst in the current context.
         /// </summary>
-        /// <returns>typeDefinitionAst or null, if currently not in type definition</returns>
+        /// <returns>TypeDefinitionAst or null, if currently not in type definition.</returns>
         public TypeDefinitionAst GetCurrentTypeDefinitionAst()
         {
             for (int i = _scopes.Count - 1; i >= 0; i--)
