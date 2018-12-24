@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell.Commands
             // a web service binding attribute
             foreach (Type type in assembly.GetTypes())
             {
-                Object[] obj = type.GetCustomAttributes(typeof(WebServiceBindingAttribute), false);
+                object[] obj = type.GetCustomAttributes(typeof(WebServiceBindingAttribute), false);
                 if (obj.Length > 0)
                 {
                     proxyType = type;
