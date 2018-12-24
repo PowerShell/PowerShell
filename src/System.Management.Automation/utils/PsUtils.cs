@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// process, you will need to write the P/Invoke yourself.
         /// </summary>
         /// <param name="targetProcess">The process from which to
-        /// retrieve the MainModule</param>
+        /// retrieve the MainModule.</param>
         /// <exception cref="NotSupportedException">
         /// You are trying to access the MainModule property for a process that is running
         /// on a remote computer. This property is available only for processes that are
@@ -92,7 +92,7 @@ namespace System.Management.Automation
         /// For perf reasons, we resort to P/Invoke.
         /// </summary>
         /// <param name="current">The process we want to find the
-        /// parent of</param>
+        /// parent of.</param>
         internal static Process GetParentProcess(Process current)
         {
             var processId = current.Id;
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         /// to the remote end that contains the key of each UsingExpressionAst and its value. This method
         /// is used to generate the key.
         /// </summary>
-        /// <param name="usingAst">A using expression</param>
+        /// <param name="usingAst">A using expression.</param>
         /// <returns>Base64 encoded string as the key of the UsingExpressionAst</returns>
         internal static string GetUsingExpressionKey(Language.UsingExpressionAst usingAst)
         {
@@ -479,7 +479,7 @@ namespace System.Management.Automation
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
         internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
-        { 
+        {
             "AliasesToExport",
             "CmdletsToExport",
             "CompatiblePSEditions",
@@ -552,7 +552,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts string to base64 encoded string
         /// </summary>
-        /// <param name="input">string to encode</param>
+        /// <param name="input">string to encode.</param>
         /// <returns>base64 encoded string</returns>
         internal static string StringToBase64String(string input)
         {
@@ -573,7 +573,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Decodes base64 encoded string
         /// </summary>
-        /// <param name="base64">base64 string to decode</param>
+        /// <param name="base64">base64 string to decode.</param>
         /// <returns>decoded string</returns>
         internal static string Base64ToString(string base64)
         {

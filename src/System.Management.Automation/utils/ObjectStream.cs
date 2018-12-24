@@ -162,7 +162,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read at most <paramref name="count"/> objects
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
+        /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
@@ -273,7 +273,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Write objects to the underlying stream
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected abstract void Dispose(bool disposing);
 
         #endregion IDisposable
@@ -1099,7 +1099,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read at most <paramref name="count"/> objects
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
+        /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Write objects to the underlying stream
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
@@ -1487,7 +1487,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (_disposed)
@@ -1700,8 +1700,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Creates an Object Reader for the pipeline
         /// </summary>
-        /// <param name="computerName">computer name that the pipeline specifies</param>
-        /// <param name="runspaceId">runspace id that the pipeline specifies</param>
+        /// <param name="computerName">computer name that the pipeline specifies.</param>
+        /// <param name="runspaceId">runspace id that the pipeline specifies.</param>
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
@@ -1747,8 +1747,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Creates a PSObject Reader for this pipeline
         /// </summary>
-        /// <param name="computerName">computer name that the pipeline specifies</param>
-        /// <param name="runspaceId">runspace id that the pipeline specifies</param>
+        /// <param name="computerName">computer name that the pipeline specifies.</param>
+        /// <param name="runspaceId">runspace id that the pipeline specifies.</param>
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
@@ -1941,7 +1941,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all resources</param>
+        /// <param name="disposing">if true, release all resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (_disposed)

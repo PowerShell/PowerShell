@@ -3101,8 +3101,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// IT resets the a registry key value to its default
         /// </summary>
-        /// <param name="key">Key whose value has to be reset</param>
-        /// <param name="valueName">name of the value to reset</param>
+        /// <param name="key">Key whose value has to be reset.</param>
+        /// <param name="valueName">name of the value to reset.</param>
         /// <returns>default value the key was set to</returns>
         private object ResetRegistryKeyValue(IRegistryWrapper key, string valueName)
         {
@@ -3207,7 +3207,7 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="path">path to check</param>
+        /// <param name="path">path to check.</param>
         /// <returns>false if the operation is not allowed</returns>
         private bool CheckOperationNotAllowedOnHiveContainer(string path)
         {
@@ -3227,8 +3227,8 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="sourcePath">source path to check</param>
-        /// <param name="destinationPath">destination path to check</param>
+        /// <param name="sourcePath">source path to check.</param>
+        /// <param name="destinationPath">destination path to check.</param>
         private bool CheckOperationNotAllowedOnHiveContainer(string sourcePath, string destinationPath)
         {
             if (IsHiveContainer(sourcePath))
@@ -3297,7 +3297,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates the parent for the keypath specified by <paramref name="path"/>.
         /// </summary>
-        /// <param name="path">RegistryKey path</param>
+        /// <param name="path">RegistryKey path.</param>
         /// <returns>
         /// True if key is created or already exist,False otherwise.
         /// </returns>
@@ -3763,9 +3763,9 @@ namespace Microsoft.PowerShell.Commands
         /// helper to wrap property values when sent to the pipeline into an PSObject;
         /// it adds the name of the property as a note.
         /// </summary>
-        /// <param name="value">The property to be written</param>
-        /// <param name="propertyName">Name of the property being written</param>
-        /// <param name="path">The path of the item being written</param>
+        /// <param name="value">The property to be written.</param>
+        /// <param name="propertyName">Name of the property being written.</param>
+        /// <param name="path">The path of the item being written.</param>
         private void WriteWrappedPropertyObject(object value, string propertyName, string path)
         {
             PSObject result = new PSObject();
@@ -3881,7 +3881,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// helper to infer the RegistryValueKind from an object
         /// </summary>
-        /// <param name="value">object whose RegistryValueKind has to be determined</param>
+        /// <param name="value">object whose RegistryValueKind has to be determined.</param>
         /// <returns>corresponding RegistryValueKind</returns>
         private static RegistryValueKind GetValueKindFromObject(object value)
         {
@@ -3923,8 +3923,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Helper to get RegistryValueKind for a Property
         /// </summary>
-        /// <param name="key">RegistryKey containing property</param>
-        /// <param name="valueName">Property for which RegistryValueKind is requested</param>
+        /// <param name="key">RegistryKey containing property.</param>
+        /// <param name="valueName">Property for which RegistryValueKind is requested.</param>
         /// <returns>RegistryValueKind of the property. If the property does not exit,returns RegistryValueKind.Unknown</returns>
         private static RegistryValueKind GetValueKindForProperty(IRegistryWrapper key, string valueName)
         {
@@ -3952,8 +3952,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// helper to read back an existing registry key value
         /// </summary>
-        /// <param name="key">key to read the value from</param>
-        /// <param name="valueName">name of the value to read</param>
+        /// <param name="key">key to read the value from.</param>
+        /// <param name="valueName">name of the value to read.</param>
         /// <returns>value of the key, null if it could not retrieve
         /// it because known exceptions were thrown, else an exception is percolated up
         /// </returns>
@@ -4037,7 +4037,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="type">
         /// The type as specified by the user that should be parsed into a RegistryValueKind enum.
         /// </param>
-        /// <param name="kind">output for the RegistryValueKind for the string</param>
+        /// <param name="kind">output for the RegistryValueKind for the string.</param>
         /// <returns>
         /// true if the conversion succeeded
         /// </returns>

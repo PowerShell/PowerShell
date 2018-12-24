@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         ///  <param name="share">
         ///    The file share to open the file with
-        ///  </param>
+        ///  .</param>
         /// <param name="delimiter">
         /// The delimiter to use when reading strings. Each time read is called, all contents up to an including
         /// the delimiter is read.
@@ -861,11 +861,11 @@ namespace Microsoft.PowerShell.Commands
         /// and then monitors for changes.  Once a change appears, it reopens the streams
         /// and seeks to the last read position.
         /// </summary>
-        /// <param name="filePath">The path of the file to read / monitor</param>
-        /// <param name="fileMode">The FileMode of the file (ie: Open / Append)</param>
-        /// <param name="fileAccess">The access properties of the file (ie: Read / Write)</param>
-        /// <param name="fileShare">The sharing properties of the file (ie: Read / ReadWrite)</param>
-        /// <param name="fileEncoding">The encoding of the file</param>
+        /// <param name="filePath">The path of the file to read / monitor.</param>
+        /// <param name="fileMode">The FileMode of the file (ie: Open / Append).</param>
+        /// <param name="fileAccess">The access properties of the file (ie: Read / Write).</param>
+        /// <param name="fileShare">The sharing properties of the file (ie: Read / ReadWrite).</param>
+        /// <param name="fileEncoding">The encoding of the file.</param>
         private void WaitForChanges(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, Encoding fileEncoding)
         {
             // Close the old stream, and store our current position.
