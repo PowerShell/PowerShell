@@ -296,7 +296,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Generates an unique session id.
         /// </para>
         /// </summary>
-        /// <returns>Unique session id under current runspace</returns>
+        /// <returns>Unique session id under current runspace.</returns>
         internal UInt32 GenerateSessionId()
         {
             return this.sessionNameCounter++;
@@ -561,7 +561,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Query session list by given id array
         /// </summary>
         /// <param name="ids"></param>
-        /// <returns>List of session wrapper objects</returns>
+        /// <returns>List of session wrapper objects.</returns>
         internal IEnumerable<PSObject> QuerySession(IEnumerable<UInt32> ids,
             out IEnumerable<ErrorRecord> errorRecords)
         {
@@ -593,7 +593,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Query session list by given instance id array
         /// </summary>
         /// <param name="instanceIds"></param>
-        /// <returns>List of session wrapper objects</returns>
+        /// <returns>List of session wrapper objects.</returns>
         internal IEnumerable<PSObject> QuerySession(IEnumerable<Guid> instanceIds,
             out IEnumerable<ErrorRecord> errorRecords)
         {
@@ -625,7 +625,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Query session list by given name array
         /// </summary>
         /// <param name="nameArray"></param>
-        /// <returns>List of session wrapper objects</returns>
+        /// <returns>List of session wrapper objects.</returns>
         internal IEnumerable<PSObject> QuerySession(IEnumerable<string> nameArray,
             out IEnumerable<ErrorRecord> errorRecords)
         {
@@ -667,7 +667,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Query session list by given computer name array
         /// </summary>
         /// <param name="computernameArray"></param>
-        /// <returns>List of session wrapper objects</returns>
+        /// <returns>List of session wrapper objects.</returns>
         internal IEnumerable<PSObject> QuerySessionByComputerName(
             IEnumerable<string> computernameArray,
             out IEnumerable<ErrorRecord> errorRecords)
@@ -706,7 +706,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Query session list by given session objects array
         /// </summary>
         /// <param name="cimsessions"></param>
-        /// <returns>List of session wrapper objects</returns>
+        /// <returns>List of session wrapper objects.</returns>
         internal IEnumerable<PSObject> QuerySession(IEnumerable<CimSession> cimsessions,
             out IEnumerable<ErrorRecord> errorRecords)
         {
@@ -738,7 +738,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Query session wrapper object
         /// </summary>
         /// <param name="cimsessions"></param>
-        /// <returns>session wrapper</returns>
+        /// <returns>Session wrapper.</returns>
         internal CimSessionWrapper QuerySession(CimSession cimsession)
         {
             CimSessionWrapper wrapper;
@@ -750,7 +750,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Query session object with given CimSessionInstanceID
         /// </summary>
         /// <param name="cimSessionInstanceId"></param>
-        /// <returns>CimSession object</returns>
+        /// <returns>CimSession object.</returns>
         internal CimSession QuerySession(Guid cimSessionInstanceId)
         {
             if (this.curCimSessionsByInstanceId.ContainsKey(cimSessionInstanceId))

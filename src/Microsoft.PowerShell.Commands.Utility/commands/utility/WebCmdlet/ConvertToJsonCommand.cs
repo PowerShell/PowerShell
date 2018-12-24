@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="obj">The object to be processed</param>
         /// <param name="depth">The current depth into the object graph</param>
-        /// <returns>An object suitable for serializing to JSON</returns>
+        /// <returns>An object suitable for serializing to JSON.</returns>
         private object ProcessValue(object obj, int depth)
         {
             if (Stopping)

@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="propKey1">First property key to compare.</param>
         /// <param name="propKey2">Second property key to compare.</param>
-        /// <returns>true if object a equals object b. false otherwise.</returns>        
+        /// <returns>True if object a equals object b. false otherwise.</returns>
         public static bool operator ==(PropertyKey propKey1, PropertyKey propKey2)
         {
             return propKey1.Equals(propKey2);
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="propKey1">First property key to compare</param>
         /// <param name="propKey2">Second property key to compare.</param>
-        /// <returns>true if object a does not equal object b. false otherwise.</returns>
+        /// <returns>True if object a does not equal object b. false otherwise.</returns>
         public static bool operator !=(PropertyKey propKey1, PropertyKey propKey2)
         {
             return !propKey1.Equals(propKey2);
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Override ToString() to provide a user friendly string representation
         /// </summary>
-        /// <returns>String representing the property key</returns>        
+        /// <returns>String representing the property key.</returns>
         public override string ToString()
         {
             return string.Format(System.Globalization.CultureInfo.InvariantCulture,

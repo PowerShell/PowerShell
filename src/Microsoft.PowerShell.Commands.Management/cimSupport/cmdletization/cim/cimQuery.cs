@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Returns a string that represents the current CIM query
         /// </summary>
-        /// <returns>A string that represents the current CIM query</returns>
+        /// <returns>A string that represents the current CIM query.</returns>
         public override string ToString()
         {
             return _wqlCondition.ToString();

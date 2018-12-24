@@ -1305,7 +1305,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the owner of the process.
         /// </summary>
         /// <param name="process"></param>
-        /// <returns>returns the owner</returns>
+        /// <returns>Returns the owner.</returns>
         private bool IsProcessOwnedByCurrentUser(Process process)
         {
             const uint TOKEN_QUERY = 0x0008;
@@ -1388,7 +1388,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Stops the given process throws non terminating error if can't.
         /// <param name="process" >process to be stopped</param>
-        /// <returns>true if process stopped successfully else false</returns>
+        /// <returns>True if process stopped successfully else false.</returns>
         /// </summary>
         private void StopProcess(Process process)
         {
@@ -2909,7 +2909,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unimplemented standard constructor.
         /// </summary>
-        /// <returns> doesn't return </returns>
+        /// <returns>Doesn't return.</returns>
         public ProcessCommandException() : base()
         {
             throw new NotImplementedException();
@@ -2919,7 +2919,7 @@ namespace Microsoft.PowerShell.Commands
         /// Standard constructor.
         /// </summary>
         /// <param name="message"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ProcessCommandException(string message) : base(message)
         {
         }
@@ -2941,7 +2941,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected ProcessCommandException(
             SerializationInfo info,
             StreamingContext context)

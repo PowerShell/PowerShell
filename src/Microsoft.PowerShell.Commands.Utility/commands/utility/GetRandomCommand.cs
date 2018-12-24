@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generates a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
         /// </summary>
-        /// <returns>A random floating-point number that is greater than or equal to 0.0, and less than 1.0</returns>
+        /// <returns>A random floating-point number that is greater than or equal to 0.0, and less than 1.0.</returns>
         internal double NextDouble()
         {
             // According to the CLR source:
@@ -666,7 +666,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Samples a random integer.
         /// </summary>
-        /// <returns>A random integer, using the full range of Int32</returns>
+        /// <returns>A random integer, using the full range of Int32.</returns>
         private int InternalSample()
         {
             int result;

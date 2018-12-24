@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// The first match shortcircuits the search.
         /// </summary>
         /// <param name="expression">PSPropertyExpression to test against</param>
-        /// <returns>true if there is a match, else false</returns>
+        /// <returns>True if there is a match, else false.</returns>
         internal bool IsMatch(PSPropertyExpression expression)
         {
             for (int k = 0; k < _wildcardPatterns.Length; k++)

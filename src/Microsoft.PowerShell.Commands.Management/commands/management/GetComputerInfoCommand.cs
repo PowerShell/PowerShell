@@ -5135,7 +5135,7 @@ namespace Microsoft.PowerShell.Commands
         /// Import WINAPI function PowerDeterminePlatformRoleEx
         /// </summary>
         /// <param name="version">The version of the POWER_PLATFORM_ROLE enumeration for the platform</param>
-        /// <returns>POWER_PLATFORM_ROLE enumeration</returns>
+        /// <returns>POWER_PLATFORM_ROLE enumeration.</returns>
         [DllImport(PInvokeDllNames.PowerDeterminePlatformRoleExDllName, EntryPoint = "PowerDeterminePlatformRoleEx", CharSet = CharSet.Ansi)]
         public static extern uint PowerDeterminePlatformRoleEx(uint version);
 

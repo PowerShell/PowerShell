@@ -1365,7 +1365,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read the type information, if present.
         /// </summary>
-        /// <returns>Type string if present else null</returns>
+        /// <returns>Type string if present else null.</returns>
         private string
         ReadTypeInformation()
         {
