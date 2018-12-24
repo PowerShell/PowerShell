@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// gets the size of a file
         /// </summary>
-        /// <param name="filePath">path to file.</param>
+        /// <param name="filePath">Path to file.</param>
         /// <returns> file size  </returns>
         /// <remarks>  </remarks>
         internal static long GetFileSize(string filePath)
@@ -33,8 +33,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// present a prompt for a SecureString data
         /// </summary>
-        /// <param name="hostUI">ref to host ui interface.</param>
-        /// <param name="prompt">prompt text.</param>
+        /// <param name="hostUI">Ref to host ui interface.</param>
+        /// <param name="prompt">Prompt text.</param>
         /// <returns> user input as secure string </returns>
         /// <remarks>  </remarks>
         internal static SecureString PromptForSecureString(PSHostUserInterface hostUI,
@@ -51,9 +51,9 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// </summary>
-        /// <param name="resourceStr">resource string.</param>
-        /// <param name="errorId">error identifier.</param>
-        /// <param name="args">replacement params for resource string formatting.</param>
+        /// <param name="resourceStr">Resource string.</param>
+        /// <param name="errorId">Error identifier.</param>
+        /// <param name="args">Replacement params for resource string formatting.</param>
         /// <returns>  </returns>
         /// <remarks>  </remarks>
         internal static
@@ -81,8 +81,8 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// </summary>
-        /// <param name="path">path that was not found.</param>
-        /// <param name="errorId">error identifier.</param>
+        /// <param name="path">Path that was not found.</param>
+        /// <param name="errorId">Error identifier.</param>
         /// <returns> ErrorRecord instance </returns>
         /// <remarks>  </remarks>
         internal static
@@ -104,9 +104,9 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Create an error record for 'operation not supported' condition
         /// </summary>
-        /// <param name="resourceStr">resource string.</param>
-        /// <param name="errorId">error identifier.</param>
-        /// <param name="args">replacement params for resource string formatting.</param>
+        /// <param name="resourceStr">Resource string.</param>
+        /// <param name="errorId">Error identifier.</param>
+        /// <param name="args">Replacement params for resource string formatting.</param>
         /// <returns>  </returns>
         /// <remarks>  </remarks>
         internal static
@@ -131,8 +131,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Create an error record for 'operation not supported' condition
         /// </summary>
-        /// <param name="e">exception to include in ErrorRecord.</param>
-        /// <param name="errorId">error identifier.</param>
+        /// <param name="e">Exception to include in ErrorRecord.</param>
+        /// <param name="errorId">Error identifier.</param>
         /// <returns>  </returns>
         /// <remarks>  </remarks>
         internal static
@@ -155,8 +155,8 @@ namespace Microsoft.PowerShell
         /// -- it points to a file
         /// -- the file exists
         /// </summary>
-        /// <param name="cmdlet">cmdlet instance.</param>
-        /// <param name="path">provider path.</param>
+        /// <param name="cmdlet">Cmdlet instance.</param>
+        /// <param name="path">Provider path.</param>
         /// <returns>
         /// filesystem path if all conditions are true,
         /// null otherwise

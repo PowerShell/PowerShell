@@ -1422,8 +1422,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Report an initialization-time error.
         /// </summary>
-        /// <param name="resourceString">resource string.</param>
-        /// <param name="arguments">arguments.</param>
+        /// <param name="resourceString">Resource string.</param>
+        /// <param name="arguments">Arguments.</param>
         internal void ReportEngineStartupError(string resourceString, params object[] arguments)
         {
             try
@@ -1453,7 +1453,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Report an initialization-time error
         /// </summary>
-        /// <param name="error">error to report.</param>
+        /// <param name="error">Error to report.</param>
         internal void ReportEngineStartupError(string error)
         {
             try

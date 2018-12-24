@@ -43,7 +43,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="command">The command name or script contents.</param>
         /// <param name="isScript">True if this command represents a script, otherwise; false.</param>
-        /// <param name="useLocalScope">if true local scope is used to run the script command.</param>
+        /// <param name="useLocalScope">If true local scope is used to run the script command.</param>
         /// <exception cref="ArgumentNullException">command is null</exception>
         public Command(string command, bool isScript, bool useLocalScope)
         {
@@ -96,7 +96,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Copy constructor for clone operations
         /// </summary>
-        /// <param name="command">The source <see cref="Command"/>instance.</param>
+        /// <param name="command">The source <see cref="Command"/>Instance.</param>
         internal Command(Command command)
         {
             IsScript = command.IsScript;
@@ -853,7 +853,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Adds a new script command
         /// </summary>
-        /// <param name="scriptContents">script contents.</param>
+        /// <param name="scriptContents">Script contents.</param>
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>
@@ -865,8 +865,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Adds a new scrip command for given script
         /// </summary>
-        /// <param name="scriptContents">script contents.</param>
-        /// <param name="useLocalScope">if true local scope is used to run the script command.</param>
+        /// <param name="scriptContents">Script contents.</param>
+        /// <param name="useLocalScope">If true local scope is used to run the script command.</param>
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>

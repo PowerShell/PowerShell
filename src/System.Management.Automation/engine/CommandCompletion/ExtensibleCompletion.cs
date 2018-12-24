@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// <summary/>
         public ScriptBlock ScriptBlock { get; private set; }
 
-        /// <param name="type">The type must implement <see cref="IArgumentCompleter"/>and have a default constructor.</param>
+        /// <param name="type">The type must implement <see cref="IArgumentCompleter"/>And have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
             if (type == null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ArgumentCompletionsAttribute class
         /// </summary>
-        /// <param name="completions">list of complete values.</param>
+        /// <param name="completions">List of complete values.</param>
         /// <exception cref="ArgumentNullException">for null arguments</exception>
         /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
         public ArgumentCompletionsAttribute(params string[] completions)

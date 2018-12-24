@@ -133,7 +133,7 @@ namespace System.Management.Automation
         /// For legacy support, TabExpansion2 will indirectly call TabExpansion if it exists.
         /// </summary>
         /// <param name="input">The input script to complete.</param>
-        /// <param name="cursorIndex">The offset in <paramref name="input"/>where completion is requested.</param>
+        /// <param name="cursorIndex">The offset in <paramref name="input"/>Where completion is requested.</param>
         /// <param name="options">Optional parameter that specifies configurable options for completion.</param>
         /// <param name="powershell">The powershell to use to invoke the script function TabExpansion2.</param>
         /// <returns>A collection of completions with the replacement start and length.</returns>
@@ -321,7 +321,7 @@ namespace System.Management.Automation
         /// Command completion while in debug break mode.
         /// </summary>
         /// <param name="input">The input script to complete.</param>
-        /// <param name="cursorIndex">The offset in <paramref name="input"/>where completion is requested.</param>
+        /// <param name="cursorIndex">The offset in <paramref name="input"/>Where completion is requested.</param>
         /// <param name="options">Optional parameter that specifies configurable options for completion.</param>
         /// <param name="debugger">Current debugger.</param>
         /// <returns>A collection of completions with the replacement start and length.</returns>

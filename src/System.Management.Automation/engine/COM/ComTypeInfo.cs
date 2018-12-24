@@ -139,7 +139,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Get the typeinfo interface for the given comobject.
         /// </summary>
-        /// <param name="comObject">reference to com object for which we are getting type information.</param>
+        /// <param name="comObject">Reference to com object for which we are getting type information.</param>
         /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object</returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Code uses the out parameter of 'GetTypeInfo' to check if the call succeeded.")]
         internal static ComTypeInfo GetDispatchTypeInfo(object comObject)
@@ -206,7 +206,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Get TypeAttr for the given type information.
         /// </summary>
-        /// <param name="typeinfo">reference to ITypeInfo from which to get TypeAttr.</param>
+        /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>
         [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)

@@ -230,8 +230,8 @@ namespace System.Management.Automation
         /// baseName and resourceId from the current assembly.
         /// You should override this if you require a different behavior.
         /// </summary>
-        /// <param name="baseName">the base resource name.</param>
-        /// <param name="resourceId">the resource id.</param>
+        /// <param name="baseName">The base resource name.</param>
+        /// <param name="resourceId">The resource id.</param>
         /// <returns>the resource string corresponding to baseName and resourceId</returns>
         /// <exception cref="System.ArgumentException">
         /// Invalid <paramref name="baseName"/> or <paramref name="resourceId"/>, or
@@ -316,7 +316,7 @@ namespace System.Management.Automation
         /// a <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>
         /// rather than the real exception.
         /// </remarks>
-        /// <param name="errorRecord">error.</param>
+        /// <param name="errorRecord">Error.</param>
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
         /// </exception>
@@ -419,7 +419,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display verbose information
         /// </summary>
-        /// <param name="text">verbose output.</param>
+        /// <param name="text">Verbose output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -456,7 +456,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display warning information
         /// </summary>
-        /// <param name="text">warning output.</param>
+        /// <param name="text">Warning output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -493,7 +493,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Write text into pipeline execution log.
         /// </summary>
-        /// <param name="text">text to be written to log.</param>
+        /// <param name="text">Text to be written to log.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -530,7 +530,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display progress information
         /// </summary>
-        /// <param name="progressRecord">progress information.</param>
+        /// <param name="progressRecord">Progress information.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -601,7 +601,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display debug information
         /// </summary>
-        /// <param name="text">debug output.</param>
+        /// <param name="text">Debug output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
