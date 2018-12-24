@@ -378,8 +378,8 @@ namespace System.Management.Automation.Remoting
         /// Have received a public key from the other side
         /// Import or take other action based on the state
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">event arguments which contains the
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Event arguments which contains the
         /// remote public key.</param>
         private void HandlePublicKeyReceived(object sender, RemoteDataEventArgs<string> eventArgs)
         {

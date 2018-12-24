@@ -268,7 +268,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Fires the start event
         /// </summary>
-        /// <param name="driver">steppable pipeline driver.</param>
+        /// <param name="driver">Steppable pipeline driver.</param>
         internal void FireStartSteppablePipeline(ServerSteppablePipelineDriver driver)
         {
             lock (_syncObject)
@@ -284,7 +284,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Fires the process record event
         /// </summary>
-        /// <param name="driver">steppable pipeline driver.</param>
+        /// <param name="driver">Steppable pipeline driver.</param>
         internal void FireHandleProcessRecord(ServerSteppablePipelineDriver driver)
         {
             lock (_syncObject)

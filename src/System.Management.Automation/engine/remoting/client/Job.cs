@@ -248,7 +248,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Copy constructor to support cloning
         /// </summary>
-        /// <param name="jobStateInfo">source information.</param>
+        /// <param name="jobStateInfo">Source information.</param>
         /// <throws>
         /// ArgumentNullException when <paramref name="jobStateInfo"/> is null.
         /// </throws>
@@ -1596,7 +1596,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the job for the specified location
         /// </summary>
-        /// <param name="location">location to filter on.</param>
+        /// <param name="location">Location to filter on.</param>
         /// <returns>collection of jobs</returns>
         internal List<Job> GetJobsForLocation(string location)
         {
@@ -1727,12 +1727,12 @@ namespace System.Management.Automation
         /// Internal constructor for initializing PSRemotingJob using
         /// computer names
         /// </summary>
-        /// <param name="computerNames">names of computers for
+        /// <param name="computerNames">Names of computers for
         /// which the job object is being created.</param>
-        /// <param name="computerNameHelpers">list of helper objects
+        /// <param name="computerNameHelpers">List of helper objects
         /// corresponding to the computer names
         /// </param>
-        /// <param name="remoteCommand">remote command corresponding to this
+        /// <param name="remoteCommand">Remote command corresponding to this
         /// job object.</param>
         /// <param name="name"> a friendly name for the job object
         /// </param>
@@ -1747,13 +1747,13 @@ namespace System.Management.Automation
         /// Internal constructor for initializing job using
         /// PSSession objects
         /// </summary>
-        /// <param name="remoteRunspaceInfos">array of runspace info
+        /// <param name="remoteRunspaceInfos">Array of runspace info
         /// objects on which the remote command is executed.</param>
         /// <param name="runspaceHelpers">List of helper objects for the
         /// runspaces.</param>
         /// <param name="remoteCommand"> remote command corresponding to this
         /// job object.</param>
-        /// <param name="name">a friendly name for the job object
+        /// <param name="name">A friendly name for the job object
         /// </param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
                         List<IThrottleOperation> runspaceHelpers, string remoteCommand, string name)
@@ -1765,15 +1765,15 @@ namespace System.Management.Automation
         /// Internal constructor for initializing PSRemotingJob using
         /// computer names
         /// </summary>
-        /// <param name="computerNames">names of computers for
+        /// <param name="computerNames">Names of computers for
         /// which the result object is being created.</param>
-        /// <param name="computerNameHelpers">list of helper objects
+        /// <param name="computerNameHelpers">List of helper objects
         /// corresponding to the computer names
         /// </param>
-        /// <param name="remoteCommand">remote command corresponding to this
+        /// <param name="remoteCommand">Remote command corresponding to this
         /// result object.</param>
         /// <param name="throttleLimit">Throttle limit to use.</param>
-        /// <param name="name">a friendly name for the job object.</param>
+        /// <param name="name">A friendly name for the job object.</param>
         internal PSRemotingJob(string[] computerNames,
                         List<IThrottleOperation> computerNameHelpers, string remoteCommand,
                             int throttleLimit, string name)
@@ -1799,13 +1799,13 @@ namespace System.Management.Automation
         /// Internal constructor for initializing job using
         /// PSSession objects
         /// </summary>
-        /// <param name="remoteRunspaceInfos">array of runspace info
+        /// <param name="remoteRunspaceInfos">Array of runspace info
         /// objects on which the remote command is executed.</param>
         /// <param name="runspaceHelpers">List of helper objects for the
         /// runspaces.</param>
         /// <param name="remoteCommand"> remote command corresponding to this
         /// result object.</param>
-        /// <param name="throttleLimit">throttle limit to use.</param>
+        /// <param name="throttleLimit">Throttle limit to use.</param>
         /// <param name="name"></param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
                         List<IThrottleOperation> runspaceHelpers, string remoteCommand,
@@ -1898,7 +1898,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get entity result for the specified computer
         /// </summary>
-        /// <param name="computerName">computername for which entity
+        /// <param name="computerName">Computername for which entity
         /// result is required.</param>
         /// <returns>entity result</returns>
         internal List<Job> GetJobsForComputer(string computerName)
@@ -1922,7 +1922,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get entity result for the specified runspace
         /// </summary>
-        /// <param name="runspace">runspace for which entity
+        /// <param name="runspace">Runspace for which entity
         /// result is required.</param>
         /// <returns>entity result</returns>
         internal List<Job> GetJobsForRunspace(PSSession runspace)
@@ -1945,7 +1945,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get entity result for the specified helper object
         /// </summary>
-        /// <param name="operation">helper for which entity
+        /// <param name="operation">Helper for which entity
         /// result is required.</param>
         /// <returns>entity result</returns>
         internal List<Job> GetJobsForOperation(IThrottleOperation operation)
@@ -2639,8 +2639,8 @@ namespace System.Management.Automation
         /// count of blocked child jobs. When count reaches 0, sets the
         /// state of the parent job to running
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">event arguments, should be empty in this
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Event arguments, should be empty in this
         /// case.</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
         {
@@ -2757,7 +2757,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of PSRemotingChildJob
         /// </summary>
-        /// <param name="remoteCommand">command invoked by this job object.</param>
+        /// <param name="remoteCommand">Command invoked by this job object.</param>
         /// <param name="helper"></param>
         /// <param name="throttleManager"></param>
         internal PSRemotingChildJob(string remoteCommand, ExecutionCmdletHelper helper, ThrottleManager throttleManager)
@@ -3024,9 +3024,9 @@ namespace System.Management.Automation
         /// pipeline. The output objects are queued on to the
         /// internal stream
         /// </summary>
-        /// <param name="sender">the pipeline reader which raised
+        /// <param name="sender">The pipeline reader which raised
         /// this event.</param>
-        /// <param name="eventArgs">information describing the ready event.</param>
+        /// <param name="eventArgs">Information describing the ready event.</param>
         private void HandleOutputReady(object sender, EventArgs eventArgs)
         {
             PSDataCollectionPipelineReader<PSObject, PSObject> reader =
@@ -3075,9 +3075,9 @@ namespace System.Management.Automation
         /// pipeline. The error records are queued on to the
         /// internal stream
         /// </summary>
-        /// <param name="sender">the pipeline reader which raised
+        /// <param name="sender">The pipeline reader which raised
         /// this event.</param>
-        /// <param name="eventArgs">information describing the ready event.</param>
+        /// <param name="eventArgs">Information describing the ready event.</param>
         private void HandleErrorReady(object sender, EventArgs eventArgs)
         {
             PSDataCollectionPipelineReader<ErrorRecord, object> reader =
@@ -3192,8 +3192,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle a throttle complete event
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="eventArgs">not used in this method.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Not used in this method.</param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
             //Question: Why do we register for HandleThrottleComplete when we have already
@@ -3213,8 +3213,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle the operation complete event
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="stateEventArgs">operation complete event args.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="stateEventArgs">Operation complete event args.</param>
         protected virtual void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
             //Question:Why are we registering for OperationComplete if we already
@@ -3488,7 +3488,7 @@ namespace System.Management.Automation
         /// Aggregates results from the pipeline associated
         /// with the specified helper
         /// </summary>
-        /// <param name="helper">helper whose pipeline results
+        /// <param name="helper">Helper whose pipeline results
         /// need to be aggregated.</param>
         protected void AggregateResultsFromHelper(ExecutionCmdletHelper helper)
         {
@@ -3526,8 +3526,8 @@ namespace System.Management.Automation
         /// If it is null, then returns the PowerShell with the specified
         /// instance Id.
         /// </summary>
-        /// <param name="pipeline">remote pipeline.</param>
-        /// <param name="instanceId">instance as described in event args.</param>
+        /// <param name="pipeline">Remote pipeline.</param>
+        /// <param name="instanceId">Instance as described in event args.</param>
         /// <returns>PowerShell instance</returns>
         private PowerShell GetPipelinePowerShell(RemotePipeline pipeline, Guid instanceId)
         {
@@ -3543,8 +3543,8 @@ namespace System.Management.Automation
         /// When a debug message is raised in the underlying PowerShell
         /// add it to the jobs debug stream
         /// </summary>
-        /// <param name="sender">unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleDebugAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -3560,8 +3560,8 @@ namespace System.Management.Automation
         /// When a verbose message is raised in the underlying PowerShell
         /// add it to the jobs verbose stream
         /// </summary>
-        /// <param name="sender">unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleVerboseAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -3577,8 +3577,8 @@ namespace System.Management.Automation
         /// When a warning message is raised in the underlying PowerShell
         /// add it to the jobs warning stream
         /// </summary>
-        /// <param name="sender">unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleWarningAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -3596,8 +3596,8 @@ namespace System.Management.Automation
         /// When a progress message is raised in the underlying PowerShell
         /// add it to the jobs progress tream
         /// </summary>
-        /// <param name="sender">unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleProgressAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -3613,8 +3613,8 @@ namespace System.Management.Automation
         /// When a Information message is raised in the underlying PowerShell
         /// add it to the jobs Information stream
         /// </summary>
-        /// <param name="sender">unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleInformationAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -3641,7 +3641,7 @@ namespace System.Management.Automation
         /// Stops collecting results from the pipeline associated with
         /// the specified helper
         /// </summary>
-        /// <param name="helper">helper class whose pipeline results
+        /// <param name="helper">Helper class whose pipeline results
         /// aggregation has to be stopped.</param>
         protected void StopAggregateResultsFromHelper(ExecutionCmdletHelper helper)
         {
@@ -3659,7 +3659,7 @@ namespace System.Management.Automation
         /// This is to support Invoke-Command auto-disconnect where a new PSRemoting
         /// job must be created to pass back to user for connection.
         /// </summary>
-        /// <param name="helper">helper class.</param>
+        /// <param name="helper">Helper class.</param>
         protected void RemoveAggreateCallbacksFromHelper(ExecutionCmdletHelper helper)
         {
             // Remove old data output callbacks from pipeline so new callbacks can be added.
@@ -3763,7 +3763,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the PowerShell for the specified instance id
         /// </summary>
-        /// <param name="instanceId">instance id of powershell.</param>
+        /// <param name="instanceId">Instance id of powershell.</param>
         /// <returns>powershell instance</returns>
         internal virtual PowerShell GetPowerShell(Guid instanceId)
         {
@@ -4094,8 +4094,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct an invoke-expression sync job
         /// </summary>
-        /// <param name="operations">list of operations to use.</param>
-        /// <param name="throttleManager">throttle manager to use for
+        /// <param name="operations">List of operations to use.</param>
+        /// <param name="throttleManager">Throttle manager to use for
         /// this job.</param>
         internal PSInvokeExpressionSyncJob(List<IThrottleOperation> operations, ThrottleManager throttleManager)
         {
@@ -4177,7 +4177,7 @@ namespace System.Management.Automation
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">true if called by Dispose().</param>
+        /// <param name="disposing">True if called by Dispose().</param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -4187,8 +4187,8 @@ namespace System.Management.Automation
         /// Handles operation complete from the operations. Adds an error record
         /// to results whenever an error is encountered
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="stateEventArgs">arguments describing this event, unused.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="stateEventArgs">Arguments describing this event, unused.</param>
         protected override void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
             ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
@@ -4312,7 +4312,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the PowerShell instance for the specified id
         /// </summary>
-        /// <param name="instanceId">instance id of PowerShell.</param>
+        /// <param name="instanceId">Instance id of PowerShell.</param>
         /// <returns>PowerShell instance</returns>
         internal override PowerShell GetPowerShell(Guid instanceId)
         {

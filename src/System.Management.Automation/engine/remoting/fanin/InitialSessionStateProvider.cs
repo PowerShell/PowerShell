@@ -1403,7 +1403,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Create an ExternalScriptInfo object from a file path.
         /// </summary>
-        /// <param name="context">execution context.</param>
+        /// <param name="context">Execution context.</param>
         /// <param name="fileName">The path to the file.</param>
         /// <param name="scriptName">The base name of the script.</param>
         /// <returns>The ExternalScriptInfo object.</returns>
@@ -1433,8 +1433,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Loads the configuration file into a hashtable
         /// </summary>
-        /// <param name="context">execution context.</param>
-        /// <param name="scriptInfo">the ExternalScriptInfo object.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="scriptInfo">The ExternalScriptInfo object.</param>
         /// <returns>configuration hashtable</returns>
         internal static Hashtable LoadConfigFile(ExecutionContext context, ExternalScriptInfo scriptInfo)
         {
@@ -1462,7 +1462,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Verifies the configuration hashtable
         /// </summary>
-        /// <param name="table">configuration hashtable.</param>
+        /// <param name="table">Configuration hashtable.</param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns>true if valid, false otherwise</returns>

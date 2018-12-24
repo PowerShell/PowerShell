@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Send the encrypted session key to the client side
         /// </summary>
-        /// <param name="encryptedSessionKey">encrypted session key
+        /// <param name="encryptedSessionKey">Encrypted session key
         /// as a string.</param>
         internal override void SendEncryptedSessionKey(string encryptedSessionKey)
         {
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Raise the public key received event
         /// </summary>
-        /// <param name="receivedData">received data.</param>
+        /// <param name="receivedData">Received data.</param>
         /// <remarks>This method is a hook to be called
         /// from the transport manager</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)

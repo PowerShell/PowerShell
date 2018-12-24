@@ -1606,7 +1606,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes an input value to the pipeline
         /// </summary>
-        /// <param name="inputValue">input value to write.</param>
+        /// <param name="inputValue">Input value to write.</param>
         private void WriteInput(object inputValue)
         {
             // when there are no input writers, there is no
@@ -1869,7 +1869,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the stream objects in the specified collection
         /// </summary>
-        /// <param name="results">collection to read from.</param>
+        /// <param name="results">Collection to read from.</param>
         private void WriteStreamObjectsFromCollection(IEnumerable<PSStreamObject> results)
         {
             foreach (var result in results)
@@ -1938,7 +1938,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Process the stream object before writing it in the specified collection.
         /// </summary>
-        /// <param name="streamObject">stream object to process.</param>
+        /// <param name="streamObject">Stream object to process.</param>
         private void PreProcessStreamObject(PSStreamObject streamObject)
         {
             ErrorRecord errorRecord = streamObject.Value as ErrorRecord;
@@ -2015,7 +2015,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// internal dispose method which does the actual disposing
         /// </summary>
-        /// <param name="disposing">whether called from dispose or finalize.</param>
+        /// <param name="disposing">Whether called from dispose or finalize.</param>
         private void Dispose(bool disposing)
         {
             if (disposing)

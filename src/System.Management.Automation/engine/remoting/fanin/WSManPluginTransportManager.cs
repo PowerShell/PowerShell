@@ -64,7 +64,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// </summary>
-        /// <param name="isShuttingDown">true if the method is called from RegisterWaitForSingleObject
+        /// <param name="isShuttingDown">True if the method is called from RegisterWaitForSingleObject
         /// callback. This boolean is used to decide whether to UnregisterWait or
         /// UnregisterWaitEx.</param>
         /// <param name="reasonForClose"></param>

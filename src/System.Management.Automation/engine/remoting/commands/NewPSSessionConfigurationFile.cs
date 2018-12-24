@@ -2079,7 +2079,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Combines an array of strings into a single string block
         /// </summary>
-        /// <param name="values">string values.</param>
+        /// <param name="values">String values.</param>
         /// <returns>string block</returns>
         internal static string CombineStringArray(string[] values)
         {

@@ -358,7 +358,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns shell configuration name with shell prefix removed.
         /// </summary>
-        /// <param name="shell">shell configuration name.</param>
+        /// <param name="shell">Shell configuration name.</param>
         /// <returns>display shell name</returns>
         private string GetDisplayShellName(string shell)
         {

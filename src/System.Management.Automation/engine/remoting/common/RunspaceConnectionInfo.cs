@@ -804,13 +804,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor used to create a WSManConnectionInfo
         /// </summary>
-        /// <param name="computerName">computer to connect to.</param>
-        /// <param name="scheme">scheme to be used for connection.</param>
-        /// <param name="port">port to connect to.</param>
-        /// <param name="appName">application end point to connect to.</param>
-        /// <param name="shellUri">remote shell to launch
+        /// <param name="computerName">Computer to connect to.</param>
+        /// <param name="scheme">Scheme to be used for connection.</param>
+        /// <param name="port">Port to connect to.</param>
+        /// <param name="appName">Application end point to connect to.</param>
+        /// <param name="shellUri">Remote shell to launch
         /// on connection.</param>
-        /// <param name="credential">credential to be used
+        /// <param name="credential">Credential to be used
         /// for connection.</param>
         /// <param name="openTimeout">Timeout in milliseconds for open
         /// call on Runspace to finish.</param>
@@ -831,13 +831,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor used to create a WSManConnectionInfo
         /// </summary>
-        /// <param name="computerName">computer to connect to.</param>
+        /// <param name="computerName">Computer to connect to.</param>
         /// <param name="scheme">Scheme to be used for connection.</param>
-        /// <param name="port">port to connect to.</param>
-        /// <param name="appName">application end point to connect to.</param>
-        /// <param name="shellUri">remote shell to launch
+        /// <param name="port">Port to connect to.</param>
+        /// <param name="appName">Application end point to connect to.</param>
+        /// <param name="shellUri">Remote shell to launch
         /// on connection.</param>
-        /// <param name="credential">credential to be used
+        /// <param name="credential">Credential to be used
         /// for connection.</param>
         /// <exception cref="ArgumentException">Invalid
         /// scheme or invalid port is specified</exception>
@@ -899,9 +899,9 @@ namespace System.Management.Automation.Runspaces
         /// and explicit credentials - server life time is
         /// default and open timeout is default
         /// </summary>
-        /// <param name="uri">uri of remote runspace.</param>
+        /// <param name="uri">Uri of remote runspace.</param>
         /// <param name="shellUri"></param>
-        /// <param name="credential">credentials to use to
+        /// <param name="credential">Credentials to use to
         /// connect to the remote runspace.</param>
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
@@ -948,7 +948,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor used to create a WSManConnectionInfo. This constructor supports a certificate thumbprint to
         /// be used while connecting to a remote machine instead of credential.
         /// </summary>
-        /// <param name="uri">uri of remote runspace.</param>
+        /// <param name="uri">Uri of remote runspace.</param>
         /// <param name="shellUri"></param>
         /// <param name="certificateThumbprint">
         /// A thumb print of the certificate to use while connecting to the remote machine.
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Runspaces
         /// default server life time and default open
         /// timeout
         /// </summary>
-        /// <param name="uri">uri of remote runspace.</param>
+        /// <param name="uri">Uri of remote runspace.</param>
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
         public WSManConnectionInfo(Uri uri)
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor that constructs the configuration name from its type
         /// </summary>
-        /// <param name="configurationType">type of configuration to construct.</param>
+        /// <param name="configurationType">Type of configuration to construct.</param>
         public WSManConnectionInfo(PSSessionType configurationType) : this()
         {
             ComputerName = string.Empty;

@@ -683,7 +683,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Process listening thread.
         /// </summary>
-        /// <param name="state">client callback delegate.</param>
+        /// <param name="state">Client callback delegate.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void ProcessListeningThread(object state)
         {
@@ -828,7 +828,7 @@ namespace System.Management.Automation.Remoting
         /// This method supports PowerShell running in "NamedPipeServerMode", which is used for
         /// PowerShell Direct Windows Server Container connection and management.
         /// </summary>
-        /// <param name="configurationName">name of the configuration to use.</param>
+        /// <param name="configurationName">Name of the configuration to use.</param>
         internal static void RunServerMode(string configurationName)
         {
             IPCNamedPipeServerEnabled = true;

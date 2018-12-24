@@ -37,8 +37,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Send a message with application private data to the client
         /// </summary>
-        /// <param name="applicationPrivateData">applicationPrivateData to send.</param>
-        /// <param name="serverCapability">server capability negotiated during initial exchange of remoting messages / session capabilities of client and server.</param>
+        /// <param name="applicationPrivateData">ApplicationPrivateData to send.</param>
+        /// <param name="serverCapability">Server capability negotiated during initial exchange of remoting messages / session capabilities of client and server.</param>
         internal void SendApplicationPrivateDataToClient(PSPrimitiveDictionary applicationPrivateData, RemoteSessionCapability serverCapability)
         {
             // make server's PSVersionTable available to the client using ApplicationPrivateData
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send a message with the RunspacePoolStateInfo to the client
         /// </summary>
-        /// <param name="stateInfo">state info to send.</param>
+        /// <param name="stateInfo">State info to send.</param>
         internal void SendStateInfoToClient(RunspacePoolStateInfo stateInfo)
         {
             RemoteDataObject data = RemotingEncoder.GenerateRunspacePoolStateInfo(
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send a message with the PSEventArgs to the client
         /// </summary>
-        /// <param name="e">event to send.</param>
+        /// <param name="e">Event to send.</param>
         internal void SendPSEventArgsToClient(PSEventArgs e)
         {
             RemoteDataObject data = RemotingEncoder.GeneratePSEventArgs(_clientRunspacePoolId, e);
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// Process the data received from the runspace pool on
         /// the server
         /// </summary>
-        /// <param name="receivedData">data received.</param>
+        /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             if (receivedData == null)
@@ -198,10 +198,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a powershell data structure handler from this runspace pool
         /// </summary>
-        /// <param name="instanceId">powershell instance id.</param>
-        /// <param name="runspacePoolId">runspace pool id.</param>
-        /// <param name="remoteStreamOptions">remote stream options.</param>
-        /// <param name="localPowerShell">local PowerShell object.</param>
+        /// <param name="instanceId">Powershell instance id.</param>
+        /// <param name="runspacePoolId">Runspace pool id.</param>
+        /// <param name="remoteStreamOptions">Remote stream options.</param>
+        /// <param name="localPowerShell">Local PowerShell object.</param>
         /// <returns>ServerPowerShellDataStructureHandler</returns>
         internal ServerPowerShellDataStructureHandler CreatePowerShellDataStructureHandler(
             Guid instanceId, Guid runspacePoolId, RemoteStreamOptions remoteStreamOptions, PowerShell localPowerShell)
@@ -257,7 +257,7 @@ namespace System.Management.Automation
         /// <summary>
         /// dispatch the message to the associated powershell data structure handler
         /// </summary>
-        /// <param name="rcvdData">message to dispatch.</param>
+        /// <param name="rcvdData">Message to dispatch.</param>
         internal void DispatchMessageToPowerShell(RemoteDataObject<PSObject> rcvdData)
         {
             ServerPowerShellDataStructureHandler dsHandler =
@@ -275,8 +275,8 @@ namespace System.Management.Automation
         /// Send the specified response to the client. The client call will
         /// be blocked on the same
         /// </summary>
-        /// <param name="callId">call id on the client.</param>
-        /// <param name="response">response to send.</param>
+        /// <param name="callId">Call id on the client.</param>
+        /// <param name="response">Response to send.</param>
         internal void SendResponseToClient(long callId, object response)
         {
             RemoteDataObject message =
@@ -348,7 +348,7 @@ namespace System.Management.Automation
         /// Send the data specified as a RemoteDataObject asynchronously
         /// to the runspace pool on the remote session
         /// </summary>
-        /// <param name="data">data to send.</param>
+        /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
         /// be the one thats used to send data from within this
         /// data structure handler class</remarks>
@@ -362,7 +362,7 @@ namespace System.Management.Automation
         /// Get the associated powershell data structure handler for the specified
         /// powershell id
         /// </summary>
-        /// <param name="clientPowerShellId">powershell id for the
+        /// <param name="clientPowerShellId">Powershell id for the
         /// powershell data structure handler.</param>
         /// <returns>ServerPowerShellDataStructureHandler</returns>
         internal ServerPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
@@ -386,8 +386,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove the association of the powershell from the runspace pool
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="e">unused.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="e">Unused.</param>
         private void HandleRemoveAssociation(object sender, EventArgs e)
         {
             Dbg.Assert(sender is ServerPowerShellDataStructureHandler, @"sender of the event
@@ -447,11 +447,11 @@ namespace System.Management.Automation
         /// Default constructor for creating ServerPowerShellDataStructureHandler
         /// instance
         /// </summary>
-        /// <param name="instanceId">powershell instance id.</param>
-        /// <param name="runspacePoolId">runspace pool id.</param>
-        /// <param name="remoteStreamOptions">remote stream options.</param>
-        /// <param name="transportManager">transport manager.</param>
-        /// <param name="localPowerShell">local powershell object.</param>
+        /// <param name="instanceId">Powershell instance id.</param>
+        /// <param name="runspacePoolId">Runspace pool id.</param>
+        /// <param name="remoteStreamOptions">Remote stream options.</param>
+        /// <param name="transportManager">Transport manager.</param>
+        /// <param name="localPowerShell">Local powershell object.</param>
         internal ServerPowerShellDataStructureHandler(Guid instanceId, Guid runspacePoolId, RemoteStreamOptions remoteStreamOptions,
             AbstractServerTransportManager transportManager, PowerShell localPowerShell)
         {
@@ -493,7 +493,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the state information to the client
         /// </summary>
-        /// <param name="stateInfo">state information to be
+        /// <param name="stateInfo">State information to be
         /// sent to the client.</param>
         internal void SendStateChangedInformationToClient(PSInvocationStateInfo
             stateInfo)
@@ -521,7 +521,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the output data to the client
         /// </summary>
-        /// <param name="data">data to send.</param>
+        /// <param name="data">Data to send.</param>
         internal void SendOutputDataToClient(PSObject data)
         {
             SendDataAsync(RemotingEncoder.GeneratePowerShellOutput(data,
@@ -531,7 +531,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the error record to client
         /// </summary>
-        /// <param name="errorRecord">error record to send.</param>
+        /// <param name="errorRecord">Error record to send.</param>
         internal void SendErrorRecordToClient(ErrorRecord errorRecord)
         {
             errorRecord.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToErrorRecord) != 0;
@@ -543,7 +543,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the specified warning record to client
         /// </summary>
-        /// <param name="record">warning record.</param>
+        /// <param name="record">Warning record.</param>
         internal void SendWarningRecordToClient(WarningRecord record)
         {
             record.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToWarningRecord) != 0;
@@ -555,7 +555,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the specified debug record to client
         /// </summary>
-        /// <param name="record">debug record.</param>
+        /// <param name="record">Debug record.</param>
         internal void SendDebugRecordToClient(DebugRecord record)
         {
             record.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToDebugRecord) != 0;
@@ -567,7 +567,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the specified verbose record to client
         /// </summary>
-        /// <param name="record">warning record.</param>
+        /// <param name="record">Warning record.</param>
         internal void SendVerboseRecordToClient(VerboseRecord record)
         {
             record.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToVerboseRecord) != 0;
@@ -579,7 +579,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the specified progress record to client
         /// </summary>
-        /// <param name="record">progress record.</param>
+        /// <param name="record">Progress record.</param>
         internal void SendProgressRecordToClient(ProgressRecord record)
         {
             SendDataAsync(RemotingEncoder.GeneratePowerShellInformational(
@@ -589,7 +589,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Send the specified information record to client
         /// </summary>
-        /// <param name="record">information record.</param>
+        /// <param name="record">Information record.</param>
         internal void SendInformationRecordToClient(InformationRecord record)
         {
             SendDataAsync(RemotingEncoder.GeneratePowerShellInformational(
@@ -611,7 +611,7 @@ namespace System.Management.Automation
         /// Process the data received from the powershell on
         /// the client
         /// </summary>
-        /// <param name="receivedData">data received.</param>
+        /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             if (receivedData == null)
@@ -784,7 +784,7 @@ namespace System.Management.Automation
         /// Send the data specified as a RemoteDataObject asynchronously
         /// to the runspace pool on the remote session
         /// </summary>
-        /// <param name="data">data to send.</param>
+        /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
         /// be the one thats used to send data from within this
         /// data structure handler class</remarks>

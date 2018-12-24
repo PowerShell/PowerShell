@@ -134,7 +134,7 @@ namespace System.Management.Automation
         /// Constructor which will initialize the job
         /// with the associated command string
         /// </summary>
-        /// <param name="command">string representation
+        /// <param name="command">String representation
         /// of the command the job is running.</param>
         protected Job2(string command) : base(command) { }
 
@@ -189,8 +189,8 @@ namespace System.Management.Automation
         /// colliding with some implementation which may have
         /// added that method
         /// </summary>
-        /// <param name="state">state of the job.</param>
-        /// <param name="reason">exception associated with the
+        /// <param name="state">State of the job.</param>
+        /// <param name="reason">Exception associated with the
         /// job entering this state.</param>
         protected new void SetJobState(JobState state, Exception reason)
         {
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         /// classes to raise the event when start of
         /// the job is completed
         /// </summary>
-        /// <param name="eventArgs">arguments describing
+        /// <param name="eventArgs">Arguments describing
         /// an exception that is associated with the event.</param>
         protected virtual void OnStartJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
@@ -242,7 +242,7 @@ namespace System.Management.Automation
         /// classes to raise the event when stopping a
         /// job is completed
         /// </summary>
-        /// <param name="eventArgs">argument describing
+        /// <param name="eventArgs">Argument describing
         /// an exception that is associated with the event.</param>
         protected virtual void OnStopJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         /// classes to raise the event when suspending a
         /// job is completed
         /// </summary>
-        /// <param name="eventArgs">argument describing
+        /// <param name="eventArgs">Argument describing
         /// an exception that is associated with the event.</param>
         protected virtual void OnSuspendJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
@@ -266,7 +266,7 @@ namespace System.Management.Automation
         /// classes to raise the event when resuming a
         /// suspended job is completed
         /// </summary>
-        /// <param name="eventArgs">argument describing
+        /// <param name="eventArgs">Argument describing
         /// an exception that is associated with the event.</param>
         protected virtual void OnResumeJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
@@ -278,7 +278,7 @@ namespace System.Management.Automation
         /// classes to raise the event when unblocking a
         /// blocked job is completed
         /// </summary>
-        /// <param name="eventArgs">argument describing
+        /// <param name="eventArgs">Argument describing
         /// an exception that is associated with the event.</param>
         protected virtual void OnUnblockJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
@@ -289,7 +289,7 @@ namespace System.Management.Automation
         /// Raises the appropriate event based on the operation
         /// and the associated event arguments
         /// </summary>
-        /// <param name="operation">operation for which the event
+        /// <param name="operation">Operation for which the event
         /// needs to be raised.</param>
         /// <param name="eventArgs"></param>
         private void RaiseCompletedHandler(int operation, AsyncCompletedEventArgs eventArgs)
@@ -597,8 +597,8 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string and name
         /// </summary>
-        /// <param name="command">command string.</param>
-        /// <param name="name">friendly name for display.</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for display.</param>
         public ContainerParentJob(string command, string name)
             : base(command, name)
         {
@@ -695,7 +695,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a child job to the parent job
         /// </summary>
-        /// <param name="childJob">child job to add.</param>
+        /// <param name="childJob">Child job to add.</param>
         /// <exception cref="ObjectDisposedException">Thrown if the job is disposed.</exception>
         /// <exception cref="ArgumentNullException">Thrown if child being added is null.</exception>
         public void AddChildJob(Job2 childJob)
@@ -2149,8 +2149,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="serializationInfo">serialization info.</param>
-        /// <param name="streamingContext">streaming context.</param>
+        /// <param name="serializationInfo">Serialization info.</param>
+        /// <param name="streamingContext">Streaming context.</param>
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {

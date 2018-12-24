@@ -420,7 +420,7 @@ namespace System.Management.Automation
         /// <param name="cmdlet">Cmdlet requesting this, for error processing.</param>
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names.</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
@@ -442,7 +442,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names.</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
@@ -466,7 +466,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names.</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
@@ -490,7 +490,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names.</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Collection of jobs with the specified
         /// state.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
@@ -528,8 +528,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a filtered list of jobs based on adapter name.
         /// </summary>
-        /// <param name="id">job id.</param>
-        /// <param name="name">adapter name.</param>
+        /// <param name="id">Job id.</param>
+        /// <param name="name">Adapter name.</param>
         /// <returns></returns>
         internal bool IsJobFromAdapter(Guid id, string name)
         {
@@ -557,7 +557,7 @@ namespace System.Management.Automation
         /// <param name="writeErrorOnException"></param>
         /// <param name="writeObject"></param>
         /// <param name="recurse"></param>
-        /// <param name="jobSourceAdapterTypes">job source adapter type names.</param>
+        /// <param name="jobSourceAdapterTypes">Job source adapter type names.</param>
         /// <returns>Filtered list of jobs.</returns>
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
