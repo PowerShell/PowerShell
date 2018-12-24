@@ -1211,7 +1211,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Raise state changed event based on the StateInfo
         /// object
         /// </summary>
-        /// <param name="stateInfo">state information object.</param>
+        /// <param name="stateInfo">State information object.</param>
         protected void RaiseStateChangeEvent(RunspacePoolStateInfo stateInfo)
         {
             StateChanged.SafeInvoke(this,

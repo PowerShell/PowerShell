@@ -193,7 +193,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Copy constructor to support cloning
         /// </summary>
-        /// <param name="pipelineStateInfo">source information.</param>
+        /// <param name="pipelineStateInfo">Source information.</param>
         /// <throws>
         /// ArgumentNullException when <paramref name="pipelineStateInfo"/> is null.
         /// </throws>
@@ -533,7 +533,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Invoke the pipeline, synchronously, returning the results as an array of objects.
         /// </summary>
-        /// <param name="input">an array of input objects to pass to the pipeline.
+        /// <param name="input">An array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects</returns>
         /// <remarks>If using synchronous exectute, do not close
@@ -666,7 +666,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the command collection.
         /// </summary>
-        /// <param name="commands">command collection to set.</param>
+        /// <param name="commands">Command collection to set.</param>
         /// <remarks>called by ClientRemotePipeline</remarks>
         internal void SetCommandCollection(CommandCollection commands)
         {
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the history string to the one that is specified
         /// </summary>
-        /// <param name="historyString">history string to set.</param>
+        /// <param name="historyString">History string to set.</param>
         internal abstract void SetHistoryString(string historyString);
 
         /// <summary>

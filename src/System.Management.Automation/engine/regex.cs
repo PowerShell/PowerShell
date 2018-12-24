@@ -448,8 +448,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class WildcardPatternException for serialization.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected WildcardPatternException(SerializationInfo info,
                                         StreamingContext context)
             : base(info, context)

@@ -127,7 +127,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the TypeNameHierarchy out of an ManagementBaseObject
         /// </summary>
-        /// <param name="obj">object to get the TypeNameHierarchy from.</param>
+        /// <param name="obj">Object to get the TypeNameHierarchy from.</param>
         /// <remarks>
         /// TypeName is of the format ObjectType#__Namespace\\__Class
         /// </remarks>
@@ -163,8 +163,8 @@ namespace System.Management.Automation
         /// Returns null if memberName is not a member in the adapter or
         /// the corresponding PSMemberInfo
         /// </summary>
-        /// <param name="obj">object to retrieve the PSMemberInfo from.</param>
-        /// <param name="memberName">name of the member to be retrieved.</param>
+        /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
+        /// <param name="memberName">Name of the member to be retrieved.</param>
         /// <returns>The PSMemberInfo corresponding to memberName from obj</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
-        /// <param name="obj">object to get all the member information from.</param>
+        /// <param name="obj">Object to get all the member information from.</param>
         /// <returns>all members in obj</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
@@ -226,8 +226,8 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to try to call
         /// the method with the arguments
         /// </summary>
-        /// <param name="method">the non empty return from GetMethods.</param>
-        /// <param name="arguments">the arguments to use.</param>
+        /// <param name="method">The non empty return from GetMethods.</param>
+        /// <param name="arguments">The arguments to use.</param>
         /// <returns>the return value for the method</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
@@ -243,7 +243,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to return the overloads
         /// </summary>
-        /// <param name="method">the return of GetMember.</param>
+        /// <param name="method">The return of GetMember.</param>
         /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
@@ -257,7 +257,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check.</param>
+        /// <param name="property">Property to check.</param>
         /// <returns>true if the property is settable</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
@@ -293,7 +293,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check.</param>
+        /// <param name="property">Property to check.</param>
         /// <returns>true if the property is gettable</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
@@ -349,8 +349,8 @@ namespace System.Management.Automation
         /// to update the WMI store, call Put().
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
-        /// <param name="setValue">value to set the property with.</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion.</param>
+        /// <param name="setValue">Value to set the property with.</param>
+        /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
@@ -388,7 +388,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of the property in the object
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember.</param>
+        /// <param name="property">Property obtained in a previous GetMember.</param>
         /// <returns>the string representation of the property in the object</returns>
         protected override string PropertyToString(PSProperty property)
         {
@@ -419,7 +419,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an array with the property attributes
         /// </summary>
-        /// <param name="property">property we want the attributes from.</param>
+        /// <param name="property">Property we want the attributes from.</param>
         /// <returns>an array with the property attributes</returns>
         protected override AttributeCollection PropertyAttributes(PSProperty property)
         {
@@ -433,8 +433,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves the table for instance methods
         /// </summary>
-        /// <param name="wmiObject">object containing methods to load in typeTable.</param>
-        /// <param name="staticBinding">controls what methods are adapted.</param>
+        /// <param name="wmiObject">Object containing methods to load in typeTable.</param>
+        /// <param name="staticBinding">Controls what methods are adapted.</param>
         protected static CacheTable GetInstanceMethodTable(ManagementBaseObject wmiObject,
             bool staticBinding)
         {
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="mgmtClass">Class to get the method info from.</param>
         /// <param name="methodTable">Cachetable to update.</param>
-        /// <param name="staticBinding">controls what methods are adapted.</param>
+        /// <param name="staticBinding">Controls what methods are adapted.</param>
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="ManagementException"></exception>
         private static void PopulateMethodTable(ManagementClass mgmtClass, CacheTable methodTable, bool staticBinding)
@@ -875,8 +875,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
-        /// <param name="wmiObject">object to get all the property information from.</param>
-        /// <param name="members">collection where the members will be added.</param>
+        /// <param name="wmiObject">Object to get all the property information from.</param>
+        /// <param name="members">Collection where the members will be added.</param>
         protected abstract void AddAllProperties<T>(ManagementBaseObject wmiObject,
             PSMemberInfoInternalCollection<T> members) where T : PSMemberInfo;
 
@@ -912,8 +912,8 @@ namespace System.Management.Automation
         /// the corresponding PSProperty with its adapterData set to information
         /// to be used when retrieving the property.
         /// </summary>
-        /// <param name="wmiObject">object to retrieve the PSProperty from.</param>
-        /// <param name="propertyName">name of the property to be retrieved.</param>
+        /// <param name="wmiObject">Object to retrieve the PSProperty from.</param>
+        /// <param name="propertyName">Name of the property to be retrieved.</param>
         /// <returns>The PSProperty corresponding to propertyName from obj</returns>
         protected abstract PSProperty DoGetProperty(ManagementBaseObject wmiObject,
             string propertyName);

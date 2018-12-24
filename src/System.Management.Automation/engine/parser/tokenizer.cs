@@ -3665,11 +3665,11 @@ namespace System.Management.Automation.Language
             return NewNumberToken(value);
         }
 
-        /// <param name="firstChar">the first character.</param>
-        /// <param name="hex">indicate if it's a hex number.</param>
-        /// <param name="real">indicate if it's a real number.</param>
-        /// <param name="suffix">indicate the type suffix.</param>
-        /// <param name="multiplier">indicate the specified multiplier.</param>
+        /// <param name="firstChar">The first character.</param>
+        /// <param name="hex">Indicate if it's a hex number.</param>
+        /// <param name="real">Indicate if it's a real number.</param>
+        /// <param name="suffix">Indicate the type suffix.</param>
+        /// <param name="multiplier">Indicate the specified multiplier.</param>
         /// <returns>
         /// return null if the token is not a number
         /// OR

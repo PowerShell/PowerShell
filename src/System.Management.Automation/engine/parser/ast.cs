@@ -2777,7 +2777,7 @@ namespace System.Management.Automation.Language
         /// Construct a simple (one that is not a form of an alias) using module statement with module specification as hashtable.
         /// </summary>
         /// <param name="extent">The extent of the using statement including the using keyword.</param>
-        /// <param name="moduleSpecification">HashtableAst that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/>object.</param>
+        /// <param name="moduleSpecification">HashtableAst that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/>Object.</param>
         public UsingStatementAst(IScriptExtent extent, HashtableAst moduleSpecification)
             : base(extent)
         {
@@ -4612,7 +4612,7 @@ namespace System.Management.Automation.Language
         /// <param name="extent">The extent of the statement, from the label or switch keyword to the closing curly.</param>
         /// <param name="label">The optionally null label.</param>
         /// <param name="condition">The expression being switched upon.</param>
-        /// <param name="flags">Any flags that affect how the <paramref name="condition"/>is tested.</param>
+        /// <param name="flags">Any flags that affect how the <paramref name="condition"/>Is tested.</param>
         /// <param name="clauses">
         /// A possibly null or empty collection of conditions and block of statements to execute if the condition matches.
         /// </param>
@@ -6225,7 +6225,7 @@ namespace System.Management.Automation.Language
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
         /// </param>
-        /// <param name="body"><see cref="ScriptBlockExpressionAst"/>of the configuration statement.</param>
+        /// <param name="body"><see cref="ScriptBlockExpressionAst"/>Of the configuration statement.</param>
         /// <param name="type">The type of the configuration.</param>
         /// <param name="instanceName">The configuration name expression.</param>
         /// <exception cref="PSArgumentNullException">
@@ -6710,7 +6710,7 @@ namespace System.Management.Automation.Language
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
         /// </param>
-        /// <param name="commandElements">A collection of <see cref="CommandElementAst"/> used to invoke <see cref="DynamicKeyword"/>specific command.</param>
+        /// <param name="commandElements">A collection of <see cref="CommandElementAst"/> used to invoke <see cref="DynamicKeyword"/>Specific command.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="commandElements"/> is null or empty.
         /// </exception>

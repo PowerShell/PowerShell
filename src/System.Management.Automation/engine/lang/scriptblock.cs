@@ -1054,7 +1054,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise.</param>
+        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>Otherwise.</param>
         public void Begin(bool expectInput)
         {
             Begin(expectInput, (ICommandRuntime)null);
@@ -1064,8 +1064,8 @@ namespace System.Management.Automation
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>otherwise.</param>
-        /// <param name="contextToRedirectTo">context used to figure out how to route the output and errors.</param>
+        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c>Otherwise.</param>
+        /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
             if (contextToRedirectTo == null)
@@ -1278,7 +1278,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message
         /// </summary>
-        /// <param name="message">the exception's message.</param>
+        /// <param name="message">The exception's message.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message)
             : base(message)
         {
@@ -1287,8 +1287,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message.</param>
-        /// <param name="innerException">the exceptions's inner exception.</param>
+        /// <param name="message">The exception's message.</param>
+        /// <param name="innerException">The exceptions's inner exception.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1315,8 +1315,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

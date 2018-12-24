@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
         /// <returns>
         /// A new collection with a copy of all the elements in the current collection.
         /// </returns>
-        /// <param name="readCount">maximum number of elements to read.</param>
+        /// <param name="readCount">Maximum number of elements to read.</param>
         internal Collection<T> ReadAndRemove(int readCount)
         {
             Dbg.Assert(_data != null, "Collection cannot be null");
@@ -1775,7 +1775,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Release all the resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -1934,7 +1934,7 @@ namespace System.Management.Automation
         /// true if the enumerator successfully advanced to the next element;
         /// otherwise, false.
         /// </returns>
-        /// <param name="block">true - to block when no elements are available.</param>
+        /// <param name="block">True - to block when no elements are available.</param>
         public bool MoveNext(bool block)
         {
             lock (_collToEnumerate.SyncObject)

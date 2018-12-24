@@ -368,8 +368,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of PSAliasProperty setting the name of the alias
         /// and the name of the member this alias refers to.
         /// </summary>
-        /// <param name="name">name of the alias.</param>
-        /// <param name="referencedMemberName">name of the member this alias refers to.</param>
+        /// <param name="name">Name of the alias.</param>
+        /// <param name="referencedMemberName">Name of the member this alias refers to.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSAliasProperty(string name, string referencedMemberName)
         {
@@ -392,9 +392,9 @@ namespace System.Management.Automation
         /// the name of the member this alias refers to and the type to convert the referenced
         /// member's value.
         /// </summary>
-        /// <param name="name">name of the alias.</param>
-        /// <param name="referencedMemberName">name of the member this alias refers to.</param>
-        /// <param name="conversionType">the type to convert the referenced member's value.</param>
+        /// <param name="name">Name of the alias.</param>
+        /// <param name="referencedMemberName">Name of the member this alias refers to.</param>
+        /// <param name="conversionType">The type to convert the referenced member's value.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSAliasProperty(string name, string referencedMemberName, Type conversionType)
         {
@@ -781,7 +781,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSCodeProperty class as a read only property.
         /// </summary>
-        /// <param name="name">name of the property.</param>
+        /// <param name="name">Name of the property.</param>
         /// <param name="getterCodeReference">This should be a public static non void method taking one PSObject parameter.</param>
         /// <exception cref="ArgumentException">if name is null or empty or getterCodeReference is null</exception>
         /// <exception cref="ExtendedTypeSystemException">if getterCodeReference doesn't have the right format.</exception>
@@ -804,7 +804,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSCodeProperty class. Setter or getter can be null, but both cannot be null.
         /// </summary>
-        /// <param name="name">name of the property.</param>
+        /// <param name="name">Name of the property.</param>
         /// <param name="getterCodeReference">This should be a public static non void method taking one PSObject parameter.</param>
         /// <param name="setterCodeReference">This should be a public static void method taking 2 parameters, where the first is an PSObject.</param>
         /// <exception cref="ArgumentException">when methodForGet and methodForSet are null</exception>
@@ -1054,8 +1054,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a property from a serialized value
         /// </summary>
-        /// <param name="name">name of the property.</param>
-        /// <param name="serializedValue">value of the property.</param>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="serializedValue">Value of the property.</param>
         internal PSProperty(string name, object serializedValue)
         {
             this.isDeserialized = true;
@@ -1066,10 +1066,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs this property
         /// </summary>
-        /// <param name="name">name of the property.</param>
-        /// <param name="adapter">adapter used in DoGetProperty.</param>
-        /// <param name="baseObject">object passed to DoGetProperty.</param>
-        /// <param name="adapterData">adapter specific data.</param>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="adapter">Adapter used in DoGetProperty.</param>
+        /// <param name="baseObject">Object passed to DoGetProperty.</param>
+        /// <param name="adapterData">Adapter specific data.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSProperty(string name, Adapter adapter, object baseObject, object adapterData)
         {
@@ -1219,8 +1219,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a property for the given base object
         /// </summary>
-        /// <param name="name">name of the property.</param>
-        /// <param name="tag">an adapter can use this object to keep any arbitrary data it needs.</param>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="tag">An adapter can use this object to keep any arbitrary data it needs.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSAdaptedProperty(string name, object tag)
             : base(name, null, null, tag)
@@ -1285,8 +1285,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNoteProperty class.
         /// </summary>
-        /// <param name="name">name of the property.</param>
-        /// <param name="value">value of the property.</param>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="value">Value of the property.</param>
         /// <exception cref="ArgumentException">for an empty or null name</exception>
         public PSNoteProperty(string name, object value)
         {
@@ -1658,8 +1658,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes an instance of the PSScriptProperty class as a read only property.
         /// </summary>
-        /// <param name="name">name of the property.</param>
-        /// <param name="getterScript">script to be used for the property getter. $this will be this PSObject.</param>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="getterScript">Script to be used for the property getter. $this will be this PSObject.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptProperty(string name, ScriptBlock getterScript)
         {
@@ -1678,8 +1678,8 @@ namespace System.Management.Automation
         /// property. getterScript or setterScript can be null, but not both.
         /// </summary>
         /// <param name="name">Name of this property.</param>
-        /// <param name="getterScript">script to be used for the property getter. $this will be this PSObject.</param>
-        /// <param name="setterScript">script to be used for the property setter. $this will be this PSObject and $args(1) will be the value to set.</param>
+        /// <param name="getterScript">Script to be used for the property getter. $this will be this PSObject.</param>
+        /// <param name="setterScript">Script to be used for the property setter. $this will be this PSObject and $args(1) will be the value to set.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptProperty(string name, ScriptBlock getterScript, ScriptBlock setterScript)
         {
@@ -1714,8 +1714,8 @@ namespace System.Management.Automation
         /// property, using the text of the properties to support lazy initialization.
         /// </summary>
         /// <param name="name">Name of this property.</param>
-        /// <param name="getterScript">script to be used for the property getter. $this will be this PSObject.</param>
-        /// <param name="setterScript">script to be used for the property setter. $this will be this PSObject and $args(1) will be the value to set.</param>
+        /// <param name="getterScript">Script to be used for the property getter. $this will be this PSObject.</param>
+        /// <param name="setterScript">Script to be used for the property setter. $this will be this PSObject and $args(1) will be the value to set.</param>
         /// <param name="languageMode">Language mode to be used during script block evaluation.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSScriptProperty(string name, string getterScript, string setterScript, PSLanguageMode? languageMode)
@@ -2050,7 +2050,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the appropriate method overload for the given arguments and returns its result.
         /// </summary>
-        /// <param name="arguments">arguments to the method.</param>
+        /// <param name="arguments">Arguments to the method.</param>
         /// <returns>return value from the method</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="MethodException">For problems finding an appropriate method for the arguments</exception>
@@ -2165,8 +2165,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSCodeMethod class.
         /// </summary>
-        /// <param name="name">name of the property.</param>
-        /// <param name="codeReference">this should be a public static method where the first parameter is an PSObject.</param>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="codeReference">This should be a public static method where the first parameter is an PSObject.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         /// <exception cref="ExtendedTypeSystemException">if the codeReference does not have the right format</exception>
         public PSCodeMethod(string name, MethodInfo codeReference)
@@ -2216,7 +2216,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes CodeReference method and returns its results.
         /// </summary>
-        /// <param name="arguments">arguments to the method.</param>
+        /// <param name="arguments">Arguments to the method.</param>
         /// <returns>return value from the method</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="MethodException">
@@ -2319,8 +2319,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSScriptMethod
         /// </summary>
-        /// <param name="name">name of the method.</param>
-        /// <param name="script">script to be used when calling the method.</param>
+        /// <param name="name">Name of the method.</param>
+        /// <param name="script">Script to be used when calling the method.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptMethod(string name, ScriptBlock script)
         {
@@ -2356,7 +2356,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes Script method and returns its results.
         /// </summary>
-        /// <param name="arguments">arguments to the method.</param>
+        /// <param name="arguments">Arguments to the method.</param>
         /// <returns>return value from the method</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="MethodInvocationException">For exceptions invoking the Script or if there is no Runspace to run the script.</exception>
@@ -2480,10 +2480,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs this method
         /// </summary>
-        /// <param name="name">name.</param>
-        /// <param name="adapter">adapter to be used invoking.</param>
-        /// <param name="baseObject">baseObject for the methods.</param>
-        /// <param name="adapterData">adapterData from adapter.GetMethodData.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="adapter">Adapter to be used invoking.</param>
+        /// <param name="baseObject">BaseObject for the methods.</param>
+        /// <param name="adapterData">AdapterData from adapter.GetMethodData.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData)
         {
@@ -2501,12 +2501,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a PSMethod
         /// </summary>
-        /// <param name="name">name.</param>
-        /// <param name="adapter">adapter to be used invoking.</param>
-        /// <param name="baseObject">baseObject for the methods.</param>
-        /// <param name="adapterData">adapterData from adapter.GetMethodData.</param>
-        /// <param name="isSpecial">true if this member is a special member, false otherwise.</param>
-        /// <param name="isHidden">true if this member is hidden, false otherwise.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="adapter">Adapter to be used invoking.</param>
+        /// <param name="baseObject">BaseObject for the methods.</param>
+        /// <param name="adapterData">AdapterData from adapter.GetMethodData.</param>
+        /// <param name="isSpecial">True if this member is a special member, false otherwise.</param>
+        /// <param name="isHidden">True if this member is hidden, false otherwise.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData, bool isSpecial, bool isHidden)
             : this(name, adapter, baseObject, adapterData)
@@ -2536,7 +2536,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the appropriate method overload for the given arguments and returns its result.
         /// </summary>
-        /// <param name="arguments">arguments to the method.</param>
+        /// <param name="arguments">Arguments to the method.</param>
         /// <returns>return value from the method</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="MethodException">For problems finding an appropriate method for the arguments</exception>
@@ -2549,8 +2549,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the appropriate method overload for the given arguments and returns its result.
         /// </summary>
-        /// <param name="invocationConstraints">constraints.</param>
-        /// <param name="arguments">arguments to the method.</param>
+        /// <param name="invocationConstraints">Constraints.</param>
+        /// <param name="arguments">Arguments to the method.</param>
         /// <returns>return value from the method</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="MethodException">For problems finding an appropriate method for the arguments</exception>
@@ -2899,10 +2899,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs this parameterized property
         /// </summary>
-        /// <param name="name">name of the property.</param>
-        /// <param name="adapter">adapter used in DoGetMethod.</param>
-        /// <param name="baseObject">object passed to DoGetMethod.</param>
-        /// <param name="adapterData">adapter specific data.</param>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="adapter">Adapter used in DoGetMethod.</param>
+        /// <param name="baseObject">Object passed to DoGetMethod.</param>
+        /// <param name="adapterData">Adapter specific data.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSParameterizedProperty(string name, Adapter adapter, object baseObject, object adapterData)
         {
@@ -2942,7 +2942,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the getter method and returns its result
         /// </summary>
-        /// <param name="arguments">arguments to the method.</param>
+        /// <param name="arguments">Arguments to the method.</param>
         /// <returns>return value from the method</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="GetValueException">When getting the value of a property throws an exception</exception>
@@ -2959,8 +2959,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the setter method
         /// </summary>
-        /// <param name="valueToSet">value to set this property with.</param>
-        /// <param name="arguments">arguments to the method.</param>
+        /// <param name="valueToSet">Value to set this property with.</param>
+        /// <param name="arguments">Arguments to the method.</param>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="SetValueException">When setting the value of a property throws an exception</exception>
         public void InvokeSet(object valueToSet, params object[] arguments)
@@ -3054,7 +3054,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSMemberSet with no initial members
         /// </summary>
-        /// <param name="name">name for the member set.</param>
+        /// <param name="name">Name for the member set.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSMemberSet(string name)
         {
@@ -3073,8 +3073,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSMemberSet with all the initial members in <paramref name="members"/>
         /// </summary>
-        /// <param name="name">name for the member set.</param>
-        /// <param name="members">members in the member set.</param>
+        /// <param name="name">Name for the member set.</param>
+        /// <param name="members">Members in the member set.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSMemberSet(string name, IEnumerable<PSMemberInfo> members)
         {
@@ -3142,8 +3142,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to create the Extended MemberSet
         /// </summary>
-        /// <param name="name">name of the memberSet.</param>
-        /// <param name="mshObject">object associated with this memberset.</param>
+        /// <param name="name">Name of the memberSet.</param>
+        /// <param name="mshObject">Object associated with this memberset.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSMemberSet(string name, PSObject mshObject)
         {
@@ -3424,8 +3424,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSPropertySet with a name and list of property names
         /// </summary>
-        /// <param name="name">name of the set.</param>
-        /// <param name="referencedPropertyNames">name of the properties in the set.</param>
+        /// <param name="name">Name of the set.</param>
+        /// <param name="referencedPropertyNames">Name of the properties in the set.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSPropertySet(string name, IEnumerable<string> referencedPropertyNames)
         {
@@ -3642,7 +3642,7 @@ namespace System.Management.Automation
         /// <param name="memberList">Members to look for member with the correct types and name.</param>
         /// <param name="name">Name of the members to look for. The name might contain globbing characters.</param>
         /// <param name="nameMatch">WildcardPattern out of name.</param>
-        /// <param name="memberTypes">type of members we want to retrieve.</param>
+        /// <param name="memberTypes">Type of members we want to retrieve.</param>
         /// <returns>A collection of members of the right types and name extracted from memberList.</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal static PSMemberInfoInternalCollection<T> Match<T>(PSMemberInfoInternalCollection<T> memberList, string name, WildcardPattern nameMatch, PSMemberTypes memberTypes)
@@ -3703,7 +3703,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a member to this collection
         /// </summary>
-        /// <param name="member">member to be added.</param>
+        /// <param name="member">Member to be added.</param>
         /// <exception cref="ExtendedTypeSystemException">
         ///     When:
         ///         adding a member to an PSMemberSet from the type configuration file or
@@ -3717,8 +3717,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a member to this collection
         /// </summary>
-        /// <param name="member">member to be added.</param>
-        /// <param name="preValidated">flag to indicate that validation has already been done
+        /// <param name="member">Member to be added.</param>
+        /// <param name="preValidated">Flag to indicate that validation has already been done
         ///     on this new member.  Use only when you can guarantee that the input will not
         ///     cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">
@@ -3734,7 +3734,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a member from this collection
         /// </summary>
-        /// <param name="name">name of the member to be removed.</param>
+        /// <param name="name">Name of the member to be removed.</param>
         /// <exception cref="ExtendedTypeSystemException">
         ///     When:
         ///         removing a member from an PSMemberSet from the type configuration file
@@ -3747,7 +3747,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member in this collection matching name. If the member does not exist, null is returned.
         /// </summary>
-        /// <param name="name">name of the member to look for.</param>
+        /// <param name="name">Name of the member to look for.</param>
         /// <returns>the member matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public abstract T this[string name] { get; }
@@ -3759,7 +3759,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>all members in the collection matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public abstract ReadOnlyPSMemberInfoCollection<T> Match(string name);
@@ -3767,8 +3767,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name and types
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
-        /// <param name="memberTypes">type of the members to be searched.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="memberTypes">Type of the members to be searched.</param>
         /// <returns>all members in the collection matching name and types</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public abstract ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes);
@@ -3776,9 +3776,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name and types
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
-        /// <param name="memberTypes">type of the members to be searched.</param>
-        /// <param name="matchOptions">match options.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="memberTypes">Type of the members to be searched.</param>
+        /// <param name="matchOptions">Match options.</param>
         /// <returns>all members in the collection matching name and types</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal abstract ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions);
@@ -3843,7 +3843,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the member in this collection matching name. If the member does not exist, null is returned.
         /// </summary>
-        /// <param name="name">name of the member to look for.</param>
+        /// <param name="name">Name of the member to look for.</param>
         /// <returns>the member matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public T this[string name]
@@ -3862,7 +3862,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>all members in the collection matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name)
@@ -3878,8 +3878,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name and types
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
-        /// <param name="memberTypes">type of the members to be searched.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="memberTypes">Type of the members to be searched.</param>
         /// <returns>all members in the collection matching name and types</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
@@ -3918,7 +3918,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the 0 based member identified by index
         /// </summary>
-        /// <param name="index">index of the member to retrieve.</param>
+        /// <param name="index">Index of the member to retrieve.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public T this[int index] => _members[index];
     }
@@ -3998,7 +3998,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a member to this collection
         /// </summary>
-        /// <param name="member">member to be added.</param>
+        /// <param name="member">Member to be added.</param>
         /// <exception cref="ExtendedTypeSystemException">when a member by this name is already present</exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Add(T member)
@@ -4009,8 +4009,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a member to this collection
         /// </summary>
-        /// <param name="member">member to be added.</param>
-        /// <param name="preValidated">flag to indicate that validation has already been done
+        /// <param name="member">Member to be added.</param>
+        /// <param name="preValidated">Flag to indicate that validation has already been done
         ///     on this new member.  Use only when you can guarantee that the input will not
         ///     cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">when a member by this name is already present</exception>
@@ -4044,7 +4044,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a member from this collection
         /// </summary>
-        /// <param name="name">name of the member to be removed.</param>
+        /// <param name="name">Name of the member to be removed.</param>
         /// <exception cref="ExtendedTypeSystemException">When removing a member with a reserved member name</exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Remove(string name)
@@ -4084,7 +4084,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the member in this collection matching name
         /// </summary>
-        /// <param name="name">name of the member to look for.</param>
+        /// <param name="name">Name of the member to look for.</param>
         /// <returns>the member matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override T this[string name]
@@ -4111,7 +4111,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>all members in the collection matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name)
@@ -4127,8 +4127,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name and types
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
-        /// <param name="memberTypes">type of the members to be searched.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="memberTypes">Type of the members to be searched.</param>
         /// <returns>all members in the collection matching name and types</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
@@ -4144,9 +4144,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name and types
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
-        /// <param name="memberTypes">type of the members to be searched.</param>
-        /// <param name="matchOptions">match options.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="memberTypes">Type of the members to be searched.</param>
+        /// <param name="matchOptions">Match options.</param>
         /// <returns>all members in the collection matching name and types</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions)
@@ -4224,7 +4224,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the 0 based member identified by index
         /// </summary>
-        /// <param name="index">index of the member to retrieve.</param>
+        /// <param name="index">Index of the member to retrieve.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal T this[int index]
         {
@@ -4431,7 +4431,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds member to the collection
         /// </summary>
-        /// <param name="member">member to be added.</param>
+        /// <param name="member">Member to be added.</param>
         /// <exception cref="ExtendedTypeSystemException">
         ///     When
         ///         member is an PSProperty or PSMethod
@@ -4450,8 +4450,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds member to the collection
         /// </summary>
-        /// <param name="member">member to be added.</param>
-        /// <param name="preValidated">flag to indicate that validation has already been done
+        /// <param name="member">Member to be added.</param>
+        /// <param name="preValidated">Flag to indicate that validation has already been done
         ///     on this new member.  Use only when you can guarantee that the input will not
         ///     cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">
@@ -4517,8 +4517,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds member to the collection
         /// </summary>
-        /// <param name="member">member to be added.</param>
-        /// <param name="preValidated">flag to indicate that validation has already been done
+        /// <param name="member">Member to be added.</param>
+        /// <param name="preValidated">Flag to indicate that validation has already been done
         ///    on this new member.  Use only when you can guarantee that the input will not
         ///    cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">
@@ -4670,7 +4670,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name corresponding to name or null if it is not present
         /// </summary>
-        /// <param name="name">name of the member to return.</param>
+        /// <param name="name">Name of the member to return.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override T this[string name]
         {
@@ -4831,7 +4831,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
         /// <returns>all members in the collection matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name)
@@ -4847,8 +4847,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name and types
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
-        /// <param name="memberTypes">type of the members to be searched.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="memberTypes">Type of the members to be searched.</param>
         /// <returns>all members in the collection matching name and types</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
@@ -4864,9 +4864,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all members in the collection matching name and types
         /// </summary>
-        /// <param name="name">name of the members to be return. May contain wildcard characters.</param>
-        /// <param name="memberTypes">type of the members to be searched.</param>
-        /// <param name="matchOptions">search options.</param>
+        /// <param name="name">Name of the members to be return. May contain wildcard characters.</param>
+        /// <param name="memberTypes">Type of the members to be searched.</param>
+        /// <param name="matchOptions">Search options.</param>
         /// <returns>all members in the collection matching name and types</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions)
@@ -4916,7 +4916,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Constructs this instance to enumerate over members
             /// </summary>
-            /// <param name="integratingCollection">members we are enumerating.</param>
+            /// <param name="integratingCollection">Members we are enumerating.</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)
             {
                 using (PSObject.memberResolution.TraceScope("Enumeration Start"))

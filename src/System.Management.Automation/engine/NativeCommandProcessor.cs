@@ -123,7 +123,7 @@ namespace System.Management.Automation
         /// Build an output object
         /// </summary>
         /// <param name="data">The data to output.</param>
-        /// <param name="stream">stream to which data belongs.</param>
+        /// <param name="stream">Stream to which data belongs.</param>
         internal ProcessOutputObject(object data, MinishellStream stream)
         {
             Data = data;

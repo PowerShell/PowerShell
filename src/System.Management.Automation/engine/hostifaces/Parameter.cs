@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a named parameter with a null value
         /// </summary>
-        /// <param name="name">parameter name.</param>
+        /// <param name="name">Parameter name.</param>
         /// <exception cref="ArgumentNullException">
         /// name is null.
         /// </exception>
@@ -39,8 +39,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a named parameter
         /// </summary>
-        /// <param name="name">parameter name.</param>
-        /// <param name="value">parameter value.</param>
+        /// <param name="name">Parameter name.</param>
+        /// <param name="value">Parameter value.</param>
         /// <exception cref="ArgumentException">
         /// Name is non null and name length is zero after trimming whitespace.
         /// </exception>
@@ -279,7 +279,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Add a parameter with given name and default null value
         /// </summary>
-        /// <param name="name">name of the parameter.</param>
+        /// <param name="name">Name of the parameter.</param>
         /// <exception cref="ArgumentNullException">
         /// name is null.
         /// </exception>
@@ -294,8 +294,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Add a parameter with given name and value
         /// </summary>
-        /// <param name="name">name of the parameter.</param>
-        /// <param name="value">value of the parameter.</param>
+        /// <param name="name">Name of the parameter.</param>
+        /// <param name="value">Value of the parameter.</param>
         /// <exception cref="ArgumentNullException">
         /// Both name and value are null. One of these must be non-null.
         /// </exception>

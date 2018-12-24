@@ -361,7 +361,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Loads the latest valid version if moduleBase is a multi-versioned module directory
         /// </summary>
-        /// <param name="moduleBase">module directory path.</param>
+        /// <param name="moduleBase">Module directory path.</param>
         /// <param name="manifestProcessingFlags">The flag that indicate manifest processing option.</param>
         /// <param name="importModuleOptions">The set of options that are used while importing a module.</param>
         /// <param name="found">True if a module was found.</param>
@@ -1300,7 +1300,7 @@ namespace Microsoft.PowerShell.Commands
         /// Routine to process the module manifest data language script.
         /// </summary>
         /// <param name="scriptInfo">The script info for the manifest script.</param>
-        /// <param name="manifestProcessingFlags">processing flags (whether to write errors / load elements).</param>
+        /// <param name="manifestProcessingFlags">Processing flags (whether to write errors / load elements).</param>
         /// <param name="minimumVersion">The minimum version to check the manifest against.</param>
         /// <param name="maximumVersion">The maximum version to check the manifest against.</param>
         /// <param name="requiredVersion">The version to check the manifest against.</param>
@@ -1322,7 +1322,7 @@ namespace Microsoft.PowerShell.Commands
         /// Routine to process the module manifest data language script.
         /// </summary>
         /// <param name="scriptInfo">The script info for the manifest script.</param>
-        /// <param name="manifestProcessingFlags">processing flags (whether to write errors / load elements).</param>
+        /// <param name="manifestProcessingFlags">Processing flags (whether to write errors / load elements).</param>
         /// <param name="minimumVersion">The minimum version to check the manifest against.</param>
         /// <param name="maximumVersion">The maximum version to check the manifest against.</param>
         /// <param name="requiredVersion">The version to check the manifest against.</param>
@@ -1438,7 +1438,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestScriptInfo">The script info for the manifest script.</param>
         /// <param name="data">Contents of the module manifest.</param>
         /// <param name="localizedData">Contents of the localized module manifest.</param>
-        /// <param name="manifestProcessingFlags">processing flags (whether to write errors / load elements).</param>
+        /// <param name="manifestProcessingFlags">Processing flags (whether to write errors / load elements).</param>
         /// <param name="minimumVersion">The minimum version to check the manifest against.</param>
         /// <param name="maximumVersion">The maximum version to check the manifest against.</param>
         /// <param name="requiredVersion">The version to check the manifest against.</param>
@@ -4319,7 +4319,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
-        /// <param name="key">the table key to use.</param>
+        /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="list">Returns the extracted version.</param>
         /// <returns></returns>
@@ -4358,7 +4358,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
-        /// <param name="key">the table key to use.</param>
+        /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="list">Returns the extracted version.</param>
         /// <returns></returns>
@@ -4411,11 +4411,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
-        /// <param name="key">the table key to use.</param>
+        /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
-        /// <param name="moduleBase">base directory of a module.</param>
-        /// <param name="extension">expected file extension (added to strings that didn't have an extension).</param>
-        /// <param name="verifyFilesExist">if <c>true</c>then we want to error out if the specified files don't exist.</param>
+        /// <param name="moduleBase">Base directory of a module.</param>
+        /// <param name="extension">Expected file extension (added to strings that didn't have an extension).</param>
+        /// <param name="verifyFilesExist">if <c>true</c>Then we want to error out if the specified files don't exist.</param>
         /// <param name="list">Returns the extracted version.</param>
         /// <returns></returns>
         private bool GetListOfFilesFromData(
@@ -4570,7 +4570,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
-        /// <param name="key">the table key to use.</param>
+        /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="result">Value from the manifest converted to the right type.</param>
         /// <returns><c>true</c> if success; <c>false</c> if there were errors.</returns>
@@ -4876,7 +4876,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes a module from the session state.
         /// </summary>
-        /// <param name="module">module to remove.</param>
+        /// <param name="module">Module to remove.</param>
         internal void RemoveModule(PSModuleInfo module)
         {
             RemoveModule(module, null);
@@ -5435,7 +5435,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fileName">The path to the file.</param>
         /// <param name="scriptName">The base name of the script.</param>
-        /// <param name="checkExecutionPolicy">check the current execution policy.</param>
+        /// <param name="checkExecutionPolicy">Check the current execution policy.</param>
         /// <returns>The ExternalScriptInfo object.</returns>
         internal ExternalScriptInfo GetScriptInfoForFile(string fileName, out string scriptName, bool checkExecutionPolicy)
         {
@@ -6484,7 +6484,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <param name="options">The set of options that are used while importing a module.</param>
         /// <param name="manifestProcessingFlags">The manifest processing flags to use when processing the module.</param>
-        /// <param name="loadTypes">load the types files mentioned in the snapin registration.</param>
+        /// <param name="loadTypes">Load the types files mentioned in the snapin registration.</param>
         /// <param name="loadFormats">Load the formst files mentioned in the snapin registration.</param>
         /// <param name="prefix">Command name prefix.</param>
         /// <param name="found">Sets this to true if an assembly was found.</param>
@@ -6515,7 +6515,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="options">The set of options that are used while importing a module.</param>
         /// <param name="manifestProcessingFlags">The manifest processing flags to use when processing the module.</param>
         /// <param name="prefix">Command name prefix.</param>
-        /// <param name="loadTypes">load the types files mentioned in the snapin registration.</param>
+        /// <param name="loadTypes">Load the types files mentioned in the snapin registration.</param>
         /// <param name="loadFormats">Load the formst files mentioned in the snapin registration.</param>
         /// <param name="found">Sets this to true if an assembly was found.</param>
         /// <param name="shortModuleName">Short name for module.</param>

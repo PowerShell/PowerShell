@@ -40,7 +40,7 @@ namespace System.Management.Automation.Runspaces
         /// pipeline.
         /// </param>
         /// <param name="command">The command string to parse.</param>
-        /// <param name="addToHistory">if true, add pipeline to history.</param>
+        /// <param name="addToHistory">If true, add pipeline to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>
         internal LocalPipeline(LocalRunspace runspace, string command, bool addToHistory, bool isNested)
             : base((Runspace)runspace, command, addToHistory, isNested)
@@ -934,7 +934,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Resolves command.CommandInfo to an appropriate CommandProcessorBase implementation
         /// </summary>
-        /// <param name="command">command to resolve.</param>
+        /// <param name="command">Command to resolve.</param>
         /// <returns></returns>
         private CommandProcessorBase CreateCommandProcessBase(Command command)
         {
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// sets the history string to the specified one
         /// </summary>
-        /// <param name="historyString">history string to set to.</param>
+        /// <param name="historyString">History string to set to.</param>
         internal override void SetHistoryString(string historyString)
         {
             HistoryString = historyString;

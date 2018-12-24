@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke the specified script
         /// </summary>
-        /// <param name="script">msh script to invoke.</param>
+        /// <param name="script">Msh script to invoke.</param>
         /// <returns>Output of invocation</returns>
         public Collection<PSObject> Invoke(string script)
         {
@@ -71,8 +71,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke the specified script and passes specified input to the script
         /// </summary>
-        /// <param name="script">msh script to invoke.</param>
-        /// <param name="input">input to script.</param>
+        /// <param name="script">Msh script to invoke.</param>
+        /// <param name="input">Input to script.</param>
         /// <returns>Output of invocation</returns>
         public Collection<PSObject> Invoke(string script, IEnumerable input)
         {
@@ -93,9 +93,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke the specified script and passes specified input to the script.
         /// </summary>
-        /// <param name="script">msh script to invoke.</param>
-        /// <param name="input">input to script.</param>
-        /// <param name="errors">this gets errors from script.</param>
+        /// <param name="script">Msh script to invoke.</param>
+        /// <param name="input">Input to script.</param>
+        /// <param name="errors">This gets errors from script.</param>
         /// <returns>output of invocation</returns>
         /// <remarks>
         /// <paramref name="errors"/> is the non-terminating error stream

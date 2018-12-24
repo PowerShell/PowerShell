@@ -25,8 +25,8 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline initialized with a command string
         /// </summary>
         /// <param name="runspace">The associated Runspace/>.</param>
-        /// <param name="command">command string.</param>
-        /// <param name="addToHistory">if true, add pipeline to history.</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="addToHistory">If true, add pipeline to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>
         /// <exception cref="ArgumentNullException">
         /// Command is null and add to history is true
@@ -364,7 +364,7 @@ namespace System.Management.Automation.Runspaces
         /// Invoke the pipeline, synchronously, returning the results as an
         /// array of objects.
         /// </summary>
-        /// <param name="input">an array of input objects to pass to the pipeline.
+        /// <param name="input">An array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects</returns>
         /// <remarks>Caller of synchronous exectute should not close
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Invoke the pipeline asynchronously with input.
         /// </summary>
-        /// <param name="input">input to provide to pipeline. Input is
+        /// <param name="input">Input to provide to pipeline. Input is
         /// used only for synchronous execution.</param>
         /// <param name="syncCall">True if this method is called from
         /// synchronous invoke else false.</param>
@@ -783,7 +783,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the new execution state.
         /// </summary>
-        /// <param name="state">the new state.</param>
+        /// <param name="state">The new state.</param>
         /// <param name="reason">
         /// An exception indicating that state change is the result of an error,
         /// otherwise; null.
@@ -823,7 +823,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the new execution state
         /// </summary>
-        /// <param name="state">the new state.</param>
+        /// <param name="state">The new state.</param>
         protected void SetPipelineState(PipelineState state)
         {
             SetPipelineState(state, null);
