@@ -597,7 +597,7 @@ namespace System.Management.Automation
         /// algorithm.
         /// </summary>
         /// <param name="name">The name of the parameter to resolve.</param>
-        /// <returns>The parameter that matches this name</returns>
+        /// <returns>The parameter that matches this name.</returns>
         public ParameterMetadata ResolveParameter(string name)
         {
             MergedCommandParameterMetadata merged = GetMergedCommandParameterMetadataSafely();
@@ -897,7 +897,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a String that represents the current PSTypeName.
         /// </summary>
-        /// <returns> String that represents the current PSTypeName.</returns>
+        /// <returns>String that represents the current PSTypeName.</returns>
         public override string ToString()
         {
             return Name ?? string.Empty;

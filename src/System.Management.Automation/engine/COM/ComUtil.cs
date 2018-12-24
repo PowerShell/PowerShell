@@ -31,7 +31,7 @@ namespace System.Management.Automation
         /// <param name="typeinfo">ITypeInfo interface of the object</param>
         /// <param name="funcdesc">FuncDesc which defines the method</param>
         /// <param name="isPropertyPut">True if this is a property put; these properties take their return type from their first parameter</param>
-        /// <returns>signature of the method</returns>
+        /// <returns>Signature of the method.</returns>
         internal static string GetMethodSignatureFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc, bool isPropertyPut)
         {
             StringBuilder builder = new StringBuilder();
@@ -102,7 +102,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type</param>
         /// <param name="funcdesc">FuncDesc of property of method</param>
-        /// <returns>name of the method or property</returns>
+        /// <returns>Name of the method or property.</returns>
         internal static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
             //Get the method or property name.
@@ -117,7 +117,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type</param>
         /// <param name="refptr">reference to the custom type</param>
-        /// <returns>name of the custom type</returns>
+        /// <returns>Name of the custom type.</returns>
         private static string GetStringFromCustomType(COM.ITypeInfo typeinfo, IntPtr refptr)
         {
             COM.ITypeInfo custtypeinfo;
@@ -145,7 +145,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs</param>
         /// <param name="typedesc">reference to type descriptor which is being converted to string from</param>
-        /// <returns>string representation of the type descriptor</returns>
+        /// <returns>String representation of the type descriptor.</returns>
         private static string GetStringFromTypeDesc(COM.ITypeInfo typeinfo, COM.TYPEDESC typedesc)
         {
             if ((VarEnum)typedesc.vt == VarEnum.VT_PTR)
@@ -247,7 +247,7 @@ namespace System.Management.Automation
         ///  Determine .net type for the given type descriptor
         /// </summary>
         /// <param name="typedesc">COM type descriptor to convert</param>
-        /// <returns>type represented by the typedesc</returns>
+        /// <returns>Type represented by the typedesc.</returns>
         internal static Type GetTypeFromTypeDesc(COM.TYPEDESC typedesc)
         {
             VarEnum vt = (VarEnum)typedesc.vt;
@@ -340,7 +340,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts a MethodBase[] into a MethodInformation[]
         /// </summary>
-        /// <returns>the ComMethodInformation[] corresponding to methods</returns>
+        /// <returns>The ComMethodInformation[] corresponding to methods.</returns>
         internal static ComMethodInformation[] GetMethodInformationArray(COM.ITypeInfo typeInfo, Collection<int> methods, bool skipLastParameters)
         {
             int methodCount = methods.Count;

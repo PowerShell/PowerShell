@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Perform disambiguation on enum names
         /// </summary>
-        /// <returns>complete enum name after disambiguation</returns>
+        /// <returns>Complete enum name after disambiguation.</returns>
         internal static string EnumDisambiguate(string text, Type enumType)
         {
             // Get all enum names in the given enum type

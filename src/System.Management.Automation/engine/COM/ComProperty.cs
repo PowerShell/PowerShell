@@ -142,7 +142,7 @@ namespace System.Management.Automation
         /// Get value of this property
         /// </summary>
         /// <param name="target">instance of the object from which to get the property value</param>
-        /// <returns>value of the property</returns>
+        /// <returns>Value of the property.</returns>
         internal object GetValue(Object target)
         {
             try
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">instance of the object from which to get the property value</param>
         /// <param name="arguments">parameters to get the property value</param>
-        /// <returns>value of the property</returns>
+        /// <returns>Value of the property</returns>
         internal object GetValue(Object target, object[] arguments)
         {
             try
@@ -360,7 +360,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the property signature string
         /// </summary>
-        /// <returns>property signature</returns>
+        /// <returns>Property signature.</returns>
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();

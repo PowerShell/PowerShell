@@ -27,7 +27,7 @@ namespace System.Management.Automation.ComInterop
         /// Determines if an object is a COM object.
         /// </summary>
         /// <param name="value">The object to test.</param>
-        /// <returns>true if the object is a COM object, false otherwise.</returns>
+        /// <returns>True if the object is a COM object, false otherwise.</returns>
         public static bool IsComObject(object value)
         {
             return
@@ -48,7 +48,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="instance">The target of the dynamic operation. </param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <param name="delayInvocation">true if member evaluation may be delayed.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation)
         {
             if (TryGetMetaObject(ref instance))
@@ -78,7 +78,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="binder">An instance of the <see cref="GetMemberBinder"/> that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation. </param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
         {
             return TryBindGetMember(binder, instance, out result, false);
@@ -91,7 +91,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="instance">The target of the dynamic operation.</param>
         /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindSetMember(SetMemberBinder binder, DynamicMetaObject instance, DynamicMetaObject value, out DynamicMetaObject result)
         {
             if (TryGetMetaObject(ref instance))
@@ -114,7 +114,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="instance">The target of the dynamic operation. </param>
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindInvoke(InvokeBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
             if (TryGetMetaObjectInvoke(ref instance))
@@ -137,7 +137,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="instance">The target of the dynamic operation. </param>
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindInvokeMember(InvokeMemberBinder binder, bool isSetProperty, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
             if (TryGetMetaObject(ref instance))
@@ -177,7 +177,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="instance">The target of the dynamic operation. </param>
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindGetIndex(GetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
             if (TryGetMetaObjectInvoke(ref instance))
@@ -200,7 +200,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set index operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindSetIndex(SetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, DynamicMetaObject value, out DynamicMetaObject result)
         {
             if (TryGetMetaObjectInvoke(ref instance))
@@ -223,7 +223,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="binder">An instance of the <see cref="ConvertBinder"/> that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <returns>true if operation was bound successfully; otherwise, false.</returns>
+        /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryConvert(ConvertBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
         {
             if (IsComObject(instance.Value))

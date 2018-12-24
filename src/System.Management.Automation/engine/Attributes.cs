@@ -142,7 +142,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        /// <returns>bool true if the validate succeeded</returns>
+        /// <returns>Bool true if the validate succeeded.</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
         /// All the system exceptions are wrapped in ValidationMetadataException
@@ -2200,7 +2200,7 @@ namespace System.Management.Automation
         /// made.
         /// </param>
         /// <param name="inputData"> parameter argument to mutate </param>
-        /// <returns> mutated object(s) </returns>
+        /// <returns>Mutated object(s).</returns>
         /// <remarks>
         /// Return the transformed value of <paramref name="inputData"/>.
         /// Throw <see cref="ArgumentException"/>

@@ -944,7 +944,7 @@ namespace System.Management.Automation.Language
         /// <param name="pipeArgumentType">Indicate the type of the piped-in argument</param>
         /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
-        /// <returns>PseudoBindingInfo</returns>
+        /// <returns>PseudoBindingInfo.</returns>
         internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
         {
             if (command == null)

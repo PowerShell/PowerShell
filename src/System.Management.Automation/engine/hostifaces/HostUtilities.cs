@@ -208,7 +208,7 @@ namespace System.Management.Automation
         /// Used internally in GetFullProfileFileName to get the base path for all users profiles.
         /// </summary>
         /// <param name="shellId">The shellId to use.</param>
-        /// <returns>the base path for all users profiles.</returns>
+        /// <returns>The base path for all users profiles.</returns>
         private static string GetAllUsersFolderPath(string shellId)
         {
             string folderPath = string.Empty;
@@ -882,7 +882,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspace">Runspace to invoke the command on</param>
         /// <param name="command">Command to invoke</param>
-        /// <returns>Collection of command output result objects</returns>
+        /// <returns>Collection of command output result objects.</returns>
         public static Collection<PSObject> InvokeOnRunspace(PSCommand command, Runspace runspace)
         {
             if (command == null)

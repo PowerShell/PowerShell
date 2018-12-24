@@ -140,7 +140,7 @@ namespace System.Management.Automation
         ///  Get the typeinfo interface for the given comobject.
         /// </summary>
         /// <param name="comObject">reference to com object for which we are getting type information.</param>
-        /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object</returns>
+        /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object.</returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Code uses the out parameter of 'GetTypeInfo' to check if the call succeeded.")]
         internal static ComTypeInfo GetDispatchTypeInfo(object comObject)
         {
@@ -266,7 +266,7 @@ namespace System.Management.Automation
         /// Get the IDispatch Typeinfo from CoClass typeinfo.
         /// </summary>
         /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs</param>
-        /// <returns>ITypeInfo reference to the Dispatch interface </returns>
+        /// <returns>ITypeInfo reference to the Dispatch interface.</returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCoClassTypeInfo(COM.ITypeInfo typeinfo)
         {
             //Get the number of interfaces implemented by this CoClass.

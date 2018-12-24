@@ -74,7 +74,7 @@ namespace System.Management.Automation
         /// Also initialize the VARIANT elements to be the type 'VT_EMPTY'.
         /// </summary>
         /// <param name="length">Array length</param>
-        /// <returns>Pointer to the array</returns>
+        /// <returns>Pointer to the array.</returns>
         private static unsafe IntPtr NewVariantArray(int length)
         {
             IntPtr variantArray = Marshal.AllocCoTaskMem(s_variantSize * length);

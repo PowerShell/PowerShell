@@ -808,7 +808,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the hash code for this instance.
         /// </summary>
-        /// <returns>The result of base.GetHashCode()</returns>
+        /// <returns>The result of base.GetHashCode().</returns>
         /// <!-- Override the base GetHashCode because the compiler complains
         /// if you don't when you implement operator== and operator!= -->
         public override int GetHashCode()
