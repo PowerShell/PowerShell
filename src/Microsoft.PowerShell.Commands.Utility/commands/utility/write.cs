@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public WriteErrorException(string message)
             : base(message)
@@ -455,8 +455,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public WriteErrorException(string message,
                                           Exception innerException)

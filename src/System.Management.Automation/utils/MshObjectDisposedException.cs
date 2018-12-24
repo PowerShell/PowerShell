@@ -25,7 +25,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSObjectDisposedException class.
         /// </summary>
-        /// <param name="objectName"> .</param>
+        /// <param name="objectName"></param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// Per MSDN, the parameter is objectName and not message.
@@ -40,8 +40,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSObjectDisposedException class.
         /// </summary>
-        /// <param name="objectName"> .</param>
-        /// <param name="message"> .</param>
+        /// <param name="objectName"></param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PSObjectDisposedException(string objectName, string message)
                 : base(objectName, message)
@@ -51,8 +51,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSObjectDisposedException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSObjectDisposedException(string message, Exception innerException)
             : base(message, innerException)

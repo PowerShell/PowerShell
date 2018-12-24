@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class PSSecurityException
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PSSecurityException(string message)
             : base(message)
@@ -69,8 +69,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class PSSecurityException
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSSecurityException(string message,
                                 Exception innerException)

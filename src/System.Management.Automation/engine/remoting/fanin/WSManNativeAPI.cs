@@ -2643,7 +2643,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Command Operation Handle. If null, the receive request corresponds
         /// to the shell.
         /// </param>
-        /// <param name="flags"> .</param>
+        /// <param name="flags"></param>
         /// <param name="desiredStreamSet"></param>
         /// <param name="asyncCallback">
         /// callback which receives the data asynchronously.

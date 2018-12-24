@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class.
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PSNotSupportedException(string message)
             : base(message)
@@ -78,8 +78,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSNotSupportedException(string message,
                         Exception innerException)

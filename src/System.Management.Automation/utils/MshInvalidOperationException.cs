@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSInvalidOperationException class.
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PSInvalidOperationException(string message)
             : base(message)
@@ -78,8 +78,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSInvalidOperationException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSInvalidOperationException(string message,
                                             Exception innerException)
@@ -90,11 +90,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSInvalidOperationException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
-        /// <param name="errorId"> .</param>
-        /// <param name="errorCategory"> .</param>
-        /// <param name="target"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <param name="errorId"></param>
+        /// <param name="errorCategory"></param>
+        /// <param name="target"></param>
         /// <returns> constructed object </returns>
         internal PSInvalidOperationException(string message, Exception innerException, string errorId, ErrorCategory errorCategory, object target)
             : base(message, innerException)

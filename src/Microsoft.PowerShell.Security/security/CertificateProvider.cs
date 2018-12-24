@@ -2360,7 +2360,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get the name of the specified certificate
         /// </summary>
-        /// <param name="cert"> .</param>
+        /// <param name="cert"></param>
         /// <returns> cert name  </returns>
         /// <remarks> we use Thumbprint as the name  </remarks>
         private static string GetCertName(X509Certificate2 cert)
@@ -2426,7 +2426,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get X509StoreLocation object at path
         /// </summary>
-        /// <param name="path"> .</param>
+        /// <param name="path"></param>
         /// <returns> X509StoreLocation object </returns>
         private X509StoreLocation GetStoreLocation(string path)
         {
@@ -2514,7 +2514,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to the store.</param>
         /// <param name="recurse">Recursively return all items if true.</param>
-        /// <param name="returnNames"> .</param>
+        /// <param name="returnNames"></param>
         /// <param name="filter">Filter info.</param>
         /// <returns> Does not return a value </returns>
         /// <remarks>  </remarks>

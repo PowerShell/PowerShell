@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNotImplementedException class.
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PSNotImplementedException(string message)
             : base(message)
@@ -78,8 +78,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNotImplementedException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSNotImplementedException(string message,
                         Exception innerException)

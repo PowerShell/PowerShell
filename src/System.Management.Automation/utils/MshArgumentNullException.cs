@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
-        /// <param name="paramName"> .</param>
+        /// <param name="paramName"></param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// Per MSDN, the parameter is paramName and not message.
@@ -48,8 +48,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSArgumentNullException(string message, Exception innerException)
             : base(message, innerException)
@@ -60,8 +60,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class.
         /// </summary>
-        /// <param name="paramName"> .</param>
-        /// <param name="message"> .</param>
+        /// <param name="paramName"></param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// ArgumentNullException has this ctor form and we imitate it here.

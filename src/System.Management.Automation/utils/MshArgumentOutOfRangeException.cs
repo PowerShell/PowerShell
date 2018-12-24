@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentOutOfRangeException class.
         /// </summary>
-        /// <param name="paramName"> .</param>
+        /// <param name="paramName"></param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// Per MSDN, the parameter is paramName and not message.
@@ -48,9 +48,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentOutOfRangeException class.
         /// </summary>
-        /// <param name="paramName"> .</param>
-        /// <param name="actualValue"> .</param>
-        /// <param name="message"> .</param>
+        /// <param name="paramName"></param>
+        /// <param name="actualValue"></param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// ArgumentOutOfRangeException has this ctor form and we imitate it here.
@@ -97,8 +97,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentOutOfRangeException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSArgumentOutOfRangeException(string message,
                                               Exception innerException)

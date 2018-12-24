@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// Per MSDN, the parameter is message.
@@ -48,8 +48,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>
-        /// <param name="paramName"> .</param>
-        /// <param name="message"> .</param>
+        /// <param name="paramName"></param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         /// <remarks>
         /// Note the unusual order of the construction parameters.
@@ -100,8 +100,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PSArgumentException(string message,
                                     Exception innerException)

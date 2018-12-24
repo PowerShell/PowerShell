@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the CmdletInvocationException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public CmdletInvocationException(string message)
             : base(message)
@@ -105,8 +105,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the CmdletInvocationException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public CmdletInvocationException(string message,
                                          Exception innerException)
@@ -241,7 +241,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the CmdletProviderInvocationException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public CmdletProviderInvocationException(string message)
             : base(message)
@@ -251,8 +251,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the CmdletProviderInvocationException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public CmdletProviderInvocationException(string message,
                                                  Exception innerException)
@@ -356,7 +356,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineStoppedException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PipelineStoppedException(string message)
             : base(message)
@@ -366,8 +366,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineStoppedException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PipelineStoppedException(string message,
                                         Exception innerException)
@@ -401,7 +401,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineClosedException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PipelineClosedException(string message)
             : base(message)
@@ -411,8 +411,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineClosedException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PipelineClosedException(string message,
                                        Exception innerException)
@@ -482,8 +482,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ActionPreferenceStopException class
         /// </summary>
-        /// <param name="invocationInfo"> .</param>
-        /// <param name="message"> .</param>
+        /// <param name="invocationInfo"></param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         internal ActionPreferenceStopException(InvocationInfo invocationInfo, string message)
             : this(message)
@@ -563,7 +563,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ActionPreferenceStopException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public ActionPreferenceStopException(string message)
             : base(message)
@@ -582,8 +582,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ActionPreferenceStopException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public ActionPreferenceStopException(string message,
                                              Exception innerException)
@@ -658,7 +658,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ParentContainsErrorRecordException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public ParentContainsErrorRecordException(string message)
         {
@@ -677,8 +677,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ParentContainsErrorRecordException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public ParentContainsErrorRecordException(string message,
                                                   Exception innerException)
@@ -768,7 +768,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the RedirectedException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public RedirectedException(string message)
             : base(message)
@@ -780,8 +780,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the RedirectedException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public RedirectedException(string message,
                                    Exception innerException)
@@ -838,7 +838,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ScriptCallDepthException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public ScriptCallDepthException(string message)
             : base(message)
@@ -848,8 +848,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ScriptCallDepthException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public ScriptCallDepthException(string message,
                                         Exception innerException)
@@ -947,7 +947,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineDepthException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public PipelineDepthException(string message)
             : base(message)
@@ -957,8 +957,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineDepthException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public PipelineDepthException(string message,
                                         Exception innerException)
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the HaltCommandException class
         /// </summary>
-        /// <param name="message"> .</param>
+        /// <param name="message"></param>
         /// <returns> constructed object </returns>
         public HaltCommandException(string message)
             : base(message)
@@ -1074,8 +1074,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the HaltCommandException class
         /// </summary>
-        /// <param name="message"> .</param>
-        /// <param name="innerException"> .</param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns> constructed object </returns>
         public HaltCommandException(string message,
                                     Exception innerException)

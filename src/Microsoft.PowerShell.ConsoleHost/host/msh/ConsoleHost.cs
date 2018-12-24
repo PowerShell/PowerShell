@@ -2884,7 +2884,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Constructs RunspaceCreationEventArgs
         /// </summary>
-        /// <param name="initialCommand"> .</param>
+        /// <param name="initialCommand"></param>
         /// <param name="skipProfiles"></param>
         /// <param name="staMode"></param>
         /// <param name="configurationName"></param>
