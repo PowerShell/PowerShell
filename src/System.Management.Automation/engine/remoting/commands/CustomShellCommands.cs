@@ -1419,7 +1419,7 @@ else
         /// <summary>
         /// Creates a Grouped Managed Service Account credential based on the passed in account name
         /// </summary>
-        /// <param name="gmsaAccount">Group Managed Service Account name</param>
+        /// <param name="gmsaAccount">Group Managed Service Account name.</param>
         /// <returns>PSCredential for GMS account</returns>
         /// <exception cref="InvalidOperationException">
         /// Invalid account name.  Must be of form 'Domain\UserName'.

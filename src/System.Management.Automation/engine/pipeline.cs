@@ -296,8 +296,8 @@ namespace System.Management.Automation.Internal
         /// Add a command to the pipeline
         /// </summary>
         /// <param name="commandProcessor"></param>
-        /// <param name="readFromCommand">reference number of command from which to read, 0 for none</param>
-        /// <param name="readErrorQueue">read from error queue of command readFromCommand</param>
+        /// <param name="readFromCommand">reference number of command from which to read, 0 for none.</param>
+        /// <param name="readErrorQueue">read from error queue of command readFromCommand.</param>
         /// <returns>reference number of this command for use in readFromCommand</returns>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="ArgumentException">
@@ -747,7 +747,7 @@ namespace System.Management.Automation.Internal
         /// to process as is the case for I/O redirection into a file. We
         /// still want the file opened, even if there was nothing to write to it.
         /// </summary>
-        /// <param name="expectInput">True if you want to write to this pipeline</param>
+        /// <param name="expectInput">True if you want to write to this pipeline.</param>
         internal void StartStepping(bool expectInput)
         {
             try
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation.Internal
         /// <param name="input">
         /// Array of input objects for first stage
         /// </param>
-        /// <param name="enumerate">If true, unravel the input otherwise pass as one object</param>
+        /// <param name="enumerate">If true, unravel the input otherwise pass as one object.</param>
         /// <throws>
         /// Exception if any cmdlet throws a [terminating] exception
         /// </throws>
@@ -1239,7 +1239,7 @@ namespace System.Management.Automation.Internal
         /// to write into the parent pipeline. It does this by resetting the terminal
         /// pipeline object.
         /// </summary>
-        /// <param name="pipeToUse">The pipeline to write success objects to</param>
+        /// <param name="pipeToUse">The pipeline to write success objects to.</param>
         internal void LinkPipelineSuccessOutput(Pipe pipeToUse)
         {
             Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
@@ -1382,8 +1382,8 @@ namespace System.Management.Automation.Internal
         /// Makes an internal note of the exception, but only if this is
         /// the first error.
         /// </summary>
-        /// <param name="e">error which terminated the pipeline</param>
-        /// <param name="command">command against which to log SecondFailure</param>
+        /// <param name="e">error which terminated the pipeline.</param>
+        /// <param name="command">command against which to log SecondFailure.</param>
         /// <returns>true iff the pipeline was not already stopped</returns>
         internal bool RecordFailure(Exception e, InternalCommand command)
         {

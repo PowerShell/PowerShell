@@ -787,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a collection of PSSession objects based on cmdlet parameters.
         /// </summary>
-        /// <param name="overrideParam">OverrideParameter</param>
+        /// <param name="overrideParam">OverrideParameter.</param>
         /// <returns>Collection of PSSession objects in disconnected state.</returns>
         private Collection<PSSession> CollectDisconnectedSessions(OverrideParameter overrideParam = OverrideParameter.None)
         {
@@ -909,8 +909,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the connect throttling complete event from the ThrottleManager.
         /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="eventArgs">EventArgs</param>
+        /// <param name="sender">Sender.</param>
+        /// <param name="eventArgs">EventArgs.</param>
         private void HandleThrottleConnectComplete(object sender, EventArgs eventArgs)
         {
             _operationsComplete.Set();
@@ -1061,7 +1061,7 @@ namespace Microsoft.PowerShell.Commands
         /// dispose operations and finalize suppressions
         /// </summary>
         /// <param name="disposing">Whether method is called
-        /// from Dispose or destructor</param>
+        /// from Dispose or destructor.</param>
         private void Dispose(bool disposing)
         {
             if (disposing)

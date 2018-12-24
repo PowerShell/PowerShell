@@ -135,14 +135,14 @@ namespace System.Management.Automation
         /// with the associated command string
         /// </summary>
         /// <param name="command">string representation
-        /// of the command the job is running</param>
+        /// of the command the job is running.</param>
         protected Job2(string command) : base(command) { }
 
         /// <summary>
         /// Creates an instance of this class
         /// </summary>
-        /// <param name="command">Command invoked by this job object</param>
-        /// <param name="name">Friendly name for the job object</param>
+        /// <param name="command">Command invoked by this job object.</param>
+        /// <param name="name">Friendly name for the job object.</param>
         protected Job2(string command, string name)
             : base(command, name)
         {
@@ -151,9 +151,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of this class
         /// </summary>
-        /// <param name="command">Command invoked by this job object</param>
-        /// <param name="name">Friendly name for the job object</param>
-        /// <param name="childJobs">Child jobs of this job object</param>
+        /// <param name="command">Command invoked by this job object.</param>
+        /// <param name="name">Friendly name for the job object.</param>
+        /// <param name="childJobs">Child jobs of this job object.</param>
         protected Job2(string command, string name, IList<Job> childJobs)
             : base(command, name, childJobs)
         {
@@ -162,9 +162,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of this class
         /// </summary>
-        /// <param name="command">Command invoked by this job object</param>
-        /// <param name="name">Friendly name for the job object</param>
-        /// <param name="token">JobIdentifier token used to assign Id and InstanceId</param>
+        /// <param name="command">Command invoked by this job object.</param>
+        /// <param name="name">Friendly name for the job object.</param>
+        /// <param name="token">JobIdentifier token used to assign Id and InstanceId.</param>
         protected Job2(string command, string name, JobIdentifier token)
             : base(command, name, token)
         {
@@ -173,8 +173,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of this class
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="name">Friendly name for the job</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for the job.</param>
         /// <param name="instanceId">Instance ID to allow job identification across sessions.</param>
         protected Job2(string command, string name, Guid instanceId)
             : base(command, name, instanceId)
@@ -189,9 +189,9 @@ namespace System.Management.Automation
         /// colliding with some implementation which may have
         /// added that method
         /// </summary>
-        /// <param name="state">state of the job</param>
+        /// <param name="state">state of the job.</param>
         /// <param name="reason">exception associated with the
-        /// job entering this state</param>
+        /// job entering this state.</param>
         protected new void SetJobState(JobState state, Exception reason)
         {
             base.SetJobState(state, reason);
@@ -231,7 +231,7 @@ namespace System.Management.Automation
         /// the job is completed
         /// </summary>
         /// <param name="eventArgs">arguments describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnStartJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(StartJobOperation, eventArgs);
@@ -243,7 +243,7 @@ namespace System.Management.Automation
         /// job is completed
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnStopJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(StopJobOperation, eventArgs);
@@ -255,7 +255,7 @@ namespace System.Management.Automation
         /// job is completed
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnSuspendJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(SuspendJobOperation, eventArgs);
@@ -267,7 +267,7 @@ namespace System.Management.Automation
         /// suspended job is completed
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnResumeJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(ResumeJobOperation, eventArgs);
@@ -279,7 +279,7 @@ namespace System.Management.Automation
         /// blocked job is completed
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnUnblockJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(UnblockJobOperation, eventArgs);
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         /// and the associated event arguments
         /// </summary>
         /// <param name="operation">operation for which the event
-        /// needs to be raised</param>
+        /// needs to be raised.</param>
         /// <param name="eventArgs"></param>
         private void RaiseCompletedHandler(int operation, AsyncCompletedEventArgs eventArgs)
         {
@@ -597,8 +597,8 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string and name
         /// </summary>
-        /// <param name="command">command string</param>
-        /// <param name="name">friendly name for display</param>
+        /// <param name="command">command string.</param>
+        /// <param name="name">friendly name for display.</param>
         public ContainerParentJob(string command, string name)
             : base(command, name)
         {
@@ -609,7 +609,7 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string
         /// </summary>
-        /// <param name="command">Command string</param>
+        /// <param name="command">Command string.</param>
         public ContainerParentJob(string command)
             : base(command)
         {
@@ -620,9 +620,9 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="name">Friendly name for the job</param>
-        /// <param name="jobId">JobIdentifier token that allows reuse of an Id and Instance Id</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for the job.</param>
+        /// <param name="jobId">JobIdentifier token that allows reuse of an Id and Instance Id.</param>
         public ContainerParentJob(string command, string name, JobIdentifier jobId)
             : base(command, name, jobId)
         {
@@ -633,8 +633,8 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="name">Friendly name for the job</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for the job.</param>
         /// <param name="instanceId">Instance ID to allow job identification across sessions.</param>
         public ContainerParentJob(string command, string name, Guid instanceId)
             : base(command, name, instanceId)
@@ -646,10 +646,10 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="name">Friendly name for the job</param>
-        /// <param name="jobId">JobIdentifier token that allows reuse of an Id and Instance Id</param>
-        /// <param name="jobType">Job type name</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for the job.</param>
+        /// <param name="jobId">JobIdentifier token that allows reuse of an Id and Instance Id.</param>
+        /// <param name="jobType">Job type name.</param>
         public ContainerParentJob(string command, string name, JobIdentifier jobId, string jobType)
             : base(command, name, jobId)
         {
@@ -661,10 +661,10 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="name">Friendly name for the job</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for the job.</param>
         /// <param name="instanceId">Instance ID to allow job identification across sessions.</param>
-        /// <param name="jobType">Job type name</param>
+        /// <param name="jobType">Job type name.</param>
         public ContainerParentJob(string command, string name, Guid instanceId, string jobType)
             : base(command, name, instanceId)
         {
@@ -676,9 +676,9 @@ namespace System.Management.Automation
         /// Create a container parent job with the specified command, name,
         /// job type strings.
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="name">Friendly name for the job</param>
-        /// <param name="jobType">Job type name</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for the job.</param>
+        /// <param name="jobType">Job type name.</param>
         public ContainerParentJob(string command, string name, string jobType)
             : base(command, name)
         {
@@ -695,7 +695,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a child job to the parent job
         /// </summary>
-        /// <param name="childJob">child job to add</param>
+        /// <param name="childJob">child job to add.</param>
         /// <exception cref="ObjectDisposedException">Thrown if the job is disposed.</exception>
         /// <exception cref="ArgumentNullException">Thrown if child being added is null.</exception>
         public void AddChildJob(Job2 childJob)
@@ -2119,7 +2119,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new JobFailedException
         /// </summary>
-        /// <param name="message">The message of the exception</param>
+        /// <param name="message">The message of the exception.</param>
         public JobFailedException(string message)
             : base(message)
         {
@@ -2128,7 +2128,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new JobFailedException
         /// </summary>
-        /// <param name="message">The message of the exception</param>
+        /// <param name="message">The message of the exception.</param>
         /// <param name="innerException">The actual exception that caused this error.</param>
         public JobFailedException(string message, Exception innerException)
             : base(message, innerException)
@@ -2149,8 +2149,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="serializationInfo">serialization info</param>
-        /// <param name="streamingContext">streaming context</param>
+        /// <param name="serializationInfo">serialization info.</param>
+        /// <param name="streamingContext">streaming context.</param>
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {
@@ -2175,8 +2175,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the information for serialization
         /// </summary>
-        /// <param name="info">The standard SerializationInfo</param>
-        /// <param name="context">The standard StreaminContext</param>
+        /// <param name="info">The standard SerializationInfo.</param>
+        /// <param name="context">The standard StreaminContext.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)

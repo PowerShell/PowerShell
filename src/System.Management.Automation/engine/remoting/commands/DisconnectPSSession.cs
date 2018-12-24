@@ -333,8 +333,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the connect throttling complete event from the ThrottleManager.
         /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="eventArgs">EventArgs</param>
+        /// <param name="sender">Sender.</param>
+        /// <param name="eventArgs">EventArgs.</param>
         private void HandleThrottleDisconnectComplete(object sender, EventArgs eventArgs)
         {
             _stream.ObjectWriter.Close();
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
         /// dispose operations and finalize suppressions
         /// </summary>
         /// <param name="disposing">Whether method is called
-        /// from Dispose or destructor</param>
+        /// from Dispose or destructor.</param>
         private void Dispose(bool disposing)
         {
             if (disposing)

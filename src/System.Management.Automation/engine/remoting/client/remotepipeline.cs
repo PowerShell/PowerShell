@@ -64,9 +64,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Private constructor that does most of the work constructing a remote pipeline object.
         /// </summary>
-        /// <param name="runspace">RemoteRunspace object</param>
-        /// <param name="addToHistory">AddToHistory</param>
-        /// <param name="isNested">IsNested</param>
+        /// <param name="runspace">RemoteRunspace object.</param>
+        /// <param name="addToHistory">AddToHistory.</param>
+        /// <param name="isNested">IsNested.</param>
         private RemotePipeline(RemoteRunspace runspace, bool addToHistory, bool isNested)
             : base(runspace)
         {
@@ -107,10 +107,10 @@ namespace System.Management.Automation
         /// Constructs a remote pipeline for the specified runspace and
         /// specified command
         /// </summary>
-        /// <param name="runspace">runspace in which to create the pipeline</param>
-        /// <param name="command">command as a string, to be used in pipeline creation</param>
-        /// <param name="addToHistory">whether to add the command to the runspaces history</param>
-        /// <param name="isNested">whether this pipeline is nested</param>
+        /// <param name="runspace">runspace in which to create the pipeline.</param>
+        /// <param name="command">command as a string, to be used in pipeline creation.</param>
+        /// <param name="addToHistory">whether to add the command to the runspaces history.</param>
+        /// <param name="isNested">whether this pipeline is nested.</param>
         internal RemotePipeline(RemoteRunspace runspace, string command, bool addToHistory, bool isNested)
             : this(runspace, addToHistory, isNested)
         {
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a cloned pipeline from the specified one
         /// </summary>
-        /// <param name="pipeline">pipeline to clone from</param>
+        /// <param name="pipeline">pipeline to clone from.</param>
         /// <remarks>This constructor is private because this will
         /// only be called from the copy method</remarks>
         private RemotePipeline(RemotePipeline pipeline) :
@@ -413,7 +413,7 @@ namespace System.Management.Automation
         /// array of objects.
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
-        /// Array may be empty but may not be null</param>
+        /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects</returns>
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
@@ -637,7 +637,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Disposes the pipeline
         /// </summary>
-        /// <param name="disposing">true, when called on Dispose()</param>
+        /// <param name="disposing">true, when called on Dispose().</param>
         protected override void Dispose(bool disposing)
         {
             try
@@ -719,7 +719,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the new execution state.
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         /// <param name="reason">
         /// An exception indicating that state change is the result of an error,
         /// otherwise; null.
@@ -863,8 +863,8 @@ namespace System.Management.Automation
         /// command will be immediately disconnected after it begins
         /// running.
         /// </summary>
-        /// <param name="syncCall">true if called from a sync call</param>
-        /// <param name="invokeAndDisconnect">Invoke and Disconnect</param>
+        /// <param name="syncCall">true if called from a sync call.</param>
+        /// <param name="invokeAndDisconnect">Invoke and Disconnect.</param>
         private void InitPowerShell(bool syncCall, bool invokeAndDisconnect = false)
         {
             if (_commands == null || _commands.Count == 0)
@@ -938,8 +938,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle host call received
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing the host call to invoke</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing the host call to invoke.</param>
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
             ClientMethodExecutor.Dispatch(
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation
         /// from currently executing pipeline's thread.
         /// </summary>
         /// <param name="syncCall">True if method is called from Invoke, false
-        /// if called from InvokeAsync</param>
+        /// if called from InvokeAsync.</param>
         /// <exception cref="InvalidOperationException">
         /// 1) A pipeline is already executing. Pipeline cannot execute
         /// concurrently.
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the history string to the specified string
         /// </summary>
-        /// <param name="historyString">new history string to set to</param>
+        /// <param name="historyString">new history string to set to.</param>
         internal override void SetHistoryString(string historyString)
         {
             _powershell.HistoryString = historyString;

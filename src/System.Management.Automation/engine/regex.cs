@@ -85,7 +85,7 @@ namespace System.Management.Automation
         /// Initializes and instance of the WildcardPattern class
         /// for the specified wildcard pattern.
         /// </summary>
-        /// <param name="pattern">The wildcard pattern to match</param>
+        /// <param name="pattern">The wildcard pattern to match.</param>
         /// <returns>The constructed WildcardPattern object</returns>
         /// <remarks> if wildCardType == None, the pattern does not have wild cards</remarks>
         public WildcardPattern(string pattern)
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// that modify the pattern.
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
-        /// <param name="options">Wildcard options</param>
+        /// <param name="options">Wildcard options.</param>
         /// <returns>The constructed WildcardPattern object</returns>
         /// <remarks> if wildCardType == None, the pattern does not have wild cards  </remarks>
         public WildcardPattern(string pattern,
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new WildcardPattern, or return an already created one.
         /// </summary>
-        /// <param name="pattern">The pattern</param>
+        /// <param name="pattern">The pattern.</param>
         /// <param name="options"></param>
         /// <returns></returns>
         public static WildcardPattern Get(string pattern, WildcardOptions options)
@@ -175,7 +175,7 @@ namespace System.Management.Automation
         /// Escape special chars, except for those specified in <paramref name="charsNotToEscape"/>, in a string by replacing them with their escape codes.
         /// </summary>
         /// <param name="pattern">The input string containing the text to convert.</param>
-        /// <param name="charsNotToEscape">Array of characters that not to escape</param>
+        /// <param name="charsNotToEscape">Array of characters that not to escape.</param>
         /// <returns>
         /// A string of characters with any metacharacters, except for those specified in <paramref name="charsNotToEscape"/>, converted to their escaped form.
         /// </returns>
@@ -428,7 +428,7 @@ namespace System.Management.Automation
         /// Constructs an instance of the WildcardPatternException object taking
         /// a message parameter to use in constructing the exception.
         /// </summary>
-        /// <param name="message">The string to use as the exception message</param>
+        /// <param name="message">The string to use as the exception message.</param>
         public WildcardPatternException(string message) : base(message)
         {
         }
@@ -437,7 +437,7 @@ namespace System.Management.Automation
         /// Constructor for class WildcardPatternException that takes both a message to use
         /// and an inner exception to include in this object.
         /// </summary>
-        /// <param name="message">The exception message to use</param>
+        /// <param name="message">The exception message to use.</param>
         /// <param name="innerException">The innerException object to encapsulate.</param>
         public WildcardPatternException(string message,
                                         Exception innerException)
@@ -448,8 +448,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class WildcardPatternException for serialization.
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected WildcardPatternException(SerializationInfo info,
                                         StreamingContext context)
             : base(info, context)
@@ -589,8 +589,8 @@ namespace System.Management.Automation
         /// Parses <paramref name="pattern"/>, calling appropriate overloads
         /// in <paramref name="parser"/>
         /// </summary>
-        /// <param name="pattern">Pattern to parse</param>
-        /// <param name="parser">Parser to call back</param>
+        /// <param name="pattern">Pattern to parse.</param>
+        /// <param name="parser">Parser to call back.</param>
         public static void Parse(WildcardPattern pattern, WildcardPatternParser parser)
         {
             parser.BeginWildcardPattern(pattern);
@@ -860,7 +860,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Parses a <paramref name="wildcardPattern"/> into a <see cref="Regex"/>
         /// </summary>
-        /// <param name="wildcardPattern">Wildcard pattern to parse</param>
+        /// <param name="wildcardPattern">Wildcard pattern to parse.</param>
         /// <returns>Regular expression equivalent to <paramref name="wildcardPattern"/></returns>
         public static Regex Parse(WildcardPattern wildcardPattern)
         {

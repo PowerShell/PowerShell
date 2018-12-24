@@ -123,8 +123,8 @@ namespace System.Management.Automation
         ///   2. TypeConverter
         /// </param>
         /// <param name="connectionInfo">connection information which identifies
-        /// the remote computer</param>
-        /// <param name="host">host on the client</param>
+        /// the remote computer.</param>
+        /// <param name="host">host on the client.</param>
         /// <param name="applicationArguments">
         /// <param name="name">Friendly name for remote runspace session.</param>
         /// <param name="id">Id for remote runspace.</param>
@@ -614,7 +614,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Dispose this runspace
         /// </summary>
-        /// <param name="disposing">true if called from Dispose</param>
+        /// <param name="disposing">true if called from Dispose.</param>
         protected override void Dispose(bool disposing)
         {
             try
@@ -767,11 +767,11 @@ namespace System.Management.Automation
         /// Creates a single disconnected remote Runspace object based on connection information and
         /// session / command identifiers.
         /// </summary>
-        /// <param name="connectionInfo">Connection object for target machine</param>
-        /// <param name="sessionId">Session Id to connect to</param>
-        /// <param name="commandId">Optional command Id to connect to</param>
-        /// <param name="host">Optional PSHost</param>
-        /// <param name="typeTable">Optional TypeTable</param>
+        /// <param name="connectionInfo">Connection object for target machine.</param>
+        /// <param name="sessionId">Session Id to connect to.</param>
+        /// <param name="commandId">Optional command Id to connect to.</param>
+        /// <param name="host">Optional PSHost.</param>
+        /// <param name="typeTable">Optional TypeTable.</param>
         /// <returns>Disconnect remote Runspace object</returns>
         internal static Runspace GetRemoteRunspace(RunspaceConnectionInfo connectionInfo, Guid sessionId, Guid? commandId, PSHost host, TypeTable typeTable)
         {
@@ -1032,7 +1032,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        /// <param name="command">A valid command string</param>
+        /// <param name="command">A valid command string.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1052,8 +1052,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a pipeline from a command string.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1088,8 +1088,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a nested pipeline.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
         /// Add the pipeline to list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
@@ -1159,7 +1159,7 @@ namespace System.Management.Automation
         /// Remove the pipeline from list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>
@@ -1184,9 +1184,9 @@ namespace System.Management.Automation
         /// Check to see, if there is any other pipeline running in this
         /// runspace. If not, then add this to the list of pipelines
         /// </summary>
-        /// <param name="pipeline">pipeline to check and add</param>
+        /// <param name="pipeline">pipeline to check and add.</param>
         /// <param name="syncCall">whether this is being called from
-        /// a synchronous method call</param>
+        /// a synchronous method call.</param>
         internal void DoConcurrentCheckAndAddToRunningPipelines(RemotePipeline pipeline, bool syncCall)
         {
             //Concurrency check should be done under runspace lock
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set the new runspace state.
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
@@ -1566,9 +1566,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles any host calls received from the server
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
+        /// <param name="sender">sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event, contains
-        /// a RemoteHostCall object</param>
+        /// a RemoteHostCall object.</param>
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
             ClientMethodExecutor.Dispatch(
@@ -1664,8 +1664,8 @@ namespace System.Management.Automation
         /// ahead on the specified invoke-command
         /// </summary>
         /// <param name="invokeCommand">current invoke-command
-        /// instance</param>
-        /// <param name="localPipelineId">local pipeline id</param>
+        /// instance.</param>
+        /// <param name="localPipelineId">local pipeline id.</param>
         /// <returns>true, if another invoke-command is running
         /// before, false otherwise</returns>
         internal bool IsAnotherInvokeCommandExecuting(InvokeCommandCommand invokeCommand,
@@ -1713,8 +1713,8 @@ namespace System.Management.Automation
         /// within the current local pipeline
         /// </summary>
         /// <param name="invokeCommand">reference to invoke command
-        /// which is currently being processed</param>
-        /// <param name="localPipelineId">the local pipeline id</param>
+        /// which is currently being processed.</param>
+        /// <param name="localPipelineId">the local pipeline id.</param>
         internal void SetCurrentInvokeCommand(InvokeCommandCommand invokeCommand,
             long localPipelineId)
         {
@@ -1849,7 +1849,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="runspace">Associated remote runspace</param>
+        /// <param name="runspace">Associated remote runspace.</param>
         public RemoteDebugger(RemoteRunspace runspace)
         {
             if (runspace == null)
@@ -1873,8 +1873,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Process debugger command.
         /// </summary>
-        /// <param name="command">Debugger PSCommand</param>
-        /// <param name="output">Output</param>
+        /// <param name="command">Debugger PSCommand.</param>
+        /// <param name="output">Output.</param>
         /// <returns>DebuggerCommandResults</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
@@ -2010,7 +2010,7 @@ namespace System.Management.Automation
         /// <summary>
         /// SetDebuggerAction
         /// </summary>
-        /// <param name="resumeAction">DebuggerResumeAction</param>
+        /// <param name="resumeAction">DebuggerResumeAction.</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
         {
             CheckForValidateState();
@@ -2094,7 +2094,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets debugger stepping mode.
         /// </summary>
-        /// <param name="enabled">True if stepping is to be enabled</param>
+        /// <param name="enabled">True if stepping is to be enabled.</param>
         public override void SetDebuggerStepMode(bool enabled)
         {
             CheckForValidateState();
@@ -2254,12 +2254,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets client debug info state based on server info.
         /// </summary>
-        /// <param name="debugMode">Debug mode</param>
-        /// <param name="inBreakpoint">Currently in breakpoint</param>
-        /// <param name="breakpointCount">Breakpoint count</param>
-        /// <param name="breakAll">Break All setting</param>
-        /// <param name="unhandledBreakpointMode">UnhandledBreakpointMode</param>
-        /// <param name="serverPSVersion">Server PowerShell version</param>
+        /// <param name="debugMode">Debug mode.</param>
+        /// <param name="inBreakpoint">Currently in breakpoint.</param>
+        /// <param name="breakpointCount">Breakpoint count.</param>
+        /// <param name="breakAll">Break All setting.</param>
+        /// <param name="unhandledBreakpointMode">UnhandledBreakpointMode.</param>
+        /// <param name="serverPSVersion">Server PowerShell version.</param>
         internal void SetClientDebugInfo(
             DebugModes? debugMode,
             bool inBreakpoint,

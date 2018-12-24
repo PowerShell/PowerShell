@@ -58,8 +58,8 @@ namespace Microsoft.PowerShell.Commands
         /// Resolve all the machine names provided. Basically, if a machine
         /// name is '.' assume localhost
         /// </summary>
-        /// <param name="computerNames">array of computer names to resolve</param>
-        /// <param name="resolvedComputerNames">resolved array of machine names</param>
+        /// <param name="computerNames">array of computer names to resolve.</param>
+        /// <param name="resolvedComputerNames">resolved array of machine names.</param>
         protected void ResolveComputerNames(string[] computerNames, out string[] resolvedComputerNames)
         {
             if (computerNames == null)
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// Resolves a computer name. If its null or empty
         /// its assumed to be localhost
         /// </summary>
-        /// <param name="computerName">computer name to resolve</param>
+        /// <param name="computerName">computer name to resolve.</param>
         /// <returns>resolved computer name</returns>
         protected string ResolveComputerName(string computerName)
         {
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands
         ///     2. DEFAULTREMOTEAPPNAME variable set
         ///     3. WSMan
         /// </summary>
-        /// <param name="appName">application name to resolve</param>
+        /// <param name="appName">application name to resolve.</param>
         /// <returns>resolved appname</returns>
         protected string ResolveAppName(string appName)
         {
@@ -850,10 +850,10 @@ namespace Microsoft.PowerShell.Commands
         /// Parse a hostname used with SSH Transport to get embedded
         /// username and/or port.
         /// </summary>
-        /// <param name="hostname">host name to parse</param>
-        /// <param name="host">resolved target host</param>
-        /// <param name="userName">resolved target user name</param>
-        /// <param name="port">resolved target port</param>
+        /// <param name="hostname">host name to parse.</param>
+        /// <param name="host">resolved target host.</param>
+        /// <param name="userName">resolved target user name.</param>
+        /// <param name="port">resolved target port.</param>
         protected void ParseSshHostName(string hostname, out string host, out string userName, out int port)
         {
             host = hostname;
@@ -1035,7 +1035,7 @@ namespace Microsoft.PowerShell.Commands
         /// happen to be a Uri. If so this throws an error
         /// </summary>
         /// <param name="computerNames">collection of computer
-        /// names to validate</param>
+        /// names to validate.</param>
         protected void ValidateComputerName(string[] computerNames)
         {
             foreach (string computerName in computerNames)
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Validates parameter value and returns as string
         /// </summary>
-        /// <param name="param">Parameter value to be validated</param>
+        /// <param name="param">Parameter value to be validated.</param>
         /// <returns>Parameter value as string</returns>
         private static string GetSSHConnectionStringParameter(object param)
         {
@@ -1070,7 +1070,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Validates parameter value and returns as integer
         /// </summary>
-        /// <param name="param">Parameter value to be validated</param>
+        /// <param name="param">Parameter value to be validated.</param>
         /// <returns>Parameter value as integer</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
@@ -1825,7 +1825,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a pipeline from the powershell
         /// </summary>
-        /// <param name="remoteRunspace">runspace on which to create the pipeline</param>
+        /// <param name="remoteRunspace">runspace on which to create the pipeline.</param>
         /// <returns>a pipeline</returns>
         internal Pipeline CreatePipeline(RemoteRunspace remoteRunspace)
         {
@@ -1934,8 +1934,8 @@ namespace Microsoft.PowerShell.Commands
         /// failed
         /// </summary>
         /// <param name="e">exception which is causing this error record
-        /// to be written</param>
-        /// <param name="uri">Uri which caused this exception</param>
+        /// to be written.</param>
+        /// <param name="uri">Uri which caused this exception.</param>
         private void WriteErrorCreateRemoteRunspaceFailed(Exception e, Uri uri)
         {
             Dbg.Assert(e is UriFormatException || e is InvalidOperationException ||
@@ -2575,9 +2575,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on the parameterset
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>list of matching runspaces</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
@@ -2590,9 +2590,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on the parameterset
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>list of matching runspaces</returns>
@@ -2694,9 +2694,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces by computernames
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByComputerName(bool writeobject,
             bool writeErrorOnNoMatch)
@@ -2756,9 +2756,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on name
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>list of matching runspaces</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
@@ -2815,9 +2815,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on the runspaces instance id
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>list of matching runspaces</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
@@ -2873,9 +2873,9 @@ namespace Microsoft.PowerShell.Commands
         /// short integer id which is unique for a runspace)
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesBySessionId(bool writeobject,
             bool writeErrorOnNoMatch)
@@ -2927,10 +2927,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm name or container id with optional session name
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline</param>
+        /// <param name="writeobject">if true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
+        /// <param name="isContainer">if true the target is a container instead of virtual machine.</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerId(bool writeobject,
             SessionFilterState filterState,
@@ -2995,10 +2995,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm name or container id with session instanceid
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline</param>
+        /// <param name="writeobject">if true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
+        /// <param name="isContainer">if true the target is a container instead of virtual machine.</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
@@ -3053,7 +3053,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm guid and optional session name
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline</param>
+        /// <param name="writeobject">if true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>list of matching runspaces</returns>
@@ -3098,7 +3098,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm guid and session instanceid
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline</param>
+        /// <param name="writeobject">if true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>list of matching runspaces</returns>
@@ -3133,9 +3133,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Write the matching runspace objects down the pipeline, or add to the list.
         /// </summary>
-        /// <param name="matchingRunspaceInfos">The matching runspaces</param>
-        /// <param name="writeobject">if true write the object down the pipeline. Otherwise, add to the list</param>
-        /// <param name="matches">The list we add the matching runspaces to</param>
+        /// <param name="matchingRunspaceInfos">The matching runspaces.</param>
+        /// <param name="writeobject">if true write the object down the pipeline. Otherwise, add to the list.</param>
+        /// <param name="matches">The list we add the matching runspaces to.</param>
         private void WriteOrAddMatches(List<PSSession> matchingRunspaceInfos,
             bool writeobject,
             ref Dictionary<Guid, PSSession> matches)
@@ -3300,7 +3300,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Internal constructor
         /// </summary>
-        /// <param name="pipeline">pipeline object associated with this operation</param>
+        /// <param name="pipeline">pipeline object associated with this operation.</param>
         internal ExecutionCmdletHelperRunspace(Pipeline pipeline)
         {
             this.pipeline = pipeline;
@@ -3373,9 +3373,9 @@ namespace Microsoft.PowerShell.Commands
         /// StartOperation and StopOperation. Here nothing more is done excepting raising
         /// the OperationComplete event appropriately which will be handled by the cmdlet
         /// </summary>
-        /// <param name="sender">source of this event</param>
+        /// <param name="sender">source of this event.</param>
         /// <param name="stateEventArgs">object describing state information about the
-        /// pipeline</param>
+        /// pipeline.</param>
         private void HandlePipelineStateChanged(object sender, PipelineStateEventArgs stateEventArgs)
         {
             PipelineStateInfo stateInfo = stateEventArgs.PipelineStateInfo;
@@ -3405,7 +3405,7 @@ namespace Microsoft.PowerShell.Commands
         /// Raise an operation complete event.
         /// </summary>
         /// <param name="baseEventArgs">The event args which actually
-        /// raises this operation complete</param>
+        /// raises this operation complete.</param>
         private void RaiseOperationCompleteEvent(EventArgs baseEventArgs)
         {
             CleanupRunspaceDebugging(PipelineRunspace);
@@ -3462,8 +3462,8 @@ namespace Microsoft.PowerShell.Commands
         /// Constructor
         /// </summary>
         /// <param name="remoteRunspace">RemoteRunspace that is associated
-        /// with this operation</param>
-        /// <param name="pipeline">pipeline created from the remote runspace</param>
+        /// with this operation.</param>
+        /// <param name="pipeline">pipeline created from the remote runspace.</param>
         /// <param name="invokeAndDisconnect">Indicates if pipeline should be disconnected after invoking command.</param>
         internal ExecutionCmdletHelperComputerName(RemoteRunspace remoteRunspace, Pipeline pipeline, bool invokeAndDisconnect = false)
         {
@@ -3536,8 +3536,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the state changed event for runspace operations
         /// </summary>
-        /// <param name="sender">sender of this information</param>
-        /// <param name="stateEventArgs">object describing this event</param>
+        /// <param name="sender">sender of this information.</param>
+        /// <param name="stateEventArgs">object describing this event.</param>
         private void HandleRunspaceStateChanged(object sender,
                 RunspaceStateEventArgs stateEventArgs)
         {
@@ -3607,8 +3607,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the state changed event for the pipeline.
         /// </summary>
-        /// <param name="sender">sender of this information</param>
-        /// <param name="stateEventArgs">object describing this event</param>
+        /// <param name="sender">sender of this information.</param>
+        /// <param name="stateEventArgs">object describing this event.</param>
         private void HandlePipelineStateChanged(object sender,
                         PipelineStateEventArgs stateEventArgs)
         {
@@ -3646,7 +3646,7 @@ namespace Microsoft.PowerShell.Commands
         /// Raise an operation complete event.
         /// </summary>
         /// <param name="baseEventArgs">The event args which actually
-        /// raises this operation complete</param>
+        /// raises this operation complete.</param>
         private void RaiseOperationCompleteEvent(EventArgs baseEventArgs)
         {
             if (pipeline != null)
@@ -3684,12 +3684,12 @@ namespace Microsoft.PowerShell.Commands
         /// Resolves the specified path and verifies the path belongs to
         /// FileSystemProvider.
         /// </summary>
-        /// <param name="path">Path to resolve</param>
+        /// <param name="path">Path to resolve.</param>
         /// <param name="isLiteralPath">True if wildcard expansion should be suppressed for this path.</param>
         /// <param name="cmdlet">reference to calling cmdlet. This will be used for
-        /// for writing errors</param>
+        /// for writing errors.</param>
         /// <param name="allowNonexistingPaths"></param>
-        /// <param name="resourceString">resource string for error when path is not from filesystem provider</param>
+        /// <param name="resourceString">resource string for error when path is not from filesystem provider.</param>
         /// <returns>A fully qualified string representing filename.</returns>
         internal static string ResolveProviderAndPath(string path, bool isLiteralPath, PSCmdlet cmdlet, bool allowNonexistingPaths, string resourceString)
         {
@@ -4054,8 +4054,8 @@ namespace Microsoft.PowerShell.Commands
         /// Returns Exception message.  If message is WSMan Xml then
         /// the WSMan message and error code is extracted and returned.
         /// </summary>
-        /// <param name="e">Exception</param>
-        /// <param name="errorCode">Returned WSMan error code</param>
+        /// <param name="e">Exception.</param>
+        /// <param name="errorCode">Returned WSMan error code.</param>
         /// <returns>WSMan message</returns>
         internal static string ExtractMessage(
             Exception e,

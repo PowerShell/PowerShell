@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
         /// PowerShell pipe name example:
         ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell
         /// </summary>
-        /// <param name="procIds">Process Ids or null</param>
+        /// <param name="procIds">Process Ids or null.</param>
         /// <returns>Collection of process AppDomain info</returns>
         internal static IReadOnlyCollection<PSHostProcessInfo> GetAppDomainNamesFromProcessId(int[] procIds)
         {
@@ -692,9 +692,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="processName">Name of process</param>
-        /// <param name="processId">Id of process</param>
-        /// <param name="appDomainName">Name of process AppDomain</param>
+        /// <param name="processName">Name of process.</param>
+        /// <param name="processId">Id of process.</param>
+        /// <param name="appDomainName">Name of process AppDomain.</param>
         internal PSHostProcessInfo(string processName, int processId, string appDomainName)
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }

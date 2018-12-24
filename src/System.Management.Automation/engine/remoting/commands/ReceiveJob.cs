@@ -918,7 +918,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns all the results from supplied PSDataCollection.
         /// </summary>
-        /// <param name="psDataCollection">data collection to read from</param>
+        /// <param name="psDataCollection">data collection to read from.</param>
         /// <returns>collection with copy of data</returns>
         private Collection<T> ReadAll<T>(PSDataCollection<T> psDataCollection)
         {
@@ -942,8 +942,8 @@ namespace Microsoft.PowerShell.Commands
         /// Write the results from this Job object. It also writes the
         /// results from its child objects recursively.
         /// </summary>
-        /// <param name="duplicate">Hashtable used for duplicate detection</param>
-        /// <param name="job">Job whose results are written</param>
+        /// <param name="duplicate">Hashtable used for duplicate detection.</param>
+        /// <param name="job">Job whose results are written.</param>
         /// <param name="registerInsteadOfWrite"></param>
         private void WriteJobResultsRecursivelyHelper(Hashtable duplicate, Job job, bool registerInsteadOfWrite)
         {
@@ -985,7 +985,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the job objects if required by the cmdlet
         /// </summary>
-        /// <param name="jobsToWrite">collection of jobs to write</param>
+        /// <param name="jobsToWrite">collection of jobs to write.</param>
         /// <remarks>this method is intended to be called only from
         /// ProcessRecord. When any changes are made ensure that this
         /// contract is not broken</remarks>
@@ -1448,7 +1448,7 @@ namespace Microsoft.PowerShell.Commands
         /// Write the results from this Job object. It also writes the
         /// results from its child objects recursively.
         /// </summary>
-        /// <param name="job">Job whose results are written</param>
+        /// <param name="job">Job whose results are written.</param>
         /// <param name="registerInsteadOfWrite"></param>
         private void WriteJobResultsRecursively(Job job, bool registerInsteadOfWrite)
         {
