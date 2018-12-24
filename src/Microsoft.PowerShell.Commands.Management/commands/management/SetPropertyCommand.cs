@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Property Value set
 
-        #region Shell Object set
+        #region Shell object set
 
         /// <summary>
         /// A PSObject that contains the properties and values to be set.
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
 
-        #endregion Shell Object set
+        #endregion Shell object set
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets

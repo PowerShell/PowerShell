@@ -689,7 +689,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private Object AuxillaryInvokeMethod(ManagementObject obj, WMIMethodCacheEntry mdata, object[] arguments)
+        private object AuxillaryInvokeMethod(ManagementObject obj, WMIMethodCacheEntry mdata, object[] arguments)
         {
             // Evaluate method and arguments
             object[] verifiedArguments;

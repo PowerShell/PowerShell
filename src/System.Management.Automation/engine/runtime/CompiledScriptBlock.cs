@@ -1995,7 +1995,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="context">The streaming context for this instance</param>
         /// <returns>A script block that corresponds to the version deserialized</returns>
-        public Object GetRealObject(StreamingContext context)
+        public object GetRealObject(StreamingContext context)
         {
             return ScriptBlock.Create(_scriptText);
         }

@@ -389,7 +389,7 @@ namespace System.Management.Automation.Security
 
             // Support fall-back debug hook for system-wide policy on non-WOA platforms
             uint pdwLockdownState = 0;
-            Object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
+            object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
             if (result != null)
             {
                 pdwLockdownState = LanguagePrimitives.ConvertTo<uint>(result);

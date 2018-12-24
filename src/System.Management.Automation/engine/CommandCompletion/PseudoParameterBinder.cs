@@ -484,7 +484,7 @@ namespace System.Management.Automation.Language
                 {
                     CompiledCommandParameter parameter = item.Value.Parameter;
                     CommandElementAst value = null;
-                    Object constantValue = null;
+                    object constantValue = null;
 
                     // This is a single argument
                     AstPair argumentAstPair = bindingInfo.BoundArguments[item.Key] as AstPair;
@@ -710,7 +710,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class ParameterBindingResult
     {
-        internal ParameterBindingResult(CompiledCommandParameter parameter, CommandElementAst value, Object constantValue)
+        internal ParameterBindingResult(CompiledCommandParameter parameter, CommandElementAst value, object constantValue)
         {
             this.Parameter = new ParameterMetadata(parameter);
             this.Value = value;
@@ -727,7 +727,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// </summary>
-        public Object ConstantValue
+        public object ConstantValue
         {
             get { return _constantValue; }
 

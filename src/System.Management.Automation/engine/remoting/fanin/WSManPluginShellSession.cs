@@ -660,7 +660,7 @@ namespace System.Management.Automation.Remoting
         }
 
         private void HandleServerRemoteSessionClosed(
-            Object sender,
+            object sender,
             RemoteSessionStateMachineEventArgs eventArgs)
         {
             Exception reasonForClose = null;
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Remoting
         }
 
         private void HandleCommandSessionClosed(
-            Object source,
+            object source,
             EventArgs e)
         {
             // command context is passed as "source" parameter

@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
             _expression = expression;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             List<PSPropertyExpressionResult> resList = _expression.GetValues(liveObject);
 

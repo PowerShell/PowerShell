@@ -627,7 +627,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Object used to synchronize access to the queues
         /// </summary>
-        private Object _syncObject;
+        private object _syncObject;
 
         private bool _submitComplete = false;                    // to check if operations have been submitComplete
         private bool _stopping = false;                      // if stop is in process

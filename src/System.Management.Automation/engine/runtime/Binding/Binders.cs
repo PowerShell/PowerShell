@@ -5143,7 +5143,7 @@ namespace System.Management.Automation.Language
             // Defer COM objects or arguments wrapped in PSObjects
             if (target.Value is PSObject && (PSObject.Base(target.Value) != target.Value))
             {
-                Object baseObject = PSObject.Base(target.Value);
+                object baseObject = PSObject.Base(target.Value);
                 if (baseObject != null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' is a COM object. It's unnecessary to unwrap in other cases,
@@ -5478,7 +5478,7 @@ namespace System.Management.Automation.Language
                                         new object[] { Name });
         }
 
-        internal static DynamicMetaObject EnsureAllowedInLanguageMode(ExecutionContext context, DynamicMetaObject target, Object targetValue,
+        internal static DynamicMetaObject EnsureAllowedInLanguageMode(ExecutionContext context, DynamicMetaObject target, object targetValue,
             string name, bool isStatic, DynamicMetaObject[] args, BindingRestrictions moreTests, string errorID, string resourceString)
         {
             if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
@@ -6027,7 +6027,7 @@ namespace System.Management.Automation.Language
             if ((target.Value is PSObject && (PSObject.Base(target.Value) != target.Value)) ||
                 (value.Value is PSObject && (PSObject.Base(value.Value) != value.Value)))
             {
-                Object baseObject = PSObject.Base(target.Value);
+                object baseObject = PSObject.Base(target.Value);
                 if (baseObject != null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
@@ -6354,7 +6354,7 @@ namespace System.Management.Automation.Language
                                     Expression.Constant(codeProperty.Name),
                                     Expression.Constant(propertyType, typeof(Type)))),
                             this.ReturnType);
-                        
+
                         return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
                     }
 
@@ -6604,7 +6604,7 @@ namespace System.Management.Automation.Language
             if ((target.Value is PSObject && (PSObject.Base(target.Value) != target.Value)) ||
                 args.Any(mo => mo.Value is PSObject && (PSObject.Base(mo.Value) != mo.Value)))
             {
-                Object baseObject = PSObject.Base(target.Value);
+                object baseObject = PSObject.Base(target.Value);
                 if (baseObject != null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
@@ -7064,7 +7064,7 @@ namespace System.Management.Automation.Language
             // via helper methods, and thus all arguments need to be casted to 'object'. The ByRef-like types
             // cannot be boxed and won't work with reflection.
             bool allowCastingToByRefLikeType =
-                invocationType != MethodInvocationType.BaseCtor && 
+                invocationType != MethodInvocationType.BaseCtor &&
                 invocationType != MethodInvocationType.NonVirtual;
             var parameters = mi.GetParameters();
             var argExprs = new Expression[parameters.Length];
@@ -7170,7 +7170,7 @@ namespace System.Management.Automation.Language
             {
                 if (invocationType == MethodInvocationType.BaseCtor)
                 {
-                    var targetExpr = target.Value is PSObject 
+                    var targetExpr = target.Value is PSObject
                         ? target.Expression.Cast(constructorInfo.DeclaringType)
                         : PSGetMemberBinder.GetTargetExpr(target, constructorInfo.DeclaringType);
                     call = Expression.Call(

@@ -179,7 +179,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Returns the object that generates events to be monitored
         /// </summary>
-        protected override Object GetSourceObject()
+        protected override object GetSourceObject()
         {
             CimIndicationWatcher watcher = null;
             string parameterSetName = null;

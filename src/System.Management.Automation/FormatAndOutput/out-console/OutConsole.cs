@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             // doesn't actually write pipeline objects.
             if (_outVarResults != null)
             {
-                Object inputObjectBase = PSObject.Base(InputObject);
+                object inputObjectBase = PSObject.Base(InputObject);
 
                 // Ignore errors and formatting records, as those can't be captured
                 if (

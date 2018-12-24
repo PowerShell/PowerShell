@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell
                             fieldPromptList.Append(
                                 string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
                             Boolean inputListEnd = false;
-                            Object convertedObj = null;
+                            object convertedObj = null;
                             string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
                                 desc, fieldEchoOnPrompt, true, out inputListEnd, out cancelInput, out convertedObj);
 
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell
                         string printFieldPrompt = StringUtil.Format(ConsoleHostUserInterfaceStrings.PromptFieldPromptInputSeparatorTemplate,
                             fieldPrompt);
                         // field is not a list
-                        Object convertedObj = null;
+                        object convertedObj = null;
                         Boolean dummy = false;
 
                         PromptForSingleItem(fieldType, printFieldPrompt, fieldPrompt, caption, message, desc,

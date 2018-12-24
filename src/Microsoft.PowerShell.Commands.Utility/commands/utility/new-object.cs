@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
         private class ComCreateInfo
         {
-            public Object objectCreated;
+            public object objectCreated;
             public bool success;
             public Exception e;
         }
