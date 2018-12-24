@@ -179,12 +179,14 @@ namespace System.Management.Automation.Runspaces
             {
                 return _culture;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }
+
                 _culture = value;
             }
         }
@@ -200,12 +202,14 @@ namespace System.Management.Automation.Runspaces
             {
                 return _uiCulture;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }
+
                 _uiCulture = value;
             }
         }
@@ -221,6 +225,7 @@ namespace System.Management.Automation.Runspaces
         public int OpenTimeout
         {
             get { return _openTimeout; }
+
             set
             {
                 _openTimeout = value;
@@ -241,6 +246,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private int _openTimeout = DefaultOpenTimeout;
         internal const int DefaultOpenTimeout = 3 * 60 * 1000; // 3 minutes
         internal const int DefaultTimeout = -1;
@@ -404,12 +410,14 @@ namespace System.Management.Automation.Runspaces
             {
                 return _connectionUri;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
+
                 UpdateUri(value);
             }
         }
@@ -423,6 +431,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _computerName;
             }
+
             set
             {
                 // null or empty value allowed
@@ -439,6 +448,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _scheme;
             }
+
             set
             {
                 // null or empty value allowed
@@ -455,6 +465,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return ConnectionUri.Port;
             }
+
             set
             {
                 ConstructUri(_scheme, _computerName, value, _appName);
@@ -471,6 +482,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _appName;
             }
+
             set
             {
                 //null or empty value allowed
@@ -487,6 +499,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _credential;
             }
+
             set
             {
                 // null or empty value allowed
@@ -503,6 +516,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _shellUri;
             }
+
             set
             {
                 _shellUri = ResolveShellUri(value);
@@ -529,6 +543,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             return AuthenticationMechanism.NegotiateWithImplicitCredential;
                         }
+
                         return AuthenticationMechanism.Negotiate;
                     case WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_DIGEST:
                         return AuthenticationMechanism.Digest;
@@ -539,6 +554,7 @@ namespace System.Management.Automation.Runspaces
                         return AuthenticationMechanism.Default;
                 }
             }
+
             set
             {
                 switch (value)
@@ -568,6 +584,7 @@ namespace System.Management.Automation.Runspaces
                     default:
                         throw new PSNotSupportedException();
                 }
+
                 ValidateSpecifiedAuthentication();
             }
         }
@@ -597,12 +614,14 @@ namespace System.Management.Automation.Runspaces
         public override string CertificateThumbprint
         {
             get { return _thumbPrint; }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
+
                 _thumbPrint = value;
             }
         }
@@ -672,6 +691,7 @@ namespace System.Management.Automation.Runspaces
         public AuthenticationMechanism ProxyAuthentication
         {
             get { return _proxyAuthentication; }
+
             set
             {
                 switch (value)
@@ -698,6 +718,7 @@ namespace System.Management.Automation.Runspaces
         public PSCredential ProxyCredential
         {
             get { return _proxyCredential; }
+
             set
             {
                 if (ProxyAccessType == ProxyAccessType.None)
@@ -918,6 +939,7 @@ namespace System.Management.Automation.Runspaces
             {
                 ConnectionUri = uri;
             }
+
             ShellUri = shellUri;
             Credential = credential;
         }
@@ -1185,6 +1207,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
+
             PSEtwLog.LogAnalyticVerbose(PSEventId.ComputerName, PSOpcode.Method,
                 PSTask.CreateRunspace, PSKeyword.Runspace | PSKeyword.UseAlwaysAnalytic,
                 _computerName);
@@ -1349,6 +1372,7 @@ namespace System.Management.Automation.Runspaces
         internal bool UseDefaultWSManPort
         {
             get { return false; }
+
             set { }
         }
 #else
@@ -1496,17 +1520,20 @@ namespace System.Management.Automation.Runspaces
                     {
                         // it is already the default
                     }
+
                     break;
 
                 case PSSessionType.Workflow:
                     {
                         ShellUri = DefaultM3PEndpoint;
                     }
+
                     break;
                 default:
                     {
                         Diagnostics.Assert(false, "Unknown value for PSSessionType");
                     }
+
                     break;
             }
         }
@@ -1558,6 +1585,7 @@ namespace System.Management.Automation.Runspaces
         public override string ComputerName
         {
             get { return "localhost"; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -1567,6 +1595,7 @@ namespace System.Management.Automation.Runspaces
         public override PSCredential Credential
         {
             get { return _credential; }
+
             set
             {
                 _credential = value;
@@ -1584,6 +1613,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _authMechanism;
             }
+
             set
             {
                 if (value != AuthenticationMechanism.Default)
@@ -1605,6 +1635,7 @@ namespace System.Management.Automation.Runspaces
         public override string CertificateThumbprint
         {
             get { return string.Empty; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -1684,6 +1715,7 @@ namespace System.Management.Automation.Runspaces
         public string AppDomainName
         {
             get { return _appDomainName; }
+
             set
             {
                 _appDomainName = value ?? string.Empty;
@@ -1748,6 +1780,7 @@ namespace System.Management.Automation.Runspaces
         public override string ComputerName
         {
             get { return "localhost"; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -1774,6 +1807,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _authMechanism;
             }
+
             set
             {
                 if (value != Runspaces.AuthenticationMechanism.Default)
@@ -1792,6 +1826,7 @@ namespace System.Management.Automation.Runspaces
         public override string CertificateThumbprint
         {
             get { return string.Empty; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -1955,6 +1990,7 @@ namespace System.Management.Automation.Runspaces
         public override PSCredential Credential
         {
             get { return null; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -1964,6 +2000,7 @@ namespace System.Management.Automation.Runspaces
         public override AuthenticationMechanism AuthenticationMechanism
         {
             get { return AuthenticationMechanism.Default; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -1973,6 +2010,7 @@ namespace System.Management.Automation.Runspaces
         public override string CertificateThumbprint
         {
             get { return string.Empty; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -2202,12 +2240,14 @@ namespace System.Management.Automation.Runspaces
                     Utils.utf8NoBom, StreamBufferSize)
                 { AutoFlush = true };
             }
+
             if (startInfo.RedirectStandardOutput)
             {
                 Debug.Assert(stdoutFd >= 0, "Invalid Fd");
                 standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
                     startInfo.StandardOutputEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
             }
+
             if (startInfo.RedirectStandardError)
             {
                 Debug.Assert(stderrFd >= 0, "Invalid Fd");
@@ -2241,6 +2281,7 @@ namespace System.Management.Automation.Runspaces
             {
                 envp[index++] = pair.Key + "=" + pair.Value;
             }
+
             return envp;
         }
 
@@ -2268,6 +2309,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             iStart++;
                         }
+
                         break;
 
                     default:
@@ -2438,7 +2480,9 @@ namespace System.Management.Automation.Runspaces
             catch (Exception)
             {
                 if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
+
                 if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
+
                 if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
 
                 throw;
@@ -2491,10 +2535,15 @@ namespace System.Management.Automation.Runspaces
             catch (Exception)
             {
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
+
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
+
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
+
                 if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
+
                 if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
+
                 if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
 
                 throw;
@@ -2557,10 +2606,15 @@ namespace System.Management.Automation.Runspaces
             catch (Exception)
             {
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
+
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
+
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
+
                 if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
+
                 if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
+
                 if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
 
                 throw;
@@ -2683,6 +2737,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _authMechanism;
             }
+
             set
             {
                 if (value != AuthenticationMechanism.Default)
@@ -2704,6 +2759,7 @@ namespace System.Management.Automation.Runspaces
         public override string CertificateThumbprint
         {
             get { return null; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -2713,6 +2769,7 @@ namespace System.Management.Automation.Runspaces
         public override PSCredential Credential
         {
             get { return _credential; }
+
             set
             {
                 _credential = value;
@@ -2804,6 +2861,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _authMechanism;
             }
+
             set
             {
                 if (value != AuthenticationMechanism.Default)
@@ -2825,6 +2883,7 @@ namespace System.Management.Automation.Runspaces
         public override string CertificateThumbprint
         {
             get { return null; }
+
             set { throw new NotImplementedException(); }
         }
 
@@ -2834,6 +2893,7 @@ namespace System.Management.Automation.Runspaces
         public override PSCredential Credential
         {
             get { return _credential; }
+
             set
             {
                 _credential = value;
@@ -2847,6 +2907,7 @@ namespace System.Management.Automation.Runspaces
         public override string ComputerName
         {
             get { return ContainerProc.ContainerId; }
+
             set { throw new PSNotSupportedException(); }
         }
 

@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_wildcardPatterns[k].IsMatch(expression.ToString()))
                     return true;
             }
+
             return false;
         }
 
@@ -104,8 +105,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Unique
         {
             get { return _unique; }
+
             set { _unique = value; }
         }
+
         private bool _unique;
 
         /// <summary>
@@ -118,8 +121,10 @@ namespace Microsoft.PowerShell.Commands
         public int Last
         {
             get { return _last; }
+
             set { _last = value; _firstOrLastSpecified = true; }
         }
+
         private int _last = 0;
 
         /// <summary>
@@ -132,8 +137,10 @@ namespace Microsoft.PowerShell.Commands
         public int First
         {
             get { return _first; }
+
             set { _first = value; _firstOrLastSpecified = true; }
         }
+
         private int _first = 0;
         private bool _firstOrLastSpecified;
 
@@ -173,6 +180,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _index;
             }
+
             set
             {
                 _index = value;
@@ -195,6 +203,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _index;
             }
+
             set
             {
                 _index = value;
@@ -241,6 +250,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     base.Dequeue();
                 }
+
                 base.Enqueue(obj);
             }
 
@@ -316,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 WrittenObject = o;
                 NotePropertyCount = notePropertyCount;
             }
+
             internal readonly PSObject WrittenObject;
             internal int NotePropertyCount { get; }
         }
@@ -330,6 +341,7 @@ namespace Microsoft.PowerShell.Commands
             if ((Property != null) && (Property.Length != 0))
             {
                 // Build property list taking into account the wildcards and @{name=;expression=}
+
                 _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
             else
@@ -399,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 FilteredWriteObject(result, matchedProperties);
             }
             else
@@ -467,15 +480,18 @@ namespace Microsoft.PowerShell.Commands
                             "EmptyScriptBlockAndNoName",
                             ErrorCategory.InvalidArgument, null));
                     }
+
                     mshProp = new PSNoteProperty(resolvedExpressionName, r.Result);
                 }
                 else
                 {
                     mshProp = new PSNoteProperty(name, r.Result);
                 }
+
                 result.Add(mshProp);
             }
         }
+
         private void ProcessExpandParameter(MshParameter p, PSObject inputObject,
             List<PSNoteProperty> matchedProperties)
         {
@@ -491,6 +507,7 @@ namespace Microsoft.PowerShell.Commands
                     inputObject);
                 throw new SelectObjectException(errorRecord);
             }
+
             if (expressionResults.Count > 1)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
@@ -580,6 +597,7 @@ namespace Microsoft.PowerShell.Commands
                 inputObject);
             WriteError(errorRecord);
         }
+
         private void FilteredWriteObject(PSObject obj, List<PSNoteProperty> addedNoteProperties)
         {
             Diagnostics.Assert(obj != null, "This command should never write null");
@@ -591,6 +609,7 @@ namespace Microsoft.PowerShell.Commands
                     SetPSCustomObject(obj);
                     WriteObject(obj);
                 }
+
                 return;
             }
             //if only unique is mentioned
@@ -613,6 +632,7 @@ namespace Microsoft.PowerShell.Commands
                                 break;
                             }
                         }
+
                         if (found)
                         {
                             isObjUnique = false;
@@ -624,6 +644,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
                 }
+
                 if (isObjUnique)
                 {
                     SetPSCustomObject(obj);

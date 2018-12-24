@@ -186,6 +186,7 @@ namespace System.Management.Automation
 
                         throw bindingException;
                     }
+
                     BindParameter(uint.MaxValue, argument, parameter, ParameterBindingFlags.ShouldCoerceType);
                 }
                 else if (argument.ParameterName.Equals(Language.Parser.VERBATIM_PARAMETERNAME, StringComparison.Ordinal))
@@ -200,6 +201,7 @@ namespace System.Management.Automation
                     result.Add(argument);
                 }
             }
+
             return result;
         }
 
@@ -261,6 +263,7 @@ namespace System.Management.Automation
                     {
                         args.Add(argValue);
                     }
+
                     continue;
                 }
 
@@ -279,6 +282,7 @@ namespace System.Management.Automation
                         { IsHidden = true };
                         parameterText.Properties.Add(noteProperty);
                     }
+
                     args.Add(parameterText);
                 }
 

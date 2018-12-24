@@ -65,6 +65,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     throw;
                 }
+
                 lpl.Stopper.Stop();
             }
 

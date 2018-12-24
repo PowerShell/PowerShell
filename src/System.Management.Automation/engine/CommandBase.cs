@@ -89,6 +89,7 @@ namespace System.Management.Automation.Internal
         internal PSObject CurrentPipelineObject
         {
             get { return currentObjectInPipeline; }
+
             set
             {
                 currentObjectInPipeline = value;
@@ -102,6 +103,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _CBhost; }
         }
+
         private PSHost _CBhost;
 
         /// <summary>
@@ -111,6 +113,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _state; }
         }
+
         private SessionState _state;
 
         /// <summary>
@@ -135,6 +138,7 @@ namespace System.Management.Automation.Internal
         internal CommandInfo CommandInfo
         {
             get { return _commandInfo; }
+
             set { _commandInfo = value; }
         }
 
@@ -151,12 +155,14 @@ namespace System.Management.Automation.Internal
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Context");
                 }
+
                 _context = value;
                 Diagnostics.Assert(_context.EngineHostInterface is InternalHost, "context.EngineHostInterface is not an InternalHost");
                 _CBhost = (InternalHost)_context.EngineHostInterface;
@@ -166,6 +172,7 @@ namespace System.Management.Automation.Internal
                 _state = new SessionState(_context.EngineSessionState);
             }
         }
+
         private ExecutionContext _context;
 
         /// <summary>
@@ -176,6 +183,7 @@ namespace System.Management.Automation.Internal
         {
             get { return CommandOriginInternal; }
         }
+
         internal CommandOrigin CommandOriginInternal = CommandOrigin.Internal;
 
         #endregion public_properties

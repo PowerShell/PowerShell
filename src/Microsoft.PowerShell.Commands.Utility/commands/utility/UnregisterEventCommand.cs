@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
@@ -34,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>

@@ -224,6 +224,7 @@ namespace System.Management.Automation
                             $(if ($_nameFound.IndexOfAny($_varsRequiringQuotes) -eq -1) {'{0}{1}{2}'}
                             else {'{0}{{{1}{2}}}'}) -f $_prefix, $_provider, $_nameFound
                         }
+
                         break;
                     }
 
@@ -284,6 +285,7 @@ namespace System.Management.Automation
                         {
                             if ($_n -like $_pat) { '-' + $_n }
                         }
+
                         break;
                     }
 
@@ -299,6 +301,7 @@ namespace System.Management.Automation
                             $_pattern = '*' + $_pattern + '*'
                             Get-History -Count 32767 | Sort-Object -Descending Id| ForEach-Object { $_.CommandLine } | where { $_ -like $_pattern }
                         }
+
                         break;
                     }
 
@@ -724,6 +727,7 @@ namespace System.Management.Automation
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MinRunspaces, minRunspaces));
                 propertyCount++;
             }
+
             if (maxRunspaces != -1)
             {
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MaxRunspaces, maxRunspaces));
@@ -1012,6 +1016,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             Dbg.Assert(getCommand != null, "Whoever sets PowerShell.IsGetCommandMetadataSpecialPipeline needs to make sure Get-Command is present");
 
             string[] name = null;
@@ -1562,6 +1567,7 @@ namespace System.Management.Automation
                 //doesn't have stack trace. Replace it with top level exception.
                 er = new ErrorRecord(er, exception);
             }
+
             return er;
         }
 
@@ -2277,6 +2283,7 @@ namespace System.Management.Automation
             {
                 powerShell.AddParameter("Module", module);
             }
+
             powerShell.AddParameter("ArgumentList", argumentList);
             return powerShell;
         }

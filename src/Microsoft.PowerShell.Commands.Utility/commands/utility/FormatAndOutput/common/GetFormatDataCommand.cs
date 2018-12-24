@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _typename;
             }
+
             set
             {
                 _typename = value;
@@ -166,6 +167,7 @@ namespace Microsoft.PowerShell.Commands
                     viewList = new List<FormatViewDefinition>();
                     typedefs.Add(consolidatedTypeName, viewList);
                 }
+
                 viewList.Add(formatdef);
             }// foreach(ViewDefinition...
 
@@ -189,6 +191,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         etd.TypeNames.Add(typeNames[i]);
                     }
+
                     WriteObject(etd);
                 }
             }
@@ -219,6 +222,7 @@ namespace Microsoft.PowerShell.Commands
                     consolidatedTypeName.Add(item.name);
                 }
             }
+
             return consolidatedTypeName;
         }
 
@@ -234,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return false;
         }
     }

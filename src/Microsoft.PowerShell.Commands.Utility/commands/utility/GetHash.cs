@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
@@ -50,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
@@ -110,6 +112,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     break;
                 case LiteralPathParameterSet:
                     foreach (string path in _paths)
@@ -117,6 +120,7 @@ namespace Microsoft.PowerShell.Commands
                         string newPath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
                         pathsToProcess.Add(newPath);
                     }
+
                     break;
             }
 
@@ -210,6 +214,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _Algorithm;
             }
+
             set
             {
                 // A hash algorithm name is case sensitive

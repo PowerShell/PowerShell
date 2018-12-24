@@ -52,6 +52,7 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+
             remove
             {
                 lock (_monitorObject)
@@ -469,6 +470,7 @@ namespace System.Management.Automation.Internal
             {
                 retval.Add(MakePSObject(o));
             }
+
             return retval;
         }
         #endregion Private
@@ -578,6 +580,7 @@ namespace System.Management.Automation.Internal
             {
                 return new Collection<ReturnType>();
             }
+
             Collection<ReturnType> results = new Collection<ReturnType>();
             int readCount = maxRequested;
 
@@ -759,6 +762,7 @@ namespace System.Management.Automation.Internal
             {
                 return new Collection<ReturnType>();
             }
+
             Collection<ReturnType> results = new Collection<ReturnType>();
             int readCount = maxRequested;
 

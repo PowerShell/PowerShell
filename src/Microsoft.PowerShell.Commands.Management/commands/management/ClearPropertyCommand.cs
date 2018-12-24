@@ -97,6 +97,7 @@ namespace Microsoft.PowerShell.Commands
                     propertyCollection,
                     context);
             }
+
             return InvokeProvider.Property.ClearPropertyDynamicParameters(
                 ".",
                 propertyCollection,

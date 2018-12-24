@@ -334,6 +334,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("runspaceStateInfo");
             }
+
             RunspaceStateInfo = runspaceStateInfo;
         }
 
@@ -505,6 +506,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return t_threadSpecificDefaultRunspace;
             }
+
             set
             {
                 if (value == null || !value.RunspaceIsRemote)
@@ -539,6 +541,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private static Runspace s_primaryRunspace;
 
         /// <summary>
@@ -607,6 +610,7 @@ namespace System.Management.Automation.Runspaces
                 this.apartmentState = value;
             }
         }
+
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
 #endif
 
@@ -798,6 +802,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private static SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
         private static object s_syncObject;
 
@@ -883,6 +888,7 @@ namespace System.Management.Automation.Runspaces
 
                             // Otherwise no change.
                     }
+
                     break;
 
                 case RunspaceAvailability.Available:
@@ -896,6 +902,7 @@ namespace System.Management.Automation.Runspaces
                             this.RunspaceAvailability = Runspaces.RunspaceAvailability.None;
                             break;
                     }
+
                     break;
 
                 case RunspaceAvailability.AvailableForNestedCommand:
@@ -913,6 +920,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 case RunspaceAvailability.Busy:
@@ -928,6 +936,7 @@ namespace System.Management.Automation.Runspaces
                             {
                                 this.RunspaceAvailability = RunspaceAvailability.None;
                             }
+
                             break;
 
                         case PipelineState.Stopping:
@@ -1020,6 +1029,7 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 }
                             }
+
                             break;
 
                         case PipelineState.Running: // this can happen if a nested pipeline is created without entering a nested prompt
@@ -1028,6 +1038,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 default:
@@ -1132,11 +1143,13 @@ namespace System.Management.Automation.Runspaces
                                 this.RunspaceAvailability = (remoteCommand == null && GetCurrentlyRunningPipeline() == null) ?
                                     RunspaceAvailability.Available : RunspaceAvailability.Busy;
                             }
+
                             break;
 
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 case RunspaceAvailability.Available:
@@ -1155,6 +1168,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 default:
@@ -1496,6 +1510,7 @@ namespace System.Management.Automation.Runspaces
                 if (count > 0)
                 {
                     if (count == 1) { _baseRunningPowerShell = null; }
+
                     return _runningPowerShells.Pop();
                 }
             }
@@ -1685,6 +1700,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("name");
             }
+
             _runspace.SetVariable(name, value);
         }
 
@@ -1717,6 +1733,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return null;
             }
+
             return _runspace.GetVariable(name);
         }
 
@@ -1780,6 +1797,7 @@ namespace System.Management.Automation.Runspaces
         public virtual PSLanguageMode LanguageMode
         {
             get { return _runspace.LanguageMode; }
+
             set { _runspace.LanguageMode = value; }
         }
 

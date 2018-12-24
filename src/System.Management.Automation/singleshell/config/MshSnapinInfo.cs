@@ -276,6 +276,7 @@ namespace System.Management.Automation
                 {
                     LoadIndirectResources();
                 }
+
                 return _description;
             }
         }
@@ -294,6 +295,7 @@ namespace System.Management.Automation
                 {
                     LoadIndirectResources();
                 }
+
                 return _vendor;
             }
         }
@@ -333,6 +335,7 @@ namespace System.Management.Automation
                 catch (System.IO.IOException)
                 {
                 }
+
                 return mshsnapinKey;
             }
         }
@@ -426,6 +429,7 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             return Regex.IsMatch(psSnapinId, "^[A-Za-z0-9-_\x2E]*$");
         }
 
@@ -509,6 +513,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 Collection<PSSnapInInfo> oneVersionMshSnapins = null;
                 try
                 {
@@ -522,6 +527,7 @@ namespace System.Management.Automation
                 catch (ArgumentException)
                 {
                 }
+
                 if (oneVersionMshSnapins != null)
                 {
                     foreach (PSSnapInInfo info in oneVersionMshSnapins)
@@ -552,6 +558,7 @@ namespace System.Management.Automation
             {
                 r = false;
             }
+
             return r;
         }
 
@@ -573,6 +580,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("psVersion");
             }
+
             RegistryKey monadRootKey = GetMonadRootKey();
             return ReadAll(monadRootKey, psVersion);
         }
@@ -607,6 +615,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 try
                 {
                     mshsnapins.Add(ReadOne(mshsnapinRoot, id));
@@ -648,6 +657,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("psVersion");
             }
+
             if (string.IsNullOrEmpty(mshsnapinId))
             {
                 throw PSTraceSource.NewArgumentNullException("mshsnapinId");
@@ -703,6 +713,7 @@ namespace System.Management.Automation
                 s_mshsnapinTracer.WriteLine("No description is specified for mshsnapin {0}. Using empty string for description.", mshsnapinId);
                 description = string.Empty;
             }
+
             string vendor = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_Vendor, false);
             if (vendor == null)
             {
@@ -892,6 +903,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("PublicKeyToken", MshSnapinInfo.PublicKeyTokenAccessFailed);
             }
+
             publicKeyToken = ConvertByteArrayToString(publicTokens);
             // save some cpu cycles by hardcoding the culture to neutral
             // assembly should never be targeted to a particular culture
@@ -1119,6 +1131,7 @@ namespace System.Management.Automation
                 Dbg.Assert(false, "Root Key of Monad installation is not present");
                 throw PSTraceSource.NewArgumentException("monad", MshSnapinInfo.MonadRootRegistryAccessFailed);
             }
+
             return rootKey;
         }
 
@@ -1180,6 +1193,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("psVersion", MshSnapinInfo.SpecifiedVersionNotFound, versionKey);
             }
+
             return versionRoot;
         }
 
@@ -1206,6 +1220,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("psVersion", MshSnapinInfo.NoMshSnapinPresentForVersion, psVersion);
             }
+
             return mshsnapinRoot;
         }
 
@@ -1232,6 +1247,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("psVersion", MshSnapinInfo.NoMshSnapinPresentForVersion, psVersion);
             }
+
             RegistryKey mshsnapinKey = mshsnapinRoot.OpenSubKey(mshSnapInName);
             return mshsnapinKey;
         }
@@ -1316,6 +1332,7 @@ namespace System.Management.Automation
                 return s_defaultMshSnapins;
             }
         }
+
         private static IList<DefaultPSSnapInInformation> s_defaultMshSnapins = null;
         private static object s_syncObject = new object();
 

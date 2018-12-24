@@ -59,6 +59,7 @@ namespace System.Management.Automation.Interpreter
         internal int LabelIndex
         {
             get { return _labelIndex; }
+
             set { _labelIndex = value; }
         }
 
@@ -97,6 +98,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     FixupBranch(instructions, branchIndex);
                 }
+
                 _forwardBranchFixups = null;
             }
         }
@@ -112,6 +114,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _forwardBranchFixups = new List<int>();
                 }
+
                 _forwardBranchFixups.Add(branchIndex);
             }
             else

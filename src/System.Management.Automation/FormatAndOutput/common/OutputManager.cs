@@ -104,6 +104,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _lo.StopProcessing();
                 }
+
                 _isStopped = true;
             }
         }

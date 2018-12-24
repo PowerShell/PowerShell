@@ -161,9 +161,11 @@ namespace System.Management.Automation
                         _errorCategory,
                         _targetObject);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "RuntimeException";
         private ErrorCategory _errorCategory = ErrorCategory.NotSpecified;
@@ -229,6 +231,7 @@ namespace System.Management.Automation
             {
                 return errorRecord.ErrorDetails.Message;
             }
+
             if (errorRecord.Exception == null)
                 return string.Empty;
             return errorRecord.Exception.Message;
@@ -264,6 +267,7 @@ namespace System.Management.Automation
         public bool WasThrownFromThrowStatement
         {
             get { return _thrownByThrowStatement; }
+
             set
             {
                 _thrownByThrowStatement = value;
@@ -277,6 +281,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _thrownByThrowStatement;
 
         /// <summary>
@@ -289,8 +294,10 @@ namespace System.Management.Automation
         internal bool SuppressPromptInInterpreter
         {
             get { return _suppressPromptInInterpreter; }
+
             set { _suppressPromptInInterpreter = value; }
         }
+
         private bool _suppressPromptInInterpreter;
 
         #endregion Internal
@@ -302,6 +309,7 @@ namespace System.Management.Automation
             {
                 return _errorToken;
             }
+
             set
             {
                 _errorToken = value;

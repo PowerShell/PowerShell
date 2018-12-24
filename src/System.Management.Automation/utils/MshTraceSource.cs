@@ -172,6 +172,7 @@ namespace System.Management.Automation
                     // Trace the object specific tracer information
                     result.TracerObjectHeader(Assembly.GetCallingAssembly());
                 }
+
                 return result;
             }
         }
@@ -260,6 +261,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("paramName");
             }
+
             if (String.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
@@ -289,6 +291,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("paramName");
             }
+
             string message = StringUtil.Format(AutomationExceptions.Argument, paramName);
             // Note that the message param comes first
             var e = new PSArgumentException(message, paramName);
@@ -318,6 +321,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("paramName");
             }
+
             if (String.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
@@ -477,6 +481,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("paramName");
             }
+
             string message = StringUtil.Format(AutomationExceptions.ArgumentOutOfRange, paramName);
             var e = new PSArgumentOutOfRangeException(paramName, actualValue, message);
 
@@ -508,6 +513,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("paramName");
             }
+
             if (String.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
@@ -538,6 +544,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("objectName");
             }
+
             string message = StringUtil.Format(AutomationExceptions.ObjectDisposed, objectName);
             var e = new PSObjectDisposedException(objectName, message);
 

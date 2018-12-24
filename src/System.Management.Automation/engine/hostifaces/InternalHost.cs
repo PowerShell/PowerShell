@@ -129,6 +129,7 @@ namespace System.Management.Automation.Internal.Host
                     }
 #pragma warning restore 56503
                 }
+
                 return _idResult;
             }
         }
@@ -349,6 +350,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     commandInfoProperty.Value = oldCommandInfo;
                 }
+
                 if (stackTraceProperty != null)
                 {
                     stackTraceProperty.Value = oldStackTrace;
@@ -400,6 +402,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 ExitNestedPromptHelper();
             }
+
             ExitNestedPromptException enpe = new ExitNestedPromptException();
             throw enpe;
         }
@@ -450,6 +453,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 throw new PSNotImplementedException();
             }
+
             return host;
         }
 
@@ -535,6 +539,7 @@ namespace System.Management.Automation.Internal.Host
         {
             // nothing to revert if Host reference is not set.
             if (!IsHostRefSet) { return; }
+
             _externalHostRef.Revert();
             _internalUIRef.Revert();
         }

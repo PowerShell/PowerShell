@@ -114,9 +114,11 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidOperation,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "ObjectDisposed";
     }

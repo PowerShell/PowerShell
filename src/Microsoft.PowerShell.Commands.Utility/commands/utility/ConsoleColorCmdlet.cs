@@ -42,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return _fgColor;
             }
+
             set
             {
                 if (value >= (ConsoleColor)0 && value <= (ConsoleColor)15)
@@ -75,6 +76,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return _bgColor;
             }
+
             set
             {
                 if (value >= (ConsoleColor)0 && value <= (ConsoleColor)15)

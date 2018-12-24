@@ -211,6 +211,7 @@ namespace Microsoft.PowerShell.Commands
         private void Initialize()
         {
             if (_isInitialized) { return; }
+
             _isInitialized = true;
             try
             {
@@ -396,6 +397,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 encoding = null;
             }
+
             return DecodeStream(stream, ref encoding);
         }
 
@@ -411,6 +413,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 encoding = null;
             }
+
             return result;
         }
 
@@ -452,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
-        internal static Byte[] EncodeToBytes(String str, Encoding encoding)
+        internal static byte[] EncodeToBytes(String str, Encoding encoding)
         {
             if (encoding == null)
             {
@@ -463,7 +466,7 @@ namespace Microsoft.PowerShell.Commands
             return encoding.GetBytes(str);
         }
 
-        internal static Byte[] EncodeToBytes(String str)
+        internal static byte[] EncodeToBytes(String str)
         {
             return EncodeToBytes(str, null);
         }

@@ -40,8 +40,10 @@ namespace Microsoft.PowerShell.Commands
         public string DefinitionName
         {
             get { return _definitionName; }
+
             set { _definitionName = value; }
         }
+
         private string _definitionName;
 
         /// <summary>
@@ -53,8 +55,10 @@ namespace Microsoft.PowerShell.Commands
         public string DefinitionPath
         {
             get { return _definitionPath; }
+
             set { _definitionPath = value; }
         }
+
         private string _definitionPath;
 
         /// <summary>
@@ -67,8 +71,10 @@ namespace Microsoft.PowerShell.Commands
         public string Type
         {
             get { return _definitionType; }
+
             set { _definitionType = value; }
         }
+
         private string _definitionType;
 
         /// <summary>
@@ -86,6 +92,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _name;
             }
+
             set
             {
                 if (!String.IsNullOrEmpty(value))
@@ -94,6 +101,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _name;
 
         /// <summary>
@@ -115,6 +123,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ScriptBlock;
             }
+
             set
             {
                 base.ScriptBlock = value;
@@ -203,6 +212,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Credential;
             }
+
             set
             {
                 base.Credential = value;
@@ -240,6 +250,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ConfigurationName;
             }
+
             set
             {
                 base.ConfigurationName = value;
@@ -293,6 +304,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.FilePath;
             }
+
             set
             {
                 base.FilePath = value;
@@ -313,6 +325,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.FilePath;
             }
+
             set
             {
                 base.FilePath = value;
@@ -332,6 +345,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Authentication;
             }
+
             set
             {
                 base.Authentication = value;
@@ -347,6 +361,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.CertificateThumbprint;
             }
+
             set
             {
                 base.CertificateThumbprint = value;
@@ -422,6 +437,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.SessionOption;
             }
+
             set
             {
                 base.SessionOption = value;
@@ -441,8 +457,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual ScriptBlock InitializationScript
         {
             get { return _initScript; }
+
             set { _initScript = value; }
         }
+
         private ScriptBlock _initScript;
 
         /// <summary>
@@ -455,8 +473,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter RunAs32
         {
             get { return _shouldRunAs32; }
+
             set { _shouldRunAs32 = value; }
         }
+
         private bool _shouldRunAs32;
 
         /// <summary>
@@ -469,6 +489,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual Version PSVersion
         {
             get { return _psVersion; }
+
             set
             {
                 RemotingCommandUtil.CheckPSVersion(value);
@@ -479,6 +500,7 @@ namespace Microsoft.PowerShell.Commands
                 _psVersion = value;
             }
         }
+
         private Version _psVersion;
 
         /// <summary>
@@ -494,6 +516,7 @@ namespace Microsoft.PowerShell.Commands
         public override PSObject InputObject
         {
             get { return base.InputObject; }
+
             set { base.InputObject = value; }
         }
 
@@ -509,6 +532,7 @@ namespace Microsoft.PowerShell.Commands
         public override object[] ArgumentList
         {
             get { return base.ArgumentList; }
+
             set { base.ArgumentList = value; }
         }
 
@@ -623,6 +647,7 @@ namespace Microsoft.PowerShell.Commands
 
                     resolvedPath = paths[0];
                 }
+
                 List<Job2> jobs = JobManager.GetJobToStart(_definitionName, resolvedPath, _definitionType, this, false);
 
                 if (jobs.Count == 0)
@@ -679,6 +704,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private bool _firstProcessRecord = true;
 
         /// <summary>

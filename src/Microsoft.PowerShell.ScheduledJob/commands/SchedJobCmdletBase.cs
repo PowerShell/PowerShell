@@ -370,10 +370,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionParamValues);
             }
+
             if (repInterval < TimeSpan.FromMinutes(1))
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionIntervalValue);
             }
+
             if (repInterval > repDuration)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionInterval);

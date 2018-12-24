@@ -184,7 +184,7 @@ namespace System.Management.Automation.Remoting
         }
 
         internal void SendOneItemToSessionHelper(
-            System.Byte[] data,
+            byte[] data,
             string stream)
         {
             transportMgr.ProcessRawData(data, stream);
@@ -318,6 +318,7 @@ namespace System.Management.Automation.Remoting
             {
                 reasonForClose = eventArgs.Exception;
             }
+
             Close(reasonForClose);
         }
 
@@ -458,8 +459,8 @@ namespace System.Management.Automation.Remoting
             IntPtr responseXml = IntPtr.Zero;
             try
             {
-                System.Byte[] inputData;
-                System.Byte[] outputData;
+                byte[] inputData;
+                byte[] outputData;
 
                 // Retrieve the string (Base64 encoded)
                 inputData = ServerOperationHelpers.ExtractEncodedXmlElement(
@@ -641,6 +642,7 @@ namespace System.Management.Automation.Remoting
                 cmdSession.SessionClosed -= new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
                 cmdSession.Close(reasonForClose);
             }
+
             copyCmdSessions.Clear();
         }
 
@@ -666,6 +668,7 @@ namespace System.Management.Automation.Remoting
             {
                 reasonForClose = eventArgs.Reason;
             }
+
             Close(reasonForClose);
         }
 
@@ -759,7 +762,7 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            System.Byte[] convertedBase64 = Convert.FromBase64String(arguments.args[0]);
+            byte[] convertedBase64 = Convert.FromBase64String(arguments.args[0]);
             transportMgr.ProcessRawData(convertedBase64, WSManPluginConstants.SupportedInputStream);
 
             return true;

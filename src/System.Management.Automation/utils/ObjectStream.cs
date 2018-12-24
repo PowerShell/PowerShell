@@ -621,6 +621,7 @@ namespace System.Management.Automation.Internal
 
                     handle = _readWaitHandle;
                 }
+
                 return handle;
             }
         }
@@ -648,6 +649,7 @@ namespace System.Management.Automation.Internal
 
                     handle = _writeWaitHandle;
                 }
+
                 return handle;
             }
         }
@@ -731,6 +733,7 @@ namespace System.Management.Automation.Internal
 
                     writer = _writer;
                 }
+
                 return writer;
             }
         }
@@ -754,6 +757,7 @@ namespace System.Management.Automation.Internal
                 {
                     endOfStream = (_objects.Count == 0 && _isOpen == false);
                 }
+
                 return endOfStream;
             }
         }
@@ -780,6 +784,7 @@ namespace System.Management.Automation.Internal
                 {
                     isOpen = _isOpen;
                 }
+
                 return isOpen;
             }
         }
@@ -797,6 +802,7 @@ namespace System.Management.Automation.Internal
                 {
                     count = _objects.Count;
                 }
+
                 return count;
             }
         }
@@ -914,6 +920,7 @@ namespace System.Management.Automation.Internal
                         {
                         }
                     }
+
                     if (_writeWaitHandle != null)
                     {
                         try
@@ -949,6 +956,7 @@ namespace System.Management.Automation.Internal
                     {
                     }
                 }
+
                 if (unblockWriters)
                 {
                     try
@@ -1060,6 +1068,7 @@ namespace System.Management.Automation.Internal
                     catch (ObjectDisposedException)
                     {
                     }
+
                     RaiseEvents();
                 }
             }
@@ -1081,6 +1090,7 @@ namespace System.Management.Automation.Internal
             {
                 return result[0];
             }
+
             Diagnostics.Assert(result.Count == 0, "Invalid number of objects returned");
 
             return AutomationNull.Value;
@@ -1116,6 +1126,7 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
             }
+
             if (count == 0)
             {
                 return new Collection<object>();
@@ -1135,6 +1146,7 @@ namespace System.Management.Automation.Internal
                         {
                             continue;    // wait some more
                         }
+
                         raiseEvents = true;
                         // NTRAID#Windows Out Of Band Releases-925566-2005/12/07-JonN
                         int objectsAdded = 0;
@@ -1145,6 +1157,7 @@ namespace System.Management.Automation.Internal
                             if (--count <= 0)
                                 break;
                         }
+
                         _objects.RemoveRange(0, objectsAdded);
                     }
                 }
@@ -1216,6 +1229,7 @@ namespace System.Management.Automation.Internal
             {
                 return new Collection<object>();
             }
+
             if (maxRequested < 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
@@ -1239,6 +1253,7 @@ namespace System.Management.Automation.Internal
                         {
                             results.Add(_objects[i]);
                         }
+
                         raiseEvents = true;
                         _objects.RemoveRange(0, readCount);
                     }
@@ -1251,6 +1266,7 @@ namespace System.Management.Automation.Internal
                     RaiseEvents();
                 }
             }
+
             return results ?? new Collection<object>();
         }
 
@@ -1276,6 +1292,7 @@ namespace System.Management.Automation.Internal
                     result = _objects[0];
                 }
             }
+
             return result;
         }
 
@@ -1333,6 +1350,7 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
+
             if (enumerable == null)
                 a.Add(obj);
             else
@@ -1351,6 +1369,7 @@ namespace System.Management.Automation.Internal
                         // we just ignore it
                         continue;
                     }
+
                     a.Add(o);
                 }
             }
@@ -1456,6 +1475,7 @@ namespace System.Management.Automation.Internal
         {
             DataReady += eventHandler;
         }
+
         private void DFT_RemoveHandler_OnDataReady(EventHandler eventHandler)
         {
             DataReady -= eventHandler;
@@ -1620,6 +1640,7 @@ namespace System.Management.Automation.Internal
                 {
                     endOfStream = (_objects.Count == 0 && !_isOpen);
                 }
+
                 return endOfStream;
             }
         }
@@ -1769,6 +1790,7 @@ namespace System.Management.Automation.Internal
                         }
                     }
                 }
+
                 return _writer;
             }
         }
@@ -1822,6 +1844,7 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
+
             if (enumerable == null)
             {
                 objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
@@ -1841,6 +1864,7 @@ namespace System.Management.Automation.Internal
                         // we just ignore it
                         continue;
                     }
+
                     objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                         typeof(T), Globalization.CultureInfo.InvariantCulture));
                 }

@@ -55,8 +55,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Association
         {
             get { return association; }
+
             set { association = value; }
         }
+
         private String association;
 
         /// <summary>
@@ -68,8 +70,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String ResultClassName
         {
             get { return resultClassName; }
+
             set { resultClassName = value; }
         }
+
         private String resultClassName;
 
         /// <summary>
@@ -86,6 +90,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimInstance InputObject
         {
             get { return cimInstance; }
+
             set
             {
                 cimInstance = value;
@@ -100,6 +105,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return cimInstance; }
         }
+
         private CimInstance cimInstance;
 
         /// <summary>
@@ -111,8 +117,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Namespace
         {
             get { return nameSpace; }
+
             set { nameSpace = value; }
         }
+
         private String nameSpace;
 
         /// <summary>
@@ -127,8 +135,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32 OperationTimeoutSec
         {
             get { return operationTimeout; }
+
             set { operationTimeout = value; }
         }
+
         private UInt32 operationTimeout;
 
         /// <summary>
@@ -141,12 +151,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Uri ResourceUri
         {
             get { return resourceUri; }
+
             set
             {
                 this.resourceUri = value;
                 base.SetParameter(value, nameResourceUri);
             }
         }
+
         private Uri resourceUri;
 
         /// <summary>
@@ -167,12 +179,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] ComputerName
         {
             get { return computerName; }
+
             set
             {
                 computerName = value;
                 base.SetParameter(value, nameComputerName);
             }
         }
+
         private String[] computerName;
 
         /// <summary>
@@ -187,12 +201,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Microsoft.Management.Infrastructure.CimSession[] CimSession
         {
             get { return cimSession; }
+
             set
             {
                 cimSession = value;
                 base.SetParameter(value, nameCimSession);
             }
         }
+
         private Microsoft.Management.Infrastructure.CimSession[] cimSession;
 
         /// <summary>
@@ -206,8 +222,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public SwitchParameter KeyOnly
         {
             get { return keyOnly; }
+
             set { keyOnly = value; }
         }
+
         private SwitchParameter keyOnly;
 
         #endregion
@@ -234,6 +252,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 operation = this.CreateOperationAgent();
             }
+
             operation.GetCimAssociatedInstance(this);
             operation.ProcessActions(this.CmdletOperation);
         }//End ProcessRecord()

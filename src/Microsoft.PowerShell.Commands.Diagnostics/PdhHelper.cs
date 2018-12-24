@@ -570,6 +570,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 //Console.WriteLine("error in PdhBindInputDataSource: " + res);
             }
+
             return res;
         }
 
@@ -599,6 +600,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 //Console.WriteLine("error in PdhOpenQueryH: " + res);
             }
+
             return res;
         }
 
@@ -632,12 +634,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 startTime = new DateTime(startTime.Ticks, DateTimeKind.Utc);
             }
+
             pTimeInfo.StartTime = (startTime == DateTime.MinValue) ? 0 : startTime.ToFileTimeUtc();
 
             if (endTime != DateTime.MaxValue && endTime.Kind == DateTimeKind.Local)
             {
                 endTime = new DateTime(endTime.Ticks, DateTimeKind.Utc);
             }
+
             pTimeInfo.EndTime = (endTime == DateTime.MaxValue) ? Int64.MaxValue : endTime.ToFileTimeUtc();
 
             pTimeInfo.SampleCount = 0;
@@ -771,6 +775,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 {
                     Marshal.FreeHGlobal(strCountersList);
                 }
+
                 if (strInstancesList != IntPtr.Zero)
                 {
                     Marshal.FreeHGlobal(strInstancesList);
@@ -820,6 +825,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     }
                 }
             }
+
             return res;
         }
 
@@ -1032,6 +1038,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                         return (uint)PdhResults.PDH_INVALID_PATH;
                     }
                 }
+
                 if (counterIndex != -1 && objIndex != -1)
                 {
                     break;
@@ -1050,6 +1057,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return res;
             }
+
             pathElts.ObjectName = objNameLocalized;
 
             string ctrNameLocalized;
@@ -1058,6 +1066,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return res;
             }
+
             pathElts.CounterName = ctrNameLocalized;
 
             // Assemble the path back by using the translated object and counter names:
@@ -1088,6 +1097,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
                     res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
                 }
+
                 if (res == 0)
                 {
                     locName = Marshal.PtrToStringUni(localizedPathPtr);
@@ -1140,6 +1150,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     }
                 }
             }
+
             return res;
         }
 
@@ -1357,6 +1368,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return string.Empty;
             }
+
             IntPtr retString = PdhGetExplainText(szMachineName, szObjectName, null);
             return Marshal.PtrToStringUni(retString);
         }
@@ -1371,6 +1383,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return res;
             }
+
             if (res != 0 && res != PdhResults.PDH_NO_DATA)
             {
                 return res;
@@ -1524,6 +1537,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return res;
             }
+
             if (res != 0 && res != PdhResults.PDH_NO_DATA)
             {
                 return res;

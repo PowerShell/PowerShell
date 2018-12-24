@@ -57,12 +57,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String ClassName
         {
             get { return className; }
+
             set
             {
                 className = value;
                 base.SetParameter(value, nameClassName);
             }
         }
+
         private String className;
 
         /// <summary>
@@ -80,12 +82,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Uri ResourceUri
         {
             get { return resourceUri; }
+
             set
             {
                 this.resourceUri = value;
                 base.SetParameter(value, nameResourceUri);
             }
         }
+
         private Uri resourceUri;
 
         /// <summary>
@@ -113,12 +117,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] Key
         {
             get { return key; }
+
             set
             {
                 key = value;
                 base.SetParameter(value, nameKey);
             }
         }
+
         private String[] key;
 
         /// <summary>
@@ -138,12 +144,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimClass CimClass
         {
             get { return cimClass; }
+
             set
             {
                 cimClass = value;
                 base.SetParameter(value, nameCimClass);
             }
         }
+
         private CimClass cimClass;
 
         /// <summary>
@@ -163,8 +171,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public IDictionary Property
         {
             get { return property; }
+
             set { property = value; }
         }
+
         private IDictionary property;
 
         /// <summary>
@@ -187,12 +197,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Namespace
         {
             get { return nameSpace; }
+
             set
             {
                 nameSpace = value;
                 base.SetParameter(value, nameNamespace);
             }
         }
+
         private String nameSpace;
 
         /// <summary>
@@ -205,8 +217,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32 OperationTimeoutSec
         {
             get { return operationTimeout; }
+
             set { operationTimeout = value; }
         }
+
         private UInt32 operationTimeout;
 
         /// <summary>
@@ -231,12 +245,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession[] CimSession
         {
             get { return cimSession; }
+
             set
             {
                 cimSession = value;
                 base.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession[] cimSession;
 
         /// <summary>
@@ -261,12 +277,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] ComputerName
         {
             get { return computerName; }
+
             set
             {
                 computerName = value;
                 base.SetParameter(value, nameComputerName);
             }
         }
+
         private String[] computerName;
 
         /// <summary>
@@ -287,11 +305,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public SwitchParameter ClientOnly
         {
             get { return clientOnly; }
+
             set {
                 clientOnly = value;
                 base.SetParameter(value, nameClientOnly);
                 }
         }
+
         private SwitchParameter clientOnly;
 
         #endregion
@@ -325,6 +345,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     conflictParameterName = @"CimSession";
                 }
+
                 if (conflictParameterName != null)
                 {
                     ThrowConflictParameterWasSet(@"New-CimInstance", conflictParameterName, @"ClientOnly");
@@ -337,6 +358,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimNewCimInstance = CreateOperationAgent();
             }
+
             cimNewCimInstance.NewCimInstance(this);
             cimNewCimInstance.ProcessActions(this.CmdletOperation);
         }//End ProcessRecord()

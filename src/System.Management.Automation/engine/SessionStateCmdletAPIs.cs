@@ -155,6 +155,7 @@ namespace System.Management.Automation
                                 toBeAdded.Add(cmdletInfo);
                             }
                         }
+
                         result.Add(entry.Key, toBeAdded);
                     }
                 }
@@ -199,6 +200,7 @@ namespace System.Management.Automation
                         toBeAdded.Add(cmdletInfo);
                     }
                 }
+
                 result.Add(entry.Key, toBeAdded);
             }
 

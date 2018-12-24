@@ -142,6 +142,7 @@ namespace Microsoft.PowerShell
                                     Array.Resize<string>(ref fallbacksForTheParent, currentIndex);
                                 }
                             }
+
                             _parentCI = new VistaCultureInfo(parentCulture, fallbacksForTheParent);
                         }
                     }

@@ -93,6 +93,7 @@ namespace System.Management.Automation
             {
                 dsHandlers = new List<ServerPowerShellDataStructureHandler>(_associatedShells.Values);
             }
+
             foreach (var dsHandler in dsHandlers)
             {
                 dsHandler.ProcessConnect();
@@ -123,6 +124,7 @@ namespace System.Management.Automation
 
                         CreateAndInvokePowerShell.SafeInvoke(this, new RemoteDataEventArgs<RemoteDataObject<PSObject>>(receivedData));
                     }
+
                     break;
 
                 case RemotingDataType.GetCommandMetadata:
@@ -132,6 +134,7 @@ namespace System.Management.Automation
 
                         GetCommandMetadata.SafeInvoke(this, new RemoteDataEventArgs<RemoteDataObject<PSObject>>(receivedData));
                     }
+
                     break;
 
                 case RemotingDataType.RemoteRunspaceHostResponseData:
@@ -147,6 +150,7 @@ namespace System.Management.Automation
 
                         HostResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostResponse>(remoteHostResponse));
                     }
+
                     break;
 
                 case RemotingDataType.SetMaxRunspaces:
@@ -156,6 +160,7 @@ namespace System.Management.Automation
 
                         SetMaxRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.SetMinRunspaces:
@@ -165,6 +170,7 @@ namespace System.Management.Automation
 
                         SetMinRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.AvailableRunspaces:
@@ -174,6 +180,7 @@ namespace System.Management.Automation
 
                         GetAvailableRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.ResetRunspaceState:
@@ -183,6 +190,7 @@ namespace System.Management.Automation
 
                         ResetRunspaceState.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
             }
         }
@@ -242,6 +250,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
 
@@ -282,6 +291,7 @@ namespace System.Management.Automation
         internal TypeTable TypeTable
         {
             get { return _transportManager.TypeTable; }
+
             set { _transportManager.TypeTable = value; }
         }
 
@@ -369,6 +379,7 @@ namespace System.Management.Automation
                     dsHandler = null;
                 }
             }
+
             return dsHandler;
         }
 
@@ -619,6 +630,7 @@ namespace System.Management.Automation
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         StopPowerShellReceived.SafeInvoke(this, EventArgs.Empty);
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellInput:
@@ -627,6 +639,7 @@ namespace System.Management.Automation
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         InputReceived.SafeInvoke(this, new RemoteDataEventArgs<object>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellInputEnd:
@@ -635,6 +648,7 @@ namespace System.Management.Automation
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         InputEndReceived.SafeInvoke(this, EventArgs.Empty);
                     }
+
                     break;
 
                 case RemotingDataType.RemotePowerShellHostResponseData:
@@ -650,6 +664,7 @@ namespace System.Management.Automation
 
                         HostResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostResponse>(remoteHostResponse));
                     }
+
                     break;
             }
         }

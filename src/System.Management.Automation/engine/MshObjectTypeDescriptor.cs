@@ -191,8 +191,10 @@ namespace System.Management.Automation
                     {
                         throw e;
                     }
+
                     return returnValue;
                 }
+
                 return property.Value;
             }
             catch (ExtendedTypeSystemException e)
@@ -204,6 +206,7 @@ namespace System.Management.Automation
                 {
                     throw;
                 }
+
                 return returnValue;
             }
         }
@@ -223,8 +226,10 @@ namespace System.Management.Automation
                                                              typeof(PSObject).Name,
                                                              typeof(PSObjectTypeDescriptor).Name);
                 }
+
                 mshObj = descriptor.Instance;
             }
+
             return mshObj;
         }
 
@@ -238,6 +243,7 @@ namespace System.Management.Automation
                     "GettingValueException event has been triggered resulting in ValueReplacement:\"{0}\".",
                     eventArgs.ValueReplacement);
             }
+
             shouldThrow = eventArgs.ShouldThrow;
             return eventArgs.ValueReplacement;
         }
@@ -283,8 +289,10 @@ namespace System.Management.Automation
                     {
                         throw e;
                     }
+
                     return;
                 }
+
                 property.Value = value;
             }
             catch (ExtendedTypeSystemException e)
@@ -297,6 +305,7 @@ namespace System.Management.Automation
                     throw;
                 }
             }
+
             OnValueChanged(component, EventArgs.Empty);
         }
 
@@ -310,6 +319,7 @@ namespace System.Management.Automation
                     "SettingValueException event has been triggered resulting in ShouldThrow:\"{0}\".",
                     eventArgs.ShouldThrow);
             }
+
             shouldThrow = eventArgs.ShouldThrow;
             return;
         }
@@ -365,6 +375,7 @@ namespace System.Management.Automation
                     typeDescriptor.WriteLine("Property \"{0}\" is write-only so it has been skipped.", propertyInfo.Name);
                     return;
                 }
+
                 AttributeCollection propertyAttributes = null;
                 Type propertyType = typeof(object);
                 if (attributes != null && attributes.Length != 0)
@@ -444,6 +455,7 @@ namespace System.Management.Automation
                 {
                     CheckAndAddProperty(property, attributes, ref returnValue);
                 }
+
                 return returnValue;
             }
         }
@@ -460,10 +472,12 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             if (this.Instance == null || other.Instance == null)
             {
                 return ReferenceEquals(this, other);
             }
+
             return other.Instance.Equals(this.Instance);
         }
 
@@ -477,6 +491,7 @@ namespace System.Management.Automation
             {
                 return base.GetHashCode();
             }
+
             return this.Instance.GetHashCode();
         }
 
@@ -490,6 +505,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             string defaultProperty = null;
             PSMemberSet standardMembers = this.Instance.PSStandardMembers;
             if (standardMembers != null)
@@ -513,6 +529,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             PropertyDescriptorCollection properties = this.GetProperties();
 
             if (defaultProperty != null)
@@ -543,6 +560,7 @@ namespace System.Management.Automation
                 // GetConverter returned an illegal value
                 return new TypeConverter();
             }
+
             object baseObject = this.Instance.BaseObject;
             TypeConverter retValue = LanguagePrimitives.GetConverter(baseObject.GetType(), null) as TypeConverter ??
                                      TypeDescriptor.GetConverter(baseObject);
@@ -584,6 +602,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetDefaultEvent(this.Instance.BaseObject);
         }
 
@@ -597,6 +616,7 @@ namespace System.Management.Automation
             {
                 return new EventDescriptorCollection(null);
             }
+
             return TypeDescriptor.GetEvents(this.Instance.BaseObject);
         }
 
@@ -611,6 +631,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetEvents(this.Instance.BaseObject, attributes);
         }
 
@@ -624,6 +645,7 @@ namespace System.Management.Automation
             {
                 return new AttributeCollection();
             }
+
             return TypeDescriptor.GetAttributes(this.Instance.BaseObject);
         }
 
@@ -637,6 +659,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetClassName(this.Instance.BaseObject);
         }
 
@@ -650,6 +673,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetComponentName(this.Instance.BaseObject);
         }
 
@@ -664,6 +688,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return TypeDescriptor.GetEditor(this.Instance.BaseObject, editorBaseType);
         }
         #endregion Forwarded To BaseObject

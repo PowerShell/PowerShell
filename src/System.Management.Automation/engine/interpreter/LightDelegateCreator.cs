@@ -120,6 +120,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return le.Type;
                 }
+
                 return null;
                 //return ((LightLambdaExpression)_lambda).Type;
             }
@@ -138,6 +139,7 @@ namespace System.Management.Automation.Interpreter
                 var applyClosure = (Func<StrongBox<object>[], Delegate>)_compiled;
                 return applyClosure(closure);
             }
+
             return _compiled;
         }
 
@@ -210,6 +212,7 @@ namespace System.Management.Automation.Interpreter
                     return delegateType;
                 }
             }
+
             return lambda.Type;
             //}
         }

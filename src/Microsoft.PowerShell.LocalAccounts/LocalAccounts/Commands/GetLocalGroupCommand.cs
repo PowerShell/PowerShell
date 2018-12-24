@@ -41,8 +41,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return this.name; }
+
             set { this.name = value; }
         }
+
         private string[] name;
 
         /// <summary>
@@ -58,8 +60,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier[] SID
         {
             get { return this.sid;}
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 

@@ -90,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
                 return _types;
             }
         }
+
         private string[] _types = new string[] { "getevent.types.ps1xml" };
 
         /// <summary>

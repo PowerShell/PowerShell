@@ -143,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Session;
             }
+
             set
             {
                 base.Session = value;
@@ -168,6 +169,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ComputerName;
             }
+
             set
             {
                 base.ComputerName = value;
@@ -202,6 +204,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Credential;
             }
+
             set
             {
                 base.Credential = value;
@@ -229,6 +232,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Port;
             }
+
             set
             {
                 base.Port = value;
@@ -251,6 +255,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.UseSSL;
             }
+
             set
             {
                 base.UseSSL = value;
@@ -292,6 +297,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ConfigurationName;
             }
+
             set
             {
                 base.ConfigurationName = value;
@@ -314,6 +320,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ApplicationName;
             }
+
             set
             {
                 base.ApplicationName = value;
@@ -343,6 +350,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.ThrottleLimit = value;
             }
+
             get
             {
                 return base.ThrottleLimit;
@@ -365,6 +373,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ConnectionUri;
             }
+
             set
             {
                 base.ConnectionUri = value;
@@ -396,11 +405,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _asjob;
             }
+
             set
             {
                 _asjob = value;
             }
         }
+
         private bool _asjob = false;
 
         /// <summary>
@@ -415,6 +426,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter InDisconnectedSession
         {
             get { return InvokeAndDisconnect; }
+
             set { InvokeAndDisconnect = value; }
         }
 
@@ -429,6 +441,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] SessionName
         {
             get { return DisconnectedSessionName; }
+
             set { DisconnectedSessionName = value; }
         }
 
@@ -455,8 +468,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter HideComputerName
         {
             get { return _hideComputerName; }
+
             set { _hideComputerName = value; }
         }
+
         private bool _hideComputerName;
 
         /// <summary>
@@ -476,6 +491,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _name;
             }
+
             set
             {
                 if (!String.IsNullOrEmpty(value))
@@ -485,6 +501,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _name = String.Empty;
 
         /// <summary>
@@ -525,6 +542,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ScriptBlock;
             }
+
             set
             {
                 base.ScriptBlock = value;
@@ -572,6 +590,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.FilePath;
             }
+
             set
             {
                 base.FilePath = value;
@@ -589,6 +608,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.AllowRedirection;
             }
+
             set
             {
                 base.AllowRedirection = value;
@@ -609,6 +629,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.SessionOption;
             }
+
             set
             {
                 base.SessionOption = value;
@@ -628,6 +649,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Authentication;
             }
+
             set
             {
                 base.Authentication = value;
@@ -647,6 +669,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter EnableNetworkAccess
         {
             get { return base.EnableNetworkAccess; }
+
             set { base.EnableNetworkAccess = value; }
         }
 
@@ -661,6 +684,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter RunAsAdministrator
         {
             get { return base.RunAsAdministrator; }
+
             set { base.RunAsAdministrator = value; }
         }
 
@@ -677,6 +701,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] HostName
         {
             get { return base.HostName; }
+
             set { base.HostName = value; }
         }
 
@@ -689,6 +714,7 @@ namespace Microsoft.PowerShell.Commands
         public override string UserName
         {
             get { return base.UserName; }
+
             set { base.UserName = value; }
         }
 
@@ -702,6 +728,7 @@ namespace Microsoft.PowerShell.Commands
         public override string KeyFilePath
         {
             get { return base.KeyFilePath; }
+
             set { base.KeyFilePath = value; }
         }
 
@@ -717,6 +744,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter SSHTransport
         {
             get { return base.SSHTransport; }
+
             set { base.SSHTransport = value; }
         }
 
@@ -981,6 +1009,7 @@ namespace Microsoft.PowerShell.Commands
                         // or not...there is no mix.
                         break;
                     }
+
                     ecHelper.ShouldUseSteppablePipelineOnServer = true;
                 }
             }
@@ -1054,6 +1083,7 @@ namespace Microsoft.PowerShell.Commands
                                         WriteObject(job);
                                     }
                                 }
+
                                 break;
 
                             case InvokeCommandCommand.SessionParameterSet:
@@ -1066,6 +1096,7 @@ namespace Microsoft.PowerShell.Commands
                                     this.JobRepository.Add(job);
                                     WriteObject(job);
                                 }
+
                                 break;
 
                             case InvokeCommandCommand.UriParameterSet:
@@ -1087,6 +1118,7 @@ namespace Microsoft.PowerShell.Commands
                                         WriteObject(job);
                                     }
                                 }
+
                                 break;
                         }
                     }
@@ -1405,6 +1437,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
             foreach (var ps in powershells)
             {
@@ -1425,6 +1458,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
             foreach (var ps in powershells)
             {
@@ -1805,6 +1839,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             if (retryCanceled &&
                 this.Host != null)
             {
@@ -1870,6 +1905,7 @@ namespace Microsoft.PowerShell.Commands
                 // in proc parameter set - just return
                 return;
             }
+
             if (!_asjob)
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.ComputerNameParameterSet) ||
@@ -2075,10 +2111,12 @@ namespace System.Management.Automation.Internal
             {
                 return;
             }
+
             if (secondsTotal < 1)
             {
                 return;
             }
+
             if (string.IsNullOrEmpty(computerName))
             {
                 throw new ArgumentNullException("computerName");

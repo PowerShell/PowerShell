@@ -101,9 +101,11 @@ namespace System.Management.Automation
                         ErrorCategory.SecurityError,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
 
         /// <summary>
@@ -115,6 +117,7 @@ namespace System.Management.Automation
         {
             get { return _message; }
         }
+
         private string _message;
     }
 }

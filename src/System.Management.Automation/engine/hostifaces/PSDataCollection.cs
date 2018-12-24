@@ -297,6 +297,7 @@ namespace System.Management.Automation
                     psdc.Add(LanguagePrimitives.ConvertTo<T>(ae));
                 }
             }
+
             psdc.Complete();
             return psdc;
         }
@@ -391,6 +392,7 @@ namespace System.Management.Automation
         public int DataAddedCount
         {
             get { return _dataAddedFrequency; }
+
             set
             {
                 bool raiseDataAdded = false;
@@ -435,6 +437,7 @@ namespace System.Management.Automation
                 _serializeInput = value;
             }
         }
+
         private bool _serializeInput = false;
 
         /// <summary>
@@ -459,6 +462,7 @@ namespace System.Management.Automation
                     return _sourceGuid;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -481,6 +485,7 @@ namespace System.Management.Automation
                     return _releaseOnEnumeration;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -502,6 +507,7 @@ namespace System.Management.Automation
                     return _isEnumerated;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -559,6 +565,7 @@ namespace System.Management.Automation
                         tempCompleted(this, EventArgs.Empty);
                     }
                 }
+
                 if (raiseDataAdded)
                 {
                     RaiseDataAddedEvent(_lastPsInstanceId, _lastIndex);
@@ -584,6 +591,7 @@ namespace System.Management.Automation
                     return _blockingEnumerator;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -648,6 +656,7 @@ namespace System.Management.Automation
                     return _data[index];
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -662,6 +671,7 @@ namespace System.Management.Automation
                     {
                         value = (T)(Object)GetSerializedObject(value);
                     }
+
                     _data[index] = value;
                 }
             }
@@ -730,6 +740,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentOutOfRangeException("index", index,
                         PSDataBufferStrings.IndexOutOfRange, 0, _data.Count - 1);
                 }
+
                 RemoveItem(index);
             }
         }
@@ -1051,6 +1062,7 @@ namespace System.Management.Automation
             {
                 return this[index];
             }
+
             set
             {
                 PSDataCollection<T>.VerifyValueType(value);
@@ -1320,6 +1332,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return _readWaitHandle;
             }
         }
@@ -1596,6 +1609,7 @@ namespace System.Management.Automation
                     return index;
                 }
             }
+
             return -1;
         }
 
@@ -1701,6 +1715,7 @@ namespace System.Management.Automation
             {
                 return _refCount;
             }
+
             set
             {
                 lock (SyncObject)
@@ -1776,6 +1791,7 @@ namespace System.Management.Automation
                     {
                         return;
                     }
+
                     _isDisposed = true;
                 }
 
@@ -1932,6 +1948,7 @@ namespace System.Management.Automation
                         {
                             _collToEnumerate[_index] = default(W);
                         }
+
                         _index++;
                         return true;
                     }
@@ -2025,11 +2042,13 @@ namespace System.Management.Automation
         internal PSDataCollection<ProgressRecord> Progress
         {
             get { return progress; }
+
             set
             {
                 progress = value;
             }
         }
+
         internal PSDataCollection<ProgressRecord> progress;
 
         /// <summary>
@@ -2039,11 +2058,13 @@ namespace System.Management.Automation
         internal PSDataCollection<VerboseRecord> Verbose
         {
             get { return verbose; }
+
             set
             {
                 verbose = value;
             }
         }
+
         internal PSDataCollection<VerboseRecord> verbose;
 
         /// <summary>
@@ -2053,11 +2074,13 @@ namespace System.Management.Automation
         internal PSDataCollection<DebugRecord> Debug
         {
             get { return debug; }
+
             set
             {
                 debug = value;
             }
         }
+
         internal PSDataCollection<DebugRecord> debug;
 
         /// <summary>

@@ -131,9 +131,11 @@ namespace System.Management.Automation
                         _errorCategory,
                         _commandName);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
 
         /// <summary>
@@ -142,8 +144,10 @@ namespace System.Management.Automation
         public string CommandName
         {
             get { return _commandName; }
+
             set { _commandName = value; }
         }
+
         private string _commandName = String.Empty;
 
         #endregion Properties
@@ -170,6 +174,7 @@ namespace System.Management.Automation
                 a = new object[1];
                 a[0] = commandName;
             }
+
             return StringUtil.Format(resourceStr, a);
         }
         #endregion Private
@@ -410,6 +415,7 @@ namespace System.Management.Automation
         {
             get { return _commandName; }
         }
+
         private string _commandName = String.Empty;
 
         /// <summary>
@@ -419,6 +425,7 @@ namespace System.Management.Automation
         {
             get { return _requiresPSVersion; }
         }
+
         private Version _requiresPSVersion;
 
         /// <summary>
@@ -428,6 +435,7 @@ namespace System.Management.Automation
         {
             get { return _missingPSSnapIns; }
         }
+
         private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(new string[0]);
 
         /// <summary>
@@ -437,6 +445,7 @@ namespace System.Management.Automation
         {
             get { return _requiresShellId; }
         }
+
         private string _requiresShellId;
 
         /// <summary>
@@ -446,6 +455,7 @@ namespace System.Management.Automation
         {
             get { return _requiresShellPath; }
         }
+
         private string _requiresShellPath;
 
         #endregion Properties
@@ -462,10 +472,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("missingItems");
             }
+
             foreach (string missingItem in missingItems)
             {
                 sb.Append(missingItem).Append(", ");
             }
+
             if (sb.Length > 1)
             {
                 sb.Remove(sb.Length - 2, 2);

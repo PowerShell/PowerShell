@@ -137,6 +137,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 message = resourceString;
             }
+
             return message;
         }
 
@@ -522,6 +523,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _pscredential;
             }
+
             set
             {
                 _pscredential = value;
@@ -592,6 +594,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _appName;
             }
+
             set
             {
                 _appName = ResolveAppName(value);
@@ -631,8 +634,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter AllowRedirection
         {
             get { return _allowRedirection; }
+
             set { _allowRedirection = value; }
         }
+
         private bool _allowRedirection = false;
 
         /// <summary>
@@ -654,11 +659,13 @@ namespace Microsoft.PowerShell.Commands
                         _sessionOption = new PSSessionOption();
                     }
                 }
+
                 return _sessionOption;
             }
 
             set { _sessionOption = value; }
         }
+
         private PSSessionOption _sessionOption;
         internal const string DEFAULT_SESSION_OPTION = "PSSessionOption";
 
@@ -674,6 +681,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _authMechanism;
             }
+
             set
             {
                 _authMechanism = value;
@@ -681,6 +689,7 @@ namespace Microsoft.PowerShell.Commands
                 ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private AuthenticationMechanism _authMechanism = AuthenticationMechanism.Default;
 
         /// <summary>
@@ -692,12 +701,14 @@ namespace Microsoft.PowerShell.Commands
         public virtual string CertificateThumbprint
         {
             get { return _thumbPrint; }
+
             set
             {
                 _thumbPrint = value;
                 ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private string _thumbPrint = null;
 
         #region SSHHostParameters
@@ -857,6 +868,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     userName = uri.UserInfo;
                 }
+
                 if (uri.Port != -1)
                 {
                     port = uri.Port;
@@ -908,6 +920,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             connectionInfo.UserName = userName;
                         }
+
                         if (port != -1)
                         {
                             connectionInfo.Port = port;
@@ -1165,11 +1178,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _scriptBlock;
             }
+
             set
             {
                 _scriptBlock = value;
             }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -1193,11 +1208,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _filePath;
             }
+
             set
             {
                 _filePath = value;
             }
         }
+
         private string _filePath;
 
         /// <summary>
@@ -1217,11 +1234,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _args;
             }
+
             set
             {
                 _args = value;
             }
         }
+
         private object[] _args;
 
         /// <summary>
@@ -1352,6 +1371,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
 
                     UpdateConnectionInfo(connectionInfo);
@@ -2034,6 +2054,7 @@ namespace Microsoft.PowerShell.Commands
 
                         CreateHelpersForSpecifiedComputerNames();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.SSHHostParameterSet:
@@ -2045,6 +2066,7 @@ namespace Microsoft.PowerShell.Commands
 
                         CreateHelpersForSpecifiedSSHComputerNames();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.SSHHostHashParameterSet:
@@ -2052,6 +2074,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedSSHHashComputerNames();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.FilePathSessionParameterSet:
@@ -2061,6 +2084,7 @@ namespace Microsoft.PowerShell.Commands
 
                         CreateHelpersForSpecifiedRunspaces();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.FilePathUriParameterSet:
@@ -2068,6 +2092,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedUris();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.VMIdParameterSet:
@@ -2077,6 +2102,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedVMSession();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.ContainerIdParameterSet:
@@ -2084,6 +2110,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedContainerSession();
                     }
+
                     break;
             }
         }
@@ -2126,6 +2153,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
+
                 if (_powershellV2 != null) { return _powershellV2; }
             }
 
@@ -2381,6 +2409,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException("localScriptBlock", "Caller needs to make sure the parameter value is not null");
             }
+
             var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(localScriptBlock.Ast);
             return allUsingExprs.Select(usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();
         }
@@ -2429,6 +2458,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _remoteRunspaceIds;
             }
+
             set
             {
                 _remoteRunspaceIds = value;
@@ -2460,6 +2490,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _names;
             }
+
             set
             {
                 _names = value;
@@ -2484,6 +2515,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _computerNames;
             }
+
             set
             {
                 _computerNames = value;
@@ -3179,6 +3211,7 @@ namespace Microsoft.PowerShell.Commands
                 return pipeline;
             }
         }
+
         protected Pipeline pipeline;
 
         /// <summary>
@@ -3192,6 +3225,7 @@ namespace Microsoft.PowerShell.Commands
                 return internalException;
             }
         }
+
         protected Exception internalException;
 
         /// <summary>
@@ -3289,6 +3323,7 @@ namespace Microsoft.PowerShell.Commands
                     rPipeline.SetIsNested(true);
                     rPipeline.SetIsSteppable(true);
                 }
+
                 pipeline.InvokeAsync();
             }
             catch (InvalidRunspaceStateException e)
@@ -3542,12 +3577,14 @@ namespace Microsoft.PowerShell.Commands
                             RemoteRunspace.CloseAsync();
                         }
                     }
+
                     break;
 
                 case RunspaceState.Broken:
                     {
                         RaiseOperationCompleteEvent(stateEventArgs);
                     }
+
                     break;
                 case RunspaceState.Closed:
                     {
@@ -3562,6 +3599,7 @@ namespace Microsoft.PowerShell.Commands
                             RaiseOperationCompleteEvent();
                         }
                     }
+
                     break;
             }
         }
@@ -3590,6 +3628,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         RemoteRunspace.CloseAsync();
                     }
+
                     break;
             }
         }
@@ -4295,6 +4334,7 @@ namespace System.Management.Automation.Remoting
         public AuthenticationMechanism ProxyAuthentication
         {
             get { return _proxyAuthentication; }
+
             set
             {
                 switch (value)
@@ -4314,6 +4354,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
         }
+
         private AuthenticationMechanism _proxyAuthentication = AuthenticationMechanism.Negotiate;
 
         /// <summary>

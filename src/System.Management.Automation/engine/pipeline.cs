@@ -114,6 +114,7 @@ namespace System.Management.Automation.Internal
             {
                 return _executionFailed;
             }
+
             set
             {
                 _executionFailed = value;
@@ -316,25 +317,30 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewArgumentNullException("commandProcessor");
             }
+
             if (_commands == null)
             {
                 // "_commands == null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             if (_disposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("PipelineProcessor");
             }
+
             if (_executionStarted)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.ExecutionAlreadyStarted);
             }
+
             if (commandProcessor.AddedToPipelineAlready)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.CommandProcessorAlreadyUsed);
             }
+
             if (0 == _commands.Count)
             {
                 if (0 != readFromCommand)
@@ -363,6 +369,7 @@ namespace System.Management.Automation.Internal
                     // "PipelineProcessor.AddCommand(): previous request object == null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 Pipe UpstreamPipe = (readErrorQueue) ?
                     prevcommandProcessor.CommandRuntime.ErrorOutputPipe : prevcommandProcessor.CommandRuntime.OutputPipe;
                 if (UpstreamPipe == null)
@@ -370,6 +377,7 @@ namespace System.Management.Automation.Internal
                     // "PipelineProcessor.AddCommand(): UpstreamPipe == null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 if (UpstreamPipe.DownstreamCmdlet != null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
@@ -406,6 +414,7 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+
             _commands.Add(commandProcessor);
 
             // We give the Command a pointer back to the
@@ -495,6 +504,7 @@ namespace System.Management.Automation.Internal
                         firstCommandProcessor.CommandRuntime.InputPipe.ExternalReader
                             = ExternalInput;
                     }
+
                     Inject(input, enumerate: true);
                 }
                 catch (PipelineStoppedException)
@@ -595,6 +605,7 @@ namespace System.Management.Automation.Internal
                         commandRequestingUpstreamCommandsToStop = null;
                         continue; // do not call DoComplete/EndProcessing on the command that initiated stopping
                     }
+
                     if (commandRequestingUpstreamCommandsToStop != null)
                     {
                         continue; // do not call DoComplete/EndProcessing on commands that were stopped upstream
@@ -636,6 +647,7 @@ namespace System.Management.Automation.Internal
                         commandProcessor.CommandRuntime.PipelineProcessor.LogExecutionComplete(
                             commandProcessor.Command.MyInvocation, commandProcessor.CommandInfo.Name);
                     }
+
                     lastCommandRuntime = commandProcessor.CommandRuntime;
                 }
             }
@@ -759,6 +771,7 @@ namespace System.Management.Automation.Internal
                 {
                     _firstTerminatingError.Throw();
                 }
+
                 throw;
             }
         }
@@ -873,6 +886,7 @@ namespace System.Management.Automation.Internal
                 {
                     _firstTerminatingError.Throw();
                 }
+
                 throw;
             }
             catch (Exception)
@@ -919,6 +933,7 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewObjectDisposedException("PipelineProcessor");
             }
+
             if (Stopping)
             {
                 throw new PipelineStoppedException();
@@ -955,6 +970,7 @@ namespace System.Management.Automation.Internal
                 // "PipelineProcessor.Start(): LastCommandProcessor == null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             if (ExternalSuccessOutput != null)
             {
                 LastCommandProcessor.CommandRuntime.OutputPipe.ExternalWriter
@@ -1357,6 +1373,7 @@ namespace System.Management.Automation.Internal
 #pragma warning restore 56500
                 }
             }
+
             _redirectionPipes = null;
         }
 
@@ -1391,6 +1408,7 @@ namespace System.Management.Automation.Internal
                     {
                         ex = ex.InnerException;
                     }
+
                     if (!(ex is PipelineStoppedException))
                     {
                         string message = StringUtil.Format(PipelineStrings.SecondFailure,
@@ -1407,9 +1425,11 @@ namespace System.Management.Automation.Internal
                             Severity.Warning);
                     }
                 }
+
                 wasStopping = _stopping;
                 _stopping = true;
             }
+
             return !wasStopping;
         }
 
@@ -1449,6 +1469,7 @@ namespace System.Management.Automation.Internal
         internal PipelineReader<object> ExternalInput
         {
             get { return _externalInputPipe; }
+
             set
             {
                 if (_executionStarted)
@@ -1456,6 +1477,7 @@ namespace System.Management.Automation.Internal
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.ExecutionAlreadyStarted);
                 }
+
                 _externalInputPipe = value;
             }
         }
@@ -1473,6 +1495,7 @@ namespace System.Management.Automation.Internal
         internal PipelineWriter ExternalSuccessOutput
         {
             get { return _externalSuccessOutput; }
+
             set
             {
                 if (_executionStarted)
@@ -1480,6 +1503,7 @@ namespace System.Management.Automation.Internal
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.ExecutionAlreadyStarted);
                 }
+
                 _externalSuccessOutput = value;
             }
         }
@@ -1498,6 +1522,7 @@ namespace System.Management.Automation.Internal
         internal PipelineWriter ExternalErrorOutput
         {
             get { return _externalErrorOutput; }
+
             set
             {
                 if (_executionStarted)
@@ -1531,6 +1556,7 @@ namespace System.Management.Automation.Internal
         internal LocalPipeline LocalPipeline
         {
             get { return _localPipeline; }
+
             set { _localPipeline = value; }
         }
 
@@ -1542,6 +1568,7 @@ namespace System.Management.Automation.Internal
         internal SessionStateScope ExecutionScope
         {
             get { return _executionScope; }
+
             set
             {
                 // This needs to be settable so that a steppable pipeline

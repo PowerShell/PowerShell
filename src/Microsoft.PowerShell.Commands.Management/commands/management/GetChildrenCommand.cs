@@ -40,6 +40,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 _paths = value;
@@ -76,6 +77,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Filter;
             }
+
             set
             {
                 base.Filter = value;
@@ -127,6 +129,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _recurse;
             }
+
             set
             {
                 _recurse = value;
@@ -146,6 +149,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _depth;
             }
+
             set
             {
                 _depth = value;
@@ -172,6 +176,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Force;
             }
+
             set
             {
                 base.Force = value;
@@ -188,6 +193,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _childNames;
             }
+
             set
             {
                 _childNames = value;
@@ -232,12 +238,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = InvokeProvider.ChildItem.GetChildItemsDynamicParameters(path, Recurse, context);
                     }
+
                     break;
 
                 default:
                     result = InvokeProvider.ChildItem.GetChildItemsDynamicParameters(path, Recurse, context);
                     break;
             }
+
             return result;
         }
 

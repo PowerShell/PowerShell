@@ -249,6 +249,7 @@ namespace System.Management.Automation
         {
             get { return _definitionExtent == null ? String.Empty : _definitionExtent.Text; }
         }
+
         internal IScriptExtent _definitionExtent;
 
         /// <summary>
@@ -257,8 +258,10 @@ namespace System.Management.Automation
         public string Description
         {
             get { return _description; }
+
             set { _description = value ?? String.Empty; }
         }
+
         private string _description = String.Empty;
 
         /// <summary>
@@ -296,10 +299,12 @@ namespace System.Management.Automation
                        (_moduleBase = !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty);
             }
         }
+
         internal void SetModuleBase(string moduleBase)
         {
             _moduleBase = moduleBase;
         }
+
         private string _moduleBase;
 
         /// <summary>
@@ -320,6 +325,7 @@ namespace System.Management.Automation
                 SetPSDataPropertiesFromPrivateData();
             }
         }
+
         private object _privateData = null;
 
         private void SetPSDataPropertiesFromPrivateData()
@@ -462,15 +468,18 @@ namespace System.Management.Automation
         public ModuleAccessMode AccessMode
         {
             get { return _accessMode; }
+
             set
             {
                 if (_accessMode == ModuleAccessMode.Constant)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 _accessMode = value;
             }
         }
+
         private ModuleAccessMode _accessMode = ModuleAccessMode.ReadWrite;
 
         /// <summary>
@@ -564,6 +573,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return exports;
             }
         }
@@ -808,8 +818,10 @@ namespace System.Management.Automation
                     {
                         _compiledExports.Add(ci);
                     }
+
                     SessionState.Internal.ExportedCmdlets.Clear();
                 }
+
                 return _compiledExports;
             }
         }
@@ -910,6 +922,7 @@ namespace System.Management.Automation
                        (_readonlyNestedModules = new ReadOnlyCollection<PSModuleInfo>(_nestedModules));
             }
         }
+
         private ReadOnlyCollection<PSModuleInfo> _readonlyNestedModules;
 
         /// <summary>
@@ -920,6 +933,7 @@ namespace System.Management.Automation
         {
             AddModuleToList(nestedModule, _nestedModules);
         }
+
         private readonly List<PSModuleInfo> _nestedModules = new List<PSModuleInfo>();
 
         /// <summary>
@@ -980,6 +994,7 @@ namespace System.Management.Automation
         {
             get { return _requiredAssemblies; }
         }
+
         private Collection<string> _requiredAssemblies = new Collection<string>();
 
         internal void AddRequiredAssembly(string assembly)
@@ -999,6 +1014,7 @@ namespace System.Management.Automation
                        (_readonlyRequiredModules = new ReadOnlyCollection<PSModuleInfo>(_requiredModules));
             }
         }
+
         private ReadOnlyCollection<PSModuleInfo> _readonlyRequiredModules;
 
         /// <summary>
@@ -1009,6 +1025,7 @@ namespace System.Management.Automation
         {
             AddModuleToList(requiredModule, _requiredModules);
         }
+
         private List<PSModuleInfo> _requiredModules = new List<PSModuleInfo>();
 
         /// <summary>
@@ -1023,6 +1040,7 @@ namespace System.Management.Automation
                        (_readonlyRequiredModulesSpecification = new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification));
             }
         }
+
         private ReadOnlyCollection<ModuleSpecification> _readonlyRequiredModulesSpecification;
 
         /// <summary>
@@ -1033,6 +1051,7 @@ namespace System.Management.Automation
         {
             _requiredModulesSpecification.Add(requiredModuleSpecification);
         }
+
         private List<ModuleSpecification> _requiredModulesSpecification = new List<ModuleSpecification>();
 
         /// <summary>
@@ -1066,6 +1085,7 @@ namespace System.Management.Automation
                 if (m.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                     return;
             }
+
             moduleList.Add(module);
         }
 
@@ -1278,6 +1298,7 @@ namespace System.Management.Automation
                 // and restore the scriptblocks session state...
                 sb.SessionStateInternal = oldSessionState;
             }
+
             return result;
         }
 
@@ -1310,6 +1331,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (callersSessionState != null)
             {
                 return callersSessionState.Internal.GetVariable(variableName);
@@ -1448,6 +1470,7 @@ namespace System.Management.Automation
             {
                 clone.AddRequiredModule(r);
             }
+
             foreach (var r in _requiredModulesSpecification)
             {
                 clone.AddRequiredModuleSpecification(r);

@@ -62,6 +62,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return true;
             }
+
             return false;
         }
 
@@ -168,6 +169,7 @@ namespace System.Management.Automation.Interpreter
             Debug.Assert(_handlers != null, "we should have at least one handler if the method gets called");
             handler = _handlers.FirstOrDefault(t => t.Matches(exception.GetType()));
             if (handler == null) { return 0; }
+
             return frame.Goto(handler.LabelIndex, exception, gotoExceptionHandler: true);
         }
     }
@@ -409,6 +411,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _locals.Box(expr, _instructions);
                 }
+
                 return local;
             }
             else if (_parent != null)
@@ -435,6 +438,7 @@ namespace System.Management.Automation.Interpreter
             {
                 local = EnsureAvailableForClosure(variable);
             }
+
             return local;
         }
 
@@ -563,6 +567,7 @@ namespace System.Management.Automation.Interpreter
             {
                 CompileAsVoid(node.Expressions[i]);
             }
+
             return locals;
         }
 
@@ -657,6 +662,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Compile(member.Expression);
                 }
+
                 Compile(node.Right);
 
                 int start = _instructions.Count;
@@ -672,6 +678,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitCall(method);
                 }
+
                 return;
             }
 
@@ -682,6 +689,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Compile(member.Expression);
                 }
+
                 Compile(node.Right);
 
                 int start = _instructions.Count;
@@ -697,6 +705,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitStoreField(fi);
                 }
+
                 return;
             }
 
@@ -888,6 +897,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitNumericConvertUnchecked(from, to);
                 }
+
                 return;
             }
 
@@ -967,6 +977,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _instructions.EmitBranchTrue(elseLabel);
                 }
+
                 Compile(node.Right);
                 _instructions.EmitBranch(endLabel, false, true);
                 _instructions.MarkLabel(elseLabel);
@@ -1056,6 +1067,7 @@ namespace System.Management.Automation.Interpreter
             {
                 throw new NotImplementedException();
             }
+
             LabelInfo end = DefineLabel(null);
             bool hasValue = node.Type != typeof(void);
 
@@ -1072,6 +1084,7 @@ namespace System.Management.Automation.Interpreter
             {
                 Debug.Assert(!hasValue);
             }
+
             _instructions.EmitBranch(end.GetLabel(this), false, hasValue);
 
             for (int i = 0; i < node.Cases.Count; i++)
@@ -1176,6 +1189,7 @@ namespace System.Management.Automation.Interpreter
             {
                 _treeLabels[node] = result = new LabelInfo(node);
             }
+
             return result;
         }
 
@@ -1192,6 +1206,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return new LabelInfo(null);
             }
+
             LabelInfo result = EnsureLabel(node);
             result.Define(_labelBlock);
             return result;
@@ -1213,6 +1228,7 @@ namespace System.Management.Automation.Interpreter
                         PushLabelBlock(LabelScopeKind.Expression);
                         return true;
                     }
+
                     return false;
                 case ExpressionType.Label:
                     // LabelExpression is a bit special, if it's directly in a
@@ -1225,12 +1241,14 @@ namespace System.Management.Automation.Interpreter
                         {
                             return false;
                         }
+
                         if (_labelBlock.Parent.Kind == LabelScopeKind.Switch &&
                             _labelBlock.Parent.ContainsTarget(label))
                         {
                             return false;
                         }
                     }
+
                     PushLabelBlock(LabelScopeKind.Statement);
                     return true;
                 case ExpressionType.Block:
@@ -1241,6 +1259,7 @@ namespace System.Management.Automation.Interpreter
                     {
                         DefineBlockLabels(node);
                     }
+
                     return true;
                 case ExpressionType.Switch:
                     PushLabelBlock(LabelScopeKind.Switch);
@@ -1253,6 +1272,7 @@ namespace System.Management.Automation.Interpreter
                         SwitchCase c = @switch.Cases[index];
                         DefineBlockLabels(c.Body);
                     }
+
                     DefineBlockLabels(@switch.DefaultBody);
                     return true;
 
@@ -1263,6 +1283,7 @@ namespace System.Management.Automation.Interpreter
                         // treat it as an expression
                         goto default;
                     }
+
                     PushLabelBlock(LabelScopeKind.Statement);
                     return true;
 
@@ -1301,6 +1322,7 @@ namespace System.Management.Automation.Interpreter
             {
                 newLabelMapping[kvp.Key] = kvp.Value.GetLabel(this);
             }
+
             return newLabelMapping;
         }
 
@@ -1348,6 +1370,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return EndsWithRethrow(block.Expressions[block.Expressions.Count - 1]);
             }
+
             return false;
         }
 
@@ -1591,6 +1614,7 @@ namespace System.Management.Automation.Interpreter
                     var arg = node.Arguments[index];
                     this.Compile(arg);
                 }
+
                 _instructions.EmitNew(node.Constructor);
             }
             else
@@ -1628,6 +1652,7 @@ namespace System.Management.Automation.Interpreter
                     Compile(node.Expression);
                     _instructions.EmitLoadField(fi);
                 }
+
                 return;
             }
 
@@ -1639,6 +1664,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Compile(node.Expression);
                 }
+
                 _instructions.EmitCall(method);
                 return;
             }
@@ -1741,6 +1767,7 @@ namespace System.Management.Automation.Interpreter
                     CompileGetBoxedVariable(variable);
                 }
             }
+
             _instructions.EmitCreateDelegate(creator);
         }
 
@@ -1903,8 +1930,10 @@ namespace System.Management.Automation.Interpreter
                     {
                         _instructions.EmitPop();
                     }
+
                     break;
             }
+
             Debug.Assert(_instructions.CurrentStackDepth == startingStackDepth);
             if (pushLabelBlock)
             {

@@ -249,6 +249,7 @@ namespace System.Management.Automation
 
             return result;
         }
+
         private static char[] s_charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
 
         /// <summary>
@@ -398,6 +399,7 @@ namespace System.Management.Automation
                         null,
                         e);
             }
+
             return result;
         }
 
@@ -631,6 +633,7 @@ namespace System.Management.Automation
                     // DriveNotFoundException which will be thrown by the caller
                 }
             }
+
             return result;
         }
 
@@ -733,6 +736,7 @@ namespace System.Management.Automation
                     e,
                     Severity.Warning);
             }
+
             return result;
         }
 
@@ -1174,6 +1178,7 @@ namespace System.Management.Automation
                                 {
                                     ProvidersCurrentWorkingDrive[drive.Provider] = null;
                                 }
+
                                 break;
                             }
                         }
@@ -1415,6 +1420,7 @@ namespace System.Management.Automation
             {
                 results.Add(drive);
             }
+
             return results;
         }
 

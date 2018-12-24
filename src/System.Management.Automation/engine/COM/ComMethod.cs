@@ -127,6 +127,7 @@ namespace System.Management.Automation
                         method.Name, arguments.Length, ce.Message);
                 }
             }
+
             return null;
         }
     }

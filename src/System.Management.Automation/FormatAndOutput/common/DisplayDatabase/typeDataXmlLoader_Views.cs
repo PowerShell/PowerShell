@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadTableControl(n);
                     }
@@ -93,6 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadListControl(n);
                     }
@@ -104,6 +106,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadWideControl(n);
                     }
@@ -114,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ProcessDuplicateNode(n);
                             return null;
                         }
+
                         mainControlFound = true;
                         view.mainControl = LoadComplexControl(n);
                     }
@@ -166,6 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         return false;
                     }
+
                     if (!(view.mainControl is ComplexControlBody) && !(view.mainControl is ListControlBody))
                     {
                         //Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.
@@ -189,6 +194,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ProcessUnknownNode(n);
                 }
             }
+
             return true;
         }
 

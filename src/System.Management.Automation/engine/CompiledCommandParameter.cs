@@ -374,6 +374,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -446,6 +447,7 @@ namespace System.Management.Automation
                 {
                     this.CannotBeNull = true;
                 }
+
                 return;
             }
 
@@ -464,6 +466,7 @@ namespace System.Management.Automation
                     Array.Copy(prevAliasNames, aliases, prevAliasNames.Length);
                     Array.Copy(newAliasNames, 0, aliases, prevAliasNames.Length, newAliasNames.Length);
                 }
+
                 return;
             }
 
@@ -547,6 +550,7 @@ namespace System.Management.Automation
             {
                 IsPipelineParameterInSomeParameterSet = true;
             }
+
             if (parameter.Mandatory)
             {
                 IsMandatoryInSomeParameterSet = true;

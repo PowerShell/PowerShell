@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path
         {
             get { return paths; }
+
             set { paths = value; }
         }
 
@@ -35,6 +36,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -78,6 +80,7 @@ namespace Microsoft.PowerShell.Commands
                     Name,
                     context);
             }
+
             return InvokeProvider.Property.CopyPropertyDynamicParameters(
                 ".",
                 Name,

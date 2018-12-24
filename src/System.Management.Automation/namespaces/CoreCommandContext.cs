@@ -139,6 +139,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
+
             ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
@@ -190,6 +191,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
+
             ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
@@ -227,6 +229,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
+
             ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
@@ -254,6 +257,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("contextToCopyFrom");
             }
+
             ExecutionContext = contextToCopyFrom.ExecutionContext;
 
             _command = contextToCopyFrom._command;
@@ -514,6 +518,7 @@ namespace System.Management.Automation
         internal SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
 

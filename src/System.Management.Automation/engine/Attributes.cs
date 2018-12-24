@@ -257,6 +257,7 @@ namespace System.Management.Automation
             {
                 ValidateElement(enumerator.Current);
             }
+
             enumerator.Reset();
         }
 
@@ -365,6 +366,7 @@ namespace System.Management.Automation
         public bool SupportsTransactions
         {
             get { return _supportsTransactions; }
+
             set
             {
 #if !CORECLR
@@ -376,6 +378,7 @@ namespace System.Management.Automation
 #endif
             }
         }
+
         private bool _supportsTransactions = false;
 
         /// <summary>
@@ -544,8 +547,10 @@ namespace System.Management.Automation
         public string[] ParameterSetName
         {
             get { return _parameterSetName ?? (_parameterSetName = new[] { ParameterAttribute.AllParameterSets }); }
+
             set { _parameterSetName = value; }
         }
+
         private string[] _parameterSetName;
     }
 
@@ -660,9 +665,11 @@ namespace System.Management.Automation
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
                 }
+
                 return _effectiveAction;
             }
         }
+
         private ExperimentAction _effectiveAction = default(ExperimentAction);
 
         #endregion
@@ -679,6 +686,7 @@ namespace System.Management.Automation
         public string ParameterSetName
         {
             get { return _parameterSetName; }
+
             set
             {
                 _parameterSetName = value;
@@ -725,12 +733,14 @@ namespace System.Management.Automation
             {
                 return _helpMessage;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessage");
                 }
+
                 _helpMessage = value;
             }
         }
@@ -746,12 +756,14 @@ namespace System.Management.Automation
             {
                 return _helpMessageBaseName;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessageBaseName");
                 }
+
                 _helpMessageBaseName = value;
             }
         }
@@ -767,12 +779,14 @@ namespace System.Management.Automation
             {
                 return _helpMessageResourceId;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessageResourceId");
                 }
+
                 _helpMessageResourceId = value;
             }
         }
@@ -925,15 +939,18 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("minLength", minLength);
             }
+
             if (maxLength <= 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxLength", maxLength);
             }
+
             if (maxLength < minLength)
             {
                 throw new ValidationMetadataException("ValidateLengthMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateLengthMaxLengthSmallerThanMinLength);
             }
+
             MinLength = minLength;
             MaxLength = maxLength;
         }
@@ -1046,10 +1063,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("minRange");
             }
+
             if (maxRange == null)
             {
                 throw PSTraceSource.NewArgumentNullException("maxRange");
             }
+
             if (maxRange.GetType() != minRange.GetType())
             {
                 bool failure = true;
@@ -1067,6 +1086,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 if (failure)
                 {
                     throw new ValidationMetadataException("MinRangeNotTheSameTypeOfMaxRange", null,
@@ -1098,6 +1118,7 @@ namespace System.Management.Automation
                 throw new ValidationMetadataException("MaxRangeSmallerThanMinRange",
                     null, Metadata.ValidateRangeMaxRangeSmallerThanMinRange);
             }
+
             MinRange = minRange;
             MaxRange = maxRange;
         }
@@ -1157,6 +1178,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangePositiveFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.NonNegative:
                     if (dynamicZero.CompareTo(element) > 0)
@@ -1167,6 +1189,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNonNegativeFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.Negative:
                     if (dynamicZero.CompareTo(element) <= 0)
@@ -1177,6 +1200,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNegativeFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.NonPositive:
                     if (dynamicZero.CompareTo(element) < 0)
@@ -1187,6 +1211,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNonPositiveFailure,
                             element.ToString());
                     }
+
                     break;
                 }
         }
@@ -1525,15 +1550,18 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("minLength", minLength);
             }
+
             if (maxLength <= 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxLength", maxLength);
             }
+
             if (maxLength < minLength)
             {
                 throw new ValidationMetadataException("ValidateRangeMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateCountMaxLengthSmallerThanMinLength);
             }
+
             MinLength = minLength;
             MaxLength = maxLength;
         }
@@ -2202,6 +2230,7 @@ namespace System.Management.Automation
             {
                 ExecutionContext.PropagateInputSource(inputData, result, engineIntrinsics.SessionState.Internal.LanguageMode);
             }
+
             return result;
         }
 

@@ -295,6 +295,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             appDomainNames = new List<string>();
                         }
+
                         appDomainNames.Add(currentAppDomainName.ToLowerInvariant());
                     }
                 }

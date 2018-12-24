@@ -209,6 +209,7 @@ namespace System.Management.Automation.Runspaces
                     return _runspacePool;
                 }
             }
+
             set
             {
                 lock (_syncObject)
@@ -239,6 +240,7 @@ namespace System.Management.Automation.Runspaces
                 _started = true;
                 Process.Exited += ProcessExited;
             }
+
             Process.Start();
         }
 

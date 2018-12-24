@@ -93,6 +93,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return node;
             }
+
             return Expression.Lambda<T>(b, node.Name, node.TailCall, node.Parameters);
         }
 
@@ -102,15 +103,18 @@ namespace System.Management.Automation.Interpreter
             {
                 _shadowedVars.Push(new HashSet<ParameterExpression>(node.Variables));
             }
+
             var b = Visit(node.Expressions);
             if (node.Variables.Count > 0)
             {
                 _shadowedVars.Pop();
             }
+
             if (b == node.Expressions)
             {
                 return node;
             }
+
             return Expression.Block(node.Variables, b);
         }
 
@@ -120,16 +124,19 @@ namespace System.Management.Automation.Interpreter
             {
                 _shadowedVars.Push(new HashSet<ParameterExpression>(new[] { node.Variable }));
             }
+
             Expression b = Visit(node.Body);
             Expression f = Visit(node.Filter);
             if (node.Variable != null)
             {
                 _shadowedVars.Pop();
             }
+
             if (b == node.Body && f == node.Filter)
             {
                 return node;
             }
+
             return Expression.MakeCatchBlock(node.Test, node.Variable, b, f);
         }
 
@@ -206,6 +213,7 @@ namespace System.Management.Automation.Interpreter
                     );
                 }
             }
+
             return base.VisitBinary(node);
         }
 
@@ -274,6 +282,7 @@ namespace System.Management.Automation.Interpreter
                     index = _indexes[index];
                     return (index >= 0) ? _first[index] : _second[-1 - index];
                 }
+
                 set
                 {
                     index = _indexes[index];

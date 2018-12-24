@@ -70,6 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _groupingKeyDisplayName = results[0].ResolvedExpression.ToString();
                 }
+
                 return update;
             }
 

@@ -294,6 +294,7 @@ namespace System.Management.Automation.Host
         public virtual bool DebuggerEnabled
         {
             get { return false; }
+
             set { throw new PSNotImplementedException(); }
         }
     }

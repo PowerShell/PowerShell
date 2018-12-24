@@ -95,6 +95,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Static
         {
             set { _staticParameter = value; }
+
             get { return _staticParameter; }
         }
 
@@ -114,6 +115,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return (_matchOptions == MshMemberMatchOptions.IncludeHidden);
             }
+
             set
             {
                 if (value)
@@ -127,6 +129,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private MshMemberMatchOptions _matchOptions = MshMemberMatchOptions.None;
 
         private HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
@@ -234,9 +237,11 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
                     }
+
                     members[resultCount] = new MemberDefinition(typeName, member.Name, member.MemberType, member.ToString());
                     resultCount++;
                 }
+
                 Array.Sort<MemberDefinition>(members, 0, resultCount, new MemberComparer());
                 for (int index = 0; index < resultCount; index++)
                 {
@@ -255,6 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return result;
                 }
+
                 return String.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
             }
         }

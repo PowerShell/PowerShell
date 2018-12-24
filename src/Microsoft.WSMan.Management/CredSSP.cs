@@ -49,8 +49,10 @@ namespace Microsoft.WSMan.Management
         public string Role
         {
             get { return role; }
+
             set { role = value; }
         }
+
         private string role;
         #endregion
 
@@ -135,6 +137,7 @@ namespace Microsoft.WSMan.Management
                     WriteError(er);
                     return;
                 }
+
                 m_SessionObj.Put(helper.CredSSP_RUri, inputXml, 0);
 
                 if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
@@ -240,6 +243,7 @@ namespace Microsoft.WSMan.Management
                     DeleteDelegateSettings(applicationname, Registry.CurrentUser, key, GPO);
                 }
             }
+
             KeyHandle = System.IntPtr.Zero;
         }
 
@@ -271,8 +275,10 @@ namespace Microsoft.WSMan.Management
                                     otherkeys = true;
                                 }
                             }
+
                             Allow_Fresh_Credential_Key.DeleteValue(value);
                         }
+
                         foreach (string keyvalue in KeyCollection)
                         {
                             Allow_Fresh_Credential_Key.SetValue(Convert.ToString(i + 1, CultureInfo.InvariantCulture), keyvalue, RegistryValueKind.String);
@@ -280,6 +286,7 @@ namespace Microsoft.WSMan.Management
                         }
                     }
                 }
+
                 if (!otherkeys)
                 {
                     rKey = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation, true);
@@ -290,17 +297,20 @@ namespace Microsoft.WSMan.Management
                         {
                             rKey.DeleteValue(helper.Key_Allow_Fresh_Credentials, false);
                         }
+
                         object regval2 = rKey.GetValue(helper.Key_Concatenate_Defaults_AllowFresh);
                         if (regval2 != null)
                         {
                             rKey.DeleteValue(helper.Key_Concatenate_Defaults_AllowFresh, false);
                         }
+
                         if (rKey.OpenSubKey(helper.Key_Allow_Fresh_Credentials) != null)
                         {
                             rKey.DeleteSubKeyTree(helper.Key_Allow_Fresh_Credentials);
                         }
                     }
                 }
+
                 GPO.Save(true, true, new Guid("35378EAC-683F-11D2-A89A-00C04FBBCFA2"), new Guid("6AD20875-336C-4e22-968F-C709ACB15814"));
             }
             catch (InvalidOperationException ex)
@@ -399,8 +409,10 @@ namespace Microsoft.WSMan.Management
         public String[] DelegateComputer
         {
             get { return delegatecomputer; }
+
             set { delegatecomputer = value; }
         }
+
         private String[] delegatecomputer;
 
         /// <summary>
@@ -410,8 +422,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter Force
         {
             get { return force; }
+
             set { force = value; }
         }
+
         private bool force = false;
 
         //helper variable
@@ -773,6 +787,7 @@ namespace Microsoft.WSMan.Management
                                     }
                                 }
                             }
+
                             if (result.EndsWith(listvalue, StringComparison.OrdinalIgnoreCase))
                             {
                                 result = result.Remove(result.Length - 1);
@@ -796,6 +811,7 @@ namespace Microsoft.WSMan.Management
                 ErrorRecord er = new ErrorRecord(ex, "ObjectDisposedException", ErrorCategory.PermissionDenied, null);
                 WriteError(er);
             }
+
              return result;
         }
         # endregion private

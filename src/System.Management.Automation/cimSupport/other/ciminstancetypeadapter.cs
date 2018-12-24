@@ -235,6 +235,7 @@ namespace Microsoft.PowerShell.Cim
                     break;
                 }
             }
+
             return inheritanceChain;
         }
 
@@ -370,6 +371,7 @@ namespace Microsoft.PowerShell.Cim
                         Dbg.Assert(paramType != null, "'default' case should only be used for well-defined CimType->DotNetType conversions");
                         break;
                 }
+
                 valueToSet = Adapter.PropertySetAndMethodArgumentConvertTo(
                     value, paramType, CultureInfo.InvariantCulture);
             }

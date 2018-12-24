@@ -201,6 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     contentLength = StreamHelper.DefaultReadBuffer;
                 }
+
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
                 _rawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, null);
             }

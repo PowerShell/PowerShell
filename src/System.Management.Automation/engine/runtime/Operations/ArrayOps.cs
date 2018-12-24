@@ -31,6 +31,7 @@ namespace System.Management.Automation
                 Array.Copy(result, shortResult, j);
                 return shortResult;
             }
+
             return result;
         }
 
@@ -111,6 +112,7 @@ namespace System.Management.Automation
                 {
                     indexes[i] = indexes[i] + ub + 1;
                 }
+
                 if (indexes[i] < lb || indexes[i] > ub)
                 {
                     // In strict mode, don't return, fall through and let Array.GetValue raise an exception.
@@ -205,6 +207,7 @@ namespace System.Management.Automation
                 Array.Copy(result, shortResult, j);
                 return shortResult;
             }
+
             return result;
         }
 

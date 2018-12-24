@@ -239,6 +239,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Content.GetContentWriterDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Content.GetContentWriterDynamicParameters(".", context);
         }
 

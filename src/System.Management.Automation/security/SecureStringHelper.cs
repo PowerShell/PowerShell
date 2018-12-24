@@ -442,6 +442,7 @@ namespace Microsoft.PowerShell
                     entropy.cbData = (uint)optionalEntropy.Length;
                     entropy.pbData = pOptionalEntropy.AddrOfPinnedObject();
                 }
+
                 uint dwFlags = CAPI.CRYPTPROTECT_UI_FORBIDDEN;
                 if (scope == DataProtectionScope.LocalMachine)
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;
@@ -523,6 +524,7 @@ namespace Microsoft.PowerShell
                     entropy.cbData = (uint)optionalEntropy.Length;
                     entropy.pbData = pOptionalEntropy.AddrOfPinnedObject();
                 }
+
                 uint dwFlags = CAPI.CRYPTPROTECT_UI_FORBIDDEN;
                 if (scope == DataProtectionScope.LocalMachine)
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;

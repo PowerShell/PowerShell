@@ -190,14 +190,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ProcessEmptyStringError(originalParameterWasHashTable, invocationContext);
                 }
+
                 PSPropertyExpression ex = new PSPropertyExpression(s);
                 if (_noGlobbing)
                 {
                     if (ex.HasWildCardCharacters)
                         ProcessGlobbingCharactersError(originalParameterWasHashTable, s, invocationContext);
                 }
+
                 return ex;
             }
+
             PSTraceSource.NewArgumentException("val");
             return null;
         }
@@ -404,6 +407,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // this should never happen
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             return LanguagePrimitives.IsTrue(val);
         }
     }

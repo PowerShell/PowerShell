@@ -135,6 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
                 duplicateDetector.Add(job.Id, job.Id);
 
                 // check if the job is available in any of the
@@ -212,6 +213,7 @@ namespace Microsoft.PowerShell.Commands
                         matches.Add(job2);
                     }
                 }
+
                 jobFound = jobFound || job2Found;
 
                 if (jobFound || !writeErrorOnNoMatch) continue;
@@ -263,6 +265,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             matches.Add(job);
                         }
+
                         break;
                     }
                 }
@@ -324,6 +327,7 @@ namespace Microsoft.PowerShell.Commands
                         matches.Add(job2);
                     }
                 }
+
                 jobFound = jobFound || job2Found;
 
                 if (jobFound || !writeErrorOnNoMatch) continue;
@@ -441,6 +445,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return matches;
         }
 
@@ -481,6 +486,7 @@ namespace Microsoft.PowerShell.Commands
                     matches.Add(job);
                 }
             }
+
             return matches;
         }
 
@@ -523,6 +529,7 @@ namespace Microsoft.PowerShell.Commands
                     matches.Add(job);
                 }
             }
+
             return matches;
         }
 
@@ -566,6 +573,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return matches;
         }
 
@@ -605,6 +613,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _names;
             }
+
             set
             {
                 _names = value;
@@ -629,6 +638,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _instanceIds;
             }
+
             set
             {
                 _instanceIds = value;
@@ -654,6 +664,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sessionIds;
             }
+
             set
             {
                 _sessionIds = value;
@@ -676,6 +687,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobstate;
             }
+
             set
             {
                 _jobstate = value;
@@ -698,6 +710,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _commands;
             }
+
             set
             {
                 _commands = value;
@@ -719,6 +732,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual Hashtable Filter
         {
             get { return _filter; }
+
             set { _filter = value; }
         }
 
@@ -776,11 +790,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
@@ -798,11 +814,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force = false;
 
         #endregion Parameters
@@ -822,42 +840,49 @@ namespace Microsoft.PowerShell.Commands
                     {
                         listOfJobsToRemove = FindJobsMatchingByName(false, false, true, !_force);
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         listOfJobsToRemove = FindJobsMatchingByInstanceId(true, false, true, !_force);
                     }
+
                     break;
 
                 case SessionIdParameterSet:
                     {
                         listOfJobsToRemove = FindJobsMatchingBySessionId(true, false, true, !_force);
                     }
+
                     break;
 
                 case CommandParameterSet:
                     {
                         listOfJobsToRemove = FindJobsMatchingByCommand(false);
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         listOfJobsToRemove = FindJobsMatchingByState(false);
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         listOfJobsToRemove = FindJobsMatchingByFilter(false);
                     }
+
                     break;
 
                 default:
                     {
                         listOfJobsToRemove = CopyJobsToList(_jobs, false, !_force);
                     }
+
                     break;
             }
 
@@ -971,6 +996,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _pendingJobs.Remove(job.InstanceId);
                 }
+
                 if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
@@ -1014,6 +1040,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 pair.Key.StopJobCompleted -= pair.Value;
             }
+
             _waitForJobs.Dispose();
         }
         #endregion Dispose

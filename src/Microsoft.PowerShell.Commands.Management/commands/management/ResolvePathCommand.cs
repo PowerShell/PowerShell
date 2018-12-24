@@ -73,6 +73,7 @@ namespace Microsoft.PowerShell.Commands
                 _relative = value;
             }
         }
+
         private SwitchParameter _relative;
 
         #endregion Parameters
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
                                 WriteObject(currentPath.Path, enumerateCollection: false);
                                 continue;
                             }
+
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
                             // Do not insert './' if result path is not relative
@@ -124,6 +126,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
+
                             WriteObject(adjustedPath, enumerateCollection: false);
                         }
                     }

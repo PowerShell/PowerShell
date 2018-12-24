@@ -91,6 +91,7 @@ namespace System.Management.Automation
                 EncodingRegisterProvider();
                 s_defaultEncoding = new UTF8Encoding(false);
             }
+
             return s_defaultEncoding;
         }
 
@@ -113,6 +114,7 @@ namespace System.Management.Automation
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
+
             return s_oemEncoding;
         }
 
@@ -347,6 +349,7 @@ namespace System.Management.Automation
             {
                 strMicrosec = strMicrosec.Substring(0, 6);
             }
+
             dmtfDateTime = dmtfDateTime + strMicrosec.PadLeft(6, '0');
             // adding the UTC offset
             dmtfDateTime = dmtfDateTime + UtcString;

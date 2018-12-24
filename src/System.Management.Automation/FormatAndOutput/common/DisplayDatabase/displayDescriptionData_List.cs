@@ -230,6 +230,7 @@ namespace System.Management.Automation
             {
                 EntrySelectedBy = EntrySelectedBy.Get(entrydefn.appliesTo.referenceList);
             }
+
             foreach (ListControlItemDefinition itemdefn in entrydefn.itemDefinitionList)
             {
                 Items.Add(new ListControlEntryItem(itemdefn));
@@ -317,6 +318,7 @@ namespace System.Management.Automation
             {
                 Label = definition.label.text;
             }
+
             FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
             if (fpt != null)
             {

@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
@@ -34,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
@@ -46,11 +48,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _eventIdentifier;
             }
+
             set
             {
                 _eventIdentifier = value;
             }
         }
+
         private int _eventIdentifier = -1;
 
         #endregion parameters

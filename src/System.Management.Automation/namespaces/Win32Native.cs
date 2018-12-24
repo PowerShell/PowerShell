@@ -406,6 +406,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 this.MaxLength = (ushort)maximumLength;
                 this.Buffer = buffer;
             }
+
             internal ushort Length;
             internal ushort MaxLength;
             internal IntPtr Buffer;

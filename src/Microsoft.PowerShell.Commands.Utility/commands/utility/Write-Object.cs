@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
         public PSObject[] InputObject
         {
             get { return _inputObjects; }
+
             set { _inputObjects = value; }
         }
 

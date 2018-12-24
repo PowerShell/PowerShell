@@ -317,11 +317,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     e = new WriteErrorException(msg);
                 }
+
                 string errid = ErrorId;
                 if (String.IsNullOrEmpty(errid))
                 {
                     errid = e.GetType().FullName;
                 }
+
                 errorRecord = new ErrorRecord(
                     e,
                     errid,
@@ -342,6 +344,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
                 }
+
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }
 

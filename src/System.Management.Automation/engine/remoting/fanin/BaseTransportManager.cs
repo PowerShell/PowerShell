@@ -234,6 +234,7 @@ namespace System.Management.Automation.Remoting
         internal TypeTable TypeTable
         {
             get { return Fragmentor.TypeTable; }
+
             set { Fragmentor.TypeTable = value; }
         }
 
@@ -1137,6 +1138,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdText.Append(cmd.CommandText);
                 cmdText.Append(" | ");
             }
+
             cmdText.Remove(cmdText.Length - 3, 3); // remove ending " | "
 
             RemoteDataObject message;
@@ -1507,10 +1509,10 @@ namespace System.Management.Automation.Remoting.Server
         /// <param name="xmlBuffer">The input buffer to search. It must be base-64 encoded XML.</param>
         /// <param name="xmlTag">The XML tag used to identify the value to extract.</param>
         /// <returns>The extracted tag converted from a base-64 string.</returns>
-        internal static System.Byte[] ExtractEncodedXmlElement(string xmlBuffer, string xmlTag)
+        internal static byte[] ExtractEncodedXmlElement(string xmlBuffer, string xmlTag)
         {
             if (xmlBuffer == null || xmlTag == null)
-                return new System.Byte[1];
+                return new byte[1];
 
             // the inboundShellInformation is in Xml format as per the SOAP WSMan spec.
             // Retrieve the string (Base64 encoded) we are interested in.
@@ -1531,7 +1533,7 @@ namespace System.Management.Automation.Remoting.Server
             }
             else // No element found, so return a default value
             {
-                return new System.Byte[1];
+                return new byte[1];
             }
 
             return Convert.FromBase64String(additionalData);

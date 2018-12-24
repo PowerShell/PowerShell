@@ -58,6 +58,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     IsValuePresent = inputParameter.IsValuePresent
                 });
             }
+
             return result;
         }
 

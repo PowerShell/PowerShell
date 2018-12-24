@@ -42,6 +42,7 @@ namespace System.Management.Automation
             {
                 return _currentWorkingDirectory;
             }
+
             set
             {
                 _currentWorkingDirectory = value;
@@ -97,6 +98,7 @@ namespace System.Management.Automation
             {
                 return _root;
             }
+
             internal set
             {
                 _root = value;
@@ -697,6 +699,7 @@ namespace System.Management.Automation
                 {
                     return drive1.Equals(drive2);
                 }
+
                 return true;
             }
             else
@@ -821,6 +824,7 @@ namespace System.Management.Automation
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);
             }
+
             return _noteProperty;
         }
     }

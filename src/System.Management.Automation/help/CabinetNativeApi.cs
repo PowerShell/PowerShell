@@ -420,6 +420,7 @@ namespace System.Management.Automation.Internal
                         return new IntPtr(1);
                     }
             }
+
             return new IntPtr(0);
         }
 

@@ -33,6 +33,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] DriveLetter
         {
             get { return _drivesList; }
+
             set { _drivesList = value; }
         }
 
@@ -46,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
@@ -134,6 +136,7 @@ namespace Microsoft.PowerShell.Commands
                     // The drive path exists, and the drive is 'fixed'.
                     return true;
                 }
+
                 WriteError(new ErrorRecord(
                             new ArgumentException(
                                 String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.InvalidDriveType, drivePath, "Get-Volume")),
@@ -141,6 +144,7 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.InvalidArgument,
                                 drivePath));
             }
+
             return false;
         }
 
@@ -175,6 +179,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 drivePath = driveName + ":\\";
             }
+
             return drivePath;
         }
 
@@ -251,6 +256,7 @@ namespace Microsoft.PowerShell.Commands
             SHERB_NOPROGRESSUI = 0x00000002,
             SHERB_NOSOUND = 0x00000004
         }
+
         [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
         internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }

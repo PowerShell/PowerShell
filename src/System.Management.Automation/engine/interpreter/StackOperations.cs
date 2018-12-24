@@ -96,6 +96,7 @@ namespace System.Management.Automation.Interpreter
         private DupInstruction() { }
 
         public override int ConsumedStack { get { return 0; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)

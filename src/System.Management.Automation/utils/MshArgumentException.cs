@@ -131,9 +131,11 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidArgument,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "Argument";
 
@@ -149,6 +151,7 @@ namespace System.Management.Automation
         {
             get { return String.IsNullOrEmpty(_message) ? base.Message : _message; }
         }
+
         private string _message;
     }
 }

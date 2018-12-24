@@ -452,6 +452,7 @@ namespace System.Management.Automation
             {
                 AssertNotDisposed();
             }
+
             try
             {
                 DoRemove(force);
@@ -466,6 +467,7 @@ namespace System.Management.Automation
                         return;
                     }
                 }
+
                 RemoveComplete.WaitOne();
             }
             catch (Exception error)
@@ -575,12 +577,14 @@ namespace System.Management.Automation
             {
                 return _removeRemoteJobOnCompletion;
             }
+
             set
             {
                 AssertChangesCanBeAccepted();
                 _removeRemoteJobOnCompletion = value;
             }
         }
+
         private bool _removeRemoteJobOnCompletion;
 
         /// <summary>
@@ -602,6 +606,7 @@ namespace System.Management.Automation
             {
                 return _runspace;
             }
+
             set
             {
                 if (value == null)
@@ -627,6 +632,7 @@ namespace System.Management.Automation
             {
                 return _runspacePool;
             }
+
             set
             {
                 if (value == null)
@@ -798,6 +804,7 @@ namespace System.Management.Automation
                 {
                     Dbg.Assert(false, "Job object did not contain command when creating proxy.");
                 }
+
                 PSJobProxy job = new PSJobProxy(command);
 
                 job.InitializeExistingJobProxy(deserializedJob, runspace, runspacePool);
@@ -931,8 +938,10 @@ namespace System.Management.Automation
                     {
                         psPrivateMetadata = p.Value;
                     }
+
                     childJobCol.Add(p.Name, p.Value);
                 }
+
                 psParamCollection.Add(childJobCol);
             }
 
@@ -942,6 +951,7 @@ namespace System.Management.Automation
             {
                 newStartParameters.Add(new CommandParameter("PSPrivateMetadata", psPrivateMetadata));
             }
+
             StartParameters.Add(newStartParameters);
         }
 
@@ -1118,6 +1128,7 @@ namespace System.Management.Automation
                             // Transfer exception via event arguments.
                             OnStopJobCompleted(new AsyncCompletedEventArgs(e, false, null));
                         }
+
                         break;
                     case QueueOperation.Suspend:
                         try
@@ -1130,6 +1141,7 @@ namespace System.Management.Automation
                             // Transfer exception via event arguments.
                             OnSuspendJobCompleted(new AsyncCompletedEventArgs(e, false, null));
                         }
+
                         break;
                     case QueueOperation.Resume:
                         try
@@ -1214,6 +1226,7 @@ namespace System.Management.Automation
                             // not proceed with the operation. This is an error.
                             throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.JobProxyAsJobMustBeTrue);
                         }
+
                         found = true;
                     }
                 }
@@ -1392,6 +1405,7 @@ namespace System.Management.Automation
                 {
                     _remoteJobRemoved = true;
                 }
+
                 if (!IsFinishedState(JobStateInfo.State))
                 {
                     DoSetJobState(JobState.Stopped);
@@ -1519,6 +1533,7 @@ namespace System.Management.Automation
                             OnResumeJobCompleted(new AsyncCompletedEventArgs(null, false, null));
                         }
                     }
+
                     break;
 
                 case JobState.Suspended:
@@ -1532,6 +1547,7 @@ namespace System.Management.Automation
                             OnSuspendJobCompleted(new AsyncCompletedEventArgs(null, false, null));
                         }
                     }
+
                     break;
                 case JobState.Failed:
                 case JobState.Completed:
@@ -1555,6 +1571,7 @@ namespace System.Management.Automation
                             OnStopJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
                         }
                     }
+
                     break;
             }
 
@@ -1593,6 +1610,7 @@ namespace System.Management.Automation
                             "Setting job state to {0} old state was {1} and reason is {2}.", newState.ToString(), JobStateInfo.State.ToString(), reason);
                         DoSetJobState(newState, e.InvocationStateInfo.Reason);
                     }
+
                     break;
 
                 case PSInvocationState.Stopped:
@@ -1634,6 +1652,7 @@ namespace System.Management.Automation
                     Dbg.Assert(false, "ChildJobs should be serialized to include InstanceID, cannot interact with them otherwise.");
                     continue;
                 }
+
                 var childProxyJob = new PSChildJobProxy(Command, job); // All have the same workflow name.
                 _childJobsMapping.Add(childJobInstanceId, childProxyJob);
 
@@ -1653,6 +1672,7 @@ namespace System.Management.Automation
                 {
                     PopulateStartParametersOnChild(childJobStartParametersObject, childProxyJob);
                 }
+
                 ChildJobs.Add(childProxyJob);
             }
         }
@@ -1680,9 +1700,11 @@ namespace System.Management.Automation
                                 newComParCol.Add(cp);
                             }
                         }
+
                         listComParCol.Add(newComParCol);
                     }
                 }
+
                 childProxyJob.StartParameters = listComParCol;
             }
         }
@@ -2089,6 +2111,7 @@ namespace System.Management.Automation
                         Diagnostics.Assert(false,
                                            "We should not get an unidentified source job id in non interop scenarios");
                     }
+
                     return;
                 }
 
@@ -2109,6 +2132,7 @@ namespace System.Management.Automation
                                          "Finished updating child job {0} state to {1} ", sourceJobId.ToString(),
                                          jobStateEventArgs.JobStateInfo.State.ToString());
                 }
+
                 return;
             }
 
@@ -2316,6 +2340,7 @@ namespace System.Management.Automation
                     return parts[2];
                 }
             }
+
             return message;
         }
 
@@ -2338,6 +2363,7 @@ namespace System.Management.Automation
 
                 _isDisposed = true;
             }
+
             if (_receivePowerShell != null)
             {
                 _receivePowerShell.Stop();
@@ -2380,6 +2406,7 @@ namespace System.Management.Automation
 
         private enum QueueOperation
         { Stop, Suspend, Resume }
+
         private ConcurrentQueue<QueueOperation> _pendingOperations = new ConcurrentQueue<QueueOperation>();
 
         private ManualResetEvent _removeComplete;
@@ -2451,6 +2478,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return _jobSuspendedOrFinished;
             }
         }
@@ -2561,26 +2589,32 @@ namespace System.Management.Automation
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Output, e.Index));
         }
+
         private void ErrorAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Error, e.Index));
         }
+
         private void WarningAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Warning, e.Index));
         }
+
         private void VerboseAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Verbose, e.Index));
         }
+
         private void ProgressAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Progress, e.Index));
         }
+
         private void DebugAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Debug, e.Index));
         }
+
         private void InformationAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Information, e.Index));
@@ -2672,6 +2706,7 @@ namespace System.Management.Automation
                 Debug.DataAdded -= DebugAdded;
                 Information.DataAdded -= InformationAdded;
             }
+
             base.Dispose(disposing);
         }
 

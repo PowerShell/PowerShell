@@ -60,6 +60,7 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
                         "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
                 }
+
                 commandSessionState = mi.SessionState.Internal;
                 commandIndex += 1;
             }
@@ -145,6 +146,7 @@ namespace System.Management.Automation
                             { InvocationName = invocationName };
                             rte.ErrorRecord.SetInvocationInfo(invocationInfo);
                         }
+
                         throw;
                     }
                 }
@@ -249,21 +251,25 @@ namespace System.Management.Automation
                     commandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter = context.ExternalErrorOutput;
                 }
             }
+
             if (!redirectedWarning && (context.ExpressionWarningOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.WarningOutputPipe = context.ExpressionWarningOutputPipe;
                 redirectedWarning = true;
             }
+
             if (!redirectedVerbose && (context.ExpressionVerboseOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.VerboseOutputPipe = context.ExpressionVerboseOutputPipe;
                 redirectedVerbose = true;
             }
+
             if (!redirectedDebug && (context.ExpressionDebugOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.DebugOutputPipe = context.ExpressionDebugOutputPipe;
                 redirectedDebug = true;
             }
+
             if (!redirectedInformation && (context.ExpressionInformationOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.InformationOutputPipe = context.ExpressionInformationOutputPipe;
@@ -323,6 +329,7 @@ namespace System.Management.Automation
                     string parameterText = GetParameterText(parameterName);
 
                     if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(parameterValue); }
+
                     yield return CommandParameterInternal.CreateParameterWithArgument(
                         splatAst, parameterName, parameterText,
                         splatAst, parameterValue, false);
@@ -336,6 +343,7 @@ namespace System.Management.Automation
                     foreach (object obj in enumerableValue)
                     {
                         if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(obj); }
+
                         yield return SplatEnumerableElement(obj, splatAst);
                     }
                 }
@@ -386,6 +394,7 @@ namespace System.Management.Automation
                 string whitespaces = parameterName.Substring(endPosition);
                 parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
             }
+
             return parameterText;
         }
 
@@ -532,6 +541,7 @@ namespace System.Management.Automation
                         position = v.Extent.EndOffset - pipelineOffset;
                     }
                 }
+
                 updatedScriptblock.Append(scriptblockBodyString.Substring(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
@@ -578,6 +588,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             var objAsArray = obj as object[];
             return objAsArray != null ? CheckAutomationNullInCommandArgumentArray(objAsArray) : obj;
         }
@@ -759,6 +770,7 @@ namespace System.Management.Automation
             {
                 return AutomationNull.Value;
             }
+
             var result = resultCount == 1 ? resultList[0] : resultList.ToArray();
             // Clear the array list so that we don't write the results of the pipe when flushing the pipe.
             resultList.Clear();
@@ -823,6 +835,7 @@ namespace System.Management.Automation
         }
 
         internal RedirectionStream FromStream { get; private set; }
+
         internal abstract void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context);
 
         internal void UnbindForExpression(FunctionContext funcContext, Pipe[] pipes)
@@ -1003,7 +1016,9 @@ namespace System.Management.Automation
         }
 
         internal string File { get; private set; }
+
         internal bool Appending { get; private set; }
+
         private PipelineProcessor PipelineProcessor { get; set; }
 
         // Handle binding file redirection for commands, like:
@@ -1114,6 +1129,7 @@ namespace System.Management.Automation
                     context.ExpressionInformationOutputPipe = pipe;
                     break;
             }
+
             return oldPipes;
         }
 
@@ -1172,6 +1188,7 @@ namespace System.Management.Automation
                 // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
                 parentPipelineProcessor.AddRedirectionPipe(PipelineProcessor);
             }
+
             return new Pipe(context, PipelineProcessor);
         }
 
@@ -1497,6 +1514,7 @@ namespace System.Management.Automation
                 var errorRecord = new ErrorRecord(current.ErrorRecordToPass, current.ExceptionToPass);
                 tuple.SetAutomaticVariable(AutomaticVariable.Underbar, errorRecord, context);
             }
+
             return current.Handler;
         }
 
@@ -1685,6 +1703,7 @@ namespace System.Management.Automation
                         {
                             locals.SetValue(i, funcContext._localsTuple.GetValue(i));
                         }
+
                         var newScope = context.EngineSessionState.NewScope(false);
                         context.EngineSessionState.CurrentScope = newScope;
                         newScope.LocalsTuple = locals;
@@ -2503,10 +2522,12 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     if (numberToReturn == 1)
                     {
                         return new object[] { current };
                     }
+
                     return rest.ToArray();
                 }
 
@@ -2538,6 +2559,7 @@ namespace System.Management.Automation
                         var e = Current(enumerator);
                         rest.Add(e);
                     }
+
                     return new object[] { first, rest.ToArray() };
                 }
 
@@ -2550,6 +2572,7 @@ namespace System.Management.Automation
             {
                 notMatched = new Collection<PSObject>();
             }
+
             var resultCollection = new List<object>();
             Pipe outputPipe = new Pipe(resultCollection);
             bool returnTheRest = false;
@@ -2657,6 +2680,7 @@ namespace System.Management.Automation
                     var ie = Current(enumerator);
                     notMatched.Add(ie == null ? null : PSObject.AsPSObject(ie));
                 }
+
                 return new object[] { matches, notMatched };
             }
 
@@ -2703,6 +2727,7 @@ namespace System.Management.Automation
                             object current = Current(enumerator);
                             list.Add(current);
                         }
+
                         return LanguagePrimitives.ConvertTo(list, targetType, CultureInfo.InvariantCulture);
                     }
 
@@ -2715,6 +2740,7 @@ namespace System.Management.Automation
                             throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                                 null, "ForEachBadGenericConversionTypeSpecified", ParserStrings.ForEachBadGenericConversionTypeSpecified, ParserOps.ConvertTo<string>(targetType, null));
                         }
+
                         resultCollection = PSObject.AsPSObject(Activator.CreateInstance(targetType));
                         while (MoveNext(context, enumerator))
                         {
@@ -2832,6 +2858,7 @@ namespace System.Management.Automation
                                     ExtendedTypeSystem.MethodInvocationException,
                                     name, arguments.Length, nullRefException.Message);
                             }
+
                             continue;
                         }
 
@@ -2934,6 +2961,7 @@ namespace System.Management.Automation
                     result.Add(value);
                 }
             }
+
             return result.ToArray();
         }
 
@@ -3003,6 +3031,7 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "PropertyNotFoundStrict", ParserStrings.PropertyNotFoundStrict, binder.Name);
                 }
+
                 return null;
             }
 
@@ -3405,6 +3434,7 @@ namespace System.Management.Automation
             {
                 result.Add(Current(enumerator));
             }
+
             return result.ToArray();
         }
 
@@ -3419,6 +3449,7 @@ namespace System.Management.Automation
             {
                 result[j++] = list[i++];
             }
+
             return result;
         }
     }

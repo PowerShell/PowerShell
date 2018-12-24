@@ -53,12 +53,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession[] CimSession
         {
             get { return cimSession; }
+
             set
             {
                 cimSession = value;
                 base.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession[] cimSession;
 
         /// <summary>
@@ -74,12 +76,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Uri ResourceUri
         {
             get { return resourceUri; }
+
             set
             {
                 this.resourceUri = value;
                 base.SetParameter(value, nameResourceUri);
             }
         }
+
         private Uri resourceUri;
 
         /// <summary>
@@ -95,12 +99,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
                 base.SetParameter(value, nameComputerName);
             }
         }
+
         private String[] computername;
 
         /// <summary>
@@ -118,12 +124,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Namespace
         {
             get { return nameSpace; }
+
             set
             {
                 nameSpace = value;
                 base.SetParameter(value, nameNamespace);
             }
         }
+
         private String nameSpace;
 
         /// <summary>
@@ -136,8 +144,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32 OperationTimeoutSec
         {
             get { return operationTimeout;}
+
             set { operationTimeout = value; }
         }
+
         private UInt32 operationTimeout;
 
         /// <summary>
@@ -158,6 +168,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimInstance InputObject
         {
             get { return cimInstance; }
+
             set
             {
                 cimInstance = value;
@@ -172,6 +183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return cimInstance; }
         }
+
         private CimInstance cimInstance;
 
         /// <summary>
@@ -190,12 +202,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Query
         {
             get { return query;}
+
             set
             {
                 query = value;
                 base.SetParameter(value, nameQuery);
             }
         }
+
         private String query;
 
         /// <summary>
@@ -210,12 +224,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String QueryDialect
         {
             get { return querydialect;}
+
             set
             {
                 querydialect = value;
                 base.SetParameter(value, nameQueryDialect);
             }
         }
+
         private String querydialect;
 
         #endregion
@@ -232,6 +248,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimRemoveInstance = CreateOperationAgent();
             }
+
             this.CmdletOperation = new CmdletOperationRemoveCimInstance(this, cimRemoveInstance);
             this.AtBeginProcess = false;
         }//End BeginProcessing()

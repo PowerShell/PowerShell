@@ -106,6 +106,7 @@ namespace System.Management.Automation.Remoting
                 {
                     cmdTransportKvp.Value.Close(reasonForClose);
                 }
+
                 _activeCmdTransportManagers.Clear();
 
                 if (_registeredShutDownWaitHandle != null)
@@ -244,6 +245,7 @@ namespace System.Management.Automation.Remoting
                     }
                 }
             }
+
             if ((int)WSManPluginErrorCodes.NoError != result)
             {
                 ReportError(result, "WSManPluginReceiveResult");

@@ -91,6 +91,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             builder.Append(")");
 
             return builder.ToString();
@@ -131,6 +132,7 @@ namespace System.Management.Automation
                 custtypeinfo.GetDocumentation(-1, out strName, out strDoc, out id, out strHelp);
                 return strName;
             }
+
             return "UnknownCustomtype";
         }
 
@@ -270,6 +272,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             return new ComMethodInformation(false, hasOptional, parameters, returntype, funcdesc.memid, funcdesc.invkind);
         }
 
@@ -284,6 +287,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(cParams > 0, "skipLastParameter is only true for property setters where there is at least one parameter");
                 cParams--;
             }
+
             ParameterInformation[] parameters = new ParameterInformation[cParams];
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
@@ -351,6 +355,7 @@ namespace System.Management.Automation
                 returnValue[count++] = ComUtil.GetMethodInformation(funcdesc, skipLastParameters);
                 typeInfo.ReleaseFuncDesc(pFuncDesc);
             }
+
             return returnValue;
         }
     }

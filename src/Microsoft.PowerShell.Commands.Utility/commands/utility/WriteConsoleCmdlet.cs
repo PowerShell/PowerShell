@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _notAppendNewline;
             }
+
             set
             {
                 _notAppendNewline = value;

@@ -150,6 +150,7 @@ namespace System.Management.Automation
         {
             get { return _swallowException; }
         }
+
         private bool _swallowException = false;
     }
 

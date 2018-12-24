@@ -142,6 +142,7 @@ namespace System.Management.Automation
             {
                 return cmdletInfo.FullName;
             }
+
             return commandInfo.Name;
         }
 
@@ -228,6 +229,7 @@ namespace System.Management.Automation
                     {
                         LoadHelpFile(helpFile, cmdletInfo.ModuleName, cmdletInfo.Name, reportErrors);
                     }
+
                     result = GetFromCommandCacheOrCmdletInfo(cmdletInfo);
                 }
             }
@@ -241,6 +243,7 @@ namespace System.Management.Automation
                     {
                         LoadHelpFile(helpFile, helpFile, commandInfo.Name, reportErrors);
                     }
+
                     result = GetFromCommandCache(helpFile, commandInfo);
                 }
             }
@@ -298,6 +301,7 @@ namespace System.Management.Automation
                         {
                             LoadHelpFile(helpFile, helpFile, commandInfo.Name, reportErrors);
                         }
+
                         result = GetFromCommandCache(helpFile, commandInfo) ?? result;
                     }
                 }
@@ -859,6 +863,7 @@ namespace System.Management.Automation
                             {
                                 commandDetails.Properties.Remove("Noun");
                             }
+
                             commandDetails.Properties.Add(new PSNoteProperty("Noun", cmdletInfo.Noun));
                         }
 
@@ -906,6 +911,7 @@ namespace System.Management.Automation
                 {
                     result.FullHelp.Properties.Remove("Name");
                 }
+
                 result.FullHelp.Properties.Add(new PSNoteProperty("Name", cmdInfo.Name));
 
                 if (result.FullHelp.Properties["Details"] != null &&
@@ -920,6 +926,7 @@ namespace System.Management.Automation
                     {
                         commandDetails.Properties.Remove("Name");
                     }
+
                     commandDetails.Properties.Add(new PSNoteProperty("Name", cmdInfo.Name));
 
                     // Note we made the change to a copy..so assigning the copy back to
@@ -1074,6 +1081,7 @@ namespace System.Management.Automation
                             {
                                 hiddenCommands.Add(helpName, null);
                             }
+
                             continue;
                         }
 

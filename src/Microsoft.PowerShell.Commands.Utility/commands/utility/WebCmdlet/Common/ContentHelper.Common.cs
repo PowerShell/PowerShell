@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
                 foreach (var header in headerCollection)
                 {
                     // Headers may have multiple entries with different values

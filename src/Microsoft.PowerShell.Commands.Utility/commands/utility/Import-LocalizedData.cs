@@ -36,6 +36,7 @@ namespace Microsoft.PowerShell.Commands
                 _bindingVariable = value;
             }
         }
+
         private string _bindingVariable;
 
         /// <summary>
@@ -54,6 +55,7 @@ namespace Microsoft.PowerShell.Commands
                 _uiculture = value;
             }
         }
+
         private string _uiculture;
 
         /// <summary>
@@ -72,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
                 _baseDirectory = value;
             }
         }
+
         private string _baseDirectory;
 
         /// <summary>
@@ -90,6 +93,7 @@ namespace Microsoft.PowerShell.Commands
                 _fileName = value;
             }
         }
+
         private string _fileName;
 
         /// <summary>
@@ -104,12 +108,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _commandsAllowed;
             }
+
             set
             {
                 _setSupportedCommand = true;
                 _commandsAllowed = value;
             }
         }
+
         private string[] _commandsAllowed = new string[] { "ConvertFrom-StringData" };
         private bool _setSupportedCommand = false;
 

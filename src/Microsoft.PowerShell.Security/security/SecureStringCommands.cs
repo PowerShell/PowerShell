@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Commands
         protected SecureString SecureStringData
         {
             get { return _ss; }
+
             set { _ss = value; }
         }
 
@@ -232,6 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 _s = value;
             }
         }
+
         private string _s;
 
         /// <summary>
@@ -251,6 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 _asPlainText = value;
             }
         }
+
         private bool _asPlainText;
 
         /// <summary>
@@ -270,6 +273,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>

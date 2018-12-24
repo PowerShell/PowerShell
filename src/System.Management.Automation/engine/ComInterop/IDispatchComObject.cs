@@ -283,6 +283,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     method = putref;
                 }
+
                 return true;
             }
             else if (hresult == ComHresults.DISP_E_UNKNOWNNAME)
@@ -458,6 +459,7 @@ namespace System.Management.Automation.ComInterop
                     _comTypeDesc = typeDesc;
                     s_cacheComTypeDesc.Add(typeAttr.guid, _comTypeDesc);
                 }
+
                 _comTypeDesc.Events = events;
             }
         }
@@ -480,6 +482,7 @@ namespace System.Management.Automation.ComInterop
                     {
                         continue;
                     }
+
                     if ((funcDesc.wFuncFlags & (int)ComTypes.FUNCFLAGS.FUNCFLAG_FRESTRICTED) != 0)
                     {
                         continue;
@@ -641,8 +644,10 @@ namespace System.Management.Automation.ComInterop
                         {
                             setItem = method;
                         }
+
                         continue;
                     }
+
                     if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0)
                     {
                         // If there is a getter for this put, use that ReturnType as the
@@ -659,6 +664,7 @@ namespace System.Management.Automation.ComInterop
                         {
                             setItem = method;
                         }
+
                         continue;
                     }
 
@@ -674,6 +680,7 @@ namespace System.Management.Automation.ComInterop
                     {
                         ((ComMethodDesc)puts[name]).InputType = method.ReturnType;
                     }
+
                     if (putrefs.ContainsKey(name))
                     {
                         ((ComMethodDesc)putrefs[name]).InputType = method.ReturnType;
@@ -709,6 +716,7 @@ namespace System.Management.Automation.ComInterop
                     _comTypeDesc = typeDesc;
                     s_cacheComTypeDesc.Add(typeAttr.guid, _comTypeDesc);
                 }
+
                 _comTypeDesc.Funcs = funcs;
                 _comTypeDesc.Puts = puts;
                 _comTypeDesc.PutRefs = putrefs;

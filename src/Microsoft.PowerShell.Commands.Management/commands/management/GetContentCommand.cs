@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
                 _totalCountSpecified = true;
             }
         }
+
         private bool _totalCountSpecified = false;
 
         /// <summary>
@@ -62,8 +63,10 @@ namespace Microsoft.PowerShell.Commands
                 _backCount = value;
                 _tailSpecified = true;
             }
+
             get { return _backCount; }
         }
+
         private int _backCount = -1;
         private bool _tailSpecified = false;
 
@@ -85,6 +88,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Content.GetContentReaderDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Content.GetContentReaderDynamicParameters(".", context);
         }
 

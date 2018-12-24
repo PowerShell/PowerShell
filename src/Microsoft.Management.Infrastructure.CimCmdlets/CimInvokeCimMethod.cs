@@ -56,6 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return this.methodName;
                 }
             }
+
             private string methodName;
 
             /// <summary>
@@ -68,6 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return this.collection;
                 }
             }
+
             private CimMethodParametersCollection collection;
         }
 
@@ -101,6 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         proxys.Add(CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet));
                     }
+
                     break;
                 case CimBaseCommand.ClassNameComputerSet:
                 case CimBaseCommand.CimClassComputerSet:
@@ -110,6 +113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         proxys.Add(CreateSessionProxy(computerName, cmdlet));
                     }
+
                     break;
                 case CimBaseCommand.ClassNameSessionSet:
                 case CimBaseCommand.CimClassSessionSet:
@@ -121,10 +125,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         CimSessionProxy proxy = CreateSessionProxy(session, cmdlet);
                         proxys.Add(proxy);
                     }
+
                     break;
                 default:
                     break;
             }
+
             CimMethodParametersCollection paramsCollection =
                 CreateParametersCollection(cmdlet.Arguments, cmdlet.CimClass, cmdlet.CimInstance, cmdlet.MethodName);
 
@@ -145,12 +151,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
                         }
+
                         foreach (CimSessionProxy proxy in proxys)
                         {
                             if (!cmdlet.ShouldProcess(target, action))
                             {
                                 return;
                             }
+
                             proxy.InvokeMethodAsync(
                                 nameSpace,
                                 cmdlet.ClassName,
@@ -158,6 +166,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 paramsCollection);
                         }
                     }
+
                     break;
                 case CimBaseCommand.CimClassComputerSet:
                 case CimBaseCommand.CimClassSessionSet:
@@ -170,6 +179,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             {
                                 return;
                             }
+
                             proxy.InvokeMethodAsync(
                                 nameSpace,
                                 cmdlet.CimClass.CimSystemProperties.ClassName,
@@ -177,6 +187,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 paramsCollection);
                         }
                     }
+
                     break;
                 case CimBaseCommand.QueryComputerSet:
                 case CimBaseCommand.QuerySessionSet:
@@ -193,6 +204,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         // firstly query instance and then invoke method upon returned instances
                         proxy.QueryInstancesAsync(nameSpace, ConstValue.GetQueryDialectWithDefault(cmdlet.QueryDialect), cmdlet.Query);
                     }
+
                     break;
                 case CimBaseCommand.CimInstanceComputerSet:
                 case CimBaseCommand.CimInstanceSessionSet:
@@ -206,12 +218,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             nameSpace = ConstValue.GetNamespace(cmdlet.CimInstance.CimSystemProperties.Namespace);
                         }
+
                         foreach (CimSessionProxy proxy in proxys)
                         {
                             if (!cmdlet.ShouldProcess(target, action))
                             {
                                 return;
                             }
+
                             proxy.InvokeMethodAsync(
                                 nameSpace,
                                 cmdlet.CimInstance,
@@ -219,6 +233,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 paramsCollection);
                         }
                     }
+
                     break;
                 default:
                     break;
@@ -394,6 +409,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         throw new ArgumentException(String.Format(
                             CultureInfo.CurrentUICulture, Strings.InvalidMethodParameter, parameterName, methodName, className));
                     }
+
                     parameter = CimMethodParameter.Create(
                         parameterName,
                         parameterValue,
@@ -434,9 +450,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         }
                     }
                 }
+
                 if (parameter != null)
                     collection.Add(parameter);
             }
+
             return collection;
         }
         #endregion

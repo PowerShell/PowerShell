@@ -435,6 +435,7 @@ namespace System.Management.Automation
         internal virtual UnhandledBreakpointProcessingMode UnhandledBreakpointMode
         {
             get { throw new PSNotImplementedException(); }
+
             set { throw new PSNotImplementedException(); }
         }
 
@@ -524,6 +525,7 @@ namespace System.Management.Automation
         protected void RaiseStartRunspaceDebugProcessingEvent(StartRunspaceDebugProcessingEventArgs args)
         {
             if (args == null) { throw new PSArgumentNullException("args"); }
+
             StartRunspaceDebugProcessing.SafeInvoke<StartRunspaceDebugProcessingEventArgs>(this, args);
         }
 
@@ -531,6 +533,7 @@ namespace System.Management.Automation
         protected void RaiseRunspaceProcessingCompletedEvent(ProcessRunspaceDebugEndEventArgs args)
         {
             if (args == null) { throw new PSArgumentNullException("args"); }
+
             RunspaceDebugProcessingCompleted.SafeInvoke<ProcessRunspaceDebugEndEventArgs>(this, args);
         }
 
@@ -911,6 +914,7 @@ namespace System.Management.Automation
                     _isLocalSession = !(((_context.InternalHost.ExternalHost != null) &&
                                          (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)));
                 }
+
                 return _isLocalSession.Value;
             }
         }
@@ -1163,6 +1167,7 @@ namespace System.Management.Automation
                 breakpoints = new List<VariableBreakpoint>();
                 _variableBreakpoints.Add(breakpoint.Variable, breakpoints);
             }
+
             breakpoints.Add(breakpoint);
             return breakpoint;
         }
@@ -1361,6 +1366,7 @@ namespace System.Management.Automation
             {
                 return tuple.Item1;
             }
+
             return null;
         }
 
@@ -1491,6 +1497,7 @@ namespace System.Management.Automation
             {
                 // Check pending breakpoints to see if any apply to this script.
                 if (string.IsNullOrEmpty(functionContext._file)) { return; }
+
                 bool havePendingBreakpoint = false;
                 foreach (var item in _pendingBreakpoints)
                 {
@@ -1500,6 +1507,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 if (havePendingBreakpoint)
                 {
                     SetPendingBreakpoints(functionContext);
@@ -1844,6 +1852,7 @@ namespace System.Management.Automation
                         // breakpoints in the current frame, but otherwise just go.)
                         goto case DebuggerResumeAction.Continue;
                     }
+
                     break;
 
                 case DebuggerResumeAction.StepOver:
@@ -1890,6 +1899,7 @@ namespace System.Management.Automation
                         Diagnostics.Assert(false, "The _preserveDebugStop event handle should always be in the signaled state at this point.");
                         return false;
                     }
+
                     _preserveDebugStopEvent.Reset();
 
                     // Wait indefinitely for a signal event.
@@ -1927,6 +1937,7 @@ namespace System.Management.Automation
                 breakpoint.BreakpointBitArray = null;
                 _pendingBreakpoints.Add(breakpoint);
             }
+
             boundBreakpoints.Clear();
         }
 
@@ -1953,6 +1964,7 @@ namespace System.Management.Automation
             {
                 Diagnostics.Assert(false, "If the script block is still alive, the entry should not be collected.");
             }
+
             Diagnostics.Assert(tuple.Item1 == functionContext._boundBreakpoints, "What's up?");
 
             foreach (var breakpoint in _pendingBreakpoints)
@@ -2217,6 +2229,7 @@ namespace System.Management.Automation
                     {
                         _psDebuggerCommand.SetIsNested(true);
                     }
+
                     _psDebuggerCommand.Runspace = localRunspace;
                     _psDebuggerCommand.Commands = command;
                     foreach (var cmd in _psDebuggerCommand.Commands.Commands)
@@ -2509,6 +2522,7 @@ namespace System.Management.Automation
             {
                 return (_preserveUnhandledDebugStopEvent) ? UnhandledBreakpointProcessingMode.Wait : UnhandledBreakpointProcessingMode.Ignore;
             }
+
             set
             {
                 switch (value)
@@ -2855,6 +2869,7 @@ namespace System.Management.Automation
             {
                 runningJobs = _runningJobs.Values.ToArray();
             }
+
             foreach (var item in runningJobs)
             {
                 try
@@ -2872,6 +2887,7 @@ namespace System.Management.Automation
             {
                 runspaceList = _runningRunspaces.Values.ToArray();
             }
+
             foreach (var item in runspaceList)
             {
                 try
@@ -3448,6 +3464,7 @@ namespace System.Management.Automation
                 // Get nested debugger runspace info.
                 NestedRunspaceDebugger nestedDebugger = senderDebugger as NestedRunspaceDebugger;
                 if (nestedDebugger == null) { return; }
+
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
 
                 // If this is a workflow debugger then ensure that there is a current active
@@ -3702,6 +3719,7 @@ namespace System.Management.Automation
             {
                 _runspaceDebugCompleteEvent.Reset();
             }
+
             _runspaceDebugCompleteEvent.Wait();
         }
 
@@ -3720,6 +3738,7 @@ namespace System.Management.Automation
             {
                 runningJobs = _runningJobs.Values.ToArray();
             }
+
             foreach (var item in runningJobs)
             {
                 Job job = item.Job;
@@ -3776,6 +3795,7 @@ namespace System.Management.Automation
                 SetInternalDebugMode(InternalDebugMode.Disabled);
             }
         }
+
         private bool _savedIgnoreScriptDebug = false;
 
         internal void Trace(string messageId, string resourceString, params object[] args)
@@ -3792,6 +3812,7 @@ namespace System.Management.Automation
             {
                 message = StringUtil.Format(resourceString, args);
             }
+
             if (String.IsNullOrEmpty(message))
             {
                 message = "Could not load text for msh script tracing message id '" + messageId + "'";
@@ -3852,6 +3873,7 @@ namespace System.Management.Automation
             {
                 valAsString = valAsString.Substring(0, msgLength) + PSObjectHelper.Ellipsis;
             }
+
             Trace("TraceVariableAssignment", ParserStrings.TraceVariableAssignment, varName, valAsString);
         }
 
@@ -4480,6 +4502,7 @@ namespace System.Management.Automation
                 StatementAst callingStatement = _parentScriptBlockAst.Find(
                     ast =>
                     { return ((ast is StatementAst) && (ast.Extent.StartLineNumber == callingLineNumber)); }
+
                     , true) as StatementAst;
 
                 if (callingStatement != null)
@@ -4734,6 +4757,7 @@ namespace System.Management.Automation
         {
             DebuggerCommand dbgCommand = DoProcessCommand(host, command, invocationInfo, output);
             if (dbgCommand.ExecutedByDebugger || (dbgCommand.ResumeAction != null)) { _lastCommand = dbgCommand; }
+
             return dbgCommand;
         }
 
@@ -4764,6 +4788,7 @@ namespace System.Management.Automation
             if (_commandTable.TryGetValue(command, out debuggerCommand))
             {
                 if (debuggerCommand.ExecutedByDebugger || (debuggerCommand.ResumeAction != null)) { _lastCommand = debuggerCommand; }
+
                 return debuggerCommand;
             }
 
@@ -4784,8 +4809,10 @@ namespace System.Management.Automation
                     {
                         DisplayScript(host, output, invocationInfo, _lastLineDisplayed + 1, DefaultListLineCount);
                     }
+
                     return _listCommand;
                 }
+
                 command = _lastCommand.Command;
             }
 
@@ -4885,6 +4912,7 @@ namespace System.Management.Automation
                     WriteErrorLine(StringUtil.Format(DebuggerStrings.BadStartFormat, _lines.Length), host, output);
                     return;
                 }
+
                 if (start <= 0 || start > _lines.Length)
                 {
                     WriteErrorLine(StringUtil.Format(DebuggerStrings.BadStartFormat, _lines.Length), host, output);

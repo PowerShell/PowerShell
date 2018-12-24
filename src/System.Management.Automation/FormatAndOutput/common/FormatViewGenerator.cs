@@ -77,6 +77,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 formatErrorPolicy.ShowErrorsAsMessages = this.dataBaseInfo.db.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
             }
+
             if (parameters != null && parameters.showErrorsInFormattedOutput.HasValue)
             {
                 formatErrorPolicy.ShowErrorsInFormattedOutput = parameters.showErrorsInFormattedOutput.Value;
@@ -104,6 +105,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     label = labelKey as string;
                 }
+
                 _groupingManager = new GroupingInfoManager();
                 _groupingManager.Initialize(groupingKeyExpression, label);
                 return;
@@ -117,6 +119,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return;
                 }
+
                 if (gb.startGroup == null || gb.startGroup.expression == null)
                 {
                     return;
@@ -164,6 +167,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 startFormat.autosizeInfo = new AutosizeInfo();
             }
+
             return startFormat;
         }
 
@@ -263,6 +267,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 controlGenerator.GenerateFormatEntries(maxTreeDepth,
                     control, firstObjectInGroup, startGroup.groupingEntry.formatValueList);
             }
+
             return startGroup;
         }
 
@@ -310,6 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     result = IsObjectApplicable(typesWithoutPrefix);
                 }
             }
+
             return result;
         }
 
@@ -319,12 +325,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get { return _autosize; }
         }
+
         private bool _autosize = false;
 
         protected bool RepeatHeader
         {
             get { return _repeatHeader; }
         }
+
         private bool _repeatHeader = false;
 
         protected class DataBaseInfo
@@ -388,6 +396,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
             }
+
             return retVal;
         }
 
@@ -404,6 +413,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
+
             return retVal;
         }
 
@@ -446,6 +456,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 fpf.propertyValue = string.Empty;
             }
+
             return fpf;
         }
 

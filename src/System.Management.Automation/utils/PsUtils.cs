@@ -199,6 +199,7 @@ namespace System.Management.Automation
             {
                 tempDir = String.Empty; // will become current working directory
             }
+
             return tempDir;
         }
 
@@ -303,6 +304,7 @@ namespace System.Management.Automation
             {
                 usingAstText = usingAstText.ToLowerInvariant();
             }
+
             return StringToBase64Converter.StringToBase64String(usingAstText);
         }
 
@@ -371,7 +373,9 @@ namespace System.Management.Automation
                                      bool skipPathValidation)
         {
             if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException("parameterName"); }
+
             if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException("psDataFilePath"); }
+
             if (context == null) { throw PSTraceSource.NewArgumentNullException("context"); }
 
             string resolvedPath;
@@ -528,6 +532,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     return result;
                 }
             }
@@ -557,6 +562,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("input");
             }
+
             string base64 = Convert.ToBase64String
                             (
                                 Encoding.Unicode.GetBytes(input.ToCharArray())
@@ -575,6 +581,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("base64");
             }
+
             string output = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
             return output;
         }
@@ -590,6 +597,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("base64");
             }
+
             string decoded = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
 
             //Deserialize string
@@ -653,6 +661,7 @@ namespace System.Management.Automation
                         temp >>= 1;
                     }
                 }
+
                 table[i] = temp;
             }
         }
@@ -665,6 +674,7 @@ namespace System.Management.Automation
                 var index = (byte)(crc ^ buffer[i] & 0xff);
                 crc = (crc >> 8) ^ table[index];
             }
+
             return ~crc;
         }
 

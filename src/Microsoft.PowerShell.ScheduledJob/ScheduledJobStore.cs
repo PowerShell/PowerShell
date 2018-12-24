@@ -291,6 +291,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentException("oldDefName");
             }
+
             if (string.IsNullOrEmpty(newDefName))
             {
                 throw new PSArgumentException("newDefName");

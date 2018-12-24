@@ -166,6 +166,7 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.InvalidType,
                                 targetObject: null));
                     }
+
                     throw e;
                 }
 
@@ -211,6 +212,7 @@ namespace Microsoft.PowerShell.Commands
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                         }
+
                         WriteObject(_newObject);
                         return;
                     }
@@ -235,6 +237,7 @@ namespace Microsoft.PowerShell.Commands
                                 "ConstructorCalledThrowException",
                                 ErrorCategory.InvalidOperation, null));
                         }
+
                         WriteObject(_newObject);
                         return;
                     }
@@ -251,6 +254,7 @@ namespace Microsoft.PowerShell.Commands
                             // Win8:649519
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                         }
+
                         WriteObject(_newObject);
                         return;
                     }
@@ -308,11 +312,13 @@ namespace Microsoft.PowerShell.Commands
                          ErrorCategory.InvalidArgument, comObject));
                     }
                 }
+
                 if (comObject != null && Property != null)
                 {
                     // Win8:649519
                     comObject = LanguagePrimitives.SetObjectProperties(comObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                 }
+
                 WriteObject(comObject);
             }
 #endif
@@ -418,6 +424,7 @@ namespace Microsoft.PowerShell.Commands
                     info.success = false;
                     return;
                 }
+
                 info.objectCreated = SafeCreateInstance(type, ArgumentList);
                 info.success = true;
             }
@@ -443,6 +450,7 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(mshArgE, "CannotLoadComObjectType", ErrorCategory.InvalidType, null));
                 }
+
                 return SafeCreateInstance(type, ArgumentList);
             }
             catch (COMException e)

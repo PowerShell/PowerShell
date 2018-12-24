@@ -112,6 +112,7 @@ namespace Microsoft.PowerShell
             {
                 return null;
             }
+
             WriteLineToConsole();
 
             cred = new PSCredential(userName, password);

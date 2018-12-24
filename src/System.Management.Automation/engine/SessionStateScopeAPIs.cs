@@ -195,6 +195,7 @@ namespace System.Management.Automation
                         inGlobalScopeLineage = true;
                         break;
                     }
+
                     scope = scope.Parent;
                 }
 
@@ -237,6 +238,7 @@ namespace System.Management.Automation
             {
                 newScope.ScriptScope = newScope;
             }
+
             return newScope;
         }
 
@@ -315,6 +317,7 @@ namespace System.Management.Automation
             {
                 _currentScope = _currentScope.Parent;
             }
+
             scope.Parent = null;
         }
     }

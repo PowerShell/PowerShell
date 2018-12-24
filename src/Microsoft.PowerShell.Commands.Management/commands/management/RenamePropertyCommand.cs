@@ -84,6 +84,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.RenamePropertyDynamicParameters(Path, Name, NewName, context);
             }
+
             return InvokeProvider.Property.RenamePropertyDynamicParameters(".", Name, NewName, context);
         }
 

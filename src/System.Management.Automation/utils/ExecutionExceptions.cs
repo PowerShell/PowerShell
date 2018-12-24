@@ -35,6 +35,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("errorRecord");
             }
+
             _errorRecord = errorRecord;
             if (errorRecord.Exception != null)
             {
@@ -76,6 +77,7 @@ namespace System.Management.Automation
                     ErrorCategory.NotSpecified,
                     null);
             }
+
             _errorRecord.SetInvocationInfo(invocationInfo);
             // 2005/04/13-JonN Can't do this in an unsealed class: HelpLink = innerException.HelpLink;
             // Exception.Source is set by Throw
@@ -169,9 +171,11 @@ namespace System.Management.Automation
                         ErrorCategory.NotSpecified,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord = null;
 
         #endregion Properties
@@ -206,6 +210,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("innerException");
             }
+
             _providerInvocationException = innerException;
         }
 
@@ -269,6 +274,7 @@ namespace System.Management.Automation
                 return _providerInvocationException;
             }
         }
+
         [NonSerialized]
         private ProviderInvocationException _providerInvocationException;
 
@@ -469,6 +475,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("error");
             }
+
             _errorRecord = error;
         }
 
@@ -496,6 +503,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("errorRecord");
             }
+
             _errorRecord = errorRecord;
         }
 
@@ -607,6 +615,7 @@ namespace System.Management.Automation
         {
             get { return _errorRecord ?? base.ErrorRecord; }
         }
+
         private readonly ErrorRecord _errorRecord = null;
         #endregion Properties
     }
@@ -896,9 +905,11 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidOperation,
                         CallDepth);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord = null;
 
         /// <summary>
@@ -1004,9 +1015,11 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidOperation,
                         CallDepth);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord = null;
 
         /// <summary>

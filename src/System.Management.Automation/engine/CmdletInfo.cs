@@ -148,6 +148,7 @@ namespace System.Management.Automation
                 return _verb;
             }
         }
+
         private string _verb = String.Empty;
 
         /// <summary>
@@ -160,6 +161,7 @@ namespace System.Management.Automation
                 return _noun;
             }
         }
+
         private string _noun = String.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
@@ -177,12 +179,14 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (index > 0)
             {
                 verb = name.Substring(0, index);
                 noun = name.Substring(index + 1);
                 return true;
             }
+
             return false;
         }
 
@@ -195,11 +199,13 @@ namespace System.Management.Automation
             {
                 return _helpFilePath;
             }
+
             internal set
             {
                 _helpFilePath = value;
             }
         }
+
         private string _helpFilePath = String.Empty;
 
         internal override HelpCategory HelpCategory
@@ -217,6 +223,7 @@ namespace System.Management.Automation
                 return _PSSnapin;
             }
         }
+
         private PSSnapInInfo _PSSnapin;
 
         /// <summary>
@@ -231,6 +238,7 @@ namespace System.Management.Automation
                 {
                     result = _PSSnapin.Name;
                 }
+
                 return result;
             }
         }
@@ -270,6 +278,7 @@ namespace System.Management.Automation
                 return _implementingType;
             }
         }
+
         private Type _implementingType = null;
 
         /// <summary>
@@ -370,6 +379,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     if (provider == null)
                     {
                         // No path argument, so just use the current path to choose the provider.
@@ -387,6 +397,7 @@ namespace System.Management.Automation
                 return new ReadOnlyCollection<PSTypeName>(_outputType);
             }
         }
+
         private List<PSTypeName> _outputType = null;
 
         /// <summary>
@@ -408,6 +419,7 @@ namespace System.Management.Automation
                 SetOptions(value, false);
             }
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
@@ -454,6 +466,7 @@ namespace System.Management.Automation
             {
                 result = moduleName + '\\' + result;
             }
+
             return result;
         }
 
@@ -525,6 +538,7 @@ namespace System.Management.Automation
                        (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
             }
         }
+
         private CommandMetadata _cmdletMetadata;
 
         internal override bool ImplementsDynamicParameters

@@ -159,12 +159,14 @@ namespace System.Management.Automation.Interpreter
                     {
                         continue;
                     }
+
                     inInterpretedFrame = true;
                 }
                 else
                 {
                     inInterpretedFrame = false;
                 }
+
                 yield return frame;
             }
         }
@@ -323,6 +325,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Data[StackIndex - 1] = value;
                 }
+
                 return target.Index - InstructionIndex;
             }
 

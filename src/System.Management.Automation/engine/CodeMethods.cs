@@ -37,6 +37,7 @@ namespace Microsoft.PowerShell
                 {
                     return String.Empty;
                 }
+
                 return (PSObject.AsPSObject(values[0]).ToString());
             }
 

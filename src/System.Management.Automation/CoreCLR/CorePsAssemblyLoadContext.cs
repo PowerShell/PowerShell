@@ -83,6 +83,7 @@ namespace System.Management.Automation
                         string message = string.Format(CultureInfo.CurrentCulture, BaseFolderDoesNotExist, basePath);
                         throw new ArgumentException(message, "basePaths");
                     }
+
                     _probingPaths[i] = basePath.Trim();
                 }
             }

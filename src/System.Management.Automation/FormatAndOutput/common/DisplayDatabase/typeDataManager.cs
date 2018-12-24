@@ -182,6 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return;
                 }
             }
+
             lock (_formatFileList)
             {
                 foreach (string formatFile in _formatFileList)
@@ -191,6 +192,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     filesToLoad.Add(fileToLoad);
                 }
             }
+
             if (!shouldPrepend)
             {
                 foreach (ExtendedTypeDefinition typeDefinition in formatData)
@@ -353,6 +355,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
             }
+
             return success;
         }
 

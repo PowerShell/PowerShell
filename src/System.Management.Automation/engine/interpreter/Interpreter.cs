@@ -75,6 +75,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return 0;
                 }
+
                 return ClosureVariables.Count;
             }
         }

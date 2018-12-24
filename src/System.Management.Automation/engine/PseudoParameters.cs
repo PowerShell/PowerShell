@@ -82,15 +82,18 @@ namespace System.Management.Automation
             {
                 return _name;
             }
+
             set
             {
                 if (String.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
+
                 _name = value;
             }
         }
+
         private string _name = String.Empty;
 
         /// <summary>
@@ -115,9 +118,11 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
+
                 _parameterType = value;
             }
         }
+
         private Type _parameterType;
 
         /// <summary>
@@ -140,6 +145,7 @@ namespace System.Management.Automation
                 _value = value;
             }
         }
+
         private object _value;
 
         /// <summary>
@@ -169,12 +175,14 @@ namespace System.Management.Automation
                 if (!hasSeenExpAttribute && attr is ExperimentalAttribute expAttribute)
                 {
                     if (expAttribute.ToHide) { return true; }
+
                     hasSeenExpAttribute = true;
                 }
                 else if (attr is ParameterAttribute paramAttribute)
                 {
                     hasParameterAttribute = true;
                     if (paramAttribute.ToHide) { continue; }
+
                     hasEnabledParamAttribute = true;
                 }
             }
@@ -217,8 +225,10 @@ namespace System.Management.Automation
         public string HelpFile
         {
             get { return _helpFile; }
+
             set { _helpFile = String.IsNullOrEmpty(value) ? String.Empty : value; }
         }
+
         private string _helpFile = String.Empty;
 
         /// <summary>

@@ -22,6 +22,7 @@ namespace Microsoft.PowerShell {
                 {
                     return null;
                 }
+
                 var candidate = Process.GetProcessById(pid);
 
                 // if the candidate was started later than process, the pid has been recycled

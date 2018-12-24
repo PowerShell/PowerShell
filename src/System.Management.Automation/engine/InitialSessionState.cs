@@ -203,6 +203,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("typeTable");
             }
+
             TypeTable = typeTable;
         }
 
@@ -218,6 +219,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("typeData");
             }
+
             TypeData = typeData;
             IsRemove = isRemove;
         }
@@ -308,6 +310,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("formattable");
             }
+
             Formattable = formattable;
         }
 
@@ -322,6 +325,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("typeDefinition");
             }
+
             FormatData = typeDefinition;
         }
 
@@ -951,6 +955,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _attributes ?? (_attributes = new Collection<Attribute>()); }
         }
+
         private Collection<Attribute> _attributes;
     }
 
@@ -1002,6 +1007,7 @@ namespace System.Management.Automation.Runspaces
                     result.Add((T)item.Clone());
                 }
             }
+
             return result;
         }
 
@@ -1037,6 +1043,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     result = _internalCollection[index];
                 }
+
                 return result;
             }
         }
@@ -1063,6 +1070,7 @@ namespace System.Management.Automation.Runspaces
                         }
                     }
                 }
+
                 return result;
             }
         }
@@ -1675,6 +1683,7 @@ namespace System.Management.Automation.Runspaces
             {
                 ss.CoreModulesToImport.Add(mod);
             }
+
             ss.DisableFormatUpdates = this.DisableFormatUpdates;
 
             foreach (var s in this.defaultSnapins)
@@ -1786,12 +1795,14 @@ namespace System.Management.Automation.Runspaces
         public Microsoft.PowerShell.ExecutionPolicy ExecutionPolicy
         {
             get { return _executionPolicy; }
+
             set
             {
                 _executionPolicy = value;
                 _wasExecutionPolicySet = true;
             }
         }
+
         private Microsoft.PowerShell.ExecutionPolicy _executionPolicy = Microsoft.PowerShell.ExecutionPolicy.Default;
         private bool _wasExecutionPolicySet = false;
 
@@ -1939,6 +1950,7 @@ namespace System.Management.Automation.Runspaces
                 return _assemblies;
             }
         }
+
         private InitialSessionStateEntryCollection<SessionStateAssemblyEntry> _assemblies;
 
         /// <summary>
@@ -1953,6 +1965,7 @@ namespace System.Management.Automation.Runspaces
                 return _types;
             }
         }
+
         private InitialSessionStateEntryCollection<SessionStateTypeEntry> _types;
 
         /// <summary>
@@ -1966,6 +1979,7 @@ namespace System.Management.Automation.Runspaces
                 return _formats;
             }
         }
+
         private InitialSessionStateEntryCollection<SessionStateFormatEntry> _formats;
 
         /// <summary>
@@ -1987,6 +2001,7 @@ namespace System.Management.Automation.Runspaces
                 return _providers;
             }
         }
+
         private InitialSessionStateEntryCollection<SessionStateProviderEntry> _providers;
 
         /// <summary>
@@ -2001,6 +2016,7 @@ namespace System.Management.Automation.Runspaces
                 return _commands;
             }
         }
+
         private InitialSessionStateEntryCollection<SessionStateCommandEntry> _commands;
 
         internal SessionStateEntryVisibility DefaultCommandVisibility { get; set; }
@@ -2014,6 +2030,7 @@ namespace System.Management.Automation.Runspaces
                 return _unresolvedCommandsToExpose;
             }
         }
+
         private HashSet<string> _unresolvedCommandsToExpose;
 
         internal Dictionary<string, Hashtable> CommandModifications
@@ -2025,6 +2042,7 @@ namespace System.Management.Automation.Runspaces
                 return _commandModifications;
             }
         }
+
         private Dictionary<string, Hashtable> _commandModifications;
 
         internal List<Hashtable> DynamicVariablesToDefine
@@ -2036,6 +2054,7 @@ namespace System.Management.Automation.Runspaces
                 return _dynamicVariablesToDefine;
             }
         }
+
         private List<Hashtable> _dynamicVariablesToDefine;
 
         /// <summary>
@@ -2049,6 +2068,7 @@ namespace System.Management.Automation.Runspaces
                 return _variables;
             }
         }
+
         private InitialSessionStateEntryCollection<SessionStateVariableEntry> _variables;
 
         /// <summary>
@@ -2062,6 +2082,7 @@ namespace System.Management.Automation.Runspaces
                 return _environmentVariables;
             }
         }
+
         private InitialSessionStateEntryCollection<SessionStateVariableEntry> _environmentVariables;
 
         /// <summary>
@@ -2075,6 +2096,7 @@ namespace System.Management.Automation.Runspaces
                 return _startupScripts;
             }
         }
+
         private HashSet<string> _startupScripts = new HashSet<string>();
 
         private Object _syncObject = new Object();
@@ -2283,12 +2305,14 @@ namespace System.Management.Automation.Runspaces
                     ss.AddSessionStateEntry(ssfe);
                     continue;
                 }
+
                 SessionStateAliasEntry ssae = cmd as SessionStateAliasEntry;
                 if (ssae != null)
                 {
                     ss.AddSessionStateEntry(ssae, StringLiterals.Local);
                     continue;
                 }
+
                 SessionStateApplicationEntry ssappe = cmd as SessionStateApplicationEntry;
                 if (ssappe != null)
                 {
@@ -2296,8 +2320,10 @@ namespace System.Management.Automation.Runspaces
                     {
                         ss.AddSessionStateEntry(ssappe);
                     }
+
                     continue;
                 }
+
                 SessionStateScriptEntry ssse = cmd as SessionStateScriptEntry;
                 if (ssse != null)
                 {
@@ -2305,6 +2331,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         ss.AddSessionStateEntry(ssse);
                     }
+
                     continue;
                 }
 
@@ -2351,6 +2378,7 @@ namespace System.Management.Automation.Runspaces
                         context.ReportEngineStartupError(error.Message);
                     }
                 }
+
                 if (etwEnabled) RunspaceEventSource.Log.LoadAssemblyStop(ssae.Name, ssae.FileName);
             }
 
@@ -2382,6 +2410,7 @@ namespace System.Management.Automation.Runspaces
                         publicCommands.Add(sessionCommand);
                     }
                 }
+
                 return publicCommands;
             }
 
@@ -2924,6 +2953,7 @@ namespace System.Management.Automation.Runspaces
                     foreach (CommandInfo cmd in LookupCommands(commandToMakeVisible, moduleName, initializedRunspace.ExecutionContext))
                     {
                         if (!found) { found = true; }
+
                         try
                         {
                             // Special case for wild card lookups.
@@ -2994,6 +3024,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     if (!found) { found = true; }
+
                     yield return commandInfo;
 
                     // Return first match unless a wild card pattern is submitted.
@@ -3035,6 +3066,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         name = Path.Combine(path, name);
                     }
+
                     cmd.Parameters.Add("Name", name);
                 }
 
@@ -3305,6 +3337,7 @@ namespace System.Management.Automation.Runspaces
                                 context.TopLevelSessionState.RemoveCmdletEntry(ssce.Name, true);
                             }
                         }
+
                         continue;
                     }
                 }
@@ -3341,6 +3374,7 @@ namespace System.Management.Automation.Runspaces
                         }
                     }
                 }
+
                 List<string> formatFilesToRemove = new List<string>();
                 if (this.Formats != null)
                 {
@@ -3373,6 +3407,7 @@ namespace System.Management.Automation.Runspaces
                         newFormats.Add(entry);
                     }
                 }
+
                 context.InitialSessionState.Formats.Clear();
                 context.InitialSessionState.Formats.Add(newFormats);
                 context.InitialSessionState.UpdateFormats(context, false);
@@ -3574,6 +3609,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     name = snapin.Name;
                 }
+
                 if (ssfe.Formattable != null)
                 {
                     if (formatsToLoad.Count == 1)
@@ -3701,6 +3737,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw pse;
             }
+
             return coreSnapin;
         }
 
@@ -3844,6 +3881,7 @@ namespace System.Management.Automation.Runspaces
                     this.Providers.Add(provider);
                 }
             }
+
             warning = null;
 
             // Add help file information for built-in functions
@@ -3861,6 +3899,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
+
             return psSnapInInfo;
         }
 
@@ -3875,6 +3914,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         loadedSnapins = new List<PSSnapInInfo>();
                     }
+
                     loadedSnapins.Add(defaultSnapin);
                 }
             }
@@ -3886,8 +3926,10 @@ namespace System.Management.Automation.Runspaces
                 {
                     loadedSnapins = new List<PSSnapInInfo>();
                 }
+
                 loadedSnapins.Add(importedSnapin);
             }
+
             return loadedSnapins;
         }
 
@@ -3915,6 +3957,7 @@ namespace System.Management.Automation.Runspaces
                 ArgumentNullException e = new ArgumentNullException("assembly");
                 throw e;
             }
+
             Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
             Dictionary<string, SessionStateProviderEntry> providers = null;
@@ -4186,6 +4229,7 @@ param(
 begin {
     $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('New-Item', [System.Management.Automation.CommandTypes]::Cmdlet)
     $scriptCmd = {& $wrappedCmd -Type Directory @PSBoundParameters }
+
     $steppablePipeline = $scriptCmd.GetSteppablePipeline()
     $steppablePipeline.Begin($PSCmdlet)
 }
@@ -4218,6 +4262,7 @@ begin {
     $PSBoundParameters['Stream'] = $true
     $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('Out-String',[System.Management.Automation.CommandTypes]::Cmdlet)
     $scriptCmd = {& $wrappedCmd @PSBoundParameters }
+
     $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
     $steppablePipeline.Begin($PSCmdlet)
 }
@@ -4837,11 +4882,13 @@ end {
                     {
                         entry.Item1.SetPSSnapIn(psSnapInInfo);
                     }
+
                     var newEntry = (SessionStateCmdletEntry)entry.Item1.Clone();
                     if (newEntry.PSSnapIn != null && psSnapInInfo == null)
                     {
                         newEntry.SetPSSnapIn(null);
                     }
+
                     cmdlets[key] = newEntry;
 
                     if (entry.Item2 != null)
@@ -4859,6 +4906,7 @@ end {
                             {
                                 newAliasEntry.SetPSSnapIn(null);
                             }
+
                             aliasList.Add(newAliasEntry);
                         }
 
@@ -4879,11 +4927,13 @@ end {
                     {
                         entry.SetPSSnapIn(psSnapInInfo);
                     }
+
                     var newEntry = (SessionStateProviderEntry)entry.Clone();
                     if (newEntry.PSSnapIn != null && psSnapInInfo == null)
                     {
                         newEntry.SetPSSnapIn(null);
                     }
+
                     providers[key] = newEntry;
                 }
             }
@@ -4940,6 +4990,7 @@ end {
                         Diagnostics.Assert(false, "Missing provider: " + pair.Key);
                     }
                 }
+
                 Diagnostics.Assert(cmdletsCheck.Count == cmdlets.Count, "new Cmdlet added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
 
                 foreach (var pair in cmdletsCheck)
@@ -4991,6 +5042,7 @@ end {
 
                     clone[entry.Key] = new Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>((SessionStateCmdletEntry)entry.Value.Clone(), aliasesCloneList);
                 }
+
                 s_cmdletCache.Value[assembly] = clone;
             }
 
@@ -5001,6 +5053,7 @@ end {
                 {
                     clone[entry.Key] = (SessionStateProviderEntry)entry.Value.Clone();
                 }
+
                 s_providerCache.Value[assembly] = clone;
             }
         }
@@ -5042,6 +5095,7 @@ end {
 
                     SessionStateCmdletEntry cmdlet = new SessionStateCmdletEntry(cmdletName, type, helpFile);
                     if (psSnapInInfo != null) { cmdlet.SetPSSnapIn(psSnapInInfo); }
+
                     if (moduleInfo != null) { cmdlet.SetModule(moduleInfo); }
 
                     cmdlets = cmdlets ?? new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
@@ -5059,9 +5113,12 @@ end {
                             // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes').
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
                             if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
+
                             if (moduleInfo != null) { aliasEntry.SetModule(moduleInfo); }
+
                             aliasList.Add(aliasEntry);
                         }
+
                         aliases.Add(cmdletName, aliasList);
                     }
 
@@ -5087,6 +5144,7 @@ end {
 
                     SessionStateProviderEntry provider = new SessionStateProviderEntry(providerName, type, helpFile);
                     if (psSnapInInfo != null) { provider.SetPSSnapIn(psSnapInInfo); }
+
                     if (moduleInfo != null) { provider.SetModule(moduleInfo); }
 
                     providers = providers ?? new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
@@ -5273,37 +5331,62 @@ end {
     }
 
     // Guid is {15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}
+
     [EventSource(Name = "Microsoft-PowerShell-Runspaces")]
     internal class RunspaceEventSource : EventSource
     {
         internal static RunspaceEventSource Log = new RunspaceEventSource();
 
         public void OpenRunspaceStart() { WriteEvent(1); }
+
         public void OpenRunspaceStop() { WriteEvent(2); }
+
         public void LoadAssembliesStart() { WriteEvent(3); }
+
         public void LoadAssembliesStop() { WriteEvent(4); }
+
         public void UpdateFormatTableStart() { WriteEvent(5); }
+
         public void UpdateFormatTableStop() { WriteEvent(6); }
+
         public void UpdateTypeTableStart() { WriteEvent(7); }
+
         public void UpdateTypeTableStop() { WriteEvent(8); }
+
         public void LoadProvidersStart() { WriteEvent(9); }
+
         public void LoadProvidersStop() { WriteEvent(10); }
+
         public void LoadCommandsStart() { WriteEvent(11); }
+
         public void LoadCommandsStop() { WriteEvent(12); }
+
         public void LoadVariablesStart() { WriteEvent(13); }
+
         public void LoadVariablesStop() { WriteEvent(14); }
+
         public void LoadEnvironmentVariablesStart() { WriteEvent(15); }
+
         public void LoadEnvironmentVariablesStop() { WriteEvent(16); }
 
         public void LoadAssemblyStart(string Name, string FileName) { WriteEvent(17, Name, FileName); }
+
         public void LoadAssemblyStop(string Name, string FileName) { WriteEvent(18, Name, FileName); }
+
         public void ProcessFormatFileStart(string FileName) { WriteEvent(19, FileName); }
+
         public void ProcessFormatFileStop(string FileName) { WriteEvent(20, FileName); }
+
         public void ProcessTypeFileStart(string FileName) { WriteEvent(21, FileName); }
+
         public void ProcessTypeFileStop(string FileName) { WriteEvent(22, FileName); }
+
         public void LoadProviderStart(string Name) { WriteEvent(23, Name); }
+
         public void LoadProviderStop(string Name) { WriteEvent(24, Name); }
+
         public void LoadCommandStart(string Name) { WriteEvent(25, Name); }
+
         public void LoadCommandStop(string Name) { WriteEvent(26, Name); }
     }
 }

@@ -97,11 +97,13 @@ namespace System.Management.Automation
             {
                 return s_delegate;
             }
+
             set
             {
                 s_delegate = value;
             }
         }
+
         private static GetSymmetricEncryptionKey s_delegate = null;
 
         /// <summary>

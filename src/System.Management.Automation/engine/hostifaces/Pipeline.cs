@@ -341,6 +341,7 @@ namespace System.Management.Automation.Runspaces
         internal virtual bool IsChild
         {
             get { return false; }
+
             set { }
         }
 
@@ -398,6 +399,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _hadErrors; }
         }
+
         private bool _hadErrors;
 
         internal void SetHadErrors(bool status)
