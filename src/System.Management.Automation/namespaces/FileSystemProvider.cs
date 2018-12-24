@@ -2056,7 +2056,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (exists && !isContainer)
                 {
-                    string message = StringUtil.Format("Cannot create {0} because a file or directory with the same name already exists.", path);
+                    string message = StringUtil.Format("Cannot create {0} because a file with the same name already exists.", path);
                     WriteError(new ErrorRecord(new IOException(message), "NewItemIOError", ErrorCategory.WriteError, path));
                     return; 
                 }
@@ -2079,55 +2079,77 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (itemType == ItemType.File)
             {
+                bool isContainer = false;
+                bool exists = false;
+
                 try
                 {
-                    FileMode fileMode = FileMode.CreateNew;
+                    exists = GetFileSystemInfo(path, out isContainer) != null;
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    WriteError(new ErrorRecord(e, "NewItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                    return;
+                }
 
-                    if (Force)
+                if (exists && isContainer)
+                {
+                    string message = StringUtil.Format("Cannot create {0} because a directory with the same name already exists.", path);
+                    WriteError(new ErrorRecord(new IOException(message), "NewItemIOError", ErrorCategory.WriteError, path));
+                    return; 
+                }
+                else
+                {
+                    try
                     {
-                        // If force is specified, overwrite the existing
-                        // file
+                        FileMode fileMode = FileMode.CreateNew;
 
-                        fileMode = FileMode.Create;
-                    }
-
-                    string action = FileSystemProviderStrings.NewItemActionFile;
-
-                    string resource = StringUtil.Format(FileSystemProviderStrings.NewItemActionTemplate, path);
-
-                    if (ShouldProcess(resource, action))
-                    {
-                        // Create the file with read/write access and
-                        // not allowing sharing.
-
-                        using (FileStream newFile =
-                            new FileStream(
-                                path,
-                                fileMode,
-                                FileAccess.Write,
-                                FileShare.None))
+                        if (Force)
                         {
-                            if (value != null)
-                            {
-                                StreamWriter streamWriter = new StreamWriter(newFile);
-                                streamWriter.Write(value.ToString());
-                                streamWriter.Flush();
-                                streamWriter.Dispose();
-                            }
+                            // If force is specified, overwrite the existing
+                            // file
+
+                            fileMode = FileMode.Create;
                         }
 
-                        FileInfo fileInfo = new FileInfo(path);
-                        WriteItemObject(fileInfo, path, false);
+                        string action = FileSystemProviderStrings.NewItemActionFile;
+
+                        string resource = StringUtil.Format(FileSystemProviderStrings.NewItemActionTemplate, path);
+
+                        if (ShouldProcess(resource, action))
+                        {
+                            // Create the file with read/write access and
+                            // not allowing sharing.
+
+                            using (FileStream newFile =
+                                new FileStream(
+                                    path,
+                                    fileMode,
+                                    FileAccess.Write,
+                                    FileShare.None))
+                            {
+                                if (value != null)
+                                {
+                                    StreamWriter streamWriter = new StreamWriter(newFile);
+                                    streamWriter.Write(value.ToString());
+                                    streamWriter.Flush();
+                                    streamWriter.Dispose();
+                                }
+                            }
+
+                            FileInfo fileInfo = new FileInfo(path);
+                            WriteItemObject(fileInfo, path, false);
+                        }
                     }
-                }
-                catch (IOException exception)
-                {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
-                    WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
-                }
-                catch (UnauthorizedAccessException accessException)
-                {
-                    WriteError(new ErrorRecord(accessException, "NewItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                    catch (IOException exception)
+                    {
+                        // IOException contains specific message about the error occured and so no need for errordetails.
+                        WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
+                    }
+                    catch (UnauthorizedAccessException accessException)
+                    {
+                        WriteError(new ErrorRecord(accessException, "NewItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                    }
                 }
             }
             else if (itemType == ItemType.SymbolicLink || itemType == ItemType.HardLink)
