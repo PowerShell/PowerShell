@@ -22,13 +22,13 @@ namespace System.Management.Automation
     ///     1. para,
     ///         <param>
     ///             para text here
-    ///         </param>
+    ///         .</param>
     ///     2. list,
     ///         <list class="ordered|unordered">
     ///             <listItem>
     ///                 <param>
     ///                     listItem Text here
-    ///                 </param>
+    ///                 .</param>
     ///             </listItem>
     ///         </list>
     ///     3. definition list,
@@ -40,7 +40,7 @@ namespace System.Management.Automation
     ///                 <definition>
     ///                     <param>
     ///                         definition text here
-    ///                     </param>
+    ///                     .</param>
     ///                 </definition>
     ///             </definitionListItem>
     ///         </definitionList>
@@ -145,17 +145,17 @@ namespace System.Management.Automation
         ///         <description attribute="value">
         ///             <param>
         ///                 para 1
-        ///             </param>
+        ///             .</param>
         ///             <list>
         ///                 <listItem>
         ///                     <param>
         ///                         list item 1
-        ///                     </param>
+        ///                     .</param>
         ///                 </listItem>
         ///                 <listItem>
         ///                     <param>
         ///                         list item 2
-        ///                     </param>
+        ///                     .</param>
         ///                 </listItem>
         ///             </list>
         ///             <definitionList>
@@ -371,9 +371,9 @@ namespace System.Management.Automation
         /// "attrib1" will be lost. This seems to be OK with current practice of authoring
         /// monad command help.
         /// </summary>
-        /// <param name="properties">property hashtable</param>
-        /// <param name="name">property name</param>
-        /// <param name="mshObject">property value</param>
+        /// <param name="properties">property hashtable.</param>
+        /// <param name="name">property name.</param>
+        /// <param name="mshObject">property value.</param>
         private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
             ArrayList propertyValues = (ArrayList)properties[name];
@@ -549,17 +549,17 @@ namespace System.Management.Automation
         ///    <description attribute="value">
         ///        <param>
         ///            para 1
-        ///        </param>
+        ///        .</param>
         ///        <list>
         ///            <listItem>
         ///                <param>
         ///                    list item 1
-        ///                </param>
+        ///                .</param>
         ///            </listItem>
         ///            <listItem>
         ///                <param>
         ///                    list item 2
-        ///                </param>
+        ///                .</param>
         ///            </listItem>
         ///        </list>
         ///        <definitionList>
@@ -738,7 +738,7 @@ namespace System.Management.Automation
         /// For example,
         ///    <param>
         ///        para text
-        ///    </param>
+        ///    .</param>
         ///    In this case, an PSObject of type "MamlParaTextItem" will be created with following property
         ///        a. text="para text"
         /// </summary>
@@ -790,12 +790,12 @@ namespace System.Management.Automation
         ///        <listItem>
         ///            <param>
         ///                text for list item 1
-        ///            </param>
+        ///            .</param>
         ///        </listItem>
         ///        <listItem>
         ///            <param>
         ///                text for list item 2
-        ///            </param>
+        ///            .</param>
         ///        </listItem>
         ///    </list>
         /// In this case, an array of PSObject, each of type "MamlOrderedListText" will be created with following
@@ -980,7 +980,7 @@ namespace System.Management.Automation
         ///            <definition>
         ///                <param>
         ///                    definition text
-        ///                </param>
+        ///                .</param>
         ///            </definition>
         ///        </definitionListItem>
         /// In this case, an PSObject of type "definitionListText" will be created with following
@@ -1142,7 +1142,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Trim empty lines from the either end of an string array.
         /// </summary>
-        /// <param name="lines">lines to trim</param>
+        /// <param name="lines">lines to trim.</param>
         /// <returns>an string array with empty lines trimed on either end</returns>
         private static string[] TrimLines(string[] lines)
         {

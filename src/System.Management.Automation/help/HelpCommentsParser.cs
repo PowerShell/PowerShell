@@ -542,7 +542,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Split the text in the comment token into multiple lines, appending commentLines.
         /// </summary>
-        /// <param name="comment">A single line or multiline comment token</param>
+        /// <param name="comment">A single line or multiline comment token.</param>
         /// <param name="commentLines"></param>
         private static void CollectCommentText(Token comment, List<string> commentLines)
         {
@@ -712,7 +712,7 @@ namespace System.Management.Automation
         /// Look for special comments indicating the comment block is meant
         /// to be used for help.
         /// </summary>
-        /// <param name="comments">The list of comments to process</param>
+        /// <param name="comments">The list of comments to process.</param>
         /// <returns>True if any special comments are found, false otherwise.</returns>
         internal bool AnalyzeCommentBlock(List<Token> comments)
         {

@@ -21,10 +21,10 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="name">module name</param>
-        /// <param name="guid">module GUID</param>
-        /// <param name="path">module path</param>
-        /// <param name="uri">HelpInfo URI</param>
+        /// <param name="name">module name.</param>
+        /// <param name="guid">module GUID.</param>
+        /// <param name="path">module path.</param>
+        /// <param name="uri">HelpInfo URI.</param>
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
             Debug.Assert(!String.IsNullOrEmpty(name));
@@ -69,7 +69,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the combined HelpContent.zip name
         /// </summary>
-        /// <param name="culture">current culture</param>
+        /// <param name="culture">current culture.</param>
         /// <returns>HelpContent name</returns>
         internal string GetHelpContentName(CultureInfo culture)
         {

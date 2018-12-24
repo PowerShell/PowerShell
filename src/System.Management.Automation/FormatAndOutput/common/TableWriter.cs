@@ -77,12 +77,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Initialize the table specifying the width of each column.
         /// </summary>
-        /// <param name="leftMarginIndent">Left margin indentation</param>
-        /// <param name="screenColumns">Number of character columns on the screen</param>
-        /// <param name="columnWidths">Array of specified column widths</param>
-        /// <param name="alignment">Array of alignment flags</param>
-        /// <param name="suppressHeader">If true, suppress header printing</param>
-        /// <param name="screenRows">Number of rows on the screen</param>
+        /// <param name="leftMarginIndent">Left margin indentation.</param>
+        /// <param name="screenColumns">Number of character columns on the screen.</param>
+        /// <param name="columnWidths">Array of specified column widths.</param>
+        /// <param name="alignment">Array of alignment flags.</param>
+        /// <param name="suppressHeader">If true, suppress header printing.</param>
+        /// <param name="screenRows">Number of rows on the screen.</param>
         internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader, int screenRows = int.MaxValue)
         {
             if (leftMarginIndent < 0)

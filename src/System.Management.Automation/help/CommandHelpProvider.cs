@@ -420,7 +420,7 @@ namespace System.Management.Automation
         /// help item. Forcing each ExactMatchHelp to go through command discovery
         /// will make sure helpInfo for invalid command will not be returned.
         /// </remarks>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
@@ -778,9 +778,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the command.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file)</param>
+        /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file).</param>
         /// <param name="commandName">Name of the command.</param>
-        /// <param name="helpCategory"> </param>
+        /// <param name="helpCategory"> .</param>
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, string commandName, HelpCategory helpCategory)
         {
@@ -807,7 +807,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the CommandInfo.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (simply full path to help file)</param>
+        /// <param name="helpFileIdentifier">help file identifier (simply full path to help file).</param>
         /// <param name="commandInfo"></param>
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, CommandInfo commandInfo)
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Search help for a specific target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content of all cmdlets.
         /// Otherwise, searches for pattern in the cmdlet names.
@@ -1247,8 +1247,8 @@ namespace System.Management.Automation
         /// Process helpInfo forwarded over from other other providers, specificly AliasHelpProvider.
         /// This can return more than 1 helpinfo object.
         /// </summary>
-        /// <param name="helpInfo">HelpInfo that is forwarded over</param>
-        /// <param name="helpRequest">Help request object</param>
+        /// <param name="helpInfo">HelpInfo that is forwarded over.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>The result helpInfo objects after processing</returns>
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {

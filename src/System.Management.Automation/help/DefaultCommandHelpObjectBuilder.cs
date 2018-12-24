@@ -46,7 +46,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Generates a HelpInfo PSObject from a CmdletInfo object
         /// </summary>
-        /// <param name="input">command info</param>
+        /// <param name="input">command info.</param>
         /// <returns>HelpInfo PSObject</returns>
         internal static PSObject GetPSObjectFromCmdletInfo(CommandInfo input)
         {
@@ -150,12 +150,12 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the details properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="name">command name</param>
-        /// <param name="noun">command noun</param>
-        /// <param name="verb">command verb</param>
-        /// <param name="typeNameForHelp">type name for help</param>
-        /// <param name="synopsis">synopsis</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="name">command name.</param>
+        /// <param name="noun">command noun.</param>
+        /// <param name="verb">command verb.</param>
+        /// <param name="typeNameForHelp">type name for help.</param>
+        /// <param name="synopsis">synopsis.</param>
         internal static void AddDetailsProperties(PSObject obj, string name, string noun, string verb, string typeNameForHelp,
             string synopsis = null)
         {
@@ -184,11 +184,11 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the syntax properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="cmdletName">command name</param>
-        /// <param name="parameterSets">parameter sets</param>
-        /// <param name="common">common parameters</param>
-        /// <param name="typeNameForHelp">type name for help</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="cmdletName">command name.</param>
+        /// <param name="parameterSets">parameter sets.</param>
+        /// <param name="common">common parameters.</param>
+        /// <param name="typeNameForHelp">type name for help.</param>
         internal static void AddSyntaxProperties(PSObject obj, string cmdletName, ReadOnlyCollection<CommandParameterSetInfo> parameterSets, bool common, string typeNameForHelp)
         {
             PSObject mshObject = new PSObject();
@@ -204,11 +204,11 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Add the syntax item properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="cmdletName">cmdlet name, you can't get this from parameterSets</param>
-        /// <param name="parameterSets">a collection of parameter sets</param>
-        /// <param name="common">common parameters</param>
-        /// <param name="typeNameForHelp">type name for help</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="cmdletName">cmdlet name, you can't get this from parameterSets.</param>
+        /// <param name="parameterSets">a collection of parameter sets.</param>
+        /// <param name="common">common parameters.</param>
+        /// <param name="typeNameForHelp">type name for help.</param>
         private static void AddSyntaxItemProperties(PSObject obj, string cmdletName, ReadOnlyCollection<CommandParameterSetInfo> parameterSets, bool common, string typeNameForHelp)
         {
             ArrayList mshObjects = new ArrayList();
@@ -241,15 +241,15 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Add the syntax parameters properties (these parameters are used to create the syntax section)
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
+        /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameters">
         /// a collection of parameters in display order
         /// ie., Positional followed by
         ///      Named Mandatory (in alpha numeric) followed by
         ///      Named (in alpha numeric)
         /// </param>
-        /// <param name="common">common parameters</param>
-        /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated</param>
+        /// <param name="common">common parameters.</param>
+        /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated.</param>
         private static void AddSyntaxParametersProperties(PSObject obj, IEnumerable<CommandParameterInfo> parameters,
             bool common, string parameterSetName)
         {
@@ -334,8 +334,8 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds a parameter value group (for enums)
         /// </summary>
-        /// <param name="obj">object</param>
-        /// <param name="values">parameter group values</param>
+        /// <param name="obj">object.</param>
+        /// <param name="values">parameter group values.</param>
         private static void AddParameterValueGroupProperties(PSObject obj, string[] values)
         {
             PSObject paramValueGroup = new PSObject();
@@ -352,10 +352,10 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Add the parameters properties (these parameters are used to create the parameters section)
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="parameters">parameters</param>
-        /// <param name="common">common parameters</param>
-        /// <param name="typeNameForHelp">type name for help</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="parameters">parameters.</param>
+        /// <param name="common">common parameters.</param>
+        /// <param name="typeNameForHelp">type name for help.</param>
         internal static void AddParametersProperties(PSObject obj, Dictionary<string, ParameterMetadata> parameters, bool common, string typeNameForHelp)
         {
             PSObject paramsObject = new PSObject();
@@ -402,13 +402,13 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the parameter properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="name">parameter name</param>
-        /// <param name="aliases">parameter aliases</param>
-        /// <param name="dynamic">is dynamic parameter?</param>
-        /// <param name="type">parameter type</param>
-        /// <param name="attributes">parameter attributes</param>
-        /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="name">parameter name.</param>
+        /// <param name="aliases">parameter aliases.</param>
+        /// <param name="dynamic">is dynamic parameter?.</param>
+        /// <param name="type">parameter type.</param>
+        /// <param name="attributes">parameter attributes.</param>
+        /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated.</param>
         private static void AddParameterProperties(PSObject obj, string name, Collection<string> aliases, bool dynamic,
             Type type, Collection<Attribute> attributes, string parameterSetName = null)
         {
@@ -522,9 +522,9 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the parameterType properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="parameterType">the type of a parameter</param>
-        /// <param name="attributes">the attributes of the parameter (needed to look for PSTypeName)</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="parameterType">the type of a parameter.</param>
+        /// <param name="attributes">the attributes of the parameter (needed to look for PSTypeName).</param>
         private static void AddParameterTypeProperties(PSObject obj, Type parameterType, IEnumerable<Attribute> attributes)
         {
             PSObject mshObject = new PSObject();
@@ -541,9 +541,9 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the parameterValue properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="parameterType">the type of a parameter</param>
-        /// <param name="attributes">the attributes of the parameter (needed to look for PSTypeName)</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="parameterType">the type of a parameter.</param>
+        /// <param name="attributes">the attributes of the parameter (needed to look for PSTypeName).</param>
         private static void AddParameterValueProperties(PSObject obj, Type parameterType, IEnumerable<Attribute> attributes)
         {
             PSObject mshObject;
@@ -570,8 +570,8 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the InputTypes properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="parameters">command parameters</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="parameters">command parameters.</param>
         internal static void AddInputTypesProperties(PSObject obj, Dictionary<string, ParameterMetadata> parameters)
         {
             Collection<string> inputs = new Collection<string>();
@@ -633,8 +633,8 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the OutputTypes properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="outputTypes">output types</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="outputTypes">output types.</param>
         private static void AddOutputTypesProperties(PSObject obj, ReadOnlyCollection<PSTypeName> outputTypes)
         {
             PSObject returnValuesObj = new PSObject();
@@ -676,9 +676,9 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the aliases properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
-        /// <param name="name">command name</param>
-        /// <param name="context">execution context</param>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="name">command name.</param>
+        /// <param name="context">execution context.</param>
         private static void AddAliasesProperties(PSObject obj, string name, ExecutionContext context)
         {
             StringBuilder sb = new StringBuilder();
@@ -705,7 +705,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Adds the remarks properties
         /// </summary>
-        /// <param name="obj">HelpInfo object</param>
+        /// <param name="obj">HelpInfo object.</param>
         /// <param name="cmdletName"></param>
         /// <param name="helpUri"></param>
         private static void AddRemarksProperties(PSObject obj, string cmdletName, string helpUri)
@@ -778,7 +778,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the parameter attribute from parameter metadata
         /// </summary>
-        /// <param name="attributes">parameter attributes</param>
+        /// <param name="attributes">parameter attributes.</param>
         /// <returns>parameter attributes</returns>
         private static Collection<ParameterAttribute> GetParameterAttribute(Collection<Attribute> attributes)
         {
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the validate set attribute from parameter metadata
         /// </summary>
-        /// <param name="attributes">parameter attributes</param>
+        /// <param name="attributes">parameter attributes.</param>
         /// <returns>parameter attributes</returns>
         private static Collection<ValidateSetAttribute> GetValidateSetAttribute(Collection<Attribute> attributes)
         {
@@ -822,7 +822,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the pipeline input type
         /// </summary>
-        /// <param name="paramAttrib">parameter attribute</param>
+        /// <param name="paramAttrib">parameter attribute.</param>
         /// <returns>pipeline input type</returns>
         private static string GetPipelineInputString(ParameterAttribute paramAttrib)
         {
@@ -873,7 +873,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Checks if a set of parameters contains any of the common parameters
         /// </summary>
-        /// <param name="parameters">parameters to check</param>
+        /// <param name="parameters">parameters to check.</param>
         /// <returns>true if it contains common parameters, false otherwise</returns>
         internal static bool HasCommonParameters(Dictionary<string, ParameterMetadata> parameters)
         {
