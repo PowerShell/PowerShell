@@ -394,7 +394,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
-        /// <returns>RunspacePoolCapability</returns>
+        /// <returns>RunspacePoolCapability.</returns>
         public virtual RunspacePoolCapability GetCapabilities()
         {
             return RunspacePoolCapability.Default;
@@ -409,7 +409,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// runspace.
         /// This is currently supported *only* for remote runspaces.
         /// </summary>
-        /// <returns>True if successful</returns>
+        /// <returns>True if successful.</returns>
         internal virtual bool ResetRunspaceState()
         {
             throw new PSNotSupportedException();

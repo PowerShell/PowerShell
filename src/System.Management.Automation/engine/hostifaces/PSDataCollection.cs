@@ -198,7 +198,7 @@ namespace System.Management.Automation
         /// Wrap the argument in a PSDataCollection
         /// </summary>
         /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(bool valueToConvert)
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         /// Wrap the argument in a PSDataCollection
         /// </summary>
         /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(string valueToConvert)
@@ -222,7 +222,7 @@ namespace System.Management.Automation
         /// Wrap the argument in a PSDataCollection
         /// </summary>
         /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(int valueToConvert)
@@ -234,7 +234,7 @@ namespace System.Management.Automation
         /// Wrap the argument in a PSDataCollection
         /// </summary>
         /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(byte valueToConvert)
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         /// Wrap the argument in a PSDataCollection
         /// </summary>
         /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(Hashtable valueToConvert)
@@ -269,7 +269,7 @@ namespace System.Management.Automation
         /// Wrap the argument in a PSDataCollection
         /// </summary>
         /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(T valueToConvert)
@@ -284,7 +284,7 @@ namespace System.Management.Automation
         /// Wrap the argument in a PSDataCollection
         /// </summary>
         /// <param name="arrayToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(object[] arrayToConvert)

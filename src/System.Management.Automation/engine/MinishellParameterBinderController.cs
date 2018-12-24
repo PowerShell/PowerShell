@@ -297,7 +297,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="parameterName">Name of the parameter for error messages. Value should be -inputFormat or -outputFormat</param>
         /// <param name="value">value to process</param>
-        /// <returns>Processed value</returns>
+        /// <returns>Processed value.</returns>
         private string
         ProcessFormatParameterValue(string parameterName, object value)
         {

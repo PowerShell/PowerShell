@@ -1921,21 +1921,21 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="hWnd">The window to show...</param>
         /// <param name="nCmdShow">The command to do</param>
-        /// <returns>true it it was successful</returns>
+        /// <returns>True it it was successful.</returns>
         [DllImport("user32.dll")]
         internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
         /// </summary>
-        /// <returns>true if a console was created...</returns>
+        /// <returns>True if a console was created...</returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool AllocConsole();
 
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window
         /// </summary>
-        /// <returns>A handle to the foreground window</returns>
+        /// <returns>A handle to the foreground window.</returns>
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -1943,7 +1943,7 @@ namespace System.Management.Automation
         /// Called to restore the foreground window after allocating a hidden console window
         /// </summary>
         /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
-        /// <returns>true if the window was brought to the foreground</returns>
+        /// <returns>True if the window was brought to the foreground.</returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);

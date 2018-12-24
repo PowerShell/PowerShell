@@ -6978,7 +6978,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: pretend we saw a statement and keep parsing.
 
                     IScriptExtent errorExtent = After(equals);
-                    
+
                     string errorId;
                     string errorMsg;
                     if (parsingSchemaElement)

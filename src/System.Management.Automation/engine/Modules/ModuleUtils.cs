@@ -69,7 +69,7 @@ namespace System.Management.Automation.Internal
         internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
-            
+
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
@@ -324,7 +324,7 @@ namespace System.Management.Automation.Internal
         /// Gets the list of versions under the specified module base path in descending sorted order
         /// </summary>
         /// <param name="moduleBase">module base path</param>
-        /// <returns>sorted list of versions</returns>
+        /// <returns>Sorted list of versions.</returns>
         internal static List<Version> GetModuleVersionSubfolders(string moduleBase)
         {
             var versionFolders = new List<Version>();

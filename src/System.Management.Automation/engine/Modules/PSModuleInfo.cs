@@ -204,7 +204,7 @@ namespace System.Management.Automation
         /// <summary>
         /// ToString() implementation which returns the name of the module.
         /// </summary>
-        /// <returns>The name of the module</returns>
+        /// <returns>The name of the module.</returns>
         public override string ToString()
         {
             return this.Name;
@@ -1237,7 +1237,7 @@ namespace System.Management.Automation
         /// Returns a new scriptblock bound to this module instance.
         /// </summary>
         /// <param name="scriptBlockToBind">The original scriptblock</param>
-        /// <returns>The new bound scriptblock</returns>
+        /// <returns>The new bound scriptblock.</returns>
         public ScriptBlock NewBoundScriptBlock(ScriptBlock scriptBlockToBind)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -1278,7 +1278,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sb">The scriptblock to invoke</param>
         /// <param name="args">Arguments to the scriptblock</param>
-        /// <returns>The result of the invocation</returns>
+        /// <returns>The result of the invocation.</returns>
         public object Invoke(ScriptBlock sb, params object[] args)
         {
             if (sb == null)
@@ -1385,7 +1385,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Build a custom object out of this module...
         /// </summary>
-        /// <returns>A custom object</returns>
+        /// <returns>A custom object.</returns>
         public PSObject AsCustomObject()
         {
             if (SessionState == null)
@@ -1445,7 +1445,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implements deep copy of a PSModuleInfo instance.
-        /// <returns>A new PSModuleInfo instance</returns>
+        /// <returns>A new PSModuleInfo instance.</returns>
         /// </summary>
         public PSModuleInfo Clone()
         {
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation
         /// Look up a module in the appdomain wide module path cache.
         /// </summary>
         /// <param name="moduleName">Module name to look up.</param>
-        /// <returns>The path to the matched module</returns>
+        /// <returns>The path to the matched module.</returns>
         internal static string ResolveUsingAppDomainLevelModuleCache(string moduleName)
         {
             string path;

@@ -232,7 +232,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Clones this object
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal PipelineStateInfo Clone()
         {
             return new PipelineStateInfo(this);
@@ -535,7 +535,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
-        /// <returns>An array of zero or more result objects</returns>
+        /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>If using synchronous exectute, do not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
