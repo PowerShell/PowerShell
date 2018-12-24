@@ -15,12 +15,12 @@ using System.Globalization;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Async operation base class, it will issue async operation through
     /// 1...* CimSession object(s), processing the async results, extended
     /// pssemantics operations, and manage the lifecycle of created
     /// CimSession object(s).
-    /// </para>
+    /// </param>
     /// </summary>
     internal abstract class CimAsyncOperation : IDisposable
     {
@@ -42,10 +42,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Event handler
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Handler used to handle new action event from
         /// <seealso cref="CimSessionProxy"/> object.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
@@ -75,10 +75,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Handler used to handle new operation event from
         /// <seealso cref="CimSessionProxy"/> object.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
@@ -95,10 +95,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Handler used to handle operation deletion event from
         /// <seealso cref="CimSessionProxy"/> object.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
@@ -121,9 +121,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// process all actions in the action queue
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdletOperation">
         /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
@@ -145,10 +145,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// process remaining actions until all operations are completed or
         /// current cmdlet is terminated by user
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdletOperation">
         /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
@@ -186,9 +186,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get action object from action queue
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="action">next action to execute</param>
         /// <returns>true indicates there is an valid action, otherwise false</returns>
@@ -198,9 +198,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Add temporary <seealso cref="CimSessionProxy"/> object to cache.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName">Computer name of the cimsession</param>
         /// <param name="sessionproxy">cimsession wrapper object</param>
@@ -221,9 +221,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Are there active operations?
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns>true for having active operations, otherwise false.</returns>
         protected bool IsActive()
@@ -329,9 +329,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Subscribe to the events issued by <see cref="CimSessionProxy"/>.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="proxy"></param>
         protected virtual void SubscribeToCimSessionProxyEvent(CimSessionProxy proxy)
@@ -437,9 +437,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region IDisposable
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Indicates whether this object was disposed or not
-        /// </para>
+        /// </param>
         /// </summary>
         protected bool Disposed
         {
@@ -452,11 +452,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private long _disposed;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose() calls Dispose(true).
         /// Implement IDisposable. Do not make this method virtual.
         /// A derived class should not be able to override this method.
-        /// </para>
+        /// </param>
         /// </summary>
         public void Dispose()
         {
@@ -470,7 +470,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose(bool disposing) executes in two distinct scenarios.
         /// If disposing equals true, the method has been called directly
         /// or indirectly by a user's code. Managed and unmanaged resources
@@ -478,7 +478,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If disposing equals false, the method has been called by the
         /// runtime from inside the finalizer and you should not reference
         /// other objects. Only unmanaged resources can be disposed.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="disposing">Whether it is directly called</param>
         protected virtual void Dispose(bool disposing)
@@ -495,9 +495,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Clean up managed resources
-        /// </para>
+        /// </param>
         /// </summary>
         private void Cleanup()
         {

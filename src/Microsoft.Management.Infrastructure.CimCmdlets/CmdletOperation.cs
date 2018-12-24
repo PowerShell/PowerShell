@@ -11,28 +11,28 @@ using System.Globalization;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Wrapper of Cmdlet, forward the operation to Cmdlet directly.
     /// This is for unit test purpose, unit test can derive from this class,
     /// to hook up all of the cmdlet related operation and verify the correctness.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CmdletOperationBase
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Wrap the Cmdlet object.
-        /// </para>
+        /// </param>
         /// </summary>
         private readonly Cmdlet cmdlet;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Wrap the Cmdlet methods, for testing purpose.
         /// Test binary can define a child class of CmdletOperationBase.
         /// While Execute method of <seealso cref="CimBaseAction"/> accept the
         /// object of CmdletOperationBase as parameter.
-        /// </para>
+        /// </param>
         /// </summary>
         #region CMDLET methods
 
@@ -112,9 +112,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Throw terminating error
-        /// </para>
+        /// </param>
         /// </summary>
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
@@ -136,10 +136,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region Class CmdletOperationRemoveCimInstance
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Wrapper of Cmdlet, override WriteObject function call since
     /// we need to remove <see cref="CimInstance"/>.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CmdletOperationRemoveCimInstance : CmdletOperationBase
     {
@@ -156,9 +156,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Object here need to be removed if it is CimInstance
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="sendToPipeline"></param>
         public override void WriteObject(object sendToPipeline, XOperationContextBase context)
@@ -200,10 +200,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region Class CmdletOperationSetCimInstance
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Wrapper of Cmdlet, override WriteObject function call since
     /// we need to set <see cref="CimInstance"/>.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CmdletOperationSetCimInstance : CmdletOperationBase
     {
@@ -220,9 +220,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Object here need to be removed if it is CimInstance
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="sendToPipeline"></param>
         public override void WriteObject(object sendToPipeline, XOperationContextBase context)
@@ -278,10 +278,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #region Class CmdletOperationInvokeCimMethod
     /// <summary>
-    /// <para>
+    /// <param>
     /// Wrapper of Cmdlet, override WriteObject function call since
     /// we need to invoke cim method.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CmdletOperationInvokeCimMethod : CmdletOperationBase
     {
@@ -298,9 +298,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Object here need to be removed if it is CimInstance
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="sendToPipeline"></param>
         public override void WriteObject(object sendToPipeline, XOperationContextBase context)
@@ -343,10 +343,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region Class CmdletOperationTestCimSession
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Wrapper of Cmdlet, override WriteObject function call since
     /// we need to add cim session to global cache.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CmdletOperationTestCimSession : CmdletOperationBase
     {
@@ -363,9 +363,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Add session object to cache
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="sendToPipeline"></param>
         public override void WriteObject(object sendToPipeline, XOperationContextBase context)

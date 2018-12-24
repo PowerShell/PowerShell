@@ -8,16 +8,16 @@ using Microsoft.Management.Infrastructure.Options;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Prompt user the message coming from provider.
-    /// </para>
-    /// <para>
+    /// </param>
+    /// <param>
     /// At the same time <see cref="CimPromptUser"/> class will prepare the
     /// message for -whatif parameter, while the message represents
     /// what will happen if execute the operation, but not do the operation.
     /// For example, Remove-CimInstance, the whatif message will like,
     /// "CIM Instance: Win32_Process@{Key=1} will be deleted."
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimPromptUser : CimSyncAction
     {
@@ -32,9 +32,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Prompt user with the given message and prepared whatif message.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet">
         /// cmdlet wrapper object, to which write result.

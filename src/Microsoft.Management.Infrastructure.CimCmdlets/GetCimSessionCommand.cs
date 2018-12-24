@@ -35,21 +35,21 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ComputerName".
         /// Specifies one or more connections by providing their ComputerName(s). The
         /// Cmdlet then gets CimSession(s) opened with those connections. This parameter
         /// is an alternative to using CimSession(s) that also identifies the remote
         /// computer(s).
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// This is the only optional parameter of the Cmdlet. If not provided, the
         /// Cmdlet returns all CimSession(s) live/active in the runspace.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If an instance of CimSession is pipelined to Get-CimSession, the
         /// ComputerName property of the instance is bound by name with this parameter.
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
         [Parameter(Position = 0,

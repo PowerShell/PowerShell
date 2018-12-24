@@ -12,14 +12,14 @@ using System.Management.Automation;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// This Cmdlet creates an instance of a CIM class based on the class
     /// definition, which is an instance factory
-    /// </para>
-    /// <para>
+    /// </param>
+    /// <param>
     /// If -ClientOnly is not specified, New-CimInstance will create a new instance
     /// on the server, otherwise just create client in-memory instance
-    /// </para>
+    /// </param>
     /// </summary>
     [Cmdlet(VerbsCommon.New, "CimInstance", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227963")]
     [OutputType(typeof(CimInstance))]
@@ -68,10 +68,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String className;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ResourceUri".
         /// Define the Resource Uri for which the instances are retrieved.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
@@ -93,13 +93,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Uri resourceUri;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Key".
         /// Enables the user to specify list of key property name.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Example: -Key {"K1", "K2"}
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             ValueFromPipelineByPropertyName = true,
@@ -155,13 +155,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimClass cimClass;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Property".
         /// Enables the user to specify instances with specific property values.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Example: -Property @{P1="Value1";P2="Value2"}
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Position = 1,
@@ -224,10 +224,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private UInt32 operationTimeout;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "CimSession".
         /// Identifies the CimSession which is to be used to create the instances.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -256,12 +256,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession[] cimSession;
 
         /// <summary>
-        /// <para>The following is the definition of the input parameter "ComputerName".
+        /// <param>The following is the definition of the input parameter "ComputerName".
         /// Provides the name of the computer from which to create the instances.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If no ComputerName is specified the default value is "localhost"
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
         [Parameter(
@@ -288,10 +288,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String[] computerName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ClientOnly".
         /// Indicates to create a client only ciminstance object, NOT on the server.
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias("Local")]
         [Parameter(
@@ -380,10 +380,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get <see cref="CimNewCimInstance"/> object, which is
         /// used to delegate all New-CimInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         CimNewCimInstance GetOperationAgent()
         {
@@ -391,10 +391,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimNewCimInstance"/> object, which is
         /// used to delegate all New-CimInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns></returns>
         CimNewCimInstance CreateOperationAgent()

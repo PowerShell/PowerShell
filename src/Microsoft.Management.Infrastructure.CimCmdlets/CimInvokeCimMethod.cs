@@ -15,9 +15,9 @@ using System.Management.Automation;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of invoke-cimmethod cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimInvokeCimMethod : CimAsyncOperation
     {
@@ -28,9 +28,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal class CimInvokeCimMethodContext : XOperationContextBase
         {
             /// <summary>
-            /// <para>
+            /// <param>
             /// Constructor
-            /// </para>
+            /// </param>
             /// </summary>
             /// <param name="theNamespace"></param>
             /// <param name="theCollection"></param>
@@ -47,7 +47,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <para>namespace</para>
+            /// <param>namespace</param>
             /// </summary>
             internal string MethodName
             {
@@ -60,7 +60,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             private string methodName;
 
             /// <summary>
-            /// <para>parameters collection</para>
+            /// <param>parameters collection</param>
             /// </summary>
             internal CimMethodParametersCollection ParametersCollection
             {
@@ -74,9 +74,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimInvokeCimMethod()
             : base()
@@ -84,9 +84,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Base on parametersetName to retrieve ciminstances
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
         public void InvokeCimMethod(InvokeCimMethodCommand cmdlet)
@@ -241,9 +241,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Invoke cimmethod on given <see cref="CimInstance"/>
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimInstance"></param>
         public void InvokeCimMethodOnCimInstance(CimInstance cimInstance, XOperationContextBase context, CmdletOperationBase operation)
@@ -269,9 +269,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set <see cref="CimSessionProxy"/> properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
@@ -287,9 +287,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cmdlet"></param>
@@ -304,9 +304,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
@@ -338,10 +338,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimMethodParametersCollection"/> with given key properties.
         /// And/or <see cref="CimClass"/> object.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="cimClass"></param>

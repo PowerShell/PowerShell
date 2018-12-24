@@ -16,17 +16,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region class ErrorToErrorRecord
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Convert error or exception to <see cref="System.Management.Automation.ErrorRecord"/>
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class ErrorToErrorRecord
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Convert ErrorRecord from exception object, <see cref="Exception"/>
         /// can be either <see cref="CimException"/> or general <see cref="Exception"/>.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="inner"></param>
         /// <param name="context">the context starting the operation, which generated the error</param>
@@ -310,9 +310,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #endregion
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Write error to pipeline
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimWriteError : CimSyncAction
     {
@@ -338,9 +338,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Write error to pipeline
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"></param>
         public override void Execute(CmdletOperationBase cmdlet)
@@ -371,9 +371,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Error instance
-        /// </para>
+        /// </param>
         /// </summary>
         private CimInstance error;
 
@@ -386,9 +386,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Exception object
-        /// </para>
+        /// </param>
         /// </summary>
         internal Exception Exception
         {
@@ -401,10 +401,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Exception exception;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// <see cref="InvocationContext"/> object that contains
         /// the information while issuing the current operation
-        /// </para>
+        /// </param>
         /// </summary>
         private InvocationContext invocationContext;
 

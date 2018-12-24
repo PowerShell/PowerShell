@@ -20,9 +20,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimNewCimInstanceContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="methodName"></param>
         /// <param name="propertyName"></param>
@@ -37,16 +37,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of new-ciminstance cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimNewCimInstance : CimAsyncOperation
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimNewCimInstance()
             : base()
@@ -54,10 +54,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Base on parametersetName to create ciminstances,
         /// either remotely or locally
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
         public void NewCimInstance(NewCimInstanceCommand cmdlet)
@@ -174,9 +174,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Get CimInstance after creation (on server)
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get full <see cref="CimInstance"/> from server based on the key
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimInstance"></param>
         internal void GetCimInstance(CimInstance cimInstance, XOperationContextBase context)
@@ -200,9 +200,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set <see cref="CimSessionProxy"/> properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
@@ -218,9 +218,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cmdlet"></param>
@@ -252,9 +252,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimInstance"/> with given properties.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="className"></param>
         /// <param name="key"></param>
@@ -320,9 +320,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimInstance"/> with given properties.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimClass"></param>
         /// <param name="properties"></param>

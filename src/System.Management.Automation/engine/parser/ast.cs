@@ -3642,12 +3642,12 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The parameters specified immediately after the function name, or null if no parameters were specified.
-        /// <para>It is possible that this property may have a value and <see cref="ScriptBlockAst.ParamBlock"/> to also have a
-        /// value.  Normally this is not allowed in a valid script, but in one rare case it is allowed:</para>
+        /// <param>It is possible that this property may have a value and <see cref="ScriptBlockAst.ParamBlock"/> to also have a
+        /// value.  Normally this is not allowed in a valid script, but in one rare case it is allowed:</param>
         /// <c>function foo() { param($a) }</c>
-        /// <para>
+        /// <param>
         /// In this example, the parameters specified after the function name must be empty or the script is not valid.
-        /// </para>
+        /// </param>
         /// </summary>
         public ReadOnlyCollection<ParameterAst> Parameters { get; private set; }
 
@@ -5732,14 +5732,14 @@ namespace System.Management.Automation.Language
         public TokenKind InvocationOperator { get; private set; }
 
         /// <summary>
-        /// <para>Returns the name of the command invoked by this ast.</para>
-        /// <para>This command name may not be known statically, in which case null is returned.</para>
-        /// <para>
+        /// <param>Returns the name of the command invoked by this ast.</param>
+        /// <param>This command name may not be known statically, in which case null is returned.</param>
+        /// <param>
         /// For example, if the command name is in a variable: <example>&amp; $foo</example>, then the parser cannot know which command is executed.
         /// Similarly, if the command is being invoked in a module: <example>&amp; (gmo SomeModule) Bar</example>, then the parser does not know the
         /// command name is Bar because the parser can't determine that the expression <code>(gmo SomeModule)</code> returns a module instead
         /// of a string.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns>The command name, if known, null otherwise.</returns>
         public string GetCommandName()

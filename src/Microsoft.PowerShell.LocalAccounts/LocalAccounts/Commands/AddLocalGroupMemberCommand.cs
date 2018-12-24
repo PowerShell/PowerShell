@@ -164,22 +164,22 @@ namespace Microsoft.PowerShell.Commands
         /// A LocalPrincipal Object to be added to the group
         /// </returns>
         /// <remarks>
-        /// <para>
+        /// <param>
         /// LocalPrincipal objects in the Member parameter may not be complete,
         /// particularly those created from a name or a SID string given to the
         /// Member cmdlet parameter. The object returned from this method contains
         /// , at the very least, a valid SID.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Any Member objects provided by name or SID string will be looked up
         /// to ensure that such an object exists. If an object is not found,
         /// an error message is displayed by PowerShell and null will be returned
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// This method also handles the WhatIf scenario. If the Cmdlet's
         /// <b>ShouldProcess</b> method returns false on any Member object,
         /// that object will not be included in the returned List.
-        /// </para>
+        /// </param>
         /// </remarks>
         private LocalPrincipal MakePrincipal(string groupId, LocalPrincipal member)
         {

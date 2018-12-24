@@ -13,14 +13,14 @@ using System.Collections.Generic;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// The Cmdlet retrieves instances connected to the given instance, which
     /// is called the source instance, via a given association. In an
     /// association each instance has a named role, and the same instance can
     /// participate in an association in different roles. Hence, the Cmdlet
     /// takes SourceRole and AssociatorRole parameters in addition to the
     /// Association parameter.
-    /// </para>
+    /// </param>
     /// </summary>
     [Cmdlet(VerbsCommon.Get,
         GetCimAssociatedInstanceCommand.Noun,
@@ -77,10 +77,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String resultClassName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "InputObject".
         /// Provides the instance from which the association traversal is to begin.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -142,10 +142,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private UInt32 operationTimeout;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ResourceUri".
         /// Define the Resource Uri for which the instances are retrieved.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter]
         public Uri ResourceUri
@@ -162,15 +162,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Uri resourceUri;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ComputerName".
         /// Specifies the name of the computer where the source instance is stored and
         /// where the association traversal should begin.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// This is an optional parameter and if it is not provided, the default value
         /// will be "localhost".
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
         [Parameter(
@@ -212,11 +212,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Microsoft.Management.Infrastructure.CimSession[] cimSession;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "KeyOnly".
         /// Indicates that only key properties of the retrieved instances should be
         /// returned to the client.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter]
         public SwitchParameter KeyOnly
@@ -272,10 +272,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get <see cref="CimGetAssociatedInstance"/> object, which is
         /// used to delegate all Get-CimAssociatedInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         CimGetAssociatedInstance GetOperationAgent()
         {
@@ -283,10 +283,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimGetAssociatedInstance"/> object, which is
         /// used to delegate all Get-CimAssociatedInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns></returns>
         CimGetAssociatedInstance CreateOperationAgent()

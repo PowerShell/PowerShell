@@ -96,15 +96,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String[] computername;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Name".
         /// Specifies a friendly name for the CIM Session connection.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If a name is not passed, then the session is given the name CimSession<int>,
         /// where <int> is the next available session number. Example, CimSession1,
         /// CimSession2, etc...
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public String Name
@@ -117,14 +117,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String name;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
         /// Specifies the operation timeout for all operations in session. Individual
         /// operations can override this timeout.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// The unit is Second.
-        /// <para>
+        /// <param>
         /// </summary>
         [Alias(AliasOT)]
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -143,10 +143,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal bool operationTimeoutSet = false;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "SkipTestConnection".
         /// Specifies where test connection should be skipped
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter SkipTestConnection
@@ -182,14 +182,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private bool portSet = false;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "SessionOption".
         /// Specifies the SessionOption object that is passed to the Cmdlet as argument.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If the argument is not given, a default SessionOption will be created for
         /// the session in .NET API layer.
-        /// </para>
+        /// </param>
         /// If a <see cref="DCOMSessionOption"/> object is passed, then
         /// connection is made using DCOM. If a <see cref="WsManSessionOption"/>
         /// object is passed, then connection is made using WsMan.
@@ -350,9 +350,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// CimNewSession object
-        /// </para>
+        /// </param>
         /// </summary>
         private CimNewSession cimNewSession;
 

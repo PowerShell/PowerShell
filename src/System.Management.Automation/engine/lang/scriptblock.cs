@@ -245,7 +245,7 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <para>variables</para> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the <param>variables</param> that actually get used by the 'using:' prefix variables
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
@@ -283,7 +283,7 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <para>variables</para> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the <param>variables</param> that actually get used by the 'using:' prefix variables
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
@@ -523,7 +523,7 @@ namespace System.Management.Automation
             // method returns [object]. If the argument to 'return'
             // is a pipeline that emits nothing then result.Count will
             // be zero so we catch that and "convert" it to null. Note that
-            // the return statement is still required in the method, it 
+            // the return statement is still required in the method, it
             // just recieves nothing from it's argument.
             if (result.Count == 0)
             {

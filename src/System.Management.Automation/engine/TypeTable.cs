@@ -4045,8 +4045,8 @@ namespace System.Management.Automation.Runspaces
         /// this TypeTable instance itself is a shared TypeTable.
         /// </param>
         /// <returns>
-        /// If <para>unshared</para> is True, return an unshared clone of this TypeTable instance
-        /// If <para>unshared</para> is False, return a clone that is exactly the same as this TypeTable instance.
+        /// If <param>unshared</param> is True, return an unshared clone of this TypeTable instance
+        /// If <param>unshared</param> is False, return a clone that is exactly the same as this TypeTable instance.
         /// </returns>
         public TypeTable Clone(bool unshared)
         {

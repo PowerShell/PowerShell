@@ -25,13 +25,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Namespace".
         /// Specifies the NameSpace under which to look for the specified class name.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Default value is root\cimv2
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter]
         public String Namespace
@@ -93,11 +93,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String query;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "QueryDialect".
         /// Specifies the dialect used by the query Engine that interprets the Query
         /// string.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ParameterSetName = CimBaseCommand.QueryExpressionComputerSet)]
         [Parameter(ParameterSetName = CimBaseCommand.QueryExpressionSessionSet)]
@@ -261,9 +261,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }//End EndProcessing()
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Handler to handle unsubscribe event
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

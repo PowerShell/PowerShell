@@ -24,9 +24,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Execute the write operation to given cmdlet object
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet">
         /// cmdlet wrapper object, to which write result.
@@ -37,12 +37,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// <see cref="XOperationContextBase"/> object that related to current action.
         /// It may used by action, such as <see cref="CimWriteResultObject"/>,
         /// since later on action may require namespace, and proxy object to reuse
         /// <see cref="CimSession"/>, <see cref="CimOperationOptions"/> object.
-        /// </para>
+        /// </param>
         /// </summary>
         protected XOperationContextBase Context
         {
@@ -61,10 +61,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }//End Class
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Synchronous action class, implemented to write results to pipeline
     /// and block current thread until the action is completed.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimSyncAction : CimBaseAction, IDisposable
     {
@@ -78,9 +78,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Block current thread until action completed
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns>Response from user</returns>
         public virtual CimResponseType GetResponse()
@@ -90,9 +90,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set response result
-        /// </para>
+        /// </param>
         /// </summary>
         internal CimResponseType ResponseType
         {
@@ -100,10 +100,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Call this method when the action is completed or
         /// the operation is terminated
-        /// </para>
+        /// </param>
         /// </summary>
         internal virtual void OnComplete()
         {
@@ -111,9 +111,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// block current thread.
-        /// </para>
+        /// </param>
         /// </summary>
         protected virtual void Block()
         {
@@ -142,11 +142,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private bool _disposed;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose() calls Dispose(true).
         /// Implement IDisposable. Do not make this method virtual.
         /// A derived class should not be able to override this method.
-        /// </para>
+        /// </param>
         /// </summary>
         public void Dispose()
         {
@@ -160,7 +160,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose(bool disposing) executes in two distinct scenarios.
         /// If disposing equals true, the method has been called directly
         /// or indirectly by a user's code. Managed and unmanaged resources
@@ -168,7 +168,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If disposing equals false, the method has been called by the
         /// runtime from inside the finalizer and you should not reference
         /// other objects. Only unmanaged resources can be disposed.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="disposing">Whether it is directly called</param>
         protected virtual void Dispose(bool disposing)

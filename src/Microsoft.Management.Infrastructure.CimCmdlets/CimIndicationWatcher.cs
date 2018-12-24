@@ -12,17 +12,17 @@ using System.Management.Automation;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Abstract Cimindication event args, which containing all elements related to
     /// an Cimindication.
-    /// </para>
+    /// </param>
     /// </summary>
     public abstract class CimIndicationEventArgs : EventArgs
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Returns an Object value for an operation context
-        /// </para>
+        /// </param>
         /// </summary>
         public object Context
         {
@@ -41,9 +41,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public class CimIndicationEventExceptionEventArgs : CimIndicationEventArgs
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Returns an exception
-        /// </para>
+        /// </param>
         /// </summary>
         public Exception Exception
         {
@@ -56,9 +56,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Exception exception;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="result"></param>
         public CimIndicationEventExceptionEventArgs(Exception theException)
@@ -108,9 +108,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="result"></param>
         public CimIndicationEventInstanceEventArgs(CimSubscriptionResult result)
@@ -120,19 +120,19 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// subscription result
-        /// </para>
+        /// </param>
         /// </summary>
         private CimSubscriptionResult result;
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// A public class used to start/stop the subscription to specific indication source,
     /// and listen to the incoming indications, event <see cref="CimIndicationArrived"/>
     /// will be raised for each cimindication.
-    /// </para>
+    /// </param>
     /// </summary>
     public class CimIndicationWatcher
     {
@@ -147,16 +147,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// CimIndication arrived event
-        /// </para>
+        /// </param>
         /// </summary>
         public event EventHandler<CimIndicationEventArgs> CimIndicationArrived;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor with given computerName, namespace, queryExpression and timeout
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="nameSpace"></param>
@@ -176,9 +176,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor with given cimsession, namespace, queryExpression and timeout
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimSession"></param>
         /// <param name="nameSpace"></param>
@@ -198,9 +198,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Initialize
-        /// </para>
+        /// </param>
         /// </summary>
         private void Initialize(
             string theComputerName,
@@ -225,9 +225,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Handler of new subscription result
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="src"></param>
         /// <param name="args"></param>
@@ -250,13 +250,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Will be called by admin\monad\src\eengine\EventManager.cs:
         /// PSEventManager::ProcessNewSubscriber to start to listen to the Cim Indication.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If set EnableRaisingEvents to false, which will be ignored
-        /// </para>
+        /// </param>
         /// </summary>
         [BrowsableAttribute(false)]
         public bool EnableRaisingEvents
@@ -280,9 +280,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private bool enableRaisingEvents;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Start the subscription
-        /// </para>
+        /// </param>
         /// </summary>
         public void Start()
         {
@@ -317,9 +317,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Unsubscribe the subscription
-        /// </para>
+        /// </param>
         /// </summary>
         public void Stop()
         {
@@ -357,9 +357,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
         /// <summary>
-        /// <para>
+        /// <param>
         /// CimRegisterCimIndication object
-        /// </para>
+        /// </param>
         /// </summary>
         private CimRegisterCimIndication cimRegisterCimIndication;
 
@@ -385,9 +385,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region parameters
         /// <summary>
-        /// <para>
+        /// <param>
         /// parameters used to start the subscription
-        /// </para>
+        /// </param>
         /// </summary>
         private string computerName;
         private CimSession cimSession;

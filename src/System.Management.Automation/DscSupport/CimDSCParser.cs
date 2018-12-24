@@ -309,13 +309,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Represents a communication channel to a CIM server.
-    /// </para>
-    /// <para>
+    /// </param>
+    /// <param>
     /// This is the main entry point of the Microsoft.Management.Infrastructure API.
     /// All CIM operations are represented as methods of this class.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimDSCParser
     {

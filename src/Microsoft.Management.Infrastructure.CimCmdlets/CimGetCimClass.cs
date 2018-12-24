@@ -20,9 +20,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetCimClassContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="methodName"></param>
         /// <param name="propertyName"></param>
@@ -40,12 +40,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ClassName".
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Wildcard expansion should be allowed.
-        /// </para>
+        /// </param>
         /// </summary>
         public String ClassName
         {
@@ -57,11 +57,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String className;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "MethodName",
         /// Which may contains wildchar.
         /// Then Filter the <see cref="CimClass"/> by given methodname
-        /// </para>
+        /// </param>
         /// </summary>
         internal String MethodName
         {
@@ -71,11 +71,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String methodName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "PropertyName",
         /// Which may contains wildchar.
         /// Filter the <see cref="CimClass"/> by given property name.
-        /// </para>
+        /// </param>
         /// </summary>
         internal String PropertyName
         {
@@ -85,11 +85,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String propertyName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "QualifierName",
         /// Which may contains wildchar.
         /// Filter the <see cref="CimClass"/> by given methodname
-        /// </para>
+        /// </param>
         /// </summary>
         internal String QualifierName
         {
@@ -100,16 +100,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of get-cimclass cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimGetCimClass : CimAsyncOperation
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimGetCimClass()
             : base()
@@ -117,9 +117,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Base on parametersetName to retrieve <see cref="CimClass"/>
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object</param>
         public void GetCimClass(GetCimClassCommand cmdlet)
@@ -183,9 +183,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set <see cref="CimSessionProxy"/> properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
@@ -197,9 +197,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cmdlet"></param>

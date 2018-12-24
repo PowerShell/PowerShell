@@ -13,9 +13,9 @@ using System.Management.Automation.Runspaces;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Initialize the cimcmdlets.
-    /// </para>
+    /// </param>
     /// </summary>
     /// <summary>
     /// Provide a hook to the engine for startup initialization
@@ -24,9 +24,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public sealed class CimCmdletsAssemblyInitializer : IModuleAssemblyInitializer
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimCmdletsAssemblyInitializer()
         {
@@ -55,16 +55,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region readonly string
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// CimCmdlet alias entry
-        /// </para>
+        /// </param>
         /// </summary>
         internal sealed class CimCmdletAliasEntry
         {
             /// <summary>
-            /// <para>
+            /// <param>
             /// Constructor
-            /// </para>
+            /// </param>
             /// </summary>
             /// <param name="name"></param>
             /// <param name="value"></param>

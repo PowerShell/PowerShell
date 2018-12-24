@@ -64,10 +64,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession[] cimSession;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ResourceUri".
         /// Define the Resource Uri for which the instances are retrieved.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
@@ -281,10 +281,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get <see cref="CimRemoveCimInstance"/> object, which is
         /// used to delegate all Remove-CimInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         CimRemoveCimInstance GetOperationAgent()
         {
@@ -292,10 +292,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimRemoveCimInstance"/> object, which is
         /// used to delegate all Remove-CimInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns></returns>
         CimRemoveCimInstance CreateOperationAgent()

@@ -121,15 +121,15 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="session">Remote session to query</param>
         /// <param name="query">Query parameters</param>
         /// <remarks>
-        /// <para>
+        /// <param>
         /// This method shouldn't do any processing or interact with the remote session.
         /// Doing so will interfere with ThrottleLimit functionality.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
         /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
-        /// </para>
+        /// </param>
         /// </remarks>
         internal abstract StartableJob CreateQueryJob(TSession session, QueryBuilder query);
 
@@ -172,15 +172,15 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="methodInvocationInfo">Method invocation details</param>
         /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on</param>
         /// <remarks>
-        /// <para>
+        /// <param>
         /// This method shouldn't do any processing or interact with the remote session.
         /// Doing so will interfere with ThrottleLimit functionality.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
         /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
-        /// </para>
+        /// </param>
         /// </remarks>
         internal abstract StartableJob CreateInstanceMethodInvocationJob(TSession session, TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru);
 
@@ -207,15 +207,15 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="session">Remote session to invoke the method in</param>
         /// <param name="methodInvocationInfo">Method invocation details</param>
         /// <remarks>
-        /// <para>
+        /// <param>
         /// This method shouldn't do any processing or interact with the remote session.
         /// Doing so will interfere with ThrottleLimit functionality.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
         /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
-        /// </para>
+        /// </param>
         /// </remarks>
         internal abstract StartableJob CreateStaticMethodInvocationJob(TSession session, MethodInvocationInfo methodInvocationInfo);
 

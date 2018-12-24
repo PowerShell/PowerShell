@@ -14,16 +14,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Subscription result event args
-    /// </para>
+    /// </param>
     /// </summary>
     internal abstract class CimSubscriptionEventArgs : EventArgs
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Returns an Object value for an operation context
-        /// </para>
+        /// </param>
         /// </summary>
         public object Context
         {
@@ -37,16 +37,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Subscription result event args
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimSubscriptionResultEventArgs : CimSubscriptionEventArgs
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// subscription result
-        /// </para>
+        /// </param>
         /// </summary>
         public CimSubscriptionResult Result
         {
@@ -59,7 +59,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSubscriptionResult result;
 
         /// <summary>
-        /// <para>Constructor</para>
+        /// <param>Constructor</param>
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionResultEventArgs(
@@ -71,16 +71,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Subscription result event args
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimSubscriptionExceptionEventArgs : CimSubscriptionEventArgs
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// subscription result
-        /// </para>
+        /// </param>
         /// </summary>
         public Exception Exception
         {
@@ -93,7 +93,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Exception exception;
 
         /// <summary>
-        /// <para>Constructor</para>
+        /// <param>Constructor</param>
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionExceptionEventArgs(
@@ -105,23 +105,23 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of register-cimindication cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimRegisterCimIndication : CimAsyncOperation
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// New subscription result event
-        /// </para>
+        /// </param>
         /// </summary>
         public event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimRegisterCimIndication()
             : base()
@@ -182,9 +182,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region override methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Subscribe to the events issued by <see cref="CimSessionProxy"/>.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="proxy"></param>
         protected override void SubscribeToCimSessionProxyEvent(CimSessionProxy proxy)
@@ -198,10 +198,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Handler used to handle new action event from
         /// <seealso cref="CimSessionProxy"/> object.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
@@ -327,9 +327,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private methods
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="timeout"></param>

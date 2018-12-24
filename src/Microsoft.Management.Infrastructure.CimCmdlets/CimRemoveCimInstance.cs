@@ -19,9 +19,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimRemoveCimInstanceContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="theNamespace"></param>
         /// <param name="theProxy"></param>
@@ -34,16 +34,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of remove-ciminstance cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimRemoveCimInstance : CimGetInstance
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimRemoveCimInstance()
             : base()
@@ -51,9 +51,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Base on parametersetName to retrieve ciminstances
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
         public void RemoveCimInstance(RemoveCimInstanceCommand cmdlet)
@@ -119,9 +119,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Remove <see cref="CimInstance"/> from namespace specified in cmdlet
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimInstance"></param>
         internal void RemoveCimInstance(CimInstance cimInstance, XOperationContextBase context, CmdletOperationBase cmdlet)

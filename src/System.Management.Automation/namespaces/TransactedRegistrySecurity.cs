@@ -26,7 +26,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands.Internal
 {
     /// <summary>
-    /// <para>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</para>
+    /// <param>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</param>
     /// </summary>
     // Suppressed because these are needed to manipulate TransactedRegistryKey, which is written to the pipeline.
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
@@ -35,8 +35,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         // Constructor for creating access rules for registry objects
 
         /// <summary>
-        /// <para>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
-        /// the access rights, and whether the specified access rights are allowed or denied.</para>
+        /// <param>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
+        /// the access rights, and whether the specified access rights are allowed or denied.</param>
         /// <param name="identity">The user or group the rule applies to. Must be of type SecurityIdentifier or a type such as
         /// NTAccount that can be converted to type SecurityIdentifier.</param>
         /// <param name="registryRights">A bitwise combination of Microsoft.Win32.RegistryRights values indicating the rights allowed or denied.</param>
@@ -48,8 +48,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
-        /// the access rights, and whether the specified access rights are allowed or denied.</para>
+        /// <param>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
+        /// the access rights, and whether the specified access rights are allowed or denied.</param>
         /// <param name="identity">The name of the user or group the rule applies to.</param>
         /// <param name="registryRights">A bitwise combination of Microsoft.Win32.RegistryRights values indicating the rights allowed or denied.</param>
         /// <param name="type">One of the AccessControlType values indicating whether the rights are allowed or denied.</param>
@@ -60,8 +60,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
-        /// the access rights, and whether the specified access rights are allowed or denied.</para>
+        /// <param>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
+        /// the access rights, and whether the specified access rights are allowed or denied.</param>
         /// <param name="identity">The user or group the rule applies to. Must be of type SecurityIdentifier or a type such as
         /// NTAccount that can be converted to type SecurityIdentifier.</param>
         /// <param name="registryRights">A bitwise combination of Microsoft.Win32.RegistryRights values indicating the rights allowed or denied.</param>
@@ -75,8 +75,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
-        /// the access rights, and whether the specified access rights are allowed or denied.</para>
+        /// <param>Initializes a new instance of the RegistryAccessRule class, specifying the user or group the rule applies to,
+        /// the access rights, and whether the specified access rights are allowed or denied.</param>
         /// <param name="identity">The name of the user or group the rule applies to.</param>
         /// <param name="registryRights">A bitwise combination of Microsoft.Win32.RegistryRights values indicating the rights allowed or denied.</param>
         /// <param name="inheritanceFlags">A bitwise combination of InheritanceFlags flags specifying how access rights are inherited from other objects.</param>
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Gets the rights allowed or denied by the access rule.</para>
+        /// <param>Gets the rights allowed or denied by the access rule.</param>
         /// </summary>
         public RegistryRights RegistryRights
         {
@@ -119,15 +119,15 @@ namespace Microsoft.PowerShell.Commands.Internal
     }
 
     /// <summary>
-    /// <para>Represents a set of access rights to be audited for a user or group. This class cannot be inherited.</para>
+    /// <param>Represents a set of access rights to be audited for a user or group. This class cannot be inherited.</param>
     /// </summary>
     // Suppressed because these are needed to manipulate TransactedRegistryKey, which is written to the pipeline.
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public sealed class TransactedRegistryAuditRule : AuditRule
     {
         /// <summary>
-        /// <para>Initializes a new instance of the RegistryAuditRule class, specifying the user or group to audit, the rights to
-        /// audit, whether to take inheritance into account, and whether to audit success, failure, or both.</para>
+        /// <param>Initializes a new instance of the RegistryAuditRule class, specifying the user or group to audit, the rights to
+        /// audit, whether to take inheritance into account, and whether to audit success, failure, or both.</param>
         /// <param name="identity">The user or group the rule applies to. Must be of type SecurityIdentifier or a type such as
         /// NTAccount that can be converted to type SecurityIdentifier.</param>
         /// <param name="registryRights">A bitwise combination of RegistryRights values specifying the kinds of access to audit.</param>
@@ -141,8 +141,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Initializes a new instance of the RegistryAuditRule class, specifying the user or group to audit, the rights to
-        /// audit, whether to take inheritance into account, and whether to audit success, failure, or both.</para>
+        /// <param>Initializes a new instance of the RegistryAuditRule class, specifying the user or group to audit, the rights to
+        /// audit, whether to take inheritance into account, and whether to audit success, failure, or both.</param>
         /// <param name="identity">The name of the user or group the rule applies to.</param>
         /// <param name="registryRights">A bitwise combination of RegistryRights values specifying the kinds of access to audit.</param>
         /// <param name="inheritanceFlags">A bitwise combination of InheritanceFlags values specifying whether the audit rule applies to subkeys of the current key.</param>
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Gets the access rights affected by the audit rule.</para>
+        /// <param>Gets the access rights affected by the audit rule.</param>
         /// </summary>
         public RegistryRights RegistryRights
         {
@@ -169,8 +169,8 @@ namespace Microsoft.PowerShell.Commands.Internal
     }
 
     /// <summary>
-    /// <para>Represents the Windows access control security for a registry key. This class cannot be inherited.
-    /// This class is specifically to be used with TransactedRegistryKey.</para>
+    /// <param>Represents the Windows access control security for a registry key. This class cannot be inherited.
+    /// This class is specifically to be used with TransactedRegistryKey.</param>
     /// </summary>
     // Suppressed because these are needed to manipulate TransactedRegistryKey, which is written to the pipeline.
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private const string resBaseName = "RegistryProviderStrings";
 
         /// <summary>
-        /// <para>Initializes a new instance of the TransactedRegistrySecurity class with default values.</para>
+        /// <param>Initializes a new instance of the TransactedRegistrySecurity class with default values.</param>
         /// </summary>
         public TransactedRegistrySecurity()
             : base(true, ResourceType.RegistryKey)
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Creates a new access control rule for the specified user, with the specified access rights, access control, and flags.</para>
+        /// <param>Creates a new access control rule for the specified user, with the specified access rights, access control, and flags.</param>
         /// <param name="identityReference">An IdentityReference that identifies the user or group the rule applies to.</param>
         /// <param name="accessMask">A bitwise combination of RegistryRights values specifying the access rights to allow or deny, cast to an integer.</param>
         /// <param name="isInherited">A Boolean value specifying whether the rule is inherited.</param>
@@ -248,8 +248,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Creates a new audit rule, specifying the user the rule applies to, the access rights to audit, the inheritance and propagation of the
-        /// rule, and the outcome that triggers the rule.</para>
+        /// <param>Creates a new audit rule, specifying the user the rule applies to, the access rights to audit, the inheritance and propagation of the
+        /// rule, and the outcome that triggers the rule.</param>
         /// <param name="identityReference">An IdentityReference that identifies the user or group the rule applies to.</param>
         /// <param name="accessMask">A bitwise combination of RegistryRights values specifying the access rights to audit, cast to an integer.</param>
         /// <param name="isInherited">A Boolean value specifying whether the rule is inherited.</param>
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for a matching access control with which the new rule can be merged. If none are found, adds the new rule.</para>
+        /// <param>Searches for a matching access control with which the new rule can be merged. If none are found, adds the new rule.</param>
         /// <param name="rule">The access control rule to add.</param>
         /// </summary>
         // Suppressed because we want to ensure TransactedRegistry* objects.
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Removes all access control rules with the same user and AccessControlType (allow or deny) as the specified rule, and then adds the specified rule.</para>
+        /// <param>Removes all access control rules with the same user and AccessControlType (allow or deny) as the specified rule, and then adds the specified rule.</param>
         /// <param name="rule">The TransactedRegistryAccessRule to add. The user and AccessControlType of this rule determine the rules to remove before this rule is added.</param>
         /// </summary>
         // Suppressed because we want to ensure TransactedRegistry* objects.
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Removes all access control rules with the same user as the specified rule, regardless of AccessControlType, and then adds the specified rule.</para>
+        /// <param>Removes all access control rules with the same user as the specified rule, regardless of AccessControlType, and then adds the specified rule.</param>
         /// <param name="rule">The TransactedRegistryAccessRule to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
         /// </summary>
         // Suppressed because we want to ensure TransactedRegistry* objects.
@@ -336,8 +336,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for an access control rule with the same user and AccessControlType (allow or deny) as the specified access rule, and with compatible
-        /// inheritance and propagation flags; if such a rule is found, the rights contained in the specified access rule are removed from it.</para>
+        /// <param>Searches for an access control rule with the same user and AccessControlType (allow or deny) as the specified access rule, and with compatible
+        /// inheritance and propagation flags; if such a rule is found, the rights contained in the specified access rule are removed from it.</param>
         /// <param name="rule">A TransactedRegistryAccessRule that specifies the user and AccessControlType to search for, and a set of inheritance
         /// and propagation flags that a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
         /// </summary>
@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for all access control rules with the same user and AccessControlType (allow or deny) as the specified rule and, if found, removes them.</para>
+        /// <param>Searches for all access control rules with the same user and AccessControlType (allow or deny) as the specified rule and, if found, removes them.</param>
         /// <param name="rule">A TransactedRegistryAccessRule that specifies the user and AccessControlType to search for. Any rights, inheritance flags, or
         /// propagation flags specified by this rule are ignored.</param>
         /// </summary>
@@ -361,7 +361,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for an access control rule that exactly matches the specified rule and, if found, removes it.</para>
+        /// <param>Searches for an access control rule that exactly matches the specified rule and, if found, removes it.</param>
         /// <param name="rule">The TransactedRegistryAccessRule to remove.</param>
         /// </summary>
         // Suppressed because we want to ensure TransactedRegistry* objects.
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for an audit rule with which the new rule can be merged. If none are found, adds the new rule.</para>
+        /// <param>Searches for an audit rule with which the new rule can be merged. If none are found, adds the new rule.</param>
         /// <param name="rule">The audit rule to add. The user specified by this rule determines the search.</param>
         /// </summary>
         // Suppressed because we want to ensure TransactedRegistry* objects.
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Removes all audit rules with the same user as the specified rule, regardless of the AuditFlags value, and then adds the specified rule.</para>
+        /// <param>Removes all audit rules with the same user as the specified rule, regardless of the AuditFlags value, and then adds the specified rule.</param>
         /// <param name="rule">The TransactedRegistryAuditRule to add. The user specified by this rule determines the rules to remove before this rule is added.</param>
         /// </summary>
         // Suppressed because we want to ensure TransactedRegistry* objects.
@@ -394,8 +394,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for an audit control rule with the same user as the specified rule, and with compatible inheritance and propagation flags;
-        /// if a compatible rule is found, the rights contained in the specified rule are removed from it.</para>
+        /// <param>Searches for an audit control rule with the same user as the specified rule, and with compatible inheritance and propagation flags;
+        /// if a compatible rule is found, the rights contained in the specified rule are removed from it.</param>
         /// <param name="rule">A TransactedRegistryAuditRule that specifies the user to search for, and a set of inheritance and propagation flags that
         /// a matching rule, if found, must be compatible with. Specifies the rights to remove from the compatible rule, if found.</param>
         /// </summary>
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for all audit rules with the same user as the specified rule and, if found, removes them.</para>
+        /// <param>Searches for all audit rules with the same user as the specified rule and, if found, removes them.</param>
         /// <param name="rule">A TransactedRegistryAuditRule that specifies the user to search for. Any rights, inheritance
         /// flags, or propagation flags specified by this rule are ignored.</param>
         /// </summary>
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Searches for an audit rule that exactly matches the specified rule and, if found, removes it.</para>
+        /// <param>Searches for an audit rule that exactly matches the specified rule and, if found, removes it.</param>
         /// <param name="rule">The TransactedRegistryAuditRule to be removed.</param>
         /// </summary>
         // Suppressed because we want to ensure TransactedRegistry* objects.
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Gets the enumeration type that the TransactedRegistrySecurity class uses to represent access rights.</para>
+        /// <param>Gets the enumeration type that the TransactedRegistrySecurity class uses to represent access rights.</param>
         /// <returns>A Type object representing the RegistryRights enumeration.</returns>
         /// </summary>
         public override Type AccessRightType
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Gets the type that the TransactedRegistrySecurity class uses to represent access rules.</para>
+        /// <param>Gets the type that the TransactedRegistrySecurity class uses to represent access rules.</param>
         /// <returns>A Type object representing the TransactedRegistryAccessRule class.</returns>
         /// </summary>
         public override Type AccessRuleType
@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Gets the type that the TransactedRegistrySecurity class uses to represent audit rules.</para>
+        /// <param>Gets the type that the TransactedRegistrySecurity class uses to represent audit rules.</param>
         /// <returns>A Type object representing the TransactedRegistryAuditRule class.</returns>
         /// </summary>
         public override Type AuditRuleType

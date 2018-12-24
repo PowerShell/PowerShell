@@ -263,8 +263,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>TransactedRegistryKey.Close
-        /// <para>Closes this key, flushes it to disk if the contents have been modified.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Closes this key, flushes it to disk if the contents have been modified.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// </summary>
         public void Close()
         {
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>TransactedRegistryKey.Flush
-        /// <para>Flushes this key. Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Flushes this key. Utilizes Transaction.Current for its transaction.</param>
         /// </summary>
         public void Flush()
         {
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>TransactedRegistryKey.Dispose
-        /// <para>Disposes this key. Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Disposes this key. Utilizes Transaction.Current for its transaction.</param>
         /// </summary>
         public void Dispose()
         {
@@ -339,8 +339,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Creates a new subkey, or opens an existing one.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Creates a new subkey, or opens an existing one.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name='subkey'>Name or path to subkey to create or open. Cannot be null or an empty string,
         /// otherwise an ArgumentException is thrown.</param>
         /// <returns>A TransactedRegistryKey object for the subkey, which is associated with Transaction.Current.
@@ -356,8 +356,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Creates a new subkey, or opens an existing one.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Creates a new subkey, or opens an existing one.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name='subkey'>Name or path to subkey to create or open. Cannot be null or an empty string,
         /// otherwise an ArgumentException is thrown.</param>
         /// <param name='permissionCheck'>One of the Microsoft.Win32.RegistryKeyPermissionCheck values that
@@ -376,8 +376,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Creates a new subkey, or opens an existing one.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Creates a new subkey, or opens an existing one.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name='subkey'>Name or path to subkey to create or open. Cannot be null or an empty string,
         /// otherwise an ArgumentException is thrown.</param>
         /// <param name='permissionCheck'>One of the Microsoft.Win32.RegistryKeyPermissionCheck values that
@@ -483,9 +483,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Deletes the specified subkey. Will throw an exception if the subkey has
+        /// <param>Deletes the specified subkey. Will throw an exception if the subkey has
         /// subkeys. To delete a tree of subkeys use, DeleteSubKeyTree.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name='subkey'>The subkey to delete.</param>
         /// <exception cref="InvalidOperationException">Thrown if the subkey as child subkeys.</exception>
         /// </summary>
@@ -499,9 +499,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Deletes the specified subkey. Will throw an exception if the subkey has
+        /// <param>Deletes the specified subkey. Will throw an exception if the subkey has
         /// subkeys. To delete a tree of subkeys use, DeleteSubKeyTree.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name='subkey'>The subkey to delete.</param>
         /// <param name='throwOnMissingSubKey'>Specify true if an ArgumentException should be thrown if
         /// the specified subkey does not exist. If false is specified, a missing subkey does not throw
@@ -565,8 +565,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Recursively deletes a subkey and any child subkeys.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Recursively deletes a subkey and any child subkeys.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="subkey">The subkey to delete.</param>
         /// </summary>
         [ResourceExposure(ResourceScope.Machine)]
@@ -662,8 +662,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Deletes the specified value from this key.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Deletes the specified value from this key.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name of the value to delete.</param>
         /// </summary>
         [ResourceExposure(ResourceScope.None)]
@@ -674,8 +674,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Deletes the specified value from this key.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Deletes the specified value from this key.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name of the value to delete.</param>
         /// <param name="throwOnMissingValue">Specify true if an ArgumentException should be thrown if
         /// the specified value does not exist. If false is specified, a missing value does not throw
@@ -745,9 +745,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves a subkey. If readonly is true, then the subkey is opened with
+        /// <param>Retrieves a subkey. If readonly is true, then the subkey is opened with
         /// read-only access.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name or path of the subkey to open.</param>
         /// <param name="writable">Set to true of you only need readonly access.</param>
         /// <returns>The subkey requested or null if the operation failed.</returns>
@@ -789,8 +789,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves a subkey.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves a subkey.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name or path of the subkey to open.</param>
         /// <param name="permissionCheck">One of the Microsoft.Win32.RegistryKeyPermissionCheck values that specifies
         /// whether the key is opened for read or read/write access.</param>
@@ -808,8 +808,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves a subkey.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves a subkey.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name or path of the subkey to open.</param>
         /// <param name="permissionCheck">One of the Microsoft.Win32.RegistryKeyPermissionCheck values that specifies
         /// whether the key is opened for read or read/write access.</param>
@@ -895,8 +895,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves a subkey for readonly access.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves a subkey for readonly access.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name or path of the subkey to open.</param>
         /// <returns>The subkey requested or null if the operation failed.</returns>
         /// </summary>
@@ -910,8 +910,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves the count of subkeys.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves the count of subkeys.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <returns>The count of subkeys.</returns>
         /// </summary>
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
@@ -953,8 +953,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves an array of strings containing all the subkey names.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves an array of strings containing all the subkey names.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <returns>A string array containing all the subkey names.</returns>
         /// </summary>
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
@@ -1000,8 +1000,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves the count of values.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves the count of values.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <returns>A count of values.</returns>
         /// </summary>
         public int ValueCount
@@ -1037,8 +1037,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves an array of strings containing all the value names.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves an array of strings containing all the value names.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <returns>All the value names.</returns>
         /// </summary>
         public String[] GetValueNames()
@@ -1103,10 +1103,10 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves the specified value. null is returned if the value
-        /// doesn't exist. Utilizes Transaction.Current for its transaction.</para>
-        /// <para>Note that name can be null or "", at which point the
-        /// unnamed or default value of this Registry key is returned, if any.</para>
+        /// <param>Retrieves the specified value. null is returned if the value
+        /// doesn't exist. Utilizes Transaction.Current for its transaction.</param>
+        /// <param>Note that name can be null or "", at which point the
+        /// unnamed or default value of this Registry key is returned, if any.</param>
         /// <param name="name">Name of value to retrieve.</param>
         /// <returns>The data associated with the value.</returns>
         /// </summary>
@@ -1117,10 +1117,10 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves the specified value. null is returned if the value
-        /// doesn't exist. Utilizes Transaction.Current for its transaction.</para>
-        /// <para>Note that name can be null or "", at which point the
-        /// unnamed or default value of this Registry key is returned, if any.</para>
+        /// <param>Retrieves the specified value. null is returned if the value
+        /// doesn't exist. Utilizes Transaction.Current for its transaction.</param>
+        /// <param>Note that name can be null or "", at which point the
+        /// unnamed or default value of this Registry key is returned, if any.</param>
         /// <param name="name">Name of value to retrieve.</param>
         /// <param name="defaultValue">Value to return if name doesn't exist.</param>
         /// <returns>The data associated with the value.</returns>
@@ -1132,10 +1132,10 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves the specified value. null is returned if the value
-        /// doesn't exist. Utilizes Transaction.Current for its transaction.</para>
-        /// <para>Note that name can be null or "", at which point the
-        /// unnamed or default value of this Registry key is returned, if any.</para>
+        /// <param>Retrieves the specified value. null is returned if the value
+        /// doesn't exist. Utilizes Transaction.Current for its transaction.</param>
+        /// <param>Note that name can be null or "", at which point the
+        /// unnamed or default value of this Registry key is returned, if any.</param>
         /// <param name="name">Name of value to retrieve.</param>
         /// <param name="defaultValue">Value to return if name doesn't exist.</param>
         /// <param name="options">One of the Microsoft.Win32.RegistryValueOptions values that specifies
@@ -1305,8 +1305,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves the registry data type of the value associated with the specified name.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Retrieves the registry data type of the value associated with the specified name.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">The value name whose data type is to be retrieved.</param>
         /// <returns>A RegistryValueKind value representing the registry data type of the value associated with name.</returns>
         /// </summary>
@@ -1352,7 +1352,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Retrieves the name of the key.</para>
+        /// <param>Retrieves the name of the key.</param>
         /// <returns>The name of the key.</returns>
         /// </summary>
         public String Name
@@ -1370,7 +1370,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Sets the specified value. Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Sets the specified value. Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name of value to store data in.</param>
         /// <param name="value">Data to store.</param>
         /// </summary>
@@ -1380,7 +1380,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Sets the specified value. Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Sets the specified value. Utilizes Transaction.Current for its transaction.</param>
         /// <param name="name">Name of value to store data in.</param>
         /// <param name="value">Data to store.</param>
         /// <param name="valueKind">The registry data type to use when storing the data.</param>
@@ -1598,7 +1598,7 @@ namespace Microsoft.PowerShell.Commands.Internal
          * @return a string representing the key.
          */
         /// <summary>
-        /// <para>Retrieves a string representation of this key.</para>
+        /// <param>Retrieves a string representation of this key.</param>
         /// <returns>A string representing the key.</returns>
         /// </summary>
         public override String ToString()
@@ -1608,8 +1608,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Returns the access control security for the current registry key.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Returns the access control security for the current registry key.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <returns>A TransactedRegistrySecurity object that describes the access control
         /// permissions on the registry key represented by the current TransactedRegistryKey.</returns>
         /// </summary>
@@ -1619,8 +1619,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Returns the access control security for the current registry key.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Returns the access control security for the current registry key.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="includeSections">A bitwise combination of AccessControlSections values that specifies the type of security information to get.</param>
         /// <returns>A TransactedRegistrySecurity object that describes the access control
         /// permissions on the registry key represented by the current TransactedRegistryKey.</returns>
@@ -1633,8 +1633,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         /// <summary>
-        /// <para>Applies Windows access control security to an existing registry key.
-        /// Utilizes Transaction.Current for its transaction.</para>
+        /// <param>Applies Windows access control security to an existing registry key.
+        /// Utilizes Transaction.Current for its transaction.</param>
         /// <param name="registrySecurity">A TransactedRegistrySecurity object that specifies the access control security to apply to the current subkey.</param>
         /// </summary>
         public void SetAccessControl(TransactedRegistrySecurity registrySecurity)

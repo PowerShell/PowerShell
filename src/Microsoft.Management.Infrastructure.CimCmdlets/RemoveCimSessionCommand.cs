@@ -66,11 +66,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession[] cimsession;
 
         /// <summary>
-        /// <para>The following is the definition of the input parameter "ComputerName".
+        /// <param>The following is the definition of the input parameter "ComputerName".
         /// Specified one or more computer names for which all CimSession(s)
-        /// (connections) should be removed (terminated).</para>
-        /// <para>This is the only optional parameter. If no value for this parameter is
-        /// provided, all CimSession(s) are terminated.</para>
+        /// (connections) should be removed (terminated).</param>
+        /// <param>This is the only optional parameter. If no value for this parameter is
+        /// provided, all CimSession(s) are terminated.</param>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
         [Parameter(

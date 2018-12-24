@@ -20,15 +20,15 @@ namespace System.Management.Automation
     ///
     /// Following three kinds of formating tags are supported per our agreement with Maml team,
     ///     1. para,
-    ///         <para>
+    ///         <param>
     ///             para text here
-    ///         </para>
+    ///         </param>
     ///     2. list,
     ///         <list class="ordered|unordered">
     ///             <listItem>
-    ///                 <para>
+    ///                 <param>
     ///                     listItem Text here
-    ///                 </para>
+    ///                 </param>
     ///             </listItem>
     ///         </list>
     ///     3. definition list,
@@ -38,9 +38,9 @@ namespace System.Management.Automation
     ///                     definition term text here
     ///                 </term>
     ///                 <definition>
-    ///                     <para>
+    ///                     <param>
     ///                         definition text here
-    ///                     </para>
+    ///                     </param>
     ///                 </definition>
     ///             </definitionListItem>
     ///         </definitionList>
@@ -143,19 +143,19 @@ namespace System.Management.Automation
         ///             a. property "attribute", with its value an PSObject wrapping string "attribute"
         ///     4. Maml formatting xml, this is a special case for Composite xml, for example
         ///         <description attribute="value">
-        ///             <para>
+        ///             <param>
         ///                 para 1
-        ///             </para>
+        ///             </param>
         ///             <list>
         ///                 <listItem>
-        ///                     <para>
+        ///                     <param>
         ///                         list item 1
-        ///                     </para>
+        ///                     </param>
         ///                 </listItem>
         ///                 <listItem>
-        ///                     <para>
+        ///                     <param>
         ///                         list item 2
-        ///                     </para>
+        ///                     </param>
         ///                 </listItem>
         ///             </list>
         ///             <definitionList>
@@ -360,7 +360,7 @@ namespace System.Management.Automation
         /// is that,
         /// <command>
         ///     <description attrib1="value1">
-        ///         <para></para>
+        ///         <param></param>
         ///         <list></list>
         ///         <definitionList></definitionList>
         ///     </description>
@@ -547,19 +547,19 @@ namespace System.Management.Automation
         ///
         /// For example, for node,
         ///    <description attribute="value">
-        ///        <para>
+        ///        <param>
         ///            para 1
-        ///        </para>
+        ///        </param>
         ///        <list>
         ///            <listItem>
-        ///                <para>
+        ///                <param>
         ///                    list item 1
-        ///                </para>
+        ///                </param>
         ///            </listItem>
         ///            <listItem>
-        ///                <para>
+        ///                <param>
         ///                    list item 2
-        ///                </para>
+        ///                </param>
         ///            </listItem>
         ///        </list>
         ///        <definitionList>
@@ -736,9 +736,9 @@ namespace System.Management.Automation
         /// Convert a para node into an mshObject.
         ///
         /// For example,
-        ///    <para>
+        ///    <param>
         ///        para text
-        ///    </para>
+        ///    </param>
         ///    In this case, an PSObject of type "MamlParaTextItem" will be created with following property
         ///        a. text="para text"
         /// </summary>
@@ -788,14 +788,14 @@ namespace System.Management.Automation
         /// For example,
         ///    <list class="ordered">
         ///        <listItem>
-        ///            <para>
+        ///            <param>
         ///                text for list item 1
-        ///            </para>
+        ///            </param>
         ///        </listItem>
         ///        <listItem>
-        ///            <para>
+        ///            <param>
         ///                text for list item 2
-        ///            </para>
+        ///            </param>
         ///        </listItem>
         ///    </list>
         /// In this case, an array of PSObject, each of type "MamlOrderedListText" will be created with following
@@ -978,9 +978,9 @@ namespace System.Management.Automation
         ///                term text
         ///            </term>
         ///            <definition>
-        ///                <para>
+        ///                <param>
         ///                    definition text
-        ///                </para>
+        ///                </param>
         ///            </definition>
         ///        </definitionListItem>
         /// In this case, an PSObject of type "definitionListText" will be created with following

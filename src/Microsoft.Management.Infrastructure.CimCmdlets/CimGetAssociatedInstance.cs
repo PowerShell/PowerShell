@@ -12,16 +12,16 @@ using System.Collections.Generic;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of get-AssociatedInstance cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimGetAssociatedInstance : CimAsyncOperation
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimGetAssociatedInstance()
             : base()
@@ -29,9 +29,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Base on parametersetName to retrieve associated ciminstances
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
         public void GetCimAssociatedInstance(GetCimAssociatedInstanceCommand cmdlet)
@@ -83,9 +83,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set <see cref="CimSessionProxy"/> properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
@@ -102,9 +102,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
