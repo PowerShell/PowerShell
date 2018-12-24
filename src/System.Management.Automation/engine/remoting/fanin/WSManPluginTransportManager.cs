@@ -66,7 +66,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="isShuttingDown">true if the method is called from RegisterWaitForSingleObject
         /// callback. This boolean is used to decide whether to UnregisterWait or
-        /// UnregisterWaitEx</param>
+        /// UnregisterWaitEx.</param>
         /// <param name="reasonForClose"></param>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "The WSManPluginReceiveResult return value is not documented and is not needed in this case.")]
         internal void DoClose(

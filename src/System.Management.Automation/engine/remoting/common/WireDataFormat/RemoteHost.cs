@@ -328,7 +328,7 @@ namespace System.Management.Automation.Remoting
         /// such modifications will be made here
         /// </summary>
         /// <param name="computerName">computer name to use in
-        /// warning messages</param>
+        /// warning messages.</param>
         /// <returns>a collection of remote host calls which will
         /// have to be executed before this host call can be
         /// executed</returns>
@@ -437,7 +437,7 @@ namespace System.Management.Automation.Remoting
         /// Used in ensuring that remote prompt messages are
         /// tagged with "Windows PowerShell Credential Request"
         /// </summary>
-        /// <param name="caption">caption to modify</param>
+        /// <param name="caption">caption to modify.</param>
         /// <returns>new modified caption</returns>
         private string ModifyCaption(string caption)
         {
@@ -460,9 +460,9 @@ namespace System.Management.Automation.Remoting
         /// contain a warning that they originate from a
         /// different computer
         /// </summary>
-        /// <param name="message">original message to modify</param>
+        /// <param name="message">original message to modify.</param>
         /// <param name="computerName">computername to include in the
-        /// message</param>
+        /// message.</param>
         /// <returns>message which contains a warning as well</returns>
         private string ModifyMessage(string message, string computerName)
         {
@@ -480,8 +480,8 @@ namespace System.Management.Automation.Remoting
         /// actually attempting to read a line as a secure string
         /// </summary>
         /// <param name="computerName">computer name to include
-        /// in warning</param>
-        /// <param name="resourceString">resource string to use</param>
+        /// in warning.</param>
+        /// <param name="resourceString">resource string to use.</param>
         /// <returns>a constructed remote host call message
         /// which will display the warning</returns>
         private RemoteHostCall ConstructWarningMessageForSecureString(string computerName,
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Remoting
         /// it was suppressed
         /// </summary>
         /// <param name="computerName">computer name to include
-        /// in warning</param>
+        /// in warning.</param>
         /// <returns>a constructed remote host call message
         /// which will display the warning</returns>
         private RemoteHostCall ConstructWarningMessageForGetBufferContents(string computerName)

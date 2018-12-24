@@ -1403,9 +1403,9 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Create an ExternalScriptInfo object from a file path.
         /// </summary>
-        /// <param name="context">execution context</param>
-        /// <param name="fileName">The path to the file</param>
-        /// <param name="scriptName">The base name of the script</param>
+        /// <param name="context">execution context.</param>
+        /// <param name="fileName">The path to the file.</param>
+        /// <param name="scriptName">The base name of the script.</param>
         /// <returns>The ExternalScriptInfo object.</returns>
         internal static ExternalScriptInfo GetScriptInfoForFile(ExecutionContext context, string fileName, out string scriptName)
         {
@@ -1433,8 +1433,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Loads the configuration file into a hashtable
         /// </summary>
-        /// <param name="context">execution context</param>
-        /// <param name="scriptInfo">the ExternalScriptInfo object</param>
+        /// <param name="context">execution context.</param>
+        /// <param name="scriptInfo">the ExternalScriptInfo object.</param>
         /// <returns>configuration hashtable</returns>
         internal static Hashtable LoadConfigFile(ExecutionContext context, ExternalScriptInfo scriptInfo)
         {
@@ -1462,7 +1462,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Verifies the configuration hashtable
         /// </summary>
-        /// <param name="table">configuration hashtable</param>
+        /// <param name="table">configuration hashtable.</param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns>true if valid, false otherwise</returns>
@@ -1709,7 +1709,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a new instance of a Declarative Initial Session State Configuration
         /// </summary>
-        /// <param name="configFile">The path to the .pssc file representing the initial session state</param>
+        /// <param name="configFile">The path to the .pssc file representing the initial session state.</param>
         /// <param name="roleVerifier">
         /// The verifier that PowerShell should call to determine if groups in the Role entry apply to the
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that

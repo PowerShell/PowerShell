@@ -637,7 +637,7 @@ namespace System.Management.Automation
         /// Tests the specified character for equality with one of the powershell path separators and
         /// returns true if it matches.
         /// </summary>
-        /// <param name="c">The character to test</param>
+        /// <param name="c">The character to test.</param>
         /// <returns>True if the character is a path separator.</returns>
         private bool IsPathSeparator(char c)
         {

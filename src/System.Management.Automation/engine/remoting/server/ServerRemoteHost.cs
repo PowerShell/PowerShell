@@ -324,7 +324,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Push runspace to use for remote command execution
         /// </summary>
-        /// <param name="runspace">RemoteRunspace</param>
+        /// <param name="runspace">RemoteRunspace.</param>
         public override void PushRunspace(Runspace runspace)
         {
             // Double session hop is currently allowed only for WSMan (non-OutOfProc) sessions, where

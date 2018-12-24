@@ -895,8 +895,8 @@ namespace System.Management.Automation.Remoting
         /// This method contains all the logic for handling the state machine
         /// for key exchange. All the different scenarios are covered in this
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">event args</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">event args.</param>
         private void DoKeyExchange(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             //There are corner cases with disconnect that can result in client receiving outdated key exchange packets
@@ -979,7 +979,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handles the timeout for key exchange
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
         {
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeyRequested, "timeout should only happen when waiting for a key");

@@ -534,7 +534,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Retrieves a WSManPluginShellSession if matched.
         /// </summary>
-        /// <param name="key">Shell context (WSManPluginRequest.unmanagedHandle)</param>
+        /// <param name="key">Shell context (WSManPluginRequest.unmanagedHandle).</param>
         /// <returns>null WSManPluginShellSession if not matched. The object if matched.</returns>
         private WSManPluginShellSession GetFromActiveShellSessions(
             IntPtr key)
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Triggers a shell close from an event handler.
         /// </summary>
-        /// <param name="source">Shell context</param>
+        /// <param name="source">Shell context.</param>
         /// <param name="e"></param>
         private void HandleShellSessionClosed(
             object source,
@@ -1552,7 +1552,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
-        /// <param name="errorMessage">Pre-formatted localized string</param>
+        /// <param name="errorMessage">Pre-formatted localized string.</param>
         /// <returns></returns>
         internal static void ReportOperationComplete(
             WSManNativeApi.WSManPluginRequest requestDetails,

@@ -1327,7 +1327,7 @@ namespace System.Management.Automation
                     if (recurse)
                     {
                         string childName = GetChildName(path, context);
-                            
+
                         // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
 
                         bool isFileOrDirectoryPresent = false;
@@ -1504,7 +1504,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        context.SuppressWildcardExpansion = true;       
+                        context.SuppressWildcardExpansion = true;
                     }
                 }
                 else if (path != null && this.ItemExists(providerInstance, path, context))
@@ -1672,8 +1672,8 @@ namespace System.Management.Automation
         /// <param name="childrenNotMatchingFilterCriteria">
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
-        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
+        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
+        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -1724,8 +1724,8 @@ namespace System.Management.Automation
         /// <param name="childrenNotMatchingFilterCriteria">
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
-        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
+        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
+        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>

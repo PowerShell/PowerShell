@@ -2426,7 +2426,7 @@ namespace System.Management.Automation.Remoting.Client
         /// will be used as the language code to get the error message in.
         /// </summary>
         /// <param name="wsManAPIHandle"></param>
-        /// <param name="option">session option to get</param>
+        /// <param name="option">session option to get.</param>
         /// <returns></returns>
         internal static string WSManGetSessionOptionAsString(IntPtr wsManAPIHandle,
             WSManSessionOption option)
@@ -2643,7 +2643,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Command Operation Handle. If null, the receive request corresponds
         /// to the shell.
         /// </param>
-        /// <param name="flags"> </param>
+        /// <param name="flags"> .</param>
         /// <param name="desiredStreamSet"></param>
         /// <param name="asyncCallback">
         /// callback which receives the data asynchronously.
@@ -2974,7 +2974,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Registers the shutdown callback.
         /// </summary>
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
-        /// <param name="shutdownCallback">Callback to be executed on shutdown</param>
+        /// <param name="shutdownCallback">Callback to be executed on shutdown.</param>
         /// <param name="shutdownContext"></param>
         /// <returns></returns>
         [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]

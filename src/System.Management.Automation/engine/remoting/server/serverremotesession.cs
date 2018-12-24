@@ -175,7 +175,7 @@ namespace System.Management.Automation.Remoting
         /// xml.
         /// </param>
         /// <param name="transportManager"></param>
-        /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions</param>
+        /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// InitialSessionState provider with <paramref name="configurationProviderId"/> does
@@ -378,9 +378,9 @@ namespace System.Management.Automation.Remoting
         /// Have received a public key from the other side
         /// Import or take other action based on the state
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
+        /// <param name="sender">sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments which contains the
-        /// remote public key</param>
+        /// remote public key.</param>
         private void HandlePublicKeyReceived(object sender, RemoteDataEventArgs<string> eventArgs)
         {
             if (SessionDataStructureHandler.StateMachine.State == RemoteSessionState.Established ||

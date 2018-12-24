@@ -340,9 +340,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the appropriate client session transportmanager.
         /// </summary>
-        /// <param name="instanceId">Runspace/Pool instance Id</param>
-        /// <param name="sessionName">Session name</param>
-        /// <param name="cryptoHelper">PSRemotingCryptoHelper</param>
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
         internal virtual BaseClientSessionTransportManager CreateClientSessionTransportManager(
             Guid instanceId,
             string sessionName,
@@ -363,7 +363,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Validates port number is in range
         /// </summary>
-        /// <param name="port">Port number to validate</param>
+        /// <param name="port">Port number to validate.</param>
         internal virtual void ValidatePortInRange(int port)
         {
             if ((port < MinPort || port > MaxPort))
@@ -804,16 +804,16 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor used to create a WSManConnectionInfo
         /// </summary>
-        /// <param name="computerName">computer to connect to</param>
-        /// <param name="scheme">scheme to be used for connection</param>
-        /// <param name="port">port to connect to</param>
-        /// <param name="appName">application end point to connect to</param>
+        /// <param name="computerName">computer to connect to.</param>
+        /// <param name="scheme">scheme to be used for connection.</param>
+        /// <param name="port">port to connect to.</param>
+        /// <param name="appName">application end point to connect to.</param>
         /// <param name="shellUri">remote shell to launch
-        /// on connection</param>
+        /// on connection.</param>
         /// <param name="credential">credential to be used
-        /// for connection</param>
+        /// for connection.</param>
         /// <param name="openTimeout">Timeout in milliseconds for open
-        /// call on Runspace to finish</param>
+        /// call on Runspace to finish.</param>
         /// <exception cref="ArgumentException">Invalid
         /// scheme or invalid port is specified</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential,System.Int64,System.Int64)", MessageId = "4#")]
@@ -831,14 +831,14 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor used to create a WSManConnectionInfo
         /// </summary>
-        /// <param name="computerName">computer to connect to</param>
+        /// <param name="computerName">computer to connect to.</param>
         /// <param name="scheme">Scheme to be used for connection.</param>
-        /// <param name="port">port to connect to</param>
-        /// <param name="appName">application end point to connect to</param>
+        /// <param name="port">port to connect to.</param>
+        /// <param name="appName">application end point to connect to.</param>
         /// <param name="shellUri">remote shell to launch
-        /// on connection</param>
+        /// on connection.</param>
         /// <param name="credential">credential to be used
-        /// for connection</param>
+        /// for connection.</param>
         /// <exception cref="ArgumentException">Invalid
         /// scheme or invalid port is specified</exception>
         /// <remarks>max server life timeout and open timeout are
@@ -899,10 +899,10 @@ namespace System.Management.Automation.Runspaces
         /// and explicit credentials - server life time is
         /// default and open timeout is default
         /// </summary>
-        /// <param name="uri">uri of remote runspace</param>
+        /// <param name="uri">uri of remote runspace.</param>
         /// <param name="shellUri"></param>
         /// <param name="credential">credentials to use to
-        /// connect to the remote runspace</param>
+        /// connect to the remote runspace.</param>
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.Uri,System.String,System.Management.Automation.PSCredential)", MessageId = "1#")]
@@ -948,7 +948,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor used to create a WSManConnectionInfo. This constructor supports a certificate thumbprint to
         /// be used while connecting to a remote machine instead of credential.
         /// </summary>
-        /// <param name="uri">uri of remote runspace</param>
+        /// <param name="uri">uri of remote runspace.</param>
         /// <param name="shellUri"></param>
         /// <param name="certificateThumbprint">
         /// A thumb print of the certificate to use while connecting to the remote machine.
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Runspaces
         /// default server life time and default open
         /// timeout
         /// </summary>
-        /// <param name="uri">uri of remote runspace</param>
+        /// <param name="uri">uri of remote runspace.</param>
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
         public WSManConnectionInfo(Uri uri)
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor that constructs the configuration name from its type
         /// </summary>
-        /// <param name="configurationType">type of configuration to construct</param>
+        /// <param name="configurationType">type of configuration to construct.</param>
         public WSManConnectionInfo(PSSessionType configurationType) : this()
         {
             ComputerName = string.Empty;
@@ -1746,7 +1746,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="processId">Process Id to connect to</param>
+        /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Application domain name to connect to, or default AppDomain if blank.</param>
         public NamedPipeConnectionInfo(
             int processId,
@@ -1757,9 +1757,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="processId">Process Id to connect to</param>
+        /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Name of application domain to connect to.  Connection is to default application domain if blank.</param>
-        /// <param name="openTimeout">Open time out in Milliseconds</param>
+        /// <param name="openTimeout">Open time out in Milliseconds.</param>
         public NamedPipeConnectionInfo(
             int processId,
             string appDomainName,
@@ -1915,9 +1915,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="userName">User Name</param>
-        /// <param name="computerName">Computer Name</param>
-        /// <param name="keyFilePath">Key File Path</param>
+        /// <param name="userName">User Name.</param>
+        /// <param name="computerName">Computer Name.</param>
+        /// <param name="keyFilePath">Key File Path.</param>
         public SSHConnectionInfo(
             string userName,
             string computerName,
@@ -1935,10 +1935,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="userName">User Name</param>
-        /// <param name="computerName">Computer Name</param>
-        /// <param name="keyFilePath">Key File Path</param>
-        /// <param name="port">Port number for connection (default 22)</param>
+        /// <param name="userName">User Name.</param>
+        /// <param name="computerName">Computer Name.</param>
+        /// <param name="keyFilePath">Key File Path.</param>
+        /// <param name="port">Port number for connection (default 22).</param>
         public SSHConnectionInfo(
             string userName,
             string computerName,
@@ -1953,11 +1953,11 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="userName">User Name</param>
-        /// <param name="computerName">Computer Name</param>
-        /// <param name="keyFilePath">Key File Path</param>
-        /// <param name="port">Port number for connection (default 22)</param>
-        /// <param name="subsystem">Subsystem to use (default 'powershell')</param>
+        /// <param name="userName">User Name.</param>
+        /// <param name="computerName">Computer Name.</param>
+        /// <param name="keyFilePath">Key File Path.</param>
+        /// <param name="port">Port number for connection (default 22).</param>
+        /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
         public SSHConnectionInfo(
             string userName,
             string computerName,
@@ -2271,7 +2271,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>Copies environment variables from ProcessStartInfo </summary>
-        /// <param name="psi">ProcessStartInfo</param>
+        /// <param name="psi">ProcessStartInfo.</param>
         /// <returns>String array of environment key/value pairs</returns>
         private static string[] CopyEnvVariables(ProcessStartInfo psi)
         {
@@ -3185,7 +3185,7 @@ namespace System.Management.Automation.Runspaces
                 // other errors caught without exception
                 default:
                     throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotCreateProcessInContainer,
-                                                                            ContainerId, 
+                                                                            ContainerId,
                                                                             Executable,
                                                                             ErrorCode));
             }
@@ -3369,7 +3369,7 @@ namespace System.Management.Automation.Runspaces
             return string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         @"{{""CommandLine"": ""{0} {1} -NoLogo {2}"",""RestrictedToken"": {3}}}",
-                        Executable, 
+                        Executable,
                         (RuntimeId != Guid.Empty) ? "-SocketServerMode -NoProfile" : "-NamedPipeServerMode",
                         string.IsNullOrEmpty(ConfigurationName) ? string.Empty : string.Concat("-Config ", ConfigurationName),
                         RunAsAdmin ? "false" : "true");

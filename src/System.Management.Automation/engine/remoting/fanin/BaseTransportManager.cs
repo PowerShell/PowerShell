@@ -577,7 +577,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Queue the robust connection notification event.
         /// </summary>
-        /// <param name="flags">Determines what kind of notification</param>
+        /// <param name="flags">Determines what kind of notification.</param>
         internal void QueueRobustConnectionNotification(int flags)
         {
             ConnectionStatusEventArgs args = null;
@@ -616,7 +616,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Raise the Robust Connection notification event.
         /// </summary>
-        /// <param name="args">ConnectionStatusEventArgs</param>
+        /// <param name="args">ConnectionStatusEventArgs.</param>
         internal void RaiseRobustConnectionNotification(ConnectionStatusEventArgs args)
         {
             RobustConnectionNotification.SafeInvoke(this, args);
@@ -755,7 +755,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Helper method to check RemoteDataObject for a host call requiring user
         /// interaction.
         /// </summary>
-        /// <param name="remoteObject">Remote data object</param>
+        /// <param name="remoteObject">Remote data object.</param>
         /// <returns>True if remote data object requires a user response</returns>
         private bool CheckForInteractiveHostCall(RemoteDataObject<PSObject> remoteObject)
         {

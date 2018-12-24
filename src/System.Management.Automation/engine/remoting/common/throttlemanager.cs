@@ -160,7 +160,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// RaiseRunspaceDebugStopEvent
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         internal void RaiseRunspaceDebugStopEvent(System.Management.Automation.Runspaces.Runspace runspace)
         {
             RunspaceDebugStop.SafeInvoke(this, new StartRunspaceDebugProcessingEventArgs(runspace));
@@ -227,7 +227,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Submit a list of operations that need to be throttled
         /// </summary>
-        /// <param name="operations">list of operations to be throttled</param>
+        /// <param name="operations">list of operations to be throttled.</param>
         /// <remarks>Once the operations are added to the queue, the method will
         /// start operations from the queue
         /// </remarks>
@@ -260,7 +260,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Add a single operation to the queue
         /// </summary>
-        /// <param name="operation">Operation to be added</param>
+        /// <param name="operation">Operation to be added.</param>
         internal void AddOperation(IThrottleOperation operation)
         {
             // add item to the queue
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Stop the specified operation
         /// </summary>
-        /// <param name="operation">operation which needs to be stopped</param>
+        /// <param name="operation">operation which needs to be stopped.</param>
         internal void StopOperation(IThrottleOperation operation)
         {
             // StopOperation is being called a second time
@@ -454,9 +454,9 @@ namespace System.Management.Automation.Remoting
         /// the <see cref="System.Management.Automation.Remoting.IThrottleOperation"/>
         /// interface
         /// </summary>
-        /// <param name="source">sender of the event</param>
+        /// <param name="source">sender of the event.</param>
         /// <param name="stateEventArgs">Event information object which describes the event
-        /// which triggered this method</param>
+        /// which triggered this method.</param>
         private void OperationCompleteHandler(object source, OperationStateEventArgs stateEventArgs)
         {
             // An item has completed operation. If it's a start operation which completed
@@ -653,7 +653,7 @@ namespace System.Management.Automation.Remoting
         /// operations and finalize suppressions
         /// </summary>
         /// <param name="disposing">If method is called from
-        /// disposing of destructor</param>
+        /// disposing of destructor.</param>
         private void Dispose(bool disposing)
         {
             if (disposing)

@@ -224,8 +224,8 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// </summary>
-        /// <param name="instance">target object or null for static call</param>
-        /// <param name="sessionStateInternal">sessionStateInternal from private field of instance or null for static call</param>
+        /// <param name="instance">target object or null for static call.</param>
+        /// <param name="sessionStateInternal">sessionStateInternal from private field of instance or null for static call.</param>
         /// <param name="args"></param>
         public void InvokeHelper(object instance, object sessionStateInternal, object[] args)
         {
@@ -247,8 +247,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="instance">target object or null for static call</param>
-        /// <param name="sessionStateInternal">sessionStateInternal from private field of instance or null for static call</param>
+        /// <param name="instance">target object or null for static call.</param>
+        /// <param name="sessionStateInternal">sessionStateInternal from private field of instance or null for static call.</param>
         /// <param name="args"></param>
         /// <returns></returns>
         public T InvokeHelperT<T>(object instance, object sessionStateInternal, object[] args)
@@ -295,9 +295,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Performs base ctor call as a method call.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="ci">ctor info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">object for invocation.</param>
+        /// <param name="ci">ctor info for invocation.</param>
+        /// <param name="args">arguments for invocation.</param>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static void CallBaseCtor(object target, ConstructorInfo ci, object[] args)
         {
@@ -307,9 +307,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Performs non-virtual method call with return value. Main usage: base class method call inside subclass method.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="mi">method info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">object for invocation.</param>
+        /// <param name="mi">method info for invocation.</param>
+        /// <param name="args">arguments for invocation.</param>
         public static object CallMethodNonVirtually(object target, MethodInfo mi, object[] args)
         {
             return CallMethodNonVirtuallyImpl(target, mi, args);
@@ -318,9 +318,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Performs non-virtual void method call. Main usage: base class method call inside subclass method.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="mi">method info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">object for invocation.</param>
+        /// <param name="mi">method info for invocation.</param>
+        /// <param name="args">arguments for invocation.</param>
         public static void CallVoidMethodNonVirtually(object target, MethodInfo mi, object[] args)
         {
             CallMethodNonVirtuallyImpl(target, mi, args);
@@ -336,9 +336,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Implementation of non-virtual method call.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="mi">method info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">object for invocation.</param>
+        /// <param name="mi">method info for invocation.</param>
+        /// <param name="args">arguments for invocation.</param>
         private static object CallMethodNonVirtuallyImpl(object target, MethodInfo mi, object[] args)
         {
             DynamicMethod dm = s_nonVirtualCallCache.GetValue(mi, CreateDynamicMethod);

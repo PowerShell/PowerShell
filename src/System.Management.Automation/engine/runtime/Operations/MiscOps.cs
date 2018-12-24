@@ -1753,9 +1753,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Determine if we should continue or not after and error or exception....
         /// </summary>
-        /// <param name="rte">The RuntimeException which was reported</param>
-        /// <param name="message">The message to display</param>
-        /// <param name="context">The execution context</param>
+        /// <param name="rte">The RuntimeException which was reported.</param>
+        /// <param name="message">The message to display.</param>
+        /// <param name="context">The execution context.</param>
         /// <returns>The preference the user selected</returns>
         /// <remarks>
         /// Error action is decided by error action preference. If preference is inquire, we will
@@ -1779,7 +1779,7 @@ namespace System.Management.Automation
         /// This is a helper function for prompting for user preference.
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="context">The execution context</param>
+        /// <param name="context">The execution context.</param>
         /// <returns></returns>
         /// <remarks>
         /// This method will allow user to enter suspend mode.
@@ -1826,8 +1826,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="extent"></param>
         /// <param name="rte"></param>
-        /// <param name="context">The execution context</param>
-        /// <param name="outputPipe">the output pipe of the statement</param>
+        /// <param name="context">The execution context.</param>
+        /// <param name="outputPipe">the output pipe of the statement.</param>
         internal static void SetErrorVariables(IScriptExtent extent, RuntimeException rte, ExecutionContext context, Pipe outputPipe)
         {
             string stack = null;
@@ -1874,8 +1874,8 @@ namespace System.Management.Automation
         /// Report error into error pipe.
         /// </summary>
         /// <param name="extent"></param>
-        /// <param name="rte">The runtime error to report</param>
-        /// <param name="context">The execution context</param>
+        /// <param name="rte">The runtime error to report.</param>
+        /// <param name="context">The execution context.</param>
         /// <returns>True if it was able to report the error</returns>
         internal static bool ReportErrorRecord(IScriptExtent extent, RuntimeException rte, ExecutionContext context)
         {
@@ -2451,7 +2451,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Implements the Where(expression) operation on collections
         /// </summary>
-        /// <param name="enumerator">The enumerator over the collection to search</param>
+        /// <param name="enumerator">The enumerator over the collection to search.</param>
         /// <param name="expressionSB">
         /// A ScriptBlock where its result is treated as a boolean, or null to
         /// return all collection objects with WhereOperatorSelectionMode.
@@ -2460,7 +2460,7 @@ namespace System.Management.Automation
         /// Sets the WhereOperatorSelectionMode for operator, defaults to All.
         /// This is of type object to allow either enum values or strings to be passed.
         /// </param>
-        /// <param name="numberToReturn">The number of elements to return</param>
+        /// <param name="numberToReturn">The number of elements to return.</param>
         /// <returns></returns>
         internal static object Where(IEnumerator enumerator, ScriptBlock expressionSB, WhereOperatorSelectionMode selectionMode, int numberToReturn)
         {
@@ -2690,7 +2690,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Implements the ForEach() operator.
         /// </summary>
-        /// <param name="enumerator">The collection to operate over</param>
+        /// <param name="enumerator">The collection to operate over.</param>
         /// <param name="expression"></param>
         /// <param name="arguments">
         /// </param>
@@ -3268,7 +3268,7 @@ namespace System.Management.Automation
         /// A routine used to advance an enumerator and catch errors that might occur
         /// performing the operation
         /// </summary>
-        /// <param name="context">The execution context used to see if the pipeline is stopping</param>
+        /// <param name="context">The execution context used to see if the pipeline is stopping.</param>
         /// <param name="enumerator">THe enumerator to advance.</param>
         /// <exception cref="RuntimeException">An error occurred moving to the next element in the enumeration</exception>
         /// <returns>True if the move succeeded</returns>
@@ -3304,7 +3304,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrapper caller for enumerator.Current - handles and republishes errors...
         /// </summary>
-        /// <param name="enumerator">The enumerator to read from</param>
+        /// <param name="enumerator">The enumerator to read from.</param>
         /// <returns></returns>
         internal static object Current(IEnumerator enumerator)
         {

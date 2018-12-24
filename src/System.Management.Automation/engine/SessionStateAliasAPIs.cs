@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a new alias entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
         /// "global", "script", "local", or "private, or a numeric ID of a relative scope
