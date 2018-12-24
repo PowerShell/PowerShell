@@ -2056,7 +2056,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (exists && !isContainer)
                 {
-                    string message = StringUtil.Format(FileSystemProviderStrings.DirectoryExist, path);
+                    string message = StringUtil.Format("Cannot create {0} because a file or directory with the same name already exists.", path);
                     WriteError(new ErrorRecord(new IOException(message), "NewItemIOError", ErrorCategory.WriteError, path));
                     return; 
                 }
