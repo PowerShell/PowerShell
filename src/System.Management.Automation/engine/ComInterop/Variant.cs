@@ -781,7 +781,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_UNKNOWN
-        public Object AsUnknown
+        public object AsUnknown
         {
             get
             {
@@ -815,7 +815,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_DISPATCH
-        public Object AsDispatch
+        public object AsDispatch
         {
             get
             {
@@ -854,7 +854,7 @@ namespace System.Management.Automation.ComInterop
 
         // VT_VARIANT
 
-        public Object AsVariant
+        public object AsVariant
         {
             get
             {

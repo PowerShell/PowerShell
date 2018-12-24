@@ -4358,7 +4358,7 @@ namespace System.Management.Automation
                 new Collection<Breakpoint>(e.Breakpoints),
                 e.ResumeAction);
 
-            Object remoteRunningCmd = null;
+            object remoteRunningCmd = null;
             try
             {
                 // For remote debugging drain/block output channel.
@@ -4554,7 +4554,7 @@ namespace System.Management.Automation
             return sb.ToString();
         }
 
-        private Object DrainAndBlockRemoteOutput()
+        private object DrainAndBlockRemoteOutput()
         {
             // We only do this for remote runspaces.
             if (!(_runspace is RemoteRunspace)) { return null; }

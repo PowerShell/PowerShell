@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
             // Read all objects in the stream pipeline.
             while (!_stream.ObjectReader.EndOfPipeline)
             {
-                Object streamObject = _stream.ObjectReader.Read();
+                object streamObject = _stream.ObjectReader.Read();
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
         }

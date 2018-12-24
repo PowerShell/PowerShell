@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputObject"></param>
         private void ProcessObjectContent(PSObject inputObject)
         {
-            Object obj = inputObject.BaseObject;
+            object obj = inputObject.BaseObject;
             byte[] inputBytes = null;
 
             switch (obj)

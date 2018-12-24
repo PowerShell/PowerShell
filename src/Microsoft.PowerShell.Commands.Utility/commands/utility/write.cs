@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("Msg", "Message")]
-        public Object MessageData { get; set; }
+        public object MessageData { get; set; }
 
         /// <summary>
         /// Any tags to be associated with this information.

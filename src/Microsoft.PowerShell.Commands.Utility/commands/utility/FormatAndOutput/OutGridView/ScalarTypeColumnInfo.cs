@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
             _type = type;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             // Strip a wrapping PSObject.
             object baseObject = ((PSObject)liveObject).BaseObject;
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
             : base(staleObjectPropertyName, displayName)
         { }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             // Strip a wrapping PSObject.
             object baseObject = ((PSObject)liveObject).BaseObject;
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
             _parentCmdlet = parentCmdlet;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             // Convert to a string preserving PowerShell formatting.
             return ColumnInfo.LimitString(_parentCmdlet.ConvertToString(liveObject));
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
             _index = index;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             // Every time this method is called, another raw is added to ML.
             return _index++;

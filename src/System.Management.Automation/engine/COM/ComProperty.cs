@@ -217,7 +217,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">instance of the object to which to set the property value</param>
         /// <param name="setValue">value to set this property</param>
-        internal void SetValue(Object target, Object setValue)
+        internal void SetValue(Object target, object setValue)
         {
             object[] propValue = new object[1];
             setValue = Adapter.PropertySetAndMethodArgumentConvertTo(setValue, this.Type, CultureInfo.InvariantCulture);
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// <param name="target">instance of the object to which to set the property value</param>
         /// <param name="setValue">value to set this property</param>
         /// <param name="arguments">parameters to set this property.</param>
-        internal void SetValue(Object target, Object setValue, Object[] arguments)
+        internal void SetValue(Object target, object setValue, Object[] arguments)
         {
             object[] newarguments;
             var setterCollection = new Collection<int> { _hasSetterByRef ? _setterByRefIndex : _setterIndex };

@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
             if (pso != null)
                 obj = pso.BaseObject;
 
-            Object rv = obj;
+            object rv = obj;
             bool isPurePSObj = false;
             bool isCustomObj = false;
 

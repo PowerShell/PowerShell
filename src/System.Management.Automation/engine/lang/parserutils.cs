@@ -1629,7 +1629,7 @@ namespace System.Management.Automation
 
         private int _current;
 
-        Object IEnumerator.Current
+        object IEnumerator.Current
         {
             get { return Current; }
         }
@@ -1698,7 +1698,7 @@ namespace System.Management.Automation
                 _increment = -1;
         }
 
-        Object IEnumerator.Current
+        object IEnumerator.Current
         {
             get { return Current; }
         }

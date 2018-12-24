@@ -662,7 +662,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Object baseObject = mshObject.BaseObject;
+            object baseObject = mshObject.BaseObject;
             if (!_notypeinformation)
                 WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, baseObject.GetType().ToString());
         }

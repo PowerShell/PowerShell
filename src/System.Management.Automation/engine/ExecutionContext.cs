@@ -380,7 +380,7 @@ namespace System.Management.Automation
         internal bool HasRunspaceEverUsedConstrainedLanguageMode { get; private set; }
 
         /// <summary>
-        /// Indicate if a parameter binding is happening that transitions the execution from ConstrainedLanguage 
+        /// Indicate if a parameter binding is happening that transitions the execution from ConstrainedLanguage
         /// mode to a trusted FullLanguage command.
         /// </summary>
         internal bool LanguageModeTransitionInParameterBinding { get; set; }
@@ -667,7 +667,7 @@ namespace System.Management.Automation
         #endregion
 
         #region FormatAndOutput
-        internal Object FormatInfo { get; set; }
+        internal object FormatInfo { get; set; }
 
         #endregion
 

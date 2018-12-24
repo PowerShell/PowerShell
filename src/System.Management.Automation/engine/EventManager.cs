@@ -641,7 +641,7 @@ namespace System.Management.Automation
         #endregion OnIdleProcessing
 
         private static Dictionary<string, Type> s_generatedEventHandlers = new Dictionary<string, Type>();
-        private void ProcessNewSubscriber(PSEventSubscriber subscriber, Object source, string eventName, string sourceIdentifier, PSObject data, bool supportEvent, bool forwardEvent)
+        private void ProcessNewSubscriber(PSEventSubscriber subscriber, object source, string eventName, string sourceIdentifier, PSObject data, bool supportEvent, bool forwardEvent)
         {
             Delegate handlerDelegate = null;
 
@@ -743,7 +743,7 @@ namespace System.Management.Automation
                 // And create an instance of the type
                 ConstructorInfo constructor =
                     handlerType.GetConstructor(new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
-                Object handler = constructor.Invoke(new object[] { this, source, sourceIdentifier, data });
+                object handler = constructor.Invoke(new object[] { this, source, sourceIdentifier, data });
                 MethodInfo eventDelegate = handlerType.GetMethod("EventDelegate", BindingFlags.Public | BindingFlags.Instance);
                 handlerDelegate = eventDelegate.CreateDelegate(eventInfo.EventHandlerType, handler);
 
@@ -1882,7 +1882,7 @@ namespace System.Management.Automation
         /// Creates an instance of the PSEventSubscriber class for a given source object, event name,
         /// and optional source identifier
         /// </summary>
-        internal PSEventSubscriber(ExecutionContext context, int id, Object source,
+        internal PSEventSubscriber(ExecutionContext context, int id, object source,
             string eventName, string sourceIdentifier, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
             _context = context;
@@ -1913,7 +1913,7 @@ namespace System.Management.Automation
         /// Creates an instance of the PSEventSubscriber
         /// class. Additionally supports an Action scriptblock.
         /// </summary>
-        internal PSEventSubscriber(ExecutionContext context, int id, Object source,
+        internal PSEventSubscriber(ExecutionContext context, int id, object source,
             string eventName, string sourceIdentifier, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount) :
             this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
@@ -1942,7 +1942,7 @@ namespace System.Management.Automation
         /// Creates an instance of the PSEventSubscriber
         /// class. Additionally supports an Action scriptblock.
         /// </summary>
-        internal PSEventSubscriber(ExecutionContext context, int id, Object source,
+        internal PSEventSubscriber(ExecutionContext context, int id, object source,
             string eventName, string sourceIdentifier, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount) :
             this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
@@ -1975,7 +1975,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The object to which this event subscription applies
         /// </summary>
-        public Object SourceObject { get; }
+        public object SourceObject { get; }
 
         /// <summary>
         /// The event object to which this event subscription applies
@@ -2110,7 +2110,7 @@ namespace System.Management.Automation
         /// Any additional data you wish to attach to the event
         /// </param>
         /// </summary>
-        public PSEventHandler(PSEventManager eventManager, Object sender, string sourceIdentifier, PSObject extraData)
+        public PSEventHandler(PSEventManager eventManager, object sender, string sourceIdentifier, PSObject extraData)
         {
             this.eventManager = eventManager;
             this.sender = sender;
@@ -2128,7 +2128,7 @@ namespace System.Management.Automation
         /// The sender of the event
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-        protected Object sender;
+        protected object sender;
 
         /// <summary>
         /// An optional identifier that identifies the source of the event
@@ -2215,7 +2215,7 @@ namespace System.Management.Automation
         /// <param name="additionalData">
         /// Additional data attached by the user to this event.
         /// </param>
-        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, Object sender, Object[] originalArgs, PSObject additionalData)
+        internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, object sender, Object[] originalArgs, PSObject additionalData)
         {
             // Capture the first EventArgs as SourceEventArgs
             if (originalArgs != null)
@@ -2267,7 +2267,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the object that generated this event
         /// </summary>
-        public Object Sender { get; }
+        public object Sender { get; }
 
         /// <summary>
         /// Gets the first argument from the original event source that

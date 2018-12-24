@@ -1079,7 +1079,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 string serializedForm = PSSerializer.Serialize(resultObject as CimInstance, depth: 1);
                 object deserializedObject = PSSerializer.Deserialize(serializedForm);
                 object returnObject = (deserializedObject is PSObject) ? (deserializedObject as PSObject).BaseObject : deserializedObject;
-                DebugHelper.WriteLogEx("Deserialized Object is {0}, type {1}", 1, returnObject, returnObject.GetType());
+                DebugHelper.WriteLogEx("Deserialized object is {0}, type {1}", 1, returnObject, returnObject.GetType());
                 return returnObject;
             }
 
