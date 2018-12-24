@@ -264,6 +264,7 @@ namespace System.Diagnostics.Eventing.Reader
                     {
                         _containerChannel = (string)NativeWrapper.EvtGetEventInfo(this.Handle, UnsafeNativeMethods.EvtEventPropertyId.EvtEventPath);
                     }
+
                     return _containerChannel;
                 }
             }
@@ -281,6 +282,7 @@ namespace System.Diagnostics.Eventing.Reader
                     {
                         _matchedQueryIds = (int[])NativeWrapper.EvtGetEventInfo(this.Handle, UnsafeNativeMethods.EvtEventPropertyId.EvtEventQueryIDs);
                     }
+
                     return _matchedQueryIds;
                 }
             }
@@ -335,6 +337,7 @@ namespace System.Diagnostics.Eventing.Reader
                         _levelNameReady = true;
                         _levelName = _cachedMetadataInformation.GetLevelDisplayName(this.ProviderName, _handle);
                     }
+
                     return _levelName;
                 }
             }
@@ -351,6 +354,7 @@ namespace System.Diagnostics.Eventing.Reader
                         _opcodeNameReady = true;
                         _opcodeName = _cachedMetadataInformation.GetOpcodeDisplayName(this.ProviderName, _handle);
                     }
+
                     return _opcodeName;
                 }
             }
@@ -369,6 +373,7 @@ namespace System.Diagnostics.Eventing.Reader
                         _taskNameReady = true;
                         _taskName = _cachedMetadataInformation.GetTaskDisplayName(this.ProviderName, _handle);
                     }
+
                     return _taskName;
                 }
             }
@@ -386,6 +391,7 @@ namespace System.Diagnostics.Eventing.Reader
                     {
                         _keywordsNames = _cachedMetadataInformation.GetKeywordDisplayNames(this.ProviderName, _handle);
                     }
+
                     return _keywordsNames;
                 }
             }
@@ -402,6 +408,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     list.Add(new EventProperty(value));
                 }
+
                 return list;
             }
         }

@@ -225,6 +225,7 @@ namespace Microsoft.PowerShell
                     {
                         Hide();
                     }
+
                     Show();
                 }
                 else

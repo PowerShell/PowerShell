@@ -67,6 +67,7 @@ namespace System.Management.Automation
                 StackFrame frame = frames[i];
                 frameString.Append(frame.ToString());
             }
+
             return frameString.ToString();
         }
 
@@ -87,6 +88,7 @@ namespace System.Management.Automation
                     return s_throwInsteadOfAssert;
                 }
             }
+
             set
             {
                 lock (s_throwInsteadOfAssertLock)
@@ -173,6 +175,7 @@ namespace System.Management.Automation
                     tracer.TraceException(e);
                     throw e;
                 }
+
                 StringBuilder builder = new StringBuilder();
                 builder.Append("ASSERT: ");
                 builder.Append(whyThisShouldNeverHappen);
@@ -192,6 +195,7 @@ namespace System.Management.Automation
                 string assertionMessage = "ASSERT: " + whyThisShouldNeverHappen + "  " + detailMessage + " ";
                 throw new AssertException(assertionMessage);
             }
+
             System.Diagnostics.Debug.Fail(whyThisShouldNeverHappen, detailMessage);
 #endif
         }

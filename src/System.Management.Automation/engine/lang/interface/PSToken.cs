@@ -83,18 +83,22 @@ namespace System.Management.Automation
             {
                 return PSTokenType.Command;
             }
+
             if ((token.TokenFlags & TokenFlags.MemberName) != 0)
             {
                 return PSTokenType.Member;
             }
+
             if ((token.TokenFlags & TokenFlags.AttributeName) != 0)
             {
                 return PSTokenType.Attribute;
             }
+
             if ((token.TokenFlags & TokenFlags.TypeName) != 0)
             {
                 return PSTokenType.Type;
             }
+
             return s_tokenKindMapping[(int)token.Kind];
         }
 

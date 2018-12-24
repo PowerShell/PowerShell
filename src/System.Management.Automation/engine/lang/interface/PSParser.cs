@@ -184,6 +184,7 @@ namespace System.Management.Automation
                     sb.AppendLine(obj.ToString());
                 }
             }
+
             return Tokenize(sb.ToString(), out errors);
         }
 

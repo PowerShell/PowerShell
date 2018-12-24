@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException(nameof(moduleName));
             }
+
             this.Name = moduleName;
             // Alias name of miniumVersion
             this.Version = null;
@@ -120,6 +121,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             badKeys.Append(", ");
                         }
+
                         badKeys.Append("'");
                         badKeys.Append(entry.Key.ToString());
                         badKeys.Append("'");
@@ -163,6 +165,7 @@ namespace Microsoft.PowerShell.Commands
                 message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaximumVersion", "RequiredVersion");
                 return new ArgumentException(message);
             }
+
             return null;
         }
 
@@ -210,6 +213,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append("'");
                 }
+
                 if (MaximumVersion != null)
                 {
                     moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append("'");

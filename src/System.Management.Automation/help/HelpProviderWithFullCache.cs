@@ -35,6 +35,7 @@ namespace System.Management.Automation
             {
                 LoadCache();
             }
+
             this.CacheFullyLoaded = true;
 
             return base.ExactMatchHelp(helpRequest);
@@ -67,6 +68,7 @@ namespace System.Management.Automation
             {
                 LoadCache();
             }
+
             this.CacheFullyLoaded = true;
 
             return base.SearchHelp(helpRequest, searchOnlyContent);

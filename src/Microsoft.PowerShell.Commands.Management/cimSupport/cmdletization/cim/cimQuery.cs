@@ -97,6 +97,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return "TRUE"; // based on http://msdn.microsoft.com/library/aa394054(VS.85).aspx
                 }
+
                 return "FALSE"; // based on http://msdn.microsoft.com/library/aa394054(VS.85).aspx
             }
 
@@ -317,6 +318,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 throw new ArgumentNullException("optionName");
             }
+
             if (optionValue == null)
             {
                 throw new ArgumentNullException("optionValue");
@@ -360,6 +362,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return CimCmdletAdapter.GetSessionOfOriginFromCimInstance(_associatedObject);
             }
+
             return null;
         }
 

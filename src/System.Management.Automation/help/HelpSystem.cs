@@ -250,6 +250,7 @@ namespace System.Management.Automation
             {
                 return _searchPaths;
             }
+
             _searchPaths = new Collection<string>();
 
             // add loaded modules paths to the search path

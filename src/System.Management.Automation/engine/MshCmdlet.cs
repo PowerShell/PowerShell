@@ -260,6 +260,7 @@ namespace System.Management.Automation
             {
                 return _commandRuntime.PipelineProcessor.ExecutionFailed;
             }
+
             set
             {
                 _commandRuntime.PipelineProcessor.ExecutionFailed = value;
@@ -442,6 +443,7 @@ namespace System.Management.Automation
             {
                 throw e;
             }
+
             if (cmdletType == null)
             {
                 return null;
@@ -454,6 +456,7 @@ namespace System.Management.Automation
                 if (ca != null)
                     break;
             }
+
             if (ca == null)
             {
                 throw PSTraceSource.NewNotSupportedException();
@@ -705,6 +708,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("scriptBlock");
             }
+
             if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("sessionState");
@@ -972,10 +976,12 @@ namespace System.Management.Automation
                             _pagingParameters = mshCommandRuntime.PagingParameters ?? new PagingParameters(mshCommandRuntime);
                         }
                     }
+
                     return _pagingParameters;
                 }
             }
         }
+
         private PagingParameters _pagingParameters;
 
         #region InvokeCommand

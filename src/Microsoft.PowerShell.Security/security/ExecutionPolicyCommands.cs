@@ -35,8 +35,10 @@ namespace Microsoft.PowerShell.Commands
         public ExecutionPolicyScope Scope
         {
             get { return _executionPolicyScope; }
+
             set { _executionPolicyScope = value; _scopeSpecified = true; }
         }
+
         private ExecutionPolicyScope _executionPolicyScope = ExecutionPolicyScope.LocalMachine;
         private bool _scopeSpecified = false;
 
@@ -48,8 +50,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter List
         {
             get { return _list; }
+
             set { _list = value; }
         }
+
         private bool _list;
 
         /// <summary>
@@ -122,8 +126,10 @@ namespace Microsoft.PowerShell.Commands
         public ExecutionPolicy ExecutionPolicy
         {
             get { return _executionPolicy; }
+
             set { _executionPolicy = value; }
         }
+
         private ExecutionPolicy _executionPolicy;
 
         /// <summary>
@@ -133,8 +139,10 @@ namespace Microsoft.PowerShell.Commands
         public ExecutionPolicyScope Scope
         {
             get { return _executionPolicyScope; }
+
             set { _executionPolicyScope = value; }
         }
+
         private ExecutionPolicyScope _executionPolicyScope = ExecutionPolicyScope.LocalMachine;
 
         /// <summary>
@@ -148,11 +156,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private SwitchParameter _force;
 
         /// <summary>

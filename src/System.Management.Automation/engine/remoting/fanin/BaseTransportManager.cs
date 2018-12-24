@@ -234,6 +234,7 @@ namespace System.Management.Automation.Remoting
         internal TypeTable TypeTable
         {
             get { return Fragmentor.TypeTable; }
+
             set { Fragmentor.TypeTable = value; }
         }
 
@@ -1137,6 +1138,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdText.Append(cmd.CommandText);
                 cmdText.Append(" | ");
             }
+
             cmdText.Remove(cmdText.Length - 3, 3); // remove ending " | "
 
             RemoteDataObject message;

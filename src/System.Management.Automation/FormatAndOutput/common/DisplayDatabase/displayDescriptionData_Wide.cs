@@ -163,6 +163,7 @@ namespace System.Management.Automation
             {
                 this.Entries.Add(entryItem);
             }
+
             this.Columns = columns;
         }
 

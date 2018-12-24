@@ -56,10 +56,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("writer");
             }
+
             if (depth < 1)
             {
                 throw PSTraceSource.NewArgumentException("writer", Serialization.DepthOfOneRequired);
             }
+
             _depth = depth;
             _writer = writer;
             _notypeinformation = notypeinformation;
@@ -152,6 +154,7 @@ namespace System.Management.Automation
                 _firstCall = false;
                 Start();
             }
+
             _writer.WriteEndElement();
             _writer.Flush();
         }
@@ -320,6 +323,7 @@ namespace System.Management.Automation
                 WriteOnePrimitiveKnownType(_writer, property, source, pktInfo);
                 return true;
             }
+
             return false;
         }
 
@@ -349,6 +353,7 @@ namespace System.Management.Automation
                     sourceHandled = true;
                 }
             }
+
             return sourceHandled;
         }
 
@@ -381,6 +386,7 @@ namespace System.Management.Automation
                     {
                         WriteDictionary(dictionary, depth);
                     }
+
                     break;
                 case ContainerType.Stack:
                 case ContainerType.Queue:
@@ -389,11 +395,13 @@ namespace System.Management.Automation
                     {
                         WriteEnumerable(enumerable, depth);
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "All containers should be handled in the switch");
                     }
+
                     break;
             }
 
@@ -523,8 +531,10 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
+
                 derived = derived.GetTypeInfo().BaseType;
             }
+
             return false;
         }
 
@@ -671,6 +681,7 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             return false;
         }
 
@@ -740,6 +751,7 @@ namespace System.Management.Automation
                         specificProperties.Add(property);
                     }
                 }
+
                 SerializeProperties(specificProperties, CustomSerializationStrings.Properties, depth);
                 return;
             }
@@ -862,6 +874,7 @@ namespace System.Management.Automation
                     {
                         break;
                     }
+
                     WriteOneObject(item, null, depth);
                 }
             }

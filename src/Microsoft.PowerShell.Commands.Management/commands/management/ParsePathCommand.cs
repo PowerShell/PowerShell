@@ -336,6 +336,7 @@ namespace Microsoft.PowerShell.Commands
                                         separatorIndex + 1);
                             }
                         }
+
                         break;
 
                     case parentSet:

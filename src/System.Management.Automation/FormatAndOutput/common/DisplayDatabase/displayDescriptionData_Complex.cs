@@ -202,10 +202,12 @@ namespace System.Management.Automation
                 {
                     frame.FirstLineHanging = (uint)-firstLine;
                 }
+
                 foreach (var frameItemToken in frameToken.itemDefinition.formatTokenList)
                 {
                     frame.CustomItems.Add(CustomItemBase.Create(frameItemToken));
                 }
+
                 return frame;
             }
 
@@ -446,6 +448,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             _entryStack.Pop();
             return this;
         }
@@ -457,6 +460,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             _entryStack.Pop();
             return _controlBuilder;
         }

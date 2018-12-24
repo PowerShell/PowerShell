@@ -219,6 +219,7 @@ namespace System.Management.Automation.Runspaces
                             SetupInvokeThread(invokeThread.Worker, true);
                             invokeThread.Start(invokeThreadProcDelegate);
                         }
+
                         break;
                     }
 
@@ -242,6 +243,7 @@ namespace System.Management.Automation.Runspaces
                             Thread.CurrentThread.CurrentCulture = oldCurrentCulture;
                             Thread.CurrentThread.CurrentUICulture = oldCurrentUICulture;
                         }
+
                         break;
                     }
 
@@ -344,6 +346,7 @@ namespace System.Management.Automation.Runspaces
                         SetHadErrors(true);
                         Runspace.ExecutionContext.AppendDollarError(ex);
                     }
+
                     throw;
                 }
 
@@ -903,6 +906,7 @@ namespace System.Management.Automation.Runspaces
                     commandProcessorBase.RedirectShellErrorOutputPipe = this.RedirectShellErrorOutputPipe;
                     pipelineProcessor.Add(commandProcessorBase);
                 }
+
                 return pipelineProcessor;
             }
             catch (RuntimeException)
@@ -1036,6 +1040,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return;
             }
+
             if (AddToHistory)
             {
                 _historyIdForThisPipeline = LocalRunspace.History.AddEntry(InstanceId, HistoryString, PipelineState, _pipelineStartTime, DateTime.Now, false);
@@ -1082,6 +1087,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return null;
             }
+
             return runspace.ExecutionContext;
         }
 
@@ -1334,6 +1340,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _stopping;
             }
+
             set
             {
                 _stopping = value;
@@ -1350,6 +1357,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("item");
             }
+
             lock (_syncRoot)
             {
                 if (_stopping)
@@ -1357,8 +1365,10 @@ namespace System.Management.Automation.Runspaces
                     PipelineStoppedException e = new PipelineStoppedException();
                     throw e;
                 }
+
                 _stack.Push(item);
             }
+
             item.LocalPipeline = _localPipeline;
         }
 
@@ -1402,6 +1412,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     return;
                 }
+
                 _stopping = true;
 
                 copyStack = _stack.ToArray();

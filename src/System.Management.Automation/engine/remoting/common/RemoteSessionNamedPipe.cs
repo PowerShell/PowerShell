@@ -475,7 +475,9 @@ namespace System.Management.Automation.Remoting
             CommonSecurityDescriptor securityDesc)
         {
             if (serverName == null) { throw new PSArgumentNullException("serverName"); }
+
             if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
+
             if (coreName == null) { throw new PSArgumentNullException("coreName"); }
 
 #if !UNIX
@@ -567,6 +569,7 @@ namespace System.Management.Automation.Remoting
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -574,6 +577,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -581,6 +585,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -616,6 +621,7 @@ namespace System.Management.Automation.Remoting
                 {
                     throw new InvalidOperationException(RemotingErrorIdStrings.NamedPipeAlreadyListening);
                 }
+
                 IsListenerRunning = true;
 
                 // Create listener thread.
@@ -729,6 +735,7 @@ namespace System.Management.Automation.Remoting
             {
                 ex = e;
             }
+
             if (ex != null)
             {
                 // Error during connection handling.  Don't try to restart listening thread.
@@ -983,6 +990,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -990,6 +998,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -1114,7 +1123,9 @@ namespace System.Management.Automation.Remoting
             string coreName)
         {
             if (serverName == null) { throw new PSArgumentNullException("serverName"); }
+
             if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
+
             if (coreName == null) { throw new PSArgumentNullException("coreName"); }
 
             _pipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;

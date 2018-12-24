@@ -198,6 +198,7 @@ namespace System.Management.Automation
                 {
                     result = obj.ToString();
                 }
+
                 return result;
             }
             catch (Exception)
@@ -248,6 +249,7 @@ namespace System.Management.Automation
             {
                 powershell.AddCommand(command);
             }
+
             powershell
                 .AddParameter("ErrorAction", ActionPreference.Ignore)
                 .AddParameter("WarningAction", ActionPreference.Ignore)

@@ -353,12 +353,14 @@ namespace System.Management.Automation
             {
                 return _host;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Host");
                 }
+
                 _host = value;
             }
         }
@@ -660,6 +662,7 @@ namespace System.Management.Automation
             {
                 _runspacePool = (RunspacePool)rsConnection;
             }
+
             Dbg.Assert(_runspacePool != null, "Invalid rsConnection parameter>");
             RemotePowerShell = new ClientRemotePowerShell(this, _runspacePool.RemoteRunspacePoolInternal);
         }
@@ -831,6 +834,7 @@ namespace System.Management.Automation
                     {
                         throw new InvalidOperationException(PowerShellStrings.NoDefaultRunspaceForPSCreate);
                     }
+
                     result = new PowerShell(new PSCommand(), null, Runspace.DefaultRunspace);
                     result.IsChild = true;
                     result.IsNested = true;
@@ -1129,6 +1133,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
+
             Command cmd = new Command(commandInfo);
             _psCommand.AddCommand(cmd);
             return this;
@@ -1426,6 +1431,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Command");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1468,6 +1474,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1502,6 +1509,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1535,6 +1543,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1568,6 +1577,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1604,6 +1614,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1640,6 +1651,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1798,6 +1810,7 @@ namespace System.Management.Automation
                     RemotePowerShell.Clear();
                     RemotePowerShell.Dispose();
                 }
+
                 RemotePowerShell = new ClientRemotePowerShell(this, remoteRunspace.RunspacePool.RemoteRunspacePoolInternal);
             }
 
@@ -1859,9 +1872,11 @@ namespace System.Management.Automation
                                 RemotePowerShell.Clear();
                                 RemotePowerShell.Dispose();
                             }
+
                             RemotePowerShell = new
                                 ClientRemotePowerShell(this, _runspacePool.RemoteRunspacePoolInternal);
                         }
+
                         _runspace = null;
                     }
                 }
@@ -1979,6 +1994,7 @@ namespace System.Management.Automation
                         OutputBuffer = new PSDataCollection<PSObject>();
                         OutputBufferOwner = true;
                     }
+
                     streamToUse = OutputBuffer;
 
                     ObjectStreamBase outputStream = new PSDataCollectionStream<PSObject>(InstanceId, streamToUse);
@@ -2052,6 +2068,7 @@ namespace System.Management.Automation
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
 
@@ -2169,8 +2186,10 @@ namespace System.Management.Automation
                     {
                         settings = new PSInvocationSettings();
                     }
+
                     settings.AddToHistory = true;
                 }
+
                 Invoke<PSObject>(input, output, settings);
             }
         }
@@ -2770,6 +2789,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("output");
             }
+
             CoreInvoke<TInput, TOutput>(input, output, settings);
         }
 
@@ -3416,6 +3436,7 @@ namespace System.Management.Automation
                 {
                     throw exception.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
         }
@@ -3935,6 +3956,7 @@ namespace System.Management.Automation
                         {
                             return;
                         }
+
                         break;
                     case PSInvocationState.Stopping:
                         // We are in stopping state and we should not honor Running state
@@ -3949,6 +3971,7 @@ namespace System.Management.Automation
                         {
                             copyStateInfo = new PSInvocationStateInfo(PSInvocationState.Stopped, stateInfo.Reason);
                         }
+
                         break;
                     default:
                         break;
@@ -4023,6 +4046,7 @@ namespace System.Management.Automation
                             tempStopAsyncResult.Release();
                         }
                     }
+
                     break;
                 case PSInvocationState.Disconnected:
                     try
@@ -4197,8 +4221,10 @@ namespace System.Management.Automation
                 {
                     inputBuffer.Add(o);
                 }
+
                 inputBuffer.Complete();
             }
+
             CoreInvoke(inputBuffer, output, settings);
         }
 
@@ -4282,6 +4308,7 @@ namespace System.Management.Automation
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
         }
@@ -4546,6 +4573,7 @@ namespace System.Management.Automation
                                         inputStream = new ObjectStream();
                                         inputStream.Close();
                                     }
+
                                     RemotePowerShell.Initialize(
                                         inputStream, new PSDataCollectionStream<TOutput>(InstanceId, output),
                                                 new PSDataCollectionStream<ErrorRecord>(InstanceId, _errorBuffer),
@@ -4557,6 +4585,7 @@ namespace System.Management.Automation
                                     {
                                         RemotePowerShell.InputStream = inputStream;
                                     }
+
                                     if (output != null)
                                     {
                                         RemotePowerShell.OutputStream =
@@ -4594,6 +4623,7 @@ namespace System.Management.Automation
 
                                 throw e;
                             }
+
                             _worker.CreateRunspaceIfNeededAndDoWork(rs, false);
                         }
                         else
@@ -4623,6 +4653,7 @@ namespace System.Management.Automation
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
 
@@ -4796,6 +4827,7 @@ namespace System.Management.Automation
                             _stopAsyncResult = new PowerShellAsyncResult(InstanceId, callback, state, null, false);
                             _stopAsyncResult.SetAsCompleted(null);
                         }
+
                         return _stopAsyncResult;
 
                     case PSInvocationState.Running:
@@ -4824,6 +4856,7 @@ namespace System.Management.Automation
                     // Since object is stopped, allow result wait to end.
                     _invokeAsyncResult.SetAsCompleted(null);
                 }
+
                 _stopAsyncResult.SetAsCompleted(null);
 
                 // Raise event for failed state change.
@@ -5196,6 +5229,7 @@ namespace System.Management.Automation
                             return;
                         _isNotActive = true;
                     }
+
                     _shell.PipelineStateChanged(this,
                             new PipelineStateEventArgs(
                                 new PipelineStateInfo(PipelineState.Failed,
@@ -5314,6 +5348,7 @@ namespace System.Management.Automation
                         {
                             CurrentlyRunningPipeline.StopAsync();
                         }
+
                         return;
                     }
 
@@ -5668,6 +5703,7 @@ namespace System.Management.Automation
             {
                 _worker.GetSettings(out addToHistoryValue, out noInputValue, out apartmentStateValue);
             }
+
             CimProperty addToHistoryProperty = InternalMISerializer.CreateCimProperty("AddToHistory",
                                                                                       addToHistoryValue,
                                                                                       Microsoft.Management.Infrastructure.CimType.Boolean);
@@ -5915,6 +5951,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("context");
             }
+
             if (powerShell == null)
             {
                 throw new ArgumentNullException("powerShell");

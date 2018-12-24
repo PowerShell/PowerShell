@@ -44,6 +44,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         private PSDataCollection<PSObject> _inputObjects = new PSDataCollection<PSObject>();
 
         /// <summary>
@@ -65,6 +66,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         private string _resolvedPath = null;
 
         /// <summary>
@@ -76,6 +78,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         private string _resolvedOutFile = null;
 
         /// <summary>
@@ -204,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         private StringBuilder _contentBuffer = new StringBuilder();
 
         /// <summary>
@@ -225,6 +229,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         private string _resolvedPath = null;
 
         /// <summary>
@@ -316,6 +321,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 recipients.Add(recipient.RecipientIdentifier.Value);
             }
+
             result.Properties.Add(
                 new PSNoteProperty("Recipients", recipients));
             result.Properties.Add(
@@ -346,6 +352,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         private StringBuilder _contentBuffer = new StringBuilder();
 
         /// <summary>
@@ -378,6 +385,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         private string _resolvedPath = null;
 
         /// <summary>
@@ -524,6 +532,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     preContext = actualContent.Substring(0, startIndex);
                 }
+
                 if (endIndex > -1)
                 {
                     postContext = actualContent.Substring(endIndex);
@@ -568,6 +577,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     resultString = preContext + resultString;
                 }
+
                 if (postContext != null)
                 {
                     resultString = resultString + postContext;

@@ -834,10 +834,12 @@ namespace System.Management.Automation.Help
             {
                 values.Add(StringUtil.Format(HelpDisplayStrings.PipelineByValue));
             }
+
             if (paramAttrib.ValueFromPipelineByPropertyName)
             {
                 values.Add(StringUtil.Format(HelpDisplayStrings.PipelineByPropertyName));
             }
+
             if (paramAttrib.ValueFromRemainingArguments)
             {
                 values.Add(StringUtil.Format(HelpDisplayStrings.PipelineFromRemainingArguments));

@@ -61,12 +61,14 @@ namespace Microsoft.PowerShell.Cmdletization
                 {
                     continue;
                 }
+
                 var objectInstance = methodParameter.Value as T;
                 if (objectInstance != null)
                 {
                     result.Add(objectInstance);
                     continue;
                 }
+
                 var objectInstanceArray = methodParameter.Value as IEnumerable;
                 if (objectInstanceArray != null)
                 {
@@ -78,9 +80,11 @@ namespace Microsoft.PowerShell.Cmdletization
                             result.Add(objectInstance2);
                         }
                     }
+
                     continue;
                 }
             }
+
             return result;
         }
     }

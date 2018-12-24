@@ -64,6 +64,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string[] _names;
         private bool _nameContainsWildcard;
 
@@ -84,10 +85,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = Utils.EmptyArray<string>();
                 }
+
                 _verbs = value;
                 _verbPatterns = null;
             }
         }
+
         private string[] _verbs = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -108,10 +111,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = Utils.EmptyArray<string>();
                 }
+
                 _nouns = value;
                 _nounPatterns = null;
             }
         }
+
         private string[] _nouns = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -133,12 +138,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = Utils.EmptyArray<string>();
                 }
+
                 _modules = value;
                 _modulePatterns = null;
 
                 _isModuleSpecified = true;
             }
         }
+
         private string[] _modules = Utils.EmptyArray<string>();
         private bool _isModuleSpecified = false;
 
@@ -160,9 +167,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _moduleSpecifications = value;
                 }
+
                 _isFullyQualifiedModuleSpecified = true;
             }
         }
+
         private ModuleSpecification[] _moduleSpecifications = Utils.EmptyArray<ModuleSpecification>();
         private bool _isFullyQualifiedModuleSpecified = false;
 
@@ -184,6 +193,7 @@ namespace Microsoft.PowerShell.Commands
                 _isCommandTypeSpecified = true;
             }
         }
+
         private CommandTypes _commandType = CommandTypes.All;
         private bool _isCommandTypeSpecified = false;
 
@@ -212,6 +222,7 @@ namespace Microsoft.PowerShell.Commands
                 _usage = value;
             }
         }
+
         private bool _usage;
 
         /// <summary>
@@ -239,8 +250,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter All
         {
             get { return _all; }
+
             set { _all = value; }
         }
+
         private bool _all;
 
         /// <summary>
@@ -260,6 +273,7 @@ namespace Microsoft.PowerShell.Commands
                 _listImported = value;
             }
         }
+
         private bool _listImported;
 
         /// <summary>
@@ -271,6 +285,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] ParameterName
         {
             get { return _parameterNames; }
+
             set
             {
                 if (value == null)
@@ -284,6 +299,7 @@ namespace Microsoft.PowerShell.Commands
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
             }
         }
+
         private Collection<WildcardPattern> _parameterNameWildcards;
         private string[] _parameterNames;
         private HashSet<string> _matchedParameterNames;
@@ -300,6 +316,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _parameterTypes;
             }
+
             set
             {
                 if (value == null)
@@ -317,15 +334,19 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
+
                     if ((i != 0) && (ptn.Type != null) && (ptn.Type.Equals(typeof(object))))
                     {
                         continue;
                     }
+
                     filteredParameterTypes.Add(ptn);
                 }
+
                 _parameterTypes = filteredParameterTypes.ToArray();
             }
         }
+
         private PSTypeName[] _parameterTypes;
 
         #endregion Definitions of cmdlet parameters
@@ -428,6 +449,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
+
                     if (_matchedParameterNames.Contains(requestedParameterName))
                     {
                         continue;
@@ -651,6 +673,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 commandNames.Add("*");
             }
+
             AccumulateMatchingCommands(commandNames);
         }
 
@@ -813,6 +836,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteError(new ErrorRecord(argumentException, "GetCommandInvalidArgument", ErrorCategory.SyntaxError, null));
                     }
+
                     continue;
                 }
                 catch (PathTooLongException pathTooLong)
@@ -821,6 +845,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteError(new ErrorRecord(pathTooLong, "GetCommandInvalidArgument", ErrorCategory.SyntaxError, null));
                     }
+
                     continue;
                 }
                 catch (FileLoadException fileLoadException)
@@ -829,6 +854,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteError(new ErrorRecord(fileLoadException, "GetCommandFileLoadError", ErrorCategory.ReadError, null));
                     }
+
                     continue;
                 }
                 catch (MetadataException metadataException)
@@ -837,6 +863,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteError(new ErrorRecord(metadataException, "GetCommandMetadataError", ErrorCategory.MetadataError, null));
                     }
+
                     continue;
                 }
                 catch (FormatException formatException)
@@ -845,6 +872,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteError(new ErrorRecord(formatException, "GetCommandBadFileFormat", ErrorCategory.InvalidData, null));
                     }
+
                     continue;
                 }
 
@@ -914,6 +942,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 break;
                             }
+
                             _accumulatedResults.Add(c);
                         }
                         // Make sure we don't exceed the TotalCount parameter
@@ -1011,6 +1040,7 @@ namespace Microsoft.PowerShell.Commands
                 // ignore all exceptions when getting parameter metadata (i.e. parse exceptions, dangling alias exceptions)
                 // and proceed as if there was no parameter metadata
             }
+
             if (commandParameters == null)
             {
                 // do not match commands which have not been imported yet / for which we don't have parameter metadata yet
@@ -1027,6 +1057,7 @@ namespace Microsoft.PowerShell.Commands
                         // not breaking out of the loop early, to ensure that _matchedParameterNames gets populated for all command parameters
                     }
                 }
+
                 return foundMatchingParameter;
             }
         }
@@ -1227,6 +1258,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 isDuplicate = true;
             }
+
             return isCommandMatch;
         }
 
@@ -1336,6 +1368,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             return isPresent;
         }
 
@@ -1436,6 +1469,7 @@ namespace Microsoft.PowerShell.Commands
                     hasParameterSet = true;
                     validValues = validateSetAttribute.ValidValues;
                 }
+
                 parameterObj.Properties.Add(new PSNoteProperty("HasParameterSet", hasParameterSet));
                 parameterObj.Properties.Add(new PSNoteProperty("ValidParamSetValues", validValues));
 

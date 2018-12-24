@@ -32,11 +32,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _inputObject;
             }
+
             set
             {
                 _inputObject = value;
             }
         }
+
         private PSObject _inputObject;
 
         /// <summary>
@@ -51,11 +53,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _property;
             }
+
             set
             {
                 _property = value;
             }
         }
+
         private object[] _property;
 
         /// <summary>
@@ -69,11 +73,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _body;
             }
+
             set
             {
                 _body = value;
             }
         }
+
         private string[] _body;
 
         /// <summary>
@@ -87,11 +93,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _head;
             }
+
             set
             {
                 _head = value;
             }
         }
+
         private string[] _head;
 
         /// <summary>
@@ -110,11 +118,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _title;
             }
+
             set
             {
                 _title = value;
             }
         }
+
         private string _title = "HTML TABLE";
 
         /// <summary>
@@ -132,11 +142,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _as;
             }
+
             set
             {
                 _as = value;
             }
         }
+
         private string _as = "Table";
 
         /// <summary>
@@ -153,12 +165,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _cssuri;
             }
+
             set
             {
                 _cssuri = value;
                 _cssuriSpecified = true;
             }
         }
+
         private Uri _cssuri;
         private bool _cssuriSpecified;
 
@@ -175,11 +189,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _fragment;
             }
+
             set
             {
                 _fragment = value;
             }
         }
+
         private SwitchParameter _fragment;
 
         /// <summary>
@@ -194,11 +210,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _postContent;
             }
+
             set
             {
                 _postContent = value;
             }
         }
+
         private string[] _postContent;
 
         /// <summary>
@@ -213,11 +231,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _preContent;
             }
+
             set
             {
                 _preContent = value;
             }
         }
+
         private string[] _preContent;
 
         /// <summary>
@@ -232,12 +252,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _meta;
             }
+
             set
             {
                 _meta = value;
                 _metaSpecified = true;
             }
         }
+
         private Hashtable _meta;
         private bool _metaSpecified = false;
 
@@ -253,12 +275,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _charset;
             }
+
             set
             {
                 _charset = value;
                 _charsetSpecified = true;
             }
         }
+
         private string _charset;
         private bool _charsetSpecified = false;
 
@@ -275,11 +299,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _transitional;
             }
+
             set
             {
                 _transitional = true;
             }
         }
+
         private bool _transitional = false;
 
         /// <summary>
@@ -320,6 +346,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 properties = new object[] { "*" };
             }
+
             return processor.ProcessParameters(properties, invocationContext);
         }
 
@@ -345,6 +372,7 @@ namespace Microsoft.PowerShell.Commands
                     resolvedNameProperty.Add(ht);
                 }
             }
+
             _resolvedNameMshParameters = ProcessParameter(resolvedNameProperty.ToArray());
         }
 
@@ -358,14 +386,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, label);
             }
+
             if (alignment != null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, alignment);
             }
+
             if (width != null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, width);
             }
+
             return ht;
         }
 
@@ -380,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return string.Empty;
             }
+
             try
             {
                 return obj.ToString();
@@ -388,6 +420,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // eats exception if safe
             }
+
             return string.Empty;
         }
 
@@ -424,12 +457,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
                 }
+
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
                 WriteObject("<head>");
                 if (_charsetSpecified)
                 {
                     WriteObject("<meta charset=\"" + _charset + "\">");
                 }
+
                 if (_metaSpecified)
                 {
                     List<string> useditems = new List<string>();
@@ -462,29 +497,35 @@ namespace Microsoft.PowerShell.Commands
                                     {
                                         record.SetInvocationInfo(invocationInfo);
                                     }
+
                                     mshCommandRuntime.WriteWarning(record);
                                     WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
                                     break;
                             }
+
                             useditems.Add(s);
                         }
                     }
                 }
+
                 WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);
                 if (_cssuriSpecified)
                 {
                     WriteObject("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _cssuri + "\" />");
                 }
+
                 WriteObject("</head><body>");
                 if (_body != null)
                 {
                     WriteObject(_body, true);
                 }
             }
+
             if (_preContent != null)
             {
                 WriteObject(_preContent, true);
             }
+
             WriteObject("<table>");
             _isTHWritten = false;
             _propertyCollector = new StringCollection();
@@ -509,6 +550,7 @@ namespace Microsoft.PowerShell.Commands
                     COLTag.Append(width);
                     COLTag.Append("\"");
                 }
+
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
                 if (alignment != null)
                 {
@@ -516,6 +558,7 @@ namespace Microsoft.PowerShell.Commands
                     COLTag.Append(alignment);
                     COLTag.Append("\"");
                 }
+
                 COLTag.Append("/>");
             }
 
@@ -584,8 +627,10 @@ namespace Microsoft.PowerShell.Commands
                     string htmlEncodedResult = WebUtility.HtmlEncode(SafeToString(result.Result));
                     Listtag.Append(htmlEncodedResult);
                 }
+
                 Listtag.Append(", ");
             }
+
             if (Listtag.ToString().EndsWith(", ", StringComparison.Ordinal))
             {
                 Listtag.Remove(Listtag.Length - 2, 2);
@@ -634,6 +679,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             _numberObjects++;
             if (!_isTHWritten)
             {

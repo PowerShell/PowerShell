@@ -143,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
                     Process = GetProcessByHostProcessInfo(HostProcessInfo);
                     break;
             }
+
             VerifyProcess(Process);
 
             // Create named pipe runspace for selected process and open.
@@ -697,6 +698,7 @@ namespace Microsoft.PowerShell.Commands
         internal PSHostProcessInfo(string processName, int processId, string appDomainName)
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
+
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
 
 #if !CORECLR

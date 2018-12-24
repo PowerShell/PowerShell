@@ -303,6 +303,7 @@ namespace System.Management.Automation.Remoting
                 _shutdownPluginGCHandle = GCHandle.Alloc(shutdownPlugin);
                 _unmanagedStruct.wsManPluginShutdownPluginCallbackNative = Marshal.GetFunctionPointerForDelegate(shutdownPlugin);
             }
+
             if (!Platform.IsWindows)
             {
                 WSMPluginOperationShutdownDelegate pluginShutDownDelegate = new WSMPluginOperationShutdownDelegate(WSManPluginManagedEntryWrapper.WSManPSShutdown);

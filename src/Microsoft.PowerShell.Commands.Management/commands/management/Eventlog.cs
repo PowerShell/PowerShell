@@ -69,6 +69,7 @@ namespace Microsoft.PowerShell.Commands
         public DateTime After
         {
             get { return _after; }
+
             set
             {
                 _after = value;
@@ -76,6 +77,7 @@ namespace Microsoft.PowerShell.Commands
                 _isFilterSpecified = true;
             }
         }
+
         private DateTime _after;
 
         /// <summary>
@@ -86,6 +88,7 @@ namespace Microsoft.PowerShell.Commands
         public DateTime Before
         {
             get { return _before; }
+
             set
             {
                 _before = value;
@@ -93,6 +96,7 @@ namespace Microsoft.PowerShell.Commands
                 _isFilterSpecified = true;
             }
         }
+
         private DateTime _before;
 
         /// <summary>
@@ -104,12 +108,14 @@ namespace Microsoft.PowerShell.Commands
         public String[] UserName
         {
             get { return _username; }
+
             set
             {
                 _username = value;
                 _isFilterSpecified = true;
             }
         }
+
         private String[] _username;
 
         /// <summary>
@@ -123,12 +129,14 @@ namespace Microsoft.PowerShell.Commands
         public long[] InstanceId
         {
             get { return _instanceIds; }
+
             set
             {
                 _instanceIds = value;
                 _isFilterSpecified = true;
             }
         }
+
         private long[] _instanceIds = null;
 
         /// <summary>
@@ -142,12 +150,14 @@ namespace Microsoft.PowerShell.Commands
         public int[] Index
         {
             get { return _indexes; }
+
             set
             {
                 _indexes = value;
                 _isFilterSpecified = true;
             }
         }
+
         private int[] _indexes = null;
 
         /// <summary>
@@ -162,12 +172,14 @@ namespace Microsoft.PowerShell.Commands
         public string[] EntryType
         {
             get { return _entryTypes; }
+
             set
             {
                 _entryTypes = value;
                 _isFilterSpecified = true;
             }
         }
+
         private string[] _entryTypes = null;
 
         /// <summary>
@@ -181,12 +193,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             { return _sources; }
+
             set
             {
                 _sources = value;
                 _isFilterSpecified = true;
             }
         }
+
         private string[] _sources;
 
         /// <summary>
@@ -201,12 +215,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _message;
             }
+
             set
             {
                 _message = value;
                 _isFilterSpecified = true;
             }
         }
+
         private string _message;
 
         /// <summary>
@@ -231,11 +247,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _asString;
             }
+
             set
             {
                 _asString = value;
             }
         }
+
         private bool _asString /* = false */;
         #endregion Parameters
 
@@ -403,6 +421,7 @@ namespace Microsoft.PowerShell.Commands
                         + ": " + e.Message);
                     throw;
                 }
+
                 if ((entry != null) &&
                 ((lastindex == Int32.MinValue
                   || lastindex - entry.Index == 1)))
@@ -413,6 +432,7 @@ namespace Microsoft.PowerShell.Commands
                         if (!FiltersMatch(entry))
                             continue;
                     }
+
                     if (!AsBaseObject)
                     {
                         //wrapping in PSobject to insert into PStypesnames
@@ -428,9 +448,11 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(entry);
                         matchesfound = true;
                     }
+
                     processed++;
                 }
             }
+
             if (!matchesfound && _isThrowError)
             {
                 Exception Ex = new ArgumentException(StringUtil.Format(EventlogResources.NoEntriesFound, log.Log, string.Empty));
@@ -447,6 +469,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
             }
+
             if (_instanceIds != null)
             {
                 if (!((IList)_instanceIds).Contains(entry.InstanceId))
@@ -454,6 +477,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
             }
+
             if (_entryTypes != null)
             {
                 bool entrymatch = false;
@@ -465,8 +489,10 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
+
                 if (!entrymatch) return entrymatch;
             }
+
             if (_sources != null)
             {
                 bool sourcematch = false;
@@ -476,6 +502,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _isThrowError = false;
                     }
+
                     WildcardPattern wildcardpattern = WildcardPattern.Get(source, WildcardOptions.IgnoreCase);
                     if (wildcardpattern.IsMatch(entry.Source))
                     {
@@ -483,20 +510,24 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
+
                 if (!sourcematch) return sourcematch;
             }
+
             if (_message != null)
             {
                 if (WildcardPattern.ContainsWildcardCharacters(_message))
                 {
                     _isThrowError = false;
                 }
+
                 WildcardPattern wildcardpattern = WildcardPattern.Get(_message, WildcardOptions.IgnoreCase);
                 if (!wildcardpattern.IsMatch(entry.Message))
                 {
                     return false;
                 }
             }
+
             if (_username != null)
             {
                 bool usernamematch = false;
@@ -513,8 +544,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 if (!usernamematch) return usernamematch;
             }
+
             if (_isDateSpecified)
             {
                 _isThrowError = false;
@@ -548,10 +581,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 if (!datematch) return datematch;
             }
+
             return true;
         }
+
         private List<EventLog> GetMatchingLogs(string pattern)
         {
             WildcardPattern wildcardPattern = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
@@ -637,6 +673,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     computer = compName;
                 }
+
                 foreach (string eventString in LogName)
                 {
                     try
@@ -647,10 +684,12 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(er);
                             continue;
                         }
+
                         if (!ShouldProcess(StringUtil.Format(EventlogResources.ClearEventLogWarning, eventString, computer)))
                         {
                             continue;
                         }
+
                         EventLog Log = new EventLog(eventString, compName);
                         Log.Clear();
                     }
@@ -785,6 +824,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _computerName = ComputerName;
             }
+
             try
             {
                 if (!(EventLog.SourceExists(Source, ComputerName)))
@@ -866,12 +906,14 @@ namespace Microsoft.PowerShell.Commands
         public Int32 RetentionDays
         {
             get { return _retention; }
+
             set
             {
                 _retention = value;
                 _retentionSpecified = true;
             }
         }
+
         private Int32 _retention;
         private bool _retentionSpecified = false;
         /// <summary>
@@ -885,12 +927,14 @@ namespace Microsoft.PowerShell.Commands
         public System.Diagnostics.OverflowAction OverflowAction
         {
             get { return _overflowaction; }
+
             set
             {
                 _overflowaction = value;
                 _overflowSpecified = true;
             }
         }
+
         private System.Diagnostics.OverflowAction _overflowaction;
         private bool _overflowSpecified = false;
         /// <summary>
@@ -901,12 +945,14 @@ namespace Microsoft.PowerShell.Commands
         public Int64 MaximumSize
         {
             get { return _maximumKilobytes; }
+
             set
             {
                 _maximumKilobytes = value;
                 _maxkbSpecified = true;
             }
         }
+
         private Int64 _maximumKilobytes;
         private bool _maxkbSpecified = false;
         #endregion Parameters
@@ -941,6 +987,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     computer = compname;
                 }
+
                 foreach (string logname in LogName)
                 {
                     try
@@ -992,6 +1039,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     newLog.ModifyOverflowPolicy(_overflowaction, _minRetention);
                                 }
+
                                 if (_maxkbSpecified)
                                 {
                                     int kiloByte = 1024;
@@ -1021,6 +1069,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteNonTerminatingError(ex, EventlogResources.ValueOutofRange, "ValueOutofRange", ErrorCategory.InvalidData, null, null);
                         }
+
                         continue;
                     }
                 }
@@ -1210,6 +1259,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     computer = compname;
                 }
+
                 try
                 {
                     foreach (string _sourceName in Source)
@@ -1326,6 +1376,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         computer = compName;
                     }
+
                     if (ParameterSetName.Equals("Default"))
                     {
                         foreach (string log in LogName)
@@ -1338,6 +1389,7 @@ namespace Microsoft.PowerShell.Commands
                                     {
                                         continue;
                                     }
+
                                     EventLog.Delete(log, compName);
                                 }
                                 else
@@ -1367,6 +1419,7 @@ namespace Microsoft.PowerShell.Commands
                                     {
                                         continue;
                                     }
+
                                     EventLog.DeleteEventSource(src, compName);
                                 }
                                 else

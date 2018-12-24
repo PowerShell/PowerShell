@@ -1277,6 +1277,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 {
                     SamApi.SamDeleteUser(userHandle);
                 }
+
                 throw;
             }
             finally
@@ -1374,6 +1375,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     Marshal.DestroyStructure<ALIAS_NAME_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
+
                 if (aliasHandle != IntPtr.Zero)
                     status = SamApi.SamCloseHandle(aliasHandle);
             }
@@ -1763,6 +1765,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     Marshal.DestroyStructure<USER_ACCOUNT_NAME_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
+
                 if (userHandle != IntPtr.Zero)
                     status = SamApi.SamCloseHandle(userHandle);
             }
@@ -1998,6 +2001,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     Marshal.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
+
                 if (aliasHandle != IntPtr.Zero)
                     status = SamApi.SamCloseHandle(aliasHandle);
             }
@@ -2200,11 +2204,13 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                  ? sourceUser.AccountExpires.Value.ToFileTime()
                                                  : 0L;
                 }
+
                 if (setFlags.HasFlag(UserProperties.Description))
                 {
                     which |= SamApi.USER_ALL_ADMINCOMMENT;
                     info.AdminComment = new UNICODE_STRING(sourceUser.Description);
                 }
+
                 if (setFlags.HasFlag(UserProperties.Enabled))
                 {
                     which |= SamApi.USER_ALL_USERACCOUNTCONTROL;
@@ -2213,6 +2219,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     else
                         uac |= SamApi.USER_ACCOUNT_DISABLED;
                 }
+
                 if (setFlags.HasFlag(UserProperties.FullName))
                 {
                     which |= SamApi.USER_ALL_FULLNAME;
@@ -2365,6 +2372,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 if (IntPtr.Zero != securityObject)
                     status = SamApi.SamFreeMemory(securityObject);
             }
+
             return rv;
         }
 
@@ -2657,6 +2665,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 if (IntPtr.Zero != sidBytes)
                     status = SamApi.SamFreeMemory(sidBytes);
             }
+
             return sid;
         }
 
@@ -2778,6 +2787,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 {
                     accountName = accountName.Substring(index + 1);
                 }
+
                 return new AccountInfo
                 {
                     AccountName = accountName,
@@ -3196,6 +3206,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 Version ver = new Version(osviex.MajorVersion, osviex.MinorVersion, osviex.BuildNumber, (osviex.ServicePackMajor << 16) | osviex.ServicePackMinor);
                 localOs = new OperatingSystem(ver, osviex.CSDVersion);
             }
+
             return localOs;
 #else
             return Environment.OSVersion;

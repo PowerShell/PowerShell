@@ -90,6 +90,7 @@ namespace System.Management.Automation.Configuration
             {
                 throw new FileNotFoundException(value);
             }
+
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
@@ -109,6 +110,7 @@ namespace System.Management.Automation.Configuration
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
             }
+
             return modulePath;
         }
 
@@ -137,6 +139,7 @@ namespace System.Management.Automation.Configuration
             {
                 execPolicy = rawExecPolicy;
             }
+
             return execPolicy;
         }
 
@@ -257,6 +260,7 @@ namespace System.Management.Automation.Configuration
             {
                 identity = "powershell";
             }
+
             return identity;
         }
 
@@ -277,6 +281,7 @@ namespace System.Management.Automation.Configuration
             {
                 level = PSLevel.Informational;
             }
+
             return level;
         }
 

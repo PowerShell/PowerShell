@@ -137,6 +137,7 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
 
@@ -209,6 +210,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -276,6 +278,7 @@ namespace System.Management.Automation
 
                 return ItemExistsDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
         }
 
@@ -351,6 +354,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -520,6 +524,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1102,6 +1107,7 @@ namespace System.Management.Automation
 
                 return RemoveItemDynamicParameters(providerInstance, providerPaths[0], recurse, newContext);
             }
+
             return null;
         }
 
@@ -1181,6 +1187,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1639,6 +1646,7 @@ namespace System.Management.Automation
                     throw;
                 }
            }
+
            return itemContainer;
 
         }
@@ -2152,6 +2160,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -2849,6 +2858,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -2925,6 +2935,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -3204,6 +3215,7 @@ namespace System.Management.Automation
 
                 return RenameItemDynamicParameters(providerInstance, providerPaths[0], newName, newContext);
             }
+
             return null;
         }
 
@@ -3284,6 +3296,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -3674,6 +3687,7 @@ namespace System.Management.Automation
 
                 return NewItemDynamicParameters(providerInstance, providerPaths[0], type, newItemValue, newContext);
             }
+
             return null;
         }
 
@@ -3757,6 +3771,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -4168,6 +4183,7 @@ namespace System.Management.Automation
                     sourceIsRemote = true;
                     session = dynamicParams.FromSession;
                 }
+
                 if (dynamicParams.ToSession != null)
                 {
                     destinationIsRemote = true;
@@ -4760,6 +4776,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 

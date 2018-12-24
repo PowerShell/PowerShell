@@ -35,6 +35,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _protocolVersion;
             }
+
             set
             {
                 _protocolVersion = value;
@@ -42,7 +43,9 @@ namespace System.Management.Automation.Remoting
         }
 
         internal Version PSVersion { get { return _psversion; } }
+
         internal Version SerializationVersion { get { return _serversion; } }
+
         internal RemotingDestination RemotingDestination { get { return _remotingDestination; } }
 
         /// <summary>
@@ -140,6 +143,7 @@ namespace System.Management.Automation.Remoting
         internal TimeZoneInfo TimeZone
         {
             get { return _timeZone; }
+
             set { _timeZone = value; }
         }
     }
@@ -397,6 +401,7 @@ namespace System.Management.Automation.Remoting
         internal bool UseRunspaceHost
         {
             get { return _useRunspaceHost; }
+
             set { _useRunspaceHost = value; }
         }
 
@@ -442,10 +447,12 @@ namespace System.Management.Automation.Remoting
 
             // Verify that the UI is not null.
             if (host.UI == null) { return; }
+
             isHostUINull = false;
 
             // Verify that the raw UI is not null.
             if (host.UI.RawUI == null) { return; }
+
             isHostRawUINull = false;
         }
     }

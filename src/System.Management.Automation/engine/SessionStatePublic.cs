@@ -120,6 +120,7 @@ namespace System.Management.Automation
         public PSLanguageMode LanguageMode
         {
             get { return _sessionState.LanguageMode; }
+
             set { _sessionState.LanguageMode = value; }
         }
 
@@ -198,6 +199,7 @@ namespace System.Management.Automation
 
                     throw exception;
                 }
+
                 CommandInfo cinfo = valueToCheck as CommandInfo;
                 if (cinfo != null)
                 {
@@ -255,6 +257,7 @@ namespace System.Management.Automation
             {
                 return (obj.Visibility == SessionStateEntryVisibility.Public);
             }
+
             return true;
         }
         /// <summary>
@@ -271,6 +274,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("variable");
             }
+
             return (variable.Visibility == SessionStateEntryVisibility.Public);
         }
         /// <summary>
@@ -287,6 +291,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
+
             return (commandInfo.Visibility == SessionStateEntryVisibility.Public);
         }
 

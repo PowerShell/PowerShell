@@ -42,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
@@ -64,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -73,8 +75,10 @@ namespace Microsoft.PowerShell.Commands
         protected Signature Signature
         {
             get { return _signature; }
+
             set { _signature = value; }
         }
+
         private Signature _signature;
 
         /// <summary>
@@ -95,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 _sourcePathOrExtension = value;
             }
         }
+
         private string[] _sourcePathOrExtension;
 
         /// <summary>
@@ -106,11 +111,13 @@ namespace Microsoft.PowerShell.Commands
         public byte[] Content
         {
             get { return _content; }
+
             set
             {
                 _content = value;
             }
         }
+
         private byte[] _content;
 
         //
@@ -325,6 +332,7 @@ namespace Microsoft.PowerShell.Commands
                 _certificate = value;
             }
         }
+
         private X509Certificate2 _certificate;
 
         /// <summary>
@@ -351,6 +359,7 @@ namespace Microsoft.PowerShell.Commands
                 _includeChain = value;
             }
         }
+
         private string _includeChain = "notroot";
 
         /// <summary>
@@ -372,9 +381,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = String.Empty;
                 }
+
                 _timestampServer = value;
             }
         }
+
         private string _timestampServer = string.Empty;
 
         /// <summary>
@@ -395,6 +406,7 @@ namespace Microsoft.PowerShell.Commands
                 _hashAlgorithm = value;
             }
         }
+
         private string _hashAlgorithm = null;
 
         /// <summary>
@@ -407,11 +419,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>

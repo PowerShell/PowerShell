@@ -51,6 +51,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition Definition
         {
             get { return _jobDefinition; }
+
             internal set { _jobDefinition = value; }
         }
 
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         internal bool AllowSetShouldExit
         {
             get { return _allowSetShouldExit; }
+
             set { _allowSetShouldExit = value; }
         }
 
@@ -138,10 +140,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentNullException("command");
             }
+
             if (name == null)
             {
                 throw new PSArgumentNullException("name");
             }
+
             if (jobDefinition == null)
             {
                 throw new PSArgumentNullException("jobDefinition");
@@ -737,10 +741,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                         _runspace = null;
                     }
                 }
+
                 if (disposePowerShell != null)
                 {
                     disposePowerShell.Dispose();
                 }
+
                 if (disposeRunspace != null)
                 {
                     disposeRunspace.Dispose();
@@ -1011,26 +1017,32 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     throw new PSArgumentNullException("output");
                 }
+
                 if (error == null)
                 {
                     throw new PSArgumentNullException("error");
                 }
+
                 if (warning == null)
                 {
                     throw new PSArgumentNullException("warning");
                 }
+
                 if (verbose == null)
                 {
                     throw new PSArgumentNullException("verbose");
                 }
+
                 if (progress == null)
                 {
                     throw new PSArgumentNullException("progress");
                 }
+
                 if (debug == null)
                 {
                     throw new PSArgumentNullException("debug");
                 }
+
                 if (information == null)
                 {
                     throw new PSArgumentNullException("information");
@@ -1224,6 +1236,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 _startTime = null;
             }
+
             DateTime stopTime = info.GetDateTime("Status_StopTime");
             if (stopTime != DateTime.MinValue)
             {
@@ -1262,6 +1275,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 info.AddValue("Status_StartTime", DateTime.MinValue);
             }
+
             if (_stopTime != null)
             {
                 info.AddValue("Status_StopTime", _stopTime);

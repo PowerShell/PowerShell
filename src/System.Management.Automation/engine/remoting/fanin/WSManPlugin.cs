@@ -441,6 +441,7 @@ namespace System.Management.Automation.Remoting
                     //this will called OperationComplete
                     PerformCloseOperation(context);
                 }
+
                 return;
             }
 
@@ -562,6 +563,7 @@ namespace System.Management.Automation.Remoting
                     count = _activeShellSessions.Count;
                 }
             }
+
             if (-1 != count)
             {
                 // Raise session count changed event
@@ -620,6 +622,7 @@ namespace System.Management.Automation.Remoting
                         inputFunctionName));
                 return false;
             }
+
             return true;
         }
 
@@ -1039,6 +1042,7 @@ namespace System.Management.Automation.Remoting
                     {
                         return false;
                     }
+
                     isProtocolVersionDeclared = true;
                 }
 

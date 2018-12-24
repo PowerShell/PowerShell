@@ -100,6 +100,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 _propertyLabels[k] += Separator;
             }
+
             _propertyLabelsDisplayLength += Separator.Length;
         }
 

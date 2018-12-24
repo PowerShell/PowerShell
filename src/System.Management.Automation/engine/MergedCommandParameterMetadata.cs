@@ -151,6 +151,7 @@ namespace System.Management.Automation
                     _aliasedParameters.Add(aliasName, mergedParameter);
                 }
             }
+
             return result;
         }
 
@@ -248,6 +249,7 @@ namespace System.Management.Automation
                     _nextAvailableParameterSetIndex++;
                 }
             }
+
             return index;
         }
 
@@ -326,6 +328,7 @@ namespace System.Management.Automation
                 // Set the bit field in the parameter
                 parameter.Parameter.ParameterSetFlags = parameterSetBitField;
             }
+
             return defaultParameterSetFlag;
         }
 
@@ -378,6 +381,7 @@ namespace System.Management.Automation
                     result = String.Empty;
                 }
             }
+
             return result;
         }
 
@@ -402,6 +406,7 @@ namespace System.Management.Automation
                         return compiledParam.Name;
                 }
             }
+
             return String.Empty;
         }
 
@@ -560,6 +565,7 @@ namespace System.Management.Automation
             {
                 result = matchingParameters[0];
             }
+
             return result;
         }
 
@@ -585,6 +591,7 @@ namespace System.Management.Automation
                     result.Add(parameter);
                 }
             }
+
             return result;
         }
 
@@ -594,6 +601,7 @@ namespace System.Management.Automation
         /// the values are the compiled parameter metadata.
         /// </summary>
         internal IDictionary<string, MergedCompiledCommandParameter> BindableParameters { get { return _bindableParameters; } }
+
         private IDictionary<string, MergedCompiledCommandParameter> _bindableParameters =
             new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
@@ -602,6 +610,7 @@ namespace System.Management.Automation
         /// the alias name and the value is the MergedCompiledCommandParameter metadata.
         /// </summary>
         internal IDictionary<string, MergedCompiledCommandParameter> AliasedParameters { get { return _aliasedParameters; } }
+
         private IDictionary<string, MergedCompiledCommandParameter> _aliasedParameters =
             new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 

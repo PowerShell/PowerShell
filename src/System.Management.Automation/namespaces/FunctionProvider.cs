@@ -202,6 +202,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             modifiedItem = SessionState.Internal.SetFunction(name, scriptBlockValue, null, Force, Context.Origin);
                         }
+
                         break;
                     }
 
@@ -232,6 +233,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             modifiedItem = SessionState.Internal.SetFunction(name, scriptBlock, null, Force, Context.Origin);
                         }
+
                         break;
                     }
 
@@ -360,12 +362,14 @@ namespace Microsoft.PowerShell.Commands
         public ScopedItemOptions Options
         {
             get { return _options; }
+
             set
             {
                 _optionsSet = true;
                 _options = value;
             }
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
@@ -376,6 +380,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _optionsSet; }
         }
+
         private bool _optionsSet;
     }
 }

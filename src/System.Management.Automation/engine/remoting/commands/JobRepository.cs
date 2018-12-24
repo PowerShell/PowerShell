@@ -23,6 +23,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException(_identifier);
             }
+
             lock (_syncObject)
             {
                 Guid instanceId = GetKey(item);
@@ -48,6 +49,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException(_identifier);
             }
+
             lock (_syncObject)
             {
                 Guid instanceId = GetKey(item);

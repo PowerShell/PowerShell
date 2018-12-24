@@ -43,6 +43,7 @@ namespace System.Management.Automation
             // And initialize the module path...
             SetModulePath();
         }
+
         private readonly ExecutionContext _context;
 
         // Holds the module collection...
@@ -71,6 +72,7 @@ namespace System.Management.Automation
                 cmdlet.ThrowTerminatingError(er);
             }
         }
+
         internal void DecrementModuleNestingCount()
         {
             --ModuleNestingDepth;
@@ -190,6 +192,7 @@ namespace System.Management.Automation
                             sb = ScriptBlock.Create(_context, sbText);
                     }
                 }
+
                 if (sb == null)
                     throw PSTraceSource.NewInvalidOperationException();
 
@@ -232,6 +235,7 @@ namespace System.Management.Automation
                     exitCode = (int)ee.Argument;
                     setExitCode = true;
                 }
+
                 result = resultList;
             }
             finally
@@ -273,6 +277,7 @@ namespace System.Management.Automation
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
             if (moduleName == null) { moduleName = String.Empty; }
+
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
 
@@ -330,6 +335,7 @@ namespace System.Management.Automation
                         found[path] = true;
                     }
                 }
+
                 if (_context.EngineSessionState != _context.TopLevelSessionState)
                 {
                     foreach (var pair in _context.TopLevelSessionState.ModuleTable)
@@ -866,6 +872,7 @@ namespace System.Management.Automation
                                                                            ExperimentalFeature.IsEnabled(featureName)));
                             }
                         }
+
                         return expFeatureList.ToArray();
                     }
                 }
@@ -927,6 +934,7 @@ namespace System.Management.Automation
             {
                 ext = Path.GetExtension(fileName);
             }
+
             if (!string.IsNullOrEmpty(ext) && IsPowerShellModuleExtension(ext))
             {
                 return fileName.Substring(0, fileName.Length - ext.Length);
@@ -1059,6 +1067,7 @@ namespace System.Management.Automation
             {
                 result = Environment.ExpandEnvironmentVariables(result);
             }
+
             return result;
         }
 
@@ -1083,6 +1092,7 @@ namespace System.Management.Automation
 
                 // We have to use equality comparison on individual substrings (as opposed to simple 'string.IndexOf' or 'string.Contains')
                 // because of cases like { pathToScan="C:\Temp\MyDir\MyModuleDir", pathToLookFor="C:\Temp" }
+
                 if (string.Equals(goodSubstring, goodPathToLookFor, StringComparison.OrdinalIgnoreCase))
                 {
                     return pos; // match found - return index of it in the 'pathToScan' string
@@ -1218,6 +1228,7 @@ namespace System.Management.Automation
                 {
                     modulePathString.Append(Path.PathSeparator);
                 }
+
                 modulePathString.Append(trimedPath);
             }
 
@@ -1559,6 +1570,7 @@ namespace System.Management.Automation
                         cmdlet.WriteVerbose(message);
                     }
                 }
+
                 SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
             }
 
@@ -1636,6 +1648,7 @@ namespace System.Management.Automation
                         sessionState.ExportedVariables.Add(entry.Value);
                     }
                 }
+
                 SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
             }
 

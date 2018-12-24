@@ -318,6 +318,7 @@ namespace System.Management.Automation
             {
                 return XmlFormatValue;
             }
+
             if (TextFormatValue.StartsWith(fpValue, StringComparison.OrdinalIgnoreCase))
             {
                 return TextFormatValue;
@@ -370,6 +371,7 @@ namespace System.Management.Automation
                     results.Add(list.Current);
                 }
             }
+
             return results;
         }
 

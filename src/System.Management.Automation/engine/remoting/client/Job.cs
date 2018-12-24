@@ -333,6 +333,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("jobStateInfo");
             }
+
             JobStateInfo = jobStateInfo;
             PreviousJobStateInfo = previousJobStateInfo;
         }
@@ -369,6 +370,7 @@ namespace System.Management.Automation
         }
 
         internal int Id { get; private set; }
+
         internal Guid InstanceId { get; private set; }
     }
 
@@ -608,6 +610,7 @@ namespace System.Management.Automation
             {
                 return _name;
             }
+
             set
             {
                 AssertNotDisposed();
@@ -632,6 +635,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return _childJobs;
             }
         }
@@ -663,6 +667,7 @@ namespace System.Management.Automation
         public string PSJobTypeName
         {
             get { return _jobTypeName; }
+
             protected internal set
             {
                 _jobTypeName = value ?? this.GetType().ToString();
@@ -682,12 +687,14 @@ namespace System.Management.Automation
             {
                 return _results;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Results");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -770,6 +777,7 @@ namespace System.Management.Automation
                     return;
                 }
             }
+
             Results.Add(new PSStreamObject(PSStreamObjectType.Error, errorRecord));
         }
 
@@ -909,6 +917,7 @@ namespace System.Management.Automation
                                 {
                                     closureSafeExceptionThrownOnCmdletThread = new OperationCanceledException();
                                 }
+
                                 gotResultEvent.Set();
                             }
                         };
@@ -1007,6 +1016,7 @@ namespace System.Management.Automation
 
                 _jobStreamsLoaded = true;
             }
+
             try
             {
                 DoLoadJobStreams();
@@ -1022,6 +1032,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _jobStreamsLoaded;
 
         /// <summary>
@@ -1071,12 +1082,14 @@ namespace System.Management.Automation
                 LoadJobStreams(); // for delayed loading
                 return _output;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Output");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1105,12 +1118,14 @@ namespace System.Management.Automation
                 LoadJobStreams(); // for delayed loading
                 return _error;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1139,12 +1154,14 @@ namespace System.Management.Automation
                 LoadJobStreams(); // for delayed loading
                 return _progress;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1170,12 +1187,14 @@ namespace System.Management.Automation
                 LoadJobStreams(); // for delayed loading
                 return _verbose;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1204,12 +1223,14 @@ namespace System.Management.Automation
                 LoadJobStreams(); // for delayed loading
                 return _debug;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1237,12 +1258,14 @@ namespace System.Management.Automation
                 LoadJobStreams(); // for delayed loading
                 return _warning;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1271,12 +1294,14 @@ namespace System.Management.Automation
                 LoadJobStreams(); // for delayed loading
                 return _information;
             }
+
             set
             {
                 if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
+
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1544,12 +1569,19 @@ namespace System.Management.Automation
             // handle and potentially throw exceptions on the notification thread.  We don't want to
             // propagate those exceptions because it prevents this thread from completing its processing.
             if (_resultsOwner) { try { _results.Complete(); } catch (Exception e) { TraceException(e); } }
+
             if (_outputOwner) { try { _output.Complete(); } catch (Exception e) { TraceException(e); } }
+
             if (_errorOwner) { try { _error.Complete(); } catch (Exception e) { TraceException(e); } }
+
             if (_progressOwner) { try { _progress.Complete(); } catch (Exception e) { TraceException(e); } }
+
             if (_verboseOwner) { try { _verbose.Complete(); } catch (Exception e) { TraceException(e); } }
+
             if (_warningOwner) { try { _warning.Complete(); } catch (Exception e) { TraceException(e); } }
+
             if (_debugOwner) { try { _debug.Complete(); } catch (Exception e) { TraceException(e); } }
+
             if (_informationOwner) { try { _information.Complete(); } catch (Exception e) { TraceException(e); } }
         }
 
@@ -1635,6 +1667,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _isDisposed;
 
         #endregion IDisposable Members
@@ -1793,6 +1826,7 @@ namespace System.Management.Automation
                 //Add the child job to list of child jobs
                 ChildJobs.Add(job);
             }
+
             CommonInit(throttleLimit, runspaceHelpers);
         }
 
@@ -1904,6 +1938,7 @@ namespace System.Management.Automation
                     returnJobList.Add(child);
                 }
             }
+
             return returnJobList;
         }
 
@@ -2145,6 +2180,7 @@ namespace System.Management.Automation
                 {
                     return;
                 }
+
                 _stopIsCalled = true;
             }
 
@@ -2256,6 +2292,7 @@ namespace System.Management.Automation
         internal bool HideComputerName
         {
             get { return _hideComputerName; }
+
             set
             {
                 _hideComputerName = value;
@@ -2269,6 +2306,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _hideComputerName = true;
 
         //ISSUE: Implement StatusMessage
@@ -2389,6 +2427,7 @@ namespace System.Management.Automation
             {
                 return;
             }
+
             if (e.JobStateInfo.State == JobState.Failed)
             {
                 //If any of the child job failed, we set status to failed
@@ -2407,6 +2446,7 @@ namespace System.Management.Automation
                     allChildJobsFinished = true;
                 }
             }
+
             if (allChildJobsFinished)
             {
                 //if any child job failed, set status to failed
@@ -2517,10 +2557,12 @@ namespace System.Management.Automation
                     {
                         StopJob();
                     }
+
                     foreach (Job job in ChildJobs)
                     {
                         job.Dispose();
                     }
+
                     _throttleManager.Dispose();
                 }
                 finally
@@ -2543,6 +2585,7 @@ namespace System.Management.Automation
                     location.Append(job.Location);
                     location.Append(",");
                 }
+
                 location.Remove(location.Length - 1, 1);
             }
 
@@ -2587,6 +2630,7 @@ namespace System.Management.Automation
             {
                 runspaces.Add(job.Runspace as RemoteRunspace);
             }
+
             return runspaces;
         }
 
@@ -2897,6 +2941,7 @@ namespace System.Management.Automation
         internal bool HideComputerName
         {
             get { return _hideComputerName; }
+
             set
             {
                 _hideComputerName = value;
@@ -2910,6 +2955,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _hideComputerName = true;
 
         /// <summary>
@@ -2965,6 +3011,7 @@ namespace System.Management.Automation
         public bool IsAsync
         {
             get { return _isAsync; }
+
             set { _isAsync = true; }
         }
 
@@ -3126,6 +3173,7 @@ namespace System.Management.Automation
                     {
                         SetJobState(JobState.Running);
                     }
+
                     break;
 
                 case PipelineState.Disconnected:
@@ -3181,6 +3229,7 @@ namespace System.Management.Automation
 
             DeterminedAndSetJobState(helper);
         }
+
         private bool _doFinishCalled = false;
 
         /// <summary>
@@ -3265,6 +3314,7 @@ namespace System.Management.Automation
                             "{0},{1}", errorId, failureException.Source);
                     }
                 }
+
                 failureErrorRecord = new ErrorRecord(helper.InternalException,
                        errorId, ErrorCategory.OperationStopped,
                             helper);
@@ -3317,6 +3367,7 @@ namespace System.Management.Automation
                         errorDetails += transException.TransportMessage;
                     }
                 }
+
                 if (failureException == null)
                 {
                     failureException = new RuntimeException(
@@ -3324,6 +3375,7 @@ namespace System.Management.Automation
                             RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
                             runspace.RunspaceStateInfo.State));
                 }
+
                 failureErrorRecord = new ErrorRecord(failureException, targetObject,
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
                                 null, null, null, null, null, errorDetails, null);
@@ -3378,12 +3430,14 @@ namespace System.Management.Automation
                 {
                     return;
                 }
+
                 lock (SyncObject)
                 {
                     if (_isDisposed)
                     {
                         return;
                     }
+
                     _isDisposed = true;
                 }
 
@@ -3419,6 +3473,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             if (!doCleanup) return;
 
             StopAggregateResultsFromHelper(Helper);
@@ -4064,6 +4119,7 @@ namespace System.Management.Automation
                         remoteRS.URIRedirectionReported += HandleURIDirectionReported;
                     }
                 }
+
                 _helpers.Add(helper);
                 AggregateResultsFromHelper(helper);
 
@@ -4331,6 +4387,7 @@ namespace System.Management.Automation
             {
                 powershellsToReturn.Add(ps);
             }
+
             return powershellsToReturn;
         }
 

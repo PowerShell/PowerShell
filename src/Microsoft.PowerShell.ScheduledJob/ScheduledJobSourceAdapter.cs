@@ -931,6 +931,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.ScheduledJobAlreadyExistsInLocal, job.Name, job.InstanceId);
                         throw new ScheduledJobException(msg);
                     }
+
                     _jobs.Add(job.InstanceId, job);
                 }
             }
@@ -952,6 +953,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         _jobs.Remove(job.InstanceId);
                     }
+
                     _jobs.Add(job.InstanceId, job);
                 }
             }
@@ -974,6 +976,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.ScheduledJobNotInRepository, job.Name);
                         throw new ScheduledJobException(msg);
                     }
+
                     _jobs.Remove(job.InstanceId);
                 }
             }
@@ -1058,6 +1061,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                         {
                             continue;
                         }
+
                         DateTime PSBeginTime = job.PSBeginTime ?? DateTime.MinValue;
                         if (definitionName.Equals(job.Definition.Name, StringComparison.OrdinalIgnoreCase) &&
                             jobRun.Year == PSBeginTime.Year &&

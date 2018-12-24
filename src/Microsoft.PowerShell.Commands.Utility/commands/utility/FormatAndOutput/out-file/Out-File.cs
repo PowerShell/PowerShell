@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Commands
         public string FilePath
         {
             get { return _fileName; }
+
             set { _fileName = value; }
         }
 
@@ -59,12 +60,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _fileName;
             }
+
             set
             {
                 _fileName = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -83,8 +86,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Append
         {
             get { return _append; }
+
             set { _append = value; }
         }
+
         private bool _append;
 
         /// <summary>
@@ -94,8 +99,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
+
         private bool _force;
 
         /// <summary>
@@ -106,8 +113,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoClobber
         {
             get { return _noclobber; }
+
             set { _noclobber = value; }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -118,6 +127,7 @@ namespace Microsoft.PowerShell.Commands
         public int Width
         {
             get { return (_width != null) ? _width.Value : 0; }
+
             set { _width = value; }
         }
 
@@ -133,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _suppressNewline;
             }
+
             set
             {
                 _suppressNewline = value;

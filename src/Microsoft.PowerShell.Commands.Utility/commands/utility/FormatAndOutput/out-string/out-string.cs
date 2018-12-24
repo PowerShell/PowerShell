@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Stream
         {
             get { return _stream; }
+
             set { _stream = value; }
         }
 
@@ -39,6 +40,7 @@ namespace Microsoft.PowerShell.Commands
         public int Width
         {
             get { return (_width != null) ? _width.Value : 0; }
+
             set { _width = value; }
         }
 
@@ -51,6 +53,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoNewline
         {
             get { return _noNewLine; }
+
             set { _noNewLine = value; }
         }
 

@@ -1911,6 +1911,7 @@ namespace System.Management.Automation.Security
             catch (Exception)
             {
             }
+
             return DllExists;
         }
     }

@@ -46,6 +46,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("runspace");
             }
+
             _runspace = runspace;
             if (Runspace.DefaultRunspace == null)
             {
@@ -84,6 +85,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
+
             Pipeline p = _runspace.CreatePipeline(script);
             return p.Invoke(input);
         }
@@ -112,6 +114,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
+
             Pipeline p = _runspace.CreatePipeline(script);
             Collection<PSObject> output = p.Invoke(input);
             // 2004/06/30-JonN was ReadAll() which was non-blocking
@@ -151,6 +154,7 @@ namespace System.Management.Automation
                     _runspace = null;
                 }
             }
+
             _disposed = true;
         }
 

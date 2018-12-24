@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// Disable ThrottleLimit parameter inherited from base class.
         /// </summary>
         public new int ThrottleLimit { set { } get { return 0; } }
+
         private ObjectStream _stream;
         private RemoteRunspace _tempRunspace;
 
@@ -153,6 +154,7 @@ namespace Microsoft.PowerShell.Commands
         public override PSCredential Credential
         {
             get { return base.Credential; }
+
             set { base.Credential = value; }
         }
 
@@ -542,6 +544,7 @@ namespace Microsoft.PowerShell.Commands
                     remoteRunspace.CloseAsync();
                 }
                 catch (InvalidRunspaceStateException) { }
+
                 return;
             }
 
@@ -556,6 +559,7 @@ namespace Microsoft.PowerShell.Commands
                         null));
                 return;
             }
+
             host.PopRunspace();
         }
 
@@ -739,6 +743,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     connectionInfo.Credential = Credential;
                 }
+
                 connectionInfo.AuthenticationMechanism = Authentication;
                 UpdateConnectionInfo(connectionInfo);
                 connectionInfo.EnableNetworkAccess = EnableNetworkAccess;
@@ -897,6 +902,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         remoteRunspace = (RemoteRunspace)this.Session.Runspace;
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
@@ -1167,6 +1173,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             targetName = remoteRunspace.ConnectionInfo.ComputerName;
                         }
+
                         break;
 
                     default:

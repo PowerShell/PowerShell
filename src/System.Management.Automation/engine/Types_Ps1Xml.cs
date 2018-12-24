@@ -873,6 +873,7 @@ namespace System.Management.Automation.Runspaces
                 new ScriptPropertyData(@"AccessToString", GetScriptBlock(@"$toString = """";
           $first = $true;
           if ( ! $this.Access ) { return """" }
+
           foreach($ace in $this.Access)
           {
           if($first)
@@ -883,6 +884,7 @@ namespace System.Management.Automation.Runspaces
           {
           $tostring += ""`n"";
           }
+
           $toString += $ace.IdentityReference.ToString();
           $toString += "" "";
           $toString += $ace.AccessControlType.ToString();
@@ -896,11 +898,13 @@ namespace System.Management.Automation.Runspaces
           $toString += $ace.RegistryRights.ToString();
           }
           }
+
           return $toString;"), null));
             td102.Members.Add("AuditToString",
                 new ScriptPropertyData(@"AuditToString", GetScriptBlock(@"$toString = """";
           $first = $true;
           if ( ! (& { Set-StrictMode -Version 1; $this.audit }) ) { return """" }
+
           foreach($ace in (& { Set-StrictMode -Version 1; $this.audit }))
           {
           if($first)
@@ -911,6 +915,7 @@ namespace System.Management.Automation.Runspaces
           {
           $tostring += ""`n"";
           }
+
           $toString += $ace.IdentityReference.ToString();
           $toString += "" "";
           $toString += $ace.AuditFlags.ToString();
@@ -924,6 +929,7 @@ namespace System.Management.Automation.Runspaces
           $toString += $ace.RegistryRights.ToString();
           }
           }
+
           return $toString;"), null));
             yield return td102;
 
@@ -1277,9 +1283,12 @@ namespace System.Management.Automation.Runspaces
             var td165 = new TypeData(@"System.Management.Automation.CallStackFrame", true);
             td165.Members.Add("Command",
                 new ScriptPropertyData(@"Command", GetScriptBlock(@"if ($null -eq $this.InvocationInfo) { return $this.FunctionName }
+
           $commandInfo = $this.InvocationInfo.MyCommand
           if ($null -eq $commandInfo) { return $this.InvocationInfo.InvocationName }
+
           if ($commandInfo.Name -ne """") { return $commandInfo.Name }
+
           return $this.FunctionName"), null));
             td165.Members.Add("Location",
                 new ScriptPropertyData(@"Location", GetScriptBlock(@"$this.GetScriptLocation()"), null));
@@ -1309,6 +1318,7 @@ namespace System.Management.Automation.Runspaces
           {
           $argumentsBuilder.Append(string.Empty, string.Empty)
           }
+
           if ($arg)
           {
           $argumentsBuilder.Append([string]$arg)
@@ -1328,16 +1338,19 @@ namespace System.Management.Automation.Runspaces
             var td166 = new TypeData(@"Microsoft.PowerShell.Commands.PSSessionConfigurationCommands#PSSessionConfiguration", true);
             td166.Members.Add("Permission",
                 new ScriptPropertyData(@"Permission", GetScriptBlock(@"trap { continue; }
+
           $private:sd = $null
           $private:sd = new-object System.Security.AccessControl.CommonSecurityDescriptor $false,$false,$this.SecurityDescriptorSddl
           if ($private:sd)
           {
           # reset trap
           trap { }
+
           $private:dacls = """";
           $private:first = $true
           $private:sd.DiscretionaryAcl | ForEach-Object {
           trap { }
+
           if ($private:first)
           {
           $private:first = $false;
@@ -1346,6 +1359,7 @@ namespace System.Management.Automation.Runspaces
           {
           $private:dacls += "", ""
           }
+
           $private:dacls += $_.SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).ToString() + "" "" + $_.AceType
           } # end of foreach
 
@@ -1971,6 +1985,7 @@ namespace System.Management.Automation.Runspaces
           {
               $suffix = ""-""+$this.PSSemVerPreReleaseLabel
           }
+
           if (![String]::IsNullOrEmpty($this.PSSemVerBuildLabel))
           {
               $suffix += ""+""+$this.PSSemVerBuildLabel

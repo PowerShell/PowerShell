@@ -96,6 +96,7 @@ namespace System.Management.Automation.Language
                        (t_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
             }
         }
+
         [ThreadStatic]
         private static Stack<Dictionary<string, DynamicKeyword>> t_dynamicKeywordsStack;
 
@@ -193,6 +194,7 @@ namespace System.Management.Automation.Language
                 PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
                 throw e;
             }
+
             DynamicKeyword.DynamicKeywords.Remove(name);
         }
 
@@ -247,10 +249,12 @@ namespace System.Management.Automation.Language
             {
                 keyword.Properties.Add(entry.Key, entry.Value);
             }
+
             foreach (KeyValuePair<string, DynamicKeywordParameter> entry in this.Parameters)
             {
                 keyword.Parameters.Add(entry.Key, entry.Value);
             }
+
             return keyword;
         }
 
@@ -320,6 +324,7 @@ namespace System.Management.Automation.Language
                        (_properties = new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase));
             }
         }
+
         private Dictionary<string, DynamicKeywordProperty> _properties;
 
         /// <summary>
@@ -333,6 +338,7 @@ namespace System.Management.Automation.Language
                        (_parameters = new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase));
             }
         }
+
         private Dictionary<string, DynamicKeywordParameter> _parameters;
 
         /// <summary>
@@ -361,6 +367,7 @@ namespace System.Management.Automation.Language
             {
                 return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
             }
+
             return false;
         }
 
@@ -394,6 +401,7 @@ namespace System.Management.Automation.Language
                 else
                     return allowedKeywords;
             }
+
             return null;
         }
     }
@@ -420,6 +428,7 @@ namespace System.Management.Automation.Language
         {
             get { return _attributes ?? (_attributes = new List<string>()); }
         }
+
         private List<string> _attributes;
 
         /// <summary>
@@ -429,6 +438,7 @@ namespace System.Management.Automation.Language
         {
             get { return _values ?? (_values = new List<string>()); }
         }
+
         private List<string> _values;
 
         /// <summary>
@@ -438,6 +448,7 @@ namespace System.Management.Automation.Language
         {
             get { return _valueMap ?? (_valueMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
         }
+
         private Dictionary<string, string> _valueMap;
 
         /// <summary>
@@ -688,12 +699,17 @@ namespace System.Management.Automation.Language
         internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
         internal Token FirstToken { get; private set; }
+
         internal Token LastToken { get; private set; }
+
         private List<Token> RequiresTokens { get; set; }
 
         private bool InCommandMode() { return Mode == TokenizerMode.Command; }
+
         private bool InExpressionMode() { return Mode == TokenizerMode.Expression; }
+
         private bool InTypeNameMode() { return Mode == TokenizerMode.TypeName; }
+
         private bool InSignatureMode() { return Mode == TokenizerMode.Signature; }
 
         internal void Initialize(string fileName, string input, List<Token> tokenList)
@@ -717,13 +733,16 @@ namespace System.Management.Automation.Language
                     {
                         i += 1;
                     }
+
                     lineStartMap.Add(i + 1);
                 }
+
                 if (c == '\n')
                 {
                     lineStartMap.Add(i + 1);
                 }
             }
+
             _currentIndex = 0;
             Mode = TokenizerMode.Command;
 
@@ -779,6 +798,7 @@ namespace System.Management.Automation.Language
             {
                 return '\0';
             }
+
             return _script[current];
         }
 
@@ -797,6 +817,7 @@ namespace System.Management.Automation.Language
             {
                 return '\0';
             }
+
             return _script[_currentIndex];
         }
 
@@ -818,10 +839,12 @@ namespace System.Management.Automation.Language
             {
                 return true;
             }
+
             if (DynamicKeyword.ContainsKeyword(str) && !DynamicKeyword.IsHiddenKeyword(str))
             {
                 return true;
             }
+
             return false;
         }
 
@@ -852,6 +875,7 @@ namespace System.Management.Automation.Language
                         ScanNewline(c);
                         NewToken(TokenKind.NewLine);
                     }
+
                     goto again;
 
                 case ';':
@@ -862,8 +886,10 @@ namespace System.Management.Automation.Language
                             _tokenStart = _currentIndex - 1;
                             NewToken(TokenKind.Semi);
                         }
+
                         goto again;
                     }
+
                     break;
 
                 case '#':
@@ -879,6 +905,7 @@ namespace System.Management.Automation.Language
                         ScanBlockComment();
                         goto again;
                     }
+
                     break;
 
                 case '`':
@@ -890,11 +917,13 @@ namespace System.Management.Automation.Language
                         NewToken(TokenKind.LineContinuation);
                         goto again;
                     }
+
                     if (char.IsWhiteSpace(c1))
                     {
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     UngetChar();
                     break;
 
@@ -904,8 +933,10 @@ namespace System.Management.Automation.Language
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     break;
             }
+
             UngetChar();
         }
 
@@ -918,6 +949,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 SkipChar();
             }
         }
@@ -949,6 +981,7 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
+
             _currentIndex = start - adjustment;
             if (_currentIndex > _script.Length + 1)
             {
@@ -985,6 +1018,7 @@ namespace System.Management.Automation.Language
             {
                 i -= 1;
             }
+
             for (; i >= 0; i--)
             {
                 if (((InternalScriptExtent)tokenList[i].Extent).EndOffset <= start)
@@ -1009,6 +1043,7 @@ namespace System.Management.Automation.Language
                     lastTokenToReplace = i;
                     continue;
                 }
+
                 if (((InternalScriptExtent)TokenList[i].Extent).StartOffset == startOffset)
                 {
                     TokenList.RemoveRange(i, lastTokenToReplace - i + 1);
@@ -1089,6 +1124,7 @@ namespace System.Management.Automation.Language
                         end += 1;
                     }
                 }
+
                 for (; i < end && i < _skippedCharOffsets.Length; ++i)
                 {
                     if (_skippedCharOffsets[i])
@@ -1097,6 +1133,7 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
+
             return new InternalScriptExtent(_positionHelper, start, end);
         }
 
@@ -1132,9 +1169,11 @@ namespace System.Management.Automation.Language
                     {
                         FirstToken = token;
                     }
+
                     LastToken = token;
                     break;
             }
+
             return token;
         }
 
@@ -1204,6 +1243,7 @@ namespace System.Management.Automation.Language
                 {
                     UngetChar();
                 }
+
                 return NewNumberToken(from);
             }
 
@@ -1250,6 +1290,7 @@ namespace System.Management.Automation.Language
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -1360,6 +1401,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingUnicodeEscapeSequenceTerminator),
                             ParserStrings.MissingUnicodeEscapeSequenceTerminator);
                     }
+
                     return s_invalidChar;
                 }
                 else if (i == s_maxNumberOfUnicodeHexDigits)
@@ -1492,6 +1534,7 @@ namespace System.Management.Automation.Language
                         {
                             goto case '\n';
                         }
+
                         goto default;
                     case '\r':
                     case '\n':
@@ -1612,6 +1655,7 @@ namespace System.Management.Automation.Language
                     SkipChar();
                     break;
                 }
+
                 if (c == '\r' || c == '\n')
                 {
                     ScanNewline(c);
@@ -1735,6 +1779,7 @@ namespace System.Management.Automation.Language
                             {
                                 requiredSnapins = new List<PSSnapInSpecification>();
                             }
+
                             break;
                         }
                     }
@@ -1755,6 +1800,7 @@ namespace System.Management.Automation.Language
                                 DiscoveryExceptions.ScriptRequiresInvalidFormat);
                         }
                     }
+
                     if (snapinName != null)
                     {
                         Diagnostics.Assert(PSSnapInInfo.IsPSSnapinIdValid(snapinName), "we shouldn't set snapinName if it wasn't valid");
@@ -1816,6 +1862,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.ParameterCannotHaveArgument,
                         parameter.ParameterName);
                 }
+
                 return;
             }
 
@@ -1848,6 +1895,7 @@ namespace System.Management.Automation.Language
                         shellIDToken);
                     return;
                 }
+
                 if (!(argumentValue is string))
                 {
                     ReportError(argumentAst.Extent,
@@ -1856,6 +1904,7 @@ namespace System.Management.Automation.Language
                         shellIDToken);
                     return;
                 }
+
                 requiredShellId = (string)argumentValue;
             }
             else if (PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
@@ -1868,6 +1917,7 @@ namespace System.Management.Automation.Language
                         PSSnapinToken);
                     return;
                 }
+
                 if (snapinName != null)
                 {
                     ReportError(parameter.Extent,
@@ -1877,6 +1927,7 @@ namespace System.Management.Automation.Language
                         PSSnapinToken);
                     return;
                 }
+
                 if (!PSSnapInInfo.IsPSSnapinIdValid((string)argumentValue))
                 {
                     ReportError(argumentAst.Extent,
@@ -1934,6 +1985,7 @@ namespace System.Management.Automation.Language
                             versionToken);
                         return;
                     }
+
                     snapinVersion = version;
                 }
                 else
@@ -1947,6 +1999,7 @@ namespace System.Management.Automation.Language
                             versionToken);
                         return;
                     }
+
                     requiredVersion = version;
                 }
             }
@@ -1990,6 +2043,7 @@ namespace System.Management.Automation.Language
                             e.Message);
                         return;
                     }
+
                     if (requiredModules == null)
                         requiredModules = new List<ModuleSpecification>();
                     requiredModules.Add(moduleSpecification);
@@ -2022,6 +2076,7 @@ namespace System.Management.Automation.Language
                     requiredAssemblies.Add((string)arg);
                 }
             }
+
             return requiredAssemblies;
         }
 
@@ -2060,6 +2115,7 @@ namespace System.Management.Automation.Language
                         editionToken);
                 }
             }
+
             return requiredEditions;
         }
         #endregion Requires
@@ -2120,8 +2176,10 @@ namespace System.Management.Automation.Language
                     {
                         break;
                     }
+
                     c = GetChar();
                 }
+
                 sb.Append(c);
                 c = GetChar();
             }
@@ -2173,6 +2231,7 @@ namespace System.Management.Automation.Language
                         {
                             scanning = false;
                         }
+
                         break;
 
                     case '`':
@@ -2191,6 +2250,7 @@ namespace System.Management.Automation.Language
                         {
                             sb.Append(c);
                         }
+
                         break;
 
                     case '\0':
@@ -2274,6 +2334,7 @@ namespace System.Management.Automation.Language
                         }
                     }
                 }
+
                 if (c == '{' || c == '}')
                 {
                     // In the format string, we need to double up the curlies because we're
@@ -2281,6 +2342,7 @@ namespace System.Management.Automation.Language
                     // format expression for string.Format.
                     formatSb.Append(c);
                 }
+
                 sb.Append(c);
                 formatSb.Append(c);
             }
@@ -2404,6 +2466,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         break;
                     }
+
                     if (c == '\r' || c == '\n' || (c == '\0' && AtEof()))
                     {
                         UngetChar();
@@ -2452,6 +2515,7 @@ namespace System.Management.Automation.Language
                     // to give a helpful error message.
                     falseFooterOffset = _currentIndex - 1;
                 }
+
                 appendChar(GetChar());  // append the '@'
             }
             else
@@ -2460,6 +2524,7 @@ namespace System.Management.Automation.Language
                 // handle the character.
                 UngetChar();
             }
+
             return false;
         }
 
@@ -2523,6 +2588,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.TerminatorExpectedAtEndOfString,
                                 "'@");
                         }
+
                         flags = TokenFlags.TokenInError;
                         break;
                     }
@@ -2569,6 +2635,7 @@ namespace System.Management.Automation.Language
                             sb.Append('\n');
                             formatSb.Append('\n');
                         }
+
                         if (ScanPossibleHereStringFooter(CharExtensions.IsDoubleQuote, appendChar, ref falseFooterOffset))
                         {
                             // Remove the last newline appended.
@@ -2576,6 +2643,7 @@ namespace System.Management.Automation.Language
                             formatSb.Length = formatLength;
                             break;
                         }
+
                         continue;
                     }
 
@@ -2602,6 +2670,7 @@ namespace System.Management.Automation.Language
                             }
                         }
                     }
+
                     if (c == '{' || c == '}')
                     {
                         // In the format string, we need to double up the curlies because we're
@@ -2609,6 +2678,7 @@ namespace System.Management.Automation.Language
                         // format expression for string.Format.
                         formatSb.Append(c);
                     }
+
                     if (c != '\0' || !AtEof())
                     {
                         sb.Append(c);
@@ -2630,6 +2700,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.TerminatorExpectedAtEndOfString,
                                 "\"@");
                         }
+
                         flags = TokenFlags.TokenInError;
                         break;
                     }
@@ -2673,12 +2744,14 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                     goto end_braced_variable_scan;
                                 }
+
                                 c = Backtick(c1, out char surrogateCharacter);
                                 if (surrogateCharacter != s_invalidChar)
                                 {
                                     sb.Append(c).Append(surrogateCharacter);
                                     continue;
                                 }
+
                                 break;
                             }
                         case '"':
@@ -2693,6 +2766,7 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                     goto end_braced_variable_scan;
                                 }
+
                                 if (c1.IsDoubleQuote())
                                 {
                                     c = c1;
@@ -2702,6 +2776,7 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                 }
                             }
+
                             break;
                         case '{':
                             ReportError(_currentIndex,
@@ -2714,6 +2789,7 @@ namespace System.Management.Automation.Language
                                 UngetChar();
                                 goto end_braced_variable_scan;
                             }
+
                             break;
                     }
 
@@ -2729,6 +2805,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.IncompleteDollarVariableReference),
                         ParserStrings.IncompleteDollarVariableReference);
                 }
+
                 if (name.Length == 0)
                 {
                     if (c == '}')
@@ -2737,6 +2814,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.EmptyVariableReference),
                             ParserStrings.EmptyVariableReference);
                     }
+
                     name = ":Error:";
                 }
 
@@ -2763,6 +2841,7 @@ namespace System.Management.Automation.Language
                     //{
                     //    return NewToken(TokenKind.Unknown);
                     //}
+
                     ReportError(NewScriptExtent(_tokenStart, _currentIndex),
                         nameof(ParserStrings.InvalidBracedVariableReference),
                         ParserStrings.InvalidBracedVariableReference);
@@ -2868,6 +2947,7 @@ namespace System.Management.Automation.Language
                             {
                                 sb.Append(c);
                             }
+
                             break;
 
                         case '\0':
@@ -2911,6 +2991,7 @@ namespace System.Management.Automation.Language
                                 UngetChar();
                                 scanning = false;
                             }
+
                             break;
                     }
                 }
@@ -2937,6 +3018,7 @@ namespace System.Management.Automation.Language
                     errorId = nameof(ParserStrings.InvalidVariableReference);
                     errorMsg = ParserStrings.InvalidVariableReference;
                 }
+
                 ReportError(NewScriptExtent(_tokenStart, _currentIndex), errorId, errorMsg);
             }
 
@@ -2988,6 +3070,7 @@ namespace System.Management.Automation.Language
                         {
                             UngetChar();
                         }
+
                         break;
 
                     case 'a':
@@ -3061,6 +3144,7 @@ namespace System.Management.Automation.Language
                             sb.Insert(0, _script[_tokenStart]); // Insert the '-' that we skipped.
                             return ScanGenericToken(sb);
                         }
+
                         UngetChar();
                         scanning = false;
                         break;
@@ -3075,6 +3159,7 @@ namespace System.Management.Automation.Language
                             UngetChar();
                             scanning = false;
                         }
+
                         break;
                 }
             }
@@ -3104,6 +3189,7 @@ namespace System.Management.Automation.Language
             {
                 return ScanGenericToken(c);
             }
+
             return NewToken(tokenKind);
         }
 
@@ -3116,6 +3202,7 @@ namespace System.Management.Automation.Language
                 sb.Append(c2);
                 return ScanGenericToken(sb);
             }
+
             return NewToken(tokenKind);
         }
 
@@ -3134,6 +3221,7 @@ namespace System.Management.Automation.Language
             {
                 sb.Append(surrogateCharacter);
             }
+
             return ScanGenericToken(sb);
         }
 
@@ -3194,6 +3282,7 @@ namespace System.Management.Automation.Language
                     {
                         formatSb.Append(sb[i]);
                     }
+
                     continue;
                 }
                 else if (c.IsDoubleQuote())
@@ -3208,6 +3297,7 @@ namespace System.Management.Automation.Language
                         continue;
                     }
                 }
+
                 sb.Append(c);
                 formatSb.Append(c);
                 if (c == '{' || c == '}')
@@ -3215,6 +3305,7 @@ namespace System.Management.Automation.Language
                     formatSb.Append(c);
                 }
             }
+
             UngetChar();
 
             var str = GetStringAndRelease(sb);
@@ -3222,12 +3313,14 @@ namespace System.Management.Automation.Language
             {
                 return NewGenericExpandableToken(str, GetStringAndRelease(formatSb), nestedTokens);
             }
+
             Release(formatSb);
 
             if (DynamicKeyword.ContainsKeyword(str) && !DynamicKeyword.IsHiddenKeyword(str))
             {
                 return NewToken(TokenKind.DynamicKeyword);
             }
+
             return NewGenericToken(str);
         }
 
@@ -3271,6 +3364,7 @@ namespace System.Management.Automation.Language
                 signIndex = sb.Length;
                 sb.Append(c);
             }
+
             if (ScanDecimalDigits(sb) == 0)
             {
                 notNumber = true;
@@ -3807,11 +3901,14 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         return null;
                     }
+
                     return NewToken(TokenKind.Dot);
                 }
+
                 UngetChar();
                 return null;
             }
+
             if (c == ':')
             {
                 _tokenStart = _currentIndex;
@@ -3827,11 +3924,14 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         return null;
                     }
+
                     return NewToken(TokenKind.ColonColon);
                 }
+
                 UngetChar();
                 return null;
             }
+
             if (c == '[' && allowLBracket)
             {
                 _tokenStart = _currentIndex;
@@ -3852,12 +3952,14 @@ namespace System.Management.Automation.Language
                 SkipChar();
                 return NewToken(TokenKind.LParen);
             }
+
             if (c == '{')
             {
                 _tokenStart = _currentIndex;
                 SkipChar();
                 return NewToken(TokenKind.LCurly);
             }
+
             return null;
         }
 
@@ -3903,6 +4005,7 @@ namespace System.Management.Automation.Language
                         ScanBlockComment();
                         goto again;
                     }
+
                     UngetChar();
                     break;
 
@@ -3924,6 +4027,7 @@ namespace System.Management.Automation.Language
                     {
                         UngetChar();
                     }
+
                     break;
 
                 default:
@@ -3933,6 +4037,7 @@ namespace System.Management.Automation.Language
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     UngetChar();
                     break;
             }
@@ -3952,8 +4057,10 @@ namespace System.Management.Automation.Language
                     UngetChar();  // Unget the second dot, let ScanGenericToken consume it.
                     return ScanGenericToken('.');
                 }
+
                 return NewToken(TokenKind.DotDot);
             }
+
             if (c.IsDecimalDigit())
             {
                 return ScanNumber('.');
@@ -4019,6 +4126,7 @@ namespace System.Management.Automation.Language
                     if (tokenKind != TokenKind.InlineScript || InWorkflowContext)
                         return NewToken(tokenKind);
                 }
+
                 if (DynamicKeyword.ContainsKeyword(ident) && !DynamicKeyword.IsHiddenKeyword(ident))
                 {
                     return NewToken(TokenKind.DynamicKeyword);
@@ -4052,6 +4160,7 @@ namespace System.Management.Automation.Language
                         {
                             continue;
                         }
+
                         break;
                 }
 
@@ -4079,6 +4188,7 @@ namespace System.Management.Automation.Language
                     UngetChar();
                     break;
                 }
+
                 sb.Append(c);
             }
 
@@ -4156,6 +4266,7 @@ namespace System.Management.Automation.Language
                     UngetChar();
                     return NewGenericToken(GetStringAndRelease(sb));
                 }
+
                 UngetChar();
                 return ScanGenericToken(sb);
             }
@@ -4217,18 +4328,22 @@ namespace System.Management.Automation.Language
                     {
                         return NewToken(TokenKind.AtCurly);
                     }
+
                     if (c1 == '(')
                     {
                         return NewToken(TokenKind.AtParen);
                     }
+
                     if (c1.IsSingleQuote())
                     {
                         return ScanHereStringLiteral();
                     }
+
                     if (c1.IsDoubleQuote())
                     {
                         return ScanHereStringExpandable();
                     }
+
                     UngetChar();
                     if (c1.IsVariableStart())
                     {
@@ -4257,11 +4372,13 @@ namespace System.Management.Automation.Language
                         NewToken(TokenKind.LineContinuation);
                         goto again;
                     }
+
                     if (char.IsWhiteSpace(c1))
                     {
                         SkipWhiteSpace();
                         goto again;
                     }
+
                     if (c1 == '\0' && AtEof())
                     {
                         ReportIncompleteInput(_currentIndex,
@@ -4286,15 +4403,18 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.PlusPlus);
                     }
+
                     if (c1 == '=')
                     {
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.PlusEquals);
                     }
+
                     if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
                     {
                         return ScanNumber(c);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Plus);
 
                 case '-':
@@ -4307,19 +4427,23 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.MinusMinus);
                     }
+
                     if (c1 == '=')
                     {
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.MinusEquals);
                     }
+
                     if (char.IsLetter(c1) || c1 == '_' || c1 == '?')
                     {
                         return ScanParameter();
                     }
+
                     if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
                     {
                         return ScanNumber(c);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Minus);
 
                 case '*':
@@ -4329,6 +4453,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.MultiplyEquals);
                     }
+
                     if (c1 == '>')
                     {
                         SkipChar();
@@ -4338,6 +4463,7 @@ namespace System.Management.Automation.Language
                             SkipChar();
                             return NewFileRedirectionToken(0, append: true, fromSpecifiedExplicitly: false);
                         }
+
                         if (c1 == '&')
                         {
                             SkipChar();
@@ -4347,6 +4473,7 @@ namespace System.Management.Automation.Language
                                 SkipChar();
                                 return NewMergingRedirectionToken(0, 1);
                             }
+
                             UngetChar();
                         }
 
@@ -4362,6 +4489,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.DivideEquals);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Divide);
 
                 case '%':
@@ -4371,6 +4499,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return CheckOperatorInCommandMode(c, c1, TokenKind.RemainderEquals);
                     }
+
                     return CheckOperatorInCommandMode(c, TokenKind.Rem);
 
                 case '$':
@@ -4379,6 +4508,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.DollarParen);
                     }
+
                     return ScanVariable(false, false);
 
                 case '<':
@@ -4388,6 +4518,7 @@ namespace System.Management.Automation.Language
                         ScanBlockComment();
                         goto again;
                     }
+
                     return NewInputRedirectionToken();
 
                 case '>':
@@ -4396,6 +4527,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewFileRedirectionToken(1, append: true, fromSpecifiedExplicitly: false);
                     }
+
                     return NewFileRedirectionToken(1, append: false, fromSpecifiedExplicitly: false);
 
                 case 'a':
@@ -4462,6 +4594,7 @@ namespace System.Management.Automation.Language
                     {
                         return ScanGenericToken('[');
                     }
+
                     return NewToken(TokenKind.LBracket);
                 case ']':
                     return NewToken(TokenKind.RBracket);
@@ -4497,6 +4630,7 @@ namespace System.Management.Automation.Language
                             SkipChar();
                             return NewFileRedirectionToken(c - '0', append: true, fromSpecifiedExplicitly: true);
                         }
+
                         if (c1 == '&')
                         {
                             SkipChar();
@@ -4506,11 +4640,13 @@ namespace System.Management.Automation.Language
                                 SkipChar();
                                 return NewMergingRedirectionToken(c - '0', c1 - '0');
                             }
+
                             UngetChar();
                         }
 
                         return NewFileRedirectionToken(c - '0', append: false, fromSpecifiedExplicitly: true);
                     }
+
                     return ScanNumber(c);
 
                 case '&':
@@ -4519,6 +4655,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.AndAnd);
                     }
+
                     return NewToken(TokenKind.Ampersand);
 
                 case '|':
@@ -4527,6 +4664,7 @@ namespace System.Management.Automation.Language
                         SkipChar();
                         return NewToken(TokenKind.OrOr);
                     }
+
                     return NewToken(TokenKind.Pipe);
 
                 case '!':
@@ -4564,12 +4702,15 @@ namespace System.Management.Automation.Language
                             sb.Append("::");
                             return ScanGenericToken(sb);
                         }
+
                         return NewToken(TokenKind.ColonColon);
                     }
+
                     if (InCommandMode())
                     {
                         return ScanLabel();
                     }
+
                     return this.NewToken(TokenKind.Colon);
 
                 case '\0':
@@ -4577,6 +4718,7 @@ namespace System.Management.Automation.Language
                     {
                         return SaveToken(new Token(NewScriptExtent(_tokenStart + 1, _tokenStart + 1), TokenKind.EndOfInput, TokenFlags.None));
                     }
+
                     return ScanGenericToken(c);
 
                 default:
@@ -4590,6 +4732,7 @@ namespace System.Management.Automation.Language
                     {
                         return ScanIdentifier(c);
                     }
+
                     return ScanGenericToken(c);
             }
         }

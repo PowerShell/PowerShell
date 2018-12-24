@@ -768,6 +768,7 @@ namespace System.Management.Automation.Tracing
             {
                 return PowerShellTraceKeywords.None;
             }
+
             set
             {
                 PowerShellTraceKeywords powerShellTraceKeywords = value;
@@ -818,6 +819,7 @@ namespace System.Management.Automation.Tracing
             {
                 return _keywords;
             }
+
             set
             {
                 _keywords = value;
@@ -1014,6 +1016,7 @@ namespace System.Management.Automation.Tracing
                 {
                     message = errorRecord.ErrorDetails.Message;
                 }
+
                 return DebugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                                message,

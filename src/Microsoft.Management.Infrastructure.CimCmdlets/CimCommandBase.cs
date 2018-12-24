@@ -45,6 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.parameterSetName;
             }
         }
+
         private readonly string parameterSetName = null;
 
         /// <summary>
@@ -57,6 +58,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.mandatory;
             }
         }
+
         private readonly bool mandatory = false;
     }
 
@@ -120,6 +122,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.isDefaultParameterSet;
             }
         }
+
         private readonly bool isDefaultParameterSet = false;
 
         /// <summary>
@@ -132,6 +135,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.mandatoryParameterCount;
             }
         }
+
         private readonly UInt32 mandatoryParameterCount = 0;
 
         /// <summary>
@@ -143,11 +147,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.isValueSet;
             }
+
             set
             {
                 this.isValueSet = value;
             }
         }
+
         private bool isValueSet = false;
 
         /// <summary>
@@ -159,11 +165,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.isValueSetAtBeginProcess;
             }
+
             set
             {
                 this.isValueSetAtBeginProcess = value;
             }
         }
+
         private bool isValueSetAtBeginProcess = false;
 
         /// <summary>
@@ -175,11 +183,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.setMandatoryParameterCount;
             }
+
             set
             {
                 this.setMandatoryParameterCount = value;
             }
         }
+
         private UInt32 setMandatoryParameterCount = 0;
 
         /// <summary>
@@ -191,11 +201,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.setMandatoryParameterCountAtBeginProcess;
             }
+
             set
             {
                 this.setMandatoryParameterCountAtBeginProcess = value;
             }
         }
+
         private UInt32 setMandatoryParameterCountAtBeginProcess = 0;
     }
 
@@ -334,8 +346,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             psEntry.SetMandatoryParameterCountAtBeginProcess++;
                         }
+
                         DebugHelper.WriteLogEx("parameterset name = '{0}'; SetMandatoryParameterCount = '{1}'", 1, parameterDefinitionEntry.ParameterSetName, psEntry.SetMandatoryParameterCount);
                     }
+
                     if (!psEntry.IsValueSet)
                     {
                         psEntry.IsValueSet = true;
@@ -344,8 +358,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             psEntry.IsValueSetAtBeginProcess = true;
                         }
                     }
+
                     nameset.Add(parameterDefinitionEntry.ParameterSetName);
                 }
+
                 this.parametersetNamesList = nameset;
                 if (isBeginProcess)
                 {
@@ -368,6 +384,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             {
                                 psEntry.SetMandatoryParameterCountAtBeginProcess++;
                             }
+
                             DebugHelper.WriteLogEx("parameterset name = '{0}'; SetMandatoryParameterCount = '{1}'",
                                 1,
                                 entry.ParameterSetName,
@@ -375,6 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         }
                     }
                 }
+
                 if (nameset.Count == 0)
                 {
                     throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
@@ -420,12 +438,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         defaultParameterSetName = parameterSetName;
                     }
+
                     if (entry.IsValueSet)
                     {
                         noMandatoryParameterSet.Add(parameterSetName);
                     }
+
                     continue;
                 }
+
                 if ((entry.SetMandatoryParameterCount == entry.MandatoryParameterCount) &&
                     this.parametersetNamesList.Contains(parameterSetName))
                 {
@@ -433,6 +454,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
                     }
+
                     boundParameterSetName = parameterSetName;
                 }
             }
@@ -462,6 +484,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
             }
+
             return boundParameterSetName;
         }
 
@@ -516,6 +539,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     this.parameterBinder.reset();
                 }
             }
+
             DebugHelper.WriteLog("current parameterset is: " + this.parameterSetName, 4);
         }
 
@@ -533,6 +557,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return;
             }
+
             if (this.parameterBinder != null)
             {
                 this.parameterBinder.SetParameter(parameterName, this.AtBeginProcess);
@@ -684,6 +709,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.atBeginProcess;
             }
+
             set
             {
                 this.atBeginProcess = value;
@@ -709,6 +735,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     this.operation = value;
                 }
             }
+
             get
             {
                 return this.operation;
@@ -924,8 +951,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     propList.Append(",");
                 }
+
                 propList.Append(property);
             }
+
             string message = String.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindPropertyFromGivenClass,
                 className, propList);
             PSArgumentOutOfRangeException exception = new PSArgumentOutOfRangeException(
@@ -975,8 +1004,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         ThrowInvalidAuthenticationTypeError(operationName, parameterName, passwordAuthentication);
                         return null;
                 }
+
                 credentials = new CimCredential(impersonatedAuthentication);
             }
+
             DebugHelper.WriteLogEx("return credential {0}", 1, credentials);
             return credentials;
         }

@@ -455,6 +455,7 @@ namespace System.Management.Automation.Internal
 
                 _hRSAKey = new PSSafeCryptKey();
             }
+
             _hSessionKey = new PSSafeCryptKey();
         }
 
@@ -776,6 +777,7 @@ namespace System.Management.Automation.Internal
             {
                 return _canEncrypt;
             }
+
             set
             {
                 _canEncrypt = value;
@@ -864,6 +866,7 @@ namespace System.Management.Automation.Internal
                     {
                         _hSessionKey.Dispose();
                     }
+
                     _hSessionKey = null;
                 }
 
@@ -880,6 +883,7 @@ namespace System.Management.Automation.Internal
                         {
                             _hRSAKey.Dispose();
                         }
+
                         _hRSAKey = null;
                     }
                 }
@@ -892,6 +896,7 @@ namespace System.Management.Automation.Internal
                         {
                             _hProv.Dispose();
                         }
+
                         _hProv = null;
                     }
                 }
@@ -998,6 +1003,7 @@ namespace System.Management.Automation.Internal
                     {
                         data[i] = Marshal.ReadByte(ptr, i);
                     }
+
                     Marshal.ZeroFreeCoTaskMemUnicode(ptr);
 
                     try
@@ -1136,6 +1142,7 @@ namespace System.Management.Automation.Internal
                 {
                     _rsaCryptoProvider.Dispose();
                 }
+
                 _rsaCryptoProvider = null;
 
                 _keyExchangeCompleted.Dispose();
@@ -1247,6 +1254,7 @@ namespace System.Management.Automation.Internal
             {
                 return _session;
             }
+
             set
             {
                 _session = value;

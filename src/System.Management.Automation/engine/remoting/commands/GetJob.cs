@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Id;
             }
+
             set
             {
                 base.Id = value;
@@ -131,12 +132,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobList.AddRange(FindJobsMatchingByName(true, false, true, false));
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByInstanceId(true, false, true, false));
                     }
+
                     break;
 
                 case SessionIdParameterSet:
@@ -152,24 +155,28 @@ namespace Microsoft.PowerShell.Commands
                             jobList.AddRange(JobManager.GetJobs(this, true, false, null));
                         }
                     }
+
                     break;
 
                 case CommandParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByCommand(false));
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByState(false));
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByFilter(false));
                     }
+
                     break;
 
                 default:

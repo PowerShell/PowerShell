@@ -28,8 +28,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             set { _name = value; }
+
             get { return _name; }
         }
+
         private string _name;
 
         /// <summary>
@@ -41,11 +43,13 @@ namespace Microsoft.PowerShell.Commands
         public ScriptBlock ScriptBlock
         {
             get { return _scriptBlock; }
+
             set
             {
                 _scriptBlock = value;
             }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -70,8 +74,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseFunctionPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _functionImportList; }
         }
+
         private string[] _functionImportList = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -96,8 +102,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseCmdletPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _cmdletImportList; }
         }
+
         private string[] _cmdletImportList = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -107,8 +115,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter ReturnResult
         {
             get { return (SwitchParameter)_returnResult; }
+
             set { _returnResult = value; }
         }
+
         private bool _returnResult;
 
         /// <summary>
@@ -118,8 +128,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsCustomObject
         {
             get { return (SwitchParameter)_asCustomObject; }
+
             set { _asCustomObject = value; }
         }
+
         private bool _asCustomObject;
 
         /// <summary>
@@ -131,8 +143,10 @@ namespace Microsoft.PowerShell.Commands
         public object[] ArgumentList
         {
             get { return _arguments; }
+
             set { _arguments = value; }
         }
+
         private object[] _arguments;
 
         /// <summary>
@@ -203,6 +217,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.Modules.DecrementModuleNestingCount();
                 }
+
                 return;
             }
         }

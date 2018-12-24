@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path
         {
             get { return paths; }
+
             set { paths = value; }
         }
 
@@ -36,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath
         {
             get { return paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -51,12 +53,14 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return _property; }
+
             set
             {
                 if (value == null)
                 {
                     value = Utils.EmptyArray<string>();
                 }
+
                 _property = value;
             }
         }
@@ -91,6 +95,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.MovePropertyDynamicParameters(Path[0], propertyName, Destination, propertyName, context);
             }
+
             return InvokeProvider.Property.MovePropertyDynamicParameters(
                 ".",
                 propertyName,

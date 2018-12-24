@@ -318,6 +318,7 @@ namespace System.Management.Automation.Remoting
             {
                 reasonForClose = eventArgs.Exception;
             }
+
             Close(reasonForClose);
         }
 
@@ -641,6 +642,7 @@ namespace System.Management.Automation.Remoting
                 cmdSession.SessionClosed -= new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
                 cmdSession.Close(reasonForClose);
             }
+
             copyCmdSessions.Clear();
         }
 
@@ -666,6 +668,7 @@ namespace System.Management.Automation.Remoting
             {
                 reasonForClose = eventArgs.Reason;
             }
+
             Close(reasonForClose);
         }
 

@@ -424,6 +424,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ReportTrace(string.Format(CultureInfo.InvariantCulture, fmtString, a.Name, s));
                 return true;
             }
+
             return false;
         }
 
@@ -607,6 +608,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     path.Insert(1, sf.node.Name);
                 }
             }
+
             return path.Length > 0 ? path.ToString() : null;
         }
 
@@ -677,10 +679,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _loadingInfo.fileDirectory = info.fileDirectory;
             _loadingInfo.filePath = info.filePath;
         }
+
         protected void SetLoadingInfoIsFullyTrusted(bool isFullyTrusted)
         {
             _loadingInfo.isFullyTrusted = isFullyTrusted;
         }
+
         protected void SetLoadingInfoIsProductCode(bool isProductCode)
         {
             _loadingInfo.isProductCode = isProductCode;

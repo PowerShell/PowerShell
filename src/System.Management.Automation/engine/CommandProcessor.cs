@@ -129,9 +129,11 @@ namespace System.Management.Automation
                 {
                     NewParameterBinderController(this.Command);
                 }
+
                 return _cmdletParameterBinderController;
             }
         }
+
         private CmdletParameterBinderController _cmdletParameterBinderController;
 
         /// <summary>
@@ -141,6 +143,7 @@ namespace System.Management.Automation
         {
             get { return _obsoleteAttribute; }
         }
+
         private ObsoleteAttribute _obsoleteAttribute;
 
         /// <summary>
@@ -391,6 +394,7 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
+
                     exceptionToThrow = rte;
                 }
                 catch (LoopFlowException)
@@ -409,6 +413,7 @@ namespace System.Management.Automation
                 {
                     _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 }
+
                 if (exceptionToThrow != null)
                 {
                     // This cmdlet threw an exception, so
@@ -653,6 +658,7 @@ namespace System.Management.Automation
             {
                 inputToOperateOn = PSObject.AsPSObject(inputObject);
             }
+
             Command.CurrentPipelineObject = inputToOperateOn;
 
             return this.CmdletParameterBinderController.BindPipelineParameters(inputToOperateOn);
@@ -732,6 +738,7 @@ namespace System.Management.Automation
 
                 throw commandException;
             }
+
             if (initError != null)
             {
                 // Log a command health event

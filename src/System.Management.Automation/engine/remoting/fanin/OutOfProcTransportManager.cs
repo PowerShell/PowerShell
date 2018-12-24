@@ -232,6 +232,7 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG);
                         }
+
                         string stream = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE);
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
@@ -267,12 +268,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.DataAckPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG:
                     {
@@ -283,12 +286,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND received, psGuid : " + psGuid.ToString());
                         callbacks.CommandCreationPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG:
                     {
@@ -299,11 +304,13 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.CommandCreationAckReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG:
                     {
@@ -314,12 +321,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE received, psGuid : " + psGuid.ToString());
                         callbacks.ClosePacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG:
                     {
@@ -330,11 +339,13 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.CloseAckPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG:
                     {
@@ -345,12 +356,14 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL received, psGuid : " + psGuid.ToString());
                         callbacks.SignalPacketReceived(psGuid);
                     }
+
                     break;
                 case OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG:
                     {
@@ -361,11 +374,13 @@ namespace System.Management.Automation.Remoting
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG);
                         }
+
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.SignalAckPacketReceived(psGuid);
                     }
+
                     break;
                 default:
                     throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
@@ -1024,6 +1039,7 @@ namespace System.Management.Automation.Remoting.Client
                         _serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
                         _serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
                     }
+
                     _serverProcess.Exited += new EventHandler(OnExited);
 
                     //serverProcess.Start();

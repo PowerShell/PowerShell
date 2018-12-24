@@ -224,6 +224,7 @@ namespace System.Management.Automation
         /// Gets the provider information of the provider that threw an exception.
         /// </summary>
         public ProviderInfo ProviderInfo { get { return _providerInfo; } }
+
         [NonSerialized]
         internal ProviderInfo _providerInfo;
 
@@ -242,9 +243,11 @@ namespace System.Management.Automation
                         ErrorCategory.NotSpecified,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         [NonSerialized]
         private ErrorRecord _errorRecord;
         #endregion Properties
@@ -263,12 +266,14 @@ namespace System.Management.Automation
                 "ProviderInvocationException.RetrieveMessage needs innerException");
                 return string.Empty;
             }
+
             if (String.IsNullOrEmpty(errorId))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs errorId");
                 return RuntimeException.RetrieveMessage(innerException);
             }
+
             if (provider == null)
             {
                 Diagnostics.Assert(false,
@@ -283,6 +288,7 @@ namespace System.Management.Automation
                 "ProviderInvocationException.RetrieveMessage bad errorId " + errorId);
                 return RuntimeException.RetrieveMessage(innerException);
             }
+
             string result = null;
 
             if (path == null)
@@ -304,6 +310,7 @@ namespace System.Management.Automation
                         path,
                         RuntimeException.RetrieveMessage(innerException));
             }
+
             return result;
         }
 
@@ -314,6 +321,7 @@ namespace System.Management.Automation
         {
             get { return (String.IsNullOrEmpty(_message)) ? base.Message : _message; }
         }
+
         [NonSerialized]
         private string _message /* = null */;
 
@@ -499,9 +507,11 @@ namespace System.Management.Automation
                         _errorCategory,
                         _itemName);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
 
         /// <summary>
@@ -511,6 +521,7 @@ namespace System.Management.Automation
         {
             get { return _itemName; }
         }
+
         private string _itemName = String.Empty;
 
         /// <summary>
@@ -520,6 +531,7 @@ namespace System.Management.Automation
         {
             get { return _sessionStateCategory; }
         }
+
         private SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
         #endregion Properties
 
@@ -544,6 +556,7 @@ namespace System.Management.Automation
                 a = new object[1];
                 a[0] = itemName;
             }
+
             return StringUtil.Format(resourceStr, a);
         }
         #endregion Private
@@ -841,6 +854,7 @@ namespace System.Management.Automation
                 return _possibleMatches;
             }
         }
+
         private ReadOnlyCollection<ProviderInfo> _possibleMatches;
 
         #endregion public properties

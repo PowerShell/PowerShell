@@ -20,16 +20,19 @@ namespace Microsoft.PowerShell.Commands
                 expansion = EnumerableExpansion.CoreOnly;
                 return true;
             }
+
             if (String.Equals(expansionString, EnumOnlyString, StringComparison.OrdinalIgnoreCase))
             {
                 expansion = EnumerableExpansion.EnumOnly;
                 return true;
             }
+
             if (String.Equals(expansionString, BothString, StringComparison.OrdinalIgnoreCase))
             {
                 expansion = EnumerableExpansion.Both;
                 return true;
             }
+
             return false;
         }
     }

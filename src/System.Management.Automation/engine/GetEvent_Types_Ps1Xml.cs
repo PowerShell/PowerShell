@@ -81,6 +81,7 @@ namespace System.Management.Automation.Runspaces
               $strPaths += ($ctr.Path + "" :"" + ""`n"")
               $strPaths += ($ctr.CookedValue.ToString() + ""`n`n"")
           }
+
           return $strPaths"), null));
             yield return td7;
 #endif

@@ -116,6 +116,7 @@ namespace System.Management.Automation
                 ErrorRecord errorRecord = new ErrorRecord(exception, "UnKnownCatalogVersion", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
+
             return catalogVersion;
         }
 
@@ -146,6 +147,7 @@ namespace System.Management.Automation
                 ErrorRecord errorRecord = new ErrorRecord(exception, "UnKnownCatalogVersion", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
+
             return hashAlgorithm;
         }
 
@@ -195,6 +197,7 @@ namespace System.Management.Automation
                 fileWriter.WriteLine();
                 fileWriter.WriteLine(cdfFilesContent);
             }
+
             return cdfFilePath;
         }
 
@@ -363,6 +366,7 @@ namespace System.Management.Automation
                     File.Delete(cdfFilePath);
                 }
             }
+
             return null;
         }
 
@@ -465,6 +469,7 @@ namespace System.Management.Automation
                 ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToReadFileToHash, filePath)), "UnableToReadFileToHash", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
+
             return hashValue;
         }
 
@@ -562,6 +567,7 @@ namespace System.Management.Automation
                 ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
+
             return catalogHashes;
         }
 
@@ -675,6 +681,7 @@ namespace System.Management.Automation
                     ProcessPathFile(new FileInfo(folderPath), null, hashAlgorithm, excludedPatterns, ref fileHashes);
                 }
             }
+
             return fileHashes;
         }
 
@@ -718,6 +725,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return Status;
         }
         /// <summary>
@@ -750,10 +758,12 @@ namespace System.Management.Automation
                 {
                     catalog.Status = CatalogValidationStatus.ValidationFailed;
                 }
+
                 catalog.HashAlgorithm = hashAlgorithm;
                 catalog.Signature = SignatureHelper.GetSignature(catalogFilePath, null);
                 return catalog;
             }
+
             return null;
         }
 
@@ -775,6 +785,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return false;
         }
         /// <summary>
@@ -789,6 +800,7 @@ namespace System.Management.Automation
                 case NativeConstants.CRYPTCAT_E_AREA_ATTRIBUTE: break;
                 default: break;
             }
+
             switch (dwLocalError)
             {
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_FILE_PATH:

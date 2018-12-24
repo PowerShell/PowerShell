@@ -94,6 +94,7 @@ namespace Microsoft.PowerShell
                 ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out unused);
                 return foreground;
             }
+
             set
             {
                 if (ConsoleControl.IsConsoleColor(value))
@@ -144,6 +145,7 @@ namespace Microsoft.PowerShell
                 ConsoleControl.WORDToColor(bufferInfo.Attributes, out unused, out background);
                 return background;
             }
+
             set
             {
                 if (ConsoleControl.IsConsoleColor(value))
@@ -190,6 +192,7 @@ namespace Microsoft.PowerShell
                 Coordinates c = new Coordinates(bufferInfo.CursorPosition.X, bufferInfo.CursorPosition.Y);
                 return c;
             }
+
             set
             {
                 // cursor position can't be outside the buffer area
@@ -231,6 +234,7 @@ namespace Microsoft.PowerShell
 
                 return size;
             }
+
             set
             {
                 const int MinCursorSize = 0;
@@ -288,6 +292,7 @@ namespace Microsoft.PowerShell
 
                 return c;
             }
+
             set
             {
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
@@ -351,6 +356,7 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
                 return new Size(bufferInfo.BufferSize.X, bufferInfo.BufferSize.Y);
             }
+
             set
             {
                 // looking in windows/core/ntcon/server/output.c, it looks like the minimum size is 1 row X however many
@@ -409,6 +415,7 @@ namespace Microsoft.PowerShell
 
                 return s;
             }
+
             set
             {
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
@@ -626,6 +633,7 @@ namespace Microsoft.PowerShell
                     cachedKeyEvent.RepeatCount = 0;
                 }
             }
+
             if (cachedKeyEvent.RepeatCount > 0)
             {
                 KEY_EVENT_RECORDToKeyInfo(cachedKeyEvent, out keyInfo);
@@ -779,6 +787,7 @@ namespace Microsoft.PowerShell
                             // represent a keystroke.
                             continue;
                         }
+
                         return true;
                     }
                 }
@@ -808,6 +817,7 @@ namespace Microsoft.PowerShell
             {
                 return ConsoleControl.GetConsoleWindowTitle();
             }
+
             set
             {
                 const int MaxWindowTitleLength = 1023;
@@ -1037,11 +1047,13 @@ namespace Microsoft.PowerShell
                         }
                     }
                 }
+
                 if (lineLength % 2 == 1)
                 {
                     lineLength++;
                 }
             }
+
             for (int row = firstRow; row <= lastRow; ++row)
             {
                 origin.Y = row;
@@ -1222,6 +1234,7 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("str");
             }
+
             return ConsoleControl.LengthInBufferCells(s, offset, parent.SupportsVirtualTerminal);
         }
 
@@ -1357,6 +1370,7 @@ namespace Microsoft.PowerShell
         public override ConsoleColor BackgroundColor
         {
             get { return Console.BackgroundColor; }
+
             set { Console.BackgroundColor = value; }
         }
 
@@ -1376,6 +1390,7 @@ namespace Microsoft.PowerShell
                     ? s_wrapSize
                     : new Size(Console.BufferWidth, Console.BufferHeight);
             }
+
             set { Console.SetBufferSize(value.Width, value.Height); }
         }
 
@@ -1385,6 +1400,7 @@ namespace Microsoft.PowerShell
         public override Coordinates CursorPosition
         {
             get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
+
             set
             {
                 Console.SetCursorPosition(value.X < 0 ? 0 : value.X,
@@ -1401,6 +1417,7 @@ namespace Microsoft.PowerShell
             // Future porting note: this API throws on Windows when output is
             // redirected, but never throws on Unix because it's fake.
             get { return Console.CursorSize; }
+
             set { Console.CursorSize = value; }
         }
 
@@ -1411,6 +1428,7 @@ namespace Microsoft.PowerShell
         public override ConsoleColor ForegroundColor
         {
             get { return Console.ForegroundColor; }
+
             set { Console.ForegroundColor = value; }
         }
 
@@ -1459,6 +1477,7 @@ namespace Microsoft.PowerShell
         public override Coordinates WindowPosition
         {
             get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
+
             set { Console.SetWindowPosition(value.X, value.Y); }
         }
 
@@ -1477,6 +1496,7 @@ namespace Microsoft.PowerShell
                     ? s_wrapSize
                     : new Size(Console.WindowWidth, Console.WindowHeight);
             }
+
             set { Console.SetWindowSize(value.Width, value.Height); }
         }
 
@@ -1688,6 +1708,7 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("str");
             }
+
             return ConsoleControl.LengthInBufferCells(s, offset, _parent.SupportsVirtualTerminal);
         }
     }

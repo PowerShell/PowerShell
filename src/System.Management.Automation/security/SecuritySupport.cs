@@ -176,6 +176,7 @@ namespace System.Management.Automation.Internal
                     {
                         PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.CurrentUser, shellId, executionPolicy);
                     }
+
                     break;
                 }
 
@@ -190,6 +191,7 @@ namespace System.Management.Automation.Internal
                     {
                         PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.AllUsers, shellId, executionPolicy);
                     }
+
                     break;
                 }
             }
@@ -225,6 +227,7 @@ namespace System.Management.Automation.Internal
                 {
                     _hasGpScriptParent = IsCurrentProcessLaunchedByGpScript();
                 }
+
                 return _hasGpScriptParent.Value;
             }
         }
@@ -267,6 +270,7 @@ namespace System.Management.Automation.Internal
                 // our goal here is to not have the Group Policy execution policy
                 // affect logon / logoff scripts.
             }
+
             return foundGpScriptParent;
         }
 
@@ -312,6 +316,7 @@ namespace System.Management.Automation.Internal
                         {
                             return ExecutionPolicy.Undefined;
                         }
+
                         return ParseExecutionPolicy(groupPolicyPreference);
                     }
             }
@@ -645,6 +650,7 @@ namespace System.Management.Automation.Internal
                     {
                         return true;
                     }
+
                     break;
                 }
             }
@@ -762,6 +768,7 @@ namespace System.Management.Automation.Internal
         internal CertificatePurpose Purpose
         {
             get { return _purpose; }
+
             set { _purpose = value; }
         }
 
@@ -771,6 +778,7 @@ namespace System.Management.Automation.Internal
         internal bool SSLServerAuthentication
         {
             get { return _sslServerAuthentication; }
+
             set { _sslServerAuthentication = value; }
         }
 
@@ -821,33 +829,41 @@ namespace System.Management.Automation.Internal
                         {
                             ekuT = ekuT + ",";
                         }
+
                         ekuT = ekuT + _eku[i];
                     }
                 }
+
                 if (_purpose == CertificatePurpose.CodeSigning)
                 {
                     if (ekuT.Length != 0)
                     {
                         ekuT = ekuT + ",";
                     }
+
                     ekuT = ekuT + CodeSigningOid;
                 }
+
                 if (_purpose == CertificatePurpose.DocumentEncryption)
                 {
                     if (ekuT.Length != 0)
                     {
                         ekuT = ekuT + ",";
                     }
+
                     ekuT = ekuT + DocumentEncryptionOid;
                 }
+
                 if (_sslServerAuthentication)
                 {
                     if (ekuT.Length != 0)
                     {
                         ekuT = ekuT + ",";
                     }
+
                     ekuT = ekuT + szOID_PKIX_KP_SERVER_AUTH;
                 }
+
                 if (ekuT.Length != 0)
                 {
                     filterString = AppendFilter(filterString, "eku", ekuT);
@@ -857,6 +873,7 @@ namespace System.Management.Automation.Internal
                         filterString = AppendFilter(filterString, "key", "*");
                     }
                 }
+
                 if (_expiringInDays >= 0)
                 {
                     filterString = AppendFilter(
@@ -869,6 +886,7 @@ namespace System.Management.Automation.Internal
                 {
                     filterString = null;
                 }
+
                 return filterString;
             }
         }
@@ -895,12 +913,14 @@ namespace System.Management.Automation.Internal
                     throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.E_INVALID_DATA);
                 }
+
                 newfilter = name + "=" + newfilter;
                 if (filterString.Length != 0)
                 {
                     newfilter = "&" + newfilter;
                 }
             }
+
             return filterString + newfilter;
         }
 
@@ -1092,6 +1112,7 @@ namespace System.Management.Automation
             _identifier = identifier;
             this.Certificates = new X509Certificate2Collection();
         }
+
         private string _identifier = null;
 
         /// <summary>
@@ -1103,6 +1124,7 @@ namespace System.Management.Automation
             _pendingCertificate = certificate;
             this.Certificates = new X509Certificate2Collection();
         }
+
         private X509Certificate2 _pendingCertificate = null;
 
         /// <summary>
@@ -1709,6 +1731,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         public static bool AmsiUninitializeCalled = false;
         public static bool AmsiInitialized = false;
         public static bool AmsiCleanedUp = false;

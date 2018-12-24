@@ -358,6 +358,7 @@ namespace System.Management.Automation
                 {
                     Input.Add(eventArgs.Data);
                 }
+
                 CheckAndPulseForProcessing(false);
 
                 if (_powershellInput != null)
@@ -451,6 +452,7 @@ namespace System.Management.Automation
                                     break;
                             }
                         }
+
                         break;
 
                     case PSInvocationState.Running:
@@ -472,6 +474,7 @@ namespace System.Management.Automation
                                     break;
                             }
                         }
+
                         break;
 
                     case PSInvocationState.Stopping:
@@ -491,6 +494,7 @@ namespace System.Management.Automation
                                     throw new InvalidOperationException();
                             }
                         }
+
                         break;
 
                     case PSInvocationState.Stopped:

@@ -25,11 +25,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _inputObject;
             }
+
             set
             {
                 _inputObject = value;
             }
         }
+
         private PSObject _inputObject = null;
 
         /// <summary>
@@ -42,11 +44,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _eventName;
             }
+
             set
             {
                 _eventName = value;
             }
         }
+
         private string _eventName = null;
 
         #endregion parameters

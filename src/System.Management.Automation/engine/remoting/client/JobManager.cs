@@ -272,6 +272,7 @@ namespace System.Management.Automation
             {
                 throw new PSArgumentNullException("job");
             }
+
             if (definition == null)
             {
                 throw new PSArgumentNullException("definition");
@@ -348,6 +349,7 @@ namespace System.Management.Automation
             {
                 adapterFound = _sourceAdapters.TryGetValue(adapterTypeName, out adapter);
             }
+
             if (!adapterFound)
             {
                 if (!string.IsNullOrEmpty(definition.ModuleName))
@@ -773,6 +775,7 @@ namespace System.Management.Automation
                     {
                         cmdlet.WriteObject(job);
                     }
+
                     return job;
                 }
             }

@@ -360,6 +360,7 @@ namespace Microsoft.PowerShell
                         "{0}{1}", prepend, defaultStr));
                     prepend = ",";
                 }
+
                 string defaultChoices = defaultChoicesBuilder.ToString();
 
                 if (defaultChoiceKeys.Count == 1)

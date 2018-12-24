@@ -165,9 +165,11 @@ namespace System.Management.Automation
                         //We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
                         typeinfo = GetDispatchTypeInfoFromCoClassTypeInfo(typeinfo);
                     }
+
                     result = new ComTypeInfo(typeinfo);
                 }
             }
+
             return result;
         }
 
@@ -256,6 +258,7 @@ namespace System.Management.Automation
                     throw;
                 }
             }
+
             return dispinfo;
         }
 
@@ -298,6 +301,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
     }

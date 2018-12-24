@@ -53,6 +53,7 @@ namespace System.Management.Automation.Tracing
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
                     _payloadBuilder = new StringBuilder(200);
                 }
+
                 return _payloadBuilder;
             }
         }

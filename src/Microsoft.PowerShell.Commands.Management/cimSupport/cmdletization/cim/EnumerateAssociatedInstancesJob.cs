@@ -89,6 +89,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 PSObject pso = PSObject.AsPSObject(outputObject);
                 AddShowComputerNameMarker(pso);
             }
+
             base.WriteObject(outputObject);
         }
 

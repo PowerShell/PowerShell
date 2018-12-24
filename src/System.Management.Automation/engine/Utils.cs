@@ -394,6 +394,7 @@ namespace System.Management.Automation
             {
                 return result;
             }
+
             return null;
         }
 
@@ -546,6 +547,7 @@ namespace System.Management.Automation
                         case nameof(ConsoleSessionConfiguration): result = policies.ConsoleSessionConfiguration; break;
                         default: Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added."); break;
                     }
+
                     if (result != null) { return (T) result; }
                 }
             }
@@ -628,12 +630,14 @@ namespace System.Management.Automation
                                     if (rawIntValue == 1) { propertyValue = true; }
                                     else if (rawIntValue == 0) { propertyValue = false; }
                                 }
+
                                 break;
                             case var _ when propertyType == typeof(string):
                                 if (rawRegistryValue is string rawStringValue)
                                 {
                                     propertyValue = rawStringValue;
                                 }
+
                                 break;
                             case var _ when propertyType == typeof(string[]):
                                 if (rawRegistryValue is string[] rawStringArrayValue)
@@ -644,6 +648,7 @@ namespace System.Management.Automation
                                 {
                                     propertyValue = new string[] { stringValue };
                                 }
+
                                 break;
                             default:
                                 Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
@@ -923,6 +928,7 @@ namespace System.Management.Automation
                 var principal = new WindowsPrincipal(currentIdentity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
+
             return false;
 #endif
         }
@@ -1109,6 +1115,7 @@ namespace System.Management.Automation
 
             return mutex;
         }
+
         internal delegate Mutex MutexInitializer();
 
         internal static bool Succeeded(int hresult)
@@ -1243,6 +1250,7 @@ namespace System.Management.Automation
                     () => callback(state));
                 return;
             }
+
             callback(state);
         }
 #endif
@@ -1600,6 +1608,7 @@ namespace System.Management.Automation
                 {
                     return false;
                 }
+
                 cmdInfoList.Add(cmdInfo);
             }
 
@@ -1936,6 +1945,7 @@ namespace System.Management.Automation.Internal
             {
                 throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
             }
+
             return item;
         }
     }

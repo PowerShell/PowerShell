@@ -70,12 +70,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsHtml
         {
             get { return _asHtml; }
+
             set
             {
                 _isHtmlSet = true;
                 _asHtml = value;
             }
         }
+
         private bool _asHtml;
         private bool _isHtmlSet = false;
 
@@ -150,6 +152,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Clipboard.Clear();
                 }
+
                 return;
             }
 
@@ -417,6 +420,7 @@ EndSelection:<<<<<<<<4";
                 _byteCount[0] = sb[i];
                 count += Encoding.UTF8.GetByteCount(_byteCount);
             }
+
             return count;
         }
     }

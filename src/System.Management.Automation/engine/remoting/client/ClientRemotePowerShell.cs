@@ -99,6 +99,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 return inputstream;
             }
+
             set
             {
                 inputstream = value;
@@ -123,6 +124,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 return outputstream;
             }
+
             set
             {
                 outputstream = value;
@@ -526,18 +528,21 @@ namespace System.Management.Automation.Runspaces.Internal
                         {
                             informationalBuffers.AddDebug((DebugRecord)infoMessage.Message);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellVerbose:
                         {
                             informationalBuffers.AddVerbose((VerboseRecord)infoMessage.Message);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellWarning:
                         {
                             informationalBuffers.AddWarning((WarningRecord)infoMessage.Message);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellProgress:
@@ -546,12 +551,14 @@ namespace System.Management.Automation.Runspaces.Internal
                                 typeof(ProgressRecord), System.Globalization.CultureInfo.InvariantCulture);
                             informationalBuffers.AddProgress(progress);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellInformationStream:
                         {
                             informationalBuffers.AddInformation((InformationRecord)infoMessage.Message);
                         }
+
                         break;
                 }
             }
@@ -821,6 +828,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.AutoDisconnectStarting,
                                 this.computerName, maxRetryConnectionTimeMinutes, warningRecord);
                     }
+
                     break;
 
                 case ConnectionStatus.AutoDisconnectSucceeded:
@@ -845,6 +853,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.InternalErrorAbort,
                                 this.computerName, maxRetryConnectionTimeMinutes, errorRecord);
                     }
+
                     break;
             }
 

@@ -65,12 +65,14 @@ namespace System.Management.Automation
         internal SessionStateScope ScriptScope
         {
             get { return _scriptScope; }
+
             set
             {
                 Diagnostics.Assert(value != null, "Caller to verify scope is not null");
                 _scriptScope = value;
             }
         }
+
         private SessionStateScope _scriptScope;
 
         /// <summary>
@@ -94,6 +96,7 @@ namespace System.Management.Automation
         /// other variables use the variable apis to find the variable and get/set it.
         /// </summary>
         internal Stack<MutableTuple> DottedScopes { get { return _dottedScopes; } }
+
         private readonly Stack<MutableTuple> _dottedScopes = new Stack<MutableTuple>();
 
         #region Drives
@@ -231,6 +234,7 @@ namespace System.Management.Automation
                 // manually removed drives.
                 GetAutomountedDrives().TryGetValue(name, out result);
             }
+
             return result;
         }
 
@@ -257,6 +261,7 @@ namespace System.Management.Automation
                         result.Add(drive);
                     }
                 }
+
                 return result;
             }
         }
@@ -327,6 +332,7 @@ namespace System.Management.Automation
                 SessionState.ThrowIfNotVisible(origin, variable);
                 return true;
             }
+
             return false;
         }
 
@@ -403,6 +409,7 @@ namespace System.Management.Automation
                 {
                     throw new NotImplementedException("fastPath");
                 }
+
                 variable = new PSVariable(name, variableToSet.Value, variableToSet.Options, variableToSet.Attributes) { Description = variableToSet.Description };
                 GetPrivateVariables()[name] = variable;
                 return variable;
@@ -966,6 +973,7 @@ namespace System.Management.Automation
 
                 RemoveAliasFromCache(aliasInfo.Name, aliasInfo.Definition);
             }
+
             aliasInfos[aliasToSet.Name] = aliasToSet;
 
             AddAliasToCache(aliasToSet.Name, aliasToSet.Definition);
@@ -1366,6 +1374,7 @@ namespace System.Management.Automation
                     GetAllScopeFunctions().Remove(name);
                 }
             }
+
             functionInfos.Remove(name);
         }
 

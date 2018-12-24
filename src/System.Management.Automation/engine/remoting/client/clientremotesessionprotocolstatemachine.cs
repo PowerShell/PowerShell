@@ -98,6 +98,7 @@ namespace System.Management.Automation.Remoting
                         _eventsInProcess = false;
                         break;
                     }
+
                     eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
@@ -179,6 +180,7 @@ namespace System.Management.Automation.Remoting
                             "State can be set to Established only when current state is NegotiationReceived");
                         SetState(RemoteSessionState.Established, null);
                     }
+
                     break;
 
                 case RemoteSessionEvent.NegotiationReceived:
@@ -192,6 +194,7 @@ namespace System.Management.Automation.Remoting
 
                         SetState(RemoteSessionState.NegotiationReceived, null);
                     }
+
                     break;
 
                 case RemoteSessionEvent.NegotiationSendCompleted:
@@ -201,6 +204,7 @@ namespace System.Management.Automation.Remoting
 
                         SetState(RemoteSessionState.NegotiationSent, null);
                     }
+
                     break;
 
                 case RemoteSessionEvent.ConnectFailed:
@@ -210,18 +214,21 @@ namespace System.Management.Automation.Remoting
 
                         SetState(RemoteSessionState.ClosingConnection, eventArgs.Reason);
                     }
+
                     break;
 
                 case RemoteSessionEvent.CloseFailed:
                     {
                         SetState(RemoteSessionState.Closed, eventArgs.Reason);
                     }
+
                     break;
 
                 case RemoteSessionEvent.CloseCompleted:
                     {
                         SetState(RemoteSessionState.Closed, eventArgs.Reason);
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyRequested:
@@ -234,6 +241,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.EstablishedAndKeyRequested, eventArgs.Reason);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyReceived:
@@ -260,6 +268,7 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySent:
@@ -278,6 +287,7 @@ namespace System.Management.Automation.Remoting
                             _keyExchangeTimer = new Timer(HandleKeyExchangeTimeout, null, BaseTransportManager.ClientDefaultOperationTimeoutMs, Timeout.Infinite);
                         }
                     }
+
                     break;
                 case RemoteSessionEvent.DisconnectCompleted:
                     {
@@ -289,6 +299,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.Disconnected, eventArgs.Reason);
                         }
                     }
+
                     break;
                 case RemoteSessionEvent.DisconnectFailed:
                     {
@@ -300,6 +311,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.Disconnected, eventArgs.Reason); //set state to disconnected even TODO. Put some ETW event describing the disconnect process failure
                         }
                     }
+
                     break;
                 case RemoteSessionEvent.ReconnectCompleted:
                     {
@@ -311,6 +323,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.Established, eventArgs.Reason);
                         }
                     }
+
                     break;
             }
         }
@@ -508,6 +521,7 @@ namespace System.Management.Automation.Remoting
                 {
                     _processPendingEventsQueue.Clear();
                 }
+
                 _processPendingEventsQueue.Enqueue(arg);
 
                 if (!_eventsInProcess)

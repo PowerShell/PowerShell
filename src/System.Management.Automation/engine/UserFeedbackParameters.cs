@@ -20,6 +20,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
+
             commandRuntime.PagingParameters = this;
         }
 
@@ -117,6 +118,7 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
+
             _commandRuntime = commandRuntime;
         }
         #endregion ctor
@@ -134,6 +136,7 @@ namespace System.Management.Automation.Internal
             {
                 return _commandRuntime.WhatIf;
             }
+
             set
             {
                 _commandRuntime.WhatIf = value;
@@ -151,6 +154,7 @@ namespace System.Management.Automation.Internal
             {
                 return _commandRuntime.Confirm;
             }
+
             set
             {
                 _commandRuntime.Confirm = value;
@@ -195,6 +199,7 @@ namespace System.Management.Automation.Internal
             {
                 return _commandRuntime.UseTransaction;
             }
+
             set
             {
                 _commandRuntime.UseTransaction = value;

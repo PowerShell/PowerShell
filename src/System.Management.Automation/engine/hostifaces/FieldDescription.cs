@@ -199,6 +199,7 @@ namespace System.Management.Automation.Host
 
                 return label;
             }
+
             set
             {
                 if (value == null)
@@ -231,6 +232,7 @@ namespace System.Management.Automation.Host
 
                 return helpMessage;
             }
+
             set
             {
                 if (value == null)
@@ -254,6 +256,7 @@ namespace System.Management.Automation.Host
             {
                 return isMandatory;
             }
+
             set
             {
                 isMandatory = value;
@@ -375,6 +378,7 @@ namespace System.Management.Automation.Host
             {
                 return modifiedByRemotingProtocol;
             }
+
             set
             {
                 modifiedByRemotingProtocol = value;
@@ -395,6 +399,7 @@ namespace System.Management.Automation.Host
             {
                 return isFromRemoteHost;
             }
+
             set
             {
                 isFromRemoteHost = value;

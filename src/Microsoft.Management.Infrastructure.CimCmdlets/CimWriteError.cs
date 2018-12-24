@@ -129,6 +129,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 errorRecord.CategoryInfo.TargetName = cimException.ErrorSource;
             }
+
             return errorRecord;
         }
 
@@ -153,6 +154,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 theTargetObject = cimResultContext.ErrorSource;
             }
+
             if (theTargetObject == null)
             {
                 if (context != null)
@@ -163,6 +165,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     }
                 }
             }
+
             ErrorRecord coreErrorRecord = new ErrorRecord(
                 exception: exception,
                 errorId: errorId,
@@ -394,6 +397,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return exception;
             }
         }
+
         private Exception exception;
 
         /// <summary>

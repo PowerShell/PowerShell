@@ -31,6 +31,7 @@ namespace System.Management.Automation
                 return ExecutionContext.TopLevelSessionState.Providers;
             }
         }
+
         private Dictionary<string, List<ProviderInfo>> _providers =
             new Dictionary<string, List<ProviderInfo>>(
                     SessionStateConstants.DefaultDictionaryCapacity, StringComparer.OrdinalIgnoreCase);
@@ -49,6 +50,7 @@ namespace System.Management.Automation
                 return ExecutionContext.TopLevelSessionState.ProvidersCurrentWorkingDrive;
             }
         }
+
         private Dictionary<ProviderInfo, PSDriveInfo> _providersCurrentWorkingDrive = new Dictionary<ProviderInfo, PSDriveInfo>();
 
         /// <summary>
@@ -118,6 +120,7 @@ namespace System.Management.Automation
                 // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
                 this.ExecutionContext.ReportEngineStartupError(e);
             }
+
             return provider;
         }
 
@@ -226,6 +229,7 @@ namespace System.Management.Automation
             {
                 drive.DriveBeingCreated = false;
             }
+
             return result;
         }
 
@@ -791,6 +795,7 @@ namespace System.Management.Automation
 
                 throw e;
             }
+
             return GetProvider(providerName);
         }
 
@@ -834,6 +839,7 @@ namespace System.Management.Automation
                     throw NewAmbiguousProviderName(name, matchingProviders);
                 }
             }
+
             return matchingProviders[0];
         }
 
@@ -901,6 +907,7 @@ namespace System.Management.Automation
                     result.Add(provider);
                 }
             }
+
             return result;
         }
 
@@ -920,6 +927,7 @@ namespace System.Management.Automation
                         result.Add(provider);
                     }
                 }
+
                 return result;
             }
         }
@@ -1285,6 +1293,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
 
@@ -1569,6 +1578,7 @@ namespace System.Management.Automation
                 {
                     count += matchingProviders.Count;
                 }
+
                 return count;
             }
         }

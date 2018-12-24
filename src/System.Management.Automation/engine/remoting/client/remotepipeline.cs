@@ -174,6 +174,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("pipeline");
             }
+
             if (pipeline._disposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("pipeline");
@@ -335,6 +336,7 @@ namespace System.Management.Automation
             {
                 return _historyString;
             }
+
             set
             {
                 _historyString = value;
@@ -426,6 +428,7 @@ namespace System.Management.Automation
             {
                 this.InputStream.Close();
             }
+
             InitPowerShell(true);
 
             Collection<PSObject> results;
@@ -666,6 +669,7 @@ namespace System.Management.Automation
                         _powershell.Dispose();
                         _powershell = null;
                     }
+
                     _inputCollection.Dispose();
                     _inputStream.Dispose();
                     _outputCollection.Dispose();
@@ -746,6 +750,7 @@ namespace System.Management.Automation
                                 return;
                             }
                         }
+
                         break;
                     case PipelineState.Stopping:
                         {
@@ -758,8 +763,10 @@ namespace System.Management.Automation
                                 copyState = PipelineState.Stopped;
                             }
                         }
+
                         break;
                 }
+
                 _pipelineStateInfo = new PipelineStateInfo(copyState, reason);
                 copyStateInfo = _pipelineStateInfo;
 

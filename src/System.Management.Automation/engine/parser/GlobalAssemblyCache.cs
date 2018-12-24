@@ -22,6 +22,7 @@ namespace Microsoft.CodeAnalysis
         /// </summary>
         public static readonly ProcessorArchitecture[] CurrentArchitectures = (IntPtr.Size == 4)
             ? new[] { ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.X86 }
+
             : new[] { ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.Amd64 };
 
 #region Interop
@@ -99,6 +100,7 @@ namespace Microsoft.CodeAnalysis
                 // no assembly found
                 yield break;
             }
+
             if (hr != S_OK)
             {
                 Exception e = Marshal.GetExceptionForHR(hr);
@@ -107,6 +109,7 @@ namespace Microsoft.CodeAnalysis
                     // invalid assembly name:
                     yield break;
                 }
+
                 if (e != null)
                 {
                     throw e;

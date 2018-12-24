@@ -58,6 +58,7 @@ namespace System.Management.Automation
             {
                 return _message;
             }
+
             set { _message = value; }
         }
 
@@ -116,6 +117,7 @@ namespace System.Management.Automation
             {
                 return _serializeExtendedInfo;
             }
+
             set
             {
                 _serializeExtendedInfo = value;
@@ -213,6 +215,7 @@ namespace System.Management.Automation
                 return _fullyQualifiedWarningId ?? string.Empty;
             }
         }
+
         private string _fullyQualifiedWarningId;
     }
 

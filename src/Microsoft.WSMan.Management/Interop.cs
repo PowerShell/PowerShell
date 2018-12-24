@@ -1058,6 +1058,7 @@ namespace Microsoft.WSMan.Management
     public class GPClass
     {
     }
+
     [ComImport, Guid("EA502723-A23D-11d1-A7D3-0000F87571E3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     interface IGroupPolicyObject

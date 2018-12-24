@@ -336,6 +336,7 @@ namespace System.Management.Automation
             {
                 Label = colheaderdefinition.label.text;
             }
+
             Alignment = (Alignment)colheaderdefinition.alignment;
             Width = colheaderdefinition.width;
         }
@@ -442,6 +443,7 @@ namespace System.Management.Automation
             {
                 SelectedBy = EntrySelectedBy.Get(rowdefinition.appliesTo.referenceList);
             }
+
             foreach (TableRowItemDefinition itemdef in rowdefinition.rowItemDefinitionList)
             {
                 FieldPropertyToken fpt = itemdef.formatTokenList[0] as FieldPropertyToken;
@@ -592,11 +594,13 @@ namespace System.Management.Automation
                 {
                     row.SelectedBy.TypeNames = new List<string>(entrySelectedByType);
                 }
+
                 if (entrySelectedByCondition != null)
                 {
                     row.SelectedBy.SelectionCondition = new List<DisplayEntry>(entrySelectedByCondition);
                 }
             }
+
             _table.Rows.Add(row);
             return new TableRowDefinitionBuilder(this, row);
         }

@@ -34,6 +34,7 @@ namespace mvc.Controllers
                 {
                     from = (int)range.From;
                 }
+
                 if(range.To != null)
                 {
                     to = (int)range.To;
@@ -79,6 +80,7 @@ namespace mvc.Controllers
             {
                 NumberBytes = FileBytes.Length;
             }
+
             Response.ContentType = MediaTypeNames.Application.Octet;
             Response.ContentLength = NumberBytes;
             await Response.Body.WriteAsync(FileBytes, 0, NumberBytes);

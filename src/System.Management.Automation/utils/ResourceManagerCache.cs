@@ -116,6 +116,7 @@ namespace System.Management.Automation
         internal static bool DFT_DoMonitorFailingResourceLookup
         {
             get { return ResourceManagerCache.s_DFT_monitorFailingResourceLookup; }
+
             set { ResourceManagerCache.s_DFT_monitorFailingResourceLookup = value; }
         }
 
@@ -202,6 +203,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(false,
                     "Lookup failure: baseName " + baseName + " resourceId " + resourceId);
             }
+
             return text;
         }
 

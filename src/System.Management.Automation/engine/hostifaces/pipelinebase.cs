@@ -130,6 +130,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("pipeline");
             }
+
             if (pipeline._disposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("pipeline");
@@ -323,6 +324,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     PipelineFinishedEvent.WaitOne();
                 }
+
                 return;
             }
 
@@ -504,6 +506,7 @@ namespace System.Management.Automation.Runspaces
                             InputStream.Write(temp);
                         }
                     }
+
                     InputStream.Close();
                 }
 

@@ -430,6 +430,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -830,6 +831,7 @@ namespace System.Management.Automation
             {
                 provider = CurrentDrive.Provider;
             }
+
             if (context.Drive == null)
             {
                 bool isProviderQualified = LocationGlobber.IsProviderQualifiedPath(parent);
@@ -845,12 +847,14 @@ namespace System.Management.Automation
                     {
                         drive = provider.HiddenDrive;
                     }
+
                     context.Drive = drive;
                 }
                 else
                 {
                     context.Drive = CurrentDrive;
                 }
+
                 result = MakePath(provider, parent, child, context);
 
                 if (isAbsolute)
@@ -867,6 +871,7 @@ namespace System.Management.Automation
                 provider = context.Drive.Provider;
                 result = MakePath(provider, parent, child, context);
             }
+
             return result;
         }
 
@@ -1279,6 +1284,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1646,6 +1652,7 @@ namespace System.Management.Automation
 
                 return MoveItemDynamicParameters(providerInstance, providerPaths[0], destination, newContext);
             }
+
             return null;
         }
 
@@ -1730,6 +1737,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 

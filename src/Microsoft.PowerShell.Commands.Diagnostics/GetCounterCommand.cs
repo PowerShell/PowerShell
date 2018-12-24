@@ -52,8 +52,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] ListSet
         {
             get { return _listSet; }
+
             set { _listSet = value; }
         }
+
         private string[] _listSet = { "*" };
 
         //
@@ -73,12 +75,14 @@ namespace Microsoft.PowerShell.Commands
         public string[] Counter
         {
             get { return _counter; }
+
             set
             {
                 _counter = value;
                 _defaultCounters = false;
             }
         }
+
         private string[] _counter = {@"\network interface(*)\bytes total/sec",
                                  @"\processor(_total)\% processor time",
                                  @"\memory\% committed bytes in use",
@@ -102,8 +106,10 @@ namespace Microsoft.PowerShell.Commands
         public int SampleInterval
         {
             get { return _sampleInterval; }
+
             set { _sampleInterval = value; }
         }
+
         private int _sampleInterval = 1;
 
         //
@@ -119,12 +125,14 @@ namespace Microsoft.PowerShell.Commands
         public Int64 MaxSamples
         {
             get { return _maxSamples; }
+
             set
             {
                 _maxSamples = value;
                 _maxSamplesSpecified = true;
             }
         }
+
         private Int64 _maxSamples = 1;
         private bool _maxSamplesSpecified = false;
 
@@ -135,8 +143,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Continuous
         {
             get { return _continuous; }
+
             set { _continuous = value; }
         }
+
         private bool _continuous = false;
 
         //
@@ -157,8 +167,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] ComputerName
         {
             get { return _computerName; }
+
             set { _computerName = value; }
         }
+
         private string[] _computerName = new string[0];
 
         private ResourceManager _resourceMgr = null;
@@ -482,9 +494,11 @@ namespace Microsoft.PowerShell.Commands
 
                         continue;
                     }
+
                     allExpandedPaths.Add(expandedPath);
                 }
             }
+
             if (allExpandedPaths.Count == 0)
             {
                 return;
@@ -495,6 +509,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ReportPdhError(res, false);
             }
+
             res = _pdhHelper.AddCounters(ref allExpandedPaths, true);
             if (res != 0)
             {
@@ -575,6 +590,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);
             }
+
             Exception exc = new Exception(msg);
             if (bTerminate)
             {
@@ -643,6 +659,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             WriteObject(set);
         }
 

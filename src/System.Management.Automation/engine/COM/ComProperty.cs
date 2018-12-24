@@ -262,6 +262,7 @@ namespace System.Management.Automation
             {
                 finalArguments[i] = newarguments[i];
             }
+
             finalArguments[newarguments.Length] = Adapter.PropertySetAndMethodArgumentConvertTo(setValue, Type, CultureInfo.InvariantCulture);
 
             try
@@ -310,6 +311,7 @@ namespace System.Management.Automation
                     {
                         IsParameterized = true;
                     }
+
                     break;
 
                 case COM.INVOKEKIND.INVOKE_PROPERTYPUT:
@@ -320,6 +322,7 @@ namespace System.Management.Automation
                     {
                         IsParameterized = true;
                     }
+
                     break;
 
                 case COM.INVOKEKIND.INVOKE_PROPERTYPUTREF:
@@ -329,6 +332,7 @@ namespace System.Management.Automation
                     {
                         IsParameterized = true;
                     }
+
                     break;
             }
         }
@@ -366,6 +370,7 @@ namespace System.Management.Automation
             {
                 builder.Append("{get} ");
             }
+
             if (_hasSetter)
             {
                 builder.Append("{set} ");

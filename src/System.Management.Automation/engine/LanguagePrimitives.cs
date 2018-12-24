@@ -181,6 +181,7 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             return true;
         }
 
@@ -403,6 +404,7 @@ namespace System.Management.Automation
                     return new EnumerableTWrapper(obj, i);
                 }
             }
+
             return null;
         }
 
@@ -420,6 +422,7 @@ namespace System.Management.Automation
                     s_getEnumerableCache.Add(type, getEnumerable);
                 }
             }
+
             return getEnumerable;
         }
 
@@ -439,6 +442,7 @@ namespace System.Management.Automation
         internal static bool IsTypeEnumerable(Type type)
         {
             if (type == null) { return false; }
+
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(type);
             return (getEnumerable != LanguagePrimitives.ReturnNullEnumerable);
         }
@@ -466,6 +470,7 @@ namespace System.Management.Automation
         {
             obj = PSObject.Base(obj);
             if (obj == null) { return null; }
+
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(obj.GetType());
             return getEnumerable(obj);
         }
@@ -573,6 +578,7 @@ namespace System.Management.Automation
                     result.Add(PSObject.AsPSObject(inputValue));
                 }
             }
+
             result.Complete();
             return result;
         }
@@ -809,6 +815,7 @@ namespace System.Management.Automation
                                                                  first.ToString(), second.ToString(), e.Message);
                     }
                 }
+
                 return culture.CompareInfo.Compare(firstString, secondString,
                                                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
             }
@@ -821,6 +828,7 @@ namespace System.Management.Automation
             {
                 return LanguagePrimitives.NumericCompare(first, second, firstIndex, secondIndex);
             }
+
             object secondConverted;
             try
             {
@@ -1069,8 +1077,10 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             return PSObject.AsPSObject(obj);
         }
+
         internal static int TypeTableIndex(Type type)
         {
             switch (LanguagePrimitives.GetTypeCode(type))
@@ -1446,6 +1456,7 @@ namespace System.Management.Automation
             {
                 return new SByteConverter();
             }
+
             return null;
         }
 
@@ -1462,6 +1473,7 @@ namespace System.Management.Automation
                 s_tracer.WriteLine("ecFromTLS != null");
                 typesXmlConverter = ecFromTLS.TypeTable.GetTypeConverter(type.FullName);
             }
+
             if ((typesXmlConverter == null) && (backupTypeTable != null))
             {
                 s_tracer.WriteLine("Using provided TypeTable to get the type converter");
@@ -1496,6 +1508,7 @@ namespace System.Management.Automation
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;
             }
+
             string assemblyName = assemblyQualifiedTypeName.Substring(typeSeparator + 2);
             string typeName = assemblyQualifiedTypeName.Substring(0, typeSeparator);
 
@@ -1513,6 +1526,7 @@ namespace System.Management.Automation
                         typeConversion.WriteLine("Assembly \"{0}\" threw an exception when retrieving the type \"{1}\": \"{2}\".", assemblyName, typeName, e.Message);
                         return null;
                     }
+
                     try
                     {
                         return Activator.CreateInstance(converterType);
@@ -1526,6 +1540,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             typeConversion.WriteLine("Could not create an instance of type \"{0}\".", assemblyQualifiedTypeName);
             return null;
         }
@@ -1746,6 +1761,7 @@ namespace System.Management.Automation
                 ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(toConstructor, resultType);
                 return noArgumentConstructorConverter.Convert(PSObject.Base(valueToConvert), resultType, recursion, (PSObject)valueToConvert, formatProvider, null, ignoreUnknownMembers);
             }
+
             return null;
         }
 
@@ -1761,6 +1777,7 @@ namespace System.Management.Automation
             {
                 return value;
             }
+
             return (T)ConvertTo(valueToConvert, typeof(T), true, CultureInfo.InvariantCulture, null);
         }
 
@@ -1780,6 +1797,7 @@ namespace System.Management.Automation
                 result = value;
                 return true;
             }
+
             return TryConvertTo(valueToConvert, CultureInfo.InvariantCulture, out result);
         }
         /// <summary>
@@ -1917,6 +1935,7 @@ namespace System.Management.Automation
                     {
                         s_enumTable.Clear();
                     }
+
                     UInt64 allValues = 0;
                     bool hasNegativeValue = false;
                     Array values = Enum.GetValues(enumType);
@@ -2087,6 +2106,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.InvalidCastException,
                         sourceValue, ObjectToTypeNameString(sourceValue), destinationType);
                 }
+
                 Diagnostics.Assert(destinationType.IsEnum, "EnumSingleTypeConverter is only applied to enumerations");
                 if (sourceValueString.Length == 0)
                 {
@@ -2094,6 +2114,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.InvalidCastException,
                         sourceValue, ObjectToTypeNameString(sourceValue), destinationType);
                 }
+
                 sourceValueString = sourceValueString.Trim();
                 if (sourceValueString.Length == 0)
                 {
@@ -2127,6 +2148,7 @@ namespace System.Management.Automation
                             ExtendedTypeSystem.InvalidCastExceptionEnumerationNoFlagAndComma,
                             sourceValue, destinationType);
                     }
+
                     sourceValueEntries = new string[] { sourceValueString };
                     fromValuePatterns = new WildcardPattern[1];
                     if (WildcardPattern.ContainsWildcardCharacters(sourceValueString))
@@ -2188,6 +2210,7 @@ namespace System.Management.Automation
                             if (String.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
                                 continue;
                         }
+
                         if (!multipleValues && foundOne)
                         {
                             object firstValue = Enum.ToObject(destinationType, returnUInt64);
@@ -2196,9 +2219,11 @@ namespace System.Management.Automation
                                 ExtendedTypeSystem.InvalidCastExceptionEnumerationMoreThanOneValue,
                                 sourceValue, destinationType, firstValue, secondValue);
                         }
+
                         foundOne = true;
                         returnUInt64 |= Convert.ToUInt64(values.GetValue(j), CultureInfo.CurrentCulture);
                     }
+
                     if (!foundOne)
                     {
                         throw new PSInvalidCastException("InvalidCastEnumStringNotFound", null,
@@ -2244,14 +2269,17 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     System.Reflection.ParameterInfo[] parameters = method.GetParameters();
                     if (parameters.Length != 1 || !parameters[0].ParameterType.IsAssignableFrom(originalType))
                     {
                         continue;
                     }
+
                     typeConversion.WriteLine("Found \"{0}\" cast operator in type {1}.", methodName, targetType.FullName);
                     return method;
                 }
+
                 typeConversion.TraceScope("Cast operator for \"{0}\" not found.", methodName);
                 return null;
             }
@@ -2604,6 +2632,7 @@ namespace System.Management.Automation
                             typeConversion.WriteLine("TypeConverter cannot convert to resultType.");
                         }
                     }
+
                     PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
                     if (valuePSTypeConverter != null)
                     {
@@ -2631,6 +2660,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 s_tracer.WriteLine("No converter found in original type.");
 
                 // now ConvertFrom for the destination type
@@ -2662,6 +2692,7 @@ namespace System.Management.Automation
                             typeConversion.WriteLine("Destination type's converter cannot convert from originalType.");
                         }
                     }
+
                     PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
                     if (valuePSTypeConverter != null)
                     {
@@ -2689,6 +2720,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 result = null;
                 return false;
             }
@@ -2819,6 +2851,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.InvalidCastException,
                     valueToConvert.ToString(), ObjectToTypeNameString(valueToConvert), resultType.ToString());
             }
+
             return namedType;
         }
 
@@ -2884,6 +2917,7 @@ namespace System.Management.Automation
                 {
                     e = e.InnerException;
                 }
+
                 typeConversion.WriteLine("Exception converting to integer: \"{0}\".", e.Message);
                 if (e is FormatException)
                 {
@@ -2897,6 +2931,7 @@ namespace System.Management.Automation
                         typeConversion.WriteLine("Exception converting to integer through double: \"{0}\".", ex.Message);
                     }
                 }
+
                 throw new PSInvalidCastException("InvalidCastFromStringToInteger", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     strToConvert, resultType.ToString(), e.Message);
@@ -2939,6 +2974,7 @@ namespace System.Management.Automation
                         typeConversion.WriteLine("Exception converting to integer through double: \"{0}\".", ex.Message);
                     }
                 }
+
                 throw new PSInvalidCastException("InvalidCastFromStringToDecimal", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -3378,6 +3414,7 @@ namespace System.Management.Automation
                     // false means no further recursions and therefore no cycles
                     result.Add(ConvertTo(obj, resultElementType, false, formatProvider, backupTable));
                 }
+
                 return result.ToArray(resultElementType);
             }
             catch (Exception e)
@@ -3551,6 +3588,7 @@ namespace System.Management.Automation
                             e.Current, resultType, EnumSingleTypeConverter.EnumValues(resultType));
                     }
                 }
+
                 sbResult.Append(current);
             }
 
@@ -3872,6 +3910,7 @@ namespace System.Management.Automation
                             IDictionary properties = valueToConvert as IDictionary;
                             SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
                         }
+
                         typeConversion.WriteLine("Constructor result: \"{0}\".", result);
                     }
                     else
@@ -4215,6 +4254,7 @@ namespace System.Management.Automation
         internal interface IConversionData
         {
             object Converter { get; }
+
             ConversionRank Rank { get; }
 
             object Invoke(object valueToConvert,
@@ -4268,6 +4308,7 @@ namespace System.Management.Automation
                         "Existing conversion isn't the same as new conversion");
                 }
             }
+
             return data;
         }
 
@@ -4378,6 +4419,7 @@ namespace System.Management.Automation
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
                     }
                 }
+
                 foreach (Type integerType in s_integerTypes)
                 {
                     CacheConversion<object>(typeofString, integerType, LanguagePrimitives.ConvertStringToInteger, ConversionRank.NumericString);
@@ -4526,6 +4568,7 @@ namespace System.Management.Automation
                                     if (TypeResolver.TryResolveType(property.TypeNameOfValue, out propType))
                                     {
                                         if (formatProvider == null) { formatProvider = CultureInfo.InvariantCulture; }
+
                                         try
                                         {
                                             PSObject propertyValue = prop.Value as PSObject;
@@ -4548,6 +4591,7 @@ namespace System.Management.Automation
                                         }
                                     }
                                 }
+
                                 property.Value = propValue;
                             }
                             else
@@ -4581,6 +4625,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return pso;
         }
 
@@ -4597,6 +4642,7 @@ namespace System.Management.Automation
                     {
                         availableProperties.Append(" , ");
                     }
+
                     availableProperties.Append("[" + p.Name + " <" + p.TypeNameOfValue + ">]");
                     if (first == true)
                     {
@@ -4805,6 +4851,7 @@ namespace System.Management.Automation
                 {
                     converter = LanguagePrimitives.ConvertClassToBool;
                 }
+
                 return CacheConversion<bool>(fromType, toType, converter, ConversionRank.Language);
             }
 
@@ -5011,6 +5058,7 @@ namespace System.Management.Automation
                         {
                             return false;
                         }
+
                         allTypesMatchExactly &= typesMatchExactly;
                     }
 
@@ -5041,6 +5089,7 @@ namespace System.Management.Automation
                             return true;
                         }
                     }
+
                     return false;
                 }
 
@@ -5107,6 +5156,7 @@ namespace System.Management.Automation
                 {
                     typeConversion.WriteLine("Exception finding Parse method with CultureInfo: \"{0}\".", e.Message);
                 }
+
                 if (parse != null)
                 {
                     ConvertViaParseMethod converter = new ConvertViaParseMethod();
@@ -5174,6 +5224,7 @@ namespace System.Management.Automation
                                 "toType has more than one generic arguments. Here we only care about the toType which contains only one generic argument and whose constructor takes IEnumerable<T>, ICollection<T> or IList<T>.");
                         return null;
                     }
+
                     elementType = argTypes[0];
 
                     if (typeof(Array) == fromType || typeof(object[]) == fromType ||
@@ -5441,6 +5492,7 @@ namespace System.Management.Automation
         }
 
         internal class InternalPSObject : PSObject { }
+
         internal static IConversionData FigureConversion(Type fromType, Type toType)
         {
             IConversionData data = GetConversionData(fromType, toType);
@@ -5648,6 +5700,7 @@ namespace System.Management.Automation
             {
                 return CacheConversion<object>(typeof(Null), toType, LanguagePrimitives.ConvertNullToRef, ConversionRank.NullToRef);
             }
+
             return CacheConversion(typeof(Null), toType, ConvertNoConversion, ConversionRank.None);
         }
 
@@ -5664,6 +5717,7 @@ namespace System.Management.Automation
             {
                 return typeNames[0];
             }
+
             return Microsoft.PowerShell.ToStringCodeMethods.Type(o.GetType());
         }
 
@@ -5679,6 +5733,7 @@ namespace System.Management.Automation
                     return assem;
                 }
             }
+
             return null;
         }
 #endif

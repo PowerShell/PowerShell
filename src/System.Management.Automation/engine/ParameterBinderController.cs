@@ -71,6 +71,7 @@ namespace System.Management.Automation
         {
             get { return _bindableParameters; }
         }
+
         protected MergedCommandParameterMetadata _bindableParameters = new MergedCommandParameterMetadata();
 
         /// <summary>
@@ -220,6 +221,7 @@ namespace System.Management.Automation
 
                             throw exception;
                         }
+
                         ++index;
                         argument.ParameterName = matchingParameter.Parameter.Name;
                         argument.SetArgumentValue(nextArgument.ArgumentAst, nextArgument.ParameterText);
@@ -364,6 +366,7 @@ namespace System.Management.Automation
                         {
                             param = CommandParameterInternal.CreateArgument(arguments[argIndex]);
                         }
+
                         commandProcessor.AddParameter(param);
                     }
                 }
@@ -507,6 +510,7 @@ namespace System.Management.Automation
                 UnboundParameters.Remove(parameter);
                 BoundParameters.Add(parameter.Parameter.Name, parameter);
             }
+
             return result;
         }
 
@@ -716,6 +720,7 @@ namespace System.Management.Automation
                     result = unboundArguments;
                 }
             }
+
             return result;
         }
 
@@ -855,6 +860,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -916,6 +922,7 @@ namespace System.Management.Automation
                     result = argument;
                     break;
                 }
+
                 nonPositionalArguments.Add(argument);
 
                 // Now check to see if the next argument needs to be consumed as well.
@@ -987,6 +994,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -1019,6 +1027,7 @@ namespace System.Management.Automation
                     positionalCommandParameter = new PositionalCommandParameter(parameter);
                     positionalCommandParameters.Add(parameter, positionalCommandParameter);
                 }
+
                 positionalCommandParameter.ParameterSetData.Add(parameterSetData);
             }
             else
@@ -1064,6 +1073,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             return result;
         }
 
@@ -1132,6 +1142,7 @@ namespace System.Management.Automation
                     {
                         flags |= ParameterBindingFlags.ShouldCoerceType;
                     }
+
                     BindParameter(uint.MaxValue, argument, parameter, flags);
                 }
                 finally

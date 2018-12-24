@@ -34,10 +34,12 @@ namespace System.Management.Automation
             {
                 _component = helpObject.Properties["Component"].Value as string;
             }
+
             if (helpObject.Properties["Role"] != null)
             {
                 _role = helpObject.Properties["Role"].Value as string;
             }
+
             if (helpObject.Properties["Functionality"] != null)
             {
                 _functionality = helpObject.Properties["Functionality"].Value as string;
@@ -369,6 +371,7 @@ namespace System.Management.Automation
                         {
                             result.Append(ExtractText(item));
                         }
+
                         break;
                     case "system.management.automation.psobject":
                         result.Append(ExtractText(PSObject.AsPSObject(propertyInfo.Value)));

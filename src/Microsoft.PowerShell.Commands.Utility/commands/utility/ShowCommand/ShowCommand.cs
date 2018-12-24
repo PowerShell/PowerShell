@@ -99,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoCommonParameter
         {
             get { return _noCommonParameter; }
+
             set { _noCommonParameter = value; }
         }
 
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             get { return _passThrough; }
+
             set { _passThrough = value; }
         }
         #endregion

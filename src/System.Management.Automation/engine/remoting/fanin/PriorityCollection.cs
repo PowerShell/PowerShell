@@ -88,6 +88,7 @@ namespace System.Management.Automation.Remoting
         internal Fragmentor Fragmentor
         {
             get { return _fragmentor; }
+
             set
             {
                 Dbg.Assert(value != null, "Fragmentor cannot be null.");
@@ -659,6 +660,7 @@ namespace System.Management.Automation.Remoting
                     {
                         ReleaseResources();
                     }
+
                     _numberOfThreadsProcessing--;
                 }
             }
@@ -674,6 +676,7 @@ namespace System.Management.Automation.Remoting
             {
                 _dataToProcessStream.Dispose();
             }
+
             _currentObjectId = 0;
             _currentFrgId = 0;
             _totalReceivedObjectSizeSoFar = 0;
@@ -759,6 +762,7 @@ namespace System.Management.Automation.Remoting
             {
                 _recvdData[index] = new ReceiveDataCollection(defragmentor, createdByClientTM);
             }
+
             _isCreateByClientTM = createdByClientTM;
         }
         #endregion

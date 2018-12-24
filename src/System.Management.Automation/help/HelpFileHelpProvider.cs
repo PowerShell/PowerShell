@@ -351,6 +351,7 @@ namespace System.Management.Automation
                 {
                     searchPaths.RemoveAt(index);
                 }
+
                 searchPaths.Insert(0, defaultShellSearchPath);
             }
 

@@ -57,6 +57,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("context");
             }
+
             ExecutionContext = context;
 
             // Create the working directory stack. This
@@ -144,6 +145,7 @@ namespace System.Management.Automation
         {
             get { return _globberPrivate ?? (_globberPrivate = ExecutionContext.LocationGlobber); }
         }
+
         private LocationGlobber _globberPrivate;
 
         /// <summary>
@@ -157,8 +159,10 @@ namespace System.Management.Automation
         internal SessionState PublicSessionState
         {
             get { return _publicSessionState ?? (_publicSessionState = new SessionState(this)); }
+
             set { _publicSessionState = value; }
         }
+
         private SessionState _publicSessionState;
 
         /// <summary>
@@ -168,6 +172,7 @@ namespace System.Management.Automation
         {
             get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); }
         }
+
         private ProviderIntrinsics _invokeProvider;
 
         /// <summary>
@@ -193,6 +198,7 @@ namespace System.Management.Automation
             {
                 return ExecutionContext.LanguageMode;
             }
+
             set
             {
                 ExecutionContext.LanguageMode = value;
@@ -403,6 +409,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return SessionStateEntryVisibility.Private;
         }
 

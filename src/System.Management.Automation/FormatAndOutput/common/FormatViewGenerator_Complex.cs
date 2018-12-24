@@ -129,6 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ExecuteFormatControlBody(level, so, complexBody, formatValueList);
                 return true;
             }
+
             return false;
         }
 
@@ -154,6 +155,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return x;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return match.BestMatch as ComplexControlEntryDefinition;
@@ -171,6 +173,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return x;
                         }
                     }
+
                     if (match.BestMatch != null)
                     {
                         return match.BestMatch as ComplexControlEntryDefinition;
@@ -210,6 +213,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     fe.formatValueList.Add(ftf);
                     continue;
                 }
+
                 var newline = t as NewLineToken;
                 if (newline != null)
                 {
@@ -217,8 +221,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         fe.formatValueList.Add(new FormatNewLine());
                     }
+
                     continue;
                 }
+
                 FrameToken ft = t as FrameToken;
                 if (ft != null)
                 {
@@ -281,6 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             val = string.Empty;
                         }
+
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
                         if (cpt.control != null)
@@ -303,6 +310,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     // nothing to process
                                     continue;
                                 }
+
                                 fpf = new FormatPropertyField();
 
                                 fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, x, _enumerationLimit, formatErrorObject, _expressionFactory);
@@ -316,6 +324,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, val, _enumerationLimit, formatErrorObject, _expressionFactory);
                             fe.formatValueList.Add(fpf);
                         }
+
                         if (formatErrorObject != null && formatErrorObject.exception != null)
                         {
                             _errorManager.LogStringFormatError(formatErrorObject);
@@ -329,6 +338,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             continue;
                         }
+
                         IEnumerable e = PSObjectHelper.GetEnumerable(val);
                         if (cpt.enumerateCollection && e != null)
                         {
@@ -369,6 +379,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
+
             return retVal;
         }
 
@@ -390,6 +401,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         internal int Level { get { return _level; } }
+
         internal int MaxDepth { get { return _maxDepth; } }
 
         internal TraversalInfo NextLevel
@@ -619,6 +631,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     throw new PipelineStoppedException();
                 }
+
                 if (_enumerationLimit >= 0)
                 {
                     if (_enumerationLimit == enumCount)
@@ -626,8 +639,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         DisplayLeaf(PSObjectHelper.Ellipsis, formatValueList);
                         break;
                     }
+
                     enumCount++;
                 }
+
                 if (TreatAsLeafNode(x, level))
                 {
                     DisplayLeaf(x, formatValueList);

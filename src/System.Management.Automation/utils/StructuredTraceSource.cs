@@ -296,6 +296,7 @@ namespace System.Management.Automation
                         _flags = (PSTraceSourceOptions)Enum.Parse(typeof(PSTraceSourceOptions), options, true);
                     }
                 }
+
                 ShowHeaders = traceHeaders;
                 Description = description;
             }
@@ -455,6 +456,7 @@ namespace System.Management.Automation
                 }
                 catch { }
             }
+
             return null;
         }
 
@@ -468,6 +470,7 @@ namespace System.Management.Automation
                 }
                 catch { }
             }
+
             return null;
         }
 
@@ -481,6 +484,7 @@ namespace System.Management.Automation
                 }
                 catch { }
             }
+
             return null;
         }
 
@@ -558,6 +562,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
 
@@ -605,6 +610,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
 
@@ -657,6 +663,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
         #endregion PSTraceSourceOptions.Events methods/helpers
@@ -718,6 +725,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
 
@@ -1143,6 +1151,7 @@ namespace System.Management.Automation
                 // raised while a thread is shutting down during
                 // normal operation.
             }
+
             return methodAndParameters.ToString();
         }
 
@@ -1405,6 +1414,7 @@ namespace System.Management.Automation
         {
             get { return _traceSource ?? (_traceSource = new MonadTraceSource(_name)); }
         }
+
         private TraceSource _traceSource;
 
         #endregion Class helper methods and properties
@@ -1476,6 +1486,7 @@ namespace System.Management.Automation
             {
                 return TraceSource.Switch;
             }
+
             set
             {
                 TraceSource.Switch = value;
@@ -1716,6 +1727,7 @@ namespace System.Management.Automation
             {
                 _tracer.OutputLine(_flag, _leavingScopeFormatter, _scopeName);
             }
+
             GC.SuppressFinalize(this);
         }
 

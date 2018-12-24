@@ -203,6 +203,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw PSTraceSource.NewInvalidOperationException("RemotingErrorIdStrings.NonExistentInitialSessionStateProvider", configurationProviderId);
             }
+
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
@@ -328,6 +329,7 @@ namespace System.Management.Automation.Remoting
                                 {
                                     SessionDataStructureHandler.StateMachine.RaiseEvent(messageReceivedArg);
                                 }
+
                                 break;
 
                             case RemotingDataType.CloseSession:
@@ -347,6 +349,7 @@ namespace System.Management.Automation.Remoting
                                 break;
                         }
                     }
+
                     break;
 
                 // TODO: Directly calling an event handler in StateMachine bypassing the StateMachine's
@@ -366,6 +369,7 @@ namespace System.Management.Automation.Remoting
                     {
                         SessionDataStructureHandler.StateMachine.RaiseEvent(messageReceivedArg);
                     }
+
                     break;
             }
         }
@@ -729,6 +733,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw PSTraceSource.NewArgumentNullException("createRunspaceEventArg");
             }
+
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
             Dbg.Assert(rcvdData != null, "rcvdData must be non-null");
 
@@ -828,6 +833,7 @@ namespace System.Management.Automation.Remoting
                                     RemoteDataNameStrings.PSv2TabExpansionFunctionText));
                         }
                     }
+
                     if (value.ContainsKey("PSVersion"))
                     {
                         psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
@@ -841,6 +847,7 @@ namespace System.Management.Automation.Remoting
                 _maxRecvdObjectSize = _sessionConfigProvider.GetMaximumReceivedObjectSize(_senderInfo);
                 _maxRecvdDataSizeCommand = _sessionConfigProvider.GetMaximumReceivedDataSizePerCommand(_senderInfo);
             }
+
             SessionDataStructureHandler.TransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
             // MaximumReceivedDataSize is not set for session transport manager...see the constructor
             // for more info.

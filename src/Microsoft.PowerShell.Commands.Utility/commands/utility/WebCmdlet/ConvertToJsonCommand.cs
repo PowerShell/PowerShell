@@ -134,6 +134,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return;
                 }
+
                 JsonSerializerSettings jsonSettings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.None,
@@ -144,10 +145,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     jsonSettings.Converters.Add(new StringEnumConverter());
                 }
+
                 if (!Compress)
                 {
                     jsonSettings.Formatting = Formatting.Indented;
                 }
+
                 string output = JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
                 WriteObject(output);
             }
@@ -450,6 +453,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 

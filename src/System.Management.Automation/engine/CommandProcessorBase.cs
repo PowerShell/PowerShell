@@ -74,8 +74,10 @@ namespace System.Management.Automation
         internal bool AddedToPipelineAlready
         {
             get { return _addedToPipelineAlready; }
+
             set { _addedToPipelineAlready = value; }
         }
+
         internal bool _addedToPipelineAlready;
 
         /// <summary>
@@ -102,6 +104,7 @@ namespace System.Management.Automation
         ///        kill current powershell session.
         /// </remarks>
         public bool FromScriptFile { get { return _fromScriptFile; } }
+
         protected bool _fromScriptFile = false;
 
         /// <summary>
@@ -118,6 +121,7 @@ namespace System.Management.Automation
         internal InternalCommand Command
         {
             get { return _command; }
+
             set
             {
                 // The command runtime needs to be set up...
@@ -132,6 +136,7 @@ namespace System.Management.Automation
                     if (value.Context == null && _context != null)
                         value.Context = _context;
                 }
+
                 _command = value;
             }
         }
@@ -153,6 +158,7 @@ namespace System.Management.Automation
         internal MshCommandRuntime CommandRuntime
         {
             get { return commandRuntime; }
+
             set { commandRuntime = value; }
         }
 
@@ -164,8 +170,10 @@ namespace System.Management.Automation
         internal bool UseLocalScope
         {
             get { return _useLocalScope; }
+
             set { _useLocalScope = value; }
         }
+
         protected bool _useLocalScope;
 
         /// <summary>
@@ -224,6 +232,7 @@ namespace System.Management.Automation
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set { _context = value; }
         }
 
@@ -270,6 +279,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("context");
             }
+
             if (string.IsNullOrEmpty(helpTarget))
             {
                 throw PSTraceSource.NewArgumentNullException("helpTarget");
@@ -443,6 +453,7 @@ namespace System.Management.Automation
                     // so the scope we created needs to release any resources it hold.s
                     CommandSessionState.RemoveScope(CommandScope);
                 }
+
                 throw;
             }
             finally
@@ -494,6 +505,7 @@ namespace System.Management.Automation
                     {
                         _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                     }
+
                     _context.CurrentCommandProcessor = this;
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
@@ -616,6 +628,7 @@ namespace System.Management.Automation
                 {
                     _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                 }
+
                 _context.CurrentCommandProcessor = this;
 
                 SetCurrentScopeToExecutionScope();

@@ -81,6 +81,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceCode;
             }
+
             set
             {
                 _sourceCode = value;
@@ -105,6 +106,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return new string[] { _sourceCode };
             }
+
             set
             {
                 _sourceCode = String.Empty;
@@ -147,6 +149,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 if (value == null)
@@ -194,6 +197,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _paths;
             }
+
             set
             {
                 if (value == null)
@@ -299,11 +303,13 @@ namespace Microsoft.PowerShell.Commands
         public String[] ReferencedAssemblies
         {
             get { return referencedAssemblies; }
+
             set
             {
                 if (value != null) { referencedAssemblies = value; }
             }
         }
+
         private string[] referencedAssemblies = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -320,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _outputAssembly;
             }
+
             set
             {
                 _outputAssembly = value;
@@ -384,6 +391,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _outputAssembly = null;
 
         /// <summary>
@@ -531,6 +539,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         usingNamespaceSet.Append("using " + namespaceValue + ";\n");
                     }
+
                     break;
 
                 default:
@@ -833,6 +842,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string assembly in ReferencedAssemblies)
                 {
                     if (string.IsNullOrWhiteSpace(assembly)) { continue; }
+
                     string resolvedAssemblyPath = ResolveAssemblyName(assembly, true);
 
                     // Ignore some specified reference assemblies
@@ -842,8 +852,10 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(StringUtil.Format(AddTypeStrings.ReferenceAssemblyIgnored, resolvedAssemblyPath));
                         continue;
                     }
+
                     tempReferences.Add(MetadataReference.CreateFromFile(resolvedAssemblyPath));
                 }
+
                 return tempReferences;
             }
             else
@@ -976,6 +988,7 @@ namespace Microsoft.PowerShell.Commands
                             syntaxTrees.Add(ParseSourceText(sourceText, parseOptions, path: filePath));
                         }
                     }
+
                     break;
                 case FromMemberParameterSetName:
                     _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
