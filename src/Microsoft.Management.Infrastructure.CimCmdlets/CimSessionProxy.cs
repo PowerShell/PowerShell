@@ -30,7 +30,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal abstract class XOperationContextBase
     {
         /// <summary>
-        /// <param>namespace</param>
+        /// <param>namespace.</param>
         /// </summary>
         internal string Namespace
         {
@@ -145,7 +145,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="action">CimBaseAction object bound to the event</param>
+        /// <param name="action">CimBaseAction object bound to the event.</param>
         public CmdletActionEventArgs(CimBaseAction action)
         {
             this.Action = action;
@@ -162,8 +162,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="operationCancellation">Object used to cancel the operation</param>
-        /// <param name="operation">Async observable operation</param>
+        /// <param name="operationCancellation">Object used to cancel the operation.</param>
+        /// <param name="operation">Async observable operation.</param>
         public OperationEventArgs(IDisposable operationCancellation,
             IObservable<object> operation,
             bool theSuccess)
@@ -203,7 +203,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private static readonly object temporarySessionCacheLock = new object();
 
         /// <summary>
-        /// <param>temporary CimSession cache</param>
+        /// <param>temporary CimSession cache.</param>
         /// <param>Temporary CimSession means the session is created by cimcmdlets,
         /// which is not created by <see cref="New-CimSession"/> cmdlet.
         /// Due to some cmdlet, such as <see cref="Remove-CimInstance"/>
@@ -227,7 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// otherwise insert it into the cache.
         /// </param>
         /// </summary>
-        /// <param name="session">CimSession to be added</param>
+        /// <param name="session">CimSession to be added.</param>
         internal static void AddCimSessionToTemporaryCache(CimSession session)
         {
             if (session != null)
@@ -249,10 +249,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <param>Wrapper function to remove CimSession from cache</param>
+        /// <param>Wrapper function to remove CimSession from cache.</param>
         /// </summary>
         /// <param name="session"></param>
-        /// <param name="dispose">Whether need to dispose the <see cref="CimSession"/>object</param>
+        /// <param name="dispose">Whether need to dispose the <see cref="CimSession"/>object.</param>
         private static void RemoveCimSessionFromTemporaryCache(CimSession session,
             bool dispose)
         {
@@ -295,7 +295,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If refcount became 0, call dispose on the <see cref="CimSession"/> object.
         /// </param>
         /// </summary>
-        /// <param name="session">CimSession to be added</param>
+        /// <param name="session">CimSession to be added.</param>
         internal static void RemoveCimSessionFromTemporaryCache(CimSession session)
         {
             RemoveCimSessionFromTemporaryCache(session, true);
@@ -308,8 +308,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles new cmdlet action come from
         /// the operations related to the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event</param>
-        /// <param name="actionArgs">Event args</param>
+        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="actionArgs">Event args.</param>
         public delegate void NewCmdletActionHandler(
             object cimSession,
             CmdletActionEventArgs actionArgs);
@@ -323,8 +323,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles operation creation and complete
         /// issued by the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event</param>
-        /// <param name="actionArgs">Event args</param>
+        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="actionArgs">Event args.</param>
         public delegate void OperationEventHandler(
             object cimSession,
             OperationEventArgs actionArgs);
@@ -430,7 +430,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
-        /// <param name="operOptions">Used when create async operation</param>
+        /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(string computerName, CimSessionOptions sessionOptions, CimOperationOptions operOptions)
         {
             CreateSetSession(computerName, null, sessionOptions, operOptions, false);
@@ -442,7 +442,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Then create wrapper object.
         /// </summary>
         /// <param name="computerName"></param>
-        /// <param name="operOptions">Used when create async operation</param>
+        /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(string computerName, CimOperationOptions operOptions)
         {
             CreateSetSession(computerName, null, null, operOptions, false);
@@ -462,7 +462,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Create wrapper object by given session object
         /// </summary>
         /// <param name="session"></param>
-        /// <param name="operOptions">Used when create async operation</param>
+        /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(CimSession session, CimOperationOptions operOptions)
         {
             CreateSetSession(null, session, null, operOptions, false);
@@ -982,8 +982,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Handle async event triggered by <see cref="CimResultObserver<T>"/>
         /// </param>
         /// </summary>
-        /// <param name="observer">object triggered the event</param>
-        /// <param name="resultArgs">async result event argument</param>
+        /// <param name="observer">object triggered the event.</param>
+        /// <param name="resultArgs">async result event argument.</param>
         internal void ResultEventHandler(
             object observer,
             AsyncResultEventArgsBase resultArgs)
@@ -2288,7 +2288,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Then create wrapper object.
         /// </summary>
         /// <param name="originalProxy"><see cref="CimSessionProxy"/>object to clone.</param>
-        /// <param name="passThru">PassThru, true means output the modified instance; otherwise does not output</param>
+        /// <param name="passThru">PassThru, true means output the modified instance; otherwise does not output.</param>
         public CimSessionProxySetCimInstance(CimSessionProxy originalProxy, bool passThru)
             : base(originalProxy)
         {

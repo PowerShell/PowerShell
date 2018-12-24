@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </param>
         /// </summary>
         /// <param name="inner"></param>
-        /// <param name="context">the context starting the operation, which generated the error</param>
+        /// <param name="context">the context starting the operation, which generated the error.</param>
         /// <param name="cimResultContext">the CimResultContext used to provide ErrorSource, etc. info.</param>
         /// <returns></returns>
         internal static ErrorRecord ErrorRecordFromAnyException(

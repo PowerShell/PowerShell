@@ -59,7 +59,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSubscriptionResult result;
 
         /// <summary>
-        /// <param>Constructor</param>
+        /// <param>Constructor.</param>
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionResultEventArgs(
@@ -93,7 +93,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Exception exception;
 
         /// <summary>
-        /// <param>Constructor</param>
+        /// <param>Constructor.</param>
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionExceptionEventArgs(
@@ -132,7 +132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Start an indication subscription target to the given computer.
         /// </summary>
-        /// <param name="computerName">null stands for localhost</param>
+        /// <param name="computerName">null stands for localhost.</param>
         /// <param name="nameSpace"></param>
         /// <param name="queryDialect"></param>
         /// <param name="queryExpression"></param>
@@ -154,7 +154,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Start an indication subscription through a given <see cref="CimSession"/>.
         /// </summary>
-        /// <param name="cimSession">Cannot be null</param>
+        /// <param name="cimSession">Cannot be null.</param>
         /// <param name="nameSpace"></param>
         /// <param name="queryDialect"></param>
         /// <param name="queryExpression"></param>
@@ -206,7 +206,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
         /// </param>
-        /// <param name="actionArgs">event argument</param>
+        /// <param name="actionArgs">event argument.</param>
         private void CimIndicationHandler(object cimSession, CmdletActionEventArgs actionArgs)
         {
             DebugHelper.WriteLogEx("action is {0}. Disposed {1}", 0, actionArgs.Action, this.Disposed);

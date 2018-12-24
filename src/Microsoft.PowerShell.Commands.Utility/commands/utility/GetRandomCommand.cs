@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns a random integer that is within a specified range.
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue</param>
+        /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
         /// <returns></returns>
         public int Next(int minValue, int maxValue)
         {
@@ -650,7 +650,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Fills the elements of a specified array of bytes with random numbers.
         /// </summary>
-        /// <param name="buffer">The array to be filled</param>
+        /// <param name="buffer">The array to be filled.</param>
         internal void NextBytes(byte[] buffer)
         {
             if (_cryptographicGenerator != null)

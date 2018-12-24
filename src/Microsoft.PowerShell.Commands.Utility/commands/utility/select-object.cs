@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Construct the class, using an array of patterns.
         /// </summary>
-        /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
+        /// <param name="wildcardPatternsStrings">array of pattern strings to use.</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
             if (wildcardPatternsStrings == null)
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// Try to match the expression against the array of wildcard patterns.
         /// The first match shortcircuits the search.
         /// </summary>
-        /// <param name="expression">PSPropertyExpression to test against</param>
+        /// <param name="expression">PSPropertyExpression to test against.</param>
         /// <returns>true if there is a match, else false</returns>
         internal bool IsMatch(PSPropertyExpression expression)
         {

@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generate HTML fragment data string with header that is required for the clipboard.
         /// </summary>
-        /// <param name="html">the html to generate for</param>
+        /// <param name="html">the html to generate for.</param>
         /// <returns>the resulted string</returns>
         private static string GetHtmlDataString(string html)
         {
@@ -406,9 +406,9 @@ EndSelection:<<<<<<<<4";
         /// <summary>
         /// Calculates the number of bytes produced by encoding the string in the string builder in UTF-8 and not .NET default string encoding.
         /// </summary>
-        /// <param name="sb">the string builder to count its string</param>
-        /// <param name="start">optional: the start index to calculate from (default  - start of string)</param>
-        /// <param name="end">optional: the end index to calculate to (default - end of string)</param>
+        /// <param name="sb">the string builder to count its string.</param>
+        /// <param name="start">optional: the start index to calculate from (default  - start of string).</param>
+        /// <param name="end">optional: the end index to calculate to (default - end of string).</param>
         /// <returns>the number of bytes required to encode the string in UTF-8</returns>
         private static int GetByteCount(StringBuilder sb, int start = 0, int end = -1)
         {

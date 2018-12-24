@@ -47,7 +47,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <param>namespace</param>
+            /// <param>namespace.</param>
             /// </summary>
             internal string MethodName
             {
@@ -60,7 +60,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             private string methodName;
 
             /// <summary>
-            /// <param>parameters collection</param>
+            /// <param>parameters collection.</param>
             /// </summary>
             internal CimMethodParametersCollection ParametersCollection
             {
@@ -88,7 +88,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve ciminstances
         /// </param>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/>object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/>object.</param>
         public void InvokeCimMethod(InvokeCimMethodCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);

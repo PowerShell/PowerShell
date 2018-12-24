@@ -339,7 +339,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// other objects. Only unmanaged resources can be disposed.
         /// </param>
         /// </summary>
-        /// <param name="disposing">Whether it is directly called</param>
+        /// <param name="disposing">Whether it is directly called.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!this._disposed)
@@ -858,8 +858,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// clean up the dictionaries if the runspace is closed or broken.
         /// </param>
         /// </summary>
-        /// <param name="sender">Runspace</param>
-        /// <param name="e">Event args</param>
+        /// <param name="sender">Runspace.</param>
+        /// <param name="e">Event args.</param>
         private static void DefaultRunspace_StateChanged(object sender, RunspaceStateEventArgs e)
         {
             Runspace runspace = (Runspace)sender;
@@ -920,7 +920,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <param>namespace</param>
+            /// <param>namespace.</param>
             /// </summary>
             internal CimSessionWrapper CimSessionWrapper
             {
@@ -1097,7 +1097,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// other objects. Only unmanaged resources can be disposed.
         /// </param>
         /// </summary>
-        /// <param name="disposing">Whether it is directly called</param>
+        /// <param name="disposing">Whether it is directly called.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!this._disposed)
