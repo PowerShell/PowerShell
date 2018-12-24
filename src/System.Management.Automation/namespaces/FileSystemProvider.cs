@@ -2041,12 +2041,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (itemType == ItemType.Directory)
             {
-                bool isContainer = false;
-                bool exists = false;
+                bool isPathDirectory = false;
+                bool pathExists = false;
 
                 try
                 {
-                    exists = GetFileSystemInfo(path, out isContainer) != null;
+                    pathExists = GetFileSystemInfo(path, out isPathDirectory) != null;
                 }
                 catch (UnauthorizedAccessException e)
                 {
@@ -2054,7 +2054,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (exists && !isContainer)
+                if (pathExists && !isPathDirectory)
                 {
                     string message = StringUtil.Format("Cannot create {0} because a file with the same name already exists.", path);
                     WriteError(new ErrorRecord(new IOException(message), "NewItemIOError", ErrorCategory.WriteError, path));
@@ -2079,12 +2079,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (itemType == ItemType.File)
             {
-                bool isContainer = false;
-                bool exists = false;
+                bool isPathDirectory = false;
+                bool pathExists = false;
 
                 try
                 {
-                    exists = GetFileSystemInfo(path, out isContainer) != null;
+                    pathExists = GetFileSystemInfo(path, out isPathDirectory) != null;
                 }
                 catch (UnauthorizedAccessException e)
                 {
@@ -2092,7 +2092,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (exists && isContainer)
+                if (pathExists && isPathDirectory)
                 {
                     string message = StringUtil.Format("Cannot create {0} because a directory with the same name already exists.", path);
                     WriteError(new ErrorRecord(new IOException(message), "NewItemIOError", ErrorCategory.WriteError, path));
