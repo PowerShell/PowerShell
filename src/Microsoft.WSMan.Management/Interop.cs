@@ -29,30 +29,30 @@ namespace Microsoft.WSMan.Management
     [TypeLibType((short)0)]
     public enum WSManEnumFlags
     {
-        /// <summary><param><c>WSManFlagNonXmlText</c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 1.</param></summary>
+        /// <summary><param><c>WSManFlagNonXmlText</c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 1.</param></summary>
         WSManFlagNonXmlText = 1,
 
-        /// <summary><param><c>WSManFlagReturnObject</c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 0.</param></summary>
+        /// <summary><param><c>WSManFlagReturnObject</c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 0.</param></summary>
         WSManFlagReturnObject = 0,
 
-        /// <summary><param><c>WSManFlagReturnEPR</c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 2.</param></summary>
+        /// <summary><param><c>WSManFlagReturnEPR</c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 2.</param></summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "EPR")]
         WSManFlagReturnEPR = 2,
 
-        /// <summary><param><c>WSManFlagReturnObjectAndEPR</c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 4.</param></summary>
+        /// <summary><param><c>WSManFlagReturnObjectAndEPR</c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 4.</param></summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "EPR")]
         WSManFlagReturnObjectAndEPR = 4,
 
-        /// <summary><param><c>WSManFlagHierarchyDeep</c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 0.</param></summary>
+        /// <summary><param><c>WSManFlagHierarchyDeep</c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 0.</param></summary>
         WSManFlagHierarchyDeep = 0,
 
-        /// <summary><param><c>WSManFlagHierarchyShallow</c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 32.</param></summary>
+        /// <summary><param><c>WSManFlagHierarchyShallow</c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 32.</param></summary>
         WSManFlagHierarchyShallow = 32,
 
-        /// <summary><param><c>WSManFlagHierarchyDeepBasePropsOnly</c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 64.</param></summary>
+        /// <summary><param><c>WSManFlagHierarchyDeepBasePropsOnly</c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 64.</param></summary>
         WSManFlagHierarchyDeepBasePropsOnly = 64,
 
-        /// <summary><param><c>WSManFlagAssociationInstance </c> constant of <c>_WSManEnumFlags</c> enumeration.  .</param><param>Constant value is 64.</param></summary>
+        /// <summary><param><c>WSManFlagAssociationInstance </c> constant of <c>_WSManEnumFlags</c> enumeration.</param><param>Constant value is 64.</param></summary>
         WSManFlagAssociationInstance = 128
     }
 
@@ -64,62 +64,62 @@ namespace Microsoft.WSMan.Management
     [TypeLibType((short)0)]
     public enum WSManSessionFlags
     {
-        /// <summary><param><c>no flag</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 1.</param></summary>
+        /// <summary><param><c>no flag</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 1.</param></summary>
         WSManNone = 0,
 
-        /// <summary><param><c>WSManFlagUTF8</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 1.</param></summary>
+        /// <summary><param><c>WSManFlagUTF8</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 1.</param></summary>
         WSManFlagUtf8 = 1,
 
-        /// <summary><param><c>WSManFlagCredUsernamePassword</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 4096.</param></summary>
+        /// <summary><param><c>WSManFlagCredUsernamePassword</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 4096.</param></summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
         WSManFlagCredUserNamePassword = 4096,
 
-        /// <summary><param><c>WSManFlagSkipCACheck</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 8192.</param></summary>
+        /// <summary><param><c>WSManFlagSkipCACheck</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 8192.</param></summary>
         WSManFlagSkipCACheck = 8192,
 
-        /// <summary><param><c>WSManFlagSkipCNCheck</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 16384.</param></summary>
+        /// <summary><param><c>WSManFlagSkipCNCheck</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 16384.</param></summary>
         WSManFlagSkipCNCheck = 16384,
 
-        /// <summary><param><c>WSManFlagUseNoAuthentication</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 32768.</param></summary>
+        /// <summary><param><c>WSManFlagUseNoAuthentication</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 32768.</param></summary>
         WSManFlagUseNoAuthentication = 32768,
 
-        /// <summary><param><c>WSManFlagUseDigest</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 65536.</param></summary>
+        /// <summary><param><c>WSManFlagUseDigest</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 65536.</param></summary>
         WSManFlagUseDigest = 65536,
 
-        /// <summary><param><c>WSManFlagUseNegotiate</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 131072.</param></summary>
+        /// <summary><param><c>WSManFlagUseNegotiate</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 131072.</param></summary>
         WSManFlagUseNegotiate = 131072,
 
-        /// <summary><param><c>WSManFlagUseBasic</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 262144.</param></summary>
+        /// <summary><param><c>WSManFlagUseBasic</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 262144.</param></summary>
         WSManFlagUseBasic = 262144,
 
-        /// <summary><param><c>WSManFlagUseKerberos</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 524288.</param></summary>
+        /// <summary><param><c>WSManFlagUseKerberos</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 524288.</param></summary>
         WSManFlagUseKerberos = 524288,
 
-        /// <summary><param><c>WSManFlagNoEncryption</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 1048576.</param></summary>
+        /// <summary><param><c>WSManFlagNoEncryption</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 1048576.</param></summary>
         WSManFlagNoEncryption = 1048576,
 
-        /// <summary><param><c>WSManFlagEnableSPNServerPort</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 4194304.</param></summary>
+        /// <summary><param><c>WSManFlagEnableSPNServerPort</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 4194304.</param></summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Spn")]
         WSManFlagEnableSpnServerPort = 4194304,
 
-        /// <summary><param><c>WSManFlagUTF16</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 8388608.</param></summary>
+        /// <summary><param><c>WSManFlagUTF16</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 8388608.</param></summary>
         WSManFlagUtf16 = 8388608,
 
-        /// <summary><param><c>WSManFlagUseCredSsp</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 16777216.</param></summary>
+        /// <summary><param><c>WSManFlagUseCredSsp</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 16777216.</param></summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Ssp")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
         WSManFlagUseCredSsp = 16777216,
 
-        /// <summary><param><c>WSManFlagUseClientCertificate</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 2097152.</param></summary>
+        /// <summary><param><c>WSManFlagUseClientCertificate</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 2097152.</param></summary>
         WSManFlagUseClientCertificate = 2097152,
 
-        /// <summary><param><c>WSManFlagSkipRevocationCheck</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 33554432.</param></summary>
+        /// <summary><param><c>WSManFlagSkipRevocationCheck</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 33554432.</param></summary>
         WSManFlagSkipRevocationCheck = 33554432,
 
-        /// <summary><param><c>WSManFlagAllowNegotiateImplicitCredentials</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 67108864.</param></summary>
+        /// <summary><param><c>WSManFlagAllowNegotiateImplicitCredentials</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 67108864.</param></summary>
         WSManFlagAllowNegotiateImplicitCredentials = 67108864,
 
-        /// <summary><param><c>WSManFlagUseSsl</c> constant of <c>_WSManSessionFlags</c> enumeration.  .</param><param>Constant value is 134217728.</param></summary>
+        /// <summary><param><c>WSManFlagUseSsl</c> constant of <c>_WSManSessionFlags</c> enumeration.</param><param>Constant value is 134217728.</param></summary>
         WSManFlagUseSsl = 134217728
     }
     #endregion WsManSessionFlags
@@ -729,7 +729,7 @@ namespace Microsoft.WSMan.Management
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
 #endif
-        /// <summary><param><c>resourceUri</c> property of <c>IWSManResourceLocator</c> interface.  .</param><param>Set the resource URI. Must contain path only -- query string is not allowed here.</param></summary>
+        /// <summary><param><c>resourceUri</c> property of <c>IWSManResourceLocator</c> interface.</param><param>Set the resource URI. Must contain path only -- query string is not allowed here.</param></summary>
         /// <remarks><param>An original IDL definition of <c>resourceUri</c> property was the following:  <c>BSTR resourceUri</c>;.</param></remarks>
         // Set the resource URI. Must contain path only -- query string is not allowed here.
         // IDL: BSTR resourceUri;
