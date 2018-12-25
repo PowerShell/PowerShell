@@ -3,9 +3,7 @@
 Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
 
     # WaitHandle.WaitOne(milliseconds, exitContext) is not accurate.
-    # The wait time varies from 980ms to 1150ms from observation
-    # when waiting for one second. To test fractional seconds
-    # the expected values start from 1450ms and end to 1700ms.
+    # The actual wait time can vary from 1450ms to 1700ms.
     $minTime = 1450
     $maxTime = 1700
 
