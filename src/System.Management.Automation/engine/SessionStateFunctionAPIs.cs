@@ -173,7 +173,7 @@ namespace System.Management.Automation
 
         private bool IsFunctionVisibleInDebugger(FunctionInfo fnInfo, CommandOrigin origin)
         {
-            // Ensure the returned function item is not exposed across language boundaries when in 
+            // Ensure the returned function item is not exposed across language boundaries when in
             // a debugger breakpoint or nested prompt.
             // A debugger breakpoint/nested prompt has access to all current scoped functions.
             // This includes both running commands from the prompt or via a debugger Action scriptblock.

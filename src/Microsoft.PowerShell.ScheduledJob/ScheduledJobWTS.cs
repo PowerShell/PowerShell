@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="taskId">Task Id</param>
         /// <exception cref="ScheduledJobException">Task not found.</exception>
-        /// <returns>ScheduledJobTriggers</returns>
+        /// <returns>ScheduledJobTriggers.</returns>
         public Collection<ScheduledJobTrigger> GetJobTriggers(
             string taskId)
         {
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="taskId">Task Id</param>
         /// <exception cref="ScheduledJobException">Task not found.</exception>
-        /// <returns>ScheduledJobOptions</returns>
+        /// <returns>ScheduledJobOptions.</returns>
         public ScheduledJobOptions GetJobOptions(
             string taskId)
         {
@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Creates a ScheduledJobTrigger object based on a provided WTS ITrigger.
         /// </summary>
         /// <param name="iTrigger">ITrigger</param>
-        /// <returns>ScheduledJobTrigger</returns>
+        /// <returns>ScheduledJobTrigger.</returns>
         private ScheduledJobTrigger CreateJobTrigger(
             ITrigger iTrigger)
         {
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// PSCredential object.
         /// </summary>
         /// <param name="credential">PSCredential</param>
-        /// <returns>Unsecured password string</returns>
+        /// <returns>Unsecured password string.</returns>
         private string GetCredentialPassword(PSCredential credential)
         {
             if (credential == null)
@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// a ITaskDefinition object.
         /// </summary>
         /// <param name="taskId">Task Id</param>
-        /// <returns>ITaskDefinition</returns>
+        /// <returns>ITaskDefinition.</returns>
         private ITaskDefinition FindTask(string taskId)
         {
             try
@@ -697,7 +697,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         ///  "nS" - second value.
         /// </summary>
         /// <param name="wtsTime">Formatted time string</param>
-        /// <returns>TimeSpan</returns>
+        /// <returns>TimeSpan.</returns>
         private TimeSpan ParseWTSTime(string wtsTime)
         {
             if (string.IsNullOrEmpty(wtsTime))
@@ -793,7 +793,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Creates WTS formatted time string based on TimeSpan parameter.
         /// </summary>
         /// <param name="time">TimeSpan</param>
-        /// <returns>WTS time string</returns>
+        /// <returns>WTS time string.</returns>
         internal static string ConvertTimeSpanToWTSString(TimeSpan time)
         {
             return string.Format(
@@ -809,7 +809,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Converts DateTime to string for WTS.
         /// </summary>
         /// <param name="dt">DateTime</param>
-        /// <returns>DateTime string</returns>
+        /// <returns>DateTime string.</returns>
         internal static string ConvertDateTimeToString(DateTime? dt)
         {
             if (dt == null)
@@ -827,7 +827,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// required by Windows Task Scheduler API.
         /// </summary>
         /// <param name="daysOfWeek">Array of DayOfWeek</param>
-        /// <returns>WTS days of week mask</returns>
+        /// <returns>WTS days of week mask.</returns>
         internal static short ConvertDaysOfWeekToMask(IEnumerable<DayOfWeek> daysOfWeek)
         {
             short rtnValue = 0;
@@ -872,7 +872,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Converts WTS days of week mask to an array of DayOfWeek type.
         /// </summary>
         /// <param name="mask">WTS days of week mask</param>
-        /// <returns>Days of week as List</returns>
+        /// <returns>Days of week as List.</returns>
         private List<DayOfWeek> ConvertMaskToDaysOfWeekArray(short mask)
         {
             List<DayOfWeek> daysOfWeek = new List<DayOfWeek>();

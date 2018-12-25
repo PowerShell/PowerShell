@@ -356,7 +356,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="startTime">When did the operation start</param>
         /// <param name="expectedDuration">How long does the operation usually take</param>
-        /// <returns>Estimated percentage complete of the operation (always between 0 and 99% - never returns 100%)</returns>
+        /// <returns>Estimated percentage complete of the operation (always between 0 and 99% - never returns 100%).</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when
         /// 1) <paramref name="startTime"/> is in the future
@@ -495,7 +495,7 @@ namespace System.Management.Automation
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject progressAsPSObject = RemotingEncoder.CreateEmptyPSObject();

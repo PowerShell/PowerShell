@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return a single-quoted string. Any embedded single quotes will be doubled.
         /// </summary>
         /// <param name="name">The string to quote</param>
-        /// <returns>The quoted string</returns>
+        /// <returns>The quoted string.</returns>
         private string QuoteName(string name)
         {
             if (name == null)
@@ -554,7 +554,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return a single-quoted string using the AbsoluteUri member to ensure it is escaped correctly
         /// </summary>
         /// <param name="name">The Uri to quote</param>
-        /// <returns>The quoted AbsoluteUri</returns>
+        /// <returns>The quoted AbsoluteUri.</returns>
         private string QuoteName(Uri name)
         {
             if (name == null)
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return a single-quoted string from a Version object
         /// </summary>
         /// <param name="name">The Version object to quote</param>
-        /// <returns>The quoted Version string</returns>
+        /// <returns>The quoted Version string.</returns>
         private string QuoteName(Version name)
         {
             if (name == null)
@@ -580,7 +580,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="names">The list to quote</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from</param>
-        /// <returns>The quoted list</returns>
+        /// <returns>The quoted list.</returns>
         private string QuoteNames(IEnumerable names, StreamWriter streamWriter)
         {
             if (names == null)
@@ -655,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleSpecs">The list to quote</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from</param>
-        /// <returns>The quoted list</returns>
+        /// <returns>The quoted list.</returns>
         private string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
         {
             StringBuilder result = new StringBuilder();
@@ -741,7 +741,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="names">The list to quote</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from</param>
-        /// <returns>The quoted list</returns>
+        /// <returns>The quoted list.</returns>
         private string QuoteFiles(IEnumerable names, StreamWriter streamWriter)
         {
             List<string> resolvedPaths = new List<string>();
@@ -774,7 +774,7 @@ namespace Microsoft.PowerShell.Commands
         ///// <param name="allowedExtension">This is the allowed file extension, any other extension will give an error.</param>
         ///// <param name="streamWriter">Streamwriter to get end of line character from</param>
         ///// <param name="item">The item of the manifest file for which names are being resolved.</param>
-        ///// <returns>The quoted list</returns>
+        ///// <returns>The quoted list.</returns>
         //private string QuoteFilesWithWildcard(string basePath, IEnumerable names, string allowedExtension, StreamWriter streamWriter, string item)
         //{
         //    if (names != null)

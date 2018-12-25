@@ -1009,7 +1009,7 @@ namespace System.Management.Automation.Runspaces
         ///<summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
-        /// <returns>RunspacePoolCapability</returns>
+        /// <returns>RunspacePoolCapability.</returns>
         public RunspacePoolCapability GetCapabilities()
         {
             return _internalPool.GetCapabilities();

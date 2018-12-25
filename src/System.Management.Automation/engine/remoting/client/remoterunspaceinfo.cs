@@ -203,7 +203,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// ToString method override
         /// </summary>
-        /// <returns>string</returns>
+        /// <returns>String.</returns>
         public override string ToString()
         {
             // PSSession is a PowerShell type name and so should not be localized.
@@ -322,7 +322,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Generates and returns the runspace name
         /// </summary>
-        /// <returns>auto generated name</returns>
+        /// <returns>Auto generated name.</returns>
         private string GetTransportName()
         {
             if (_remoteRunspace.ConnectionInfo is WSManConnectionInfo)
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Runspaces
         /// Returns shell configuration name with shell prefix removed.
         /// </summary>
         /// <param name="shell">shell configuration name</param>
-        /// <returns>display shell name</returns>
+        /// <returns>Display shell name.</returns>
         private string GetDisplayShellName(string shell)
         {
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
@@ -376,7 +376,7 @@ namespace System.Management.Automation.Runspaces
         /// Generates a unique runspace id.
         /// </summary>
         /// <param name="rtnId">Returned Id</param>
-        /// <returns>Returned name</returns>
+        /// <returns>Returned name.</returns>
         internal static string GenerateRunspaceName(out int rtnId)
         {
             int id = GenerateRunspaceId();
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Increments and returns a session unique runspace Id.
         /// </summary>
-        /// <returns>Id</returns>
+        /// <returns>Id.</returns>
         internal static int GenerateRunspaceId()
         {
             return System.Threading.Interlocked.Increment(ref s_seed);

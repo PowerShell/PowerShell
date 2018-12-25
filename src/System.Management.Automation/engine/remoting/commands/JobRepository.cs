@@ -80,7 +80,7 @@ namespace System.Management.Automation
         /// Get a key for the specified item
         /// </summary>
         /// <param name="item">item for which the key is required</param>
-        /// <returns>returns a key</returns>
+        /// <returns>Returns a key.</returns>
         protected abstract Guid GetKey(T item);
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace System.Management.Automation
         /// Returns the instance id of the job as key
         /// </summary>
         /// <param name="item">job for which a key is required</param>
-        /// <returns>returns jobs guid</returns>
+        /// <returns>Returns jobs guid.</returns>
         protected override Guid GetKey(Job item)
         {
             if (item != null)

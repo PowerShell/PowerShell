@@ -54,7 +54,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">object to retrieve the PSMemberInfo from</param>
         /// <param name="memberName">name of the member to be retrieved</param>
-        /// <returns>The PSMemberInfo corresponding to memberName from obj</returns>
+        /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
             ComProperty prop;
@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// to the properties available in it.
         /// </summary>
         /// <param name="obj">object to get all the member information from</param>
-        /// <returns>all members in obj</returns>
+        /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
             PSMemberInfoInternalCollection<T> collection = new PSMemberInfoInternalCollection<T>();
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         /// Returns an array with the property attributes
         /// </summary>
         /// <param name="property">property we want the attributes from</param>
-        /// <returns>an array with the property attributes</returns>
+        /// <returns>An array with the property attributes.</returns>
         protected override AttributeCollection PropertyAttributes(PSProperty property)
         {
             return new AttributeCollection();
@@ -151,7 +151,7 @@ namespace System.Management.Automation
         /// Returns the value from a property coming from a previous call to DoGetProperty
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
-        /// <returns>The value of the property</returns>
+        /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// Returns true if the property is settable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is settable</returns>
+        /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -185,7 +185,7 @@ namespace System.Management.Automation
         /// Returns true if the property is gettable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is gettable</returns>
+        /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -197,7 +197,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">PSProperty obtained in a previous DoGetProperty</param>
         /// <param name="forDisplay">True if the result is for display purposes only</param>
-        /// <returns>the name of the type corresponding to the property</returns>
+        /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         ///  get the property signature.
         /// </summary>
         /// <param name="property">property object whose signature we want</param>
-        /// <returns>string representing the signature of the property</returns>
+        /// <returns>String representing the signature of the property.</returns>
         protected override string PropertyToString(PSProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the non empty return from GetMethods</param>
         /// <param name="arguments">the arguments to use</param>
-        /// <returns>the return value for the method</returns>
+        /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
             ComMethod commethod = (ComMethod)method.adapterData;
@@ -248,7 +248,7 @@ namespace System.Management.Automation
         /// Returns the name of the type corresponding to the property's value
         /// </summary>
         /// <param name="property">property obtained in a previous GetMember</param>
-        /// <returns>the name of the type corresponding to the member</returns>
+        /// <returns>The name of the type corresponding to the member.</returns>
         protected override string ParameterizedPropertyType(PSParameterizedProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -259,7 +259,7 @@ namespace System.Management.Automation
         /// Returns true if the property is settable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is settable</returns>
+        /// <returns>True if the property is settable.</returns>
         protected override bool ParameterizedPropertyIsSettable(PSParameterizedProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -270,7 +270,7 @@ namespace System.Management.Automation
         /// Returns true if the property is gettable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is gettable</returns>
+        /// <returns>True if the property is gettable.</returns>
         protected override bool ParameterizedPropertyIsGettable(PSParameterizedProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">the non empty return from GetMember</param>
         /// <param name="arguments">the arguments to use</param>
-        /// <returns>the return value for the property</returns>
+        /// <returns>The return value for the property.</returns>
         protected override object ParameterizedPropertyGet(PSParameterizedProperty property, object[] arguments)
         {
             ComProperty prop = (ComProperty)property.adapterData;
@@ -305,7 +305,7 @@ namespace System.Management.Automation
         /// Returns the string representation of the property in the object
         /// </summary>
         /// <param name="property">property obtained in a previous GetMember</param>
-        /// <returns>the string representation of the property in the object</returns>
+        /// <returns>The string representation of the property in the object.</returns>
         protected override string ParameterizedPropertyToString(PSParameterizedProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;

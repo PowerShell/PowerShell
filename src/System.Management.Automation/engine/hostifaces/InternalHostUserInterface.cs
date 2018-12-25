@@ -439,7 +439,7 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// Gets the informational message buffers of the host
         /// </summary>
-        /// <returns>informational message buffers</returns>
+        /// <returns>Informational message buffers.</returns>
         internal PSInformationalBuffers GetInformationalMessageBuffers()
         {
             return _informationalBuffers;

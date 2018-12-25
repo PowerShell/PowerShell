@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// to be written to the error pipeline and clear the list of pending
         /// errors
         /// </summary>
-        /// <returns>list of ErrorRecord objects</returns>
+        /// <returns>List of ErrorRecord objects.</returns>
         internal List<ErrorRecord> DrainFailedResultList()
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -687,7 +687,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Conversion between an error internal representation and ErrorRecord
         /// </summary>
         /// <param name="error">internal error object</param>
-        /// <returns>corresponding ErrorRecord instance</returns>
+        /// <returns>Corresponding ErrorRecord instance.</returns>
         private static ErrorRecord GenerateErrorRecord(FormattingError error)
         {
             ErrorRecord errorRecord = null;

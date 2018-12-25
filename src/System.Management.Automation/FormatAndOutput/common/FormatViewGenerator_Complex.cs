@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object to process</param>
         /// <param name="inputParameters">parameters from the command line</param>
-        /// <returns>complex view entry to send to the output command</returns>
+        /// <returns>Complex view entry to send to the output command.</returns>
         internal ComplexViewEntry GenerateView(PSObject so, FormattingCommandLineParameters inputParameters)
         {
             _complexSpecificParameters = (ComplexSpecificParameters)inputParameters.shapeParameters;
@@ -697,7 +697,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// treat as scalar check
         /// </summary>
         /// <param name="typeNames">name of the type to check</param>
-        /// <returns>true if it has to be treated as a scalar</returns>
+        /// <returns>True if it has to be treated as a scalar.</returns>
         private static bool TreatAsScalarType(Collection<string> typeNames)
         {
             return DefaultScalarTypes.IsTypeInList(typeNames);

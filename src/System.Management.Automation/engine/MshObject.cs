@@ -428,7 +428,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the adapter corresponding to obj.GetType()
         /// </summary>
-        /// <returns>the adapter set corresponding to obj.GetType()</returns>
+        /// <returns>The adapter set corresponding to obj.GetType().</returns>
         internal static AdapterSet GetMappedAdapter(object obj, TypeTable typeTable)
         {
             Type objectType = obj.GetType();
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation
         /// If it is not present, and the BaseObject is null we try listing the properties.
         /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
         /// </param>
-        /// <returns>A string representation of the object</returns>
+        /// <returns>A string representation of the object.</returns>
         /// <exception cref="ExtendedTypeSystemException">
         /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
         /// </exception>
@@ -1248,7 +1248,7 @@ namespace System.Management.Automation
         /// <param name="unravelEnumeratorOnRecurse">If recurse is false, this parameter is not considered. If it is true
         /// this parameter will determine how enumerators are going to be treated.
         /// </param>
-        /// <returns>A string representation of the object</returns>
+        /// <returns>A string representation of the object.</returns>
         /// <exception cref="ExtendedTypeSystemException">
         /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
         /// </exception>
@@ -1489,7 +1489,7 @@ namespace System.Management.Automation
         /// CodeMethod or ScriptMethod will be used, if available. Enumerations items are
         /// concatenated using $ofs.
         /// </summary>
-        /// <returns>the string representation for baseObject</returns>
+        /// <returns>The string representation for baseObject.</returns>
         /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString</exception>
         public override string ToString()
         {
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="format">repassed to baseObject's IFormattable if present</param>
         /// <param name="formatProvider">repassed to baseObject's IFormattable if present</param>
-        /// <returns>the string representation for baseObject</returns>
+        /// <returns>The string representation for baseObject.</returns>
         /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString</exception>
         public string ToString(string format, IFormatProvider formatProvider)
         {
@@ -1547,7 +1547,7 @@ namespace System.Management.Automation
         /// it is a value type, and use BaseObject.Clone() for the new PSObject,
         /// if the BaseObject is ICloneable.
         /// </summary>
-        /// <returns>a copy of this object</returns>
+        /// <returns>A copy of this object.</returns>
         public virtual PSObject Copy()
         {
             PSObject returnValue = (PSObject)this.MemberwiseClone();
@@ -1665,7 +1665,7 @@ namespace System.Management.Automation
         /// Determines whether the specified Object is equal to the current Object.
         /// </summary>
         /// <param name="obj">The Object to compare with the current Object.</param>
-        /// <returns>true if the specified Object is equal to the current Object; otherwise, false.</returns>
+        /// <returns>True if the specified Object is equal to the current Object; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             // There is a slight difference between BaseObject and PSObject.Base.
@@ -1694,7 +1694,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
         /// </summary>
-        /// <returns>A hash code for the current Object</returns>
+        /// <returns>A hash code for the current Object.</returns>
         public override int GetHashCode()
         {
             return this.BaseObject.GetHashCode();
@@ -1959,7 +1959,7 @@ namespace System.Management.Automation
         /// in the remoting scenario on the client side (where a LocalRunspace may not be
         /// present).
         /// </param>
-        /// <returns>A collection with only the specific properties to serialize</returns>
+        /// <returns>A collection with only the specific properties to serialize.</returns>
         internal Collection<string> GetSpecificPropertiesToSerialize(TypeTable backupTypeTable)
         {
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
@@ -2494,7 +2494,7 @@ namespace Microsoft.PowerShell
             if (nodes == null)
             {
                 return string.Empty;
-            }   
+            }
 
             if (nodes.Count == 1)
             {

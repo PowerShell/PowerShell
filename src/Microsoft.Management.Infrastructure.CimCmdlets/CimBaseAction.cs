@@ -82,7 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Block current thread until action completed
         /// </para>
         /// </summary>
-        /// <returns>Response from user</returns>
+        /// <returns>Response from user.</returns>
         public virtual CimResponseType GetResponse()
         {
             this.Block();

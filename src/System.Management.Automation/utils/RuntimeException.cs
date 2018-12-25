@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the RuntimeException class.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RuntimeException()
             : base()
         {
@@ -41,7 +41,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected RuntimeException(SerializationInfo info,
                            StreamingContext context)
                 : base(info, context)
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the RuntimeException class.
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RuntimeException(string message)
             : base(message)
         {
@@ -84,7 +84,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RuntimeException(string message,
                                 Exception innerException)
                 : base(message, innerException)
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// <param name="message"></param>
         /// <param name="innerException"></param>
         /// <param name="errorRecord"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RuntimeException(string message,
             Exception innerException,
             ErrorRecord errorRecord)

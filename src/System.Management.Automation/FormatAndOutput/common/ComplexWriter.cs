@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// so that we do not break paths etc.
         /// </summary>
         /// <param name="s">input string</param>
-        /// <returns>a collection of words</returns>
+        /// <returns>A collection of words.</returns>
         private static IEnumerable<GetWordsResult> GetWords(string s)
         {
             StringBuilder sb = new StringBuilder();
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// by honoring both \n and \r\n
         /// </summary>
         /// <param name="s">string to split</param>
-        /// <returns>string array with the values</returns>
+        /// <returns>String array with the values.</returns>
         internal static string[] SplitLines(string s)
         {
             if (string.IsNullOrEmpty(s))

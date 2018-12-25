@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell
         /// <param name="listInput">true if the field is a list</param>
         /// <param name="endListInput">valid only if listInput is true. set to true if the input signals end of list input </param>
         /// <param name="cancelled">true iff the input is canceled, e.g., by Ctrl-C or Ctrl-Break</param>
-        /// <returns>processed input string to be converted with LanguagePrimitives.ConvertTo </returns>
+        /// <returns>Processed input string to be converted with LanguagePrimitives.ConvertTo.</returns>
         private string PromptReadInput(string fieldPrompt, FieldDescription desc, bool fieldEchoOnPrompt,
                         bool listInput, out bool endListInput, out bool cancelled)
         {
@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell
         /// <param name="inputString">the string to be converted</param>
         /// <param name="convertedObj">if there's no error in the conversion, the converted object will be assigned here;
         /// otherwise, this will be the same as the inputString</param>
-        /// <returns>an object of type fieldType that inputString represents</returns>
+        /// <returns>An object of type fieldType that inputString represents.</returns>
         private PromptCommonInputErrors PromptTryConvertTo(Type fieldType, bool isFromRemoteHost, string inputString, out object convertedObj)
         {
             Dbg.Assert(fieldType != null, "fieldType should never be null when PromptTryConvertTo is called");

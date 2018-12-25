@@ -188,7 +188,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Constructs the resultant object from the AST and returns it if it is safe.
         /// </summary>
-        /// <returns>The object represented by the AST as a safe object</returns>
+        /// <returns>The object represented by the AST as a safe object.</returns>
         /// <exception cref="InvalidOperationException">
         /// If <paramref name="extent"/> is deemed unsafe
         /// </exception>
@@ -2932,7 +2932,7 @@ namespace System.Management.Automation.Language
         /// Define imported module and all type definitions imported by this using statement.
         /// </summary>
         /// <param name="moduleInfo"></param>
-        /// <returns>return ExportedTypeTable for this module</returns>
+        /// <returns>Return ExportedTypeTable for this module.</returns>
         internal ReadOnlyDictionary<string, TypeDefinitionAst> DefineImportedModule(PSModuleInfo moduleInfo)
         {
             var types = moduleInfo.GetExportedTypeDefinitions();
@@ -2943,7 +2943,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Is UsingStatementKind Module or Assembly.
         /// </summary>
-        /// <returns>true, if it is.</returns>
+        /// <returns>True, if it is.</returns>
         internal bool IsUsingModuleOrAssembly()
         {
             return UsingStatementKind == UsingStatementKind.Assembly || UsingStatementKind == UsingStatementKind.Module;

@@ -281,8 +281,8 @@ namespace System.Management.Automation.Tracing
         /// nothing.
         /// </summary>
         /// <param name="activityId"></param>
-        /// <returns>true when provided activity was set, false if current activity
-        /// was found to be same and set was not needed</returns>
+        /// <returns>True when provided activity was set, false if current activity
+        /// was found to be same and set was not needed.</returns>
         public static bool SetActivityId(Guid activityId)
         {
             if (GetActivityId() != activityId)
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="levels">Levels to check </param>
         /// <param name="keywords">Keywords to check</param>
-        /// <returns>True, if any ETW listener is enabled else false</returns>
+        /// <returns>True, if any ETW listener is enabled else false.</returns>
         public bool IsProviderEnabled(byte levels, long keywords)
         {
             return GetProvider().IsEnabled(levels, keywords);

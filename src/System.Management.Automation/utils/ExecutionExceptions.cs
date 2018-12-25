@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the CmdletInvocationException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public CmdletInvocationException(string message)
             : base(message)
         {
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public CmdletInvocationException(string message,
                                          Exception innerException)
             : base(message, innerException)
@@ -122,7 +122,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected CmdletInvocationException(SerializationInfo info,
                                             StreamingContext context)
                     : base(info, context)
@@ -200,7 +200,7 @@ namespace System.Management.Automation
         /// <param name="myInvocation">
         /// identity of cmdlet, null is unknown
         /// </param>
-        /// <returns>constructed object</returns>
+        /// <returns>Constructed object.</returns>
         internal CmdletProviderInvocationException(
                     ProviderInvocationException innerException,
                     InvocationInfo myInvocation)
@@ -217,7 +217,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the CmdletProviderInvocationException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public CmdletProviderInvocationException()
             : base()
         {
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected CmdletProviderInvocationException(SerializationInfo info,
                                                     StreamingContext context)
             : base(info, context)
@@ -242,7 +242,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the CmdletProviderInvocationException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public CmdletProviderInvocationException(string message)
             : base(message)
         {
@@ -253,7 +253,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public CmdletProviderInvocationException(string message,
                                                  Exception innerException)
             : base(message, innerException)
@@ -329,7 +329,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineStoppedException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineStoppedException()
             : base(GetErrorText.PipelineStoppedException)
         {
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected PipelineStoppedException(SerializationInfo info,
                                            StreamingContext context)
                     : base(info, context)
@@ -357,7 +357,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the PipelineStoppedException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineStoppedException(string message)
             : base(message)
         {
@@ -368,7 +368,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineStoppedException(string message,
                                         Exception innerException)
             : base(message, innerException)
@@ -392,7 +392,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineClosedException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineClosedException()
             : base()
         {
@@ -402,7 +402,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the PipelineClosedException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineClosedException(string message)
             : base(message)
         {
@@ -413,7 +413,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineClosedException(string message,
                                        Exception innerException)
             : base(message, innerException)
@@ -429,7 +429,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected PipelineClosedException(SerializationInfo info,
                                           StreamingContext context)
             : base(info, context)
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ActionPreferenceStopException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ActionPreferenceStopException()
             : this(GetErrorText.ActionPreferenceStop)
         {
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         /// <param name="error">
         /// Non-terminating error which triggered the Stop
         /// </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal ActionPreferenceStopException(ErrorRecord error)
             : this(RetrieveMessage(error))
         {
@@ -484,7 +484,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="invocationInfo">  </param>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal ActionPreferenceStopException(InvocationInfo invocationInfo, string message)
             : this(message)
         {
@@ -515,7 +515,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected ActionPreferenceStopException(SerializationInfo info,
                                                 StreamingContext context)
                     : base(info, context)
@@ -564,7 +564,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the ActionPreferenceStopException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ActionPreferenceStopException(string message)
             : base(message)
         {
@@ -584,7 +584,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ActionPreferenceStopException(string message,
                                              Exception innerException)
             : base(message, innerException)
@@ -640,7 +640,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the ParentContainsErrorRecordException class.
         /// Note that this sets the Message and not the InnerException.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// I leave this non-standard constructor form public.
         /// </remarks>
@@ -659,7 +659,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the ParentContainsErrorRecordException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ParentContainsErrorRecordException(string message)
         {
             _message = message;
@@ -668,7 +668,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ParentContainsErrorRecordException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ParentContainsErrorRecordException()
             : base()
         {
@@ -679,7 +679,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ParentContainsErrorRecordException(string message,
                                                   Exception innerException)
             : base(message, innerException)
@@ -696,7 +696,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> doesn't return </returns>
+        /// <returns>Doesn't return.</returns>
         /// <exception cref="NotImplementedException">always</exception>
         protected ParentContainsErrorRecordException(
             SerializationInfo info, StreamingContext context)
@@ -757,7 +757,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the RedirectedException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RedirectedException()
             : base()
         {
@@ -769,7 +769,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the RedirectedException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RedirectedException(string message)
             : base(message)
         {
@@ -782,7 +782,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public RedirectedException(string message,
                                    Exception innerException)
             : base(message, innerException)
@@ -798,7 +798,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected RedirectedException(SerializationInfo info,
                                       StreamingContext context)
                     : base(info, context)
@@ -829,7 +829,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the ScriptCallDepthException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ScriptCallDepthException()
             : base(GetErrorText.ScriptCallDepthException)
         {
@@ -839,7 +839,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the ScriptCallDepthException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ScriptCallDepthException(string message)
             : base(message)
         {
@@ -850,7 +850,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ScriptCallDepthException(string message,
                                         Exception innerException)
                 : base(message, innerException)
@@ -866,7 +866,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected ScriptCallDepthException(SerializationInfo info,
                                            StreamingContext context)
             : base(info, context)
@@ -938,7 +938,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the PipelineDepthException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineDepthException()
             : base(GetErrorText.PipelineDepthException)
         {
@@ -948,7 +948,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the PipelineDepthException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineDepthException(string message)
             : base(message)
         {
@@ -959,7 +959,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PipelineDepthException(string message,
                                         Exception innerException)
             : base(message, innerException)
@@ -975,7 +975,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected PipelineDepthException(SerializationInfo info,
                                            StreamingContext context)
             : base(info, context)
@@ -1055,7 +1055,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiates a new instance of the HaltCommandException class
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public HaltCommandException()
             : base(StringUtil.Format(AutomationExceptions.HaltCommandException))
         {
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the HaltCommandException class
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public HaltCommandException(string message)
             : base(message)
         {
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public HaltCommandException(string message,
                                     Exception innerException)
             : base(message, innerException)
@@ -1092,7 +1092,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected HaltCommandException(SerializationInfo info,
                                        StreamingContext context)
             : base(info, context)

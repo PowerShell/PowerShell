@@ -45,7 +45,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets the system lockdown policy
         /// </summary>
-        /// <returns>An EnforcementMode that describes the system policy</returns>
+        /// <returns>An EnforcementMode that describes the system policy.</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
             if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
@@ -69,7 +69,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets lockdown policy as applied to a file
         /// </summary>
-        /// <returns>An EnforcementMode that describes policy</returns>
+        /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
         {
             // Check the WLDP API

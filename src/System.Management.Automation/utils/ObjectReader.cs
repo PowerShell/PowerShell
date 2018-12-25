@@ -251,7 +251,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
@@ -264,7 +264,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single object from the stream
         /// </summary>
-        /// <returns>the next object in the stream</returns>
+        /// <returns>The next object in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         public override object Read()
         {
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Peek the next object
         /// </summary>
-        /// <returns>The next object in the stream or ObjectStream.EmptyObject if the stream is empty</returns>
+        /// <returns>The next object in the stream or ObjectStream.EmptyObject if the stream is empty.</returns>
         public override object Peek()
         {
             return _stream.Peek();
@@ -361,7 +361,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
@@ -374,7 +374,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single PSObject from the stream
         /// </summary>
-        /// <returns>the next PSObject in the stream</returns>
+        /// <returns>The next PSObject in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         public override PSObject Read()
         {
@@ -429,7 +429,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Peek the next PSObject
         /// </summary>
-        /// <returns>The next PSObject in the stream or ObjectStream.EmptyObject if the stream is empty</returns>
+        /// <returns>The next PSObject in the stream or ObjectStream.EmptyObject if the stream is empty.</returns>
         public override PSObject Peek()
         {
             return MakePSObject(_stream.Peek());
@@ -514,7 +514,7 @@ namespace System.Management.Automation.Internal
         /// This method is not supported.
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         public override Collection<ReturnType> Read(int count)
         {
             throw new NotSupportedException();
@@ -689,7 +689,7 @@ namespace System.Management.Automation.Internal
         /// This method is not supported.
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         public override Collection<ReturnType> Read(int count)
         {
             throw new NotSupportedException();
@@ -794,7 +794,7 @@ namespace System.Management.Automation.Internal
         /// Converts to the return type based on language primitives
         /// </summary>
         /// <param name="inputObject">input object to convert</param>
-        /// <returns>input object converted to the specified return type</returns>
+        /// <returns>Input object converted to the specified return type.</returns>
         private ReturnType ConvertToReturnType(object inputObject)
         {
             Type resultType = typeof(ReturnType);

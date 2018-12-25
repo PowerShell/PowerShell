@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// <c>0.0</c> means that total count is unknown;
         /// anything in-between means that total count is estimated
         /// </param>
-        /// <returns>An object that represents a total count of objects that the cmdlet would return without paging</returns>
+        /// <returns>An object that represents a total count of objects that the cmdlet would return without paging.</returns>
         public PSObject NewTotalCount(UInt64 totalCount, double accuracy)
         {
             PSObject result = new PSObject(totalCount);

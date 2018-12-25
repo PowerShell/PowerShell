@@ -47,7 +47,7 @@ namespace System.Management.Automation.Remoting
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
         /// <param name="procId">Process Id</param>
-        /// <returns>Pipe name</returns>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             int procId)
         {
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Remoting
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
         /// <param name="proc">Process object</param>
-        /// <returns>Pipe name</returns>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             System.Diagnostics.Process proc)
         {
@@ -73,7 +73,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="procId">Process Id</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>
-        /// <returns>Pipe name</returns>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             int procId,
             string appDomainName)
@@ -87,7 +87,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="proc">Process object</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>
-        /// <returns>Pipe name</returns>
+        /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             System.Diagnostics.Process proc,
             string appDomainName)
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Returns the current process AppDomain name.
         /// </summary>
-        /// <returns>AppDomain Name string</returns>
+        /// <returns>AppDomain Name string.</returns>
         internal static string GetCurrentAppDomainName()
         {
 #if CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
@@ -428,7 +428,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a RemoteSessionNamedPipeServer with the current process and AppDomain information.
         /// </summary>
-        /// <returns>RemoteSessionNamedPipeServer</returns>
+        /// <returns>RemoteSessionNamedPipeServer.</returns>
         public static RemoteSessionNamedPipeServer CreateRemoteSessionNamedPipeServer()
         {
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
@@ -467,7 +467,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="namespaceName">Named pipe namespace name.</param>
         /// <param name="coreName">Named pipe core name.</param>
         /// <param name="securityDesc"></param>
-        /// <returns>NamedPipeServerStream</returns>
+        /// <returns>NamedPipeServerStream.</returns>
         private NamedPipeServerStream CreateNamedPipe(
             string serverName,
             string namespaceName,

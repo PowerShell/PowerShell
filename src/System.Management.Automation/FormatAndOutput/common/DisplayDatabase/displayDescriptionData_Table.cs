@@ -229,7 +229,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if this object is safe to be written
         /// </summary>
-        /// <returns>true if safe, false otherwise</returns>
+        /// <returns>True if safe, false otherwise.</returns>
         internal override bool SafeForExport()
         {
             if (!base.SafeForExport())

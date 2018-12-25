@@ -366,7 +366,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
-        /// <returns>An array of zero or more result objects</returns>
+        /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.

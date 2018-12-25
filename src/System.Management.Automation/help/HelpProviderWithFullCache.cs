@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// since this is no need for children class to override this member.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>The HelpInfo found. Null if nothing is found</returns>
+        /// <returns>The HelpInfo found. Null if nothing is found.</returns>
         internal sealed override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             if (!this.CacheFullyLoaded)
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal sealed override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             if (!this.CacheFullyLoaded)
@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// since this is no need for children class to override this member.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal sealed override IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
         {
             return null;

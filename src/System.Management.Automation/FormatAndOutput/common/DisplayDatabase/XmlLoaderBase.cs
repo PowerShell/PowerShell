@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// The returned IDisposable should be used in a using(){...} block
         /// </summary>
         /// <param name="n">node to push on the stack</param>
-        /// <returns>object to dispose when exiting the frame</returns>
+        /// <returns>Object to dispose when exiting the frame.</returns>
         protected IDisposable StackFrame(XmlNode n)
         {
             return StackFrame(n, -1);
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="n">node to push on the stack</param>
         /// <param name="index">index of the node of the same name in a collection</param>
-        /// <returns>object to dispose when exiting the frame</returns>
+        /// <returns>Object to dispose when exiting the frame.</returns>
         protected IDisposable StackFrame(XmlNode n, int index)
         {
             XmlLoaderStackFrame sf = new XmlLoaderStackFrame(this, n, index);
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="n">XmlNode whose name is to compare</param>
         /// <param name="s">string to compare the node name to</param>
         /// <param name="allowAttributes">if true, accept the presence of attributes on the node</param>
-        /// <returns>true if there is a match</returns>
+        /// <returns>True if there is a match.</returns>
         private bool MatchNodeNameHelper(XmlNode n, string s, bool allowAttributes)
         {
             bool match = false;

@@ -1756,7 +1756,7 @@ namespace System.Management.Automation
         /// <param name="rte">The RuntimeException which was reported</param>
         /// <param name="message">The message to display</param>
         /// <param name="context">The execution context</param>
-        /// <returns>The preference the user selected</returns>
+        /// <returns>The preference the user selected.</returns>
         /// <remarks>
         /// Error action is decided by error action preference. If preference is inquire, we will
         /// prompt user for their preference.
@@ -1876,7 +1876,7 @@ namespace System.Management.Automation
         /// <param name="extent"></param>
         /// <param name="rte">The runtime error to report</param>
         /// <param name="context">The execution context</param>
-        /// <returns>True if it was able to report the error</returns>
+        /// <returns>True if it was able to report the error.</returns>
         internal static bool ReportErrorRecord(IScriptExtent extent, RuntimeException rte, ExecutionContext context)
         {
             if (context.ShellFunctionErrorOutputPipe == null)
@@ -3271,7 +3271,7 @@ namespace System.Management.Automation
         /// <param name="context">The execution context used to see if the pipeline is stopping</param>
         /// <param name="enumerator">THe enumerator to advance.</param>
         /// <exception cref="RuntimeException">An error occurred moving to the next element in the enumeration</exception>
-        /// <returns>True if the move succeeded</returns>
+        /// <returns>True if the move succeeded.</returns>
         internal static bool MoveNext(ExecutionContext context, IEnumerator enumerator)
         {
             try

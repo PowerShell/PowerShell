@@ -137,7 +137,7 @@ namespace System.Management.Automation
         /// Default implementation - always returns true.
         /// </summary>
         /// <param name="target">ignored</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public bool ShouldProcess(string target) { return true; }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">ignored</param>
         /// <param name="action">ignored</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public bool ShouldProcess(string target, string action) { return true; }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// <param name="verboseDescription">ignored</param>
         /// <param name="verboseWarning">ignored</param>
         /// <param name="caption">ignored</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption) { return true; }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// <param name="verboseWarning">ignored</param>
         /// <param name="caption">ignored</param>
         /// <param name="shouldProcessReason">ignored</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption, out ShouldProcessReason shouldProcessReason) { shouldProcessReason = ShouldProcessReason.None; return true; }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="query">ignored</param>
         /// <param name="caption">ignored</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public bool ShouldContinue(string query, string caption) { return true; }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace System.Management.Automation
         /// <param name="caption">ignored</param>
         /// <param name="yesToAll">ignored</param>
         /// <param name="noToAll">ignored</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll) { return true; }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         /// <param name="hasSecurityImpact">ignored</param>
         /// <param name="yesToAll">ignored</param>
         /// <param name="noToAll">ignored</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public bool ShouldContinue(string query, string caption, bool hasSecurityImpact, ref bool yesToAll, ref bool noToAll) { return true; }
 
         #endregion Should

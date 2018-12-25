@@ -772,7 +772,7 @@ namespace System.Management.Automation
         /// <param name="commandId">Optional command Id to connect to</param>
         /// <param name="host">Optional PSHost</param>
         /// <param name="typeTable">Optional TypeTable</param>
-        /// <returns>Disconnect remote Runspace object</returns>
+        /// <returns>Disconnect remote Runspace object.</returns>
         internal static Runspace GetRemoteRunspace(RunspaceConnectionInfo connectionInfo, Guid sessionId, Guid? commandId, PSHost host, TypeTable typeTable)
         {
             RunspacePool runspacePool = RemoteRunspacePoolInternal.GetRemoteRunspacePool(
@@ -950,7 +950,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public override RunspaceCapability GetCapabilities()
         {
             RunspaceCapability returnCaps = RunspaceCapability.Default;
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
         {
             return CoreCreatePipeline(null, false, false);
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
-        /// <returns>Previous runspace state</returns>
+        /// <returns>Previous runspace state.</returns>
         /// <remarks>
         /// Sets the internal runspace state information member variable. It also
         /// adds RunspaceStateInfo to a queue.
@@ -1666,8 +1666,8 @@ namespace System.Management.Automation
         /// <param name="invokeCommand">current invoke-command
         /// instance</param>
         /// <param name="localPipelineId">local pipeline id</param>
-        /// <returns>true, if another invoke-command is running
-        /// before, false otherwise</returns>
+        /// <returns>True, if another invoke-command is running
+        /// before, false otherwise.</returns>
         internal bool IsAnotherInvokeCommandExecuting(InvokeCommandCommand invokeCommand,
             long localPipelineId)
         {
@@ -1875,7 +1875,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">Debugger PSCommand</param>
         /// <param name="output">Output</param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <returns>DebuggerCommandResults.</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
             CheckForValidateState();
@@ -2034,7 +2034,7 @@ namespace System.Management.Automation
         /// <summary>
         /// GetDebuggerStopped
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             CheckForValidateState();

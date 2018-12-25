@@ -353,7 +353,7 @@ namespace System.Management.Automation
         /// concise text description based on
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
-        /// <returns>concise text description</returns>
+        /// <returns>Concise text description.</returns>
         /// <remarks>
         /// GetMessage returns a concise string which categorizes the error,
         /// based on
@@ -384,7 +384,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
         /// <param name="uiCultureInfo">Culture in which to display message</param>
-        /// <returns>concise text description</returns>
+        /// <returns>Concise text description.</returns>
         /// <remarks>
         /// GetMessage returns a concise string which categorizes the error,
         /// based on
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         /// Same as
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.GetMessage()"/>
         /// </summary>
-        /// <returns>developer-readable identifier</returns>
+        /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
         {
             return GetMessage(CultureInfo.CurrentUICulture);
@@ -476,7 +476,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="uiCultureInfo">culture to retrieve template if needed</param>
         /// <param name="original">original string</param>
-        /// <returns>Ellipsized version of string</returns>
+        /// <returns>Ellipsized version of string.</returns>
         /// <remarks>
         /// "Please do not make this public as ellipsize is not a word."
         /// </remarks>
@@ -693,7 +693,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected ErrorDetails(SerializationInfo info,
                                StreamingContext context)
         {
@@ -785,7 +785,7 @@ namespace System.Management.Automation
         /// <summary>
         /// As <see cref="System.Object.ToString()"/>
         /// </summary>
-        /// <returns>developer-readable identifier</returns>
+        /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
         {
             return Message;
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// ErrorRecord instances which are serialized using
         /// <see cref="ISerializable"/>
@@ -1689,7 +1689,7 @@ namespace System.Management.Automation
         /// <summary>
         /// As <see cref="System.Object.ToString()"/>
         /// </summary>
-        /// <returns>developer-readable identifier</returns>
+        /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
         {
             if (ErrorDetails != null
@@ -1843,7 +1843,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="baseName">the base resource name</param>
         /// <param name="resourceId">the resource id</param>
-        /// <returns>the error message template string corresponding to baseName and resourceId</returns>
+        /// <returns>The error message template string corresponding to baseName and resourceId.</returns>
         string GetResourceString(string baseName, string resourceId);
     }
 }

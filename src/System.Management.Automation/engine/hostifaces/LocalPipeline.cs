@@ -175,7 +175,7 @@ namespace System.Management.Automation.Runspaces
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-                        // Start execution of pipeline in another thread, 
+                        // Start execution of pipeline in another thread,
                         // and support impersonation flow as needed (Windows only).
                         Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
@@ -533,7 +533,7 @@ namespace System.Management.Automation.Runspaces
 
 #if !UNIX
         /// <summary>
-        /// Invokes the InvokeThreadProc() method on new thread, and flows calling thread 
+        /// Invokes the InvokeThreadProc() method on new thread, and flows calling thread
         /// impersonation as needed.
         /// </summary>
         private void InvokeThreadProcImpersonate()
@@ -826,7 +826,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a PipelineProcessor object from LocalPipeline object.
         /// </summary>
-        /// <returns>Created PipelineProcessor object</returns>
+        /// <returns>Created PipelineProcessor object.</returns>
         private PipelineProcessor CreatePipelineProcessor()
         {
             CommandCollection commands = Commands;

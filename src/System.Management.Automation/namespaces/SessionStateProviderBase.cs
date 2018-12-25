@@ -1057,21 +1057,21 @@ namespace Microsoft.PowerShell.Commands
         /// Always returns null
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object GetContentReaderDynamicParameters(string path) { return null; }
 
         /// <summary>
         /// Always returns null
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object GetContentWriterDynamicParameters(string path) { return null; }
 
         /// <summary>
         /// Always returns null
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object ClearContentDynamicParameters(string path) { return null; }
 
         #endregion

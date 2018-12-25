@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// Invoke the specified script
         /// </summary>
         /// <param name="script">msh script to invoke</param>
-        /// <returns>Output of invocation</returns>
+        /// <returns>Output of invocation.</returns>
         public Collection<PSObject> Invoke(string script)
         {
             return Invoke(script, null);
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="script">msh script to invoke</param>
         /// <param name="input">input to script</param>
-        /// <returns>Output of invocation</returns>
+        /// <returns>Output of invocation.</returns>
         public Collection<PSObject> Invoke(string script, IEnumerable input)
         {
             if (_disposed == true)
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// <param name="script">msh script to invoke</param>
         /// <param name="input">input to script</param>
         /// <param name="errors">this gets errors from script</param>
-        /// <returns>output of invocation</returns>
+        /// <returns>Output of invocation.</returns>
         /// <remarks>
         /// <paramref name="errors"/> is the non-terminating error stream
         /// from the command.

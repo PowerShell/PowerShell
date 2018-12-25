@@ -1327,7 +1327,7 @@ namespace System.Management.Automation
                     if (recurse)
                     {
                         string childName = GetChildName(path, context);
-                            
+
                         // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
 
                         bool isFileOrDirectoryPresent = false;
@@ -1504,7 +1504,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        context.SuppressWildcardExpansion = true;       
+                        context.SuppressWildcardExpansion = true;
                     }
                 }
                 else if (path != null && this.ItemExists(providerInstance, path, context))

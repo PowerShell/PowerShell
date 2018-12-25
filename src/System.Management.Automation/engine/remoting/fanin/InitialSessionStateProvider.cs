@@ -1435,7 +1435,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="context">execution context</param>
         /// <param name="scriptInfo">the ExternalScriptInfo object</param>
-        /// <returns>configuration hashtable</returns>
+        /// <returns>Configuration hashtable.</returns>
         internal static Hashtable LoadConfigFile(ExecutionContext context, ExternalScriptInfo scriptInfo)
         {
             object result;
@@ -1465,7 +1465,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="table">configuration hashtable</param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns>true if valid, false otherwise</returns>
+        /// <returns>True if valid, false otherwise.</returns>
         internal static bool VerifyConfigTable(Hashtable table, PSCmdlet cmdlet, string path)
         {
             bool hasSchemaVersion = false;

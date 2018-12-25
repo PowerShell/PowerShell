@@ -659,7 +659,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Handles known Task Scheduler COM error codes.
         /// </summary>
         /// <param name="e">COMException</param>
-        /// <returns>Error message</returns>
+        /// <returns>Error message.</returns>
         private string ConvertCOMErrorCode(System.Runtime.InteropServices.COMException e)
         {
             string msg = null;
@@ -1170,7 +1170,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// job is also added to the local job repository.  Job results are
         /// not written to the job store.
         /// </summary>
-        /// <returns>ScheduledJob object for running job</returns>
+        /// <returns>ScheduledJob object for running job.</returns>
         public ScheduledJob StartJob()
         {
             IsDisposed();
@@ -1426,7 +1426,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="triggerIds">List of trigger Ids</param>
         /// <param name="notFoundIds">List of not found trigger Ids</param>
-        /// <returns>List of ScheduledJobTrigger objects</returns>
+        /// <returns>List of ScheduledJobTrigger objects.</returns>
         public List<ScheduledJobTrigger> GetTriggers(
             IEnumerable<Int32> triggerIds,
             out List<Int32> notFoundIds)
@@ -1477,7 +1477,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// the passed in trigger Id.
         /// </summary>
         /// <param name="triggerId">Trigger Id</param>
-        /// <returns>ScheduledJobTrigger object</returns>
+        /// <returns>ScheduledJobTrigger object.</returns>
         public ScheduledJobTrigger GetTrigger(
             Int32 triggerId)
         {
@@ -1723,7 +1723,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="definitionName">Name of definition to load</param>
         /// <param name="definitionPath">Path to definition file</param>
-        /// <returns>ScheduledJobDefinition object</returns>
+        /// <returns>ScheduledJobDefinition object.</returns>
         internal static ScheduledJobDefinition LoadDefFromStore(
             string definitionName,
             string definitionPath)
@@ -1947,7 +1947,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Create a Job2 job, runs it and waits for it to complete.
         /// Job status and results are written to the job store.
         /// </summary>
-        /// <returns>Job2 job object that was run</returns>
+        /// <returns>Job2 job object that was run.</returns>
         public Job2 Run()
         {
             Job2 job = null;
@@ -2217,7 +2217,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// the provided definition name.
         /// </summary>
         /// <param name="jobDefName">Definition name</param>
-        /// <returns>True if definition exists</returns>
+        /// <returns>True if definition exists.</returns>
         public bool Contains(string jobDefName)
         {
             lock (_syncObject)

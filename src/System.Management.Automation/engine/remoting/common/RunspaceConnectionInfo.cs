@@ -1029,7 +1029,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow copy of the current instance.
         /// </summary>
-        /// <returns>RunspaceConnectionInfo</returns>
+        /// <returns>RunspaceConnectionInfo.</returns>
         internal override RunspaceConnectionInfo InternalCopy()
         {
             return Copy();
@@ -1833,7 +1833,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow copy of current instance.
         /// </summary>
-        /// <returns>NamedPipeConnectionInfo</returns>
+        /// <returns>NamedPipeConnectionInfo.</returns>
         internal override RunspaceConnectionInfo InternalCopy()
         {
             NamedPipeConnectionInfo newCopy = new NamedPipeConnectionInfo();
@@ -2017,7 +2017,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow copy of current instance.
         /// </summary>
-        /// <returns>NamedPipeConnectionInfo</returns>
+        /// <returns>NamedPipeConnectionInfo.</returns>
         internal override RunspaceConnectionInfo InternalCopy()
         {
             SSHConnectionInfo newCopy = new SSHConnectionInfo();
@@ -2272,7 +2272,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>Copies environment variables from ProcessStartInfo </summary>
         /// <param name="psi">ProcessStartInfo</param>
-        /// <returns>String array of environment key/value pairs</returns>
+        /// <returns>String array of environment key/value pairs.</returns>
         private static string[] CopyEnvVariables(ProcessStartInfo psi)
         {
             var envp = new string[psi.Environment.Count];
@@ -3185,7 +3185,7 @@ namespace System.Management.Automation.Runspaces
                 // other errors caught without exception
                 default:
                     throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotCreateProcessInContainer,
-                                                                            ContainerId, 
+                                                                            ContainerId,
                                                                             Executable,
                                                                             ErrorCode));
             }
@@ -3369,7 +3369,7 @@ namespace System.Management.Automation.Runspaces
             return string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         @"{{""CommandLine"": ""{0} {1} -NoLogo {2}"",""RestrictedToken"": {3}}}",
-                        Executable, 
+                        Executable,
                         (RuntimeId != Guid.Empty) ? "-SocketServerMode -NoProfile" : "-NamedPipeServerMode",
                         string.IsNullOrEmpty(ConfigurationName) ? string.Empty : string.Concat("-Config ", ConfigurationName),
                         RunAsAdmin ? "false" : "true");

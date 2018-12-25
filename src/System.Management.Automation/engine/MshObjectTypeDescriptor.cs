@@ -123,14 +123,14 @@ namespace System.Management.Automation
         /// Returns false to indicate that ResetValue has no effect.
         /// </summary>
         /// <param name="component">The component to test for reset capability. </param>
-        /// <returns>false</returns>
+        /// <returns>False.</returns>
         public override bool CanResetValue(object component) { return false; }
 
         /// <summary>
         /// Returns true to indicate that the value of this property needs to be persisted.
         /// </summary>
         /// <param name="component">The component with the property to be examined for persistence.</param>
-        /// <returns>true</returns>
+        /// <returns>True.</returns>
         public override bool ShouldSerializeValue(object component)
         {
             return true;
@@ -464,7 +464,7 @@ namespace System.Management.Automation
         /// Determines whether the Instance property of <paramref name="obj"/> is equal to the current Instance.
         /// </summary>
         /// <param name="obj">The Object to compare with the current Object.</param>
-        /// <returns>true if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
+        /// <returns>True if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             PSObjectTypeDescriptor other = obj as PSObjectTypeDescriptor;
@@ -484,7 +484,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Provides a value for hashing algorithms.
         /// </summary>
-        /// <returns>A hash code for the current object</returns>
+        /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
             if (this.Instance == null)
@@ -498,7 +498,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the default property for this object.
         /// </summary>
-        /// <returns>An <see cref="PSObjectPropertyDescriptor"/> that represents the default property for this object, or a null reference (Nothing in Visual Basic) if this object does not have properties</returns>
+        /// <returns>An <see cref="PSObjectPropertyDescriptor"/> that represents the default property for this object, or a null reference (Nothing in Visual Basic) if this object does not have properties.</returns>
         public override PropertyDescriptor GetDefaultProperty()
         {
             if (this.Instance == null)

@@ -375,7 +375,7 @@ namespace System.Management.Automation.Internal
         /// Returns true if file has product binary signature
         /// </summary>
         /// <param name="file">Name of file to check</param>
-        /// <returns>True when file has product binary signature</returns>
+        /// <returns>True when file has product binary signature.</returns>
         public static bool IsProductBinary(string file)
         {
             if (String.IsNullOrEmpty(file) || (!IO.File.Exists(file)))
@@ -422,7 +422,7 @@ namespace System.Management.Automation.Internal
         /// Returns the value of the Execution Policy as retrieved
         /// from group policy.
         /// </summary>
-        /// <returns>NULL if it is not defined at this level</returns>
+        /// <returns>NULL if it is not defined at this level.</returns>
         private static string GetGroupPolicyValue(string shellId, ExecutionPolicyScope scope)
         {
             ConfigScope[] scopeKey = null;
@@ -460,7 +460,7 @@ namespace System.Management.Automation.Internal
         /// Returns the value of the Execution Policy as retrieved
         /// from the local preference.
         /// </summary>
-        /// <returns>NULL if it is not defined at this level</returns>
+        /// <returns>NULL if it is not defined at this level.</returns>
         private static string GetLocalPreferenceValue(string shellId, ExecutionPolicyScope scope)
         {
             switch (scope)
@@ -581,7 +581,7 @@ namespace System.Management.Automation.Internal
         /// throw if file does not exist
         /// </summary>
         /// <param name="filePath"> path to file </param>
-        /// <returns> Does not return a value </returns>
+        /// <returns>Does not return a value.</returns>
         internal static void CheckIfFileExists(string filePath)
         {
             if (!File.Exists(filePath))
@@ -595,7 +595,7 @@ namespace System.Management.Automation.Internal
         /// used as a code signing cert
         /// </summary>
         /// <param name="c"> certificate object </param>
-        /// <returns> true on success, false otherwise </returns>
+        /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
             if (!CertHasPrivatekey(c))
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Internal
         /// that this cert doesn't require the private key.
         /// </summary>
         /// <param name="c"> certificate object </param>
-        /// <returns> true on success, false otherwise </returns>
+        /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForEncryption(X509Certificate2 c)
         {
             return (
@@ -659,7 +659,7 @@ namespace System.Management.Automation.Internal
         /// check if the specified cert has a private key in it
         /// </summary>
         /// <param name="cert"> certificate object </param>
-        /// <returns> true on success, false otherwise </returns>
+        /// <returns>True on success, false otherwise.</returns>
         internal static bool CertHasPrivatekey(X509Certificate2 cert)
         {
             return cert.HasPrivateKey;
@@ -669,7 +669,7 @@ namespace System.Management.Automation.Internal
         /// Get the EKUs of a cert
         /// </summary>
         /// <param name="cert"> certificate object </param>
-        /// <returns> a collection of cert eku strings </returns>
+        /// <returns>A collection of cert eku strings.</returns>
         [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
@@ -727,7 +727,7 @@ namespace System.Management.Automation.Internal
         /// convert an int to a DWORD
         /// </summary>
         /// <param name="n"> signed int number  </param>
-        /// <returns> DWORD </returns>
+        /// <returns>DWORD.</returns>
         internal static DWORD GetDWORDFromInt(int n)
         {
             UInt32 result = BitConverter.ToUInt32(BitConverter.GetBytes(n), 0);
@@ -738,7 +738,7 @@ namespace System.Management.Automation.Internal
         /// convert a DWORD to int
         /// </summary>
         /// <param name="n"> number </param>
-        /// <returns> int </returns>
+        /// <returns>Int.</returns>
         internal static int GetIntFromDWORD(DWORD n)
         {
             Int64 n64 = n - 0x100000000L;

@@ -1814,7 +1814,7 @@ namespace System.Management.Automation
         /// <param name="childJobsCount"></param>
         /// <param name="computedJobState"></param>
         /// <param name="failedChildJobsCount"></param>
-        /// <returns>true if the job state needs to be modified, false otherwise</returns>
+        /// <returns>True if the job state needs to be modified, false otherwise.</returns>
         internal static bool ComputeJobStateFromChildJobStates(string traceClassName, JobStateEventArgs e,
             ref int blockedChildJobsCount, ref int suspendedChildJobsCount, ref int suspendingChildJobsCount, ref int finishedChildJobsCount,
                 ref int failedChildJobsCount, ref int stoppedChildJobsCount, int childJobsCount,

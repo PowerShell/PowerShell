@@ -679,7 +679,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">The name of the command to lookup</param>
         /// <param name="dotSource"></param>
-        /// <returns>The command processor object</returns>
+        /// <returns>The command processor object.</returns>
         internal CommandProcessorBase CreateCommand(string command, bool dotSource)
         {
             CommandOrigin commandOrigin = this.EngineSessionState.CurrentScope.ScopeOrigin;
@@ -1642,7 +1642,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">The event sender</param>
         /// <param name="args">The event args</param>
-        /// <returns>The resolve assembly or null if not found</returns>
+        /// <returns>The resolve assembly or null if not found.</returns>
         private static Assembly PowerShellAssemblyResolveHandler(object sender, ResolveEventArgs args)
         {
             ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();

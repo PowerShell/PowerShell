@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// preprocessed by the default formatter
         /// </summary>
         /// <param name="o">object to examine for formatting</param>
-        /// <returns>whether the object needs to be shunted to preprocessing</returns>
+        /// <returns>Whether the object needs to be shunted to preprocessing.</returns>
         private bool NeedsPreprocessing(object o)
         {
             FormatEntryData fed = o as FormatEntryData;
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// shunt object to the formatting pipeline for preprocessing
         /// </summary>
         /// <param name="o">object to be preprocessed</param>
-        /// <returns>array of objects returned by the preprocessing step</returns>
+        /// <returns>Array of objects returned by the preprocessing step.</returns>
         private Array ApplyFormatting(object o)
         {
             if (_command == null)

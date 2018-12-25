@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
         /// Check if the TypeData instance contains no members.
         /// </summary>
         /// <param name="typeData"></param>
-        /// <returns>false if empty, true if not</returns>
+        /// <returns>False if empty, true if not.</returns>
         private bool EnsureTypeDataIsNotEmpty(TypeData typeData)
         {
             if (typeData.Members.Count == 0 && typeData.StandardMembers.Count == 0

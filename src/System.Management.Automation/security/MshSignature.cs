@@ -194,7 +194,7 @@ namespace System.Management.Automation
         /// <param name="error"> win32 error code </param>
         /// <param name="signer"> cert of the signer </param>
         /// <param name="timestamper"> cert of the time stamper </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath,
                            DWORD error,
                            X509Certificate2 signer,
@@ -214,7 +214,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath"> this signature is found in this file </param>
         /// <param name="signer"> cert of the signer </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath,
                            X509Certificate2 signer)
         {
@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// <param name="filePath"> this signature is found in this file </param>
         /// <param name="error"> win32 error code </param>
         /// <param name="signer"> cert of the signer </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath,
                            DWORD error,
                            X509Certificate2 signer)
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath"> this signature is found in this file </param>
         /// <param name="error"> win32 error code </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath, DWORD error)
         {
             Utils.CheckArgForNullOrEmpty(filePath, "filePath");

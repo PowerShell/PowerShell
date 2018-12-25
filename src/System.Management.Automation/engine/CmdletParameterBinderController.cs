@@ -509,7 +509,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="currentParameterSetFlag"></param>
         /// <param name="availableParameterValuePairs"></param>
-        /// <returns>null if no qualified pair found</returns>
+        /// <returns>Null if no qualified pair found.</returns>
         private Dictionary<MergedCompiledCommandParameter, object> GetQualifiedParameterValuePairs(
             uint currentParameterSetFlag,
             Dictionary<MergedCompiledCommandParameter, object> availableParameterValuePairs)
@@ -597,7 +597,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get all available default parameter value pairs
         /// </summary>
-        /// <returns>return the available parameter value pairs. Otherwise return null</returns>
+        /// <returns>Return the available parameter value pairs. Otherwise return null.</returns>
         private Dictionary<MergedCompiledCommandParameter, object> GetDefaultParameterValuePairs(bool needToGetAlias)
         {
             if (DefaultParameterValues == null)
@@ -4378,7 +4378,7 @@ namespace System.Management.Automation
         /// <summary>
         /// check to see if the hashtable has been changed since last check
         /// </summary>
-        /// <returns>true for changed; false for not changed</returns>
+        /// <returns>True for changed; false for not changed.</returns>
         public bool ChangeSinceLastCheck()
         {
             bool ret = _isChanged;
@@ -4609,7 +4609,7 @@ namespace System.Management.Automation
         /// <param name="key"></param>
         /// <param name="cmdletName"></param>
         /// <param name="parameterName"></param>
-        /// <returns>Return true if the key is valid, false if not</returns>
+        /// <returns>Return true if the key is valid, false if not.</returns>
         internal static bool CheckKeyIsValid(string key, ref string cmdletName, ref string parameterName)
         {
             if (key == String.Empty)

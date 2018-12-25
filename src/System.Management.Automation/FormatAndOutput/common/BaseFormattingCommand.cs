@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// compute the group transition, given an input object
         /// </summary>
         /// <param name="so">object received from the input pipeline</param>
-        /// <returns>GroupTransition enumeration</returns>
+        /// <returns>GroupTransition enumeration.</returns>
         private GroupTransition ComputeGroupTransition(PSObject so)
         {
             // check if we have to start a group
@@ -667,7 +667,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// FormattingCommandLineParameters instance, ready to pass to the
         /// inner format command
         /// </summary>
-        /// <returns>parameters collected in unified manner</returns>
+        /// <returns>Parameters collected in unified manner.</returns>
         internal virtual FormattingCommandLineParameters GetCommandLineParameters()
         {
             return null;

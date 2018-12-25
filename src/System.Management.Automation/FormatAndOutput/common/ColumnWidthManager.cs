@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// (meaning unassigned)
         /// </summary>
         /// <param name="columnWidths">columns to process</param>
-        /// <returns>true if there was a fit, false if there is need for trimming</returns>
+        /// <returns>True if there was a fit, false if there is need for trimming.</returns>
         private bool AssignColumnWidths(Span<int> columnWidths)
         {
             // run a quick check to see if all the columns have a specified width,
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// get the last visible column (i.e. with a width >= 0)
         /// </summary>
         /// <param name="columnWidths">column widths array</param>
-        /// <returns>index of the last visible column, -1 if none</returns>
+        /// <returns>Index of the last visible column, -1 if none.</returns>
         private static int GetLastVisibleColumn(Span<int> columnWidths)
         {
             for (int k = 0; k < columnWidths.Length; k++)

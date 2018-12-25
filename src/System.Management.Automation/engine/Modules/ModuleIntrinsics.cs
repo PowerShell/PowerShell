@@ -93,7 +93,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="ss">The session state instance to use for this module - may be null</param>
         /// <param name="results">The results produced from evaluating the scriptblock</param>
-        /// <returns>The newly created module info object</returns>
+        /// <returns>The newly created module info object.</returns>
         internal PSModuleInfo CreateModule(string name, string path, ScriptBlock scriptBlock, SessionState ss, out List<object> results, params object[] arguments)
         {
             return CreateModuleImplementation(name, path, scriptBlock, null, ss, null, out results, arguments);
@@ -108,7 +108,7 @@ namespace System.Management.Automation
         /// <param name="arguments">Optional arguments to pass to the script while executing</param>
         /// <param name="ss">The session state instance to use for this module - may be null</param>
         /// <param name="privateData">The private data to use for this module - may be null</param>
-        /// <returns>The constructed module object</returns>
+        /// <returns>The constructed module object.</returns>
         internal PSModuleInfo CreateModule(string path, ExternalScriptInfo scriptInfo, IScriptExtent scriptPosition, SessionState ss, object privateData, params object[] arguments)
         {
             List<object> result;
@@ -136,7 +136,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="ss">The session state instance to use for this module - may be null</param>
         /// <param name="privateData">The private data to use for this module - may be null</param>
-        /// <returns>The created module</returns>
+        /// <returns>The created module.</returns>
         private PSModuleInfo CreateModuleImplementation(string name, string path, object moduleCode, IScriptExtent scriptPosition, SessionState ss, object privateData, out List<object> result, params object[] arguments)
         {
             ScriptBlock sb;
@@ -262,7 +262,7 @@ namespace System.Management.Automation
         /// <param name="context">Context to use to create bounded script.</param>
         /// <param name="sb">The scriptblock to bind</param>
         /// <param name="linkToGlobal">Whether it should be linked to the global session state or not</param>
-        /// <returns>A new scriptblock</returns>
+        /// <returns>A new scriptblock.</returns>
         internal ScriptBlock CreateBoundScriptBlock(ExecutionContext context, ScriptBlock sb, bool linkToGlobal)
         {
             PSModuleInfo module = new PSModuleInfo(context, linkToGlobal);
@@ -921,7 +921,7 @@ namespace System.Management.Automation
         /// Gets the module name from module path.
         /// </summary>
         /// <param name="path">The path to the module</param>
-        /// <returns>The module name</returns>
+        /// <returns>The module name.</returns>
         internal static string GetModuleName(string path)
         {
             string fileName = path == null ? string.Empty : Path.GetFileName(path);
@@ -948,7 +948,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the personal module path
         /// </summary>
-        /// <returns>personal module path</returns>
+        /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
 #if UNIX
@@ -961,7 +961,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the PSHome module path, as known as the "system wide module path" in windows powershell.
         /// </summary>
-        /// <returns>The PSHome module path</returns>
+        /// <returns>The PSHome module path.</returns>
         internal static string GetPSHomeModulePath()
         {
             if (s_psHomeModulePath != null)
@@ -1371,7 +1371,7 @@ namespace System.Management.Automation
         /// modules long term - e.g. when open sourcing a module and installing from the gallery.
         /// </param>
         /// <param name="context"></param>
-        /// <returns>The module path as an array of strings</returns>
+        /// <returns>The module path as an array of strings.</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
             string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
@@ -1697,7 +1697,7 @@ namespace System.Management.Automation
         /// Checks pattern list for wildcard characters.
         /// </summary>
         /// <param name="list">Pattern list</param>
-        /// <returns>True if pattern contains '*'</returns>
+        /// <returns>True if pattern contains '*'.</returns>
         internal static bool PatternContainsWildcard(List<WildcardPattern> list)
         {
             if (list != null)

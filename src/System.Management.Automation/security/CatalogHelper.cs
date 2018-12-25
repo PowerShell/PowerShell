@@ -87,7 +87,7 @@ namespace System.Management.Automation
         /// Find out the Version of Catalog by reading its Meta data. We can have either version 1 or version 2 catalog
         /// </summary>
         /// <param name="catalogHandle"> Handle to open catalog file </param>
-        /// <returns> Version of the catalog </returns>
+        /// <returns>Version of the catalog.</returns>
         private static int GetCatalogVersion(IntPtr catalogHandle)
         {
             int catalogVersion = -1;
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// HashAlgorithm used by the Catalog. It is based on the version of Catalog.
         /// </summary>
         /// <param name="catalogVersion"> Path of the output catalog file </param>
-        /// <returns> Version of the catalog </returns>
+        /// <returns>Version of the catalog.</returns>
         private static string GetCatalogHashAlgorithm(int catalogVersion)
         {
             string hashAlgorithm = string.Empty;
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         /// <param name="cdfFilePath"> Path of the catalog definition file </param>
         /// <param name="catalogVersion"> Version of catalog</param>
         /// <param name="hashAlgorithm"> hash method used to generate hashes for the Catalog </param>
-        /// <returns> HashSet for the relative Path for files in Catalog </returns>
+        /// <returns>HashSet for the relative Path for files in Catalog.</returns>
         internal static string GenerateCDFFile(Collection<string> Path, string catalogFilePath, string cdfFilePath, int catalogVersion, string hashAlgorithm)
         {
             HashSet<string> relativePaths = new HashSet<string>();
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         /// <param name="cdfHeaderContent"> content to be added in CatalogHeader section of cdf File</param>
         /// <param name="cdfFilesContent"> content to be added in CatalogFiles section of cdf File </param>
         /// <param name="catAttributeCount"> indicating the current no of catalog header level attributes </param>
-        /// <returns> void </returns>
+        /// <returns>Void.</returns>
         internal static void ProcessFileToBeAddedInCatalogDefinitionFile(FileInfo fileToHash, DirectoryInfo dirInfo, ref HashSet<string> relativePaths, ref string cdfHeaderContent, ref string cdfFilesContent, ref int catAttributeCount)
         {
             string relativePath = string.Empty;
@@ -332,7 +332,7 @@ namespace System.Management.Automation
         /// <param name="catalogFilePath"> Catalog File Path </param>
         /// <param name="catalogVersion"> Catalog File Path </param>
         /// <param name="cmdlet"> Instance of cmdlet calling this method  </param>
-        /// <returns> true if able to generate .cat file or false </returns>
+        /// <returns>True if able to generate .cat file or false.</returns>
         internal static FileInfo GenerateCatalog(PSCmdlet cmdlet, Collection<string> Path, string catalogFilePath, int catalogVersion)
         {
             _cmdlet = cmdlet;
@@ -374,7 +374,7 @@ namespace System.Management.Automation
         /// Get file attribute (Relative path in our case) from catalog
         /// </summary>
         /// <param name="memberAttrInfo"> Pointer to current attribute of catalog member. </param>
-        /// <returns> value of the attribute </returns>
+        /// <returns>Value of the attribute.</returns>
         internal static string ProcessFilePathAttributeInCatalog(IntPtr memberAttrInfo)
         {
             string relativePath = string.Empty;
@@ -401,7 +401,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath"> Path of the file </param>
         /// <param name="hashAlgorithm"> Used to calculate Hash </param>
-        /// <returns> HashValue for the file </returns>
+        /// <returns>HashValue for the file.</returns>
         internal static string CalculateFileHash(string filePath, string hashAlgorithm)
         {
             string hashValue = string.Empty;
@@ -479,7 +479,7 @@ namespace System.Management.Automation
         /// <param name="catalogFilePath"> Path to the folder having catalog file </param>
         /// <param name="excludedPatterns"></param>
         /// <param name="catalogVersion"> The version of input catalog we read from catalog meta data after opening it.</param>
-        /// <returns> Dictionary mapping files relative paths to HashValues </returns>
+        /// <returns>Dictionary mapping files relative paths to HashValues.</returns>
         internal static Dictionary<string, string> GetHashesFromCatalog(string catalogFilePath, WildcardPattern[] excludedPatterns, out int catalogVersion)
         {
             IntPtr resultCatalog = NativeMethods.CryptCATOpen(catalogFilePath, 0, IntPtr.Zero, 1, 0);
@@ -578,7 +578,7 @@ namespace System.Management.Automation
         /// <param name="fileHash"> hash of file found in catalog. </param>
         /// <param name="excludedPatterns"> skip file from validation if it matches these patterns </param>
         /// <param name="catalogHashes"> collection of hashes of catalog </param>
-        /// <returns> void </returns>
+        /// <returns>Void.</returns>
         internal static void ProcessCatalogFile(string relativePath, string fileHash, WildcardPattern[] excludedPatterns, ref Dictionary<string, string> catalogHashes)
         {
             // Found the attribute we are looking for
@@ -604,7 +604,7 @@ namespace System.Management.Automation
         /// <param name="hashAlgorithm"> Used to calculate Hash </param>
         /// <param name="excludedPatterns"> skip file if it matches these patterns </param>
         /// <param name="fileHashes"> collection of hashes of files </param>
-        /// <returns> void </returns>
+        /// <returns>Void.</returns>
         internal static void ProcessPathFile(FileInfo fileToHash, DirectoryInfo dirInfo, string hashAlgorithm, WildcardPattern[] excludedPatterns, ref Dictionary<string, string> fileHashes)
         {
             string relativePath = string.Empty;
@@ -656,7 +656,7 @@ namespace System.Management.Automation
         /// <param name="catalogFilePath"> catalog file path it should be skipped when calculating the hashes </param>
         /// <param name="hashAlgorithm"> Used to calculate Hash </param>
         /// <param name="excludedPatterns"></param>
-        /// <returns> Dictionary mapping file relative paths to hashes. </returns>
+        /// <returns>Dictionary mapping file relative paths to hashes..</returns>
         internal static Dictionary<string, string> CalculateHashesFromPath(Collection<string> folderPaths, string catalogFilePath, string hashAlgorithm, WildcardPattern[] excludedPatterns)
         {
             // Create a HashTable of file Hashes
@@ -690,7 +690,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="catalogItems"> Hashes extracted from Catalog </param>
         /// <param name="pathItems"> Hashes created from folders path </param>
-        /// <returns> True if both collections are same </returns>
+        /// <returns>True if both collections are same.</returns>
         internal static bool CompareDictionaries(Dictionary<string, string> catalogItems, Dictionary<string, string> pathItems)
         {
             bool Status = true;
@@ -735,7 +735,7 @@ namespace System.Management.Automation
         /// <param name="catalogFilePath"> File Name of the Catalog </param>
         /// <param name="excludedPatterns"></param>
         /// <param name="cmdlet"> Instance of cmdlet calling this method  </param>
-        /// <returns> Information about Catalog </returns>
+        /// <returns>Information about Catalog.</returns>
         internal static CatalogInformation ValidateCatalog(PSCmdlet cmdlet, Collection<string> catalogFolders, string catalogFilePath, WildcardPattern[] excludedPatterns)
         {
             _cmdlet = cmdlet;
@@ -772,7 +772,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="excludedPatterns"></param>
-        /// <returns>True if match is found else false</returns>
+        /// <returns>True if match is found else false.</returns>
         internal static bool CheckExcludedCriteria(string filename, WildcardPattern[] excludedPatterns)
         {
             if (excludedPatterns != null)

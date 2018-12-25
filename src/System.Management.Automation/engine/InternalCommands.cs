@@ -1708,7 +1708,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the value based on the given property name
         /// </summary>
-        /// <returns>the value of the property</returns>
+        /// <returns>The value of the property.</returns>
         private object GetValue(ref bool error)
         {
             if (LanguagePrimitives.IsNull(InputObject))

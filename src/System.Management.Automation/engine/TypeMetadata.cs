@@ -1294,7 +1294,7 @@ namespace System.Management.Automation
                 if (processingDynamicParameters)
                 {
                     // When processing dynamic parameters, parameter definitions come from the user,
-                    // Invalid data could be passed in, or the parameter could be actually disabled. 
+                    // Invalid data could be passed in, or the parameter could be actually disabled.
                     if (parameterDefinition == null || parameterDefinition.IsDisabled()) { continue; }
                 }
 

@@ -756,7 +756,7 @@ namespace System.Management.Automation.Remoting.Client
         /// interaction.
         /// </summary>
         /// <param name="remoteObject">Remote data object</param>
-        /// <returns>True if remote data object requires a user response</returns>
+        /// <returns>True if remote data object requires a user response.</returns>
         private bool CheckForInteractiveHostCall(RemoteDataObject<PSObject> remoteObject)
         {
             bool interactiveHostCall = false;

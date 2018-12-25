@@ -366,7 +366,7 @@ namespace System.Management.Automation.Runspaces
         /// CreateDebugPerfStruct is a helper method to populate DebugPreference
         /// </summary>
         /// <param name="AppDomainNames">App Domain Names</param>
-        /// <returns>DebugPreference</returns>
+        /// <returns>DebugPreference.</returns>
         private static DebugPreference CreateDebugPreference(string[] AppDomainNames)
         {
             DebugPreference DebugPreference = new DebugPreference();

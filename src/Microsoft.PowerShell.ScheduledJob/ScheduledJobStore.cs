@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// for the current user.
         /// </summary>
         /// <param name="definitionPath">Path for scheduled job definitions</param>
-        /// <returns>True if paths are equal</returns>
+        /// <returns>True if paths are equal.</returns>
         public static bool IsDefaultUserPath(string definitionPath)
         {
             return definitionPath.Equals(GetJobDefinitionLocation(), StringComparison.OrdinalIgnoreCase);
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         ///  scheduled job definition.
         /// </summary>
         /// <param name="definitionName">Definition name</param>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         public static string GetJobRunOutputDirectory(
             string definitionName)
         {
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Gets the directory path for a Scheduled Job Definition.
         /// </summary>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         public static string GetJobDefinitionLocation()
         {
 #if UNIX
@@ -444,7 +444,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Gets the directory path for Scheduled Jobs.  Will create the directory if
         /// it does not exist.
         /// </summary>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         private static string GetDirectoryPath()
         {
             string pathName;
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="definitionName">Definition name</param>
         /// <param name="fileName">File name</param>
-        /// <returns>File path/name</returns>
+        /// <returns>File path/name.</returns>
         private static string CreateFilePathName(string definitionName, string fileName)
         {
             string filePath = GetJobDefinitionPath(definitionName);
@@ -491,7 +491,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="definitionName">Definition name</param>
         /// <param name="fileName">File name</param>
-        /// <returns>File path/name</returns>
+        /// <returns>File path/name.</returns>
         private static string GetFilePathName(string definitionName, string fileName)
         {
             string filePath = GetJobDefinitionPath(definitionName);
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Gets the directory path for a Scheduled Job Definition.
         /// </summary>
         /// <param name="definitionName">Scheduled job definition name</param>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         private static string GetJobDefinitionPath(string definitionName)
         {
 #if UNIX
@@ -519,7 +519,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="definitionName">Definition name</param>
         /// <param name="runStart">File name</param>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         private static string GetRunDirectory(
             string definitionName,
             DateTime runStart)
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="definitionOutputPath">Output directory path</param>
         /// <param name="runStart">File name</param>
-        /// <returns>Directory Path</returns>
+        /// <returns>Directory Path.</returns>
         private static string GetRunDirectoryFromPath(
             string definitionOutputPath,
             DateTime runStart)
@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="definitionName">Definition name</param>
         /// <param name="runItem">Result type</param>
         /// <param name="runStart">Run date</param>
-        /// <returns>File path/name</returns>
+        /// <returns>File path/name.</returns>
         private static string GetRunFilePathName(
             string definitionName,
             JobRunItem runItem,

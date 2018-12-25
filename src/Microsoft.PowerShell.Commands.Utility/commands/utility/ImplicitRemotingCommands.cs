@@ -1103,7 +1103,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="name">name to validate</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeNameOrIdentifier(string name)
         {
             // '.' is needed for stuff like net.exe
@@ -1121,7 +1121,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="parameterName">parameter name to validate</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeParameterName(string parameterName)
         {
             return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(":");
@@ -1132,7 +1132,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it doesn't introduce any side effects on the client).
         /// </summary>
         /// <param name="type">type to validate</param>
-        /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeTypeConstraint(Type type)
         {
             if (type == null)
@@ -1175,7 +1175,7 @@ namespace Microsoft.PowerShell.Commands
         /// Writes error messages if necessary.  Modifies command metadata to make it safe if necessary.
         /// </summary>
         /// <param name="commandMetadata">command metadata to verify</param>
-        /// <returns><c>true</c> if the command metadata is safe; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if the command metadata is safe; <c>false</c> otherwise.</returns>
         private bool IsSafeCommandMetadata(CommandMetadata commandMetadata)
         {
             if (!IsCommandNameMatchingParameters(commandMetadata.Name))
@@ -1395,7 +1395,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="name2commandMetadata">Dictionary where rehydrated CommandMetadata are going to be stored</param>
         /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names</param>
         /// <param name="remoteCommandInfo">Remote (deserialized) CommandInfo object</param>
-        /// <returns>CommandMetadata equivalents</returns>
+        /// <returns>CommandMetadata equivalents.</returns>
         private void AddRemoteCommandMetadata(
             Dictionary<string, CommandMetadata> name2commandMetadata,
             Dictionary<string, string> alias2resolvedCommandName,
@@ -1592,7 +1592,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets CommandMetadata objects from remote runspace.
         /// </summary>
-        /// <returns>(rehydrated) CommandMetadata objects</returns>
+        /// <returns>(rehydrated) CommandMetadata objects.</returns>
         internal List<ExtendedTypeDefinition> GetRemoteFormatData()
         {
             if ((this.FormatTypeName == null) || (this.FormatTypeName.Length == 0) ||
@@ -1695,7 +1695,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets CommandMetadata objects from remote runspace.
         /// </summary>
-        /// <returns>(rehydrated) CommandMetadata objects</returns>
+        /// <returns>(rehydrated) CommandMetadata objects.</returns>
         internal List<CommandMetadata> GetRemoteCommandMetadata(out Dictionary<string, string> alias2resolvedCommandName)
         {
             bool isReleaseCandidateBackcompatibilityMode =
@@ -1866,7 +1866,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="listOfCommandMetadata">remote commands to generate proxies for</param>
         /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names</param>
         /// <param name="listOfFormatData">remote format data to generate format.ps1xml for</param>
-        /// <returns>Paths to generated files</returns>
+        /// <returns>Paths to generated files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
             String moduleNamePrefix,
@@ -1941,7 +1941,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a connection URI associated with the remote runspace.
         /// </summary>
-        /// <returns>Connection URI associated with the remote runspace</returns>
+        /// <returns>Connection URI associated with the remote runspace.</returns>
         private string GetConnectionString()
         {
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
@@ -3020,7 +3020,7 @@ function Get-PSImplicitRemotingClientSideParameters
         /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names</param>
         /// <param name="listOfFormatData">remote format data to generate format.ps1xml for</param>
         /// <param name="certificate">certificate with which to sign the format files</param>
-        /// <returns>Path to the created files</returns>
+        /// <returns>Path to the created files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
             String fileNamePrefix,

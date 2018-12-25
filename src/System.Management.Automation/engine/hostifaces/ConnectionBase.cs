@@ -482,7 +482,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a pipeline object in the Disconnected state.
         /// </summary>
-        /// <returns>Pipeline</returns>
+        /// <returns>Pipeline.</returns>
         public override Pipeline CreateDisconnectedPipeline()
         {
             //
@@ -495,7 +495,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a powershell object in the Disconnected state.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         public override PowerShell CreateDisconnectedPowerShell()
         {
             //
@@ -508,7 +508,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public override RunspaceCapability GetCapabilities()
         {
             return RunspaceCapability.Default;
@@ -521,7 +521,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
         {
             return CoreCreatePipeline(null, false, false);

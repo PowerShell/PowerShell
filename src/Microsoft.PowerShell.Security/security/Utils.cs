@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell
         /// gets the size of a file
         /// </summary>
         /// <param name="filePath"> path to file </param>
-        /// <returns> file size  </returns>
+        /// <returns>File size.</returns>
         internal static long GetFileSize(string filePath)
         {
             long size = 0;
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="hostUI"> ref to host ui interface </param>
         /// <param name="prompt"> prompt text </param>
-        /// <returns> user input as secure string </returns>
+        /// <returns> user input as secure string.</returns>
         internal static SecureString PromptForSecureString(PSHostUserInterface hostUI,
                                                            string prompt)
         {
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell
         /// <param name="resourceStr"> resource string </param>
         /// <param name="errorId"> error identifier </param>
         /// <param name="args"> replacement params for resource string formatting </param>
-        /// <returns>  </returns>
+        /// <returns></returns>
         internal static
         ErrorRecord CreateFileNotFoundErrorRecord(string resourceStr,
                                                   string errorId,
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="path"> path that was not found </param>
         /// <param name="errorId"> error identifier </param>
-        /// <returns> ErrorRecord instance </returns>
+        /// <returns>ErrorRecord instance.</returns>
         internal static
         ErrorRecord CreatePathNotFoundErrorRecord(string path,
                                                   string errorId)
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell
         /// <param name="resourceStr"> resource string </param>
         /// <param name="errorId"> error identifier </param>
         /// <param name="args"> replacement params for resource string formatting </param>
-        /// <returns>  </returns>
+        /// <returns></returns>
         internal static
         ErrorRecord CreateNotSupportedErrorRecord(string resourceStr,
                                                   string errorId,
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="e"> exception to include in ErrorRecord </param>
         /// <param name="errorId"> error identifier </param>
-        /// <returns>  </returns>
+        /// <returns></returns>
         internal static
         ErrorRecord CreateInvalidArgumentErrorRecord(Exception e,
                                                      string errorId)
@@ -170,4 +170,3 @@ namespace Microsoft.PowerShell
         }
     }
 }
-

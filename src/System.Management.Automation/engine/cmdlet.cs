@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="baseName">the base resource name</param>
         /// <param name="resourceId">the resource id</param>
-        /// <returns>the resource string corresponding to baseName and resourceId</returns>
+        /// <returns>The resource string corresponding to baseName and resourceId.</returns>
         /// <exception cref="System.ArgumentException">
         /// Invalid <paramref name="baseName"/> or <paramref name="resourceId"/>, or
         /// string not found in resources
@@ -1611,7 +1611,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke this cmdlet object returning a collection of results.
         /// </summary>
-        /// <returns>The results that were produced by this class</returns>
+        /// <returns>The results that were produced by this class.</returns>
         public IEnumerable Invoke()
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -1626,7 +1626,7 @@ namespace System.Management.Automation
         /// Returns a strongly-typed enumerator for the results of this cmdlet.
         /// </summary>
         /// <typeparam name="T">The type returned by the enumerator</typeparam>
-        /// <returns>An instance of the appropriate enumerator</returns>
+        /// <returns>An instance of the appropriate enumerator.</returns>
         /// <exception cref="InvalidCastException">Thrown when the object returned by the cmdlet cannot be converted to the target type</exception>
         public IEnumerable<T> Invoke<T>()
         {

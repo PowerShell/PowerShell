@@ -3501,7 +3501,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.Security.SecurityException">
         /// if caller doesn't have permission to read the PowerShell registry key
         /// </exception>
-        /// <returns>TypeTable</returns>
+        /// <returns>TypeTable.</returns>
         public static TypeTable LoadDefaultTypeFiles()
         {
             return new TypeTable(GetDefaultTypeFiles());
@@ -3510,7 +3510,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the default types files available in PowerShell
         /// </summary>
-        /// <returns>list of type files</returns>
+        /// <returns>List of type files.</returns>
         public static List<string> GetDefaultTypeFiles()
         {
             string typesFilePath = string.Empty;
@@ -3579,7 +3579,7 @@ namespace System.Management.Automation.Runspaces
         /// The first type in the type hierarchy is guaranteed to have SpecificProperties
         /// </summary>
         /// <param name="types"></param>
-        /// <returns>null if this should not be serialized with SpecificProperties</returns>
+        /// <returns>Null if this should not be serialized with SpecificProperties.</returns>
         internal Collection<string> GetSpecificProperties(ConsolidatedString types)
         {
             if (types == null || string.IsNullOrEmpty(types.Key))
@@ -3703,7 +3703,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets the type converter for the typeName
         /// </summary>
         /// <param name="typeName">type name with the converter</param>
-        /// <returns>the type converter for the typeName or null, if there is no type converter</returns>
+        /// <returns>The type converter for the typeName or null, if there is no type converter.</returns>
         internal object GetTypeConverter(string typeName)
         {
             if (string.IsNullOrEmpty(typeName))
@@ -3719,7 +3719,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the type adapter for the given type
         /// </summary>
-        /// <returns>the type adapter or null, if there is no adapter</returns>
+        /// <returns>The type adapter or null, if there is no adapter.</returns>
         internal PSObject.AdapterSet GetTypeAdapter(Type type)
         {
             if (type == null)

@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// Auxiliar used in GetValue methods since the list does not deal well with unlimited sized lines.
         /// </summary>
         /// <param name="src">source string</param>
-        /// <returns>the source string limited in the number of lines</returns>
+        /// <returns>The source string limited in the number of lines.</returns>
         internal static object LimitString(object src)
         {
             string srcString = src as string;

@@ -295,7 +295,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// runspace.
         /// This is currently supported *only* for remote runspaces.
         /// </summary>
-        /// <returns>True if successful</returns>
+        /// <returns>True if successful.</returns>
         internal override bool ResetRunspaceState()
         {
             // Version check.  Reset Runspace is supported only on PSRP protocol
@@ -450,7 +450,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Retrieves the number of runspaces available at the time of calling
         /// this method from the remote server
         /// </summary>
-        /// <returns>The number of runspaces available in the pool</returns>
+        /// <returns>The number of runspaces available in the pool.</returns>
         internal override int GetAvailableRunspaces()
         {
             int availableRunspaces = 0;
@@ -789,7 +789,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Pop the currently running PowerShell from stack.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         internal PowerShell PopRunningPowerShell()
         {
             PowerShell powershell;
@@ -804,7 +804,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Return the current running PowerShell.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         internal PowerShell GetCurrentRunningPowerShell()
         {
             PowerShell powershell;
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="callback">AsyncCallback object.</param>
         /// <param name="state">state object.</param>
-        /// <returns>IAsyncResult</returns>
+        /// <returns>IAsyncResult.</returns>
         public override IAsyncResult BeginDisconnect(AsyncCallback callback, object state)
         {
             if (!CanDisconnect)
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="callback">ASyncCallback object.</param>
         /// <param name="state">state Object.</param>
-        /// <returns>IAsyncResult</returns>
+        /// <returns>IAsyncResult.</returns>
         public override IAsyncResult BeginConnect(AsyncCallback callback, object state)
         {
             if (!AvailableForConnection)
@@ -1227,7 +1227,7 @@ namespace System.Management.Automation.Runspaces.Internal
         ///<summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
-        /// <returns>RunspacePoolCapability</returns>
+        /// <returns>RunspacePoolCapability.</returns>
         public override RunspacePoolCapability GetCapabilities()
         {
             RunspacePoolCapability returnCaps = RunspacePoolCapability.Default;
@@ -2102,7 +2102,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// object used for Get-WSManInstance queries.
         /// </summary>
         /// <param name="wsmanConnectionInfo">WSManConnectionInfo</param>
-        /// <returns>WSMan session options object</returns>
+        /// <returns>WSMan session options object.</returns>
         private static object GetSessionOptions(WSManConnectionInfo wsmanConnectionInfo)
         {
             Collection<PSObject> result;

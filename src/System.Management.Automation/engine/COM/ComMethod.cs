@@ -84,7 +84,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">represents the instance of the method we want to invoke</param>
         /// <param name="arguments">parameters to be passed to the method</param>
-        /// <returns>returns the value of method call</returns>
+        /// <returns>Returns the value of method call.</returns>
         internal object InvokeMethod(PSMethod method, object[] arguments)
         {
             try

@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// it just returns the object unchanged
         /// </summary>
         /// <param name="so">object to deserialize</param>
-        /// <returns>deserialized object or null</returns>
+        /// <returns>Deserialized object or null.</returns>
         internal object Deserialize(PSObject so)
         {
             var fid = PSObject.Base(so) as FormatInfoData;
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="rawObject">object to process</param>
         /// <param name="propertyName">property to look up</param>
-        /// <returns>string[] representation of the property</returns>
+        /// <returns>String[] representation of the property.</returns>
         private static string[] ReadStringArrayHelper (object rawObject, string propertyName)
         {
             // throw if the property is not there
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object whose the property belongs to</param>
         /// <param name="property">name of the string property</param>
-        /// <returns>string out of the MsObject</returns>
+        /// <returns>String out of the MsObject.</returns>
         internal string DeserializeStringMemberVariableRaw(PSObject so, string property)
         {
             return (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);
@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object whose the property belongs to</param>
         /// <param name="property">name of the string property</param>
-        /// <returns>string out of the MsObject</returns>
+        /// <returns>String out of the MsObject.</returns>
         internal string DeserializeStringMemberVariable(PSObject so, string property)
         {
             string val = (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);

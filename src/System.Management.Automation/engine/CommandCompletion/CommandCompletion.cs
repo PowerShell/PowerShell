@@ -358,7 +358,7 @@ namespace System.Management.Automation
         /// <param name="cursorPosition"></param>
         /// <param name="options">Optional options to configure how completion is performed</param>
         /// <param name="debugger">Current debugger</param>
-        /// <returns>Command completion</returns>
+        /// <returns>Command completion.</returns>
         internal static CommandCompletion CompleteInputInDebugger(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, Debugger debugger)
         {
             if (ast == null)

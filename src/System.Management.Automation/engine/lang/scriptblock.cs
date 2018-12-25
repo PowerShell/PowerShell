@@ -336,7 +336,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable", Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline()
         {
@@ -346,7 +346,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable", Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline(CommandOrigin commandOrigin)
         {
@@ -356,7 +356,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable", Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline(CommandOrigin commandOrigin, object[] args)
         {
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
-        /// the script block returned as a collection of PSObjects</returns>
+        /// the script block returned as a collection of PSObjects.</returns>
         /// <exception cref="RuntimeException">Thrown if a script runtime exceptionexception occurred</exception>
         /// <exception cref="FlowControlException">An internal (non-public) exception from a flow control statement</exception>
         public Collection<PSObject> Invoke(params object[] args)
@@ -523,7 +523,7 @@ namespace System.Management.Automation
             // method returns [object]. If the argument to 'return'
             // is a pipeline that emits nothing then result.Count will
             // be zero so we catch that and "convert" it to null. Note that
-            // the return statement is still required in the method, it 
+            // the return statement is still required in the method, it
             // just recieves nothing from it's argument.
             if (result.Count == 0)
             {
@@ -836,7 +836,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
-        /// the script block returned as a collection of PSObjects</returns>
+        /// the script block returned as a collection of PSObjects.</returns>
         /// <exception cref="RuntimeException">A script exception occurred</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>
         internal Collection<PSObject> DoInvoke(object dollarUnder, object input, object[] args)
@@ -893,7 +893,7 @@ namespace System.Management.Automation
         /// <param name="scriptThis"></param>
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
-        /// the script block returned as a collection of PSObjects</returns>
+        /// the script block returned as a collection of PSObjects.</returns>
         /// <exception cref="RuntimeException">A script exception occurred</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>
         internal object DoInvokeReturnAsIs(bool useLocalScope,
@@ -1131,7 +1131,7 @@ namespace System.Management.Automation
         /// Process a single input object.
         /// </summary>
         /// <param name="input">The object to process</param>
-        /// <returns>a collection of 0 or more result objects</returns>
+        /// <returns>A collection of 0 or more result objects.</returns>
         public Array Process(object input)
         {
             try
@@ -1185,7 +1185,7 @@ namespace System.Management.Automation
         /// Begin() was called with $false so we won't send any
         /// input to be processed.
         /// </summary>
-        /// <returns>The result of the execution</returns>
+        /// <returns>The result of the execution.</returns>
         public Array Process()
         {
             try

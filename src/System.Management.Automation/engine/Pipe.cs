@@ -597,7 +597,7 @@ namespace System.Management.Automation.Internal
         /// not block on ExternalInput, and it does not modify the contents of
         /// the pipe.
         /// </summary>
-        /// <returns>possibly empty array of objects, but not null</returns>
+        /// <returns>Possibly empty array of objects, but not null.</returns>
         internal object[] ToArray()
         {
             if (ObjectQueue == null || ObjectQueue.Count == 0)

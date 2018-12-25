@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Returns default sessions to use when the user doesn't specify the -Session cmdlet parameter.
         /// </summary>
-        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter</returns>
+        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter.</returns>
         protected abstract TSession DefaultSession { get; }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Queries for object instances in the object model.
         /// </summary>
         /// <param name="query">Query parameters</param>
-        /// <returns>A lazy evaluated collection of object instances</returns>
+        /// <returns>A lazy evaluated collection of object instances.</returns>
         public override void ProcessRecord(QueryBuilder query)
         {
             _parentJob.DisableFlowControlForPendingCmdletActionsQueue();

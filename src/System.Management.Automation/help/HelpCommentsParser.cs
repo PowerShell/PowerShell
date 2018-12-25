@@ -202,7 +202,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create the maml xml after a successful analysis of the comments.
         /// </summary>
-        /// <returns>The xml node for the command constructed</returns>
+        /// <returns>The xml node for the command constructed.</returns>
         internal XmlDocument BuildXmlFromComments()
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(_commandName), "Name can never be null");
@@ -955,7 +955,7 @@ namespace System.Management.Automation
         /// Analyze a block of comments to determine if it is a special help block.
         /// </summary>
         /// <param name="commentBlock">The block of comments to analyze.</param>
-        /// <returns>true if the block is our special comment block for help, false otherwise.</returns>
+        /// <returns>True if the block is our special comment block for help, false otherwise.</returns>
         internal static bool IsCommentHelpText(List<Token> commentBlock)
         {
             if ((commentBlock == null) || (commentBlock.Count == 0))

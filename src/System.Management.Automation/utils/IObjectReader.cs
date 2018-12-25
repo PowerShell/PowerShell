@@ -97,7 +97,7 @@ namespace System.Management.Automation.Runspaces
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Read a single object from the stream
         /// </summary>
-        /// <returns>the next object in the stream</returns>
+        /// <returns>The next object in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         public abstract T Read();
 

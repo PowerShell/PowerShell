@@ -253,7 +253,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpTarget">help target to request</param>
         /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal virtual bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             // by default we don't handle "-?" parameter at all
@@ -269,7 +269,7 @@ namespace System.Management.Automation
         /// <param name="context">context for the command processor</param>
         /// <param name="helpTarget">help target</param>
         /// <param name="helpCategory">help category</param>
-        /// <returns>command processor for "get-help [helpTarget]"</returns>
+        /// <returns>Command processor for "get-help [helpTarget]".</returns>
         internal static CommandProcessorBase CreateGetHelpCommandProcessor(
             ExecutionContext context,
             string helpTarget,

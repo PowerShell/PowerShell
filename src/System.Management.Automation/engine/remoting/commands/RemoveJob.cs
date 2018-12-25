@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
         /// <param name="checkIfJobCanBeRemoved">check if this job can be removed</param>
         /// <param name="recurse">recurse and check in child jobs</param>
-        /// <returns>list of matching jobs</returns>
+        /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingByName(
             bool recurse,
             bool writeobject,
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
         /// <param name="checkIfJobCanBeRemoved">check if this job can be removed</param>
         /// <param name="recurse">look in all child jobs</param>
-        /// <returns>list of matching jobs</returns>
+        /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingByInstanceId(bool recurse, bool writeobject, bool writeErrorOnNoMatch, bool checkIfJobCanBeRemoved)
         {
             List<Job> matches = new List<Job>();
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
         /// <param name="checkIfJobCanBeRemoved">check if this job can be removed</param>
         /// <param name="recurse">look in child jobs as well</param>
-        /// <returns>list of matching jobs</returns>
+        /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingBySessionId(bool recurse, bool writeobject, bool writeErrorOnNoMatch, bool checkIfJobCanBeRemoved)
         {
             List<Job> matches = new List<Job>();
@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
-        /// <returns>list of matching jobs</returns>
+        /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingByCommand(
             bool writeobject)
         {
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
-        /// <returns>list of matching jobs</returns>
+        /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingByState(
             bool writeobject)
         {
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <param name="resourceString">Resource String in case of error</param>
         /// <param name="list">Parameters for resource message</param>
-        /// <returns>true if object should be removed, else false</returns>
+        /// <returns>True if object should be removed, else false.</returns>
         private bool CheckJobCanBeRemoved(Job job, string parameterName, string resourceString, params object[] list)
         {
             if (job.IsFinishedState(job.JobStateInfo.State))

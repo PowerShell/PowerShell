@@ -354,7 +354,7 @@ namespace System.Management.Automation
         /// Utility function to turn a dictionary of name/value pairs into a parameter collection
         /// </summary>
         /// <param name="parameters">The dictionary to convert</param>
-        /// <returns>The converted collection</returns>
+        /// <returns>The converted collection.</returns>
         private static CommandParameterCollection ConvertDictionaryToParameterCollection(IEnumerable<KeyValuePair<string, object>> parameters)
         {
             if (parameters == null)
@@ -388,7 +388,7 @@ namespace System.Management.Automation
         /// The original job must have been saved using "SaveJobIdForReconstruction"
         /// </summary>
         /// <param name="instanceId">Instance Id of the job to recreate</param>
-        /// <returns>JobIdentifier to be used in job construction</returns>
+        /// <returns>JobIdentifier to be used in job construction.</returns>
         protected JobIdentifier RetrieveJobIdForReuse(Guid instanceId)
         {
             return JobManager.GetJobIdentifier(instanceId, this.GetType().Name);
@@ -442,7 +442,7 @@ namespace System.Management.Automation
         /// Create a new job with the specified definition
         /// </summary>
         /// <param name="definition">job definition to use</param>
-        /// <returns>job object</returns>
+        /// <returns>Job object.</returns>
         public Job2 NewJob(JobDefinition definition)
         {
             return NewJob(new JobInvocationInfo(definition, new Dictionary<string, object>()));
@@ -456,7 +456,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="definitionName">Job definition name</param>
         /// <param name="definitionPath">Job definition file path</param>
-        /// <returns>Job2 object</returns>
+        /// <returns>Job2 object.</returns>
         public virtual Job2 NewJob(string definitionName, string definitionPath)
         {
             return null;
@@ -466,14 +466,14 @@ namespace System.Management.Automation
         /// Create a new job with the specified JobSpecification
         /// </summary>
         /// <param name="specification">specification</param>
-        /// <returns>job object</returns>
+        /// <returns>Job object.</returns>
         public abstract Job2 NewJob(JobInvocationInfo specification);
 
         /// <summary>
         /// Get the list of jobs that are currently available in this
         /// store
         /// </summary>
-        /// <returns>collection of job objects</returns>
+        /// <returns>Collection of job objects.</returns>
         public abstract IList<Job2> GetJobs();
 
         /// <summary>
@@ -482,8 +482,8 @@ namespace System.Management.Automation
         /// <param name="name">names to match, can support
         ///   wildcard if the store supports</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public abstract IList<Job2> GetJobsByName(string name, bool recurse);
 
         /// <summary>
@@ -491,8 +491,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">command to match</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public abstract IList<Job2> GetJobsByCommand(string command, bool recurse);
 
         /// <summary>
@@ -500,7 +500,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="instanceId">Guid to match</param>
         /// <param name="recurse"></param>
-        /// <returns>job with the specified guid</returns>
+        /// <returns>Job with the specified guid.</returns>
         public abstract Job2 GetJobByInstanceId(Guid instanceId, bool recurse);
 
         /// <summary>
@@ -508,7 +508,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="id">Id to match</param>
         /// <param name="recurse"></param>
-        /// <returns>Job with the specified id</returns>
+        /// <returns>Job with the specified id.</returns>
         public abstract Job2 GetJobBySessionId(int id, bool recurse);
 
         /// <summary>
@@ -516,8 +516,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="state">state to match</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs with the specified
-        /// state</returns>
+        /// <returns>Collection of jobs with the specified
+        /// state.</returns>
         public abstract IList<Job2> GetJobsByState(JobState state, bool recurse);
 
         /// <summary>
@@ -527,8 +527,8 @@ namespace System.Management.Automation
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the
-        /// specified criteria</returns>
+        /// <returns>Collection of jobs that match the
+        /// specified criteria.</returns>
         public abstract IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse);
 
         /// <summary>

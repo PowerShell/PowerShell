@@ -374,7 +374,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="helpInfo">helpInfo forwarded in</param>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>The help info object after processing</returns>
+        /// <returns>The help info object after processing.</returns>
         override internal HelpInfo ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             if (helpInfo == null)

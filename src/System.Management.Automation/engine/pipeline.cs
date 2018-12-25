@@ -270,7 +270,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Add a single InternalCommand to the end of the pipeline
         /// </summary>
-        /// <returns>Results from last pipeline stage</returns>
+        /// <returns>Results from last pipeline stage.</returns>
         /// <exception cref="InvalidOperationException">
         /// see AddCommand
         /// </exception>
@@ -298,7 +298,7 @@ namespace System.Management.Automation.Internal
         /// <param name="commandProcessor"></param>
         /// <param name="readFromCommand">reference number of command from which to read, 0 for none</param>
         /// <param name="readErrorQueue">read from error queue of command readFromCommand</param>
-        /// <returns>reference number of this command for use in readFromCommand</returns>
+        /// <returns>Reference number of this command for use in readFromCommand.</returns>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="ArgumentException">
         /// FirstCommandCannotHaveInput: <paramref name="readFromCommand"/> must be zero
@@ -675,7 +675,7 @@ namespace System.Management.Automation.Internal
         /// Implements DoComplete as a stand-alone function for completing
         /// the execution of a steppable pipeline.
         /// </summary>
-        /// <returns>The results of the execution</returns>
+        /// <returns>The results of the execution.</returns>
         internal Array DoComplete()
         {
             if (Stopping)
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="e">error which terminated the pipeline</param>
         /// <param name="command">command against which to log SecondFailure</param>
-        /// <returns>true iff the pipeline was not already stopped</returns>
+        /// <returns>True iff the pipeline was not already stopped.</returns>
         internal bool RecordFailure(Exception e, InternalCommand command)
         {
             bool wasStopping = false;

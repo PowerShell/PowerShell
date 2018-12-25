@@ -135,7 +135,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="script">script to parse</param>
         /// <param name="errors">errors happened during parsing</param>
-        /// <returns>collection of tokens generated during parsing</returns>
+        /// <returns>Collection of tokens generated during parsing.</returns>
         /// <exception cref="System.Management.Automation.RuntimeException">
         /// Although this API returns most parse-time exceptions in the errors
         /// collection, there are some scenarios where resource limits will result
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="script">script to parse, as an array of lines</param>
         /// <param name="errors">errors happened during parsing</param>
-        /// <returns>collection of tokens generated during parsing</returns>
+        /// <returns>Collection of tokens generated during parsing.</returns>
         /// <exception cref="System.Management.Automation.RuntimeException">
         /// Although this API returns most parse-time exceptions in the errors
         /// collection, there are some scenarios where resource limits will result

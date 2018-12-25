@@ -1165,7 +1165,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="T">Type of the collection</typeparam>
         /// <param name="collection">collection to check</param>
-        /// <returns>true if the collection has more data</returns>
+        /// <returns>True if the collection has more data.</returns>
         private static bool CollectionHasMoreData<T>(PSDataCollection<T> collection)
         {
             return (collection.IsOpen || collection.Count > 0);
