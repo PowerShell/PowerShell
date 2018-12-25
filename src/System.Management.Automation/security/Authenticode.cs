@@ -89,7 +89,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found
         /// </exception>
-        /// <remarks>  </remarks>
         [ArchitectureSensitive]
         internal static Signature SignFile(SigningOption option,
                                            string fileName,
@@ -269,7 +268,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        /// <remarks>  </remarks>
         [ArchitectureSensitive]
         internal static Signature GetSignature(string fileName, string fileContent)
         {

@@ -2252,7 +2252,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="returnNames"> whether we only need the names </param>
         /// <param name="filter"> filter info </param>
         /// <returns> Does not return a value </returns>
-        /// <remarks>  </remarks>
         private void GetChildItemsOrNames(
             string path,
             bool recurse,
@@ -2517,7 +2516,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="returnNames">  </param>
         /// <param name="filter"> filter info </param>
         /// <returns> Does not return a value </returns>
-        /// <remarks>  </remarks>
         private void GetStoresOrNames(
             string path,
             bool recurse,

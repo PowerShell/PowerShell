@@ -17,7 +17,6 @@ namespace System.Management.Automation.Runspaces
         /// initialize default values of preference vars
         /// </summary>
         /// <returns> Does not return a value </returns>
-        /// <remarks>  </remarks>
 
         private void InitializeDefaults()
         {

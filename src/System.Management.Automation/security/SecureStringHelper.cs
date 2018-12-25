@@ -204,7 +204,6 @@ namespace Microsoft.PowerShell
         /// <param name="input"> input string to encrypt </param>
         /// <param name="key"> encryption key </param>
         /// <returns> a string (see summary)  </returns>
-        /// <remarks>  </remarks>
         internal static EncryptionResult Encrypt(SecureString input, SecureString key)
         {
             EncryptionResult output = null;
@@ -234,7 +233,6 @@ namespace Microsoft.PowerShell
         /// <param name="input"> input string to encrypt </param>
         /// <param name="key"> encryption key </param>
         /// <returns> a string (see summary)  </returns>
-        /// <remarks>  </remarks>
         internal static EncryptionResult Encrypt(SecureString input, byte[] key)
         {
             return Encrypt(input, key, null);

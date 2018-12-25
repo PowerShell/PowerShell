@@ -582,7 +582,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="filePath"> path to file </param>
         /// <returns> Does not return a value </returns>
-        /// <remarks>  </remarks>
         internal static void CheckIfFileExists(string filePath)
         {
             if (!File.Exists(filePath))
@@ -597,7 +596,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="c"> certificate object </param>
         /// <returns> true on success, false otherwise </returns>
-        /// <remarks>  </remarks>
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
             if (!CertHasPrivatekey(c))
@@ -615,7 +613,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="c"> certificate object </param>
         /// <returns> true on success, false otherwise </returns>
-        /// <remarks>  </remarks>
         internal static bool CertIsGoodForEncryption(X509Certificate2 c)
         {
             return (
@@ -663,7 +660,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="cert"> certificate object </param>
         /// <returns> true on success, false otherwise </returns>
-        /// <remarks>  </remarks>
         internal static bool CertHasPrivatekey(X509Certificate2 cert)
         {
             return cert.HasPrivateKey;
@@ -674,7 +670,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="cert"> certificate object </param>
         /// <returns> a collection of cert eku strings </returns>
-        /// <remarks>  </remarks>
         [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
@@ -733,7 +728,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="n"> signed int number  </param>
         /// <returns> DWORD </returns>
-        /// <remarks>  </remarks>
         internal static DWORD GetDWORDFromInt(int n)
         {
             UInt32 result = BitConverter.ToUInt32(BitConverter.GetBytes(n), 0);
@@ -745,7 +739,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="n"> number </param>
         /// <returns> int </returns>
-        /// <remarks>  </remarks>
         internal static int GetIntFromDWORD(DWORD n)
         {
             Int64 n64 = n - 0x100000000L;
