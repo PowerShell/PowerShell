@@ -269,13 +269,13 @@ Describe "New-Item with links fails for non elevated user if developer mode not 
         Remove-Item -Path $testFilePath -Force -ErrorAction SilentlyContinue
     }
 
-    It "Should error correctly when failing to create a symbolic link and not in developer mode" -Skip:(!$IsWindows -or $developerMode) {
+    It "Should error correctly when failing to create a symbolic link and not in developer mode" -Skip:(!$IsWindows -or $developerMode -or (Test-IsElevated)) {
         { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } |
         Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
         $TestFilePath | Should -Not -Exist
     }
 
-    It "Should succeed to create a symbolic link without elevation and in developer mode" -Skip:(!$IsWindows -or !$developerMode) {
+    It "Should succeed to create a symbolic link without elevation and in developer mode" -Skip:(!$IsWindows -or !$developerMode -or (Test-IsElevated)) {
         { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } | Should -Not -Throw
         $TestFilePath | Should -Exist
     }

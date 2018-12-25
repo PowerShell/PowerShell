@@ -2434,10 +2434,14 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
-            int created = NativeMethods.CreateSymbolicLink(
-                path,
-                strTargetPath,
-                (isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File) | NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate);
+            // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
+            var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
+            if (Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 14972)
+            {
+                flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
+            }
+
+            int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
             return (created == 1) ? true : false;
         }
 
