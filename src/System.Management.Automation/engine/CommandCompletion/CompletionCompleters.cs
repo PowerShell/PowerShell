@@ -784,7 +784,7 @@ namespace System.Management.Automation
         /// Get completion results for operators that start with <paramref name="wordToComplete"/>
         /// </summary>
         /// <param name="wordToComplete">The starting text of the operator to complete</param>
-        /// <returns>A list of completion results</returns>
+        /// <returns>A list of completion results.</returns>
         public static List<CompletionResult> CompleteOperator(string wordToComplete)
         {
             if (wordToComplete.StartsWith("-", StringComparison.Ordinal))

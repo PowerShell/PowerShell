@@ -253,7 +253,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="transportErrorCode">transport error code</param>
         /// <param name="defaultFQEID">Default FQEID</param>
-        /// <returns>Fully qualified error Id string</returns>
+        /// <returns>Fully qualified error Id string.</returns>
         internal static string GetFQEIDFromTransportError(
             int transportErrorCode,
             string defaultFQEID)

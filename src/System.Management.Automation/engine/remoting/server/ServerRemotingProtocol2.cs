@@ -202,7 +202,7 @@ namespace System.Management.Automation
         /// <param name="runspacePoolId">runspace pool id</param>
         /// <param name="remoteStreamOptions">remote stream options</param>
         /// <param name="localPowerShell">local PowerShell object</param>
-        /// <returns>ServerPowerShellDataStructureHandler</returns>
+        /// <returns>ServerPowerShellDataStructureHandler.</returns>
         internal ServerPowerShellDataStructureHandler CreatePowerShellDataStructureHandler(
             Guid instanceId, Guid runspacePoolId, RemoteStreamOptions remoteStreamOptions, PowerShell localPowerShell)
         {
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientPowerShellId">powershell id for the
         /// powershell data structure handler</param>
-        /// <returns>ServerPowerShellDataStructureHandler</returns>
+        /// <returns>ServerPowerShellDataStructureHandler.</returns>
         internal ServerPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
             (Guid clientPowerShellId)
         {

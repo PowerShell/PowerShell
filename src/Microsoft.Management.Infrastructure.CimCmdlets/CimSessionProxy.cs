@@ -129,7 +129,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Performs pre processing of given result object.
         /// </summary>
         /// <param name="resultObject"></param>
-        /// <returns>Pre-processed object</returns>
+        /// <returns>Pre-processed object.</returns>
         object Process(object resultObject);
     }
     #endregion

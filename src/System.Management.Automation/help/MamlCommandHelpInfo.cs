@@ -253,7 +253,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode">xmlNode that contains help info</param>
         /// <param name="helpCategory">help category this maml object fits into</param>
-        /// <returns>MamlCommandHelpInfo object created</returns>
+        /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlCommandHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
             MamlCommandHelpInfo mamlCommandHelpInfo = new MamlCommandHelpInfo(xmlNode, helpCategory);
@@ -281,7 +281,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="cmdletHelp">provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object</param>
         /// <param name="dynamicParameterHelp">provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object</param>
-        /// <returns>merged command help info object</returns>
+        /// <returns>Merged command help info object.</returns>
         internal MamlCommandHelpInfo MergeProviderSpecificHelp(PSObject cmdletHelp, PSObject[] dynamicParameterHelp)
         {
             if (this._fullHelpObject == null)

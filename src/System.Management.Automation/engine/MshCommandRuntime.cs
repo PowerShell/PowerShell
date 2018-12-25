@@ -2273,7 +2273,7 @@ namespace System.Management.Automation
         /// Be sure to use this object only in "using" so that it is reliably
         /// disposed and follows stack semantics.
         /// </summary>
-        /// <returns>IDisposable</returns>
+        /// <returns>IDisposable.</returns>
         internal IDisposable AllowThisCommandToWrite(bool permittedToWriteToPipeline)
         {
             return new AllowWrite(_thisCommand, permittedToWriteToPipeline);
@@ -2333,7 +2333,7 @@ namespace System.Management.Automation
         /// throw ManageException(e);
         /// </summary>
         /// <param name="e">the exception</param>
-        /// <returns>PipelineStoppedException</returns>
+        /// <returns>PipelineStoppedException.</returns>
         public Exception ManageException(Exception e)
         {
             if (e == null)
@@ -2936,7 +2936,7 @@ namespace System.Management.Automation
                 {
                     return _debugPreference;
                 }
-                
+
                 if (IsDebugFlagSet)
                 {
                     return Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
@@ -2957,7 +2957,7 @@ namespace System.Management.Automation
 
                     _isDebugPreferenceCached = true;
                 }
-                
+
                 return _debugPreference;
             }
 
@@ -3394,7 +3394,7 @@ namespace System.Management.Automation
         /// <param name="lastContinueStatus"></param>
         /// <param name="preferenceVariableName"></param>
         /// <param name="message"></param>
-        /// <returns>Did Inquire return YesToAll?</returns>
+        /// <returns>Did Inquire return YesToAll?.</returns>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -3469,7 +3469,7 @@ namespace System.Management.Automation
         /// <param name="allowNoToAll"></param>
         /// <param name="replaceNoWithHalt"></param>
         /// <param name="hasSecurityImpact"></param>
-        /// <returns>user's selection</returns>
+        /// <returns>User's selection.</returns>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.

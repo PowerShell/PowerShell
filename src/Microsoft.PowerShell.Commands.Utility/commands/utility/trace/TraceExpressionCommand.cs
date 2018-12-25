@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="ObjectDisposedException">
         /// The underlying stream is closed.
         /// </exception>

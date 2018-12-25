@@ -84,7 +84,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckKeyArg(byte[] arg, string argName)
         {
             if (arg == null)
@@ -111,7 +111,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNullOrEmpty(string arg, string argName)
         {
             if (arg == null)
@@ -130,7 +130,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNull(object arg, string argName)
         {
             if (arg == null)
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckSecureStringArg(SecureString arg, string argName)
         {
             if (arg == null)
@@ -237,7 +237,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Specifies the per-user configuration settings directory in a platform agnostic manner.
         /// </summary>
-        /// <returns>The current user's configuration settings directory</returns>
+        /// <returns>The current user's configuration settings directory.</returns>
         internal static string GetUserConfigurationDirectory()
         {
 #if UNIX
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         /// returns current major version of monad ( that is running ) in a string
         /// format.
         /// </summary>
-        /// <returns>string</returns>
+        /// <returns>String.</returns>
         /// <remarks>
         /// Cannot return a Version object as minor number is a requirement for
         /// version object.
@@ -403,7 +403,7 @@ namespace System.Management.Automation
         /// by ver.
         /// </summary>
         /// <param name="ver">Version to check</param>
-        /// <returns>true if supported, false otherwise</returns>
+        /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSVersionSupported(string ver)
         {
             // Convert version to supported format ie., x.x
@@ -416,7 +416,7 @@ namespace System.Management.Automation
         /// by checkVersion.
         /// </summary>
         /// <param name="checkVersion">Version to check</param>
-        /// <returns>true if supported, false otherwise</returns>
+        /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSVersionSupported(Version checkVersion)
         {
             if (checkVersion == null)
@@ -438,7 +438,7 @@ namespace System.Management.Automation
         /// by checkEdition.
         /// </summary>
         /// <param name="checkEdition">Edition to check</param>
-        /// <returns>true if supported, false otherwise</returns>
+        /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSEditionSupported(string checkEdition)
         {
             return PSVersionInfo.PSEdition.Equals(checkEdition, StringComparison.OrdinalIgnoreCase);
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         /// Checks whether the specified edition value is allowed.
         /// </summary>
         /// <param name="editionValue">Edition value to check</param>
-        /// <returns>true if allowed, false otherwise</returns>
+        /// <returns>True if allowed, false otherwise.</returns>
         internal static bool IsValidPSEditionValue(string editionValue)
         {
             return AllowedEditionValues.Contains(editionValue, StringComparer.OrdinalIgnoreCase);
@@ -896,7 +896,7 @@ namespace System.Management.Automation
         /// Gets the current impersonating Windows identity, if any
         /// </summary>
         /// <param name="impersonatedIdentity">Current impersonated Windows identity or null</param>
-        /// <returns>True if current identity is impersonated</returns>
+        /// <returns>True if current identity is impersonated.</returns>
         internal static bool TryGetWindowsImpersonatedIdentity(out WindowsIdentity impersonatedIdentity)
         {
             WindowsIdentity currentIdentity;
@@ -1094,7 +1094,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="mutex">The mutex to wait on. If it is null, a new one will be created</param>
         /// <param name="initializer">The initializer to use to recreate the mutex.</param>
-        /// <returns>A working mutex. If the mutex was abandoned, a new one is created to replace it</returns>
+        /// <returns>A working mutex. If the mutex was abandoned, a new one is created to replace it.</returns>
         internal static Mutex SafeWaitMutex(Mutex mutex, MutexInitializer initializer)
         {
             try
@@ -1261,7 +1261,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
-        /// <returns>Command name and as appropriate Module name in out parameter</returns>
+        /// <returns>Command name and as appropriate Module name in out parameter.</returns>
         internal static string ParseCommandName(string commandName, out string moduleName)
         {
             var names = commandName.Split(Separators.Backslash, 2);
@@ -1356,7 +1356,7 @@ namespace System.Management.Automation
         ///     NoLanguage          ->  NoLanguage
         /// </summary>
         /// <param name="context">ExecutionContext</param>
-        /// <returns>Previous language mode or null for no language mode change</returns>
+        /// <returns>Previous language mode or null for no language mode change.</returns>
         internal static PSLanguageMode? EnforceSystemLockDownLanguageMode(ExecutionContext context)
         {
             PSLanguageMode? oldMode = null;
@@ -1840,7 +1840,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="commandPipeline">Command pipeline to test</param>
         /// <param name="runspace">Runspace with imported remote session</param>
-        /// <returns>True if commandPipeline is batched successfully</returns>
+        /// <returns>True if commandPipeline is batched successfully.</returns>
         public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
         {
             return Utils.TryRunAsImplicitBatch(commandPipeline, runspace);

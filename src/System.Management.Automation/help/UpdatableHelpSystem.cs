@@ -110,7 +110,7 @@ namespace System.Management.Automation.Help
         /// Creates an error record from this context
         /// </summary>
         /// <param name="commandType">command type</param>
-        /// <returns>error record</returns>
+        /// <returns>Error record.</returns>
         internal ErrorRecord CreateErrorRecord(UpdatableHelpCommandType commandType)
         {
             Debug.Assert(Modules.Count != 0);
@@ -287,7 +287,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the current UIculture (includes the fallback chain)
         /// </summary>
-        /// <returns>a list of cultures</returns>
+        /// <returns>A list of cultures.</returns>
         internal IEnumerable<string> GetCurrentUICulture()
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
@@ -314,7 +314,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         /// <param name="module">internal module information</param>
         /// <param name="culture">help content culture</param>
-        /// <returns>internal help uri representation</returns>
+        /// <returns>Internal help uri representation.</returns>
         internal UpdatableHelpUri GetHelpInfoUri(UpdatableHelpModuleInfo module, CultureInfo culture)
         {
             return new UpdatableHelpUri(module.ModuleName, module.ModuleGuid, culture, ResolveUri(module.HelpInfoUri, false));
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Help
         /// <param name="moduleName">module name</param>
         /// <param name="moduleGuid">module GUID</param>
         /// <param name="culture">current UI culture</param>
-        /// <returns>HelpInfo object</returns>
+        /// <returns>HelpInfo object.</returns>
         internal UpdatableHelpInfo GetHelpInfo(UpdatableHelpCommandType commandType, string uri, string moduleName, Guid moduleGuid, string culture)
         {
             try
@@ -376,7 +376,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         /// <param name="baseUri">base URI</param>
         /// <param name="verbose"></param>
-        /// <returns>resolved URI</returns>
+        /// <returns>Resolved URI.</returns>
         private string ResolveUri(string baseUri, bool verbose)
         {
             Debug.Assert(!String.IsNullOrEmpty(baseUri));
@@ -527,7 +527,7 @@ namespace System.Management.Automation.Help
         /// to handle redirections if any.
         /// </param>
         /// <param name="ignoreValidationException">ignore the xsd validation exception and return null in such case</param>
-        /// <returns>HelpInfo object</returns>
+        /// <returns>HelpInfo object.</returns>
         internal UpdatableHelpInfo CreateHelpInfo(string xml, string moduleName, Guid moduleGuid,
             string currentCulture, string pathOverride, bool verbose, bool shouldResolveUri, bool ignoreValidationException)
         {
@@ -715,7 +715,7 @@ namespace System.Management.Automation.Help
         /// <param name="helpContentUri">help content uri</param>
         /// <param name="xsdPath">path of the maml XSDs</param>
         /// <param name="installed">files installed</param>
-        /// <returns>true if the operation succeeded, false if not</returns>
+        /// <returns>True if the operation succeeded, false if not.</returns>
         internal bool DownloadAndInstallHelpContent(UpdatableHelpCommandType commandType, ExecutionContext context, Collection<string> destPaths,
             string fileName, CultureInfo culture, string helpContentUri, string xsdPath, out Collection<string> installed)
         {
@@ -746,7 +746,7 @@ namespace System.Management.Automation.Help
         /// <param name="helpContentUri">help content uri</param>
         /// <param name="fileName">combined file name</param>
         /// <param name="culture">culture name</param>
-        /// <returns>true if the operation succeeded, false if not</returns>
+        /// <returns>True if the operation succeeded, false if not.</returns>
         internal bool DownloadHelpContent(UpdatableHelpCommandType commandType, string path, string helpContentUri, string fileName, string culture)
         {
             if (_stopping)
@@ -1412,7 +1412,7 @@ namespace System.Management.Automation.Help
         /// <param name="cmdlet">cmdlet instance</param>
         /// <param name="path">path to load</param>
         /// <param name="credential">credential</param>
-        /// <returns>string loaded</returns>
+        /// <returns>String loaded.</returns>
         internal static string LoadStringFromPath(PSCmdlet cmdlet, string path, PSCredential credential)
         {
             Debug.Assert(path != null);

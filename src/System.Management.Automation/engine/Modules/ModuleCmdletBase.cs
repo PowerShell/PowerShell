@@ -1379,7 +1379,7 @@ namespace Microsoft.PowerShell.Commands
         /// Helper function to generate fake PSModuleInfo objects from ModuleSpecification objects.
         /// </summary>
         /// <param name="moduleSpecs">Collection of ModuleSpecification objects</param>
-        /// <returns>Collection of fake PSModuleInfo objects</returns>
+        /// <returns>Collection of fake PSModuleInfo objects.</returns>
         private IEnumerable<PSModuleInfo> CreateFakeModuleObject(IEnumerable<ModuleSpecification> moduleSpecs)
         {
             foreach (ModuleSpecification moduleSpec in moduleSpecs)
@@ -2979,7 +2979,7 @@ namespace Microsoft.PowerShell.Commands
                 ImportModuleOptions nestedModuleOptions = new ImportModuleOptions();
 
                 // If the nested manifest explicitly (no wildcards) specifies functions to be exported then allow all functions to be exported
-                // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the 
+                // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the
                 // specified function list.
                 nestedModuleOptions.AllowNestedModuleFunctionsToExport = ((exportedFunctions != null) && !exportedFunctionsContainsWildcards);
 
@@ -3094,13 +3094,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     bool found;
                     newManifestInfo = LoadModuleNamedInManifest(
-                        parentModule: null, 
+                        parentModule: null,
                         moduleSpecification: new ModuleSpecification(actualRootModule),
-                        moduleBase: moduleBase, 
+                        moduleBase: moduleBase,
                         searchModulePath: false,
-                        prefix: resolvedCommandPrefix, 
-                        ss: ss, 
-                        options: options, 
+                        prefix: resolvedCommandPrefix,
+                        ss: ss,
+                        options: options,
                         manifestProcessingFlags: manifestProcessingFlags,
                         loadTypesFiles: (exportedTypeFiles == null || 0 == exportedTypeFiles.Count),        // If types files already loaded, don't load snapin files
                         loadFormatFiles: (exportedFormatFiles == null || 0 == exportedFormatFiles.Count),   // if format files already loaded, don't load snapin files
@@ -3437,7 +3437,7 @@ namespace Microsoft.PowerShell.Commands
                     // implicitly export functions and cmdlets.
                     if ((ss != null) && (!ss.Internal.UseExportList))
                     {
-                        // For cross language boundaries, implicitly import all functions only if 
+                        // For cross language boundaries, implicitly import all functions only if
                         // this manifest *does* exort functions explicitly.
                         List<WildcardPattern> fnMatchPattern = (
                                                                 (manifestScriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
@@ -3744,7 +3744,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="requiredModule">Either a string or a hash of ModuleName, optional Guid, and ModuleVersion.</param>
         /// <param name="matchFailureReason">The reason the module failed to load, or null on success.</param>
         /// <param name="loaded">Sets if the module/snapin is already present.</param>
-        /// <returns>null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
+        /// <returns>Null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
         internal static object IsModuleLoaded(ExecutionContext context, ModuleSpecification requiredModule, out ModuleMatchFailure matchFailureReason, out bool loaded)
         {
             loaded = false;
@@ -3791,7 +3791,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements</param>
         /// <param name="containedErrors">Set if any errors are found.</param>
         /// <param name="error">Contains error record information.</param>
-        /// <returns>null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
+        /// <returns>Null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
         internal PSModuleInfo LoadRequiredModule(PSModuleInfo currentModule, ModuleSpecification requiredModule, string moduleManifestPath, ManifestProcessingFlags manifestProcessingFlags, bool containedErrors, out ErrorRecord error)
         {
             Dbg.Assert(moduleManifestPath != null, "Caller should verify moduleManifestPath != null");
@@ -3815,7 +3815,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleManifestPath">Used for error messages.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements</param>
         /// <param name="error">Contains error record information.</param>
-        /// <returns>null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
+        /// <returns>Null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
         internal static PSModuleInfo LoadRequiredModule(ExecutionContext context,
             PSModuleInfo currentModule,
             ModuleSpecification requiredModuleSpecification,
@@ -5334,7 +5334,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!BaseForce && importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                 {
                     moduleFileFound = true;
- 
+
                     // If the module has already been loaded, then while loading it the second time, we should load it with the DefaultCommandPrefix specified in the module manifest. (If there is no Prefix from command line)
                     if (string.IsNullOrEmpty(prefix))
                     {
@@ -5513,7 +5513,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">The manifest processing flags to use when processing the module</param>
         /// <param name="found">True if a module was found</param>
         /// <param name="moduleFileFound">True if a module file was found</param>
-        /// <returns>True if the module was successfully loaded</returns>
+        /// <returns>True if the module was successfully loaded.</returns>
         internal PSModuleInfo LoadModule(PSModuleInfo parentModule, string fileName, string moduleBase, string prefix,
             SessionState ss, object privateData, ref ImportModuleOptions options,
             ManifestProcessingFlags manifestProcessingFlags, out bool found, out bool moduleFileFound)
@@ -5997,7 +5997,7 @@ namespace Microsoft.PowerShell.Commands
             // If system is in lock down mode, we disallow trusted modules that use the dotsource operator while simultaneously using
             // wild cards for exporting module functions, unless there is an overriding manifest that explicitly exports functions
             // without wild cards.
-            // This is because dotsourcing brings functions into module scope and it is too easy to inadvertently or maliciously 
+            // This is because dotsourcing brings functions into module scope and it is too easy to inadvertently or maliciously
             // expose harmful private functions that run in trusted (FullLanguage) mode.
             if (!manifestWithExplicitFunctionExport && ss.Internal.FunctionsExportedWithWildcard &&
                 (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
@@ -7551,13 +7551,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the context cached ModuleTable module for import only if found and has safe language boundaries while
         /// exporting all functions by default.
-        /// 
+        ///
         /// This protects cached trusted modules that exported all functions in a trusted context, from being re-used
         /// in an untrusted context and thus exposing functions that were meant to be private in that context.
-        /// 
+        ///
         /// Returning false forces module import to re-import the module from file with the current context and prevent
         /// all module functions from being exported by default.
-        /// 
+        ///
         /// Note that module loading order is important with this check when the system is *locked down with DeviceGuard*.
         /// If a submodule that does not explicitly export any functions is imported from the command line, its useless
         /// because no functions are exported (default fn export is explictly disallowed on locked down systems).
@@ -7575,7 +7575,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="key">Key</param>
         /// <param name="moduleInfo">PSModuleInfo</param>
         /// <param name="toRemove">True if module item is to be removed</param>
-        /// <returns>True if module found in table and is safe to use</returns>
+        /// <returns>True if module found in table and is safe to use.</returns>
         internal bool TryGetFromModuleTable(string key, out PSModuleInfo moduleInfo, bool toRemove = false)
         {
             var foundModule = Context.Modules.ModuleTable.TryGetValue(key, out moduleInfo);

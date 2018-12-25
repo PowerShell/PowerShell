@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException()
             : base(StringUtil.Format(WriteErrorStrings.WriteErrorException))
         {
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
         /// Constructor for class WriteErrorException.
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException(string message)
             : base(message)
         {
@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException(string message,
                                           Exception innerException)
             : base(message, innerException)
@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected WriteErrorException(SerializationInfo info,
                                       StreamingContext context)
             : base(info, context)

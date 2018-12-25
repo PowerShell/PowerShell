@@ -988,7 +988,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// get text from SecureString
         /// </summary>
         /// <param name="value">value of SecureString</param>
-        /// <returns>decoded string</returns>
+        /// <returns>Decoded string.</returns>
         public static string GetStringFromSecureString(SecureString value)
         {
             string passwordValueToAdd = String.Empty;
@@ -1057,7 +1057,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Find cached cim classes defined under specified module
         /// </summary>
         /// <param name="module"></param>
-        /// <returns>List of cached cim classes</returns>
+        /// <returns>List of cached cim classes.</returns>
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();

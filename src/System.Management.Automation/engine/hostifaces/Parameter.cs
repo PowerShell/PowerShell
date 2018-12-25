@@ -222,7 +222,7 @@ namespace System.Management.Automation.Runspaces
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject parameterAsPSObject = RemotingEncoder.CreateEmptyPSObject();

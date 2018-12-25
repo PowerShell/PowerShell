@@ -302,7 +302,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Clones current object
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal RunspaceStateInfo Clone()
         {
             return new RunspaceStateInfo(this);
@@ -1354,7 +1354,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public abstract RunspaceCapability GetCapabilities();
 
         #endregion
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public abstract Pipeline CreatePipeline();
 
         /// <summary>
@@ -1500,7 +1500,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Pop the currently running PowerShell from stack.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         internal PowerShell PopRunningPowerShell()
         {
             lock (_syncObject)

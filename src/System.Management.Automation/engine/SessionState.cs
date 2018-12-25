@@ -226,7 +226,7 @@ namespace System.Management.Automation
         /// See if a script is allowed to be run.
         /// </summary>
         /// <param name="scriptPath">Path to check</param>
-        /// <returns>true if script is allowed</returns>
+        /// <returns>True if script is allowed.</returns>
         internal SessionStateEntryVisibility CheckScriptVisibility(string scriptPath)
         {
             return checkPathVisibility(Scripts, scriptPath);

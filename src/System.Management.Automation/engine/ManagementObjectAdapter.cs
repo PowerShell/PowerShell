@@ -165,7 +165,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">object to retrieve the PSMemberInfo from</param>
         /// <param name="memberName">name of the member to be retrieved</param>
-        /// <returns>The PSMemberInfo corresponding to memberName from obj</returns>
+        /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
             tracer.WriteLine("Getting member with name {0}", memberName);
@@ -209,7 +209,7 @@ namespace System.Management.Automation
         /// to the properties available in it.
         /// </summary>
         /// <param name="obj">object to get all the member information from</param>
-        /// <returns>all members in obj</returns>
+        /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
             // obj should never be null
@@ -228,7 +228,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the non empty return from GetMethods</param>
         /// <param name="arguments">the arguments to use</param>
-        /// <returns>the return value for the method</returns>
+        /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
             ManagementObject mgmtObject = method.baseObject as ManagementObject;
@@ -258,7 +258,7 @@ namespace System.Management.Automation
         /// Returns true if the property is settable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is settable</returns>
+        /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
             ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
@@ -294,7 +294,7 @@ namespace System.Management.Automation
         /// Returns true if the property is gettable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is gettable</returns>
+        /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
             return true;
@@ -305,7 +305,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">PSProperty obtained in a previous DoGetProperty</param>
         /// <param name="forDisplay">True if the result is for display purposes only</param>
-        /// <returns>the name of the type corresponding to the property</returns>
+        /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
             PropertyData pd = property.adapterData as PropertyData;
@@ -337,7 +337,7 @@ namespace System.Management.Automation
         /// Returns the value from a property coming from a previous call to DoGetProperty
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
-        /// <returns>The value of the property</returns>
+        /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
             PropertyData pd = property.adapterData as PropertyData;
@@ -389,7 +389,7 @@ namespace System.Management.Automation
         /// Returns the string representation of the property in the object
         /// </summary>
         /// <param name="property">property obtained in a previous GetMember</param>
-        /// <returns>the string representation of the property in the object</returns>
+        /// <returns>The string representation of the property in the object.</returns>
         protected override string PropertyToString(PSProperty property)
         {
             StringBuilder returnValue = new StringBuilder();
@@ -420,7 +420,7 @@ namespace System.Management.Automation
         /// Returns an array with the property attributes
         /// </summary>
         /// <param name="property">property we want the attributes from</param>
-        /// <returns>an array with the property attributes</returns>
+        /// <returns>An array with the property attributes.</returns>
         protected override AttributeCollection PropertyAttributes(PSProperty property)
         {
             return null;
@@ -914,7 +914,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="wmiObject">object to retrieve the PSProperty from</param>
         /// <param name="propertyName">name of the property to be retrieved</param>
-        /// <returns>The PSProperty corresponding to propertyName from obj</returns>
+        /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected abstract PSProperty DoGetProperty(ManagementBaseObject wmiObject,
             string propertyName);
 

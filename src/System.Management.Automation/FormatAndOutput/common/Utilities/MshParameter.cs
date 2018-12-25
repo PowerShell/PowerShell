@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="keyName">key to verify</param>
         /// <param name="invocationContext">invocation context for error reporting</param>
-        /// <returns>matching hash table entry</returns>
+        /// <returns>Matching hash table entry.</returns>
         /// <exception cref="ArgumentException"></exception>
         internal HashtableEntryDefinition MatchEntry(string keyName, TerminatingErrorContext invocationContext)
         {

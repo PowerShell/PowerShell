@@ -40,7 +40,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="array">collection to multiply</param>
         /// <param name="times">number of times the collection is to be multiplied/copied</param>
-        /// <returns>collection multiplied by integer</returns>
+        /// <returns>Collection multiplied by integer.</returns>
         internal static T[] Multiply<T>(T[] array, uint times)
         {
             Diagnostics.Assert(array != null, "Caller should verify the arguments for array multiplication");

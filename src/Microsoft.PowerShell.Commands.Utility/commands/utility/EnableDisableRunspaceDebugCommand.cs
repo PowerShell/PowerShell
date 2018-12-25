@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns a list of valid runspaces based on current parameter set.
         /// </summary>
-        /// <returns>IReadOnlyList</returns>
+        /// <returns>IReadOnlyList.</returns>
         protected IReadOnlyList<Runspace> GetRunspaces()
         {
             IReadOnlyList<Runspace> results = null;
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns Runspace Debugger.
         /// </summary>
         /// <param name="runspace">Runspace</param>
-        /// <returns>Debugger</returns>
+        /// <returns>Debugger.</returns>
         protected System.Management.Automation.Debugger GetDebuggerFromRunspace(Runspace runspace)
         {
             System.Management.Automation.Debugger debugger = null;

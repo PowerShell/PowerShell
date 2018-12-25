@@ -427,7 +427,7 @@ namespace System.Management.Automation.Remoting
         /// various initializations.
         /// </summary>
         /// <param name="wkrPtrs">IntPtr to WSManPluginEntryDelegates.WSManPluginEntryDelegatesInternal</param>
-        /// <returns>0 = Success, 1 = Failure</returns>
+        /// <returns>0 = Success, 1 = Failure.</returns>
         public static int InitPlugin(
             IntPtr wkrPtrs)
         {

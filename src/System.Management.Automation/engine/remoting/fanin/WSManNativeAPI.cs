@@ -172,7 +172,7 @@ namespace System.Management.Automation.Remoting.Client
             /// Must be a value type.
             /// </typeparam>
             /// <param name="obj"></param>
-            /// <returns>MarshalledObject</returns>
+            /// <returns>MarshalledObject.</returns>
             internal static MarshalledObject Create<T>(T obj)
             {
                 IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<T>());

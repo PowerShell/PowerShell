@@ -196,8 +196,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked</param>
-        /// <returns>id for the new created entry. Use this id to fetch the
-        /// entry. Returns -1 if the entry is not added</returns>
+        /// <returns>Id for the new created entry. Use this id to fetch the
+        /// entry. Returns -1 if the entry is not added.</returns>
         /// <remarks>This function is thread safe</remarks>
         internal long AddEntry(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime, bool skipIfLocked)
         {
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
         /// id returned by Add method.
         /// </summary>
         /// <param name="id">Id of the entry to be fetched</param>
-        /// <returns>entry corresponding to id if it is present else null
+        /// <returns>Entry corresponding to id if it is present else null
         /// </returns>
         internal HistoryInfo GetEntry(long id)
         {
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="id"></param>
         /// <param name="count"></param>
         /// <param name="newest"></param>
-        /// <returns>history entries</returns>
+        /// <returns>History entries.</returns>
         internal HistoryInfo[] GetEntries(long id, long count, SwitchParameter newest)
         {
             ReallocateBufferIfNeeded();
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
         /// Clears the history entry from buffer for a given id.
         /// </summary>
         /// <param name="id">Id of the entry to be Cleared</param>
-        /// <returns>nothing</returns>
+        /// <returns>Nothing.</returns>
         internal void ClearEntry(long id)
         {
             lock (_syncRoot)
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         /// gets the total number of entries added
         ///</summary>
-        ///<returns>count of total entries added</returns>
+        ///<returns>count of total entries added.</returns>
 
         internal int Buffercapacity()
         {
@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="entry"></param>
         /// <returns>Returns id for the entry. This id should be used to fetch
-        /// the entry from the buffer</returns>
+        /// the entry from the buffer.</returns>
         /// <remarks>Id starts from 1 and is incremented by 1 for each new entry</remarks>
 
         private long Add(HistoryInfo entry)
@@ -631,7 +631,7 @@ namespace Microsoft.PowerShell.Commands
         /// id returned by Add method.
         /// </summary>
         /// <param name="id">Id of the entry to be fetched</param>
-        /// <returns>entry corresponding to id if it is present else null
+        /// <returns>Entry corresponding to id if it is present else null
         /// </returns>
         private HistoryInfo CoreGetEntry(long id)
         {
@@ -719,7 +719,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the index for new entry
         /// </summary>
-        /// <returns>Index for new entry</returns>
+        /// <returns>Index for new entry.</returns>
         private int GetIndexForNewEntry()
         {
             return (int)(_countEntriesAdded % _capacity);
@@ -1722,7 +1722,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the session history based on the id parameter
         /// takes no parameters
-        /// <returns>nothing</returns>
+        /// <returns>Nothing.</returns>
         /// </summary>
         private void ClearHistoryByID()
         {
@@ -1830,7 +1830,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the session history based on the Commandline parameter
         /// takes no parameters
-        /// <returns>nothing</returns>
+        /// <returns>Nothing.</returns>
         /// </summary>
         private void ClearHistoryByCmdLine()
         {
@@ -1897,7 +1897,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="count" > count of entries to be cleared</param>
         /// <param name="cmdline" >cmdline string to be cleared</param>
         /// <param name="newest" > order of the entries</param>
-        /// <returns>nothing</returns>
+        /// <returns>Nothing.</returns>
         /// </summary>
 
         private void ClearHistoryEntries(long id, int count, string cmdline, SwitchParameter newest)

@@ -997,7 +997,7 @@ namespace System.Management.Automation
         /// and returns true if this object should be serialized as string.
         /// </summary>
         /// <param name="source">PSObject to be serialized.</param>
-        /// <returns>true if the object needs to be serialized as a string.</returns>
+        /// <returns>True if the object needs to be serialized as a string.</returns>
         private static bool SerializeAsString(PSObject source)
         {
             return source.GetSerializationMethod(null) == SerializationMethod.String;

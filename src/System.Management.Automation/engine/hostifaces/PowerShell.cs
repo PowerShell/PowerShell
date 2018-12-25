@@ -1952,7 +1952,7 @@ namespace System.Management.Automation
         /// <param name="output">The output buffer to return from EndInvoke.</param>
         /// <param name="invocationCallback">An AsyncCallback to be called once the previous invocation has completed.</param>
         /// <param name="state">A user supplied state to call the <paramref name="invocationCallback"/> with.</param>
-        /// <returns>IAsyncResult</returns>
+        /// <returns>IAsyncResult.</returns>
         public IAsyncResult ConnectAsync(
             PSDataCollection<PSObject> output,
             AsyncCallback invocationCallback,
@@ -2127,7 +2127,7 @@ namespace System.Management.Automation
         /// <param name="invokeMustRun">True if PowerShell Invoke must run regardless
         /// of whether debugger handles the command.
         /// </param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <returns>DebuggerCommandResults.</returns>
         internal void InvokeWithDebugger(
             IEnumerable<object> input,
             IList<PSObject> output,
@@ -3620,7 +3620,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         /// <exception cref="InvalidOperationException">An attempt was made to use the scriptblock outside of the engine.</exception>
         internal SteppablePipeline GetSteppablePipeline()
         {
@@ -3668,7 +3668,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="context">engine execution context</param>
         /// <param name="commandOrigin">command origin</param>
-        /// <returns>steppable pipeline object</returns>
+        /// <returns>Steppable pipeline object.</returns>
         private SteppablePipeline GetSteppablePipeline(ExecutionContext context, CommandOrigin commandOrigin)
         {
             // Check for an empty pipeline
@@ -5526,7 +5526,7 @@ namespace System.Management.Automation
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject powerShellAsPSObject = RemotingEncoder.CreateEmptyPSObject();
@@ -5640,7 +5640,7 @@ namespace System.Management.Automation
         /// control the invocation of the command with
         /// AsJob Parameter
         /// </summary>
-        /// <returns>Job object</returns>
+        /// <returns>Job object.</returns>
         public PSJobProxy AsJobProxy()
         {
             // if there are no commands added

@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         /// if it exists in the metadata cache.
         /// </summary>
         /// <param name="module">module name</param>
-        /// <returns>true if system module, false if not</returns>
+        /// <returns>True if system module, false if not.</returns>
         internal static bool IsSystemModule(string module)
         {
             return s_metadataCache.ContainsKey(module);
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="pattern">pattern to search</param>
         /// <param name="fullyQualifiedName">Module Specification</param>
         /// <param name="noErrors">do not generate errors for modules without HelpInfoUri</param>
-        /// <returns>a list of modules</returns>
+        /// <returns>A list of modules.</returns>
         private Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo> GetModuleInfo(ExecutionContext context, string pattern, ModuleSpecification fullyQualifiedName, bool noErrors)
         {
             List<PSModuleInfo> modules = null;
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="module">module to process</param>
         /// <param name="culture">culture to use</param>
-        /// <returns>true if the module has been processed, false if not</returns>
+        /// <returns>True if the module has been processed, false if not.</returns>
         internal virtual bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             return false;
@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="pattern">pattern to match</param>
         /// <param name="fullyQualifiedName">ModuleSpecification</param>
         /// <param name="noErrors">skip errors</param>
-        /// <returns>a list of modules</returns>
+        /// <returns>A list of modules.</returns>
         internal Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo> GetModuleInfo(string pattern, ModuleSpecification fullyQualifiedName, bool noErrors)
         {
             Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo> modules = GetModuleInfo(Context, pattern, fullyQualifiedName, noErrors);
@@ -638,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="newHelpInfo">new HelpInfo.xml</param>
         /// <param name="culture">current culture</param>
         /// <param name="force">force update</param>
-        /// <returns>true if it is necessary to update help, false if not</returns>
+        /// <returns>True if it is necessary to update help, false if not.</returns>
         internal bool IsUpdateNecessary(UpdatableHelpModuleInfo module, UpdatableHelpInfo currentHelpInfo,
             UpdatableHelpInfo newHelpInfo, CultureInfo culture, bool force)
         {
@@ -676,7 +676,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filename">help info file name</param>
         /// <param name="time">current time (UTC)</param>
         /// <param name="force">if -Force is specified</param>
-        /// <returns>true if we are okay to update, false if not</returns>
+        /// <returns>True if we are okay to update, false if not.</returns>
         internal bool CheckOncePerDayPerModule(string moduleName, string path, string filename, DateTime time, bool force)
         {
             // Update if -Force is specified
@@ -719,7 +719,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">path to resolve</param>
         /// <param name="recurse">resolve recursively?</param>
         /// <param name="isLiteralPath">Treat the path / start path as a literal path?</param>///
-        /// <returns>a list of directories</returns>
+        /// <returns>A list of directories.</returns>
         internal IEnumerable<string> ResolvePath(string path, bool recurse, bool isLiteralPath)
         {
             List<string> resolvedPaths = new List<string>();
@@ -777,7 +777,7 @@ namespace Microsoft.PowerShell.Commands
         /// Resolves a given path to a list of directories recursively
         /// </summary>
         /// <param name="path">path to resolve</param>
-        /// <returns>a list of directories</returns>
+        /// <returns>A list of directories.</returns>
         private IEnumerable<string> RecursiveResolvePathHelper(string path)
         {
             if (System.IO.Directory.Exists(path))

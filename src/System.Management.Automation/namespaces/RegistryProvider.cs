@@ -3103,7 +3103,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="key">Key whose value has to be reset</param>
         /// <param name="valueName">name of the value to reset</param>
-        /// <returns>default value the key was set to</returns>
+        /// <returns>Default value the key was set to.</returns>
         private object ResetRegistryKeyValue(IRegistryWrapper key, string valueName)
         {
             RegistryValueKind valueKind = key.GetValueKind(valueName);
@@ -3208,7 +3208,7 @@ namespace Microsoft.PowerShell.Commands
         /// it throws an exception
         /// </summary>
         /// <param name="path">path to check</param>
-        /// <returns>false if the operation is not allowed</returns>
+        /// <returns>False if the operation is not allowed.</returns>
         private bool CheckOperationNotAllowedOnHiveContainer(string path)
         {
             if (IsHiveContainer(path))
@@ -3882,7 +3882,7 @@ namespace Microsoft.PowerShell.Commands
         /// helper to infer the RegistryValueKind from an object
         /// </summary>
         /// <param name="value">object whose RegistryValueKind has to be determined</param>
-        /// <returns>corresponding RegistryValueKind</returns>
+        /// <returns>Corresponding RegistryValueKind.</returns>
         private static RegistryValueKind GetValueKindFromObject(object value)
         {
             if (value == null)
@@ -3925,7 +3925,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="key">RegistryKey containing property</param>
         /// <param name="valueName">Property for which RegistryValueKind is requested</param>
-        /// <returns>RegistryValueKind of the property. If the property does not exit,returns RegistryValueKind.Unknown</returns>
+        /// <returns>RegistryValueKind of the property. If the property does not exit,returns RegistryValueKind.Unknown.</returns>
         private static RegistryValueKind GetValueKindForProperty(IRegistryWrapper key, string valueName)
         {
             try
@@ -3954,7 +3954,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="key">key to read the value from</param>
         /// <param name="valueName">name of the value to read</param>
-        /// <returns>value of the key, null if it could not retrieve
+        /// <returns>Value of the key, null if it could not retrieve
         /// it because known exceptions were thrown, else an exception is percolated up
         /// </returns>
         private static object ReadExistingKeyValue(IRegistryWrapper key, string valueName)

@@ -504,8 +504,8 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// Checks if the host is in a nested prompt
         /// </summary>
-        /// <returns>true, if host in nested prompt
-        /// false, otherwise</returns>
+        /// <returns>True, if host in nested prompt
+        /// false, otherwise.</returns>
         internal bool HostInNestedPrompt()
         {
             if (NestedPromptCount > 0)

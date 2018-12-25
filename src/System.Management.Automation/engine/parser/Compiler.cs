@@ -2396,7 +2396,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="rootForDefiningTypes"></param>
         /// <param name="typeAsts">non-empty array of TypeDefinitionAst</param>
-        /// <returns>Assembly with defined types</returns>
+        /// <returns>Assembly with defined types.</returns>
         internal static Assembly DefinePowerShellTypes(Ast rootForDefiningTypes, TypeDefinitionAst[] typeAsts)
         {
             // TODO(sevoroby): this Diagnostic is conceptually right.
@@ -2540,7 +2540,7 @@ namespace System.Management.Automation.Language
         /// Take module info of module that can be already loaded or not and loads it.
         /// </summary>
         /// <param name="originalModuleInfo"></param>
-        /// <returns>module info of the same module, but loaded</returns>
+        /// <returns>Module info of the same module, but loaded.</returns>
         private static PSModuleInfo LoadModule(PSModuleInfo originalModuleInfo)
         {
             // originalModuleInfo is created during parse time and may not contain [System.Type] types exported from the module.

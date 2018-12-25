@@ -1138,7 +1138,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the registry key to PSEngine.
         /// </summary>
-        /// <returns>RegistryKey</returns>
+        /// <returns>RegistryKey.</returns>
         /// <param name="psVersion">Major version in string format.</param>
         /// <exception cref="ArgumentException">
         /// Monad registration information is not available.

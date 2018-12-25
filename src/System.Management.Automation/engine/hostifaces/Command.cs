@@ -635,7 +635,7 @@ namespace System.Management.Automation.Runspaces
         /// that can be used in a remoting protocol data object.
         /// </summary>
         /// <param name="psRPVersion">PowerShell remoting protocol version</param>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting(Version psRPVersion)
         {
             PSObject commandAsPSObject = RemotingEncoder.CreateEmptyPSObject();

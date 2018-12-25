@@ -227,7 +227,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object.
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateTypeEntry entry;
@@ -408,7 +408,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object.
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateAssemblyEntry entry = new SessionStateAssemblyEntry(Name, FileName);
@@ -550,7 +550,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateScriptEntry entry = new SessionStateScriptEntry(Path, Visibility);
@@ -629,7 +629,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateAliasEntry entry = new SessionStateAliasEntry(Name, Definition, Description, Options, Visibility);
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateApplicationEntry entry = new SessionStateApplicationEntry(Path, Visibility);
@@ -923,7 +923,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             // Copy the attribute collection if necessary...

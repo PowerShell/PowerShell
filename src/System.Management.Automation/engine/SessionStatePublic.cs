@@ -247,7 +247,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="origin">The origin to check against</param>
         /// <param name="valueToCheck">The object to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, object valueToCheck)
         {
             if (origin == CommandOrigin.Internal)
@@ -265,7 +265,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="origin">The origin to check against</param>
         /// <param name="variable">The variable to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, PSVariable variable)
         {
             if (origin == CommandOrigin.Internal)
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="origin">The origin to check against</param>
         /// <param name="commandInfo">The command to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, CommandInfo commandInfo)
         {
             if (origin == CommandOrigin.Internal)

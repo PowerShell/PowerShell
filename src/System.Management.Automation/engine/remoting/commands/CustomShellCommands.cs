@@ -1420,7 +1420,7 @@ else
         /// Creates a Grouped Managed Service Account credential based on the passed in account name
         /// </summary>
         /// <param name="gmsaAccount">Group Managed Service Account name</param>
-        /// <returns>PSCredential for GMS account</returns>
+        /// <returns>PSCredential for GMS account.</returns>
         /// <exception cref="InvalidOperationException">
         /// Invalid account name.  Must be of form 'Domain\UserName'.
         /// </exception>
@@ -1554,7 +1554,7 @@ else
         /// <param name="configTable"></param>
         /// <param name="accessMode"></param>
         /// <param name="error"></param>
-        /// <returns>SDDL</returns>
+        /// <returns>SDDL.</returns>
         internal static string ComputeSDDLFromConfiguration(
             Hashtable configTable,
             PSSessionConfigurationAccessMode accessMode,

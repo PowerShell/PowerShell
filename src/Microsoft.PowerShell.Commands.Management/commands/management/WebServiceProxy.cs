@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generates a random name
         /// </summary>
-        /// <returns>string </returns>
+        /// <returns>String.</returns>
         private string GenerateRandomName()
         {
             string rndname = null;

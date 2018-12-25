@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// <param name="timeStampServerUrl"> URL of time stamping server  </param>
         /// <param name="hashAlgorithm"> The name of the hash
         /// algorithm to use. </param>
-        /// <returns> Does not return a value </returns>
+        /// <returns>Does not return a value.</returns>
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName or certificate is null.
         /// </exception>
@@ -259,7 +259,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName"> name of file to check </param>
         /// <param name="fileContent"> content of file to check </param>
-        /// <returns> Signature object </returns>
+        /// <returns>Signature object.</returns>
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.
         /// </exception>

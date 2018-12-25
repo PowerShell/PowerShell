@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Create a new Job2 results instance.
         /// </summary>
         /// <param name="specification">Job specification</param>
-        /// <returns>Job2</returns>
+        /// <returns>Job2.</returns>
         public override Job2 NewJob(JobInvocationInfo specification)
         {
             if (specification == null)
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="definitionName">ScheduledJob definition name</param>
         /// <param name="definitionPath">ScheduledJob definition file path</param>
-        /// <returns>Job2 object</returns>
+        /// <returns>Job2 object.</returns>
         public override Job2 NewJob(string definitionName, string definitionPath)
         {
             if (string.IsNullOrEmpty(definitionName))
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Get the list of jobs that are currently available in this
         /// store
         /// </summary>
-        /// <returns>Collection of job objects</returns>
+        /// <returns>Collection of job objects.</returns>
         public override IList<Job2> GetJobs()
         {
             RefreshRepository();
@@ -145,8 +145,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="name">names to match, can support
         ///   wildcard if the store supports</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public override IList<Job2> GetJobsByName(string name, bool recurse)
         {
             if (string.IsNullOrEmpty(name))
@@ -174,8 +174,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="command">command to match</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public override IList<Job2> GetJobsByCommand(string command, bool recurse)
         {
             if (string.IsNullOrEmpty(command))
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="instanceId">Guid to match</param>
         /// <param name="recurse"></param>
-        /// <returns>job with the specified guid</returns>
+        /// <returns>Job with the specified guid.</returns>
         public override Job2 GetJobByInstanceId(Guid instanceId, bool recurse)
         {
             RefreshRepository();
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="id">Id to match</param>
         /// <param name="recurse"></param>
-        /// <returns>Job with the specified id</returns>
+        /// <returns>Job with the specified id.</returns>
         public override Job2 GetJobBySessionId(int id, bool recurse)
         {
             RefreshRepository();
@@ -245,8 +245,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="state">state to match</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs with the specified
-        /// state</returns>
+        /// <returns>Collection of jobs with the specified
+        /// state.</returns>
         public override IList<Job2> GetJobsByState(JobState state, bool recurse)
         {
             RefreshRepository();
@@ -270,8 +270,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the
-        /// specified criteria</returns>
+        /// <returns>Collection of jobs that match the
+        /// specified criteria.</returns>
         public override IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse)
         {
             if (filter == null)
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="jobRun">DateTime of job run to load</param>
         /// <param name="definitionName">ScheduledJobDefinition name</param>
-        /// <returns>Job2 job loaded from store</returns>
+        /// <returns>Job2 job loaded from store.</returns>
         internal static Job2 LoadJobFromStore(string definitionName, DateTime jobRun)
         {
             FileStream fsResults = null;
@@ -563,7 +563,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Loads the Job2 object from provided files stream.
         /// </summary>
         /// <param name="fs">FileStream from which to read job object</param>
-        /// <returns>Created Job2 from file stream</returns>
+        /// <returns>Created Job2 from file stream.</returns>
         private static Job2 LoadResultsFromFile(FileStream fs)
         {
             XmlObjectSerializer serializer = new System.Runtime.Serialization.NetDataContractSerializer();
@@ -996,7 +996,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             /// Gets the latest job run Date/Time for the given definition name.
             /// </summary>
             /// <param name="definitionName">ScheduledJobDefinition name</param>
-            /// <returns>Job Run DateTime</returns>
+            /// <returns>Job Run DateTime.</returns>
             public DateTime GetLatestJobRun(string definitionName)
             {
                 if (string.IsNullOrEmpty(definitionName))
@@ -1050,7 +1050,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             /// </summary>
             /// <param name="definitionName">Definition name</param>
             /// <param name="jobRun">Job run DateTime</param>
-            /// <returns>Scheduled job if found</returns>
+            /// <returns>Scheduled job if found.</returns>
             public ScheduledJob GetJob(string definitionName, DateTime jobRun)
             {
                 lock (_syncObject)

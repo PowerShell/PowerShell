@@ -191,7 +191,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="action">next action to execute</param>
-        /// <returns>true indicates there is an valid action, otherwise false</returns>
+        /// <returns>True indicates there is an valid action, otherwise false.</returns>
         protected bool GetActionAndRemove(out CimBaseAction action)
         {
             return this.actionQueue.TryDequeue(out action);
@@ -225,7 +225,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Are there active operations?
         /// </para>
         /// </summary>
-        /// <returns>true for having active operations, otherwise false.</returns>
+        /// <returns>True for having active operations, otherwise false.</returns>
         protected bool IsActive()
         {
             DebugHelper.WriteLogEx("Disposed {0}, Operation Count {1}", 2, this.Disposed, this.operationCount);

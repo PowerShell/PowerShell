@@ -1241,7 +1241,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Peek the next character
         /// </summary>
-        /// <returns>Return -1 if we reach the head of the file</returns>
+        /// <returns>Return -1 if we reach the head of the file.</returns>
         public override int Peek()
         {
             if (_charCount == 0)
@@ -1259,7 +1259,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read the next character
         /// </summary>
-        /// <returns>Return -1 if we reach the head of the file</returns>
+        /// <returns>Return -1 if we reach the head of the file.</returns>
         public override int Read()
         {
             if (_charCount == 0)
@@ -1280,8 +1280,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="buffer">Output buffer.</param>
         /// <param name="index">Start position to write with.</param>
         /// <param name="count">Number of bytes to read.</param>
-        /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
-        /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
+        /// <returns>Return the number of characters read, or -1 if we reach the head of the file.</returns>
+        /// <returns>Return the number of characters read, or -1 if we reach the head of the file.</returns>
         public override int Read(char[] buffer, int index, int count)
         {
             return ReadSpan(new Span<char>(buffer, index, count));
@@ -1329,7 +1329,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read a line from the current stream
         /// </summary>
-        /// <returns>Return null if we reach the head of the file</returns>
+        /// <returns>Return null if we reach the head of the file.</returns>
         public override string ReadLine()
         {
             if (_charCount == 0 && RefillCharBuffer() == -1)

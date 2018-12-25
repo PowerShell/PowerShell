@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ProcessRecord when a command name is specified.
         /// </summary>
-        /// <returns>true if there was no exception processing this record</returns>
+        /// <returns>True if there was no exception processing this record.</returns>
         private bool CanProcessRecordForOneCommand()
         {
             CommandInfo commandInfo;
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ProcessRecord when a command name is not specified.
         /// </summary>
-        /// <returns>true if there was no exception processing this record</returns>
+        /// <returns>True if there was no exception processing this record.</returns>
         private bool CanProcessRecordForAllCommands()
         {
             Collection<PSObject> rawCommands = this.InvokeCommand.InvokeScript(_showCommandProxy.GetShowAllModulesCommand());
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="str">string to add to console input buffer</param>
             /// <param name="newLine">true to add Enter after the string</param>
-            /// <returns>true if it was successful in adding all characters to console input buffer</returns>
+            /// <returns>True if it was successful in adding all characters to console input buffer.</returns>
             internal static bool AddToConsoleInputBuffer(string str, bool newLine)
             {
                 IntPtr handle = ConsoleInputWithNativeMethods.GetStdHandle(ConsoleInputWithNativeMethods.STD_INPUT_HANDLE);
@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the console handle.
             /// </summary>
             /// <param name="nStdHandle">which console handle to get</param>
-            /// <returns>the console handle</returns>
+            /// <returns>The console handle.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             internal static extern IntPtr GetStdHandle(int nStdHandle);
 
@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="lpBuffer">inputs to be written</param>
             /// <param name="nLength">number of inputs to be written</param>
             /// <param name="lpNumberOfEventsWritten">returned number of inputs actually written</param>
-            /// <returns>0 if the function fails</returns>
+            /// <returns>0 if the function fails.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool WriteConsoleInput(

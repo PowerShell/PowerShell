@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// Serializes an object into PowerShell CliXml
         /// </summary>
         /// <param name="source">The input object to serialize. Serializes to a default depth of 1</param>
-        /// <returns>The serialized object, as CliXml</returns>
+        /// <returns>The serialized object, as CliXml.</returns>
         public static string Serialize(Object source)
         {
             return Serialize(source, s_mshDefaultSerializationDepth);
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="source">The input object to serialize</param>
         /// <param name="depth">The depth of the members to serialize</param>
-        /// <returns>The serialized object, as CliXml</returns>
+        /// <returns>The serialized object, as CliXml.</returns>
         public static string Serialize(Object source, int depth)
         {
             // Create an xml writer
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         /// Deserializes PowerShell CliXml into an object.
         /// </summary>
         /// <param name="source">The CliXml the represents the object to deserialize.</param>
-        /// <returns>An object that represents the serialized content</returns>
+        /// <returns>An object that represents the serialized content.</returns>
         public static object Deserialize(string source)
         {
             object[] results = DeserializeAsList(source);
@@ -149,7 +149,7 @@ namespace System.Management.Automation
         /// Deserializes PowerShell CliXml into a list of objects.
         /// </summary>
         /// <param name="source">The CliXml the represents the object to deserialize.</param>
-        /// <returns>An object array represents the serialized content</returns>
+        /// <returns>An object array represents the serialized content.</returns>
         public static object[] DeserializeAsList(string source)
         {
             List<object> results = new List<object>();
@@ -659,7 +659,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="o"></param>
         /// <param name="type"></param>
-        /// <returns><c>true</c> if <paramref name="o"/> is either a live or deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if <paramref name="o"/> is either a live or deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
         internal static bool IsInstanceOfType(object o, Type type)
         {
             if (type == null)
@@ -680,7 +680,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="o"></param>
         /// <param name="type"></param>
-        /// <returns><c>true</c> if <paramref name="o"/> is a deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if <paramref name="o"/> is a deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
         internal static bool IsDeserializedInstanceOfType(object o, Type type)
         {
             if (type == null)
@@ -2252,7 +2252,7 @@ namespace System.Management.Automation
         /// string
         /// </summary>
         /// <param name="source">PSObject to be serialized</param>
-        /// <returns>true if the object needs to be serialized as a string</returns>
+        /// <returns>True if the object needs to be serialized as a string.</returns>
         private bool SerializeAsString(PSObject source)
         {
             SerializationMethod method = source.GetSerializationMethod(_typeTable);
@@ -2784,7 +2784,7 @@ namespace System.Management.Automation
         /// Encodes the string to escape characters which would make XmlWriter.WriteString throw an exception.
         /// </summary>
         /// <param name="s">string to encode</param>
-        /// <returns>encoded string</returns>
+        /// <returns>Encoded string.</returns>
         /// <remarks>
         /// Output from this method can be reverted using XmlConvert.DecodeName method
         /// (or InternalDeserializer.DecodeString).
@@ -2832,7 +2832,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="s">string to encode</param>
         /// <param name="indexOfFirstEncodableCharacter">indexOfFirstEncodableCharacter</param>
-        /// <returns>encoded string</returns>
+        /// <returns>Encoded string.</returns>
         private static string EncodeString(string s, int indexOfFirstEncodableCharacter)
         {
             Dbg.Assert(s != null, "Caller should validate the 's' parameter");
@@ -3717,7 +3717,7 @@ namespace System.Management.Automation
         /// This function reads the refId attribute and creates a
         /// mshObject for that attribute
         /// </summary>
-        /// <returns>mshObject which is created for refId</returns>
+        /// <returns>MshObject which is created for refId.</returns>
         private PSObject ReadAttributeAndCreatePSObject()
         {
             string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
@@ -4749,7 +4749,7 @@ namespace System.Management.Automation
         /// Read start element in monad namespace
         /// </summary>
         /// <param name="element">element tag to read</param>
-        /// <returns>true if not an empty element else false</returns>
+        /// <returns>True if not an empty element else false.</returns>
         internal bool ReadStartElementAndHandleEmpty(string element)
         {
             Dbg.Assert(!string.IsNullOrEmpty(element), "Caller should validate the parameter");
@@ -4932,7 +4932,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get new reference id.
         /// </summary>
-        /// <returns>New reference id</returns>
+        /// <returns>New reference id.</returns>
         private UInt64 GetNewReferenceId()
         {
             UInt64 refId = _seed++;
@@ -4958,7 +4958,7 @@ namespace System.Management.Automation
         /// Assigns a RefId to the given object
         /// </summary>
         /// <param name="t">object to assign a RefId to</param>
-        /// <returns>RefId assigned to the object</returns>
+        /// <returns>RefId assigned to the object.</returns>
         internal string SetRefId(T t)
         {
             if (_object2refId != null)
@@ -5111,7 +5111,7 @@ namespace System.Management.Automation
         /// Gets the type serialization information about a type
         /// </summary>
         /// <param name="type">Type for which information is retrieved</param>
-        /// <returns>TypeSerializationInfo for the type, null if it doesn't exist</returns>
+        /// <returns>TypeSerializationInfo for the type, null if it doesn't exist.</returns>
         internal static TypeSerializationInfo GetTypeSerializationInfo(Type type)
         {
             TypeSerializationInfo temp;
@@ -5127,7 +5127,7 @@ namespace System.Management.Automation
         /// Get TypeSerializationInfo using ItemTag as key
         /// </summary>
         /// <param name="itemTag">ItemTag for which TypeSerializationInfo is to be fetched</param>
-        /// <returns>TypeSerializationInfo entry, null if no entry exist for the tag</returns>
+        /// <returns>TypeSerializationInfo entry, null if no entry exist for the tag.</returns>
         internal static TypeSerializationInfo GetTypeSerializationInfoFromItemTag(string itemTag)
         {
             TypeSerializationInfo temp;
@@ -6538,7 +6538,7 @@ namespace System.Management.Automation
         /// <param name="data">The root dictionary</param>
         /// <param name="result"></param>
         /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value</param>
-        /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise.</returns>
         internal static bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
         {
             Dbg.Assert(keys != null, "Caller should verify that keys != null");
@@ -6686,7 +6686,7 @@ namespace Microsoft.PowerShell
         /// <param name="destinationType">The type to convert to</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
-        /// <returns>the <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
+        /// <returns>The <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
         public override object ConvertFrom(PSObject sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
@@ -6774,7 +6774,7 @@ namespace Microsoft.PowerShell
         /// <param name="destinationType">The type to convert to</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
-        /// <returns>sourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
+        /// <returns>SourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
         public override object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {

@@ -2075,7 +2075,7 @@ $result
         /// <param name="formatErrorMessage">Error message format string that takes two parameters</param>
         /// <param name="ErrorFQEID">Fully qualified error Id</param>
         /// <param name="cancelToken">Cancel token</param>
-        /// <returns>True on success</returns>
+        /// <returns>True on success.</returns>
         internal static bool InvokeWin32ShutdownUsingWsman(
             PSCmdlet cmdlet,
             bool isLocalhost,
@@ -2192,7 +2192,7 @@ $result
         /// <param name="shortLocalMachineName"></param>
         /// <param name="fullLocalMachineName"></param>
         /// <param name="error"></param>
-        /// <returns>Valid computer name</returns>
+        /// <returns>Valid computer name.</returns>
         internal static string ValidateComputerName(
             string nameToCheck,
             string shortLocalMachineName,

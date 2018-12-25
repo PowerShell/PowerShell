@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// Confirm that the operation should proceed
         /// </summary>
         /// <param name="service">service object to be acted on</param>
-        /// <returns> true if operation should continue, false otherwise </returns>
+        /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(ServiceController service)
         {
             return ShouldProcessServiceOperation(
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="displayName">display name of service to be acted on</param>
         /// <param name="serviceName">service name of service to be acted on</param>
-        /// <returns> true if operation should continue, false otherwise </returns>
+        /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(
             string displayName, string serviceName)
         {
@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
         /// Adds UserName, Description, BinaryPathName, DelayedAutoStart and StartupType to a ServiceController object.
         /// </summary>
         /// <param name="service"></param>
-        /// <returns>ServiceController as PSObject with UserName, Description and StartupType added</returns>
+        /// <returns>ServiceController as PSObject with UserName, Description and StartupType added.</returns>
         private PSObject AddProperties(ServiceController service)
         {
             NakedWin32Handle hScManager = IntPtr.Zero;
@@ -809,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
         ///  <param name="errorMessage">
         /// errorMessage for a nonterminating error if operation fails
         /// </param>
-        /// <returns>true if action succeeded</returns>
+        /// <returns>True if action succeeded.</returns>
         /// <exception cref="PipelineStoppedException">
         /// WriteWarning will throw this if the pipeline has been stopped.
         /// This means that the delay between hitting CTRL-C and stopping
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will start the service.
         /// </summary>
         /// <param name="serviceController">service to start</param>
-        /// <returns>true iff the service was started</returns>
+        /// <returns>True iff the service was started.</returns>
         internal bool DoStartService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -921,7 +921,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="serviceController">service to stop</param>
         /// <param name="force">stop dependent services</param>
         /// <param name="waitForServiceToStop"></param>
-        /// <returns>true iff the service was stopped</returns>
+        /// <returns>True iff the service was stopped.</returns>
         internal List<ServiceController> DoStopService(ServiceController serviceController, bool force, bool waitForServiceToStop)
         {
             // Ignore ServiceController.CanStop.  CanStop will be set false
@@ -1085,7 +1085,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will pause the service.
         /// </summary>
         /// <param name="serviceController">service to pause</param>
-        /// <returns>true iff the service was paused</returns>
+        /// <returns>True iff the service was paused.</returns>
         internal bool DoPauseService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -1166,7 +1166,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will resume the service.
         /// </summary>
         /// <param name="serviceController">service to resume</param>
-        /// <returns>true iff the service was resumed</returns>
+        /// <returns>True iff the service was resumed.</returns>
         internal bool DoResumeService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -2467,7 +2467,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// unimplemented standard constructor
         /// </summary>
-        /// <returns> doesn't return </returns>
+        /// <returns>Doesn't return.</returns>
         public ServiceCommandException()
             : base()
         {
@@ -2478,7 +2478,7 @@ namespace Microsoft.PowerShell.Commands
         /// standard constructor
         /// </summary>
         /// <param name="message"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ServiceCommandException(string message)
             : base(message)
         {
@@ -2501,7 +2501,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// send an object to the pipeline
         /// </summary>
         /// <param name="o">object to process</param>
-        /// <returns>Array of objects out of the success pipeline</returns>
+        /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array Process(object o)
         {
             if (_pp == null)
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// shut down the pipeline
         /// </summary>
-        /// <returns>Array of objects out of the success pipeline</returns>
+        /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array ShutDown()
         {
             if (_pp == null)
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// callback for the implementation to obtain a reference to the Cmdlet object
         /// </summary>
-        /// <returns>Cmdlet reference</returns>
+        /// <returns>Cmdlet reference.</returns>
         protected virtual PSCmdlet OuterCmdletCall()
         {
             return this;
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// callback for the implementation to get the current pipeline object
         /// </summary>
-        /// <returns>current object from the pipeline</returns>
+        /// <returns>Current object from the pipeline.</returns>
         protected virtual PSObject InputObjectCall()
         {
             // just bind to the input object parameter

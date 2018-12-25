@@ -129,7 +129,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpTarget">help target to request</param>
         /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (arguments != null && CommandInfo != null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock != null)

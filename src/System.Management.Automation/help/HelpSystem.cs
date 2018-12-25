@@ -155,7 +155,7 @@ namespace System.Management.Automation
         /// object on fly.
         /// </summary>
         /// <param name="helpRequest">helpRequest object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <returns>An array of HelpInfo object.</returns>
         internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
             if (helpRequest == null)
@@ -242,7 +242,7 @@ namespace System.Management.Automation
         /// If the current shell is single-shell based, then the returned
         /// search path contains all the directories of currently active PSSnapIns/modules.
         /// </summary>
-        /// <returns>a collection of strings representing locations</returns>
+        /// <returns>A collection of strings representing locations.</returns>
         internal Collection<string> GetSearchPaths()
         {
             // return the cache if already present.
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         ///     4. if step 3 returns exact one helpInfo object, try to retrieve exact help.
         /// </summary>
         /// <param name="helpRequest">Help request object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <returns>An array of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> DoGetHelp(HelpRequest helpRequest)
         {
             _lastErrors.Clear();
@@ -456,7 +456,7 @@ namespace System.Management.Automation
         /// Get help that exactly match the target
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>An IEnumerable of HelpInfo object</returns>
+        /// <returns>An IEnumerable of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest)
         {
             int countOfHelpInfosFound = 0;
