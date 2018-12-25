@@ -798,7 +798,7 @@ namespace Microsoft.PowerShell.Commands
         public string ComputerName { get; set; } = ".";
 
         #endregion Parameters
-        # region private
+        #region private
 
         private void WriteNonTerminatingError(Exception exception, string errorId, string errorMessage,
             ErrorCategory category)
@@ -957,7 +957,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _maxkbSpecified = false;
         #endregion Parameters
 
-        # region private
+        #region private
         private void WriteNonTerminatingError(Exception exception, string resourceId, string errorId,
       ErrorCategory category, string _logName, string _compName)
         {
@@ -1075,7 +1075,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        # endregion override
+        #endregion override
 
     }
     #endregion LimitEventLogCommand
@@ -1137,11 +1137,11 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(er);
             }
         }
-        # endregion override
+        #endregion override
     }
     #endregion ShowEventLogCommand
 
-    # region NewEventLogCommand
+    #region NewEventLogCommand
     /// <summary>
     /// This cmdlet creates the new event log .This cmdlet can also be used to
     /// configure a new source for writing entries to an event log on the local
@@ -1165,7 +1165,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.New, "EventLog", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135235", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class NewEventLogCommand : PSCmdlet
     {
-        # region Parameter
+        #region Parameter
         /// <summary>
         /// The following is the definition of the input parameter "CategoryResourceFile".
         /// Specifies the path of the resource file that contains category strings for
@@ -1230,9 +1230,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Source { get; set; }
 
-        # endregion Parameter
+        #endregion Parameter
 
-        # region private
+        #region private
         private void WriteNonTerminatingError(Exception exception, string resourceId, string errorId,
             ErrorCategory category, string _logName, string _compName, string _source, string _resourceFile)
         {
@@ -1240,9 +1240,9 @@ namespace Microsoft.PowerShell.Commands
             WriteError(new ErrorRecord(ex, errorId, category, null));
         }
 
-        # endregion private
+        #endregion private
 
-        # region override
+        #region override
         /// <summary>
         /// BeginProcessing method.
         /// </summary>

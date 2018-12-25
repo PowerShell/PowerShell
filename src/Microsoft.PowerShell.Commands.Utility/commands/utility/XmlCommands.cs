@@ -806,7 +806,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet
     {
-        # region parameters
+        #region parameters
         /// <summary>
         /// Specifies the path which contains the xml files. The default is the current user directory.
         /// </summary>
@@ -876,9 +876,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable Namespace { get; set; }
 
-        # endregion parameters
+        #endregion parameters
 
-        # region private
+        #region private
 
         private void WriteResults(XmlNodeList foundXmlNodes, string filePath)
         {
@@ -1006,7 +1006,7 @@ namespace Microsoft.PowerShell.Commands
             return xmlns;
         }
 
-        # endregion private
+        #endregion private
 
         #region override
 

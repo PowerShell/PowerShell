@@ -752,7 +752,7 @@ namespace Microsoft.WSMan.Management
     [Cmdlet(VerbsCommon.Get, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141443")]
     public class GetWSManCredSSPCommand : PSCmdlet, IDisposable
     {
-        # region private
+        #region private
         WSManHelper helper = null;
         /// <summary>
         /// method to get the values.
@@ -814,9 +814,9 @@ namespace Microsoft.WSMan.Management
 
              return result;
         }
-        # endregion private
+        #endregion private
 
-        # region overrides
+        #region overrides
         /// <summary>
         /// Method to begin processing.
         /// </summary>

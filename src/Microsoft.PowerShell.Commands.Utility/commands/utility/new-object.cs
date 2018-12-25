@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary Property { get; set; }
 
-        # endregion parameters
+        #endregion parameters
 
         #region private
         private object CallConstructor(Type type, ConstructorInfo[] constructors, object[] args)

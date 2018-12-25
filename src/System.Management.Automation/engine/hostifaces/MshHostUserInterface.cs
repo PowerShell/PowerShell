@@ -774,7 +774,7 @@ namespace System.Management.Automation.Host
 
         #endregion Line-oriented interaction
 
-        # region Dialog-oriented Interaction
+        #region Dialog-oriented Interaction
 
         /// <summary>
         /// Constructs a 'dialog' where the user is presented with a number of fields for which to supply values.
