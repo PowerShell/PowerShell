@@ -211,8 +211,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// delegate to allow notifications when the autosize queue is about to be drained
         /// </summary>
-        /// <param name="formatStartData"> current Fs control message</param>
-        /// <param name="objects">enumeration of PacketInfoData objects </param>
+        /// <param name="formatStartData">current Fs control message</param>
+        /// <param name="objects">enumeration of PacketInfoData objects</param>
         internal delegate void ProcessCachedGroupNotification(FormatStartData formatStartData, List<PacketInfoData> objects);
 
         /// <summary>

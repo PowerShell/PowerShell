@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object to display</param>
         /// <param name="currentLevel">current level in the traversal</param>
-        /// <param name="parameterList"> list of parameters from the command line</param>
+        /// <param name="parameterList">list of parameters from the command line</param>
         /// <param name="formatValueList">list of format tokens to add to</param>
         private void DisplayObject(PSObject so, TraversalInfo currentLevel, List<MshParameter> parameterList,
                                         List<FormatValue> formatValueList)

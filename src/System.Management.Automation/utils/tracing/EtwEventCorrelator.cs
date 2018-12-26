@@ -17,9 +17,9 @@ namespace System.Management.Automation.Tracing
         ///     Gets or sets the ETW activity ID of the current thread.
         /// </summary>
         /// <remarks>
-        ///     <para>This method should only be used for advanced scenarios
+        ///     <param>This method should only be used for advanced scenarios
         ///         or diagnostics.  Prefer using <see cref="StartActivity()" />
-        ///         or <see cref="StartActivity(Guid)" /> instead.</para>
+        ///         or <see cref="StartActivity(Guid)" /> instead.</param>
         /// </remarks>
         Guid CurrentActivityId { get; set; }
 

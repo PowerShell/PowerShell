@@ -39,8 +39,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns>Constructed object.</returns>
         protected RuntimeException(SerializationInfo info,
                            StreamingContext context)
@@ -53,8 +53,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -72,7 +72,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the RuntimeException class.
         /// </summary>
-        /// <param name="message">  </param>
+        /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
         public RuntimeException(string message)
             : base(message)
@@ -82,8 +82,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the RuntimeException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns>Constructed object.</returns>
         public RuntimeException(string message,
                                 Exception innerException)

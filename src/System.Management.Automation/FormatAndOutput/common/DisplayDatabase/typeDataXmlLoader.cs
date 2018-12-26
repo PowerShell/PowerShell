@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// It assumes that the XML document has been successfully loaded
         /// </summary>
         /// <param name="doc">XML document to load from, cannot be null</param>
-        /// <param name="db"> instance of the databaseto load into</param>
+        /// <param name="db">instance of the databaseto load into</param>
         private void LoadData(XmlDocument doc, TypeInfoDataBase db)
         {
             if (doc == null)

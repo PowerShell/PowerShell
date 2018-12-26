@@ -488,8 +488,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -653,8 +653,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

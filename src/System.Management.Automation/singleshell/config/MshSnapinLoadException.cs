@@ -170,8 +170,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate a PSSnapInException instance.
         /// </summary>
-        /// <param name="info"> Serialization information </param>
-        /// <param name="context"> Streaming context </param>
+        /// <param name="info">Serialization information</param>
+        /// <param name="context">Streaming context</param>
         protected PSSnapInException(SerializationInfo info,
                                         StreamingContext context)
             : base(info, context)
@@ -185,8 +185,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get object data from serialization information.
         /// </summary>
-        /// <param name="info"> Serialization information </param>
-        /// <param name="context"> Streaming context </param>
+        /// <param name="info">Serialization information</param>
+        /// <param name="context">Streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

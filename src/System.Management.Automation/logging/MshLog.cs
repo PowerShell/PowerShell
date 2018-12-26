@@ -308,7 +308,7 @@ namespace System.Management.Automation
         ///
         /// This API is currently used only by runspace before engine start.
         /// </summary>
-        /// <param name="logContext">logContext to be </param>
+        /// <param name="logContext">logContext to be</param>
         /// <param name="eventId">EventId for the event to be logged</param>
         /// <param name="exception">Exception associated with this event</param>
         /// <param name="additionalInfo">Additional information for this event</param>

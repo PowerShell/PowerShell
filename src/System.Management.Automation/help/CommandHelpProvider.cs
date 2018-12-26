@@ -780,7 +780,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file)</param>
         /// <param name="commandName">Name of the command.</param>
-        /// <param name="helpCategory"> </param>
+        /// <param name="helpCategory"></param>
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, string commandName, HelpCategory helpCategory)
         {

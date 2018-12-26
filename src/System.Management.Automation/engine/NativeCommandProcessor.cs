@@ -2082,7 +2082,7 @@ namespace System.Management.Automation
         /// with a specified error message, serialized Exception and
         /// serialized InvocationInfo
         /// </summary>
-        /// <param name="message">The message that describes the error. </param>
+        /// <param name="message">The message that describes the error.</param>
         /// <param name="serializedRemoteException">
         /// serialized exception from remote msh
         /// </param>

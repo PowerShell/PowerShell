@@ -357,7 +357,7 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Checks whether a provider matching certain levels and keyword is enabled
         /// </summary>
-        /// <param name="levels">Levels to check </param>
+        /// <param name="levels">Levels to check</param>
         /// <param name="keywords">Keywords to check</param>
         /// <returns>True, if any ETW listener is enabled else false.</returns>
         public bool IsProviderEnabled(byte levels, long keywords)

@@ -13,10 +13,10 @@ using Microsoft.Win32;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Encapsulates $PSVersionTable.
-    /// </para>
-    /// <para>
+    /// </param>
+    /// <param>
     /// Provides a simple interface to retrieve details from the PowerShell version table:
     /// <code>
     ///    PSVersionInfo.PSVersion;
@@ -26,7 +26,7 @@ namespace System.Management.Automation
     ///    PSVersionInfo.PSEdition;
     /// </code>
     /// The above statement retrieves the PowerShell edition.
-    /// </para>
+    /// </param>
     /// </summary>
     public class PSVersionInfo
     {

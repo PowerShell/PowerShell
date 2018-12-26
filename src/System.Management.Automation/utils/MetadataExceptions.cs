@@ -128,7 +128,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initialize a new instance of ValidationMetadataException. This validation exception could be
-        /// ignored in positional binding phase if the <para>swallowException</para> is set to be true.
+        /// ignored in positional binding phase if the <param>swallowException</param> is set to be true.
         /// </summary>
         /// <param name="message">
         /// The error message</param>

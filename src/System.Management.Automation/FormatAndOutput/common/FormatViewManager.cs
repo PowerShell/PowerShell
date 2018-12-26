@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// log a failed formatting operation
         /// </summary>
-        /// <param name="error">string format error object </param>
+        /// <param name="error">string format error object</param>
         internal void LogStringFormatError(StringFormatError error)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)

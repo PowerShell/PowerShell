@@ -28,7 +28,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Constructor which creates a client remote powershell
         /// </summary>
-        /// <param name="shell">powershell instance </param>
+        /// <param name="shell">powershell instance</param>
         /// <param name="runspacePool">The runspace pool associated with
         /// this shell</param>
         internal ClientRemotePowerShell(PowerShell shell, RemoteRunspacePoolInternal runspacePool)
