@@ -10,21 +10,21 @@ using Xunit;
 
 namespace PSTests.Parallel.System.Management.Automation.Unicode
 {
-    public class SimpleFoldedStringComparerTests
+    public class StringComparerUsingSimpleCaseFoldingTests
     {
         // The tests come from CoreFX tests: src/System.Runtime.Extensions/tests/System/StringComparer.cs
 
         [Fact]
         public static void TestOrdinal_EmbeddedNull_ReturnsDifferentHashCodes()
         {
-            SimpleFoldedStringComparer sc = new SimpleFoldedStringComparer();
+            StringComparerUsingSimpleCaseFolding sc = new StringComparerUsingSimpleCaseFolding();
             Assert.NotEqual(sc.GetHashCode("\0AAAAAAAAA"), sc.GetHashCode("\0BBBBBBBBBBBB"));
         }
 
         [Fact]
         public static void TestHash_ReturnsHashCodes()
         {
-            SimpleFoldedStringComparer sc = new SimpleFoldedStringComparer();
+            StringComparerUsingSimpleCaseFolding sc = new StringComparerUsingSimpleCaseFolding();
             Assert.Equal(sc.GetHashCode("AAA"), sc.GetHashCode("aaa"));
             Assert.Equal(sc.GetHashCode("BaC"), sc.GetHashCode("bAc"));
             Assert.Equal(sc.GetHashCode((object)"BaC"), sc.GetHashCode((object)"bAc"));
@@ -36,7 +36,7 @@ namespace PSTests.Parallel.System.Management.Automation.Unicode
         [Fact]
         public static void VerifyComparer()
         {
-            SimpleFoldedStringComparer sc = new SimpleFoldedStringComparer();
+            StringComparerUsingSimpleCaseFolding sc = new StringComparerUsingSimpleCaseFolding();
             string s1 = "Hello";
             string s1a = "Hello";
             string s1b = "HELLO";

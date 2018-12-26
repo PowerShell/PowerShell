@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation.Unicode;
+using System.Management.Automation.Unicode.Tests;
 using Xunit;
 
 namespace PSTests.Parallel.System.Management.Automation.Unicode
@@ -19,7 +20,7 @@ namespace PSTests.Parallel.System.Management.Automation.Unicode
                     expected = foldedCharOut;
                 }
 
-                var foldedChar = (int)SimpleCaseFolding.Fold((char)i);
+                var foldedChar = (int)SimpleCaseFolding.SimpleCaseFold((char)i);
                 Assert.Equal(expected, foldedChar);
             }
         }
