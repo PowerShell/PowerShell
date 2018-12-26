@@ -28,7 +28,7 @@ namespace System.Management.Automation.Unicode.Tests
     public class IntroBenchmarkBaseline
     {
         //[Benchmark]
-        [Benchmark(Baseline = true)]
+        //[Benchmark(Baseline = true)]
         [ArgumentsSource(nameof(Data))]
         public int CoreFXCompareOrdinal(string StrA, string StrB)
         {
@@ -36,6 +36,7 @@ namespace System.Management.Automation.Unicode.Tests
         }
 
         //[Benchmark]
+        [Benchmark(Baseline = true)]
         [ArgumentsSource(nameof(Data))]
         public int CoreFXCompareOrdinalIgnoreCase(string StrA, string StrB)
         {
