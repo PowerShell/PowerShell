@@ -17,8 +17,8 @@ namespace System.Management.Automation.Unicode
     /// </summary>
     internal static partial class SimpleCaseFolding
     {
-        private static ushort refL1 = MemoryMarshal.GetReference(L1.AsSpan());
-        private static ushort refL3 = MemoryMarshal.GetReference(L3.AsSpan());
+        private static ushort refL1 = L1[0];
+        private static ushort refL3 = L3[0];
 
         /// <summary>
         /// Simple case folding of the char (Utf16).
@@ -31,12 +31,18 @@ namespace System.Management.Automation.Unicode
         internal static char SimpleCaseFold(char c)
         {
             //var v = Unsafe.Add(ref refL1, 1);
-            //var v = Unsafe.Add(ref refL1, c >> 8);
             //var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
-            var ch = Unsafe.Add(ref refL3, Unsafe.Add(ref refL1, c >> 8) + (c & 0xFF));
+            //var v = Unsafe.Add(ref L1, c >> 8);
+            //var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
+
+            //var v = L1[c >> 8];
+            //var ch = L3[v + (c & 0xFF)];
+            var v = Unsafe.Add(ref refL1, c >> 8);
+            var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
+            //var ch = Unsafe.Add(ref refL3, Unsafe.Add(ref refL1, c >> 8) + (c & 0xFF));
             //ushort ch = (ushort)v;
 
-            return Unsafe.As<ushort, char>(ref ch);
+            return ch == 0 ? c : Unsafe.As<ushort, char>(ref ch);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
