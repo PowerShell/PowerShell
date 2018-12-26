@@ -510,8 +510,8 @@ namespace Microsoft.WSMan.Management
                 WriteError(er);
             }
         }
-        # endregion private
-        # region override
+        #endregion private
+        #region override
         /// <summary>
         /// ProcessRecord method.
         /// </summary>

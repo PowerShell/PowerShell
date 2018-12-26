@@ -287,7 +287,7 @@ namespace Microsoft.WSMan.Management
     }//end class
     #endregion
 
-    # region Disconnect-WSMAN
+    #region Disconnect-WSMAN
     /// <summary>
     /// The following is the definition of the input parameter "ComputerName".
     /// Executes the management operation on the specified computer(s). The default
