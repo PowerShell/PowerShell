@@ -2436,7 +2436,8 @@ namespace Microsoft.PowerShell.Commands
         {
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
             var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
-            if (Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 14972)
+            if (Environment.OSVersion.Version.Major == 10 && Environment.OSVersion.Version.Build >= 14972 ||
+                Environment.OSVersion.Version.Major >= 11)
             {
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
