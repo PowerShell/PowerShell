@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
         /// <param name="innerException">The inner exception, null for none</param>
-        /// <param name="resourceString">Resource string </param>
+        /// <param name="resourceString">Resource string</param>
         /// <param name="arguments">Arguments to the resource string</param>
         internal ExtendedTypeSystemException(string errorId, Exception innerException, string resourceString,
             params object[] arguments) :
@@ -57,8 +57,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ExtendedTypeSystemException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected ExtendedTypeSystemException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -124,8 +124,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected MethodException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -189,8 +189,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected MethodInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -252,8 +252,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected GetValueException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -316,8 +316,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected PropertyNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -379,8 +379,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected GetValueInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -440,8 +440,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected SetValueException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -501,8 +501,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected SetValueInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -541,8 +541,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected PSInvalidCastException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             _errorId = info.GetString("ErrorId");

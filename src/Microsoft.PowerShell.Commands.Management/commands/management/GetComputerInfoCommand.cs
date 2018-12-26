@@ -103,16 +103,16 @@ namespace Microsoft.PowerShell.Commands
         /// Wild-card patterns may be provided
         /// </summary>
         /// <remarks>
-        /// <para>
+        /// <param>
         /// Any named properties that are not recognized are ignored. If no
         /// recognized properties are provided the cmdlet returns an empty
         /// PSCustomObject.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If a provided wild-card pattern contains only an asterisk ("*"),
         /// the cmdlet will operate as if the parameter were not given at all
         /// and will return a fully-populated ComputerInfo object.
-        /// </para>
+        /// </param>
         /// </remarks>
         [Parameter(Position = 0,
                    ValueFromPipeline = true,

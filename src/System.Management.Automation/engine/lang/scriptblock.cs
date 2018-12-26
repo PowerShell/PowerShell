@@ -245,7 +245,7 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <para>variables</para> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the <param>variables</param> that actually get used by the 'using:' prefix variables
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
@@ -283,7 +283,7 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <para>variables</para> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the <param>variables</param> that actually get used by the 'using:' prefix variables
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
@@ -1315,8 +1315,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

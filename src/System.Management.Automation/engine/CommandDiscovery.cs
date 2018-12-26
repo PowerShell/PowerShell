@@ -251,7 +251,7 @@ namespace System.Management.Automation
         /// <param name="commandName">
         /// The command name to lookup.
         /// </param>
-        /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
+        /// <param name="commandOrigin">Location where the command was dispatched from.</param>
         /// <param name="useLocalScope">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable
@@ -544,7 +544,7 @@ namespace System.Management.Automation
         /// <param name="commandInfo">
         /// The commandInfo for the command to lookup.
         /// </param>
-        /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
+        /// <param name="commandOrigin">Location where the command was dispatched from.</param>
         /// <param name="useLocalScope">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable

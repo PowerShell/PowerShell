@@ -1894,9 +1894,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the session history based on the input parameter
         /// <param name="id" >id of the entry to be cleared</param>
-        /// <param name="count" > count of entries to be cleared</param>
+        /// <param name="count" >count of entries to be cleared</param>
         /// <param name="cmdline" >cmdline string to be cleared</param>
-        /// <param name="newest" > order of the entries</param>
+        /// <param name="newest" >order of the entries</param>
         /// <returns>Nothing.</returns>
         /// </summary>
 
