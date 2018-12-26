@@ -16,8 +16,8 @@ namespace System.Management.Automation.Unicode
     /// </summary>
     internal static partial class SimpleCaseFoldingG2
     {
-            static  ushort refL1 = MemoryMarshal.GetReference(L1.AsSpan());
-            static ushort refL3 = MemoryMarshal.GetReference(L3.AsSpan());
+        private static ushort refL1 = L1[0];
+        private static ushort refL3 = L3[0];
 
         /// <summary>
         /// Simple case folding of the char (Utf16).
@@ -31,7 +31,7 @@ namespace System.Management.Automation.Unicode
             var ch = Unsafe.Add(ref refL3, Unsafe.Add(ref refL1, c >> 8) + (c & 0xFF));
             //ushort ch = (ushort)v;
 
-            return Unsafe.As<ushort,char>(ref ch);
+            return ch == 0 ? c : Unsafe.As<ushort, char>(ref ch);
         }
 
 

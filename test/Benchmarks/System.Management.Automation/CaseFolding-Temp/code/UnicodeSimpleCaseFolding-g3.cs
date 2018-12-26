@@ -30,7 +30,7 @@ namespace System.Management.Automation.Unicode
             v = Unsafe.Add(ref refL2, v + ((c >> 4) & 0xF));
             var ch = Unsafe.Add(ref refL3, v + (c & 0xF));
 
-            return ch;
+            return ch == 0 ? c : ch;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
