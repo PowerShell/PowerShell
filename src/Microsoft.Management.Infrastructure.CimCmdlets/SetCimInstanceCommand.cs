@@ -12,10 +12,10 @@ using System.Management.Automation;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Enables the user to Set properties and keys on a specific <see cref="CimInstance"/>
     /// CimInstance must have values of all [KEY] properties.
-    /// </para>
+    /// </param>
     /// </summary>
     [Cmdlet(
         VerbsCommon.Set,
@@ -88,10 +88,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String[] computername;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ResourceUri".
         /// Define the Resource Uri for which the instances are retrieved.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
@@ -232,14 +232,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String querydialect;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Property",
         /// defines the value to be changed.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// The key properties will be ignored. Any invalid property will cause
         /// termination of the cmdlet execution.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(Mandatory = true,
             ValueFromPipelineByPropertyName = true,
@@ -269,10 +269,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The following is the definition of the input parameter "PassThru",
         /// indicate whether Set-CimInstance should output modified result instance or not.
-        /// <para>
+        /// <param>
         /// True indicates output the result instance, otherwise output nothing as by default
         /// behavior.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter]
         [ValidateNotNull]
@@ -338,10 +338,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get <see cref="CimSetCimInstance"/> object, which is
         /// used to delegate all Set-CimInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         CimSetCimInstance GetOperationAgent()
         {
@@ -349,10 +349,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSetCimInstance"/> object, which is
         /// used to delegate all Set-CimInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns></returns>
         CimSetCimInstance CreateOperationAgent()

@@ -66,10 +66,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String className;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ResourceUri".
         /// Define the Resource Uri for which the instances are retrieved.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
@@ -143,11 +143,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string query;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "QueryDialect".
         /// Specifies the dialect used by the query Engine that interprets the Query
         /// string.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
@@ -202,14 +202,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimInstance cimInstance;
 
         /// <summary>
-        /// <para>The following is the definition of the input parameter "ComputerName".
+        /// <param>The following is the definition of the input parameter "ComputerName".
         /// Provides the name of the computer from which to invoke the method. The
         /// ComputerName is used to create a temporary CimSession with default parameter
         /// values, which is then used to retrieve the instances.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If no ComputerName is specified the default value is "localhost"
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
         [Parameter(
@@ -242,10 +242,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String[] computerName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "CimSession".
         /// Identifies the CimSession which is to be used to retrieve the instances.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -412,10 +412,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get <see cref="CimInvokeCimMethod"/> object, which is
         /// used to delegate all Invoke-CimMethod operations.
-        /// </para>
+        /// </param>
         /// </summary>
         CimInvokeCimMethod GetOperationAgent()
         {
@@ -423,10 +423,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimInvokeCimMethod"/> object, which is
         /// used to delegate all Invoke-CimMethod operations.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns></returns>
         CimInvokeCimMethod CreateOperationAgent()

@@ -11,9 +11,9 @@ using Microsoft.Management.Infrastructure.Options;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Write message to message channel
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimWriteMessage : CimBaseAction
     {
@@ -55,9 +55,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Write message to the target channel
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"></param>
         public override void Execute(CmdletOperationBase cmdlet)

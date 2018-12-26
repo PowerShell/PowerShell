@@ -13,15 +13,15 @@ using System.Management.Automation;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Enables the user to enumerate the list of CIM Classes under a specific
     /// Namespace. If no list of classes is given, the Cmdlet returns all
     /// classes in the given namespace.
-    /// </para>
-    /// <para>
+    /// </param>
+    /// <param>
     /// NOTES: The class instance contains the Namespace properties
     /// Should the class remember what Session it came from? No.
-    /// </para>
+    /// </param>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, GetCimClassCommand.Noun, DefaultParameterSetName = ComputerSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227959")]
     [OutputType(typeof(CimClass))]
@@ -43,12 +43,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ClassName".
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Wildcard expansion should be allowed.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Position = 0,
@@ -63,15 +63,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String className;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Namespace".
         /// Specifies the Namespace under which to look for the specified class name.
         /// If no class name is specified, the cmdlet should return all classes under
         /// the specified Namespace.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Default namespace is root\cimv2
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Position = 1,
@@ -124,12 +124,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession[] cimSession;
 
         /// <summary>
-        /// <para>The following is the definition of the input parameter "ComputerName".
+        /// <param>The following is the definition of the input parameter "ComputerName".
         /// Provides the name of the computer from which to retrieve the <see cref="CimClass"/>
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If no ComputerName is specified the default value is "localhost"
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
         [Parameter(
@@ -150,11 +150,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String[] computerName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "MethodName",
         /// Which may contains wildchar.
         /// Then Filter the <see cref="CimClass"/> by given methodname
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public String MethodName
@@ -167,11 +167,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String methodName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "PropertyName",
         /// Which may contains wildchar.
         /// Filter the <see cref="CimClass"/> by given property name.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public String PropertyName
@@ -184,11 +184,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String propertyName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "QualifierName",
         /// Which may contains wildchar.
         /// Filter the <see cref="CimClass"/> by given methodname
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public String QualifierName
@@ -246,10 +246,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get <see cref="CimNewCimInstance"/> object, which is
         /// used to delegate all New-CimInstance operations.
-        /// </para>
+        /// </param>
         /// </summary>
         CimGetCimClass GetOperationAgent()
         {
@@ -257,10 +257,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimGetCimClass"/> object, which is
         /// used to delegate all Get-CimClass operations.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns></returns>
         CimGetCimClass CreateOperationAgent()

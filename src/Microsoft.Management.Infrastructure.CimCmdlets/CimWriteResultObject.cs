@@ -8,9 +8,9 @@
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Write result object to ps pipeline
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimWriteResultObject : CimBaseAction
     {
@@ -24,9 +24,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Write result object to ps pipeline
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"></param>
         public override void Execute(CmdletOperationBase cmdlet)

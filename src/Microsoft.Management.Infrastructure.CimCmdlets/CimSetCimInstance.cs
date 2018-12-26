@@ -20,9 +20,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSetCimInstanceContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="theNamespace"></param>
         /// <param name="theCollection"></param>
@@ -41,7 +41,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>property value</para>
+        /// <param>property value</param>
         /// </summary>
         internal IDictionary Property
         {
@@ -54,7 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IDictionary property;
 
         /// <summary>
-        /// <para>parameter set name</para>
+        /// <param>parameter set name</param>
         /// </summary>
         internal string ParameterSetName
         {
@@ -67,7 +67,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string parameterSetName;
 
         /// <summary>
-        /// <para>PassThru value</para>
+        /// <param>PassThru value</param>
         /// </summary>
         internal bool PassThru
         {
@@ -81,16 +81,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of set-ciminstance cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimSetCimInstance : CimGetInstance
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimSetCimInstance()
             : base()
@@ -98,9 +98,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Base on parametersetName to set ciminstances
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"><see cref="SetCimInstanceCommand"/> object</param>
         public void SetCimInstance(SetCimInstanceCommand cmdlet)
@@ -169,9 +169,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set <see cref="CimInstance"/> with properties specified in cmdlet
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimInstance"></param>
         public void SetCimInstance(CimInstance cimInstance, CimSetCimInstanceContext context, CmdletOperationBase cmdlet)
@@ -197,10 +197,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set the properties value to be modified to the given
         /// <see cref="CimInstance"/>
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="properties"></param>
         /// <param name="cimInstance"></param>

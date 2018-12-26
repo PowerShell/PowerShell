@@ -46,25 +46,25 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Implements operations of get-ciminstance cmdlet.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimGetInstance : CimAsyncOperation
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         public CimGetInstance() : base()
         {
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Base on parametersetName to retrieve ciminstances
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
         public void GetCimInstance(GetCimInstanceCommand cmdlet)
@@ -73,9 +73,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Refactor to be reused by Get-CimInstance;Remove-CimInstance;Set-CimInstance
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"></param>
         protected void GetCimInstanceInternal(CimBaseCommand cmdlet)
@@ -369,9 +369,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region help methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Set <see cref="CimSessionProxy"/> properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
@@ -424,9 +424,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cmdlet"></param>
@@ -441,9 +441,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
@@ -476,9 +476,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimSessionProxy"/> and set properties
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>

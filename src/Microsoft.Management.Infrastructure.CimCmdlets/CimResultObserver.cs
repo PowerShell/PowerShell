@@ -13,9 +13,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     #region AsyncResultType
     /// <summary>
-    /// <para>
+    /// <param>
     /// Async result type
-    /// </para>
+    /// </param>
     /// </summary>
     public enum AsyncResultType
     {
@@ -57,9 +57,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #region AsyncResultEventArgsBase
     /// <summary>
-    /// <para>
+    /// <param>
     /// Base class of async result event argument
-    /// </para>
+    /// </param>
     /// </summary>
     internal abstract class AsyncResultEventArgsBase : EventArgs
     {
@@ -110,16 +110,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #region AsyncResult*Args
     /// <summary>
-    /// <para>
+    /// <param>
     /// operation successfully completed event argument
-    /// </para>
+    /// </param>
     /// </summary>
     internal class AsyncResultCompleteEventArgs : AsyncResultEventArgsBase
     {
         /// <summary>
-        /// <para>
+        /// <param>
         /// Constructor
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="session"><see cref="CimSession"/> object</param>
         /// <param name="cancellationDisposable"></param>
@@ -132,9 +132,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// async result argument with object
-    /// </para>
+    /// </param>
     /// </summary>
     internal class AsyncResultObjectEventArgs : AsyncResultEventArgsBase
     {
@@ -157,9 +157,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// operation completed with exception event argument
-    /// </para>
+    /// </param>
     /// </summary>
     internal class AsyncResultErrorEventArgs : AsyncResultEventArgsBase
     {
@@ -201,17 +201,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #region CimResultObserver
     /// <summary>
-    /// <para>
+    /// <param>
     /// Observer to consume results from asynchronous operations, such as,
     /// EnumerateInstancesAsync operation of <see cref="CimSession"/> object.
-    /// </para>
-    /// <para>
+    /// </param>
+    /// <param>
     /// (See http://channel9.msdn.com/posts/J.Van.Gogh/Reactive-Extensions-API-in-depth-Contract/)
     /// for the IObserver/IObservable contact
     /// - the only possible sequence is OnNext* (OnCompleted|OnError)?
     /// - callbacks are serialized
     /// - Subscribe never throws
-    /// </para>
+    /// </param>
     /// </summary>
     /// <typeparam name="T">object type</typeparam>
     internal class CimResultObserver<T> : IObserver<T>
@@ -257,9 +257,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Operation completed successfully
-        /// </para>
+        /// </param>
         /// </summary>
         public virtual void OnCompleted()
         {
@@ -281,9 +281,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Operation completed with an error
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="error">error object</param>
         public virtual void OnError(Exception error)
@@ -322,9 +322,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Operation got a new result object
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="value">result object</param>
         public virtual void OnNext(T value)

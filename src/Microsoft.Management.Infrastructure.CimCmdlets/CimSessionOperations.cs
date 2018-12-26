@@ -165,10 +165,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region CimSessionState
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Class used to hold all cimsession related status data related to a runspace.
     /// Including the CimSession cache, session counters for generating session name.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimSessionState : IDisposable
     {
@@ -188,9 +188,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static string CimSessionObject = "{CimSession Object}";
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// CimSession object path, which is identifying a cimsession object
-        /// </para>
+        /// </param>
         /// </summary>
         internal static string SessionObjectPath = @"CimSession id = {0}, name = {2}, ComputerName = {3}, instance id = {1}";
 
@@ -220,53 +220,53 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static string protocolPropName = "Protocol";
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// session counter bound to current runspace.
-        /// </para>
+        /// </param>
         /// </summary>
         private UInt32 sessionNameCounter;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dictionary used to holds all CimSessions in current runspace by session name.
-        /// </para>
+        /// </param>
         /// </summary>
         private Dictionary<string, HashSet<CimSessionWrapper>> curCimSessionsByName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dictionary used to holds all CimSessions in current runspace by computer name.
-        /// </para>
+        /// </param>
         /// </summary>
         private Dictionary<string, HashSet<CimSessionWrapper>> curCimSessionsByComputerName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dictionary used to holds all CimSessions in current runspace by instance ID.
-        /// </para>
+        /// </param>
         /// </summary>
         private Dictionary<Guid, CimSessionWrapper> curCimSessionsByInstanceId;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dictionary used to holds all CimSessions in current runspace by session id.
-        /// </para>
+        /// </param>
         /// </summary>
         private Dictionary<UInt32, CimSessionWrapper> curCimSessionsById;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dictionary used to link CimSession object with PSObject.
-        /// </para>
+        /// </param>
         /// </summary>
         private Dictionary<CimSession, CimSessionWrapper> curCimSessionWrapper;
 
         #endregion
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// constructor
-        /// </para>
+        /// </param>
         /// </summary>
         internal CimSessionState()
         {
@@ -281,9 +281,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get sessions count.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns>The count of session objects in current runspace.</returns>
         internal int GetSessionsCount()
@@ -292,9 +292,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Generates an unique session id.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns>Unique session id under current runspace.</returns>
         internal UInt32 GenerateSessionId()
@@ -304,18 +304,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region IDisposable
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Indicates whether this object was disposed or not
-        /// </para>
+        /// </param>
         /// </summary>
         private bool _disposed;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose() calls Dispose(true).
         /// Implement IDisposable. Do not make this method virtual.
         /// A derived class should not be able to override this method.
-        /// </para>
+        /// </param>
         /// </summary>
         public void Dispose()
         {
@@ -329,7 +329,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose(bool disposing) executes in two distinct scenarios.
         /// If disposing equals true, the method has been called directly
         /// or indirectly by a user's code. Managed and unmanaged resources
@@ -337,7 +337,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If disposing equals false, the method has been called by the
         /// runtime from inside the finalizer and you should not reference
         /// other objects. Only unmanaged resources can be disposed.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="disposing">Whether it is directly called</param>
         protected virtual void Dispose(bool disposing)
@@ -355,10 +355,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Performs application-defined tasks associated with freeing, releasing, or
         /// resetting unmanaged resources.
-        /// </para>
+        /// </param>
         /// </summary>
         public void Cleanup()
         {
@@ -380,9 +380,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Add CimSession to/remove CimSession from cache
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Add new CimSession object to cache
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="session"></param>
         /// <param name="sessionId"></param>
@@ -424,9 +424,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Generates remove session message by given wrapper object.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="psObject"></param>
         internal string GetRemoveSessionObjectTarget(PSObject psObject)
@@ -465,9 +465,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Remove given <see cref="PSObject"/> object from cache
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="psObject"></param>
         internal void RemoveOneSessionObjectFromCache(PSObject psObject)
@@ -481,9 +481,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Remove given <see cref="CimSession"/> object from cache
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="session"></param>
         internal void RemoveOneSessionObjectFromCache(CimSession session)
@@ -516,9 +516,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Remove given <see cref="CimSession"/> object from partial of the cache only.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="session"></param>
         /// <param name="psObject"></param>
@@ -537,9 +537,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Query CimSession from cache
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Add ErrorRecord to list.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="errRecords"></param>
         /// <param name="propertyName"></param>
@@ -769,12 +769,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region CimSessionBase
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Base class of all session operation classes.
     /// All sessions created will be held in a ConcurrentDictionary:cimSessions.
     /// It manages the lifecycle of the sessions being created for each
     /// runspace according to the state of the runspace.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimSessionBase
     {
@@ -803,27 +803,27 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Thread safe static dictionary to store session objects associated
         /// with each runspace, which is identified by a GUID. NOTE: cmdlet
         /// can running parallelly under more than one runspace(s).
-        /// </para>
+        /// </param>
         /// </summary>
         internal static ConcurrentDictionary<Guid, CimSessionState> cimSessions
             = new ConcurrentDictionary<Guid, CimSessionState>();
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Default runspace id
-        /// </para>
+        /// </param>
         /// </summary>
         internal static Guid defaultRunspaceId = Guid.Empty;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Object used to hold all CimSessions and status data bound
         /// to current runspace.
-        /// </para>
+        /// </param>
         /// </summary>
         internal CimSessionState sessionState;
 
@@ -854,9 +854,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// clean up the dictionaries if the runspace is closed or broken.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="sender">Runspace</param>
         /// <param name="e">Event args</param>
@@ -891,10 +891,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region CimNewSession
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// <c>CimNewSession</c> is the class to create cimSession
     /// based on given <c>NewCimSessionCommand</c>.
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimNewSession : CimSessionBase, IDisposable
     {
@@ -904,9 +904,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal class CimTestCimSessionContext : XOperationContextBase
         {
             /// <summary>
-            /// <para>
+            /// <param>
             /// Constructor
-            /// </para>
+            /// </param>
             /// </summary>
             /// <param name="theProxy"></param>
             /// <param name="wrapper"></param>
@@ -920,7 +920,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <para>namespace</para>
+            /// <param>namespace</param>
             /// </summary>
             internal CimSessionWrapper CimSessionWrapper
             {
@@ -934,9 +934,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// constructor
-        /// </para>
+        /// </param>
         /// </summary>
         internal CimNewSession() : base()
         {
@@ -987,9 +987,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Add session to global cache
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cimSession"></param>
         /// <param name="context"></param>
@@ -1016,9 +1016,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// process all actions in the action queue
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdletOperation">
         /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
@@ -1029,10 +1029,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// process remaining actions until all operations are completed or
         /// current cmdlet is terminated by user
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdletOperation">
         /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
@@ -1044,9 +1044,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
         /// <summary>
-        /// <para>
+        /// <param>
         /// <see cref="CimTestSession"/> object.
-        /// </para>
+        /// </param>
         /// </summary>
         private CimTestSession cimTestSession;
         #endregion //private members
@@ -1054,9 +1054,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region IDisposable
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Indicates whether this object was disposed or not
-        /// </para>
+        /// </param>
         /// </summary>
         protected bool Disposed
         {
@@ -1069,11 +1069,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private bool _disposed;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose() calls Dispose(true).
         /// Implement IDisposable. Do not make this method virtual.
         /// A derived class should not be able to override this method.
-        /// </para>
+        /// </param>
         /// </summary>
         public void Dispose()
         {
@@ -1087,7 +1087,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Dispose(bool disposing) executes in two distinct scenarios.
         /// If disposing equals true, the method has been called directly
         /// or indirectly by a user's code. Managed and unmanaged resources
@@ -1095,7 +1095,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If disposing equals false, the method has been called by the
         /// runtime from inside the finalizer and you should not reference
         /// other objects. Only unmanaged resources can be disposed.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="disposing">Whether it is directly called</param>
         protected virtual void Dispose(bool disposing)
@@ -1119,9 +1119,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region CimGetSession
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Get CimSession based on given id/instanceid/computername/name
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimGetSession : CimSessionBase
     {
@@ -1196,9 +1196,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region CimRemoveSession
 
     /// <summary>
-    /// <para>
+    /// <param>
     /// Get CimSession based on given id/instanceid/computername/name
-    /// </para>
+    /// </param>
     /// </summary>
     internal class CimRemoveSession : CimSessionBase
     {

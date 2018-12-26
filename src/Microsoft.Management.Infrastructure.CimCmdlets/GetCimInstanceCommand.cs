@@ -38,10 +38,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "CimSession".
         /// Identifies the CimSession which is to be used to retrieve the instances.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -74,10 +74,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession[] cimSession;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ClassName".
         /// Define the class name for which the instances are retrieved.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -101,10 +101,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String className;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "ResourceUri".
         /// Define the Resource Uri for which the instances are retrieved.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
@@ -136,14 +136,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Uri resourceUri;
 
         /// <summary>
-        /// <para>The following is the definition of the input parameter "ComputerName".
+        /// <param>The following is the definition of the input parameter "ComputerName".
         /// Provides the name of the computer from which to retrieve the instances. The
         /// ComputerName is used to create a temporary CimSession with default parameter
         /// values, which is then used to retrieve the instances.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// If no ComputerName is specified the default value is "localhost"
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
         [Parameter(
@@ -172,11 +172,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String[] computerName;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "KeyOnly".
         /// Indicates that only key properties of the retrieved instances should be
         /// returned to the client.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
         [Parameter(ParameterSetName = CimBaseCommand.ClassNameSessionSet)]
@@ -196,14 +196,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private SwitchParameter keyOnly;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Namespace".
         /// Identifies the Namespace in which the class, indicated by ClassName, is
         /// registered.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// Default namespace is 'root\cimv2' if this property is not specified.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
@@ -231,13 +231,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String nameSpace;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
         /// Specifies the operation timeout after which the client operation should be
         /// canceled. The default is the CimSession operation timeout. If this parameter
         /// is specified, then this value takes precedence over the CimSession
         /// OperationTimeout.
-        /// </para>
+        /// </param>
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
@@ -251,17 +251,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private UInt32 operationTimeout;
 
         /// <summary>
-        /// <para>The following is the definition of the input parameter "InputObject".
+        /// <param>The following is the definition of the input parameter "InputObject".
         /// Provides the <see cref="CimInstance"/> that containing the [Key] properties,
         /// based on the key properties to retrieve the <see cref="CimInstance"/>.
-        /// </para>
-        /// <para>
+        /// </param>
+        /// <param>
         /// User can call New-CimInstance to create the CimInstance with key only
         /// properties, for example:
         /// New-CimInstance -ClassName C -Namespace root\cimv2
         ///  -Property @{CreationClassName="CIM_VirtualComputerSystem";Name="VM3358"}
         ///  -Keys {"CreationClassName", "Name"} -Local
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -320,11 +320,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String query;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "QueryDialect".
         /// Specifies the dialect used by the query Engine that interprets the Query
         /// string.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
@@ -349,13 +349,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String queryDialect;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Shallow".
         /// If the switch is set to True, only instance of the class identified by
         /// Namespace + ClassName will be returned. If the switch is not set, instances
         /// of the above class and of all of its descendents will be returned (the
         /// enumeration will cascade the class inheritance hierarchy).
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
         [Parameter(ParameterSetName = CimBaseCommand.ClassNameSessionSet)]
@@ -377,10 +377,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private SwitchParameter shallow;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Filter".
         /// Specifies the where clause of the query.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.ClassNameSessionSet)]
@@ -404,10 +404,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String filter;
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// The following is the definition of the input parameter "Property".
         /// Specifies the selected properties of result instances.
-        /// </para>
+        /// </param>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.ClassNameSessionSet)]
@@ -486,11 +486,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Get <see cref="CimGetInstance"/> object, which is
         /// used to delegate all Get-CimInstance operations, such
         /// as enumerate instances, get instance, query instance.
-        /// </para>
+        /// </param>
         /// </summary>
         CimGetInstance GetOperationAgent()
         {
@@ -498,11 +498,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Create <see cref="CimGetInstance"/> object, which is
         /// used to delegate all Get-CimInstance operations, such
         /// as enumerate instances, get instance, query instance.
-        /// </para>
+        /// </param>
         /// </summary>
         /// <returns></returns>
         CimGetInstance CreateOperationAgent()

@@ -11,9 +11,9 @@ using System.Management.Automation;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// <para>
+    /// <param>
     /// Write progress record of given activity
-    /// </para>
+    /// </param>
     /// </summary>
     internal sealed class CimWriteProgress : CimBaseAction
     {
@@ -60,9 +60,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
+        /// <param>
         /// Write progress record to powershell
-        /// </para>
+        /// </param>
         /// </summary>
         /// <param name="cmdlet"></param>
         public override void Execute(CmdletOperationBase cmdlet)
