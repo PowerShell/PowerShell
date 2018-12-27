@@ -11,7 +11,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "String", DefaultParameterSetName = "wrap")]
     [OutputType(typeof(string))]
-    [Alias("wrap")]
     public sealed class AddStringCommand : Cmdlet
     {
         #region Parameters
