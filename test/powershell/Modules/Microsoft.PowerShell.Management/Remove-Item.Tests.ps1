@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Remove-Item" -Tags "CI" {
     $testpath = $TestDrive
     $testfile = "testfile.txt"
@@ -24,24 +26,28 @@ Describe "Remove-Item" -Tags "CI" {
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
 	It "Should be able to call the rm alias" {
 	    { rm $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
 	It "Should be able to call the del alias" {
 	    { del $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
 	It "Should be able to call the erase alias" {
 	    { erase $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
 	It "Should be able to call the ri alias" {
 	    { ri $testfilepath } | Should -Not -Throw
 

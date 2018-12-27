@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
     $testAliases        = "TestAliases"
@@ -67,6 +69,7 @@ Describe "Import-Alias" -Tags "CI" {
 	    { Import-Alias $pesteraliasfile } | Should -Not -throw
 	}
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
 	It "Should be able to import file via the Import-Alias alias of ipal" {
 	    { ipal $pesteraliasfile } | Should -Not -throw
 	}
@@ -76,6 +79,7 @@ Describe "Import-Alias" -Tags "CI" {
 	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
 	}
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
 	It "Should be able to use ipal alias to import an alias file and perform cmd" {
 	    (ipal $pesteraliasfile)
 	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"

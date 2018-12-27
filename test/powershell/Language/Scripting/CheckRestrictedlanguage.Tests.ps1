@@ -67,7 +67,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
 
         It 'Check for allowed commands and variables' {
 
-            { { get-process | where name -Match $pattern | foreach $prop }.CheckRestrictedLanguage(
+            { { get-process | Where-Object name -Match $pattern | ForEach-Object $prop }.CheckRestrictedLanguage(
                 (list get-process where foreach),
                 (list prop pattern)
                 , $false) }| Should -Not -Throw

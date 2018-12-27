@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Test-Push-Location" -Tags "CI" {
     New-Variable -Name startDirectory -Value $(Get-Location).Path -Scope Global -Force
 
-    BeforeEach { cd $startDirectory }
+    BeforeEach { Set-Location $startDirectory }
 
     It "Should be called without error" {
 	{ Push-Location } | Should -Not -Throw
@@ -33,15 +35,17 @@ Describe "Test-Push-Location" -Tags "CI" {
 	{ ".." | Push-Location } | Should -Not -Throw
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to call the pushd alias" {
 	{ pushd } | Should -Not -Throw
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to push to the same location between the alias and the cmdlet" {
 	pushd ..
 	$aliasDirectory = $(Get-Location).Path
 
-	cd $startDirectory
+	Set-Location $startDirectory
 	Push-Location ..
 	$cmdletDirectory = $(Get-Location).Path
 
@@ -53,5 +57,5 @@ Describe "Test-Push-Location" -Tags "CI" {
     }
 
     # final cleanup
-    cd $startDirectory
+    Set-Location $startDirectory
 }

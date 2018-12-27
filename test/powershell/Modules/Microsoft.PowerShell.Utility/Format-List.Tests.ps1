@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Format-List" -Tags "CI" {
     $nl = [Environment]::NewLine
     BeforeEach {
@@ -11,10 +13,12 @@ Describe "Format-List" -Tags "CI" {
         { $in | Format-List } | Should -Not -BeNullOrEmpty
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to call the alias" {
         { $in | fl } | Should -Not -BeNullOrEmpty
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should have the same output whether choosing alias or not" {
         $expected = $in | Format-List | Out-String
         $actual   = $in | fl          | Out-String

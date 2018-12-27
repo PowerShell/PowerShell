@@ -1,9 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Format-Custom" -Tags "CI" {
 
     Context "Check Format-Custom aliases" {
 
+        # PSAvoidUsingCmdletAliases should be suppressed here
         It "Should have the same output between the alias and the unaliased function" {
             $nonaliased = Get-FormatData | Format-Custom
             $aliased    = Get-FormatData | fc

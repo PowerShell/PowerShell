@@ -24,7 +24,7 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         }
 
         It 'uses ErrorRecord object to return stderr output' {
-            ($out | measure).Count | Should -BeGreaterThan 1
+            ($out | Measure-Object).Count | Should -BeGreaterThan 1
 
             $out[0] | Should -BeOfType 'System.Management.Automation.ErrorRecord'
             $out[0].FullyQualifiedErrorId | Should -Be 'NativeCommandError'
@@ -36,7 +36,7 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         }
 
         It 'uses correct exception messages for error stream' {
-            ($out | measure).Count | Should -Be 9
+            ($out | Measure-Object).Count | Should -Be 9
             $out[0].Exception.Message | Should -BeExactly 'foo'
             $out[1].Exception.Message | Should -BeExactly ''
             $out[2].Exception.Message | Should -BeExactly 'bar'

@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 
 Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
     It "Get-Alias Bogus Scope Name should throw PSArgumentException"{
@@ -185,6 +187,7 @@ Describe "Get-Alias" -Tags "CI" {
         }
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "should return an array of objects" {
         $val = Get-Alias a*
         $alias = gal a*

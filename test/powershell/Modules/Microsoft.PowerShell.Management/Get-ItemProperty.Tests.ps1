@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Get-ItemProperty" -Tags "CI" {
     $currentDirectory = Split-Path $PSScriptRoot -Leaf
     $parentDirectory  = Split-Path (Join-Path -Path $PSScriptRoot -ChildPath "..") -Leaf
@@ -38,11 +40,13 @@ Describe "Get-ItemProperty" -Tags "CI" {
 	$output.PSProvider.Name | Should -Be "FileSystem"
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to use the gp alias without error" {
 	{ gp . }  | Should -Not -Throw
 	{ gp .. } | Should -Not -Throw
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should have the same results between alias and cmdlet" {
 	$alias  = gp -Path $testfile -Name fullname
 	$cmdlet = Get-ItemProperty -Path $testfile -Name fullname

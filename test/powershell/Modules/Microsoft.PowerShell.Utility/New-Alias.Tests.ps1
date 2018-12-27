@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 	It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{
 		New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
@@ -52,10 +54,12 @@ Describe "New-Alias" -Tags "CI" {
 	}
     }
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to call the New-Alias cmdlet using the nal alias without error" {
 	{ nal -Name testAlias -Value 100 } | Should -Not -Throw
     }
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
     It "Should have the same output between the nal alias and the New-Alias cmdlet" {
 	nal -Name testAlias -Value Get-Command
 

@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 Add-TestDynamicType
 
@@ -20,10 +22,12 @@ Describe "Select-Object" -Tags "CI" {
 	$result | Should -Be $expected
     }
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to use the alias" {
 	{ $dirObject | select } | Should -Not -Throw
     }
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
     It "Should have same result when using alias" {
 	$result   = $dirObject | select
 	$expected = $dirObject | Select-Object

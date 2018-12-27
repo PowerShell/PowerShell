@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Get-PSDrive" -Tags "CI" {
 
     It "Should not throw" {
@@ -11,12 +13,14 @@ Describe "Get-PSDrive" -Tags "CI" {
 	(Get-PSDrive).Root.Length | Should -Not -BeLessThan 1
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to be called with the gdr alias" {
 	{ gdr } | Should -Not -Throw
 
 	gdr | Should -Not -BeNullOrEmpty
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be the same output between Get-PSDrive and gdr" {
 	$alias  = gdr
 	$actual = Get-PSDrive

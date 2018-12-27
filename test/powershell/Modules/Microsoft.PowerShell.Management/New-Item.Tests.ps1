@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 
 Import-Module HelpersCommon
 
@@ -68,6 +70,7 @@ Describe "New-Item" -Tags "CI" {
         Test-Path $FullyQualifiedFolder | Should -BeTrue
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Should create a file using the ni alias" {
         ni -Name $testfile -Path $tmpDirectory -ItemType file
 

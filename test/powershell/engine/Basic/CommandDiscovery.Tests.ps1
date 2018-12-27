@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Command Discovery tests" -Tags "CI" {
 
     BeforeAll {
@@ -81,6 +83,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         $ev | Should -BeNullOrEmpty
     }
 
+    # PSAvoidUsingCmdletAliases should be suppressed here
     It "Get- is prepended to commands" {
         (& 'location').Path | Should -Be (get-location).Path
     }

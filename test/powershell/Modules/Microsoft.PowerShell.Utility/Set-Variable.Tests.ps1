@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 
 Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 	It "Set-Variable normal variable Name should works"{
@@ -166,12 +168,14 @@ Describe "Set-Variable" -Tags "CI" {
 	$testVar | Should -Be 2
     }
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to be called with the set alias" {
 	set testVar -Value 1
 
 	$testVar | Should -Be 1
     }
 
+	# PSAvoidUsingCmdletAliases should be suppressed here
     It "Should be able to be called with the sv alias" {
 	sv testVar -Value 2
 

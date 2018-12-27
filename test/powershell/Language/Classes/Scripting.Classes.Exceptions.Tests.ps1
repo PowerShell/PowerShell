@@ -231,7 +231,7 @@ Describe "Exception error position" -Tags "CI" {
         static f1() { [MSFT_3090412]::bar = 42 }
         static f2() { throw "an error in f2" }
         static f3() { "".Substring(0, 10) }
-        static f4() { dir nosuchfile -ErrorAction Stop }
+        static f4() { Get-ChildItem nosuchfile -ErrorAction Stop }
     }
 
     It "Setting a property that doesn't exist" {
