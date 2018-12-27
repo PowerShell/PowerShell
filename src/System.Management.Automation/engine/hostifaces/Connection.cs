@@ -63,7 +63,7 @@ namespace System.Management.Automation.Runspaces
         /// Initializes a new instance of the InvalidRunspaceStateException
         /// with a specified error message and current and expected state.
         /// </summary>
-        /// <param name="message">The message that describes the error. </param>
+        /// <param name="message">The message that describes the error.</param>
         /// <param name="currentState">Current state of runspace</param>
         /// <param name="expectedState">Expected states of runspace</param>
         internal InvalidRunspaceStateException

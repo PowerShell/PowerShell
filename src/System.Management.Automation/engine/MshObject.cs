@@ -1179,7 +1179,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of obj.
         /// </summary>
-        /// <param name="context">ExecutionContext used to fetch the separator. </param>
+        /// <param name="context">ExecutionContext used to fetch the separator.</param>
         /// <param name="obj">
         /// object we are trying to call ToString on. If this is not an PSObject we try
         /// enumerating and if that fails we call obj.ToString.
@@ -1199,7 +1199,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of obj.
         /// </summary>
-        /// <param name="context">ExecutionContext used to fetch the separator. </param>
+        /// <param name="context">ExecutionContext used to fetch the separator.</param>
         /// <param name="obj">
         /// object we are trying to call ToString on. If this is not an PSObject we try
         /// enumerating and if that fails we call obj.ToString.

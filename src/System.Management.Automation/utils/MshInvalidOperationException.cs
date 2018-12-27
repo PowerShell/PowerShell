@@ -37,8 +37,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info"> serialization information</param>
+        /// <param name="context"> streaming context</param>
         /// <returns>Constructed object.</returns>
         protected PSInvalidOperationException(SerializationInfo info,
                            StreamingContext context)
@@ -50,8 +50,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info"> serialization information</param>
+        /// <param name="context"> streaming context</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSInvalidOperationException class.
         /// </summary>
-        /// <param name="message">  </param>
+        /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
         public PSInvalidOperationException(string message)
             : base(message)
@@ -78,8 +78,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSInvalidOperationException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns>Constructed object.</returns>
         public PSInvalidOperationException(string message,
                                             Exception innerException)
@@ -90,11 +90,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSInvalidOperationException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
-        /// <param name="errorId">  </param>
-        /// <param name="errorCategory">  </param>
-        /// <param name="target">  </param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <param name="errorId"></param>
+        /// <param name="errorCategory"></param>
+        /// <param name="target"></param>
         /// <returns>Constructed object.</returns>
         internal PSInvalidOperationException(string message, Exception innerException, string errorId, ErrorCategory errorCategory, object target)
             : base(message, innerException)

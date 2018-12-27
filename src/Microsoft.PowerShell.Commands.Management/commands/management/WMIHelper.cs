@@ -56,8 +56,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="childJob">Job associated with this operation</param>
         /// <param name="wmiObject">object associated with this operation</param>
-        /// <param name="computerName"> computer on which the operation is invoked </param>
-        /// <param name="results"> sink to get wmi objects </param>
+        /// <param name="computerName"> computer on which the operation is invoked</param>
+        /// <param name="results"> sink to get wmi objects</param>
         internal WmiAsyncCmdletHelper(PSWmiChildJob childJob, Cmdlet wmiObject, string computerName, ManagementOperationObserver results)
         {
             _wmiObject = wmiObject;
