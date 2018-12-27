@@ -251,7 +251,7 @@ Describe "Exception error position" -Tags "CI" {
 
     It "Terminating error" {
         $e = { [MSFT_3090412]::f4() } | Should -Throw -PassThru -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
-        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('dir nosuchfile -ErrorAction Stop'))
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('Get-ChildItem nosuchfile -ErrorAction Stop'))
     }
 }
 

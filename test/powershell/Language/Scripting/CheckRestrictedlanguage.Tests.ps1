@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
+param()
 Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
             set-strictmode -v 2
@@ -65,9 +67,10 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             { {get-date}.CheckRestrictedLangauge($null, $null, $false) } | Should -Throw -ErrorId 'MethodNotFound'
         }
 
+        # PSAvoidUsingCmdletAliases should be suppressed here
         It 'Check for allowed commands and variables' {
 
-            { { get-process | Where-Object name -Match $pattern | ForEach-Object $prop }.CheckRestrictedLanguage(
+            { { get-process | where name -Match $pattern | foreach $prop }.CheckRestrictedLanguage(
                 (list get-process where foreach),
                 (list prop pattern)
                 , $false) }| Should -Not -Throw
