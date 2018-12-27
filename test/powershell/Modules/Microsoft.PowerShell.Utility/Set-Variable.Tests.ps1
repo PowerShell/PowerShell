@@ -166,14 +166,14 @@ Describe "Set-Variable" -Tags "CI" {
 	$testVar | Should -Be 2
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to be called with the set alias" {
 	set testVar -Value 1
 
 	$testVar | Should -Be 1
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to be called with the sv alias" {
 	sv testVar -Value 2
 

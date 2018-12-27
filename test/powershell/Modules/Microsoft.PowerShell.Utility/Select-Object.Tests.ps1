@@ -20,12 +20,12 @@ Describe "Select-Object" -Tags "CI" {
 	$result | Should -Be $expected
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to use the alias" {
 	{ $dirObject | select } | Should -Not -Throw
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should have same result when using alias" {
 	$result   = $dirObject | select
 	$expected = $dirObject | Select-Object

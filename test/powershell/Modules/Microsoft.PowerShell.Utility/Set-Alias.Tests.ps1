@@ -80,18 +80,18 @@ Describe "Set-Alias" -Tags "CI" {
 	{ set-alias -Name gd -Value Get-Date } | Should -Not -Throw
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to have the same output between set-alias and the output of the function being aliased" {
 	set-alias -Name gd -Value Get-Date
 	gd | Should -Be $(Get-Date)
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to use the sal alias" {
 	{ sal gd Get-Date } | Should -Not -Throw
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should have the same output between the sal alias and the original set-alias cmdlet" {
 	sal -Name gd -Value Get-Date
 

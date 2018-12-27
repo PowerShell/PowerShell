@@ -185,7 +185,7 @@ Describe "Get-Alias" -Tags "CI" {
         }
     }
 
-    # PSAvoidUsingCmdletAliases should be suppressed here
+    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "should return an array of objects" {
         $val = Get-Alias a*
         $alias = gal a*

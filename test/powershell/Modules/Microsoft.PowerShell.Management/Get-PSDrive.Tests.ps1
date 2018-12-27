@@ -11,14 +11,14 @@ Describe "Get-PSDrive" -Tags "CI" {
 	(Get-PSDrive).Root.Length | Should -Not -BeLessThan 1
     }
 
-    # PSAvoidUsingCmdletAliases should be suppressed here
+    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to be called with the gdr alias" {
 	{ gdr } | Should -Not -Throw
 
 	gdr | Should -Not -BeNullOrEmpty
     }
 
-    # PSAvoidUsingCmdletAliases should be suppressed here
+    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be the same output between Get-PSDrive and gdr" {
 	$alias  = gdr
 	$actual = Get-PSDrive

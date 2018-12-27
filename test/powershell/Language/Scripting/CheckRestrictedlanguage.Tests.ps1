@@ -65,7 +65,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             { {get-date}.CheckRestrictedLangauge($null, $null, $false) } | Should -Throw -ErrorId 'MethodNotFound'
         }
 
-        # PSAvoidUsingCmdletAliases should be suppressed here
+        # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
         It 'Check for allowed commands and variables' {
 
             { { get-process | where name -Match $pattern | foreach $prop }.CheckRestrictedLanguage(

@@ -33,12 +33,12 @@ Describe "Test-Push-Location" -Tags "CI" {
 	{ ".." | Push-Location } | Should -Not -Throw
     }
 
-    # PSAvoidUsingCmdletAliases should be suppressed here
+    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to call the pushd alias" {
 	{ pushd } | Should -Not -Throw
     }
 
-    # PSAvoidUsingCmdletAliases should be suppressed here
+    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to push to the same location between the alias and the cmdlet" {
 	pushd ..
 	$aliasDirectory = $(Get-Location).Path

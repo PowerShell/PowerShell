@@ -11,12 +11,12 @@ Describe "Format-List" -Tags "CI" {
         { $in | Format-List } | Should -Not -BeNullOrEmpty
     }
 
-    # PSAvoidUsingCmdletAliases should be suppressed here
+    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to call the alias" {
         { $in | fl } | Should -Not -BeNullOrEmpty
     }
 
-    # PSAvoidUsingCmdletAliases should be suppressed here
+    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should have the same output whether choosing alias or not" {
         $expected = $in | Format-List | Out-String
         $actual   = $in | fl          | Out-String

@@ -52,12 +52,12 @@ Describe "New-Alias" -Tags "CI" {
 	}
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should be able to call the New-Alias cmdlet using the nal alias without error" {
 	{ nal -Name testAlias -Value 100 } | Should -Not -Throw
     }
 
-	# PSAvoidUsingCmdletAliases should be suppressed here
+	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
     It "Should have the same output between the nal alias and the New-Alias cmdlet" {
 	nal -Name testAlias -Value Get-Command
 
