@@ -80,11 +80,11 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (null == _completedWaitHandle)
+                if (_completedWaitHandle == null)
                 {
                     lock (SyncObject)
                     {
-                        if (null == _completedWaitHandle)
+                        if (_completedWaitHandle == null)
                         {
                             _completedWaitHandle = new ManualResetEvent(IsCompleted);
                         }
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // call the user supplied callback
-            if (null != Callback)
+            if (Callback != null)
             {
                 Callback(this);
             }
@@ -180,7 +180,7 @@ namespace System.Management.Automation.Runspaces
         {
             lock (SyncObject)
             {
-                if (null != _completedWaitHandle)
+                if (_completedWaitHandle != null)
                 {
                     _completedWaitHandle.Set();
                 }
@@ -225,7 +225,7 @@ namespace System.Management.Automation.Runspaces
             _invokeOnThreadEvent = null;  // Allow early GC
 
             // Operation is done: if an exception occured, throw it
-            if (null != Exception)
+            if (Exception != null)
             {
                 throw Exception;
             }

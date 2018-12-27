@@ -94,6 +94,7 @@ namespace System.Management.Automation.Language
                     {
                         parametersSet.Add(parameterName);
                     }
+
                     var voidConstraint =
                         parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(t => typeof(void) == t.TypeName.GetReflectionType());
 
@@ -286,6 +287,7 @@ namespace System.Management.Automation.Language
                     propertyNames.Add(fieldInfo.Name);
                 }
             }
+
             return string.Join(", ", propertyNames);
         }
 
@@ -315,6 +317,7 @@ namespace System.Management.Automation.Language
                                     nameof(ParserStrings.MultipleTypeConstraintsOnMethodParam),
                                     ParserStrings.MultipleTypeConstraintsOnMethodParam);
                             }
+
                             isParamTypeDefined = true;
                         }
                     }
@@ -351,6 +354,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.ScriptTooComplicated);
                     break;
                 }
+
                 if (type is ArrayTypeName)
                 {
                     type = ((ArrayTypeName)type).ElementType;
@@ -374,6 +378,7 @@ namespace System.Management.Automation.Language
                     break;
                 }
             }
+
             if (dscResourceAttributeAst != null)
             {
                 DscResourceChecker.CheckType(_parser, typeDefinitionAst, dscResourceAttributeAst);
@@ -584,13 +589,14 @@ namespace System.Management.Automation.Language
                             ParserStrings.LabelNotFound,
                             label);
                     }
+
                     break;
                 }
 
                 var loop = parent as LoopStatementAst;
                 if (loop != null)
                 {
-                    if (LoopFlowException.MatchLoopLabel(label, loop.Label ?? ""))
+                    if (LoopFlowException.MatchLoopLabel(label, loop.Label ?? string.Empty))
                         break;
                 }
             }
@@ -619,9 +625,9 @@ namespace System.Management.Automation.Language
                 // If label is not null, we have a break/continue where we know the loop label at compile
                 // time. If we can match the label before finding the finally, then we're not flowing out
                 // of the finally.
-                if (label != null && parent is LoopStatementAst)
+                if (label != null && parent is LabeledStatementAst)
                 {
-                    if (LoopFlowException.MatchLoopLabel(label, ((LoopStatementAst)parent).Label ?? ""))
+                    if (LoopFlowException.MatchLoopLabel(label, ((LabeledStatementAst)parent).Label ?? string.Empty))
                         break;
                 }
 
@@ -646,7 +652,7 @@ namespace System.Management.Automation.Language
             // we just use the empty string.
             if (expr == null)
             {
-                return "";
+                return string.Empty;
             }
 
             var str = expr as StringConstantExpressionAst;
@@ -678,6 +684,7 @@ namespace System.Management.Automation.Language
             {
                 return;
             }
+
             if (ast.Pipeline != null)
             {
                 if (functionMemberAst.IsReturnTypeVoid())
@@ -770,6 +777,7 @@ namespace System.Management.Automation.Language
                                     ParserStrings.VoidTypeConstraintNotAllowed);
                             }
                         }
+
                         expr = ((AttributedExpressionAst)expr).Child;
                     }
 
@@ -801,16 +809,20 @@ namespace System.Management.Automation.Language
                                                 varPath.UnqualifiedPath,
                                                 expectedType);
                                         }
+
                                         break;
                                     }
+
                                     specialIndex += 1;
                                 }
                             }
                         }
+
                         CheckAssignmentTarget(expr, simpleAssignment, reportError);
                     }
                 }
             }
+
             if (errorAst != null)
             {
                 reportError(errorAst);
@@ -904,6 +916,7 @@ namespace System.Management.Automation.Language
                                                 nameof(ParserStrings.ReferenceNeedsToBeByItselfInTypeSequence),
                                                 ParserStrings.ReferenceNeedsToBeByItselfInTypeSequence);
                         }
+
                         child = childAttrExpr.Child;
                         continue;
                     }
@@ -935,12 +948,15 @@ namespace System.Management.Automation.Language
                                 skipError = statementAst.Left.Find(ast1 => ast1 == convertExpressionAst, searchNestedScriptBlocks: true) != null;
                                 break;
                             }
+
                             if (ast is CommandExpressionAst)
                             {
                                 break;
                             }
+
                             ast = ast.Parent;
                         }
+
                         if (!skipError)
                         {
                             _parser.ReportError(convertExpressionAst.Type.Extent,
@@ -948,6 +964,7 @@ namespace System.Management.Automation.Language
                                                 ParserStrings.ReferenceNeedsToBeLastTypeInTypeConversion);
                         }
                     }
+
                     parent = parent.Child as AttributedExpressionAst;
                 }
             }
@@ -1000,6 +1017,7 @@ namespace System.Management.Automation.Language
                 {
                     return indexExpr.Index;
                 }
+
                 return CheckUsingExpression(indexExpr.Target);
             }
 
@@ -1179,6 +1197,7 @@ namespace System.Management.Automation.Language
             {
                 _memberScopeStack.Push(null);
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -1242,13 +1261,16 @@ namespace System.Management.Automation.Language
                                 }
                             }
                         }
+
                         break;
                     }
+
                     statementAst = ast as PipelineAst;
                     ancestorNodeLevel++;
                     ast = ast.Parent;
                 }
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -1315,6 +1337,7 @@ namespace System.Management.Automation.Language
                         e.ToString());
                 }
             }
+
             DynamicKeyword keyword = dynamicKeywordStatementAst.Keyword;
             HashtableAst hashtable = dynamicKeywordStatementAst.BodyExpression as HashtableAst;
             if (hashtable != null)
@@ -1392,6 +1415,7 @@ namespace System.Management.Automation.Language
                         propertyMemberAst.PropertyType.TypeName.FullName);
                 }
             }
+
             _memberScopeStack.Push(propertyMemberAst);
             return AstVisitAction.Continue;
         }
@@ -1405,6 +1429,7 @@ namespace System.Management.Automation.Language
                 {
                     _memberScopeStack.Pop();
                 }
+
                 _scopeStack.Pop();
                 scriptBlockAst.PostParseChecksPerformed = true;
                 // at this moment, we could use different parser for the initial syntax check
@@ -1564,6 +1589,7 @@ namespace System.Management.Automation.Language
                         CheckKey(parser, propertyMemberAst, ref hasKey);
                     }
                 }
+
                 if (baseTypeDefinitionAst.BaseTypes != null && (!hasSet || !hasGet || !hasTest || !hasKey))
                 {
                     LookupRequiredMembers(parser, baseTypeDefinitionAst, ref hasSet, ref hasGet, ref hasTest, ref hasKey);
@@ -1582,6 +1608,7 @@ namespace System.Management.Automation.Language
             {
                 return;
             }
+
             if (functionMemberAst.Name.Equals("Get", StringComparison.OrdinalIgnoreCase) &&
                 functionMemberAst.Parameters.Count == 0)
             {
@@ -1684,12 +1711,14 @@ namespace System.Management.Automation.Language
                                         }
                                     }
                                 }
+
                                 if (!keyPropertyTypeAllowed)
                                 {
                                     parser.ReportError(propertyMemberAst.Extent,
                                         nameof(ParserStrings.DscResourceInvalidKeyProperty),
                                         ParserStrings.DscResourceInvalidKeyProperty);
                                 }
+
                                 return;
                             }
                         }
@@ -2066,6 +2095,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.CmdletNotInAllowedListForDataSection,
                         commandAst.Extent.Text);
                 }
+
                 return AstVisitAction.Continue;
             }
 

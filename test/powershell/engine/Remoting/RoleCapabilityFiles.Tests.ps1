@@ -42,21 +42,11 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             Administrators = @{ RoleCapabilityFiles = "$RoleCapDirectory\NoFile.psrc" }
         }
 
-        $fullyQualifiedErrorId = ""
-        try
-        {
+        $e = {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
-            throw 'No Exception!'
-        }
-        catch
-        {
-            $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
-            if ($null -ne $psioe)
-            {
-                $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
-            }
-            $fullyQualifiedErrorId | Should -Be 'CouldNotFindRoleCapabilityFile'
-        }
+        } | Should -Throw -PassThru
+
+        $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'CouldNotFindRoleCapabilityFile'
     }
 
     It "Verifies incorrect role capability file extenstion error" {
@@ -65,21 +55,10 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             Administrators = @{ RoleCapabilityFiles = "$BadRoleCapFile" }
         }
 
-        $fullyQualifiedErrorId = ""
-        try
-        {
+        $e = {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
-            throw 'No Exception!'
-        }
-        catch
-        {
-            $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
-            if ($null -ne $psioe)
-            {
-                $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
-            }
-            $fullyQualifiedErrorId | Should -Be 'InvalidRoleCapabilityFileExtension'
-        }
+        } | Should -Throw -PassThru
+        $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'InvalidRoleCapabilityFileExtension'
     }
 
     It "Verifies restriction on good role capability file" {

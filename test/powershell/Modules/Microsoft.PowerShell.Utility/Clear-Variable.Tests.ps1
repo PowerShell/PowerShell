@@ -14,7 +14,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 	It "Clear-Variable ReadOnly variable Name should throw exception and force Clear-Variable should works"{
 		Set-Variable foo bar -Option ReadOnly
 
-		$e = { Clear-Variable -Name foo -Scope 1 -EA Stop } | ShouldBeErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+		$e = { Clear-Variable -Name foo -Scope 1 -ErrorAction Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 
 		Clear-Variable -Name foo -Force
@@ -49,8 +49,8 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 	It "Clear-Variable Private variable Name should works and Get-Variable with local scope should throw exception"{
 		Set-Variable foo bar -Option Private
 		&{
-			$e = { Get-Variable -Name foo -Scope local -EA Stop } |
-				ShouldBeErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$e = { Get-Variable -Name foo -Scope local -ErrorAction Stop } |
+				Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand" -PassThru
 			$e.CategoryInfo | Should -Match "ItemNotFoundException"
 		}
 
@@ -176,7 +176,7 @@ Describe "Clear-Variable" -Tags "CI" {
 
 	It "Should throw error when trying to clear variable that is read-only without using the Force parameter" {
 		New-Variable -Name var2 -Option ReadOnly -Value 100
-		{ Clear-Variable -Name var2 -Scope 1 -ea stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+		{ Clear-Variable -Name var2 -Scope 1 -ErrorAction stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 
 		$var2 | Should -Not -BeNullOrEmpty
 

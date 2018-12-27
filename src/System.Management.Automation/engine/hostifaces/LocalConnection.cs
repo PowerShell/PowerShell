@@ -169,6 +169,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
@@ -293,6 +294,7 @@ namespace System.Management.Automation.Runspaces
                 return _transcriptionData;
             }
         }
+
         private TranscriptionData _transcriptionData = null;
 
         private JobRepository _jobRepository;
@@ -364,7 +366,7 @@ namespace System.Management.Automation.Runspaces
         /// CreateDebugPerfStruct is a helper method to populate DebugPreference
         /// </summary>
         /// <param name="AppDomainNames">App Domain Names</param>
-        /// <returns>DebugPreference</returns>
+        /// <returns>DebugPreference.</returns>
         private static DebugPreference CreateDebugPreference(string[] AppDomainNames)
         {
             DebugPreference DebugPreference = new DebugPreference();
@@ -544,6 +546,7 @@ namespace System.Management.Automation.Runspaces
                     debugPreferenceCache = psObjects[0].BaseObject as Hashtable;
                 }
             }
+
             return debugPreferenceCache;
         }
 
@@ -563,6 +566,7 @@ namespace System.Management.Automation.Runspaces
                     processDebugPreference = LanguagePrimitives.ConvertTo<DebugPreference>(debugPreferencePsObject);
                 }
             }
+
             return processDebugPreference;
         }
 
@@ -678,30 +682,27 @@ namespace System.Management.Automation.Runspaces
             s_runspaceInitTracer.WriteLine("runspace opened successfully");
 
             // Now do initial state configuration that requires an active runspace
-            if (InitialSessionState != null)
+            Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
+            if (initError != null)
             {
-                Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
-                if (initError != null)
-                {
-                    // Log engine health event
-                    LogEngineHealthEvent(initError);
+                // Log engine health event
+                LogEngineHealthEvent(initError);
 
-                    // Log engine for end of engine life
-                    Debug.Assert(_engine.Context != null,
-                                "if startLifeCycleEventWritten is true, ExecutionContext must be present");
-                    MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
+                // Log engine for end of engine life
+                Debug.Assert(_engine.Context != null,
+                            "if startLifeCycleEventWritten is true, ExecutionContext must be present");
+                MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
 
-                    // Open failed. Set the RunspaceState to Broken.
-                    SetRunspaceState(RunspaceState.Broken, initError);
+                // Open failed. Set the RunspaceState to Broken.
+                SetRunspaceState(RunspaceState.Broken, initError);
 
-                    // Raise the event
-                    RaiseRunspaceStateEvents();
+                // Raise the event
+                RaiseRunspaceStateEvents();
 
-                    // Throw the exception. For asynchronous execution,
-                    // OpenThreadProc will catch it. For synchronous execution
-                    // caller of open will catch it.
-                    throw initError;
-                }
+                // Throw the exception. For asynchronous execution,
+                // OpenThreadProc will catch it. For synchronous execution
+                // caller of open will catch it.
+                throw initError;
             }
 
 #if LEGACYTELEMETRY
@@ -727,7 +728,7 @@ namespace System.Management.Automation.Runspaces
         internal void LogEngineHealthEvent(Exception exception,
                              Severity severity,
                              int id,
-                             Dictionary<String, String> additionalInfo)
+                             Dictionary<string, string> additionalInfo)
         {
             Dbg.Assert(exception != null, "Caller should validate the parameter");
 
@@ -823,7 +824,7 @@ namespace System.Management.Automation.Runspaces
             // When closing the primary runspace, ensure all other local runspaces are closed.
             var closeAllOpenRunspaces = isPrimaryRunspace && haveOpenRunspaces;
 
-            // Stop all transcriptions and unitialize AMSI if we're the last runspace to exit or we are exiting the primary runspace.
+            // Stop all transcriptions and un-initialize AMSI if we're the last runspace to exit or we are exiting the primary runspace.
             if (!haveOpenRunspaces)
             {
                 ExecutionContext executionContext = this.GetExecutionContext;
@@ -910,6 +911,7 @@ namespace System.Management.Automation.Runspaces
                     allRunspacesClosed = false;
                     break;
                 }
+
                 var localRunspace = r as LocalRunspace;
                 if (localRunspace != null && localRunspace.Host is IHostProvidesTelemetryData)
                 {
@@ -917,6 +919,7 @@ namespace System.Management.Automation.Runspaces
                     break;
                 }
             }
+
             if (allRunspacesClosed && !hostProvidesExitTelemetry)
             {
                 TelemetryAPI.ReportExitTelemetry(null);
@@ -948,6 +951,7 @@ namespace System.Management.Automation.Runspaces
                     IThrottleOperation operation = new CloseOrDisconnectRunspaceOperationHelper(remoteRunspace);
                     throttleManager.AddOperation(operation);
                 }
+
                 throttleManager.EndSubmitOperations();
 
                 remoteRunspaceCloseCompleted.WaitOne();
@@ -960,6 +964,7 @@ namespace System.Management.Automation.Runspaces
         private void StopOrDisconnectAllJobs()
         {
             if (JobRepository.Jobs.Count == 0) { return; }
+
             List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
 
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
@@ -994,12 +999,12 @@ namespace System.Management.Automation.Runspaces
                             disconnectRunspaces.AddRange(jobRunspaces);
                         }
                     }
-                } // foreach job
+                }
 
                 // Stop jobs.
                 throttleManager.EndSubmitOperations();
                 jobsStopCompleted.WaitOne();
-            } // using jobsStopCompleted
+            }
 
             // Disconnect all disconnectable job runspaces found.
             CloseOrDisconnectAllRemoteRunspaces(() =>
@@ -1099,6 +1104,7 @@ namespace System.Management.Automation.Runspaces
 
                 return _engine.Context.SessionState.LanguageMode;
             }
+
             set
             {
                 if (_disposed)
@@ -1210,6 +1216,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     return;
                 }
+
                 lock (SyncRoot)
                 {
                     if (_disposed)
@@ -1246,7 +1253,6 @@ namespace System.Management.Automation.Runspaces
                         }
                         catch (ObjectDisposedException)
                         {
-                            ;
                         }
                     }
                 }
@@ -1553,6 +1559,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _errors; }
         }
+
         private PSDataCollection<ErrorRecord> _errors;
 
         #region Serialization
@@ -1583,7 +1590,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion Serialization
-    } // RunspaceOpenException
+    }
 
     #endregion Helper Class
 }

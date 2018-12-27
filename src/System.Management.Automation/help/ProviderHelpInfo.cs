@@ -7,10 +7,8 @@ using System.Xml;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class ProviderHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    ///
     /// </summary>
     internal class ProviderHelpInfo : HelpInfo
     {
@@ -39,17 +37,17 @@ namespace System.Management.Automation
             get
             {
                 if (_fullHelpObject == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Name"] == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Name"].Value == null)
-                    return "";
+                    return string.Empty;
 
                 string name = _fullHelpObject.Properties["Name"].Value.ToString();
                 if (name == null)
-                    return "";
+                    return string.Empty;
 
                 return name.Trim();
             }
@@ -64,17 +62,17 @@ namespace System.Management.Automation
             get
             {
                 if (_fullHelpObject == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Synopsis"] == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Synopsis"].Value == null)
-                    return "";
+                    return string.Empty;
 
                 string synopsis = _fullHelpObject.Properties["Synopsis"].Value.ToString();
                 if (synopsis == null)
-                    return "";
+                    return string.Empty;
 
                 return synopsis.Trim();
             }
@@ -89,18 +87,18 @@ namespace System.Management.Automation
             get
             {
                 if (this.FullHelp == null)
-                    return "";
+                    return string.Empty;
 
                 if (this.FullHelp.Properties["DetailedDescription"] == null ||
                     this.FullHelp.Properties["DetailedDescription"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 IList descriptionItems = FullHelp.Properties["DetailedDescription"].Value as IList;
                 if (descriptionItems == null || descriptionItems.Count == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 // I think every provider description should atleast have 400 characters...
@@ -110,9 +108,9 @@ namespace System.Management.Automation
                 foreach (object descriptionItem in descriptionItems)
                 {
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((null == descriptionObject) ||
-                        (null == descriptionObject.Properties["Text"]) ||
-                        (null == descriptionObject.Properties["Text"].Value))
+                    if ((descriptionObject == null) ||
+                        (descriptionObject.Properties["Text"] == null) ||
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }
@@ -164,17 +162,17 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Diagnostics.Assert(null != pattern, "pattern cannot be null");
+            Diagnostics.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (null == synopsis)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (null == detailedDescription)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -193,7 +191,7 @@ namespace System.Management.Automation
         /// Return the provider-specific cmdlet help based on input cmdletName
         /// </summary>
         /// <param name="cmdletName">cmdletName on which to get provider-specific help</param>
-        /// <returns>An mshObject that contains provider-specific commandlet help</returns>
+        /// <returns>An mshObject that contains provider-specific commandlet help.</returns>
         internal PSObject GetCmdletHelp(string cmdletName)
         {
             if (String.IsNullOrEmpty(cmdletName))
@@ -264,7 +262,7 @@ namespace System.Management.Automation
         /// Return the provider-specific dynamic parameter help based on input parameter name
         /// </summary>
         /// <param name="parameters">an array of parameters to retrieve help</param>
-        /// <returns>an array of mshObject that contains the parameter help</returns>
+        /// <returns>An array of mshObject that contains the parameter help.</returns>
         internal PSObject[] GetDynamicParameterHelp(string[] parameters)
         {
             if (parameters == null || parameters.Length == 0)
@@ -348,7 +346,7 @@ namespace System.Management.Automation
         /// Create providerHelpInfo from an xmlNode
         /// </summary>
         /// <param name="xmlNode">xml node that contains the provider help info</param>
-        /// <returns>the providerHelpInfo object created</returns>
+        /// <returns>The providerHelpInfo object created.</returns>
         internal static ProviderHelpInfo Load(XmlNode xmlNode)
         {
             ProviderHelpInfo providerHelpInfo = new ProviderHelpInfo(xmlNode);

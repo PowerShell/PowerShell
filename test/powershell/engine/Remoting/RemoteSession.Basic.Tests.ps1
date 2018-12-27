@@ -1,13 +1,36 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
-        try {
-            New-PSSession -ComputerName nonexistcomputer -Authentication Basic
-            throw "New-PSSession should throw"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
-        }
+        { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
+           Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+    }
+}
+
+Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
+    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
+        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $credential = [PSCredential]::new('username', $password)
+
+        $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
+        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        # Should be PSRemotingErrorId.ConnectFailed
+        # Ensures we are looking at the expected instance
+        $err.Exception.ErrorCode | Should -Be 801
+    }
+
+    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
+        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $credential = [PSCredential]::new('username', $password)
+
+        # use a Uri that specifies HTTPS to test Basic Auth logic.
+        # NOTE: The connection is expected to fail but not with a  ConnectFailed exception
+        $uri = "https://localhost"
+        New-PSSession -Uri $uri -Credential $credential -Authentication Basic -ErrorVariable err
+        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.FullyQualifiedErrorId | Should -Be '1,PSSessionOpenFailed'
+        $err.Exception.HResult | Should -Be 0x80131501
     }
 }
 
@@ -220,7 +243,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     It "<title>" -TestCases $ParameterError {
         param($parameters, $expectedError)
 
-        { Invoke-Command @parameters } | ShouldBeErrorId $expectedError
+        { Invoke-Command @parameters } | Should -Throw -ErrorId $expectedError
     }
 
     It 'Can execute command if one of the sessions is available' {
@@ -254,7 +277,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It 'Can invoke-command as job' {
-        $result = Invoke-Command -ScriptBlock { 1 + 1 } -Session $openSession -AsJob | Receive-Job -AutoRemoveJob -Wait
+        $result = Invoke-Command -ScriptBlock { 1 + 1 } -Session $openSession -AsJob | Receive-Job -AutoRemoveJob -Wait -ErrorAction SilentlyContinue
         $result | Should -Be 2
     }
 

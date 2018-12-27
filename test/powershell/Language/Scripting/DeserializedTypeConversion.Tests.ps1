@@ -144,15 +144,7 @@ Describe "Tests conversion of deserialized types to original type using object p
         }
 
         It 'Type casts should fail.' {
-
-            try
-            {
-                $tc3 = [test3]$dst3
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastConstructorException'
-            }
+            { $tc3 = [test3]$dst3 } | Should -Throw -ErrorId 'InvalidCastConstructorException'
         }
 
         It 'Parameter bindings should fail.' {
@@ -167,14 +159,7 @@ Describe "Tests conversion of deserialized types to original type using object p
                 $test | Format-List | Out-String
             }
 
-            try
-            {
-                test-3 $dst3
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly 'ParameterArgumentTransformationError,test-3'
-            }
+            { test-3 $dst3 } | Should -Throw -ErrorId 'ParameterArgumentTransformationError,test-3'
         }
     }
 

@@ -77,7 +77,7 @@ namespace System.Management.Automation.Internal
         /// However, if the instantiation happens in a different Runspace where the class is not defined, or it happens on
         /// a thread without a default Runspace, then the created instance won't be bound to any session state.
         /// </remarks>
-        /// <returns>SessionStateInternal</returns>
+        /// <returns>SessionStateInternal.</returns>
         public object GetSessionState()
         {
             SessionStateInternal ss = null;
@@ -90,6 +90,7 @@ namespace System.Management.Automation.Internal
             {
                 _stateMap.TryGetValue(defaultRunspace, out ss);
             }
+
             return ss;
         }
     }
@@ -217,6 +218,7 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+
             _boundScriptBlock.Value.SessionStateInternal = sessionStateToUse;
         }
 
@@ -363,6 +365,7 @@ namespace System.Management.Automation.Internal
             {
                 il.Emit(OpCodes.Ldarg, i);
             }
+
             il.Emit(OpCodes.Tailcall);
             il.EmitCall(OpCodes.Call, mi, null);
             il.Emit(OpCodes.Ret);

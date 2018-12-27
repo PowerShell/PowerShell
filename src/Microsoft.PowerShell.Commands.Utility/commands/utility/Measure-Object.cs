@@ -12,25 +12,23 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class output by Measure-Object
+    /// Class output by Measure-Object.
     /// </summary>
     public abstract class MeasureInfo
     {
         /// <summary>
-        ///
-        /// property name
-        ///
+        /// Property name.
         /// </summary>
         public string Property { get; set; } = null;
     }
 
     /// <summary>
-    /// Class output by Measure-Object
+    /// Class output by Measure-Object.
     /// </summary>
     public sealed class GenericMeasureInfo : MeasureInfo
     {
         /// <summary>
-        /// default ctor
+        /// Default ctor.
         /// </summary>
         public GenericMeasureInfo()
         {
@@ -38,37 +36,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
-        /// Keeping track of number of objects with a certain property
-        ///
+        /// Keeping track of number of objects with a certain property.
         /// </summary>
         public int Count { get; set; }
 
         /// <summary>
-        ///
-        /// The average of property values
-        ///
+        /// The average of property values.
         /// </summary>
         public double? Average { get; set; }
 
         /// <summary>
-        ///
-        /// The sum of property values
-        ///
+        /// The sum of property values.
         /// </summary>
         public double? Sum { get; set; }
 
         /// <summary>
-        ///
-        /// The max of property values
-        ///
+        /// The max of property values.
         /// </summary>
         public double? Maximum { get; set; }
 
         /// <summary>
-        ///
-        /// The min of property values
-        ///
+        /// The min of property values.
         /// </summary>
         public double? Minimum { get; set; }
 
@@ -82,8 +70,7 @@ namespace Microsoft.PowerShell.Commands
     /// Class output by Measure-Object.
     /// </summary>
     /// <remarks>
-    /// This class is created for fixing "Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo"
-    /// bug (Win8:343911).
+    /// This class is created to make 'Measure-Object -MAX -MIN' work with ANYTHING that supports 'CompareTo'.
     /// GenericMeasureInfo class is shipped with PowerShell V2. Fixing this bug requires, changing the type of
     /// Maximum and Minimum properties which would be a breaking change. Hence created a new class to not
     /// have an appcompat issues with PS V2.
@@ -91,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GenericObjectMeasureInfo : MeasureInfo
     {
         /// <summary>
-        /// default ctor
+        /// Default ctor.
         /// </summary>
         public GenericObjectMeasureInfo()
         {
@@ -100,37 +87,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
-        /// Keeping track of number of objects with a certain property
-        ///
+        /// Keeping track of number of objects with a certain property.
         /// </summary>
         public int Count { get; set; }
 
         /// <summary>
-        ///
-        /// The average of property values
-        ///
+        /// The average of property values.
         /// </summary>
         public double? Average { get; set; }
 
         /// <summary>
-        ///
-        /// The sum of property values
-        ///
+        /// The sum of property values.
         /// </summary>
         public double? Sum { get; set; }
 
         /// <summary>
-        ///
-        /// The max of property values
-        ///
+        /// The max of property values.
         /// </summary>
         public object Maximum { get; set; }
 
         /// <summary>
-        ///
-        /// The min of property values
-        ///
+        /// The min of property values.
         /// </summary>
         public object Minimum { get; set; }
 
@@ -141,12 +118,12 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Class output by Measure-Object
+    /// Class output by Measure-Object.
     /// </summary>
     public sealed class TextMeasureInfo : MeasureInfo
     {
         /// <summary>
-        /// default ctor
+        /// Default ctor.
         /// </summary>
         public TextMeasureInfo()
         {
@@ -154,29 +131,23 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
-        /// Keeping track of number of objects with a certain property
-        ///
+        /// Keeping track of number of objects with a certain property.
         /// </summary>
         public int? Lines { get; set; }
 
         /// <summary>
-        ///
-        /// The average of property values
-        ///
+        /// The average of property values.
         /// </summary>
         public int? Words { get; set; }
 
         /// <summary>
-        ///
-        /// The sum of property values
-        ///
+        /// The sum of property values.
         /// </summary>
         public int? Characters { get; set; }
     }
 
     /// <summary>
-    /// measure object cmdlet
+    /// Measure object cmdlet.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Measure, "Object", DefaultParameterSetName = GenericParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113349", RemotingCapability = RemotingCapability.None)]
@@ -184,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class MeasureObjectCommand : PSCmdlet
     {
         /// <summary>
-        /// Dictionary to be used by Measure-Object implementation
+        /// Dictionary to be used by Measure-Object implementation.
         /// Keys are strings. Keys are compared with OrdinalIgnoreCase.
         /// </summary>
         /// <typeparam name="V">Value type.</typeparam>
@@ -192,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
             where V : new()
         {
             /// <summary>
-            /// default ctor
+            /// Default ctor.
             /// </summary>
             internal MeasureObjectDictionary() : base(StringComparer.OrdinalIgnoreCase)
             {
@@ -247,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// default constructor
+        /// Default constructor.
         /// </summary>
         public MeasureObjectCommand()
             : base()
@@ -259,19 +230,19 @@ namespace Microsoft.PowerShell.Commands
         #region Common parameters in both sets
 
         /// <summary>
-        /// incoming object
+        /// Incoming object.
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
-        /// Properties to be examined
+        /// Properties to be examined.
         /// </summary>
         /// <value></value>
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public string[] Property { get; set; } = null;
+        public PSPropertyExpression[] Property { get; set; } = null;
 
         #endregion Common parameters in both sets
 
@@ -285,6 +256,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureStandardDeviation;
             }
+
             set
             {
                 _measureStandardDeviation = value;
@@ -294,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureStandardDeviation;
 
         /// <summary>
-        /// Set to true is Sum is to be returned
+        /// Set to true is Sum is to be returned.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
@@ -304,15 +276,37 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureSum;
             }
+
             set
             {
                 _measureSum = value;
             }
         }
+
         private bool _measureSum;
 
         /// <summary>
-        /// Set to true is Average is to be returned
+        /// Gets or sets the value indicating if all statistics should be returned.
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = GenericParameterSet)]
+        public SwitchParameter AllStats
+        {
+            get
+            {
+                return _allStats;
+            }
+
+            set
+            {
+                _allStats = value;
+            }
+        }
+
+        private bool _allStats;
+
+        /// <summary>
+        /// Set to true is Average is to be returned.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
@@ -322,15 +316,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureAverage;
             }
+
             set
             {
                 _measureAverage = value;
             }
         }
+
         private bool _measureAverage;
 
         /// <summary>
-        /// Set to true is Max is to be returned
+        /// Set to true is Max is to be returned.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
@@ -340,15 +336,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureMax;
             }
+
             set
             {
                 _measureMax = value;
             }
         }
+
         private bool _measureMax;
 
         /// <summary>
-        /// Set to true is Min is to be returned
+        /// Set to true is Min is to be returned.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
@@ -358,16 +356,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureMin;
             }
+
             set
             {
                 _measureMin = value;
             }
         }
+
         private bool _measureMin;
 
         #region TextMeasure ParameterSet
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -377,15 +376,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureLines;
             }
+
             set
             {
                 _measureLines = value;
             }
         }
+
         private bool _measureLines = false;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -395,15 +395,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureWords;
             }
+
             set
             {
                 _measureWords = value;
             }
         }
+
         private bool _measureWords = false;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -413,15 +414,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _measureCharacters;
             }
+
             set
             {
                 _measureCharacters = value;
             }
         }
+
         private bool _measureCharacters = false;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -431,11 +433,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _ignoreWhiteSpace;
             }
+
             set
             {
                 _ignoreWhiteSpace = value;
             }
         }
+
         private bool _ignoreWhiteSpace;
 
         #endregion TextMeasure ParameterSet
@@ -450,6 +454,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 return String.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
             }
+        }
+
+        /// <summary>
+        /// Does the begin part of the cmdlet.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            // Sets all other generic parameters to true to get all statistics.
+            if (_allStats)
+            {
+                _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
+            }
+
+            // finally call the base class.
+            base.BeginProcessing();
         }
 
         /// <summary>
@@ -486,10 +505,9 @@ namespace Microsoft.PowerShell.Commands
 
             // First iterate over the user-specified list of
             // properties...
-            foreach (string p in Property)
+            foreach (var expression in Property)
             {
-                MshExpression expression = new MshExpression(p);
-                List<MshExpression> resolvedNames = expression.ResolveNames(inObj);
+                List<PSPropertyExpression> resolvedNames = expression.ResolveNames(inObj);
                 if (resolvedNames == null || resolvedNames.Count == 0)
                 {
                     // Insert a blank entry so we can track
@@ -506,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
                 // Each property value can potentially refer
                 // to multiple properties via globbing. Iterate over
                 // the actual property names.
-                foreach (MshExpression resolvedName in resolvedNames)
+                foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     string propertyName = resolvedName.ToString();
                     // skip duplicated properties
@@ -515,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    List<MshExpressionResult> tempExprRes = resolvedName.GetValues(inObj);
+                    List<PSPropertyExpressionResult> tempExprRes = resolvedName.GetValues(inObj);
                     if (tempExprRes == null || tempExprRes.Count == 0)
                     {
                         // Shouldn't happen - would somehow mean
@@ -551,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_measureCharacters || _measureWords || _measureLines)
             {
-                string strValue = (objValue == null) ? "" : objValue.ToString();
+                string strValue = (objValue == null) ? string.Empty : objValue.ToString();
                 AnalyzeString(strValue, stat);
             }
 
@@ -573,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
                 AnalyzeNumber(numValue, stat);
             }
 
-            // Win8:343911 Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo
+            // Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo
             if (_measureMin)
             {
                 stat.min = Compare(objValue, stat.min, true);
@@ -625,26 +643,28 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Class contains util static functions
+        /// Class contains util static functions.
         /// </summary>
         private static class TextCountUtilities
         {
             /// <summary>
-            /// count chars in inStr
+            /// Count chars in inStr.
             /// </summary>
             /// <param name="inStr">string whose chars are counted</param>
             /// <param name="ignoreWhiteSpace">true to discount white space</param>
-            /// <returns>number of chars in inStr</returns>
+            /// <returns>Number of chars in inStr.</returns>
             internal static int CountChar(string inStr, bool ignoreWhiteSpace)
             {
                 if (String.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
+
                 if (!ignoreWhiteSpace)
                 {
                     return inStr.Length;
                 }
+
                 int len = 0;
                 foreach (char c in inStr)
                 {
@@ -653,20 +673,22 @@ namespace Microsoft.PowerShell.Commands
                         len++;
                     }
                 }
+
                 return len;
             }
 
             /// <summary>
-            /// count words in inStr
+            /// Count words in inStr.
             /// </summary>
             /// <param name="inStr">string whose words are counted</param>
-            /// <returns>number of words in inStr</returns>
+            /// <returns>Number of words in inStr.</returns>
             internal static int CountWord(string inStr)
             {
                 if (String.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
+
                 int wordCount = 0;
                 bool wasAWhiteSpace = true;
                 foreach (char c in inStr)
@@ -681,23 +703,26 @@ namespace Microsoft.PowerShell.Commands
                         {
                             wordCount++;
                         }
+
                         wasAWhiteSpace = false;
                     }
                 }
+
                 return wordCount;
             }
 
             /// <summary>
-            /// count lines in inStr
+            /// Count lines in inStr.
             /// </summary>
             /// <param name="inStr">string whose lines are counted</param>
-            /// <returns>number of lines in inStr</returns>
+            /// <returns>Number of lines in inStr.</returns>
             internal static int CountLine(string inStr)
             {
                 if (String.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
+
                 int numberOfLines = 0;
                 foreach (char c in inStr)
                 {
@@ -712,6 +737,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     numberOfLines++;
                 }
+
                 return numberOfLines;
             }
         }
@@ -743,6 +769,7 @@ namespace Microsoft.PowerShell.Commands
                 stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
             }
+
             if (_measureStandardDeviation && stat.count > 1)
             {
                 // Based off of iterative method of calculating variance on
@@ -754,7 +781,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// WriteError when a property is not found
+        /// WriteError when a property is not found.
         /// </summary>
         /// <param name="propertyName">The missing property.</param>
         /// <param name="errorId">The error ID to write.</param>
@@ -884,11 +911,12 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Sum = sum;
                 gmi.Average = average;
                 gmi.StandardDeviation = StandardDeviation;
-                if (null != max)
+                if (max != null)
                 {
                     gmi.Maximum = (double)max;
                 }
-                if (null != min)
+
+                if (min != null)
                 {
                     gmi.Minimum = (double)min;
                 }
@@ -928,9 +956,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The observed statistics keyed by property name. If
-        /// Property is not set, then the key used will be the
-        /// value of thisObject.
+        /// The observed statistics keyed by property name.
+        /// If Property is not set, then the key used will be the value of thisObject.
         /// </summary>
         private MeasureObjectDictionary<Statistics> _statistics = new MeasureObjectDictionary<Statistics>();
 
@@ -961,4 +988,3 @@ namespace Microsoft.PowerShell.Commands
         private const string thisObject = "$_";
     }
 }
-

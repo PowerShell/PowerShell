@@ -64,7 +64,6 @@ namespace System.Management.Automation
         #region public methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cursorIndex"></param>
@@ -86,7 +85,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="input">The input to complete</param>
         /// <param name="cursorIndex">The index of the cursor in the input</param>
@@ -104,7 +102,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="ast">Ast for pre-parsed input</param>
         /// <param name="tokens">Tokens for pre-parsed input</param>
@@ -361,7 +358,7 @@ namespace System.Management.Automation
         /// <param name="cursorPosition"></param>
         /// <param name="options">Optional options to configure how completion is performed</param>
         /// <param name="debugger">Current debugger</param>
-        /// <returns>Command completion</returns>
+        /// <returns>Command completion.</returns>
         internal static CommandCompletion CompleteInputInDebugger(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, Debugger debugger)
         {
             if (ast == null)
@@ -557,6 +554,7 @@ namespace System.Management.Automation
                                 break;
                             }
                         }
+
                         SessionStateScope scopeToRestore = null;
                         if (tupleForFrameToSkipPast != null)
                         {
@@ -567,11 +565,13 @@ namespace System.Management.Automation
                             {
                                 scope = scope.Parent;
                             }
+
                             if (scope != null)
                             {
                                 context.EngineSessionState.CurrentScope = scope.Parent;
                             }
                         }
+
                         try
                         {
                         */
@@ -667,8 +667,10 @@ namespace System.Management.Automation
                                 oldResultStr = quote + oldResultStr + quote;
                             }
                         }
+
                         completionResult = new CompletionResult(oldResultStr);
                     }
+
                     results.Add(completionResult);
                 }
             }
@@ -693,7 +695,6 @@ namespace System.Management.Automation
         /// exists for legacy purpose only. It is used only in a remote interactive session from Win8 to Win7. V3 and forward
         /// uses completely different completers.
         /// </summary>
-        ///
         /// <remarks>
         /// The implementation of file name completion is completely different on V2 and V3 for remote scenarios. On PSv3, the
         /// CompletionResults are generated always on the target machine, and
@@ -720,6 +721,7 @@ namespace System.Management.Automation
                 {
                     return s_cmdletTabRegex.IsMatch(lastWord);
                 }
+
                 if (cmdletParts.Length == 2)
                 {
                     isSnapinSpecified = PSSnapInInfo.IsPSSnapinIdValid(cmdletParts[0]);
@@ -728,6 +730,7 @@ namespace System.Management.Automation
                         return s_cmdletTabRegex.IsMatch(cmdletParts[1]);
                     }
                 }
+
                 return false;
             }
 
@@ -858,6 +861,7 @@ namespace System.Management.Automation
                         AddCommandResult(commandAndName, previousMatched, completingAtStartOfLine, quote, results);
                         previousMatched = false;
                     }
+
                     i++;
                 }
             }
@@ -993,6 +997,7 @@ namespace System.Management.Automation
                         ++j;
                         continue;
                     }
+
                     result.Add(s2[i]);
                 }
 
@@ -1291,6 +1296,7 @@ namespace System.Management.Automation
             private int ReplacementIndex
             {
                 get { return _replacementIndex; }
+
                 set
                 {
                     Diagnostics.Assert(value >= 0 && value < _sentence.Length + 1, "value out of range");

@@ -11,14 +11,12 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpFileHelpProvider implement the help provider for help.txt kinds of
     /// help contents.
     ///
     /// Help File help information are stored in '.help.txt' files. These files are
     /// located in the Monad / CustomShell Path as well as in the Application Base
     /// of PSSnapIns
-    ///
     /// </summary>
     internal class HelpFileHelpProvider : HelpProviderWithCache
     {
@@ -220,7 +218,7 @@ namespace System.Management.Automation
 
             pattern += ".help.txt";
 
-            Collection<String> files = MUIFileSearcher.SearchFiles(pattern, GetExtendedSearchPaths());
+            Collection<string> files = MUIFileSearcher.SearchFiles(pattern, GetExtendedSearchPaths());
 
             var matchedFilesToRemove = FilterToLatestModuleVersion(files);
 
@@ -294,7 +292,7 @@ namespace System.Management.Automation
         /// Load help file based on the file path.
         /// </summary>
         /// <param name="path">file path to load help from</param>
-        /// <returns>Help info object loaded from the file</returns>
+        /// <returns>Help info object loaded from the file.</returns>
         private HelpInfo LoadHelpFile(string path)
         {
             string fileName = Path.GetFileName(path);
@@ -338,13 +336,13 @@ namespace System.Management.Automation
         /// Gets the extended search paths for about_topics help. To be able to get about_topics help from unloaded modules,
         /// we will add $pshome and the folders under PS module paths to the collection of paths to search.
         /// </summary>
-        /// <returns>a collection of string representing locations</returns>
+        /// <returns>A collection of string representing locations.</returns>
         internal Collection<string> GetExtendedSearchPaths()
         {
-            Collection<String> searchPaths = GetSearchPaths();
+            Collection<string> searchPaths = GetSearchPaths();
 
             // Add $pshome at the top of the list
-            String defaultShellSearchPath = GetDefaultShellSearchPath();
+            string defaultShellSearchPath = GetDefaultShellSearchPath();
 
             int index = searchPaths.IndexOf(defaultShellSearchPath);
             if (index != 0)
@@ -353,6 +351,7 @@ namespace System.Management.Automation
                 {
                     searchPaths.RemoveAt(index);
                 }
+
                 searchPaths.Insert(0, defaultShellSearchPath);
             }
 

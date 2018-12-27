@@ -27,7 +27,6 @@ using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using System.Linq;
 using Dbg = System.Management.Automation;
-using Microsoft.PowerShell.CoreClr.Stubs;
 
 // FxCop suppressions for resource strings:
 [module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "ComputerResources.resources", MessageId = "unjoined")]
@@ -35,7 +34,7 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace Microsoft.PowerShell.Commands
 {
-#region Restart-Computer
+    #region Restart-Computer
 
     /// <summary>
     /// This exception is thrown when the timeout expires before a computer finishes restarting
@@ -77,7 +76,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs a RestartComputerTimeoutException
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
@@ -86,25 +84,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs a RestartComputerTimeoutException
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
-        ///
         /// <param name="innerException">
         /// An exception that led to this exception.
         /// </param>
         public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
 
-#region Serialization
+        #region Serialization
         /// <summary>
         /// Serialization constructor for class RestartComputerTimeoutException
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -123,11 +117,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serializes the RestartComputerTimeoutException.
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -143,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
             info.AddValue("ComputerName", ComputerName);
             info.AddValue("Timeout", Timeout);
         }
-#endregion Serialization
+        #endregion Serialization
     }
 
     /// <summary>
@@ -175,10 +167,10 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RestartComputerCommand : PSCmdlet, IDisposable
     {
-#region "Parameters and PrivateData"
+        #region "Parameters and PrivateData"
 
         private const string DefaultParameterSet = "DefaultSet";
-        private const int forcedReboot = 6; // see https://msdn.microsoft.com/en-us/library/aa394058(v=vs.85).aspx
+        private const int forcedReboot = 6; // see https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -247,12 +239,14 @@ namespace Microsoft.PowerShell.Commands
         public int Timeout
         {
             get { return _timeout; }
+
             set
             {
                 _timeout = value;
                 _timeoutSpecified = true;
             }
         }
+
         private int _timeout = -1;
         private bool _timeoutSpecified = false;
 
@@ -264,12 +258,14 @@ namespace Microsoft.PowerShell.Commands
         public WaitForServiceTypes For
         {
             get { return _waitFor; }
+
             set
             {
                 _waitFor = value;
                 _waitForSpecified = true;
             }
         }
+
         private WaitForServiceTypes _waitFor = WaitForServiceTypes.PowerShell;
         private bool _waitForSpecified = false;
 
@@ -282,12 +278,14 @@ namespace Microsoft.PowerShell.Commands
         public Int16 Delay
         {
             get { return (Int16)_delay; }
+
             set
             {
                 _delay = value;
                 _delaySpecified = true;
             }
         }
+
         private int _delay = 5;
         private bool _delaySpecified = false;
 
@@ -303,13 +301,16 @@ foreach ($computerName in $array[1])
     $arguments = @{
         ComputerName = $computerName
         ScriptBlock = { $true }
+
         SessionOption = NewPSSessionOption -NoMachineProfile
         ErrorAction = 'SilentlyContinue'
     }
+
     if ( $null -ne $array[0] )
     {
         $arguments['Credential'] = $array[0]
     }
+
     $result[$computerName] = (Invoke-Command @arguments) -as [bool]
 }
 $result
@@ -348,11 +349,11 @@ $result
         private readonly ManualResetEventSlim _waitHandler = new ManualResetEventSlim(false);
         private readonly Dictionary<string, ComputerInfo> _computerInfos = new Dictionary<string, ComputerInfo>(StringComparer.OrdinalIgnoreCase);
 
-        // CLR 4.0 Port note - use https://msdn.microsoft.com/en-us/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
+        // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
         private readonly string _shortLocalMachineName = Dns.GetHostName();
 
         // And for this, use PsUtils.GetHostname()
-        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
+        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
         private int _percent;
         private string _status;
@@ -365,9 +366,9 @@ $result
         private const string WinrmConnectionTest = "WinRM";
         private const string PowerShellConnectionTest = "PowerShell";
 
-#endregion "parameters and PrivateData"
+        #endregion "parameters and PrivateData"
 
-#region "IDisposable Members"
+        #region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -402,9 +403,9 @@ $result
             }
         }
 
-#endregion "IDisposable Members"
+        #endregion "IDisposable Members"
 
-#region "Private Methods"
+        #region "Private Methods"
 
         /// <summary>
         /// Validate parameters for 'DefaultSet'
@@ -426,6 +427,7 @@ $result
                     {
                         WriteError(error);
                     }
+
                     continue;
                 }
 
@@ -441,7 +443,7 @@ $result
             }
 
             // Force wait with a test hook even if we're on the local computer
-            if (! InternalTestHooks.TestWaitStopComputer && Wait && containLocalhost)
+            if (!InternalTestHooks.TestWaitStopComputer && Wait && containLocalhost)
             {
                 // The local machine will be ignored, and an error will be emitted.
                 InvalidOperationException ex = new InvalidOperationException(ComputerResources.CannotWaitLocalComputer);
@@ -535,6 +537,7 @@ $result
                 try
                 {
                     if (token.IsCancellationRequested) { break; }
+
                     using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, token, this))
                     {
                         bool itemRetrieved = false;
@@ -650,15 +653,16 @@ $result
                 string errorMsg = StringUtil.Format(ComputerResources.RestartcomputerFailed, computer, ComputerResources.TimeoutError);
                 var exception = new RestartComputerTimeoutException(computer, Timeout, errorMsg, errorId);
                 var error = new ErrorRecord(exception, errorId, ErrorCategory.OperationTimeout, computer);
-                if (! InternalTestHooks.TestWaitStopComputer ) {
-                WriteError(error);
+                if (!InternalTestHooks.TestWaitStopComputer)
+                {
+                    WriteError(error);
                 }
             }
         }
 
-#endregion "Private Methods"
+        #endregion "Private Methods"
 
-#region "Internal Methods"
+        #region "Internal Methods"
 
         internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, CancellationToken token, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet)
         {
@@ -675,6 +679,7 @@ $result
                 try
                 {
                     if (token.IsCancellationRequested) { break; }
+
                     using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, token, cmdlet))
                     {
                         bool itemRetrieved = false;
@@ -771,9 +776,9 @@ $result
             return psList;
         }
 
-#endregion "Internal Methods"
+        #endregion "Internal Methods"
 
-#region "Overrides"
+        #region "Overrides"
 
         /// <summary>
         /// BeginProcessing method.
@@ -843,7 +848,7 @@ $result
                     bool isLocal = false;
                     string compname;
 
-                    if (computer.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+                    if (computer.Equals("localhost", StringComparison.OrdinalIgnoreCase))
                     {
                         compname = _shortLocalMachineName;
                         isLocal = true;
@@ -931,6 +936,7 @@ $result
                             // We check if the target machine has already rebooted by querying the LastBootUpTime from the Win32_OperatingSystem object.
                             // So after this step, we are sure that both the Network and the WMI or WinRM service have already come up.
                             if (_exit) { break; }
+
                             if (restartStageTestList.Count > 0)
                             {
                                 if (_waitOnComputers.Count == 1)
@@ -939,12 +945,14 @@ $result
                                     _percent = CalculateProgressPercentage(StageVerification);
                                     WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                 }
+
                                 List<string> nextTestList = (isForWmi || isForPowershell) ? wmiTestList : winrmTestList;
                                 restartStageTestList = TestRestartStageUsingWsman(restartStageTestList, nextTestList, _cancel.Token);
                             }
 
                             // Test WMI service
                             if (_exit) { break; }
+
                             if (wmiTestList.Count > 0)
                             {
                                 // This statement block executes for both CLRs.
@@ -956,13 +964,16 @@ $result
                                         _percent = CalculateProgressPercentage(WmiConnectionTest);
                                         WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                     }
+
                                     wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, _cancel.Token, Credential, WsmanAuthentication, this);
                                 }
                             }
+
                             if (isForWmi) { break; }
 
                             // Test WinRM service
                             if (_exit) { break; }
+
                             if (winrmTestList.Count > 0)
                             {
                                 // This statement block executes for both CLRs.
@@ -991,10 +1002,12 @@ $result
                                     }
                                 }
                             }
+
                             if (isForWinRm) { break; }
 
                             // Test PowerShell
                             if (_exit) { break; }
+
                             if (psTestList.Count > 0)
                             {
                                 if (_waitOnComputers.Count == 1)
@@ -1003,6 +1016,7 @@ $result
                                     _percent = CalculateProgressPercentage(PowerShellConnectionTest);
                                     WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                 }
+
                                 psTestList = TestPowerShell(psTestList, allDoneList, _powershell, this.Credential);
                             }
                         } while (false);
@@ -1036,6 +1050,7 @@ $result
                                 WriteProgress(_indicator[indicatorIndex % 4] + _activity, _status, 100, ProgressRecordType.Completed);
                                 _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
                             }
+
                             break;
                         }
 
@@ -1052,12 +1067,14 @@ $result
                         do
                         {
                             if (restartStageTestList.Count > 0) { WriteOutTimeoutError(restartStageTestList); }
+
                             if (wmiTestList.Count > 0) { WriteOutTimeoutError(wmiTestList); }
                             // Wait for WMI. All computers that finished restarting are put in "winrmTestList"
                             if (isForWmi) { break; }
 
                             // Wait for WinRM. All computers that finished restarting are put in "psTestList"
                             if (winrmTestList.Count > 0) { WriteOutTimeoutError(winrmTestList); }
+
                             if (isForWinRm) { break; }
 
                             if (psTestList.Count > 0) { WriteOutTimeoutError(psTestList); }
@@ -1089,12 +1106,12 @@ $result
             }
         }
 
-#endregion "Overrides"
+        #endregion "Overrides"
     }
 
-#endregion Restart-Computer
+    #endregion Restart-Computer
 
-#region Stop-Computer
+    #region Stop-Computer
 
     /// <summary>
     /// cmdlet to stop computer
@@ -1103,14 +1120,14 @@ $result
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class StopComputerCommand : PSCmdlet, IDisposable
     {
-#region Private Members
+        #region Private Members
 
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
-        private const int forcedShutdown = 5; // See https://msdn.microsoft.com/en-us/library/aa394058(v=vs.85).aspx
+        private const int forcedShutdown = 5; // See https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
-#endregion
+        #endregion
 
-#region "Parameters"
+        #region "Parameters"
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -1157,7 +1174,7 @@ $result
 
         #endregion "parameters"
 
-#region "IDisposable Members"
+        #region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -1171,9 +1188,9 @@ $result
             catch (ObjectDisposedException) { }
         }
 
-#endregion "IDisposable Members"
+        #endregion "IDisposable Members"
 
-#region "Overrides"
+        #region "Overrides"
 
         /// <summary>
         /// ProcessRecord
@@ -1201,9 +1218,9 @@ $result
             catch (AggregateException) { }
         }
 
-#endregion "Overrides"
+        #endregion "Overrides"
 
-#region Private Methods
+        #region Private Methods
 
         private void ProcessWSManProtocol(object[] flags)
         {
@@ -1215,7 +1232,7 @@ $result
 
                 if (_cancel.Token.IsCancellationRequested) { break; }
 
-                if ((computer.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if ((computer.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     compname = Dns.GetHostName();
                     strLocal = "localhost";
@@ -1246,12 +1263,12 @@ $result
             }
         }
 
-#endregion
+        #endregion
     }
 
-#endregion
+    #endregion
 
-#region Rename-Computer
+    #region Rename-Computer
 
     /// <summary>
     /// Renames a domain computer and its corresponding domain account or a
@@ -1263,17 +1280,17 @@ $result
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219990", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RenameComputerCommand : PSCmdlet
     {
-#region Private Members
+        #region Private Members
 
         private bool _containsLocalHost = false;
         private string _newNameForLocalHost = null;
 
         private readonly string _shortLocalMachineName = Dns.GetHostName();
-        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
+        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
-#endregion
+        #endregion
 
-#region Parameters
+        #region Parameters
 
         /// <summary>
         /// Target computers to rename
@@ -1319,8 +1336,10 @@ $result
         public SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
+
         private bool _force;
 
         /// <summary>
@@ -1330,8 +1349,10 @@ $result
         public SwitchParameter Restart
         {
             get { return _restart; }
+
             set { _restart = value; }
         }
+
         private bool _restart;
 
         /// <summary>
@@ -1348,9 +1369,9 @@ $result
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; } = "Default";
 
-#endregion
+        #endregion
 
-#region "Private Methods"
+        #region "Private Methods"
 
         /// <summary>
         /// Check to see if the target computer is the local machine
@@ -1366,6 +1387,7 @@ $result
                 {
                     WriteError(targetError);
                 }
+
                 return null;
             }
 
@@ -1479,7 +1501,7 @@ $result
                             Microsoft.Management.Infrastructure.CimType.String,
                             (dPassword == null) ? CimFlags.NullValue : CimFlags.None));
 
-                        if ( ! InternalTestHooks.TestRenameComputer )
+                        if (!InternalTestHooks.TestRenameComputer)
                         {
                             CimMethodResult result = cimSession.InvokeMethod(
                                 ComputerWMIHelper.CimOperatingSystemNamespace,
@@ -1534,8 +1556,8 @@ $result
                                 WriteWarning(StringUtil.Format(ComputerResources.RestartNeeded, null, computerName));
                             }
                         }
-                    } // end foreach
-                } // end using
+                    }
+                }
             }
             catch (CimException ex)
             {
@@ -1553,9 +1575,9 @@ $result
             }
         }
 
-#endregion "Private Methods"
+        #endregion "Private Methods"
 
-#region "Override Methods"
+        #region "Override Methods"
 
         /// <summary>
         /// ProcessRecord method.
@@ -1588,12 +1610,12 @@ $result
             DoRenameComputerAction("localhost", _newNameForLocalHost, true);
         }
 
-#endregion "Override Methods"
+        #endregion "Override Methods"
     }
 
-#endregion Rename-Computer
+    #endregion Rename-Computer
 
-#region "Public API"
+    #region "Public API"
     /// <summary>
     /// The object returned by SAM Computer cmdlets representing the status of the target machine.
     /// </summary>
@@ -1675,9 +1697,9 @@ $result
             return StringUtil.Format(MatchFormat, HasSucceeded, newcomputername, oldcomputername);
         }
     }
-#endregion "Public API"
+    #endregion "Public API"
 
-#region Helper
+    #region Helper
     /// <summary>
     /// Helper Class used by Stop-Computer,Restart-Computer and Test-Connection
     /// Also Contain constants used by System Restore related Cmdlets.
@@ -1825,7 +1847,6 @@ $result
 
         /// <summary>
         /// Gets the Scope
-        ///
         /// </summary>
         /// <param name="computer"></param>
         /// <param name="namespaceParameter"></param>
@@ -1833,7 +1854,7 @@ $result
         internal static string GetScopeString(string computer, string namespaceParameter)
         {
             StringBuilder returnValue = new StringBuilder("\\\\");
-            if (computer.Equals("::1", StringComparison.CurrentCultureIgnoreCase) || computer.Equals("[::1]", StringComparison.CurrentCultureIgnoreCase))
+            if (computer.Equals("::1", StringComparison.OrdinalIgnoreCase) || computer.Equals("[::1]", StringComparison.OrdinalIgnoreCase))
             {
                 returnValue.Append("localhost");
             }
@@ -1841,6 +1862,7 @@ $result
             {
                 returnValue.Append(computer);
             }
+
             returnValue.Append(namespaceParameter);
             return returnValue.ToString();
         }
@@ -1861,6 +1883,7 @@ $result
                         return true;
                 }
             }
+
             return false;
         }
 
@@ -1875,15 +1898,16 @@ $result
             string driveApp;
             foreach (string drive in drives)
             {
-                if (!drive.EndsWith("\\", StringComparison.CurrentCultureIgnoreCase))
+                if (!drive.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
                 {
                     driveApp = String.Concat(drive, "\\");
                 }
                 else
                     driveApp = drive;
-                if (driveApp.Equals(sysdrive, StringComparison.CurrentCultureIgnoreCase))
+                if (driveApp.Equals(sysdrive, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
+
             return false;
         }
 
@@ -1918,7 +1942,7 @@ $result
                     i++;
                 }
 
-                if ((computer.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if ((computer.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     compname = Dns.GetHostName();
                 }
@@ -1945,6 +1969,7 @@ $result
             {
                 computerchangeinfo.HasSucceeded = true;
             }
+
             return computerchangeinfo;
         }
 
@@ -1961,6 +1986,7 @@ $result
             {
                 renamecomputerchangeinfo.HasSucceeded = true;
             }
+
             return renamecomputerchangeinfo;
         }
 
@@ -1972,6 +1998,7 @@ $result
             {
                 additionalmessage = StringUtil.Format(ComputerResources.NetworkPathNotFound, computername);
             }
+
             string message = StringUtil.Format(ComputerResources.OperationFailed, ex.Message, computername, additionalmessage);
             ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, computername);
             cmdlet.WriteError(er);
@@ -2030,6 +2057,7 @@ $result
                 cmdlet.WriteError(er);
                 retValue = true;
             }
+
             return retValue;
         }
 
@@ -2047,7 +2075,7 @@ $result
         /// <param name="formatErrorMessage">Error message format string that takes two parameters</param>
         /// <param name="ErrorFQEID">Fully qualified error Id</param>
         /// <param name="cancelToken">Cancel token</param>
-        /// <returns>True on success</returns>
+        /// <returns>True on success.</returns>
         internal static bool InvokeWin32ShutdownUsingWsman(
             PSCmdlet cmdlet,
             bool isLocalhost,
@@ -2103,7 +2131,7 @@ $result
                         Microsoft.Management.Infrastructure.CimType.SInt32,
                         CimFlags.None));
 
-                    if ( ! InternalTestHooks.TestStopComputer )
+                    if (!InternalTestHooks.TestStopComputer)
                     {
                         CimMethodResult result = cimSession.InvokeMethod(
                             ComputerWMIHelper.CimOperatingSystemNamespace,
@@ -2164,7 +2192,7 @@ $result
         /// <param name="shortLocalMachineName"></param>
         /// <param name="fullLocalMachineName"></param>
         /// <param name="error"></param>
-        /// <returns>Valid computer name</returns>
+        /// <returns>Valid computer name.</returns>
         internal static string ValidateComputerName(
             string nameToCheck,
             string shortLocalMachineName,
@@ -2219,6 +2247,7 @@ $result
 
                         return null;
                     }
+
                     validatedComputerName = nameToCheck;
                 }
             }
@@ -2226,8 +2255,7 @@ $result
             return validatedComputerName;
         }
     }
-#endregion Helper
-
+    #endregion Helper
 }//End namespace
 
 #endif

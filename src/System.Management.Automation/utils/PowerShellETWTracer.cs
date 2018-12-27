@@ -670,17 +670,14 @@ namespace System.Management.Automation.Tracing
         ManagedPlugIn = 0x100,
 
         /// <summary>
-        ///
         /// </summary>
         UseAlwaysDebug = 0x2000000000000000,
 
         /// <summary>
-        ///
         /// </summary>
         UseAlwaysOperational = 0x8000000000000000,
 
         /// <summary>
-        ///
         /// </summary>
         UseAlwaysAnalytic = 0x4000000000000000,
     }
@@ -764,7 +761,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         public virtual PowerShellTraceKeywords Keywords
         {
@@ -772,6 +768,7 @@ namespace System.Management.Automation.Tracing
             {
                 return PowerShellTraceKeywords.None;
             }
+
             set
             {
                 PowerShellTraceKeywords powerShellTraceKeywords = value;
@@ -815,7 +812,6 @@ namespace System.Management.Automation.Tracing
         private PowerShellTraceKeywords _keywords;
 
         /// <summary>
-        ///
         /// </summary>
         public override PowerShellTraceKeywords Keywords
         {
@@ -823,6 +819,7 @@ namespace System.Management.Automation.Tracing
             {
                 return _keywords;
             }
+
             set
             {
                 _keywords = value;
@@ -1019,6 +1016,7 @@ namespace System.Management.Automation.Tracing
                 {
                     message = errorRecord.ErrorDetails.Message;
                 }
+
                 return DebugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                                message,
@@ -1085,16 +1083,15 @@ namespace System.Management.Automation.Tracing
             {
                 return DebugChannel.TraceDebug(PowerShellTraceEvent.Job,
                                                PowerShellTraceOperationCode.Method, PowerShellTraceTask.None,
-                                               "", "", "NULL job");
+                                               string.Empty, string.Empty, "NULL job");
             }
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public bool WriteMessage(String message)
+        public bool WriteMessage(string message)
         {
             return DebugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage,
                                             PowerShellTraceOperationCode.None,
@@ -1102,7 +1099,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message1"></param>
         /// <param name="message2"></param>
@@ -1115,7 +1111,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="instanceId"></param>
@@ -1128,7 +1123,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1150,7 +1144,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1449,7 +1442,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1473,7 +1465,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <returns></returns>

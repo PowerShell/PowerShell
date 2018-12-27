@@ -13,12 +13,12 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     (Join-Path -Path TestDrive:,$TestDrive -ChildPath "SubDir1" -resolve).Length | Should -Be 2
   }
   It "should throw 'DriveNotFound' when called with -Resolve and drive does not exist" {
-    try {Join-Path bogusdrive:\\somedir otherdir -resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..."
-    } catch {$_.FullyQualifiedErrorId | Should -Be "DriveNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"}
+    { Join-Path bogusdrive:\\somedir otherdir -resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
+      Should -Throw -ErrorId "DriveNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
   }
   It "should throw 'PathNotFound' when called with -Resolve and item does not exist" {
-    try {Join-Path "Bogus" "Path" -resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..."
-    } catch {$_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"}
+    { Join-Path "Bogus" "Path" -resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
+      Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
   }
   #[BugId(BugDatabase.WindowsOutOfBandReleases, 905237)] Note: Result should be the same on non-Windows platforms too
   It "should return one object when called with a Windows FileSystem::Redirector" {

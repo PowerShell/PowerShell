@@ -12,7 +12,7 @@ try
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $restartTesthookName
 
-    Describe "Restart-Computer" -Tag Feature {
+    Describe "Restart-Computer" -Tag Feature,RequireAdminOnWindows {
         # if we throw in BeforeEach, the test will fail and the restart will not be called
         BeforeEach {
             if ( ! (Test-TesthookIsSet -testhookName $restartTesthookName) ) {
@@ -78,17 +78,17 @@ try
             }
 
             It "Should produce an error when 'Delay' is specified" {
-                { Restart-Computer -Delay 30 } | ShouldBeErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                { Restart-Computer -Delay 30 } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
             It "Should not support timeout on localhost" {
                 Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-                { Restart-Computer -timeout 3 -ErrorAction Stop } | ShouldBeErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
             It "Should not support timeout on localhost" {
                 Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-                { Restart-Computer -timeout 3 -ErrorAction Stop } | ShouldBeErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
         }
     }

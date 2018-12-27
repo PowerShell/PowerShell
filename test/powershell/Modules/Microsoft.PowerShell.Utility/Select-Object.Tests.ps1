@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
+Add-TestDynamicType
 
 Describe "Select-Object" -Tags "CI" {
     BeforeEach {
@@ -124,7 +125,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 	}
 
 	It "Select-Object with empty script block property should throw"{
-		$e = { "bar" | select-object -Prop {} -EA Stop } |
+		$e = { "bar" | select-object -Prop {} -ErrorAction Stop } |
 			Should -Throw -ErrorId "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand" -PassThru
 		$e.CategoryInfo | Should -Match "PSArgumentException"
 	}
@@ -225,8 +226,8 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 		$results.Count | Should -Be 0
 	}
 
-	It "Select-Object with Start-Time In Idle Process should work"{
-		$results = Get-Process i* | Select-Object ProcessName
+	It "Select-Object with Start-Time In Idle Process should work" {
+		$results = Get-Process * | Select-Object ProcessName
 		$results.Count | Should -Not -Be 0
 	}
 
@@ -242,6 +243,59 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 		$results.Count | Should -Be 1
 		$results[0] | Should -BeExactly "3"
 	}
+
+    It "Select-Object with SkipIndex should work" {
+        $results = "1", "2", "3" | Select-Object -SkipIndex 0, 2
+        $results | Should -HaveCount 1
+        $results[0] | Should -BeExactly "2"
+    }
+
+    It "Select-Object with SkipIndex should work with index out of range" {
+        $results = 0..10 | Select-Object -SkipIndex 5, 6, 7, 8, 11
+        $results | Should -HaveCount 7
+        $results -join ',' | Should -BeExactly "0,1,2,3,4,9,10"
+    }
+
+    It "Select-Object should handle dynamic (DLR) properties"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object -ExpandProperty FooProp
+        $results.Count | Should -Be 2
+        $results[0] | Should -Be 123
+        $results[1] | Should -Be 123
+    }
+
+    It "Select-Object should handle dynamic (DLR) properties without GetDynamicMemberNames hint"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object -ExpandProperty HiddenProp
+        $results.Count | Should -Be 2
+        $results[0] | Should -Be 789
+        $results[1] | Should -Be 789
+    }
+
+    It "Select-Object should handle wildcarded dynamic (DLR) properties when hinted by GetDynamicMemberNames"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object -ExpandProperty FooP*
+        $results.Count | Should -Be 2
+        $results[0] | Should -Be 123
+        $results[1] | Should -Be 123
+    }
+
+    It "Select-Object should work when multiple dynamic (DLR) properties match"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object *Prop
+        $results.Count | Should -Be 2
+        $results[0].FooProp | Should -Be 123
+        $results[0].BarProp | Should -Be 456
+        $results[1].FooProp | Should -Be 123
+        $results[1].BarProp | Should -Be 456
+    }
+
+    It "Select-Object -ExpandProperty should yield errors if multiple dynamic (DLR) properties match"{
+        $dynObj = [TestDynamic]::new()
+        $e = { $results = $dynObj, $dynObj | Select-Object -ExpandProperty *Prop -ErrorAction Stop} |
+            Should -Throw -PassThru -ErrorId "MutlipleExpandProperties,Microsoft.PowerShell.Commands.SelectObjectCommand"
+        $e.CategoryInfo | Should -Match "PSArgumentException"
+    }
 }
 
 Describe "Select-Object with Property = '*'" -Tags "CI" {

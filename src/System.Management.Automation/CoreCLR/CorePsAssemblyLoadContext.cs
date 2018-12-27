@@ -83,6 +83,7 @@ namespace System.Management.Automation
                         string message = string.Format(CultureInfo.CurrentCulture, BaseFolderDoesNotExist, basePath);
                         throw new ArgumentException(message, "basePaths");
                     }
+
                     _probingPaths[i] = basePath.Trim();
                 }
             }
@@ -100,7 +101,7 @@ namespace System.Management.Automation
 
         #region Fields
 
-        private readonly static object s_syncObj = new object();
+        private static readonly object s_syncObj = new object();
         private readonly string[] _probingPaths;
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary
@@ -108,6 +109,9 @@ namespace System.Management.Automation
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
+        private readonly HashSet<string> _blackListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
+                "System.Windows.Forms"
+            };
 
 #if !UNIX
         private string _winDir;
@@ -295,6 +299,13 @@ namespace System.Management.Automation
         private bool TryFindInGAC(AssemblyName assemblyName, out string assemblyFilePath)
         {
             assemblyFilePath = null;
+            if (_blackListedAssemblies.Contains(assemblyName.Name))
+            {
+                // DotNet catches and throws a new exception with no inner exception
+                // We cannot change the message DotNet returns.
+                return false;
+            }
+
             if (Internal.InternalTestHooks.DisableGACLoading)
             {
                 return false;

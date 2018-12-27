@@ -40,6 +40,7 @@ namespace Microsoft.PowerShell.Commands
                 return internalException;
             }
         }
+
         protected Exception internalException = null;
     }
 
@@ -93,6 +94,7 @@ namespace Microsoft.PowerShell.Commands
         internal WmiState State
         {
             get { return _state; }
+
             set { _state = value; }
         }
 
@@ -122,6 +124,7 @@ namespace Microsoft.PowerShell.Commands
                 returnValue.Append(" where ");
                 returnValue.Append(getObject.Filter);
             }
+
             return returnValue.ToString();
         }
 
@@ -155,13 +158,13 @@ namespace Microsoft.PowerShell.Commands
                 RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 return;
             }
+
             thread.IsBackground = true;
             //thread.SetApartmentState( ApartmentState.STA);
             thread.Start();
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
@@ -175,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
             OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
             operationStateEventArgs.OperationState = state;
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
-        } // RaiseOperationCompleteEvent
+        }
 
         ///<summary>
         /// Raise WMI state changed event
@@ -213,6 +216,7 @@ namespace Microsoft.PowerShell.Commands
                             RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                             return;
                         }
+
                         mObj = ((ManagementClass)setObject.InputObject).CreateInstance();
                         setObject.PutType = PutType.CreateOnly;
                     }
@@ -237,6 +241,7 @@ namespace Microsoft.PowerShell.Commands
 
                         mObj = (ManagementObject)setObject.InputObject.Clone();
                     }
+
                     if (setObject.Arguments != null)
                     {
                         IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
@@ -245,6 +250,7 @@ namespace Microsoft.PowerShell.Commands
                             mObj[en.Key as string] = en.Value;
                         }
                     }
+
                     pOptions.Type = setObject.PutType;
                     if (mObj != null)
                     {
@@ -291,6 +297,7 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
+
                     setObject.PutType = PutType.CreateOnly;
                 }
                 else
@@ -317,6 +324,7 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
+
                     if (mPath.IsClass)
                     {
                         if (setObject.flagSpecified && setObject.PutType != PutType.CreateOnly)
@@ -327,6 +335,7 @@ namespace Microsoft.PowerShell.Commands
                             RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                             return;
                         }
+
                         setObject.PutType = PutType.CreateOnly;
                     }
                     else
@@ -356,6 +365,7 @@ namespace Microsoft.PowerShell.Commands
                         _computerName = mPath.Server;
                     }
                 }
+
                 ConnectionOptions options = setObject.GetConnectionOption();
                 ManagementObject mObject = null;
                 try
@@ -388,6 +398,7 @@ namespace Microsoft.PowerShell.Commands
                                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                                     return;
                                 }
+
                                 int namespaceIndex = setObject.Path.IndexOf(':');
                                 if (namespaceIndex == -1)
                                 {
@@ -396,6 +407,7 @@ namespace Microsoft.PowerShell.Commands
                                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                                     return;
                                 }
+
                                 int classIndex = (setObject.Path.Substring(namespaceIndex)).IndexOf('.');
                                 if (classIndex == -1)
                                 {
@@ -411,6 +423,7 @@ namespace Microsoft.PowerShell.Commands
                                 mClass.Scope = mScope;
                                 mInstance = mClass.CreateInstance();
                             }
+
                             mObject = mInstance;
                         }
                     }
@@ -421,6 +434,7 @@ namespace Microsoft.PowerShell.Commands
                         mClass.Scope = scope;
                         mObject = mClass.CreateInstance();
                     }
+
                     if (setObject.Arguments != null)
                     {
                         IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
@@ -429,6 +443,7 @@ namespace Microsoft.PowerShell.Commands
                             mObject[en.Key as string] = en.Value;
                         }
                     }
+
                     PutOptions pOptions = new PutOptions();
                     pOptions.Type = setObject.PutType;
                     if (mObject != null)
@@ -490,6 +505,7 @@ namespace Microsoft.PowerShell.Commands
                             inParamCount--;
                         }
                     }
+
                     invokeObject.InputObject.InvokeMethod(_results, invokeObject.Name, inputParameters, null);
                 }
                 catch (ManagementException e)
@@ -510,6 +526,7 @@ namespace Microsoft.PowerShell.Commands
                     _state = WmiState.Failed;
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 }
+
                 return;
             }
             else
@@ -582,6 +599,7 @@ namespace Microsoft.PowerShell.Commands
                             ManagementObject mInstance = new ManagementObject(mPath);
                             mObject = mInstance;
                         }
+
                         ManagementScope mScope = new ManagementScope(mPath, options);
                         mObject.Scope = mScope;
                     }
@@ -672,11 +690,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = true;
 
-                // CLR 4.0 Port note - use https://msdn.microsoft.com/en-us/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
+                // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
                 string localName = System.Net.Dns.GetHostName();
 
                 // And for this, use PsUtils.GetHostname()
-                string localFullName = System.Net.Dns.GetHostEntry("").HostName;
+                string localFullName = System.Net.Dns.GetHostEntry(string.Empty).HostName;
                 if (computer.Equals(".") || computer.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localName, StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localFullName, StringComparison.OrdinalIgnoreCase))
@@ -720,6 +738,7 @@ namespace Microsoft.PowerShell.Commands
                     _state = WmiState.Failed;
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 }
+
                 return;
             }
             else
@@ -751,11 +770,13 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
+
                     if (!(mPath.Server == "." && removeObject.serverNameSpecified))
                     {
                         _computerName = mPath.Server;
                     }
                 }
+
                 try
                 {
                     if (removeObject.Path != null)
@@ -771,6 +792,7 @@ namespace Microsoft.PowerShell.Commands
                             ManagementObject mInstance = new ManagementObject(mPath);
                             mObject = mInstance;
                         }
+
                         ManagementScope mScope = new ManagementScope(mPath, options);
                         mObject.Scope = mScope;
                     }
@@ -781,6 +803,7 @@ namespace Microsoft.PowerShell.Commands
                         mObject = mClass;
                         mObject.Scope = scope;
                     }
+
                     mObject.Delete(_results);
                 }
                 catch (ManagementException e)
@@ -827,6 +850,7 @@ namespace Microsoft.PowerShell.Commands
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                     return;
                 }
+
                 try
                 {
                     if (getObject.Recurse.IsPresent)
@@ -850,6 +874,7 @@ namespace Microsoft.PowerShell.Commands
                                     namespaceArray.Add(connectNamespace + "\\" + obj["Name"]);
                                 }
                             }
+
                             if (topNamespace)
                             {
                                 topNamespace = false;
@@ -859,6 +884,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 sinkArray.Add(_job.GetNewSink());
                             }
+
                             connectArray.Add(scope);
                             currentNamespaceCount++;
                         }
@@ -881,6 +907,7 @@ namespace Microsoft.PowerShell.Commands
                                 currentNamespaceCount++;
                                 continue;
                             }
+
                             if (topNamespace)
                             {
                                 topNamespace = false;
@@ -890,6 +917,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 searcher.Get((ManagementOperationObserver)sinkArray[currentNamespaceCount]);
                             }
+
                             currentNamespaceCount++;
                         }
                     }
@@ -921,8 +949,10 @@ namespace Microsoft.PowerShell.Commands
                     _state = WmiState.Failed;
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 }
+
                 return;
             }
+
             string queryString = string.IsNullOrEmpty(getObject.Query) ? GetWmiQueryString() : getObject.Query;
             ObjectQuery query = new ObjectQuery(queryString.ToString());
             try
@@ -1111,6 +1141,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] ComputerName
         {
             get { return _computerName; }
+
             set { _computerName = value; serverNameSpecified = true; }
         }
         /// <summary>
@@ -1125,6 +1156,7 @@ namespace Microsoft.PowerShell.Commands
         public string Namespace
         {
             get { return _nameSpace; }
+
             set { _nameSpace = value; namespaceSpecified = true; }
         }
         #endregion Parameters
@@ -1172,6 +1204,7 @@ namespace Microsoft.PowerShell.Commands
                     options.SecurePassword = this.Credential.Password;
                 }
             }
+
             return options;
         }
         /// <summary>
@@ -1209,11 +1242,13 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 throw;
                             }
+
                             int namespaceIndex = setObject.Path.IndexOf(':');
                             if (namespaceIndex == -1)
                             {
                                 throw;
                             }
+
                             int classIndex = (setObject.Path.Substring(namespaceIndex)).IndexOf('.');
                             if (classIndex == -1)
                             {
@@ -1226,6 +1261,7 @@ namespace Microsoft.PowerShell.Commands
                             mClass.Scope = mScope;
                             mInstance = mClass.CreateInstance();
                         }
+
                         mObject = mInstance;
                     }
                 }
@@ -1236,6 +1272,7 @@ namespace Microsoft.PowerShell.Commands
                     mClass.Scope = scope;
                     mObject = mClass.CreateInstance();
                 }
+
                 if (setObject.Arguments != null)
                 {
                     IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
@@ -1245,6 +1282,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return mObject;
         }
         /// <summary>
@@ -1268,6 +1306,7 @@ namespace Microsoft.PowerShell.Commands
                          ErrorCategory.InvalidOperation,
                          wmiInstance.PutType));
                     }
+
                     wmiInstance.PutType = PutType.CreateOnly;
                 }
                 else
@@ -1296,6 +1335,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.InvalidOperation,
                             wmiInstance.ComputerName));
                     }
+
                     if (mPath.IsClass)
                     {
                         if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
@@ -1307,6 +1347,7 @@ namespace Microsoft.PowerShell.Commands
                              ErrorCategory.InvalidOperation,
                              wmiInstance.PutType));
                         }
+
                         wmiInstance.PutType = PutType.CreateOnly;
                     }
                     else
@@ -1330,6 +1371,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return mPath;
         }
 
@@ -1358,6 +1400,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.InvalidOperation,
                             wmiInstance.PutType));
                         }
+
                         mObj = ((ManagementClass)wmiInstance.InputObject).CreateInstance();
                         wmiInstance.PutType = PutType.CreateOnly;
                     }
@@ -1383,6 +1426,7 @@ namespace Microsoft.PowerShell.Commands
 
                         mObj = (ManagementObject)wmiInstance.InputObject.Clone();
                     }
+
                     if (wmiInstance.Arguments != null)
                     {
                         IDictionaryEnumerator en = wmiInstance.Arguments.GetEnumerator();
@@ -1393,6 +1437,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return mObj;
         }
 
@@ -1406,6 +1451,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ((System.Management.Automation.Runspaces.LocalRunspace)_context.CurrentRunspace).JobRepository.Add(wmiJob);
             }
+
             WriteObject(wmiJob);
         }
         // Get the PowerShell execution context if it's available at cmdlet creation time...
@@ -1436,6 +1482,7 @@ namespace Microsoft.PowerShell.Commands
                 job.JobUnblocked += new EventHandler(HandleJobUnblocked);
                 ChildJobs.Add(job);
             }
+
             CommonInit(throttleLimt);
         }
 
@@ -1497,6 +1544,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             if (e.JobStateInfo.State == JobState.Failed)
             {
                 //If any of the child job failed, we set status to failed
@@ -1514,6 +1562,7 @@ namespace Microsoft.PowerShell.Commands
                     allChildJobsFinished = true;
                 }
             }
+
             if (allChildJobsFinished)
             {
                 //if any child job failed, set status to failed
@@ -1554,7 +1603,7 @@ namespace Microsoft.PowerShell.Commands
         private void SetStatusMessage()
         {
             _statusMessage = "test";
-        } // SetStatusMessage
+        }
 
         private bool _moreData = false;
         /// <summary>
@@ -1600,6 +1649,7 @@ namespace Microsoft.PowerShell.Commands
                 return ConstructLocation();
             }
         }
+
         private String ConstructLocation()
         {
             StringBuilder location = new StringBuilder();
@@ -1609,6 +1659,7 @@ namespace Microsoft.PowerShell.Commands
                 location.Append(job.Location);
                 location.Append(",");
             }
+
             location.Remove(location.Length - 1, 1);
 
             return location.ToString();
@@ -1648,6 +1699,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             StopJob();
                         }
+
                         _throttleManager.Dispose();
                         foreach (Job job in ChildJobs)
                         {
@@ -1797,6 +1849,7 @@ namespace Microsoft.PowerShell.Commands
             SetJobState(JobState.Running, null);
             JobUnblocked.SafeInvoke(this, EventArgs.Empty);
         }
+
         internal ManagementOperationObserver GetNewSink()
         {
             ManagementOperationObserver wmiSink = new ManagementOperationObserver();
@@ -1805,6 +1858,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sinkCompleted++;
             }
+
             wmiSink.ObjectReady += new ObjectReadyEventHandler(this.NewObject);
             wmiSink.Completed += new CompletedEventHandler(this.JobDone);
             return wmiSink;
@@ -1819,6 +1873,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _bAtLeastOneObject = true;
             }
+
             this.WriteObject(obj.NewObject);
         }
 
@@ -1831,10 +1886,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sinkCompleted--;
             }
+
             if (obj.Status != ManagementStatus.NoError)
             {
                 _bJobFailed = true;
             }
+
             if (_sinkCompleted == 0)
             {
                 //Notify throttle manager and change the state to complete
@@ -1866,6 +1923,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sinkCompleted--;
             }
+
             if (_sinkCompleted == 0)
             {
                 _helper.RaiseOperationCompleteEvent(null, OperationState.StopComplete);
@@ -1930,6 +1988,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private bool _isDisposed;
 
         /// <summary>
@@ -2017,6 +2076,6 @@ namespace Microsoft.PowerShell.Commands
                 SetJobState(JobState.Stopped, _helper.InternalException);
             }
             //Do Nothing
-        } // HandleThrottleComplete
+        }
     }
 }

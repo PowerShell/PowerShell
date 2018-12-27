@@ -20,6 +20,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return type.GetGenericArguments()[0];
             }
+
             return type;
         }
 
@@ -30,6 +31,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return typeof(Nullable<>).MakeGenericType(type);
             }
+
             return type;
         }
 
@@ -64,6 +66,7 @@ namespace System.Management.Automation.Interpreter
                         return true;
                 }
             }
+
             return false;
         }
 
@@ -84,6 +87,7 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.UInt64:
                     return true;
             }
+
             return false;
         }
 
@@ -105,6 +109,7 @@ namespace System.Management.Automation.Interpreter
                         return true;
                 }
             }
+
             return false;
         }
     }
@@ -213,6 +218,7 @@ namespace System.Management.Automation.Interpreter
                         #endregion
                 }
             }
+
             throw Assert.Unreachable;
         }
     }
@@ -405,6 +411,7 @@ namespace System.Management.Automation.Interpreter
                     }
                 }
             }
+
             value = default(TValue);
             return false;
         }
@@ -463,6 +470,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return _dict.Count;
                 }
+
                 return _count;
             }
         }
@@ -505,6 +513,7 @@ namespace System.Management.Automation.Interpreter
 
                 throw new KeyNotFoundException();
             }
+
             set
             {
                 Debug.Assert(key != null);
@@ -550,6 +559,7 @@ namespace System.Management.Automation.Interpreter
                         {
                             _dict[_keysAndValues[i].Key] = _keysAndValues[i].Value;
                         }
+
                         _keysAndValues = null;
 
                         _dict[key] = value;
@@ -646,8 +656,10 @@ namespace System.Management.Automation.Interpreter
                 {
                     return res;
                 }
+
                 throw new KeyNotFoundException();
             }
+
             set
             {
                 Add(key, value);
@@ -703,6 +715,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return GetStorageInfo().Value;
             }
+
             set
             {
                 GetStorageInfo().Value = value;
@@ -754,31 +767,6 @@ namespace System.Management.Automation.Interpreter
 
         #region Storage implementation
 
-#if SILVERLIGHT
-        private static int _cfThreadIdDispenser = 1;
-
-        [ThreadStatic]
-        private static int _cfThreadId;
-
-        private static int GetCurrentThreadId() {
-            if (PlatformAdaptationLayer.IsCompactFramework) {
-                // CF doesn't index threads by small integers, so we need to do the indexing ourselves:
-                int id = _cfThreadId;
-                if (id == 0) {
-                    _cfThreadId = id = Interlocked.Increment(ref _cfThreadIdDispenser);
-                }
-                return id;
-            } else {
-                return Thread.CurrentThread.ManagedThreadId;
-            }
-        }
-#else
-        private static int GetCurrentThreadId()
-        {
-            return Thread.CurrentThread.ManagedThreadId;
-        }
-#endif
-
         /// <summary>
         /// Gets the StorageInfo for the current thread.
         /// </summary>
@@ -789,7 +777,7 @@ namespace System.Management.Automation.Interpreter
 
         private StorageInfo GetStorageInfo(StorageInfo[] curStorage)
         {
-            int threadId = GetCurrentThreadId();
+            int threadId = Thread.CurrentThread.ManagedThreadId;
 
             // fast path if we already have a value in the array
             if (curStorage != null && curStorage.Length > threadId)
@@ -839,7 +827,7 @@ namespace System.Management.Automation.Interpreter
             StorageInfo[] curStorage = s_updating;
             try
             {
-                int threadId = GetCurrentThreadId();
+                int threadId = Thread.CurrentThread.ManagedThreadId;
                 StorageInfo newInfo = new StorageInfo(Thread.CurrentThread);
 
                 // set to updating while potentially resizing/mutating, then we'll
@@ -866,6 +854,7 @@ namespace System.Management.Automation.Interpreter
                             newStorage[i] = curStorage[i];
                         }
                     }
+
                     curStorage = newStorage;
                 }
 
@@ -984,6 +973,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return expression;
             }
+
             return Expression.Block(expression, Utils.Empty());
         }
 
@@ -993,6 +983,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return Empty();
             }
+
             return Expression.Default(type);
         }
 
@@ -1071,6 +1062,7 @@ namespace System.Management.Automation.Interpreter
                 case ExpressionType.SubtractAssignChecked:
                     return true;
             }
+
             return false;
         }
     }
@@ -1099,6 +1091,7 @@ namespace System.Management.Automation.Interpreter
             {
                 result[count++] = select(t);
             }
+
             return result;
         }
 
@@ -1111,6 +1104,7 @@ namespace System.Management.Automation.Interpreter
             {
                 h ^= (h << 5) ^ cmp.GetHashCode(t);
             }
+
             return h;
         }
 
@@ -1120,6 +1114,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return false;
             }
+
             var cmp = EqualityComparer<T>.Default;
             var f = first.GetEnumerator();
             var s = second.GetEnumerator();
@@ -1132,6 +1127,7 @@ namespace System.Management.Automation.Interpreter
                     return false;
                 }
             }
+
             return true;
         }
     }

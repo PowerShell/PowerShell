@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -36,7 +37,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Disable ThrottleLimit parameter inherited from base class.
         /// </summary>
-        public new Int32 ThrottleLimit { set { } get { return 0; } }
+        public new int ThrottleLimit { set { } get { return 0; } }
+
         private ObjectStream _stream;
         private RemoteRunspace _tempRunspace;
 
@@ -106,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
         ParameterSetName = NameParameterSet)]
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
@@ -152,6 +154,7 @@ namespace Microsoft.PowerShell.Commands
         public override PSCredential Credential
         {
             get { return base.Credential; }
+
             set { base.Credential = value; }
         }
 
@@ -182,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = EnterPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = EnterPSSessionCommand.VMNameParameterSet)]
-        public String ConfigurationName { get; set; }
+        public string ConfigurationName { get; set; }
 
         #region Suppress PSRemotingBaseCmdlet SSH hash parameter set
 
@@ -493,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // A third-party host can throw any exception here..we should
                 // clean the runspace created in this case.
-                if ((null != remoteRunspace) && (remoteRunspace.ShouldCloseOnPop))
+                if ((remoteRunspace != null) && (remoteRunspace.ShouldCloseOnPop))
                 {
                     remoteRunspace.Close();
                 }
@@ -509,7 +512,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (null != _stream)
+            if (_stream != null)
             {
                 while (true)
                 {
@@ -518,19 +521,18 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!_stream.ObjectReader.EndOfPipeline)
                     {
-                        Object streamObject = _stream.ObjectReader.Read();
+                        object streamObject = _stream.ObjectReader.Read();
                         WriteStreamObject((Action<Cmdlet>)streamObject);
                     }
                     else
                     {
                         break;
                     }
-                } // while ...
+                }
             }
-        }// EndProcessing()
+        }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -542,6 +544,7 @@ namespace Microsoft.PowerShell.Commands
                     remoteRunspace.CloseAsync();
                 }
                 catch (InvalidRunspaceStateException) { }
+
                 return;
             }
 
@@ -556,6 +559,7 @@ namespace Microsoft.PowerShell.Commands
                         null));
                 return;
             }
+
             host.PopRunspace();
         }
 
@@ -619,7 +623,7 @@ namespace Microsoft.PowerShell.Commands
             // having to mine through the error record details
             PSRemotingTransportException transException =
                         exception as PSRemotingTransportException;
-            String errorDetails = null;
+            string errorDetails = null;
             if ((transException != null) &&
                 (transException.ErrorCode ==
                     System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_REDIRECT_REQUESTED))
@@ -650,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteInvalidArgumentError(PSRemotingErrorId errorId, string resourceString, object errorArgument)
         {
-            String message = GetMessage(resourceString, errorArgument);
+            string message = GetMessage(resourceString, errorArgument);
             WriteError(new ErrorRecord(new ArgumentException(message), errorId.ToString(),
                 ErrorCategory.InvalidArgument, errorArgument));
         }
@@ -739,6 +743,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     connectionInfo.Credential = Credential;
                 }
+
                 connectionInfo.AuthenticationMechanism = Authentication;
                 UpdateConnectionInfo(connectionInfo);
                 connectionInfo.EnableNetworkAccess = EnableNetworkAccess;
@@ -897,6 +902,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         remoteRunspace = (RemoteRunspace)this.Session.Runspace;
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
@@ -1152,7 +1158,7 @@ namespace Microsoft.PowerShell.Commands
 
                     case ContainerIdParameterSet:
                         targetName = (this.ContainerId.Length <= 15) ? this.ContainerId
-                                                                     : this.ContainerId.Remove(12) + "...";
+                                                                     : this.ContainerId.Remove(14) + PSObjectHelper.Ellipsis;
                         break;
 
                     case SessionParameterSet:
@@ -1167,6 +1173,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             targetName = remoteRunspace.ConnectionInfo.ComputerName;
                         }
+
                         break;
 
                     default:
@@ -1282,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace GetRunspaceForSSHSession()
         {
             ParseSshHostName(HostName, out string host, out string userName, out int port);
-            var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port);
+            var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port, this.Subsystem);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
 
             // Use the class _tempRunspace field while the runspace is being opened so that StopProcessing can be handled at that time.

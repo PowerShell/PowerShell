@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     #region get-date
 
     /// <summary>
-    /// implementation for the get-date command
+    /// Implementation for the get-date command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113313")]
     [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// Allows user to override the date/time object that will be processed
+        /// Allows user to override the date/time object that will be processed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
@@ -32,17 +32,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _date;
             }
+
             set
             {
                 _date = value;
                 _dateSpecified = true;
             }
         }
+
         private DateTime _date;
         private bool _dateSpecified;
 
         /// <summary>
-        /// Allows the user to override the year
+        /// Allows the user to override the year.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(1, 9999)]
@@ -52,17 +54,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _year;
             }
+
             set
             {
                 _year = value;
                 _yearSpecified = true;
             }
         }
+
         private int _year;
         private bool _yearSpecified;
 
         /// <summary>
-        /// Allows the user to override the month
+        /// Allows the user to override the month.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(1, 12)]
@@ -72,17 +76,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _month;
             }
+
             set
             {
                 _month = value;
                 _monthSpecified = true;
             }
         }
+
         private int _month;
         private bool _monthSpecified;
 
         /// <summary>
-        /// Allows the user to override the day
+        /// Allows the user to override the day.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(1, 31)]
@@ -92,17 +98,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _day;
             }
+
             set
             {
                 _day = value;
                 _daySpecified = true;
             }
         }
+
         private int _day;
         private bool _daySpecified;
 
         /// <summary>
-        /// Allows the user to override the hour
+        /// Allows the user to override the hour.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 23)]
@@ -112,17 +120,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _hour;
             }
+
             set
             {
                 _hour = value;
                 _hourSpecified = true;
             }
         }
+
         private int _hour;
         private bool _hourSpecified;
 
         /// <summary>
-        /// Allows the user to override the minute
+        /// Allows the user to override the minute.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 59)]
@@ -132,17 +142,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _minute;
             }
+
             set
             {
                 _minute = value;
                 _minuteSpecified = true;
             }
         }
+
         private int _minute;
         private bool _minuteSpecified;
 
         /// <summary>
-        /// Allows the user to override the second
+        /// Allows the user to override the second.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 59)]
@@ -152,17 +164,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _second;
             }
+
             set
             {
                 _second = value;
                 _secondSpecified = true;
             }
         }
+
         private int _second;
         private bool _secondSpecified;
 
         /// <summary>
-        /// Allows the user to override the millisecond
+        /// Allows the user to override the millisecond.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 999)]
@@ -172,30 +186,32 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _millisecond;
             }
+
             set
             {
                 _millisecond = value;
                 _millisecondSpecified = true;
             }
         }
+
         private int _millisecond;
         private bool _millisecondSpecified;
 
         /// <summary>
-        /// This option determines the default output format used to display the object get-date emits
+        /// This option determines the default output format used to display the object get-date emits.
         /// </summary>
         [Parameter]
         public DisplayHintType DisplayHint { get; set; } = DisplayHintType.DateTime;
 
         /// <summary>
-        /// Unix format string
+        /// Unix format string.
         /// </summary>
         [Parameter(ParameterSetName = "UFormat")]
         [ValidateNotNullOrEmpty]
         public string UFormat { get; set; }
 
         /// <summary>
-        /// Unix format string
+        /// Unix format string.
         /// </summary>
         [Parameter(ParameterSetName = "net")]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
@@ -206,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         #region methods
 
         /// <summary>
-        /// get the time
+        /// Get the time.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -312,12 +328,12 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(outputObj);
             }
-        } // EndProcessing
+        }
 
         private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
-        /// This is more an implementation of the UNIX strftime
+        /// This is more an implementation of the UNIX strftime.
         /// </summary>
         private string UFormatDateString(DateTime dateTime)
         {
@@ -329,6 +345,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 offset++;
             }
+
             for (int i = offset; i < UFormat.Length; i++)
             {
                 if (UFormat[i] == '%')
@@ -372,6 +389,10 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append(StringUtil.Format("{0,2}", dateTime.Day));
                             break;
 
+                        case 'F':
+                            sb.Append("{0:yyyy}-{0:MM}-{0:dd}");
+                            break;
+                            
                         case 'G':
                             sb.Append("{0:yyyy}");
                             break;
@@ -478,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             // FirstFourDayWeek and DayOfWeek.Monday is from ISO 8601
-                            sb.Append(StringUtil.Format("{0:00}",calender.GetWeekOfYear(normalizedDatetime,
+                            sb.Append(StringUtil.Format("{0:00}", calender.GetWeekOfYear(normalizedDatetime,
                                                                                         CalendarWeekRule.FirstFourDayWeek,
                                                                                         DayOfWeek.Monday)));
                             break;
@@ -524,34 +545,32 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return StringUtil.Format(sb.ToString(), dateTime);
-        } // UFormatDateString
+        }
 
         #endregion
-    } // GetDateCommand
+    }
 
     #endregion
 
     #region DisplayHintType enum
 
     /// <summary>
-    /// Display Hint type
+    /// Display Hint type.
     /// </summary>
     public enum DisplayHintType
     {
         /// <summary>
-        /// Display preference Date-Only
+        /// Display preference Date-Only.
         /// </summary>
         Date,
         /// <summary>
-        /// Display preference Time-Only
+        /// Display preference Time-Only.
         /// </summary>
         Time,
         /// <summary>
-        /// Display preference Date and Time
+        /// Display preference Date and Time.
         /// </summary>
         DateTime
     }
-
     #endregion
-} // namespace Microsoft.PowerShell.Commands
-
+}

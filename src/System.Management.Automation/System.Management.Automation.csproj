@@ -9,18 +9,21 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0" />
-    <PackageReference Include="System.Memory" Version="4.5.0-*"/>
-    <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0" />
-    <PackageReference Include="System.Security.Permissions" Version="4.4.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0" />
+    <PackageReference Include="System.Management" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.1" />
+    <PackageReference Include="System.Security.Permissions" Version="4.5.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
-    <PackageReference Include="PowerShell.Core.Instrumentation" Version="6.0.0-beta*" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="6.2.0-preview.3" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -30,7 +33,6 @@
   <ItemGroup>
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Remove="engine\CodeMethods.cs" />
     <Compile Remove="engine\ComInterop\ArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\BoolArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\BoundDispEvent.cs" />
@@ -89,8 +91,6 @@
     <Compile Remove="engine\ComInterop\VariantArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\VariantArray.cs" />
     <Compile Remove="engine\ComInterop\VariantBuilder.cs" />
-    <Compile Remove="engine\ExtraAdapter.cs" />
-    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\PSMI\PSNegotiationData.cs" />
     <Compile Remove="engine\PSMI\PSPowerShellPipeline.cs" />
     <Compile Remove="engine\PSMI\Serialization\InternalMISerializer.cs" />
@@ -102,6 +102,8 @@
     <Compile Remove="engine\TransactionManager.cs" />
     <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
     <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
+    <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
+    <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
     <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
     <Compile Remove="namespaces\SafeTransactionHandle.cs" />
     <Compile Remove="namespaces\SafeRegistryHandle.cs" />
@@ -129,16 +131,14 @@
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
+    <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
+    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
+    <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
+  </ItemGroup>
 
 </Project>

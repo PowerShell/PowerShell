@@ -31,7 +31,7 @@ Any change that is a clear violation of the public contract.
 + Any existing behavior that results in an error message generally may be changed to provide new functionality.
 + A new instance field is added to a type (this impacts .NET serialization but not PowerShell serialization and so is considered acceptable.)
 + Adding new types, new type members and new cmdlets
-+ Making changes to the protocols with a protocol version increment. Older versions of the protocol would still need to be maintained to allow communication with earlier systems. This would require that protocol negotiation take place between the two systems. In addition to any protocol code changes, the Microsoft Open Specification program requires that the formal protocol specification for a protocol be updated in a timely manner.  An example of a MS protocol specification document (MS-PSRP) can be found at: https://msdn.microsoft.com/en-us/library/dd357801.aspx
++ Making changes to the protocols with a protocol version increment. Older versions of the protocol would still need to be maintained to allow communication with earlier systems. This would require that protocol negotiation take place between the two systems. In addition to any protocol code changes, the Microsoft Open Specification program requires that the formal protocol specification for a protocol be updated in a timely manner.  An example of a MS protocol specification document (MS-PSRP) can be found at: https://msdn.microsoft.com/library/dd357801.aspx
 
 ## Bucket 2: Reasonable Grey Area
 

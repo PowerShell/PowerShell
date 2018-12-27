@@ -21,26 +21,16 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
   Context 'Check null or empty value to the -Name parameter' {
     It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
       param($data)
-      try {
-        $null = Get-Service -Name $data -ErrorAction Stop
-        throw 'Expected error on previous command'
-      }
-      catch {
-        $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
-      }
+      { $null = Get-Service -Name $data -ErrorAction Stop } |
+        Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
     }
   }
 
   Context 'Check null or empty value to the -Name parameter via pipeline' {
     It 'Should throw if <value> is passed through pipeline to -Name parameter' -TestCases $testCases {
       param($data)
-      try {
-        $null = Get-Service -Name $data -ErrorAction Stop
-        throw 'Expected error on previous command'
-      }
-      catch {
-        $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
-      }
+      { $null = Get-Service -Name $data -ErrorAction Stop } |
+        Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
     }
   }
 
@@ -89,6 +79,6 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
        ErrorId = "NoServiceFoundForGivenDisplayName,Microsoft.PowerShell.Commands.GetServiceCommand" }
   ) {
     param($script,$errorid)
-    { & $script } | ShouldBeErrorId $errorid
+    { & $script } | Should -Throw -ErrorId $errorid
   }
 }

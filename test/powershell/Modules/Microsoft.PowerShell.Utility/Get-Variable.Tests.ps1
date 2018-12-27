@@ -3,7 +3,7 @@
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{
-		{ Get-Variable -EA Stop -Name nonexistingVariableName } | 
+		{ Get-Variable -ErrorAction Stop -Name nonexistingVariableName } |
 			Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
@@ -39,7 +39,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 
 	It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{
 		Set-Variable newVar testing -Option Private
-		{Get-Variable -Name newVar -EA Stop} | 
+		{Get-Variable -Name newVar -ErrorAction Stop} |
 			Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 }

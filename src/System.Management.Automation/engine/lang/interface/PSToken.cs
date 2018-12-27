@@ -76,25 +76,29 @@ namespace System.Management.Automation
         /// Map a V3 token to a V2 PSTokenType
         /// </summary>
         /// <param name="token">The V3 token</param>
-        /// <returns>The V2 PSTokenType</returns>
+        /// <returns>The V2 PSTokenType.</returns>
         public static PSTokenType GetPSTokenType(Token token)
         {
             if ((token.TokenFlags & TokenFlags.CommandName) != 0)
             {
                 return PSTokenType.Command;
             }
+
             if ((token.TokenFlags & TokenFlags.MemberName) != 0)
             {
                 return PSTokenType.Member;
             }
+
             if ((token.TokenFlags & TokenFlags.AttributeName) != 0)
             {
                 return PSTokenType.Attribute;
             }
+
             if ((token.TokenFlags & TokenFlags.TypeName) != 0)
             {
                 return PSTokenType.Type;
             }
+
             return s_tokenKindMapping[(int)token.Kind];
         }
 
@@ -374,7 +378,6 @@ namespace System.Management.Automation
         /// For example, 'get-process' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         Command,
 
@@ -385,7 +388,6 @@ namespace System.Management.Automation
         /// For example, '-name' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandParameter,
 
@@ -396,7 +398,6 @@ namespace System.Management.Automation
         /// For example, 'foo' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandArgument,
 
@@ -407,7 +408,6 @@ namespace System.Management.Automation
         /// For example, 12 in
         ///
         ///     $a=12
-        ///
         /// </remarks>
         Number,
 
@@ -418,7 +418,6 @@ namespace System.Management.Automation
         /// For example, "12" in
         ///
         ///     $a="12"
-        ///
         /// </remarks>
         String,
 
@@ -429,7 +428,6 @@ namespace System.Management.Automation
         /// For example, $a in
         ///
         ///     $a="12"
-        ///
         /// </remarks>
         Variable,
 
@@ -440,7 +438,6 @@ namespace System.Management.Automation
         /// For example, Name in
         ///
         ///     $a.Name
-        ///
         /// </remarks>
         Member,
 
@@ -455,7 +452,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a
         ///     }
-        ///
         /// </remarks>
         LoopLabel,
 
@@ -466,7 +462,6 @@ namespace System.Management.Automation
         /// For example, Mandatory in
         ///
         ///     param([Mandatory] $a)
-        ///
         /// </remarks>
         Attribute,
 
@@ -477,7 +472,6 @@ namespace System.Management.Automation
         /// For example, [string] in
         ///
         ///     $a = [string] 12
-        ///
         /// </remarks>
         Type,
 
@@ -488,7 +482,6 @@ namespace System.Management.Automation
         /// For example, + in
         ///
         ///     $a = 1 + 2
-        ///
         /// </remarks>
         Operator,
 
@@ -502,7 +495,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupStart,
 
@@ -516,7 +508,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupEnd,
 
@@ -530,7 +521,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Keyword,
 
@@ -545,7 +535,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Comment,
 
@@ -560,7 +549,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         StatementSeparator,
 
@@ -575,7 +563,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         NewLine,
 
@@ -587,7 +574,6 @@ namespace System.Management.Automation
         ///
         ///     get-command -name `
         ///     foo
-        ///
         /// </remarks>
         LineContinuation,
 

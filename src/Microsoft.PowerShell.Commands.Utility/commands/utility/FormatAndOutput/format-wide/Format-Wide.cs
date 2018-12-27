@@ -11,13 +11,13 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// implementation for the format-table command
+    /// Implementation for the format-table command.
     /// </summary>
     [Cmdlet(VerbsCommon.Format, "Wide", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113304")]
     public class FormatWideCommand : OuterFormatShapeCommandBase
     {
         /// <summary>
-        /// constructor to se the inner command
+        /// Constructor to se the inner command.
         /// </summary>
         public FormatWideCommand()
         {
@@ -27,22 +27,21 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        /// Positional parameter for properties, property sets and table sets
-        /// specified on the command line.
-        /// The parameter is optional, since the defaults
-        /// will be determined using property sets, etc.
+        /// Positional parameter for properties, property sets and table sets specified on the command line.
+        /// The parameter is optional, since the defaults will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]
         public object Property
         {
             get { return _prop; }
+
             set { _prop = value; }
         }
 
         private object _prop;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -54,12 +53,14 @@ namespace Microsoft.PowerShell.Commands
                     return _autosize.Value;
                 return false;
             }
+
             set { _autosize = value; }
         }
-        private Nullable<bool> _autosize = null;
+
+        private bool? _autosize = null;
 
         /// <summary>
-        /// optional, non positional parameter
+        /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -72,9 +73,11 @@ namespace Microsoft.PowerShell.Commands
                     return _column.Value;
                 return -1;
             }
+
             set { _column = value; }
         }
-        private Nullable<int> _column = null;
+
+        private int? _column = null;
 
         #endregion
 
@@ -96,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }
+
                 parameters.viewName = this.View;
             }
 
@@ -136,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 wideSpecific.columns = _column.Value;
             }
+
             return parameters;
         }
     }

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -18,15 +19,12 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Class to manage the caching of analysis data.
-    ///
     /// For performance, module command caching is flattened after discovery. Many modules have nested
     /// modules that can only be resolved at runtime - for example,
     /// script modules that declare: $env:PATH += "; $psScriptRoot". When
     /// doing initial analysis, we include these in 'ExportedCommands'.
-    ///
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
-    ///
     /// </summary>
     internal class AnalysisCache
     {
@@ -100,6 +98,12 @@ namespace System.Management.Automation
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
                 if (moduleManifestProperties != null)
                 {
+                    if (ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
+                    {
+                        ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
+                        return null;
+                    }
+
                     Version version;
                     if (ModuleUtils.IsModuleInVersionSubdirectory(modulePath, out version))
                     {
@@ -156,6 +160,31 @@ namespace System.Management.Automation
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisResult(modulePath, result != null);
 
             return result ?? AnalyzeTheOldWay(modulePath, context, lastWriteTime);
+        }
+
+        /// <summary>
+        /// Check if a module is compatible with the current PSEdition given its path and its manifest properties.
+        /// </summary>
+        /// <param name="modulePath">The path to the module.</param>
+        /// <param name="moduleManifestProperties">The properties of the module's manifest.</param>
+        /// <returns></returns>
+        internal static bool ModuleIsEditionIncompatible(string modulePath, Hashtable moduleManifestProperties)
+        {
+#if UNIX
+            return false;
+#else
+            if (!ModuleUtils.IsOnSystem32ModulePath(modulePath))
+            {
+                return false;
+            }
+
+            if (!moduleManifestProperties.ContainsKey("CompatiblePSEditions"))
+            {
+                return true;
+            }
+
+            return !Utils.IsPSEditionSupported(LanguagePrimitives.ConvertTo<string[]>(moduleManifestProperties["CompatiblePSEditions"]));
+#endif
         }
 
         internal static bool ModuleAnalysisViaGetModuleRequired(object modulePathObj, bool hadCmdlets, bool hadFunctions, bool hadAliases)
@@ -249,8 +278,10 @@ namespace System.Management.Automation
                 {
                     commandTypes = commandTypeToAdd;
                 }
+
                 result[command] = commandTypes;
             }
+
             return true;
         }
 
@@ -446,6 +477,14 @@ namespace System.Management.Automation
         internal static void CacheModuleExports(PSModuleInfo module, ExecutionContext context)
         {
             ModuleIntrinsics.Tracer.WriteLine("Requested caching for {0}", module.Name);
+
+            // Don't cache incompatible modules on the system32 module path even if loaded with
+            // -SkipEditionCheck, since it will break subsequent sessions.
+            if (!module.IsConsideredEditionCompatible)
+            {
+                ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
+                return;
+            }
 
             DateTime lastWriteTime;
             ModuleCacheEntry moduleCacheEntry;
@@ -650,10 +689,9 @@ namespace System.Management.Automation
             var keys = Entries.Keys;
             foreach (var key in keys)
             {
-                if (!Utils.NativeFileExists(key))
+                if (!File.Exists(key))
                 {
-                    ModuleCacheEntry unused;
-                    removedSomething |= Entries.TryRemove(key, out unused);
+                    removedSomething |= Entries.TryRemove(key, out ModuleCacheEntry _);
                 }
             }
 
@@ -669,6 +707,7 @@ namespace System.Management.Automation
             fixed (byte* b = bytes) *((int*)b) = val;
             stream.Write(bytes, 0, 4);
         }
+
         private static unsafe void Write(long val, byte[] bytes, FileStream stream)
         {
             Diagnostics.Assert(bytes.Length >= 8, "Must pass a large enough byte array");
@@ -690,7 +729,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (Utils.NativeFileExists(filename))
+                if (File.Exists(filename))
                 {
                     var fileLastWriteTime = new FileInfo(filename).LastWriteTime;
                     if (fileLastWriteTime > this.LastReadTime)
@@ -975,6 +1014,7 @@ namespace System.Management.Automation
                 {
                     Task.Delay(10000).ContinueWith(_ => result.Cleanup());
                 }
+
                 return result;
             }
         }
@@ -987,7 +1027,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (Utils.NativeFileExists(s_cacheStoreLocation))
+                    if (File.Exists(s_cacheStoreLocation))
                     {
                         return Deserialize(s_cacheStoreLocation);
                     }
@@ -1004,6 +1044,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 retryCount -= 1;
                 Thread.Sleep(25); // Sleep a bit to give time for another process to finish writing the cache
             } while (retryCount > 0);
@@ -1025,12 +1066,52 @@ namespace System.Management.Automation
 
         static AnalysisCacheData()
         {
-            s_cacheStoreLocation =
-                Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath") ??
+            // If user defines a custom cache path, then use that.
+            string userDefinedCachePath = Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath");
+            if (!string.IsNullOrEmpty(userDefinedCachePath))
+            {
+                s_cacheStoreLocation = userDefinedCachePath;
+                return;
+            }
+
+            string cacheFileName = "ModuleAnalysisCache";
+
+            // When multiple copies of pwsh are on the system, they should use their own copy of the cache.
+            // Append hash of `$PSHOME` to cacheFileName.
+            string hashString = CRC32Hash.ComputeHash(Utils.DefaultPowerShellAppBase);
+            cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
+
+            if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
+            {
+                // If any experimental features are enabled, we cannot use the default cache file because those
+                // features may expose commands that are not available in a regular powershell session, and we
+                // should not cache those commands in the default cache file because that will result in wrong
+                // auto-completion suggestions when the default cache file is used in another powershell session.
+                //
+                // Here we will generate a cache file name that represent the combination of enabled feature names.
+                // We first convert enabled feature names to lower case, then we sort the feature names, and then
+                // compute an CRC32 hash from the sorted feature names. We will use the CRC32 hash to generate the
+                // cache file name.
+                int index = 0;
+                string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
+                foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
+                {
+                    featureNames[index++] = featureName.ToLowerInvariant();
+                }
+
+                Array.Sort(featureNames);
+                string allNames = string.Join(Environment.NewLine, featureNames);
+
+                // Use CRC32 because it's faster.
+                // It's very unlikely to get collision from hashing the combinations of enabled features names.
+                hashString = CRC32Hash.ComputeHash(allNames);
+                cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
+            }
+
 #if UNIX
-                Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ModuleAnalysisCache");
+            s_cacheStoreLocation = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), cacheFileName);
 #else
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell\ModuleAnalysisCache");
+            s_cacheStoreLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell", cacheFileName);
 #endif
         }
     }
@@ -1044,4 +1125,4 @@ namespace System.Management.Automation
         public ConcurrentDictionary<string, CommandTypes> Commands;
         public ConcurrentDictionary<string, TypeAttributes> Types;
     }
-} // System.Management.Automation
+}

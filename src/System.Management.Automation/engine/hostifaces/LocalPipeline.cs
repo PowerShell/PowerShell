@@ -1,15 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
-using System.Threading;
-using Microsoft.Win32;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Tracing;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Threading;
 using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -152,13 +155,29 @@ namespace System.Management.Automation.Runspaces
 
             PSThreadOptions memberOptions = this.IsNested ? PSThreadOptions.UseCurrentThread : this.LocalRunspace.ThreadOptions;
 
+#if !UNIX
+            // Use thread proc that supports impersonation flow for new thread start.
+            ThreadStart invokeThreadProcDelegate = InvokeThreadProcImpersonate;
+            _identityToImpersonate = null;
+
+            // If impersonation identity flow is requested, then get current thread impersonation, if any.
+            if ((InvocationSettings != null) && InvocationSettings.FlowImpersonationPolicy)
+            {
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
+            }
+#else
+            // UNIX does not support thread impersonation flow.
+            ThreadStart invokeThreadProcDelegate = InvokeThreadProc;
+#endif
+
             switch (memberOptions)
             {
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-                        // Start execution of pipeline in another thread
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), DefaultPipelineStackSize);
+                        // Start execution of pipeline in another thread,
+                        // and support impersonation flow as needed (Windows only).
+                        Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
 #if !CORECLR
                         // No ApartmentState in CoreCLR
@@ -187,17 +206,20 @@ namespace System.Management.Automation.Runspaces
                     {
                         if (this.IsNested)
                         {
-                            // if this a nested pipeline we are already in the appropriate thread so we just execute the pipeline here
+                            // If this a nested pipeline we are already in the appropriate thread so we just execute the pipeline here.
+                            // Impersonation flow (Windows only) is not needed when using existing thread.
                             SetupInvokeThread(Thread.CurrentThread, true);
-                            this.InvokeThreadProc();
+                            InvokeThreadProc();
                         }
                         else
                         {
-                            // otherwise we execute the pipeline in the Runspace's thread
+                            // Otherwise we execute the pipeline in the Runspace's thread,
+                            // and support information flow on new thread as needed (Windows only).
                             PipelineThread invokeThread = this.LocalRunspace.GetPipelineThread();
                             SetupInvokeThread(invokeThread.Worker, true);
-                            invokeThread.Start(this.InvokeThreadProc);
+                            invokeThread.Start(invokeThreadProcDelegate);
                         }
+
                         break;
                     }
 
@@ -210,9 +232,10 @@ namespace System.Management.Automation.Runspaces
 
                         try
                         {
-                            // prepare invoke thread
+                            // Prepare invoke thread.
+                            // Impersonation flow (Windows only) is not needed when using existing thread.
                             SetupInvokeThread(Thread.CurrentThread, false);
-                            this.InvokeThreadProc();
+                            InvokeThreadProc();
                         }
                         finally
                         {
@@ -220,6 +243,7 @@ namespace System.Management.Automation.Runspaces
                             Thread.CurrentThread.CurrentCulture = oldCurrentCulture;
                             Thread.CurrentThread.CurrentUICulture = oldCurrentUICulture;
                         }
+
                         break;
                     }
 
@@ -322,6 +346,7 @@ namespace System.Management.Automation.Runspaces
                         SetHadErrors(true);
                         Runspace.ExecutionContext.AppendDollarError(ex);
                     }
+
                     throw;
                 }
 
@@ -338,8 +363,9 @@ namespace System.Management.Automation.Runspaces
                 // Set Informational Buffers on the host only if this is not a child.
                 // Do not overwrite parent's informational buffers.
                 if (!this.IsChild)
-                    LocalRunspace.ExecutionContext.InternalHost.
-                        InternalUI.SetInformationalMessageBuffers(InformationalBuffers);
+                {
+                    LocalRunspace.ExecutionContext.InternalHost.InternalUI.SetInformationalMessageBuffers(InformationalBuffers);
+                }
 
                 bool oldQuestionMarkValue = true;
                 bool savedIgnoreScriptDebug = this.LocalRunspace.ExecutionContext.IgnoreScriptDebug;
@@ -402,7 +428,6 @@ namespace System.Management.Automation.Runspaces
                                 catch (ExitNestedPromptException)
                                 {
                                     // Already at the top level so we just want to ignore this exception...
-                                    ;
                                 }
                             }
                         }
@@ -420,13 +445,6 @@ namespace System.Management.Automation.Runspaces
                             finally
                             {
                                 this.LocalRunspace.ExecutionContext.EngineHostInterface.SetShouldExit(exitCode);
-
-                                // close the remote runspaces available
-                                /*foreach (RemoteRunspaceInfo remoteRunspaceInfo in
-                                    this.LocalRunspace.RunspaceRepository.Runspaces)
-                                {
-                                    remoteRunspaceInfo.RemoteRunspace.CloseAsync();
-                                }*/
                             }
                         }
                     }
@@ -443,7 +461,6 @@ namespace System.Management.Automation.Runspaces
                         }
 
                         // Otherwise discard this type of exception generated by the debugger or from an unhandled break, continue or return.
-                        ;
                     }
                     catch (Exception)
                     {
@@ -500,12 +517,11 @@ namespace System.Management.Automation.Runspaces
             catch (FlowControlException)
             {
                 // Discard this type of exception generated by the debugger or from an unhandled break, continue or return.
-                ;
             }
             finally
             {
                 // 2004/02/26-JonN added IDisposable to PipelineProcessor
-                if (null != pipelineProcessor)
+                if (pipelineProcessor != null)
                 {
                     pipelineProcessor.Dispose();
                     pipelineProcessor = null;
@@ -515,8 +531,26 @@ namespace System.Management.Automation.Runspaces
             return flowControlException;
         }
 
-        // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-        // Removed HandleUnexpectedExceptions infrastructure
+#if !UNIX
+        /// <summary>
+        /// Invokes the InvokeThreadProc() method on new thread, and flows calling thread
+        /// impersonation as needed.
+        /// </summary>
+        private void InvokeThreadProcImpersonate()
+        {
+            if (_identityToImpersonate != null)
+            {
+                WindowsIdentity.RunImpersonated(
+                    _identityToImpersonate.AccessToken,
+                    () => InvokeThreadProc());
+
+                return;
+            }
+
+            InvokeThreadProc();
+        }
+#endif
+
         /// <summary>
         /// Start thread method for asynchronous pipeline execution.
         /// </summary>
@@ -527,19 +561,6 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-#if !CORECLR    // Impersonation is not supported in CoreCLR.
-                // Used to store old impersonation context if we impersonate.
-                System.Security.Principal.WindowsImpersonationContext oldImpersonationCtxt = null;
-                try
-                {
-                    if ((null != InvocationSettings) && (InvocationSettings.FlowImpersonationPolicy))
-                    {
-                        // we have a valid identity to impersonate.
-                        System.Security.Principal.WindowsIdentity identityToImPersonate =
-                            new System.Security.Principal.WindowsIdentity(InvocationSettings.WindowsIdentityToImpersonate.Token);
-                        oldImpersonationCtxt = identityToImPersonate.Impersonate();
-                    }
-#endif
                 // Set up pipeline internal host if it is available.
                 if (InvocationSettings != null && InvocationSettings.Host != null)
                 {
@@ -582,29 +603,6 @@ namespace System.Management.Automation.Runspaces
                     // Invoke finished successfully. Set state to Completed.
                     SetPipelineState(PipelineState.Completed);
                 }
-#if !CORECLR
-                }
-                finally
-                {
-                    // Impersonation is not supported in CoreCLR.
-                    // This finally block is needed to handle fxcop CA2124
-                    // If sensitive operations such as impersonation occur in the try block, and an
-                    // exception is thrown, the filter can execute before the finally block. For the
-                    // impersonation example, this means that the filter would execute as the impersonated user.
-                    if (null != oldImpersonationCtxt)
-                    {
-                        try
-                        {
-                            oldImpersonationCtxt.Undo();
-                            oldImpersonationCtxt.Dispose();
-                            oldImpersonationCtxt = null;
-                        }
-                        catch (System.Security.SecurityException)
-                        {
-                        }
-                    }
-                }
-#endif
             }
             catch (PipelineStoppedException ex)
             {
@@ -828,7 +826,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a PipelineProcessor object from LocalPipeline object.
         /// </summary>
-        /// <returns>Created PipelineProcessor object</returns>
+        /// <returns>Created PipelineProcessor object.</returns>
         private PipelineProcessor CreatePipelineProcessor()
         {
             CommandCollection commands = Commands;
@@ -854,7 +852,12 @@ namespace System.Management.Automation.Runspaces
                         try
                         {
                             CommandOrigin commandOrigin = command.CommandOrigin;
-                            if (IsNested)
+
+                            // Do not set command origin to internal if this is a script debugger originated command (which always
+                            // runs nested commands).  This prevents the script debugger command line from seeing private commands.
+                            if (IsNested &&
+                                !LocalRunspace.InNestedPrompt &&
+                                !((LocalRunspace.Debugger != null) && (LocalRunspace.Debugger.InBreakpoint)))
                             {
                                 commandOrigin = CommandOrigin.Internal;
                             }
@@ -903,6 +906,7 @@ namespace System.Management.Automation.Runspaces
                     commandProcessorBase.RedirectShellErrorOutputPipe = this.RedirectShellErrorOutputPipe;
                     pipelineProcessor.Add(commandProcessorBase);
                 }
+
                 return pipelineProcessor;
             }
             catch (RuntimeException)
@@ -1036,6 +1040,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return;
             }
+
             if (AddToHistory)
             {
                 _historyIdForThisPipeline = LocalRunspace.History.AddEntry(InstanceId, HistoryString, PipelineState, _pipelineStartTime, DateTime.Now, false);
@@ -1082,6 +1087,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return null;
             }
+
             return runspace.ExecutionContext;
         }
 
@@ -1103,11 +1109,14 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        // NTRAID#Windows Out Of Band Releases-925566-2005/12/09-JonN
         private bool _useExternalInput;
 
         private PipelineWriter _oldExternalErrorOutput;
         private PipelineWriter _oldExternalSuccessOutput;
+
+#if !UNIX
+        private WindowsIdentity _identityToImpersonate;
+#endif
 
         #endregion private_fields
 
@@ -1331,6 +1340,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _stopping;
             }
+
             set
             {
                 _stopping = value;
@@ -1347,6 +1357,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("item");
             }
+
             lock (_syncRoot)
             {
                 if (_stopping)
@@ -1354,8 +1365,10 @@ namespace System.Management.Automation.Runspaces
                     PipelineStoppedException e = new PipelineStoppedException();
                     throw e;
                 }
+
                 _stack.Push(item);
             }
+
             item.LocalPipeline = _localPipeline;
         }
 
@@ -1399,6 +1412,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     return;
                 }
+
                 _stopping = true;
 
                 copyStack = _stack.ToArray();

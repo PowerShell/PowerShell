@@ -122,32 +122,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// True if it is the inbox powershell for NanoServer or IoT.
-        /// </summary>
-        internal static bool IsInbox
-        {
-            get
-            {
-#if UNIX
-                return false;
-#else
-                if (_isInbox.HasValue) { return _isInbox.Value; }
-
-                _isInbox = false;
-                if (IsNanoServer || IsIoT)
-                {
-                    _isInbox = string.Equals(
-                        Utils.DefaultPowerShellAppBase,
-                        Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID),
-                        StringComparison.OrdinalIgnoreCase);
-                }
-
-                return _isInbox.Value;
-#endif
-            }
-        }
-
-        /// <summary>
         /// True if underlying system is Windows Desktop.
         /// </summary>
         public static bool IsWindowsDesktop
@@ -168,7 +142,6 @@ namespace System.Management.Automation
 #if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
-        private static bool? _isInbox = null;
         private static bool? _isWindowsDesktop = null;
 #endif
 
@@ -206,7 +179,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void RemoveTemporaryDirectory()
         {
-            if (null == _tempDirectory)
+            if (_tempDirectory == null)
             {
                 return;
             }
@@ -219,6 +192,7 @@ namespace System.Management.Automation
             {
                 // ignore if there is a failure
             }
+
             _tempDirectory = null;
         }
 
@@ -227,7 +201,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
-            if (null != _tempDirectory)
+            if (_tempDirectory != null)
             {
                 return _tempDirectory;
             }
@@ -267,10 +241,11 @@ namespace System.Management.Automation
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
-            if (null == envHome)
+            if (envHome == null)
             {
                 envHome = GetTemporaryDirectory();
             }
+
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
             string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
@@ -308,6 +283,7 @@ namespace System.Management.Automation
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgDataHomeDefault;
                     }
                     else
@@ -332,6 +308,7 @@ namespace System.Management.Automation
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgModuleDefault;
                     }
                     else
@@ -419,31 +396,35 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>
         /// The path to the specified system special folder, if that folder physically exists on your computer.
-        /// Otherwise, an empty string ("").
+        /// Otherwise, an empty string (string.Empty).
         /// </returns>
         private static string InternalGetFolderPath(System.Environment.SpecialFolder folder)
         {
             string folderPath = null;
 #if UNIX
             string envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
-            if (null == envHome)
+            if (envHome == null)
             {
                 envHome = Platform.GetTemporaryDirectory();
             }
+
             switch (folder)
             {
                 case System.Environment.SpecialFolder.ProgramFiles:
                     folderPath = "/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.ProgramFilesX86:
                     folderPath = "/usr/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.System:
                 case System.Environment.SpecialFolder.SystemX86:
                     folderPath = "/sbin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.Personal:
                     folderPath = envHome;
@@ -462,6 +443,7 @@ namespace System.Management.Automation
                             folderPath = String.Empty;
                         }
                     }
+
                     break;
                 default:
                     throw new NotSupportedException();
@@ -495,12 +477,6 @@ namespace System.Management.Automation
         internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
         {
             return Unix.NativeMethods.IsSymLink(fileInfo.FullName);
-        }
-
-        internal static string NonWindowsInternalGetTarget(SafeFileHandle handle)
-        {
-            // SafeHandle is a Windows concept.  Use the string version instead.
-            throw new PlatformNotSupportedException();
         }
 
         internal static string NonWindowsInternalGetTarget(string path)
@@ -545,36 +521,10 @@ namespace System.Management.Automation
             return Unix.NativeMethods.SetDate(&tm) == 0;
         }
 
-        internal static string NonWindowsGetDomainName()
-        {
-            string name = Unix.NativeMethods.GetFullyQualifiedName();
-            if (!string.IsNullOrEmpty(name))
-            {
-                // name is hostname.domainname, so extract domainname
-                int index = name.IndexOf('.');
-                if (index >= 0)
-                {
-                    return name.Substring(index + 1);
-                }
-            }
-            // if the domain name could not be found, do not throw, just return empty
-            return string.Empty;
-        }
-
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
             return Unix.NativeMethods.GetFullyQualifiedName() ?? string.Empty;
-        }
-
-        internal static bool NonWindowsIsFile(string path)
-        {
-            return Unix.NativeMethods.IsFile(path);
-        }
-
-        internal static bool NonWindowsIsDirectory(string path)
-        {
-            return Unix.NativeMethods.IsDirectory(path);
         }
 
         internal static bool NonWindowsIsSameFileSystemItem(string pathOne, string pathTwo)
@@ -631,6 +581,7 @@ namespace System.Management.Automation
                     {
                         s_userName = NativeMethods.GetUserName();
                     }
+
                     return s_userName ?? string.Empty;
                 }
             }
@@ -650,6 +601,7 @@ namespace System.Management.Automation
                             return dir;
                         }
                     }
+
                     return "/tmp";
                 }
             }
@@ -696,6 +648,7 @@ namespace System.Management.Automation
                     {
                         return invalidPid;
                     }
+
                     return Int32.Parse(parts[3]);
                 }
                 catch (Exception)
@@ -791,14 +744,6 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsFile([MarshalAs(UnmanagedType.LPStr)]string filePath);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)]string filePathOne,
                                                                  [MarshalAs(UnmanagedType.LPStr)]string filePathTwo);
 
@@ -808,4 +753,4 @@ namespace System.Management.Automation
             }
         }
     }
-} // namespace System.Management.Automation
+}

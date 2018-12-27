@@ -124,6 +124,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         GetRandomCommand.s_runspaceGeneratorMapLock.ExitWriteLock();
                     }
+
                     break;
             }
         }
@@ -131,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         private PolymorphicRandomNumberGenerator _generator;
 
         /// <summary>
-        /// Gets and sets generator associated with the current runspace
+        /// Gets and sets generator associated with the current runspace.
         /// </summary>
         private PolymorphicRandomNumberGenerator Generator
         {
@@ -160,6 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return _generator;
             }
+
             set
             {
                 _generator = value;
@@ -173,6 +175,7 @@ namespace Microsoft.PowerShell.Commands
                         // make sure we won't leave the generator around after runspace exits
                         myRunspace.StateChanged += CurrentRunspace_StateChanged;
                     }
+
                     GetRandomCommand.s_runspaceGeneratorMap[myRunspace.InstanceId] = _generator;
                 }
                 finally
@@ -187,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
         #region Common parameters
 
         /// <summary>
-        /// Seed used to reinitialize random numbers generator
+        /// Seed used to reinitialize random numbers generator.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
@@ -198,13 +201,13 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters for RandomNumberParameterSet
 
         /// <summary>
-        /// Maximum number to generate
+        /// Maximum number to generate.
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet, Position = 0)]
         public object Maximum { get; set; }
 
         /// <summary>
-        /// Minimum number to generate
+        /// Minimum number to generate.
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet)]
         public object Minimum { get; set; }
@@ -215,6 +218,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             return false;
         }
 
@@ -224,6 +228,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
+
             return false;
         }
 
@@ -266,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
         private int _numberOfProcessedListItems;
 
         /// <summary>
-        /// List from which random elements are chosen
+        /// List from which random elements are chosen.
         /// </summary>
         [Parameter(ParameterSetName = RandomListItemParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -274,7 +279,7 @@ namespace Microsoft.PowerShell.Commands
         public object[] InputObject { get; set; }
 
         /// <summary>
-        /// Number of items to output (number of list items or of numbers)
+        /// Number of items to output (number of list items or of numbers).
         /// </summary>
         [Parameter(ParameterSetName = GetRandomCommand.RandomListItemParameterSet)]
         [ValidateRange(1, int.MaxValue)]
@@ -321,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get a random Int64 type number
+        /// Get a random Int64 type number.
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -367,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the BeginProcessing method for get-random command
+        /// This method implements the BeginProcessing method for get-random command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -474,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
         // which proves that P_final(I) = K / N for all values of I.  QED.
 
         /// <summary>
-        /// This method implements the ProcessRecord method for get-random command
+        /// This method implements the ProcessRecord method for get-random command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -503,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the EndProcessing method for get-random command
+        /// This method implements the EndProcessing method for get-random command.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -547,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
     internal class PolymorphicRandomNumberGenerator
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public PolymorphicRandomNumberGenerator()
         {
@@ -567,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generates a random floating-point number that is greater than or equal to 0.0, and less than 1.0.
         /// </summary>
-        /// <returns>A random floating-point number that is greater than or equal to 0.0, and less than 1.0</returns>
+        /// <returns>A random floating-point number that is greater than or equal to 0.0, and less than 1.0.</returns>
         internal double NextDouble()
         {
             // According to the CLR source:
@@ -659,9 +664,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Samples a random integer
+        /// Samples a random integer.
         /// </summary>
-        /// <returns>A random integer, using the full range of Int32</returns>
+        /// <returns>A random integer, using the full range of Int32.</returns>
         private int InternalSample()
         {
             int result;
@@ -676,7 +681,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Samples a random int when the range is large. This does
         /// not need to be in the range of -Double.MaxValue .. Double.MaxValue,
-        /// just 0.. (2 * Int32.MaxValue) - 1
+        /// just 0.. (2 * Int32.MaxValue) - 1 .
         /// </summary>
         /// <returns></returns>
         private double InternalSampleLargeRange()

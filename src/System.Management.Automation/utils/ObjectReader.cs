@@ -44,7 +44,7 @@ namespace System.Management.Automation.Internal
             {
                 lock (_monitorObject)
                 {
-                    bool firstRegistrant = (null == InternalDataReady);
+                    bool firstRegistrant = (InternalDataReady == null);
                     InternalDataReady += value;
                     if (firstRegistrant)
                     {
@@ -52,12 +52,13 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+
             remove
             {
                 lock (_monitorObject)
                 {
                     InternalDataReady -= value;
-                    if (null == InternalDataReady)
+                    if (InternalDataReady == null)
                     {
                         _stream.DataReady -= new EventHandler(this.OnDataReady);
                     }
@@ -225,7 +226,7 @@ namespace System.Management.Automation.Internal
         protected abstract void Dispose(bool disposing);
 
         #endregion IDisposable
-    } // ObjectReaderBase
+    }
 
     /// <summary>
     /// A PipelineReader reading objects from an ObjectStream
@@ -250,7 +251,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
@@ -263,7 +264,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single object from the stream
         /// </summary>
-        /// <returns>the next object in the stream</returns>
+        /// <returns>The next object in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         public override object Read()
         {
@@ -318,7 +319,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Peek the next object
         /// </summary>
-        /// <returns>The next object in the stream or ObjectStream.EmptyObject if the stream is empty</returns>
+        /// <returns>The next object in the stream or ObjectStream.EmptyObject if the stream is empty.</returns>
         public override object Peek()
         {
             return _stream.Peek();
@@ -335,7 +336,7 @@ namespace System.Management.Automation.Internal
                 _stream.Close();
             }
         }
-    } // ObjectReader
+    }
 
     /// <summary>
     /// A PipelineReader reading PSObjects from an ObjectStream
@@ -360,7 +361,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
@@ -373,7 +374,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single PSObject from the stream
         /// </summary>
-        /// <returns>the next PSObject in the stream</returns>
+        /// <returns>The next PSObject in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         public override PSObject Read()
         {
@@ -428,7 +429,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Peek the next PSObject
         /// </summary>
-        /// <returns>The next PSObject in the stream or ObjectStream.EmptyObject if the stream is empty</returns>
+        /// <returns>The next PSObject in the stream or ObjectStream.EmptyObject if the stream is empty.</returns>
         public override PSObject Peek()
         {
             return MakePSObject(_stream.Peek());
@@ -449,7 +450,7 @@ namespace System.Management.Automation.Internal
         #region Private
         private static PSObject MakePSObject(object o)
         {
-            if (null == o)
+            if (o == null)
                 return null;
 
             return PSObject.AsPSObject(o);
@@ -462,17 +463,18 @@ namespace System.Management.Automation.Internal
         private static Collection<PSObject> MakePSObjectCollection(
             Collection<object> coll)
         {
-            if (null == coll)
+            if (coll == null)
                 return null;
             Collection<PSObject> retval = new Collection<PSObject>();
             foreach (object o in coll)
             {
                 retval.Add(MakePSObject(o));
             }
+
             return retval;
         }
         #endregion Private
-    } // PSObjectReader
+    }
 
     /// <summary>
     /// A ObjectReader for a PSDataCollection ObjectStream
@@ -501,7 +503,7 @@ namespace System.Management.Automation.Internal
         public PSDataCollectionReader(PSDataCollectionStream<DataStoreType> stream)
             : base(stream)
         {
-            System.Management.Automation.Diagnostics.Assert(null != stream.ObjectStore,
+            System.Management.Automation.Diagnostics.Assert(stream.ObjectStore != null,
                 "Stream should have a valid data store");
             _enumerator = (PSDataCollectionEnumerator<DataStoreType>)stream.ObjectStore.GetEnumerator();
         }
@@ -512,7 +514,7 @@ namespace System.Management.Automation.Internal
         /// This method is not supported.
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         public override Collection<ReturnType> Read(int count)
         {
             throw new NotSupportedException();
@@ -578,6 +580,7 @@ namespace System.Management.Automation.Internal
             {
                 return new Collection<ReturnType>();
             }
+
             Collection<ReturnType> results = new Collection<ReturnType>();
             int readCount = maxRequested;
 
@@ -658,10 +661,10 @@ namespace System.Management.Automation.Internal
         /// <param name="computerName"></param>
         /// <param name="runspaceId"></param>
         internal PSDataCollectionPipelineReader(PSDataCollectionStream<DataStoreType> stream,
-            String computerName, Guid runspaceId)
+            string computerName, Guid runspaceId)
             : base(stream)
         {
-            System.Management.Automation.Diagnostics.Assert(null != stream.ObjectStore,
+            System.Management.Automation.Diagnostics.Assert(stream.ObjectStore != null,
                 "Stream should have a valid data store");
             _datastore = stream.ObjectStore;
             ComputerName = computerName;
@@ -674,7 +677,7 @@ namespace System.Management.Automation.Internal
         /// Computer name passed in by the pipeline which
         /// created this reader
         /// </summary>
-        internal String ComputerName { get; }
+        internal string ComputerName { get; }
 
         /// <summary>
         /// Runspace Id passed in by the pipeline which
@@ -686,7 +689,7 @@ namespace System.Management.Automation.Internal
         /// This method is not supported.
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         public override Collection<ReturnType> Read(int count)
         {
             throw new NotSupportedException();
@@ -759,6 +762,7 @@ namespace System.Management.Automation.Internal
             {
                 return new Collection<ReturnType>();
             }
+
             Collection<ReturnType> results = new Collection<ReturnType>();
             int readCount = maxRequested;
 
@@ -790,7 +794,7 @@ namespace System.Management.Automation.Internal
         /// Converts to the return type based on language primitives
         /// </summary>
         /// <param name="inputObject">input object to convert</param>
-        /// <returns>input object converted to the specified return type</returns>
+        /// <returns>Input object converted to the specified return type.</returns>
         private ReturnType ConvertToReturnType(object inputObject)
         {
             Type resultType = typeof(ReturnType);

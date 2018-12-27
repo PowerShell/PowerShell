@@ -143,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Session;
             }
+
             set
             {
                 base.Session = value;
@@ -155,7 +156,6 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
@@ -163,12 +163,13 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
-        public override String[] ComputerName
+        public override string[] ComputerName
         {
             get
             {
                 return base.ComputerName;
             }
+
             set
             {
                 base.ComputerName = value;
@@ -203,6 +204,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Credential;
             }
+
             set
             {
                 base.Credential = value;
@@ -223,13 +225,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public override Int32 Port
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        public override int Port
         {
             get
             {
                 return base.Port;
             }
+
             set
             {
                 base.Port = value;
@@ -252,6 +255,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.UseSSL;
             }
+
             set
             {
                 base.UseSSL = value;
@@ -287,12 +291,13 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        public override String ConfigurationName
+        public override string ConfigurationName
         {
             get
             {
                 return base.ConfigurationName;
             }
+
             set
             {
                 base.ConfigurationName = value;
@@ -309,12 +314,13 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
-        public override String ApplicationName
+        public override string ApplicationName
         {
             get
             {
                 return base.ApplicationName;
             }
+
             set
             {
                 base.ApplicationName = value;
@@ -338,12 +344,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        public override Int32 ThrottleLimit
+        public override int ThrottleLimit
         {
             set
             {
                 base.ThrottleLimit = value;
             }
+
             get
             {
                 return base.ThrottleLimit;
@@ -366,6 +373,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ConnectionUri;
             }
+
             set
             {
                 base.ConnectionUri = value;
@@ -397,11 +405,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _asjob;
             }
+
             set
             {
                 _asjob = value;
             }
         }
+
         private bool _asjob = false;
 
         /// <summary>
@@ -416,6 +426,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter InDisconnectedSession
         {
             get { return InvokeAndDisconnect; }
+
             set { InvokeAndDisconnect = value; }
         }
 
@@ -430,6 +441,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] SessionName
         {
             get { return DisconnectedSessionName; }
+
             set { DisconnectedSessionName = value; }
         }
 
@@ -456,8 +468,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter HideComputerName
         {
             get { return _hideComputerName; }
+
             set { _hideComputerName = value; }
         }
+
         private bool _hideComputerName;
 
         /// <summary>
@@ -471,12 +485,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        public String JobName
+        public string JobName
         {
             get
             {
                 return _name;
             }
+
             set
             {
                 if (!String.IsNullOrEmpty(value))
@@ -486,7 +501,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        private String _name = String.Empty;
+
+        private string _name = String.Empty;
 
         /// <summary>
         /// The script block that the user has specified in the
@@ -526,6 +542,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ScriptBlock;
             }
+
             set
             {
                 base.ScriptBlock = value;
@@ -573,6 +590,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.FilePath;
             }
+
             set
             {
                 base.FilePath = value;
@@ -590,6 +608,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.AllowRedirection;
             }
+
             set
             {
                 base.AllowRedirection = value;
@@ -610,6 +629,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.SessionOption;
             }
+
             set
             {
                 base.SessionOption = value;
@@ -629,6 +649,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Authentication;
             }
+
             set
             {
                 base.Authentication = value;
@@ -648,6 +669,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter EnableNetworkAccess
         {
             get { return base.EnableNetworkAccess; }
+
             set { base.EnableNetworkAccess = value; }
         }
 
@@ -662,6 +684,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter RunAsAdministrator
         {
             get { return base.RunAsAdministrator; }
+
             set { base.RunAsAdministrator = value; }
         }
 
@@ -678,6 +701,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] HostName
         {
             get { return base.HostName; }
+
             set { base.HostName = value; }
         }
 
@@ -690,6 +714,7 @@ namespace Microsoft.PowerShell.Commands
         public override string UserName
         {
             get { return base.UserName; }
+
             set { base.UserName = value; }
         }
 
@@ -703,6 +728,7 @@ namespace Microsoft.PowerShell.Commands
         public override string KeyFilePath
         {
             get { return base.KeyFilePath; }
+
             set { base.KeyFilePath = value; }
         }
 
@@ -718,6 +744,7 @@ namespace Microsoft.PowerShell.Commands
         public override SwitchParameter SSHTransport
         {
             get { return base.SSHTransport; }
+
             set { base.SSHTransport = value; }
         }
 
@@ -783,7 +810,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(RemotingErrorIdStrings.AsJobAndDisconnectedError);
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("SessionName") && !this.InvokeAndDisconnect)
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(SessionName)) && !this.InvokeAndDisconnect)
             {
                 throw new InvalidOperationException(RemotingErrorIdStrings.SessionNameWithoutInvokeDisconnected);
             }
@@ -982,6 +1009,7 @@ namespace Microsoft.PowerShell.Commands
                         // or not...there is no mix.
                         break;
                     }
+
                     ecHelper.ShouldUseSteppablePipelineOnServer = true;
                 }
             }
@@ -1055,6 +1083,7 @@ namespace Microsoft.PowerShell.Commands
                                         WriteObject(job);
                                     }
                                 }
+
                                 break;
 
                             case InvokeCommandCommand.SessionParameterSet:
@@ -1067,6 +1096,7 @@ namespace Microsoft.PowerShell.Commands
                                     this.JobRepository.Add(job);
                                     WriteObject(job);
                                 }
+
                                 break;
 
                             case InvokeCommandCommand.UriParameterSet:
@@ -1074,7 +1104,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (Operations.Count > 0)
                                     {
-                                        String[] locations = new String[ConnectionUri.Length];
+                                        string[] locations = new String[ConnectionUri.Length];
                                         for (int i = 0; i < locations.Length; i++)
                                         {
                                             locations[i] = ConnectionUri[i].ToString();
@@ -1088,11 +1118,12 @@ namespace Microsoft.PowerShell.Commands
                                         WriteObject(job);
                                     }
                                 }
+
                                 break;
-                        } // switch ...
-                    } // else ...
+                        }
+                    }
                 }
-            } // if (!pipelineinvoked...
+            }
 
             if (InputObject != AutomationNull.Value && !_inputStreamClosed)
             {
@@ -1116,7 +1147,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// InvokeAsync would have been called in ProcessRecord. Wait here
@@ -1220,11 +1251,11 @@ namespace Microsoft.PowerShell.Commands
                             // finally dispose the job.
                             _job.Dispose();
 
-                        } // if (needToCollect...
-                    }// else - job == null
+                        }
+                    }
                 }
-            }// if (!async ...
-        } // EndProcessing
+            }
+        }
 
         /// <summary>
         /// This method is called when the user sends a stop signal to the
@@ -1281,7 +1312,7 @@ namespace Microsoft.PowerShell.Commands
                     _needToCollect = false;
                 }
             }
-        }// StopProcessing()
+        }
 
         #endregion Overrides
 
@@ -1311,7 +1342,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _operationsComplete.Set();
             _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
-        } // HandleThrottleComplete
+        }
 
         /// <summary>
         /// Clears the internal invoke command instance on all
@@ -1406,6 +1437,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
             foreach (var ps in powershells)
             {
@@ -1426,6 +1458,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
             foreach (var ps in powershells)
             {
@@ -1806,6 +1839,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             if (retryCanceled &&
                 this.Host != null)
             {
@@ -1871,6 +1905,7 @@ namespace Microsoft.PowerShell.Commands
                 // in proc parameter set - just return
                 return;
             }
+
             if (!_asjob)
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.ComputerNameParameterSet) ||
@@ -2024,7 +2059,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // Dispose
+        }
 
         #endregion IDisposable Overrides
     }
@@ -2076,10 +2111,12 @@ namespace System.Management.Automation.Internal
             {
                 return;
             }
+
             if (secondsTotal < 1)
             {
                 return;
             }
+
             if (string.IsNullOrEmpty(computerName))
             {
                 throw new ArgumentNullException("computerName");

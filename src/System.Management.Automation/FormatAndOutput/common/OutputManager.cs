@@ -104,6 +104,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _lo.StopProcessing();
                 }
+
                 _isStopped = true;
             }
         }
@@ -155,13 +156,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal CommandWrapper command = new CommandWrapper();
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="typeName">ETS type name of the object to process</param>
-            /// <returns>true if there is a match</returns>
+            /// <returns>True if there is a match.</returns>
             internal bool AppliesToType(string typeName)
             {
-                foreach (String s in _applicableTypes)
+                foreach (string s in _applicableTypes)
                 {
                     if (string.Equals(s, typeName, StringComparison.OrdinalIgnoreCase))
                         return true;
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// to process the current pipeline object
         /// </summary>
         /// <param name="so">pipeline object to be processed</param>
-        /// <returns>applicable command entry</returns>
+        /// <returns>Applicable command entry.</returns>
         private CommandEntry GetActiveCommandEntry(PSObject so)
         {
             string typeName = PSObjectHelper.PSObjectIsOfExactType(so.InternalTypeNames);

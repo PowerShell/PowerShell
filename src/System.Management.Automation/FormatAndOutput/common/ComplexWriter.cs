@@ -88,19 +88,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             GenerateFormatEntryDisplay(feChild, currentDepth + 1);
                         }
                     }
+
                     continue;
                 }
+
                 if (obj is FormatNewLine)
                 {
                     this.WriteToScreen();
                     continue;
                 }
+
                 FormatTextField ftf = obj as FormatTextField;
                 if (ftf != null)
                 {
                     this.AddToBuffer(ftf.text);
                     continue;
                 }
+
                 FormatPropertyField fpf = obj as FormatPropertyField;
                 if (fpf != null)
                 {
@@ -292,6 +296,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 val += fi.rightIndentation;
             }
+
             return val;
         }
 
@@ -302,6 +307,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 val += fi.leftIndentation;
             }
+
             return val;
         }
 
@@ -343,7 +349,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// so that we do not break paths etc.
         /// </summary>
         /// <param name="s">input string</param>
-        /// <returns>a collection of words</returns>
+        /// <returns>A collection of words.</returns>
         private static IEnumerable<GetWordsResult> GetWords(string s)
         {
             StringBuilder sb = new StringBuilder();
@@ -490,6 +496,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _addedFirstLine = true;
                 }
+
                 _retVal.Add(s);
             }
 
@@ -653,7 +660,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// by honoring both \n and \r\n
         /// </summary>
         /// <param name="s">string to split</param>
-        /// <returns>string array with the values</returns>
+        /// <returns>String array with the values.</returns>
         internal static string[] SplitLines(string s)
         {
             if (string.IsNullOrEmpty(s))
@@ -701,7 +708,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (string.IsNullOrEmpty(s))
             {
-                return "";
+                return string.Empty;
             }
 
             int lineBreak = s.IndexOfAny(s_lineBreakChars);
@@ -711,7 +718,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return s;
             }
 
-            return s.Substring(0, lineBreak) + PSObjectHelper.ellipses;
+            return s.Substring(0, lineBreak) + PSObjectHelper.Ellipsis;
         }
 
         internal static string PadLeft(string val, int count)

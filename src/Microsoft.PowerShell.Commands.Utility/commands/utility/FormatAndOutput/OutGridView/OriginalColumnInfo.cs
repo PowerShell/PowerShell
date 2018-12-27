@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
             _parentCmdlet = parentCmdlet;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
             try
             {
@@ -31,9 +31,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // The live object has the liveObjectPropertyName property.
-                Object liveObjectValue = propertyInfo.Value;
+                object liveObjectValue = propertyInfo.Value;
                 ICollection collectionValue = liveObjectValue as ICollection;
-                if (null != collectionValue)
+                if (collectionValue != null)
                 {
                     liveObjectValue = _parentCmdlet.ConvertToString(PSObjectHelper.AsPSObject(propertyInfo.Value));
                 }
@@ -65,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // ignore
             }
+
             return null;
         }
     }

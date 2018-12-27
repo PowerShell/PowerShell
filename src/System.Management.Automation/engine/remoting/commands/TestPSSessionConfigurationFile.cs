@@ -29,8 +29,10 @@ namespace Microsoft.PowerShell.Commands
         public string Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
+
         private string _path;
 
         #endregion
@@ -38,7 +40,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

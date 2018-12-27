@@ -12,15 +12,15 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// helper class to do wildcard matching on MshExpressions
+    /// Helper class to do wildcard matching on PSPropertyExpressions.
     /// </summary>
-    internal sealed class MshExpressionFilter
+    internal sealed class PSPropertyExpressionFilter
     {
         /// <summary>
-        /// construct the class, using an array of patterns
+        /// Construct the class, using an array of patterns.
         /// </summary>
         /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
-        internal MshExpressionFilter(string[] wildcardPatternsStrings)
+        internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
             if (wildcardPatternsStrings == null)
             {
@@ -35,18 +35,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// try to match the expression against the array of wildcard patterns.
-        /// the first match shortcircuits the search
+        /// Try to match the expression against the array of wildcard patterns.
+        /// The first match shortcircuits the search.
         /// </summary>
-        /// <param name="expression">MshExpression to test against</param>
-        /// <returns>true if there is a match, else false</returns>
-        internal bool IsMatch(MshExpression expression)
+        /// <param name="expression">PSPropertyExpression to test against</param>
+        /// <returns>True if there is a match, else false.</returns>
+        internal bool IsMatch(PSPropertyExpression expression)
         {
             for (int k = 0; k < _wildcardPatterns.Length; k++)
             {
                 if (_wildcardPatterns[k].IsMatch(expression.ToString()))
                     return true;
             }
+
             return false;
         }
 
@@ -63,7 +64,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Select, "Object", DefaultParameterSetName = "DefaultParameter",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
@@ -72,14 +72,12 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ParameterSetName = "DefaultParameter")]
@@ -87,7 +85,6 @@ namespace Microsoft.PowerShell.Commands
         public object[] Property { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -95,7 +92,6 @@ namespace Microsoft.PowerShell.Commands
         public string[] ExcludeProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -103,19 +99,19 @@ namespace Microsoft.PowerShell.Commands
         public string ExpandProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
         public SwitchParameter Unique
         {
             get { return _unique; }
+
             set { _unique = value; }
         }
+
         private bool _unique;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -125,12 +121,13 @@ namespace Microsoft.PowerShell.Commands
         public int Last
         {
             get { return _last; }
+
             set { _last = value; _firstOrLastSpecified = true; }
         }
+
         private int _last = 0;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -140,13 +137,15 @@ namespace Microsoft.PowerShell.Commands
         public int First
         {
             get { return _first; }
+
             set { _first = value; _firstOrLastSpecified = true; }
         }
+
         private int _first = 0;
         private bool _firstOrLastSpecified;
 
         /// <summary>
-        /// Skips the specified number of items from top when used with First,from end when used with Last
+        /// Skips the specified number of items from top when used with First, from end when used with Last.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -162,14 +161,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// With this switch present, the cmdlet won't "short-circuit"
-        /// (i.e. won't stop upstream cmdlets after it knows that no further objects will be emitted downstream)
+        /// (i.e. won't stop upstream cmdlets after it knows that no further objects will be emitted downstream).
         /// </summary>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "IndexParameter")]
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
-        /// Used to display the object at specified index
+        /// Used to display the object at the specified index.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
@@ -181,15 +180,42 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _index;
             }
+
             set
             {
                 _index = value;
                 _indexSpecified = true;
+                _isIncludeIndex = true;
                 Array.Sort(_index);
             }
         }
+
+        /// <summary>
+        /// Used to display all objects at the specified indices.
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = "SkipIndexParameter")]
+        [ValidateRangeAttribute(0, int.MaxValue)]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public int[] SkipIndex
+        {
+            get
+            {
+                return _index;
+            }
+
+            set
+            {
+                _index = value;
+                _indexSpecified = true;
+                _isIncludeIndex = false;
+                Array.Sort(_index);
+            }
+        }
+
         private int[] _index;
         private bool _indexSpecified;
+        private bool _isIncludeIndex;
 
         #endregion
 
@@ -224,6 +250,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     base.Dequeue();
                 }
+
                 base.Enqueue(obj);
             }
 
@@ -276,21 +303,21 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private int _streamedObjectCount;
-            private int _first,_last,_skip,_skipLast;
+            private int _first, _last, _skip, _skipLast;
             private bool _firstOrLastSpecified;
         }
 
         /// <summary>
-        /// list of processed parameters obtained from the Expression array
+        /// List of processed parameters obtained from the Expression array.
         /// </summary>
         private List<MshParameter> _propertyMshParameterList;
 
         /// <summary>
-        /// singleton list of process parameters obtained from ExpandProperty
+        /// Singleton list of process parameters obtained from ExpandProperty.
         /// </summary>
         private List<MshParameter> _expandMshParameterList;
 
-        private MshExpressionFilter _exclusionFilter;
+        private PSPropertyExpressionFilter _exclusionFilter;
 
         private class UniquePSObjectHelper
         {
@@ -299,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 WrittenObject = o;
                 NotePropertyCount = notePropertyCount;
             }
+
             internal readonly PSObject WrittenObject;
             internal int NotePropertyCount { get; }
         }
@@ -313,6 +341,7 @@ namespace Microsoft.PowerShell.Commands
             if ((Property != null) && (Property.Length != 0))
             {
                 // Build property list taking into account the wildcards and @{name=;expression=}
+
                 _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
             else
@@ -328,11 +357,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (ExcludeProperty != null)
             {
-                _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
+                _exclusionFilter = new PSPropertyExpressionFilter(ExcludeProperty);
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
-                    Property = new Object[]{"*"};
+                    Property = new object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
                 }
             }
@@ -382,6 +411,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 FilteredWriteObject(result, matchedProperties);
             }
             else
@@ -394,15 +424,15 @@ namespace Microsoft.PowerShell.Commands
         {
             string name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
 
-            MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-            List<MshExpressionResult> expressionResults = new List<MshExpressionResult>();
-            foreach (MshExpression resolvedName in ex.ResolveNames(inputObject))
+            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            List<PSPropertyExpressionResult> expressionResults = new List<PSPropertyExpressionResult>();
+            foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
             {
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                 {
-                    List<MshExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
+                    List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
                     if (tempExprResults == null) continue;
-                    foreach (MshExpressionResult mshExpRes in tempExprResults)
+                    foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
                     {
                         expressionResults.Add(mshExpRes);
                     }
@@ -413,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
             // unless noexist-name itself contains wildcards
             if (expressionResults.Count == 0 && !ex.HasWildCardCharacters)
             {
-                expressionResults.Add(new MshExpressionResult(null, ex, null));
+                expressionResults.Add(new PSPropertyExpressionResult(null, ex, null));
             }
 
             // if we have an expansion, renaming is not acceptable
@@ -429,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            foreach (MshExpressionResult r in expressionResults)
+            foreach (PSPropertyExpressionResult r in expressionResults)
             {
                 // filter the exclusions, if any
                 if (_exclusionFilter != null && _exclusionFilter.IsMatch(r.ResolvedExpression))
@@ -450,20 +480,23 @@ namespace Microsoft.PowerShell.Commands
                             "EmptyScriptBlockAndNoName",
                             ErrorCategory.InvalidArgument, null));
                     }
+
                     mshProp = new PSNoteProperty(resolvedExpressionName, r.Result);
                 }
                 else
                 {
                     mshProp = new PSNoteProperty(name, r.Result);
                 }
+
                 result.Add(mshProp);
             }
         }
+
         private void ProcessExpandParameter(MshParameter p, PSObject inputObject,
             List<PSNoteProperty> matchedProperties)
         {
-            MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-            List<MshExpressionResult> expressionResults = ex.GetValues(inputObject);
+            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject);
 
             if (expressionResults.Count == 0)
             {
@@ -474,6 +507,7 @@ namespace Microsoft.PowerShell.Commands
                     inputObject);
                 throw new SelectObjectException(errorRecord);
             }
+
             if (expressionResults.Count > 1)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
@@ -484,7 +518,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new SelectObjectException(errorRecord);
             }
 
-            MshExpressionResult r = expressionResults[0];
+            PSPropertyExpressionResult r = expressionResults[0];
             if (r.Exception == null)
             {
                 // ignore the property value if it's null
@@ -563,6 +597,7 @@ namespace Microsoft.PowerShell.Commands
                 inputObject);
             WriteError(errorRecord);
         }
+
         private void FilteredWriteObject(PSObject obj, List<PSNoteProperty> addedNoteProperties)
         {
             Diagnostics.Assert(obj != null, "This command should never write null");
@@ -574,6 +609,7 @@ namespace Microsoft.PowerShell.Commands
                     SetPSCustomObject(obj);
                     WriteObject(obj);
                 }
+
                 return;
             }
             //if only unique is mentioned
@@ -596,6 +632,7 @@ namespace Microsoft.PowerShell.Commands
                                 break;
                             }
                         }
+
                         if (found)
                         {
                             isObjUnique = false;
@@ -607,6 +644,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
                 }
+
                 if (isObjUnique)
                 {
                     SetPSCustomObject(obj);
@@ -636,7 +674,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -650,16 +687,18 @@ namespace Microsoft.PowerShell.Commands
             _selectObjectQueue = new SelectObjectQueue(_first, _last, Skip, SkipLast, _firstOrLastSpecified);
         }
 
-        private int _indexOfCurrentObject = 0;
-        private int _indexCount = 0;
         /// <summary>
-        ///
+        /// Handles processing of InputObject.
         /// </summary>
         protected override void ProcessRecord()
         {
             if (InputObject != AutomationNull.Value && InputObject != null)
             {
-                if (!_indexSpecified)
+                if (_indexSpecified)
+                {
+                    ProcessIndexed();
+                }
+                else
                 {
                     _selectObjectQueue.Enqueue(InputObject);
                     PSObject streamingInputObject = _selectObjectQueue.StreamingDequeue();
@@ -667,40 +706,82 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ProcessObjectAndHandleErrors(streamingInputObject);
                     }
+
                     if (_selectObjectQueue.AllRequestedObjectsProcessed && !this.Wait)
                     {
                         this.EndProcessing();
                         throw new StopUpstreamCommandsException(this);
                     }
                 }
-                else
-                {
-                    if (_indexOfCurrentObject < _index.Length)
-                    {
-                        int currentlyRequestedIndex = _index[_indexOfCurrentObject];
-                        if (_indexCount == currentlyRequestedIndex)
-                        {
-                            ProcessObjectAndHandleErrors(InputObject);
-                            while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == currentlyRequestedIndex))
-                            {
-                                _indexOfCurrentObject++;
-                            }
-                        }
-                    }
-
-                    if (!this.Wait && _indexOfCurrentObject >= _index.Length)
-                    {
-                        this.EndProcessing();
-                        throw new StopUpstreamCommandsException(this);
-                    }
-
-                    _indexCount++;
-                }
             }
         }
 
         /// <summary>
-        ///
+        /// The index of the active index filter.
+        /// </summary>
+        private int _currentFilterIndex;
+
+        /// <summary>
+        /// The index of the object being processed.
+        /// </summary>
+        private int _currentObjectIndex;
+
+        /// <summary>
+        /// Handles processing of InputObject if -Index or -SkipIndex is specified.
+        /// </summary>
+        private void ProcessIndexed()
+        {
+            if (_isIncludeIndex)
+            {
+                if (_currentFilterIndex < _index.Length)
+                {
+                    int nextIndexToOutput = _index[_currentFilterIndex];
+                    if (_currentObjectIndex == nextIndexToOutput)
+                    {
+                        ProcessObjectAndHandleErrors(InputObject);
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToOutput))
+                        {
+                            _currentFilterIndex++;
+                        }
+                    }
+                }
+
+                if (!Wait && _currentFilterIndex >= _index.Length)
+                {
+                    EndProcessing();
+                    throw new StopUpstreamCommandsException(this);
+                }
+
+                _currentObjectIndex++;
+            }
+            else
+            {
+                if (_currentFilterIndex < _index.Length)
+                {
+                    int nextIndexToSkip = _index[_currentFilterIndex];
+                    if (_currentObjectIndex != nextIndexToSkip)
+                    {
+                        ProcessObjectAndHandleErrors(InputObject);
+                    }
+                    else
+                    {
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToSkip))
+                        {
+                            _currentFilterIndex++;
+                        }
+                    }
+                }
+                else
+                {
+                    ProcessObjectAndHandleErrors(InputObject);
+                }
+
+                _currentObjectIndex++;
+            }
+        }
+
+        /// <summary>
+        /// Completes the processing of Input.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -749,7 +830,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Used only internally for select-object
+    /// Used only internally for select-object.
     /// </summary>
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception is internal and never thrown by any public API")]
@@ -764,4 +845,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

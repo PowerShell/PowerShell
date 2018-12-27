@@ -18,11 +18,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The WMI Object to use
         /// </summary>
-        ///
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {
             get { return _inputObject; }
+
             set { _inputObject = value; }
         }
         /// <summary>
@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
         public string Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
         /// <summary>
@@ -41,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
         public string Class
         {
             get { return _className; }
+
             set { _className = value; }
         }
 
@@ -63,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 RunAsJob("Remove-WMIObject");
                 return;
             }
+
             if (_inputObject != null)
             {
                 try
@@ -71,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return;
                     }
+
                     _inputObject.Delete();
                 }
                 catch (ManagementException e)
@@ -83,6 +87,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord errorRecord = new ErrorRecord(e, "RemoveWMICOMException", ErrorCategory.InvalidOperation, null);
                     WriteError(errorRecord);
                 }
+
                 return;
             }
             else
@@ -116,12 +121,14 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.InvalidOperation,
                             this.ComputerName));
                     }
+
                     if (!(mPath.Server == "." && serverNameSpecified))
                     {
                         string[] serverName = new string[] { mPath.Server };
                         ComputerName = serverName;
                     }
                 }
+
                 foreach (string name in ComputerName)
                 {
                     try
@@ -139,6 +146,7 @@ namespace Microsoft.PowerShell.Commands
                                 ManagementObject mInstance = new ManagementObject(mPath);
                                 mObject = mInstance;
                             }
+
                             ManagementScope mScope = new ManagementScope(mPath, options);
                             mObject.Scope = mScope;
                         }
@@ -149,10 +157,12 @@ namespace Microsoft.PowerShell.Commands
                             mObject = mClass;
                             mObject.Scope = scope;
                         }
+
                         if (!ShouldProcess(mObject["__PATH"].ToString()))
                         {
                             continue;
                         }
+
                         mObject.Delete();
                     }
                     catch (ManagementException e)

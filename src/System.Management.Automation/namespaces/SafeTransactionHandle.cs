@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             IDtcTransaction dtcTransaction = TransactionInterop.GetDtcTransaction(managedTransaction);
             IKernelTransaction ktmInterface = dtcTransaction as IKernelTransaction;
-            if (null == ktmInterface)
+            if (ktmInterface == null)
             {
                 throw new NotSupportedException(RegistryProviderStrings.NotSupported_KernelTransactions);
             }

@@ -13,10 +13,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     internal static class DisplayCondition
     {
-        internal static bool Evaluate(PSObject obj, MshExpression ex, out MshExpressionResult expressionResult)
+        internal static bool Evaluate(PSObject obj, PSPropertyExpression ex, out PSPropertyExpressionResult expressionResult)
         {
             expressionResult = null;
-            List<MshExpressionResult> res = ex.GetValues(obj);
+            List<PSPropertyExpressionResult> res = ex.GetValues(obj);
             if (res.Count == 0)
                 return false;
             if (res[0].Exception != null)
@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 expressionResult = res[0];
                 return false;
             }
+
             return LanguagePrimitives.IsTrue(res[0].Result);
         }
     }
@@ -40,6 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Item = obj;
             AppliesTo = a;
         }
+
         internal TypeMatchItem(object obj, AppliesTo a, PSObject currentObject)
         {
             Item = obj;
@@ -48,7 +50,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         internal object Item { get; }
+
         internal AppliesTo AppliesTo { get; }
+
         internal PSObject CurrentObject { get; }
     }
 
@@ -78,13 +82,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             s_activeTracer = t;
         }
+
         internal static void ResetTracer()
         {
             s_activeTracer = s_classTracer;
         }
         #endregion tracer
 
-        internal TypeMatch(MshExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
+        internal TypeMatch(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
         {
             _expressionFactory = expressionFactory;
             _db = db;
@@ -92,7 +97,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _useInheritance = true;
         }
 
-        internal TypeMatch(MshExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames, bool useInheritance)
+        internal TypeMatch(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames, bool useInheritance)
         {
             _expressionFactory = expressionFactory;
             _db = db;
@@ -112,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _bestMatchIndex = match;
                 _bestMatchItem = item;
             }
+
             return _bestMatchIndex == BestMatchIndexPerfect;
         }
 
@@ -130,7 +136,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int best = BestMatchIndexUndefined;
             foreach (TypeOrGroupReference r in appliesTo.referenceList)
             {
-                MshExpression ex = null;
+                PSPropertyExpression ex = null;
                 if (r.conditionToken != null)
                 {
                     ex = _expressionFactory.CreateFromExpressionToken(r.conditionToken);
@@ -158,6 +164,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         currentMatch = ComputeBestMatchInGroup(tgd, currentObject, ex);
                     }
                 }
+
                 if (currentMatch == BestMatchIndexPerfect)
                     return currentMatch;
 
@@ -170,7 +177,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return best;
         }
 
-        private int ComputeBestMatchInGroup(TypeGroupDefinition tgd, PSObject currentObject, MshExpression ex)
+        private int ComputeBestMatchInGroup(TypeGroupDefinition tgd, PSObject currentObject, PSPropertyExpression ex)
         {
             int best = BestMatchIndexUndefined;
             int k = 0;
@@ -184,12 +191,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     best = currentMatch;
                 }
+
                 k++;
             }
+
             return best;
         }
 
-        private int MatchTypeIndex(string typeName, PSObject currentObject, MshExpression ex)
+        private int MatchTypeIndex(string typeName, PSObject currentObject, PSPropertyExpression ex)
         {
             if (string.IsNullOrEmpty(typeName))
                 return BestMatchIndexUndefined;
@@ -201,33 +210,36 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return k;
                 }
+
                 if (k == 0 && !_useInheritance)
                     break;
                 k++;
             }
+
             return BestMatchIndexUndefined;
         }
 
-        private bool MatchCondition(PSObject currentObject, MshExpression ex)
+        private bool MatchCondition(PSObject currentObject, PSPropertyExpression ex)
         {
             if (ex == null)
                 return true;
 
-            MshExpressionResult expressionResult;
+            PSPropertyExpressionResult expressionResult;
             bool retVal = DisplayCondition.Evaluate(currentObject, ex, out expressionResult);
             if (expressionResult != null && expressionResult.Exception != null)
             {
                 _failedResultsList.Add(expressionResult);
             }
+
             return retVal;
         }
 
-        private MshExpressionFactory _expressionFactory;
+        private PSPropertyExpressionFactory _expressionFactory;
         private TypeInfoDataBase _db;
         private Collection<string> _typeNameHierarchy;
         private bool _useInheritance;
 
-        private List<MshExpressionResult> _failedResultsList = new List<MshExpressionResult>();
+        private List<PSPropertyExpressionResult> _failedResultsList = new List<PSPropertyExpressionResult>();
 
         private int _bestMatchIndex = BestMatchIndexUndefined;
         private TypeMatchItem _bestMatchItem;
@@ -258,13 +270,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             s_activeTracer = t;
         }
+
         internal static void ResetTracer()
         {
             s_activeTracer = s_classTracer;
         }
         #endregion tracer
 
-        internal static EnumerableExpansion GetEnumerableExpansionFromType(MshExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
+        internal static EnumerableExpansion GetEnumerableExpansionFromType(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
         {
             TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (EnumerableExpansionDirective expansionDirective in db.defaultSettingsSection.enumerableExpansionDirectiveList)
@@ -274,6 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return expansionDirective.enumerableExpansion;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return ((EnumerableExpansionDirective)(match.BestMatch)).enumerableExpansion;
@@ -281,7 +295,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     EnumerableExpansion result = GetEnumerableExpansionFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -292,7 +306,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        internal static FormatShape GetShapeFromType(MshExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
+        internal static FormatShape GetShapeFromType(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
         {
             ShapeSelectionDirectives shapeDirectives = db.defaultSettingsSection.shapeSelectionDirectives;
 
@@ -304,6 +318,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return shapeSelOnType.formatShape;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return ((FormatShapeSelectionOnType)(match.BestMatch)).formatShape;
@@ -311,7 +326,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     FormatShape result = GetShapeFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -330,7 +345,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return FormatShape.List;
         }
 
-        internal static ViewDefinition GetViewByShapeAndType(MshExpressionFactory expressionFactory, TypeInfoDataBase db,
+        internal static ViewDefinition GetViewByShapeAndType(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db,
                 FormatShape shape, Collection<string> typeNames, string viewName)
         {
             if (shape == FormatShape.Undefined)
@@ -360,10 +375,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 Diagnostics.Assert(false, "unknown shape: this should never happen unless a new shape is added");
                 return null;
             }
+
             return GetView(expressionFactory, db, t, typeNames, viewName);
         }
 
-        internal static ViewDefinition GetOutOfBandView(MshExpressionFactory expressionFactory,
+        internal static ViewDefinition GetOutOfBandView(PSPropertyExpressionFactory expressionFactory,
                                                         TypeInfoDataBase db, Collection<string> typeNames)
         {
             TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
@@ -382,10 +398,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (null == result)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetOutOfBandView(expressionFactory, db, typesWithoutPrefix);
                 }
@@ -394,7 +410,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return result;
         }
 
-        private static ViewDefinition GetView(MshExpressionFactory expressionFactory, TypeInfoDataBase db, System.Type mainControlType, Collection<string> typeNames, string viewName)
+        private static ViewDefinition GetView(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, System.Type mainControlType, Collection<string> typeNames, string viewName)
         {
             TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
@@ -403,9 +419,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
-                        ControlBase.GetControlShapeName(vd.mainControl), (null != vd ? vd.name : string.Empty));
+                        ControlBase.GetControlShapeName(vd.mainControl), (vd != null ? vd.name : string.Empty));
                     continue;
                 }
+
                 if (IsOutOfBandView(vd))
                 {
                     ActiveTracer.WriteLine(
@@ -413,6 +430,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
+
                 if (vd.appliesTo == null)
                 {
                     ActiveTracer.WriteLine(
@@ -445,6 +463,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     TypeMatch.ResetTracer();
                 }
+
                 TraceHelper(vd, false);
             }
 
@@ -454,10 +473,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (null == result)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetView(expressionFactory, db, mainControlType, typesWithoutPrefix, viewName);
                 }
@@ -486,6 +505,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.AppendFormat(CultureInfo.InvariantCulture, " {0} NAME: {1}  GROUP: {2}",
                             ControlBase.GetControlShapeName(vd.mainControl), vd.name, tgr.name);
                     }
+
                     ActiveTracer.WriteLine(sb.ToString());
                 }
             }
@@ -498,10 +518,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 TraceHelper(bestMatchedVD, true);
             }
+
             return bestMatchedVD;
         }
 
-        private static ViewDefinition GetDefaultView(MshExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
+        private static ViewDefinition GetDefaultView(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
         {
             TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
 
@@ -517,6 +538,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
+
                 if (vd.appliesTo == null)
                 {
                     ActiveTracer.WriteLine(
@@ -524,6 +546,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
+
                 try
                 {
                     TypeMatch.SetTracer(ActiveTracer);
@@ -537,6 +560,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     TypeMatch.ResetTracer();
                 }
+
                 TraceHelper(vd, false);
             }
             // this is the best match we had
@@ -544,10 +568,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (null == result)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetDefaultView(expressionFactory, db, typesWithoutPrefix);
                 }
@@ -647,6 +671,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (String.Compare(controlReference.name, x.name, StringComparison.OrdinalIgnoreCase) == 0)
                     return x.controlBody;
             }
+
             return null;
         }
     }

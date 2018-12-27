@@ -50,6 +50,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.errorSource;
             }
         }
+
         private object errorSource;
     }
     #endregion
@@ -334,6 +335,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return;
             }
+
             this.OnNextCore(value);
         }
 
@@ -349,6 +351,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return session;
             }
         }
+
         private CimSession session;
 
         /// <summary>
@@ -466,6 +469,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     resultObject.Properties.Add(new PSNoteProperty(@"ItemValue", methodStreamedResult.ItemValue));
                 }
             }
+
             if (resultObject != null)
             {
                 resultObject.Properties.Add(new PSNoteProperty(@"PSComputerName", this.CurrentSession.ComputerName));

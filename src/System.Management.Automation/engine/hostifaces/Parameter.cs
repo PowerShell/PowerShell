@@ -59,6 +59,7 @@ namespace System.Management.Automation.Runspaces
             {
                 Name = null;
             }
+
             Value = value;
         }
 
@@ -110,6 +111,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return new CommandParameter(name, internalParameter.ArgumentValue);
             }
+
             if (name != null) // either a switch parameter or first part of parameter+argument
             {
                 return new CommandParameter(name);
@@ -156,6 +158,7 @@ namespace System.Management.Automation.Runspaces
                 spaceAfterParameter = true;
                 endPosition--;
             }
+
             Debug.Assert(endPosition > 0, "parameter name should have some non-whitespace characters in it");
 
             // now make sure that parameterText doesn't have whitespace at the end,
@@ -219,7 +222,7 @@ namespace System.Management.Automation.Runspaces
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject parameterAsPSObject = RemotingEncoder.CreateEmptyPSObject();

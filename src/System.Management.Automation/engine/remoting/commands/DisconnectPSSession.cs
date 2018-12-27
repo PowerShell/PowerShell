@@ -35,7 +35,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Disconnect a collection of PS sessions:
     /// > Get-PSSession | Disconnect-PSSession
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,
@@ -68,6 +67,7 @@ namespace Microsoft.PowerShell.Commands
         public int IdleTimeoutSec
         {
             get { return this.PSSessionOption.IdleTimeout.Seconds; }
+
             set { this.PSSessionOption.IdleTimeout = TimeSpan.FromSeconds(value); }
         }
 
@@ -81,6 +81,7 @@ namespace Microsoft.PowerShell.Commands
         public OutputBufferingMode OutputBufferingMode
         {
             get { return this.PSSessionOption.OutputBufferingMode; }
+
             set { this.PSSessionOption.OutputBufferingMode = value; }
         }
 
@@ -93,13 +94,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.IdParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit { get; set; } = 0;
+        public int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Disconnect-PSSession does not support ComputerName parameter set.
         /// This may change for later versions.
         /// </summary>
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         private PSSessionOption PSSessionOption
         {
@@ -110,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 return _sessionOption ?? (_sessionOption = new PSSessionOption());
             }
         }
+
         private PSSessionOption _sessionOption;
 
         /// <summary>
@@ -306,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
             // Read all objects in the stream pipeline.
             while (!_stream.ObjectReader.EndOfPipeline)
             {
-                Object streamObject = _stream.ObjectReader.Read();
+                object streamObject = _stream.ObjectReader.Read();
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
         }
@@ -500,6 +502,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailed, _remoteSession.InstanceId);
                     }
+
                     Exception reason = new RuntimeException(msg, e);
                     ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
@@ -562,5 +565,5 @@ namespace Microsoft.PowerShell.Commands
         private ObjectStream _stream = new ObjectStream();
 
         #endregion
-    } // DisconnectPSSessionCommand
+    }
 }

@@ -272,6 +272,7 @@ namespace System.Management.Automation
             {
                 throw new PSArgumentNullException("job");
             }
+
             if (definition == null)
             {
                 throw new PSArgumentNullException("definition");
@@ -325,7 +326,7 @@ namespace System.Management.Automation
         /// otherwise load the associated module and the requested source adapter.
         /// </summary>
         /// <param name="definition">JobDefinition supplies the JobSourceAdapter information.</param>
-        /// <returns>JobSourceAdapter</returns>
+        /// <returns>JobSourceAdapter.</returns>
         private JobSourceAdapter GetJobSourceAdapter(JobDefinition definition)
         {
             string adapterTypeName;
@@ -348,6 +349,7 @@ namespace System.Management.Automation
             {
                 adapterFound = _sourceAdapters.TryGetValue(adapterTypeName, out adapter);
             }
+
             if (!adapterFound)
             {
                 if (!string.IsNullOrEmpty(definition.ModuleName))
@@ -773,6 +775,7 @@ namespace System.Management.Automation
                     {
                         cmdlet.WriteObject(job);
                     }
+
                     return job;
                 }
             }
@@ -790,7 +793,7 @@ namespace System.Management.Automation
         /// <param name="definitionType">JobSourceAdapter type that contains the job definition.</param>
         /// <param name="cmdlet">Cmdlet making call.</param>
         /// <param name="writeErrorOnException">Whether to write jobsourceadapter errors.</param>
-        /// <returns>List of matching Job2 objects</returns>
+        /// <returns>List of matching Job2 objects.</returns>
         internal List<Job2> GetJobToStart(
             string definitionName,
             string definitionPath,
@@ -876,7 +879,7 @@ namespace System.Management.Automation
         /// Returns a List of adapter names currently loaded.
         /// </summary>
         /// <param name="adapterTypeNames">Adapter names to filter on</param>
-        /// <returns>List of names</returns>
+        /// <returns>List of names.</returns>
         internal List<string> GetLoadedAdapterNames(string[] adapterTypeNames)
         {
             List<string> adapterNames = new List<string>();

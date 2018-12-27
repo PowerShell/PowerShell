@@ -21,6 +21,7 @@ namespace mvc.Controllers
                 int milliseconds = seconds * 1000;
                 Thread.Sleep(milliseconds);
             }
+
             var getController = new GetController();
             getController.ControllerContext = this.ControllerContext;
             return getController.Index();

@@ -53,6 +53,7 @@ namespace System.Management.Automation.Help
                 return _moduleGuid;
             }
         }
+
         private Guid _moduleGuid;
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace System.Management.Automation.Help
         /// Gets the combined HelpContent.zip name
         /// </summary>
         /// <param name="culture">current culture</param>
-        /// <returns>HelpContent name</returns>
+        /// <returns>HelpContent name.</returns>
         internal string GetHelpContentName(CultureInfo culture)
         {
             Debug.Assert(culture != null);
@@ -80,7 +81,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the combined HelpInfo.xml name
         /// </summary>
-        /// <returns>HelpInfo name</returns>
+        /// <returns>HelpInfo name.</returns>
         internal string GetHelpInfoName()
         {
             return ModuleName + "_" + _moduleGuid.ToString() + "_" + HelpIntoXmlName;

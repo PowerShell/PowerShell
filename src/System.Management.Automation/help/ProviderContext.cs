@@ -40,7 +40,7 @@ namespace System.Management.Automation
             ExecutionContext executionContext,
             PathIntrinsics pathIntrinsics)
         {
-            Dbg.Assert(null != executionContext, "ExecutionContext cannot be null.");
+            Dbg.Assert(executionContext != null, "ExecutionContext cannot be null.");
             _requestedPath = requestedPath;
             _executionContext = executionContext;
             _pathIntrinsics = pathIntrinsics;

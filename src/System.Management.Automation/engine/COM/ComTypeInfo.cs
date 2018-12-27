@@ -29,8 +29,8 @@ namespace System.Management.Automation
         /// <summary>
         ///  Member variables.
         /// </summary>
-        private Dictionary<String, ComProperty> _properties = null;
-        private Dictionary<String, ComMethod> _methods = null;
+        private Dictionary<string, ComProperty> _properties = null;
+        private Dictionary<string, ComMethod> _methods = null;
         private COM.ITypeInfo _typeinfo = null;
         private Guid _guid = Guid.Empty;
 
@@ -41,8 +41,8 @@ namespace System.Management.Automation
         internal ComTypeInfo(COM.ITypeInfo info)
         {
             _typeinfo = info;
-            _properties = new Dictionary<String, ComProperty>(StringComparer.OrdinalIgnoreCase);
-            _methods = new Dictionary<String, ComMethod>(StringComparer.OrdinalIgnoreCase);
+            _properties = new Dictionary<string, ComProperty>(StringComparer.OrdinalIgnoreCase);
+            _methods = new Dictionary<string, ComMethod>(StringComparer.OrdinalIgnoreCase);
 
             if (_typeinfo != null)
             {
@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Collection of properties in the COM object.
         /// </summary>
-        internal Dictionary<String, ComProperty> Properties
+        internal Dictionary<string, ComProperty> Properties
         {
             get
             {
@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Collection of methods in the COM object.
         /// </summary>
-        internal Dictionary<String, ComMethod> Methods
+        internal Dictionary<string, ComMethod> Methods
         {
             get
             {
@@ -108,7 +108,7 @@ namespace System.Management.Automation
 
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {
-                        // http://msdn.microsoft.com/en-us/library/ee488948.aspx
+                        // http://msdn.microsoft.com/library/ee488948.aspx
                         // FUNCFLAGS -- FUNCFLAG_FRESTRICTED = 0x1:
                         //     Indicates that the function should not be accessible from macro languages.
                         //     This flag is intended for system-level functions or functions that type browsers should not display.
@@ -118,7 +118,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    String strName = ComUtil.GetNameFromFuncDesc(_typeinfo, funcdesc);
+                    string strName = ComUtil.GetNameFromFuncDesc(_typeinfo, funcdesc);
 
                     switch (funcdesc.invkind)
                     {
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         ///  Get the typeinfo interface for the given comobject.
         /// </summary>
         /// <param name="comObject">reference to com object for which we are getting type information.</param>
-        /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object</returns>
+        /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object.</returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Code uses the out parameter of 'GetTypeInfo' to check if the call succeeded.")]
         internal static ComTypeInfo GetDispatchTypeInfo(object comObject)
         {
@@ -165,9 +165,11 @@ namespace System.Management.Automation
                         //We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
                         typeinfo = GetDispatchTypeInfoFromCoClassTypeInfo(typeinfo);
                     }
+
                     result = new ComTypeInfo(typeinfo);
                 }
             }
+
             return result;
         }
 
@@ -217,7 +219,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
@@ -233,7 +234,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeinfo"></param>
         /// <returns></returns>
@@ -258,6 +258,7 @@ namespace System.Management.Automation
                     throw;
                 }
             }
+
             return dispinfo;
         }
 
@@ -265,7 +266,7 @@ namespace System.Management.Automation
         /// Get the IDispatch Typeinfo from CoClass typeinfo.
         /// </summary>
         /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs</param>
-        /// <returns>ITypeInfo reference to the Dispatch interface </returns>
+        /// <returns>ITypeInfo reference to the Dispatch interface.</returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCoClassTypeInfo(COM.ITypeInfo typeinfo)
         {
             //Get the number of interfaces implemented by this CoClass.
@@ -300,6 +301,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
     }

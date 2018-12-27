@@ -232,7 +232,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Clones this object
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal PipelineStateInfo Clone()
         {
             return new PipelineStateInfo(this);
@@ -308,7 +308,7 @@ namespace System.Management.Automation.Runspaces
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid
-            Dbg.Assert(null != command, "Command cannot be null");
+            Dbg.Assert(command != null, "Command cannot be null");
             InstanceId = runspace.GeneratePipelineId();
             Commands = command;
 
@@ -341,6 +341,7 @@ namespace System.Management.Automation.Runspaces
         internal virtual bool IsChild
         {
             get { return false; }
+
             set { }
         }
 
@@ -398,6 +399,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _hadErrors; }
         }
+
         private bool _hadErrors;
 
         internal void SetHadErrors(bool status)
@@ -533,7 +535,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
-        /// <returns>An array of zero or more result objects</returns>
+        /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>If using synchronous exectute, do not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
@@ -675,7 +677,7 @@ namespace System.Management.Automation.Runspaces
         /// Sets the history string to the one that is specified
         /// </summary>
         /// <param name="historyString">history string to set</param>
-        internal abstract void SetHistoryString(String historyString);
+        internal abstract void SetHistoryString(string historyString);
 
         /// <summary>
         /// Invokes a remote command and immediately disconnects if

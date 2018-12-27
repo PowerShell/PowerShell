@@ -225,6 +225,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return _mergeUnclaimedPreviousCommandResults;
             }
+
             set
             {
                 if (value == PipelineResultTypes.None)
@@ -262,6 +263,7 @@ namespace System.Management.Automation.Runspaces
             Debug = 3,
             Information = 4
         }
+
         internal const int MaxMergeType = (int)(MergeType.Information + 1);
 
         /// <summary>
@@ -273,15 +275,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Merges this commands results
         /// </summary>
-        ///
         /// <param name="myResult">
         /// Pipeline stream to be redirected.
         /// </param>
-        ///
         /// <param name="toResult">
         /// Pipeline stream in to which myResult is merged
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// myResult parameter is not PipelineResultTypes.Error or
         /// toResult parameter is not PipelineResultTypes.Output
@@ -302,6 +301,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     MergeInstructions[i] = PipelineResultTypes.None;
                 }
+
                 return;
             }
 
@@ -310,10 +310,12 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentException("myResult", RunspaceStrings.InvalidMyResultError);
             }
+
             if (myResult == PipelineResultTypes.Error && toResult != PipelineResultTypes.Output)
             {
                 throw PSTraceSource.NewArgumentException("toResult", RunspaceStrings.InvalidValueToResultError);
             }
+
             if (toResult != PipelineResultTypes.Output && toResult != PipelineResultTypes.Null)
             {
                 throw PSTraceSource.NewArgumentException("toResult", RunspaceStrings.InvalidValueToResult);
@@ -331,18 +333,22 @@ namespace System.Management.Automation.Runspaces
             {
                 MergeInstructions[(int)MergeType.Error] = toResult;
             }
+
             if (myResult == PipelineResultTypes.Warning || myResult == PipelineResultTypes.All)
             {
                 MergeInstructions[(int)MergeType.Warning] = toResult;
             }
+
             if (myResult == PipelineResultTypes.Verbose || myResult == PipelineResultTypes.All)
             {
                 MergeInstructions[(int)MergeType.Verbose] = toResult;
             }
+
             if (myResult == PipelineResultTypes.Debug || myResult == PipelineResultTypes.All)
             {
                 MergeInstructions[(int)MergeType.Debug] = toResult;
             }
+
             if (myResult == PipelineResultTypes.Information || myResult == PipelineResultTypes.All)
             {
                 MergeInstructions[(int)MergeType.Information] = toResult;
@@ -478,7 +484,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (scriptBlock.UsesCmdletBinding)
                 {
-                    FunctionInfo functionInfo = new FunctionInfo("", scriptBlock, executionContext);
+                    FunctionInfo functionInfo = new FunctionInfo(string.Empty, scriptBlock, executionContext);
                     commandProcessorBase = new CommandProcessor(functionInfo, executionContext,
                                                                 _useLocalScope ?? false, fromScriptFile: false, sessionState: executionContext.EngineSessionState);
                 }
@@ -595,18 +601,22 @@ namespace System.Management.Automation.Runspaces
             {
                 command.MergeInstructions[(int)MergeType.Error] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeError);
             }
+
             if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeWarning] != null)
             {
                 command.MergeInstructions[(int)MergeType.Warning] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeWarning);
             }
+
             if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeVerbose] != null)
             {
                 command.MergeInstructions[(int)MergeType.Verbose] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeVerbose);
             }
+
             if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeDebug] != null)
             {
                 command.MergeInstructions[(int)MergeType.Debug] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeDebug);
             }
+
             if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeInformation] != null)
             {
                 command.MergeInstructions[(int)MergeType.Information] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeInformation);
@@ -625,7 +635,7 @@ namespace System.Management.Automation.Runspaces
         /// that can be used in a remoting protocol data object.
         /// </summary>
         /// <param name="psRPVersion">PowerShell remoting protocol version</param>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting(Version psRPVersion)
         {
             PSObject commandAsPSObject = RemotingEncoder.CreateEmptyPSObject();
@@ -705,6 +715,7 @@ namespace System.Management.Automation.Runspaces
             {
                 parametersAsListOfPSObjects.Add(parameter.ToPSObjectForRemoting());
             }
+
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.Parameters, parametersAsListOfPSObjects));
 
             return commandAsPSObject;

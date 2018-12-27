@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.PowerShell.Commands;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 // ReSharper disable UnusedMember.Global
 
@@ -51,6 +52,15 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "CantInvokeInNonImportedModule", ParserStrings.CantInvokeInNonImportedModule, mi.Name);
                 }
+                else if (((invocationToken == TokenKind.Ampersand) || (invocationToken == TokenKind.Dot)) && (mi.LanguageMode != context.LanguageMode))
+                {
+                    // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
+                    // runs "internal" origin and so has access to all functions, including non-exported functions.
+                    // Otherwise we end up leaking non-exported functions that run in FullLanguage.
+                    throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
+                        "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
+                }
+
                 commandSessionState = mi.SessionState.Internal;
                 commandIndex += 1;
             }
@@ -136,6 +146,7 @@ namespace System.Management.Automation
                             { InvocationName = invocationName };
                             rte.ErrorRecord.SetInvocationInfo(invocationInfo);
                         }
+
                         throw;
                     }
                 }
@@ -240,21 +251,25 @@ namespace System.Management.Automation
                     commandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter = context.ExternalErrorOutput;
                 }
             }
+
             if (!redirectedWarning && (context.ExpressionWarningOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.WarningOutputPipe = context.ExpressionWarningOutputPipe;
                 redirectedWarning = true;
             }
+
             if (!redirectedVerbose && (context.ExpressionVerboseOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.VerboseOutputPipe = context.ExpressionVerboseOutputPipe;
                 redirectedVerbose = true;
             }
+
             if (!redirectedDebug && (context.ExpressionDebugOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.DebugOutputPipe = context.ExpressionDebugOutputPipe;
                 redirectedDebug = true;
             }
+
             if (!redirectedInformation && (context.ExpressionInformationOutputPipe != null))
             {
                 commandProcessor.CommandRuntime.InformationOutputPipe = context.ExpressionInformationOutputPipe;
@@ -295,6 +310,15 @@ namespace System.Management.Automation
         internal static IEnumerable<CommandParameterInternal> Splat(object splattedValue, Ast splatAst)
         {
             splattedValue = PSObject.Base(splattedValue);
+
+            var markUntrustedData = false;
+            if (ExecutionContext.HasEverUsedConstrainedLanguage)
+            {
+                // If the value to be splatted is untrusted, then make sure sub-values held by it are
+                // also marked as untrusted.
+                markUntrustedData = ExecutionContext.IsMarkedAsUntrusted(splattedValue);
+            }
+
             IDictionary splattedTable = splattedValue as IDictionary;
             if (splattedTable != null)
             {
@@ -303,6 +327,8 @@ namespace System.Management.Automation
                     string parameterName = de.Key.ToString();
                     object parameterValue = de.Value;
                     string parameterText = GetParameterText(parameterName);
+
+                    if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(parameterValue); }
 
                     yield return CommandParameterInternal.CreateParameterWithArgument(
                         splatAst, parameterName, parameterText,
@@ -316,6 +342,8 @@ namespace System.Management.Automation
                 {
                     foreach (object obj in enumerableValue)
                     {
+                        if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(obj); }
+
                         yield return SplatEnumerableElement(obj, splatAst);
                     }
                 }
@@ -366,6 +394,7 @@ namespace System.Management.Automation
                 string whitespaces = parameterName.Substring(endPosition);
                 parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
             }
+
             return parameterText;
         }
 
@@ -512,6 +541,7 @@ namespace System.Management.Automation
                         position = v.Extent.EndOffset - pipelineOffset;
                     }
                 }
+
                 updatedScriptblock.Append(scriptblockBodyString.Substring(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
@@ -558,6 +588,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             var objAsArray = obj as object[];
             return objAsArray != null ? CheckAutomationNullInCommandArgumentArray(objAsArray) : obj;
         }
@@ -739,6 +770,7 @@ namespace System.Management.Automation
             {
                 return AutomationNull.Value;
             }
+
             var result = resultCount == 1 ? resultList[0] : resultList.ToArray();
             // Clear the array list so that we don't write the results of the pipe when flushing the pipe.
             resultList.Clear();
@@ -803,6 +835,7 @@ namespace System.Management.Automation
         }
 
         internal RedirectionStream FromStream { get; private set; }
+
         internal abstract void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context);
 
         internal void UnbindForExpression(FunctionContext funcContext, Pipe[] pipes)
@@ -983,7 +1016,9 @@ namespace System.Management.Automation
         }
 
         internal string File { get; private set; }
+
         internal bool Appending { get; private set; }
+
         private PipelineProcessor PipelineProcessor { get; set; }
 
         // Handle binding file redirection for commands, like:
@@ -1001,8 +1036,7 @@ namespace System.Management.Automation
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
                     if (context.CurrentCommandProcessor != null)
                     {
-                        context.CurrentCommandProcessor.CommandRuntime.
-                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
@@ -1016,8 +1050,7 @@ namespace System.Management.Automation
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
                     if (context.CurrentCommandProcessor != null)
                     {
-                        context.CurrentCommandProcessor.CommandRuntime.
-                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
@@ -1096,6 +1129,7 @@ namespace System.Management.Automation
                     context.ExpressionInformationOutputPipe = pipe;
                     break;
             }
+
             return oldPipes;
         }
 
@@ -1154,6 +1188,7 @@ namespace System.Management.Automation
                 // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
                 parentPipelineProcessor.AddRedirectionPipe(PipelineProcessor);
             }
+
             return new Pipe(context, PipelineProcessor);
         }
 
@@ -1212,8 +1247,12 @@ namespace System.Management.Automation
                 ScriptBlock scriptBlock = scriptBlockExpressionWrapper.GetScriptBlock(
                     context, functionDefinitionAst.IsFilter);
 
-                context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name,
-                                                          scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
+                var expAttribute = scriptBlock.ExperimentalAttribute;
+                if (expAttribute == null || expAttribute.ToShow)
+                {
+                    context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name,
+                        scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
+                }
             }
             catch (Exception exception)
             {
@@ -1271,7 +1310,7 @@ namespace System.Management.Automation
 
                 if (errorKeyString.Length > 40)
                 {
-                    errorKeyString = errorKeyString.Substring(0, 40) + "...";
+                    errorKeyString = errorKeyString.Substring(0, 40) + PSObjectHelper.Ellipsis;
                 }
 
                 throw InterpreterError.NewInterpreterException(hashtable, typeof(RuntimeException), errorExtent,
@@ -1475,6 +1514,7 @@ namespace System.Management.Automation
                 var errorRecord = new ErrorRecord(current.ErrorRecordToPass, current.ExceptionToPass);
                 tuple.SetAutomaticVariable(AutomaticVariable.Underbar, errorRecord, context);
             }
+
             return current.Handler;
         }
 
@@ -1663,6 +1703,7 @@ namespace System.Management.Automation
                         {
                             locals.SetValue(i, funcContext._localsTuple.GetValue(i));
                         }
+
                         var newScope = context.EngineSessionState.NewScope(false);
                         context.EngineSessionState.CurrentScope = newScope;
                         newScope.LocalsTuple = locals;
@@ -1715,7 +1756,7 @@ namespace System.Management.Automation
         /// <param name="rte">The RuntimeException which was reported</param>
         /// <param name="message">The message to display</param>
         /// <param name="context">The execution context</param>
-        /// <returns>The preference the user selected</returns>
+        /// <returns>The preference the user selected.</returns>
         /// <remarks>
         /// Error action is decided by error action preference. If preference is inquire, we will
         /// prompt user for their preference.
@@ -1835,7 +1876,7 @@ namespace System.Management.Automation
         /// <param name="extent"></param>
         /// <param name="rte">The runtime error to report</param>
         /// <param name="context">The execution context</param>
-        /// <returns>True if it was able to report the error</returns>
+        /// <returns>True if it was able to report the error.</returns>
         internal static bool ReportErrorRecord(IScriptExtent extent, RuntimeException rte, ExecutionContext context)
         {
             if (context.ShellFunctionErrorOutputPipe == null)
@@ -2159,7 +2200,6 @@ namespace System.Management.Automation
         /// Note that AddPowerShellTypesToTheScope() would be call on every foo call, 10 times.
         ///
         /// This method also should be called for 'using module' statements. Then added types would have a different name.
-        ///
         /// </summary>
         /// <param name="types"></param>
         /// <param name="context"></param>
@@ -2444,7 +2484,7 @@ namespace System.Management.Automation
                 }
 
                 var rest = new List<object>();
-                Object current = null;
+                object current = null;
 
                 int index = 0;
                 if (numberToReturn == 0)
@@ -2482,14 +2522,16 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     if (numberToReturn == 1)
                     {
-                        return new Object[] { current };
+                        return new object[] { current };
                     }
+
                     return rest.ToArray();
                 }
 
-                System.Object[] first = new System.Object[numberToReturn];
+                object[] first = new System.Object[numberToReturn];
                 while (MoveNext(context, enumerator))
                 {
                     current = Current(enumerator);
@@ -2517,7 +2559,8 @@ namespace System.Management.Automation
                         var e = Current(enumerator);
                         rest.Add(e);
                     }
-                    return new System.Object[] { first, rest.ToArray() };
+
+                    return new object[] { first, rest.ToArray() };
                 }
 
                 return first;
@@ -2529,6 +2572,7 @@ namespace System.Management.Automation
             {
                 notMatched = new Collection<PSObject>();
             }
+
             var resultCollection = new List<object>();
             Pipe outputPipe = new Pipe(resultCollection);
             bool returnTheRest = false;
@@ -2636,7 +2680,8 @@ namespace System.Management.Automation
                     var ie = Current(enumerator);
                     notMatched.Add(ie == null ? null : PSObject.AsPSObject(ie));
                 }
-                return new System.Object[] { matches, notMatched };
+
+                return new object[] { matches, notMatched };
             }
 
             return matches;
@@ -2682,6 +2727,7 @@ namespace System.Management.Automation
                             object current = Current(enumerator);
                             list.Add(current);
                         }
+
                         return LanguagePrimitives.ConvertTo(list, targetType, CultureInfo.InvariantCulture);
                     }
 
@@ -2694,6 +2740,7 @@ namespace System.Management.Automation
                             throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                                 null, "ForEachBadGenericConversionTypeSpecified", ParserStrings.ForEachBadGenericConversionTypeSpecified, ParserOps.ConvertTo<string>(targetType, null));
                         }
+
                         resultCollection = PSObject.AsPSObject(Activator.CreateInstance(targetType));
                         while (MoveNext(context, enumerator))
                         {
@@ -2811,6 +2858,7 @@ namespace System.Management.Automation
                                     ExtendedTypeSystem.MethodInvocationException,
                                     name, arguments.Length, nullRefException.Message);
                             }
+
                             continue;
                         }
 
@@ -2913,6 +2961,7 @@ namespace System.Management.Automation
                     result.Add(value);
                 }
             }
+
             return result.ToArray();
         }
 
@@ -2982,6 +3031,7 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "PropertyNotFoundStrict", ParserStrings.PropertyNotFoundStrict, binder.Name);
                 }
+
                 return null;
             }
 
@@ -3221,7 +3271,7 @@ namespace System.Management.Automation
         /// <param name="context">The execution context used to see if the pipeline is stopping</param>
         /// <param name="enumerator">THe enumerator to advance.</param>
         /// <exception cref="RuntimeException">An error occurred moving to the next element in the enumeration</exception>
-        /// <returns>True if the move succeeded</returns>
+        /// <returns>True if the move succeeded.</returns>
         internal static bool MoveNext(ExecutionContext context, IEnumerator enumerator)
         {
             try
@@ -3384,6 +3434,7 @@ namespace System.Management.Automation
             {
                 result.Add(Current(enumerator));
             }
+
             return result.ToArray();
         }
 
@@ -3398,6 +3449,7 @@ namespace System.Management.Automation
             {
                 result[j++] = list[i++];
             }
+
             return result;
         }
     }

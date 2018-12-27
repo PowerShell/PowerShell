@@ -34,7 +34,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         # there is a possibility that we could be on Windows, but MofComp
         # isn't present, in any event we will mark these tests as skipped
         # since the environment won't support loading the test classes
-        if ( (Get-Command -ea SilentlyContinue Mofcomp.exe) -eq $null ) {
+        if ( (Get-Command -ErrorAction SilentlyContinue Mofcomp.exe) -eq $null ) {
             $script:ItSkipOrPending = @{ Skip = $true }
             return
         }
@@ -138,7 +138,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         }
 
         It "The Get-CimTest cmdlet should return the proper error if the instance does not exist" @ItSkipOrPending {
-            { Get-CimTest -ea stop -id "ThisIdDoesNotExist" } | ShouldBeErrorId "CmdletizationQuery_NotFound_Id,Get-CimTest"
+            { Get-CimTest -ErrorAction Stop -id "ThisIdDoesNotExist" } | Should -Throw -ErrorId "CmdletizationQuery_NotFound_Id,Get-CimTest"
         }
 
         It "The Get-CimTest cmdlet should work as a job" @ItSkipOrPending {
@@ -230,9 +230,9 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 field1 = "a string"
                 field2 = "a bad string" # this needs to be an int
             }
-            { New-CimTest @instanceArgs } | ShouldBeErrorId "ParameterArgumentTransformationError,New-CimTest"
+            { New-CimTest @instanceArgs } | Should -Throw -ErrorId "ParameterArgumentTransformationError,New-CimTest"
             # just make sure that it wasn't added
-            Get-CimTest -id $instanceArgs.Id -ea SilentlyContinue | Should -BeNullOrEmpty
+            Get-CimTest -id $instanceArgs.Id -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
         }
 
         It "Should support -whatif" @ItSkipOrPending {
@@ -243,7 +243,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 Whatif = $true
             }
             New-CimTest @instanceArgs
-            Get-CimTest -id $instanceArgs.Id -ea SilentlyContinue | Should -BeNullOrEmpty
+            Get-CimTest -id $instanceArgs.Id -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
         }
     }
 

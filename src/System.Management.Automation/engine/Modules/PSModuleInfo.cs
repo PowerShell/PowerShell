@@ -58,6 +58,20 @@ namespace System.Management.Automation
         /// <param name="path">The absolute path to the module</param>
         /// <param name="context">The execution context for this engine instance</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
+        /// <param name="languageMode">Language mode for script based modules</param>
+        internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState, PSLanguageMode? languageMode)
+            : this(name, path, context, sessionState)
+        {
+            LanguageMode = languageMode;
+        }
+
+        /// <summary>
+        /// This object describes a PowerShell module...
+        /// </summary>
+        /// <param name="name">The name to use for the module. If null, get it from the path name</param>
+        /// <param name="path">The absolute path to the module</param>
+        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
         internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState)
         {
             if (path != null)
@@ -134,6 +148,8 @@ namespace System.Management.Automation
             SessionState = new SessionState(context, true, true);
             SessionState.Internal.Module = this;
 
+            LanguageMode = scriptBlock.LanguageMode;
+
             // Now set up the module's session state to be the current session state
             SessionStateInternal oldSessionState = context.EngineSessionState;
             try
@@ -164,6 +180,20 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Specifies the language mode for script based modules
+        /// </summary>
+        internal PSLanguageMode? LanguageMode
+        {
+            get;
+            set;
+        } = PSLanguageMode.FullLanguage;
+
+        /// <summary>
+        /// Set to true when script module automatically exports all functions by default
+        /// </summary>
+        internal bool ModuleAutoExportsAllFunctions { get; set; }
+
         internal bool ModuleHasPrivateMembers { get; set; }
 
         /// <summary>
@@ -174,7 +204,7 @@ namespace System.Management.Automation
         /// <summary>
         /// ToString() implementation which returns the name of the module.
         /// </summary>
-        /// <returns>The name of the module</returns>
+        /// <returns>The name of the module.</returns>
         public override string ToString()
         {
             return this.Name;
@@ -219,6 +249,7 @@ namespace System.Management.Automation
         {
             get { return _definitionExtent == null ? String.Empty : _definitionExtent.Text; }
         }
+
         internal IScriptExtent _definitionExtent;
 
         /// <summary>
@@ -227,8 +258,10 @@ namespace System.Management.Automation
         public string Description
         {
             get { return _description; }
+
             set { _description = value ?? String.Empty; }
         }
+
         private string _description = String.Empty;
 
         /// <summary>
@@ -266,10 +299,12 @@ namespace System.Management.Automation
                        (_moduleBase = !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty);
             }
         }
+
         internal void SetModuleBase(string moduleBase)
         {
             _moduleBase = moduleBase;
         }
+
         private string _moduleBase;
 
         /// <summary>
@@ -290,6 +325,7 @@ namespace System.Management.Automation
                 SetPSDataPropertiesFromPrivateData();
             }
         }
+
         private object _privateData = null;
 
         private void SetPSDataPropertiesFromPrivateData()
@@ -301,49 +337,37 @@ namespace System.Management.Automation
             ProjectUri = null;
             IconUri = null;
 
-            var privateDataHashTable = _privateData as Hashtable;
-            if (privateDataHashTable != null)
+            if (_privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
             {
-                var psData = privateDataHashTable["PSData"] as Hashtable;
-                if (psData != null)
+                var tagsValue = psData["Tags"];
+                if (tagsValue is object[] tags && tags.Length > 0)
                 {
-                    object tagsValue = psData["Tags"];
-                    if (tagsValue != null)
+                    foreach (var tagString in tags.OfType<string>())
                     {
-                        var tags = tagsValue as object[];
-                        if (tags != null && tags.Any())
-                        {
-                            foreach (var tagString in tags.OfType<string>())
-                            {
-                                AddToTags(tagString);
-                            }
-                        }
-                        else
-                        {
-                            AddToTags(tagsValue.ToString());
-                        }
+                        AddToTags(tagString);
                     }
-
-                    var licenseUri = psData["LicenseUri"] as string;
-                    if (licenseUri != null)
-                    {
-                        LicenseUri = GetUriFromString(licenseUri);
-                    }
-
-                    var projectUri = psData["ProjectUri"] as string;
-                    if (projectUri != null)
-                    {
-                        ProjectUri = GetUriFromString(projectUri);
-                    }
-
-                    var iconUri = psData["IconUri"] as string;
-                    if (iconUri != null)
-                    {
-                        IconUri = GetUriFromString(iconUri);
-                    }
-
-                    ReleaseNotes = psData["ReleaseNotes"] as string;
                 }
+                else if (tagsValue is string tag)
+                {
+                    AddToTags(tag);
+                }
+
+                if (psData["LicenseUri"] is string licenseUri)
+                {
+                    LicenseUri = GetUriFromString(licenseUri);
+                }
+
+                if (psData["ProjectUri"] is string projectUri)
+                {
+                    ProjectUri = GetUriFromString(projectUri);
+                }
+
+                if (psData["IconUri"] is string iconUri)
+                {
+                    IconUri = GetUriFromString(iconUri);
+                }
+
+                ReleaseNotes = psData["ReleaseNotes"] as string;
             }
         }
 
@@ -361,9 +385,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get the experimental features declared in this module.
+        /// </summary>
+        public IEnumerable<ExperimentalFeature> ExperimentalFeatures { get; internal set; } = Utils.EmptyReadOnlyCollection<ExperimentalFeature>();
+
+        /// <summary>
         /// Tags of this module.
         /// </summary>
-        public IEnumerable<String> Tags
+        public IEnumerable<string> Tags
         {
             get { return _tags; }
         }
@@ -439,15 +468,18 @@ namespace System.Management.Automation
         public ModuleAccessMode AccessMode
         {
             get { return _accessMode; }
+
             set
             {
                 if (_accessMode == ModuleAccessMode.Constant)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 _accessMode = value;
             }
         }
+
         private ModuleAccessMode _accessMode = ModuleAccessMode.ReadWrite;
 
         /// <summary>
@@ -462,7 +494,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Company Name
         /// </summary>
-        public String CompanyName
+        public string CompanyName
         {
             get;
             internal set;
@@ -471,7 +503,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Copyright
         /// </summary>
-        public String Copyright
+        public string Copyright
         {
             get;
             internal set;
@@ -486,6 +518,15 @@ namespace System.Management.Automation
             internal set;
         }
 
+        internal Collection<string> DeclaredFunctionExports = null;
+        internal Collection<string> DeclaredCmdletExports = null;
+        internal Collection<string> DeclaredAliasExports = null;
+        internal Collection<string> DeclaredVariableExports = null;
+
+        internal List<string> DetectedFunctionExports = new List<string>();
+        internal List<string> DetectedCmdletExports = new List<string>();
+        internal Dictionary<string, string> DetectedAliasExports = new Dictionary<string, string>();
+
         /// <summary>
         /// Lists the functions exported by this module...
         /// </summary>
@@ -496,17 +537,15 @@ namespace System.Management.Automation
                 Dictionary<string, FunctionInfo> exports = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
                 // If the module is not binary, it may also have functions...
-                if ((DeclaredFunctionExports != null) && (DeclaredFunctionExports.Count > 0))
+                if (DeclaredFunctionExports != null)
                 {
+                    if (DeclaredFunctionExports.Count == 0) { return exports; }
+
                     foreach (string fn in DeclaredFunctionExports)
                     {
                         FunctionInfo tempFunction = new FunctionInfo(fn, ScriptBlock.EmptyScriptBlock, null) { Module = this };
                         exports[fn] = tempFunction;
                     }
-                }
-                else if ((DeclaredFunctionExports != null) && (DeclaredFunctionExports.Count == 0))
-                {
-                    return exports;
                 }
                 else if (SessionState != null)
                 {
@@ -525,7 +564,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    foreach (var detectedExport in _detectedFunctionExports)
+                    foreach (var detectedExport in DetectedFunctionExports)
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
@@ -534,6 +573,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return exports;
             }
         }
@@ -577,6 +617,15 @@ namespace System.Management.Automation
             var res = new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase);
             foreach (var nestedModule in this.NestedModules)
             {
+                if (nestedModule == this)
+                {
+                    // Circular nested modules could happen with ill-organized module structure.
+                    // For example, module folder 'test' has two files: 'test.psd1' and 'test.psm1', and 'test.psd1' has the following content:
+                    //    "@{ ModuleVersion = '0.0.1'; RootModule = 'test'; NestedModules = @('test') }"
+                    // Then, 'Import-Module test.psd1 -PassThru' will return a ModuleInfo object with circular nested modules.
+                    continue;
+                }
+
                 foreach (var typePairs in nestedModule.GetExportedTypeDefinitions())
                 {
                     // The last one name wins! It's the same for command names in nested modules.
@@ -621,14 +670,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Prefix
         /// </summary>
-        public String Prefix
+        public string Prefix
         {
             get;
             internal set;
         }
-
-        internal Collection<string> DeclaredFunctionExports = null;
-        internal List<string> _detectedFunctionExports = new List<string>();
 
         /// <summary>
         /// Add function to the fixed exports list
@@ -638,9 +684,9 @@ namespace System.Management.Automation
         {
             Dbg.Assert(name != null, "AddDetectedFunctionExport should not be called with a null value");
 
-            if (!_detectedFunctionExports.Contains(name))
+            if (!DetectedFunctionExports.Contains(name))
             {
-                _detectedFunctionExports.Add(name);
+                DetectedFunctionExports.Add(name);
             }
         }
 
@@ -653,17 +699,15 @@ namespace System.Management.Automation
             {
                 Dictionary<string, CmdletInfo> exports = new Dictionary<string, CmdletInfo>(StringComparer.OrdinalIgnoreCase);
 
-                if ((DeclaredCmdletExports != null) && (DeclaredCmdletExports.Count > 0))
+                if (DeclaredCmdletExports != null)
                 {
+                    if (DeclaredCmdletExports.Count == 0) { return exports; }
+
                     foreach (string fn in DeclaredCmdletExports)
                     {
                         CmdletInfo tempCmdlet = new CmdletInfo(fn, null, null, null, null) { Module = this };
                         exports[fn] = tempCmdlet;
                     }
-                }
-                else if ((DeclaredCmdletExports != null) && (DeclaredCmdletExports.Count == 0))
-                {
-                    return exports;
                 }
                 else if ((CompiledExports != null) && (CompiledExports.Count > 0))
                 {
@@ -674,7 +718,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    foreach (string detectedExport in _detectedCmdletExports)
+                    foreach (string detectedExport in DetectedCmdletExports)
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
@@ -687,8 +731,6 @@ namespace System.Management.Automation
                 return exports;
             }
         }
-        internal Collection<string> DeclaredCmdletExports = null;
-        internal List<string> _detectedCmdletExports = new List<string>();
 
         /// <summary>
         /// Add CmdletInfo to the fixed exports list...
@@ -698,9 +740,9 @@ namespace System.Management.Automation
         {
             Dbg.Assert(cmdlet != null, "AddDetectedCmdletExport should not be called with a null value");
 
-            if (!_detectedCmdletExports.Contains(cmdlet))
+            if (!DetectedCmdletExports.Contains(cmdlet))
             {
-                _detectedCmdletExports.Add(cmdlet);
+                DetectedCmdletExports.Add(cmdlet);
             }
         }
 
@@ -776,8 +818,10 @@ namespace System.Management.Automation
                     {
                         _compiledExports.Add(ci);
                     }
+
                     SessionState.Internal.ExportedCmdlets.Clear();
                 }
+
                 return _compiledExports;
             }
         }
@@ -805,7 +849,7 @@ namespace System.Management.Automation
         /// <summary>
         /// FileList
         /// </summary>
-        public IEnumerable<String> FileList
+        public IEnumerable<string> FileList
         {
             get { return _fileList; }
         }
@@ -818,9 +862,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// CompatiblePSEditions
+        /// Lists the PowerShell editions this module is compatible with. This should
+        /// reflect the module manifest the module was loaded with, or if no manifest was given
+        /// or the key was not in the manifest, this should be an empty collection. This
+        /// property is never null.
         /// </summary>
-        public IEnumerable<String> CompatiblePSEditions
+        public IEnumerable<string> CompatiblePSEditions
         {
             get { return _compatiblePSEditions; }
         }
@@ -831,6 +878,22 @@ namespace System.Management.Automation
         {
             _compatiblePSEditions.Add(psEdition);
         }
+
+        internal void AddToCompatiblePSEditions(IEnumerable<string> psEditions)
+        {
+            _compatiblePSEditions.AddRange(psEditions);
+        }
+
+        /// <summary>
+        /// Describes whether the module was considered compatible at load time.
+        /// Any module not on the System32 module path should have this as true.
+        /// Modules loaded from the System32 module path will have this as true if they
+        /// have declared edition compatibility with PowerShell Core. Currently, this field
+        /// is true for all non-psd1 module files, when it should not be. Being able to
+        /// load psm1/dll modules from the System32 module path without needing to skip
+        /// the edition check is considered a bug and should be fixed.
+        /// </summary>
+        internal bool IsConsideredEditionCompatible { get; set; } = true;
 
         /// <summary>
         /// ModuleList
@@ -859,6 +922,7 @@ namespace System.Management.Automation
                        (_readonlyNestedModules = new ReadOnlyCollection<PSModuleInfo>(_nestedModules));
             }
         }
+
         private ReadOnlyCollection<PSModuleInfo> _readonlyNestedModules;
 
         /// <summary>
@@ -869,12 +933,13 @@ namespace System.Management.Automation
         {
             AddModuleToList(nestedModule, _nestedModules);
         }
+
         private readonly List<PSModuleInfo> _nestedModules = new List<PSModuleInfo>();
 
         /// <summary>
         /// PowerShell Host Name
         /// </summary>
-        public String PowerShellHostName
+        public string PowerShellHostName
         {
             get;
             internal set;
@@ -910,12 +975,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Scripts to Process
         /// </summary>
-        public IEnumerable<String> Scripts
+        public IEnumerable<string> Scripts
         {
             get { return _scripts; }
         }
 
-        private List<String> _scripts = new List<string>();
+        private List<string> _scripts = new List<string>();
 
         internal void AddScript(string s)
         {
@@ -925,11 +990,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Required Assemblies
         /// </summary>
-        public IEnumerable<String> RequiredAssemblies
+        public IEnumerable<string> RequiredAssemblies
         {
             get { return _requiredAssemblies; }
         }
-        private Collection<String> _requiredAssemblies = new Collection<string>();
+
+        private Collection<string> _requiredAssemblies = new Collection<string>();
 
         internal void AddRequiredAssembly(string assembly)
         {
@@ -948,6 +1014,7 @@ namespace System.Management.Automation
                        (_readonlyRequiredModules = new ReadOnlyCollection<PSModuleInfo>(_requiredModules));
             }
         }
+
         private ReadOnlyCollection<PSModuleInfo> _readonlyRequiredModules;
 
         /// <summary>
@@ -958,6 +1025,7 @@ namespace System.Management.Automation
         {
             AddModuleToList(requiredModule, _requiredModules);
         }
+
         private List<PSModuleInfo> _requiredModules = new List<PSModuleInfo>();
 
         /// <summary>
@@ -972,6 +1040,7 @@ namespace System.Management.Automation
                        (_readonlyRequiredModulesSpecification = new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification));
             }
         }
+
         private ReadOnlyCollection<ModuleSpecification> _readonlyRequiredModulesSpecification;
 
         /// <summary>
@@ -982,12 +1051,13 @@ namespace System.Management.Automation
         {
             _requiredModulesSpecification.Add(requiredModuleSpecification);
         }
+
         private List<ModuleSpecification> _requiredModulesSpecification = new List<ModuleSpecification>();
 
         /// <summary>
         /// Root Module
         /// </summary>
-        public String RootModule
+        public string RootModule
         {
             get;
             internal set;
@@ -997,7 +1067,7 @@ namespace System.Management.Automation
         /// This member is used to copy over the RootModule in case the module is a manifest module
         /// This is so that only ModuleInfo for modules with type=Manifest have RootModule populated
         /// </summary>
-        internal String RootModuleForManifest
+        internal string RootModuleForManifest
         {
             get;
             set;
@@ -1015,6 +1085,7 @@ namespace System.Management.Automation
                 if (m.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                     return;
             }
+
             moduleList.Add(module);
         }
 
@@ -1056,7 +1127,6 @@ namespace System.Management.Automation
                 return exportedVariables;
             }
         }
-        internal Collection<string> DeclaredVariableExports = null;
 
         /// <summary>
         /// Lists the aliases exported by this module.
@@ -1088,9 +1158,9 @@ namespace System.Management.Automation
                     if (SessionState == null)
                     {
                         // Check if we detected any
-                        if (_detectedAliasExports.Count > 0)
+                        if (DetectedAliasExports.Count > 0)
                         {
-                            foreach (var pair in _detectedAliasExports)
+                            foreach (var pair in DetectedAliasExports)
                             {
                                 string detectedExport = pair.Key;
                                 if (!exportedAliases.ContainsKey(detectedExport))
@@ -1120,8 +1190,6 @@ namespace System.Management.Automation
                 return exportedAliases;
             }
         }
-        internal Collection<string> DeclaredAliasExports = null;
-        internal Dictionary<string, string> _detectedAliasExports = new Dictionary<string, string>();
 
         /// <summary>
         /// Add alias to the detected alias list
@@ -1132,7 +1200,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(name != null, "AddDetectedAliasExport should not be called with a null value");
 
-            _detectedAliasExports[name] = value;
+            DetectedAliasExports[name] = value;
         }
 
         /// <summary>
@@ -1147,7 +1215,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         public ReadOnlyCollection<string> ExportedDscResources
         {
@@ -1170,7 +1237,7 @@ namespace System.Management.Automation
         /// Returns a new scriptblock bound to this module instance.
         /// </summary>
         /// <param name="scriptBlockToBind">The original scriptblock</param>
-        /// <returns>The new bound scriptblock</returns>
+        /// <returns>The new bound scriptblock.</returns>
         public ScriptBlock NewBoundScriptBlock(ScriptBlock scriptBlockToBind)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -1211,7 +1278,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sb">The scriptblock to invoke</param>
         /// <param name="args">Arguments to the scriptblock</param>
-        /// <returns>The result of the invocation</returns>
+        /// <returns>The result of the invocation.</returns>
         public object Invoke(ScriptBlock sb, params object[] args)
         {
             if (sb == null)
@@ -1231,6 +1298,7 @@ namespace System.Management.Automation
                 // and restore the scriptblocks session state...
                 sb.SessionStateInternal = oldSessionState;
             }
+
             return result;
         }
 
@@ -1263,6 +1331,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (callersSessionState != null)
             {
                 return callersSessionState.Internal.GetVariable(variableName);
@@ -1316,7 +1385,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Build a custom object out of this module...
         /// </summary>
-        /// <returns>A custom object</returns>
+        /// <returns>A custom object.</returns>
         public PSObject AsCustomObject()
         {
             if (SessionState == null)
@@ -1376,7 +1445,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implements deep copy of a PSModuleInfo instance.
-        /// <returns>A new PSModuleInfo instance</returns>
+        /// <returns>A new PSModuleInfo instance.</returns>
         /// </summary>
         public PSModuleInfo Clone()
         {
@@ -1401,6 +1470,7 @@ namespace System.Management.Automation
             {
                 clone.AddRequiredModule(r);
             }
+
             foreach (var r in _requiredModulesSpecification)
             {
                 clone.AddRequiredModuleSpecification(r);
@@ -1440,7 +1510,7 @@ namespace System.Management.Automation
         /// Look up a module in the appdomain wide module path cache.
         /// </summary>
         /// <param name="moduleName">Module name to look up.</param>
-        /// <returns>The path to the matched module</returns>
+        /// <returns>The path to the matched module.</returns>
         internal static string ResolveUsingAppDomainLevelModuleCache(string moduleName)
         {
             string path;
@@ -1486,7 +1556,7 @@ namespace System.Management.Automation
 
         private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_appdomainModulePathCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-    } // PSModuleInfo
+    }
 
     /// <summary>
     /// Indicates the type of a module.
@@ -1586,4 +1656,4 @@ namespace System.Management.Automation
             }
         }
     }
-} // System.Management.Automation
+}

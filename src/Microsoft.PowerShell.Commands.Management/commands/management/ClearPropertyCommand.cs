@@ -26,67 +26,63 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The properties to clear from the item
         /// </summary>
-        ///
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Name
         {
             get
             {
                 return _property;
-            } // get
+            }
 
             set
             {
                 _property = value;
             }
-        } // Name
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             Collection<string> propertyCollection = new Collection<string>();
@@ -101,11 +97,12 @@ namespace Microsoft.PowerShell.Commands
                     propertyCollection,
                     context);
             }
+
             return InvokeProvider.Property.ClearPropertyDynamicParameters(
                 ".",
                 propertyCollection,
                 context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -169,8 +166,8 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound));
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // ClearItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

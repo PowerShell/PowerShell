@@ -71,13 +71,7 @@ try {
             Get-ExecutionPolicy -Scope CurrentUser | Should -Be "Undefined"
 
             # Verify the file was not created during the test
-            try {
-                $propFile = Get-Item $userPropertiesFile -ErrorAction Stop
-                throw "Properties file genererated during read operation"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
-            }
+            { $propFile = Get-Item $userPropertiesFile -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify Queries for Non-Existant Properties Return Default Value" {

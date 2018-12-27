@@ -25,8 +25,8 @@ using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
+using System.Threading.Tasks;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -35,11 +35,8 @@ using Debugger = System.Management.Automation.Debugger;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// Subclasses S.M.A.Host to implement a console-mode monad host.
-    ///
     /// </summary>
-    ///
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal sealed partial class ConsoleHost
         :
@@ -60,26 +57,18 @@ namespace Microsoft.PowerShell
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
         /// <summary>
-        ///
         /// internal Entry point in msh console host implementation
-        ///
         /// </summary>
-        ///
         /// <param name="bannerText">
         /// Banner text to be displayed by ConsoleHost
         /// </param>
-        ///
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
-        ///
         /// <param name = "args">
-        ///
         /// Command line parameters to pwsh.exe
-        ///
         /// </param>
         /// <returns>
-        ///
         /// The exit code for the shell.
         ///
         /// NTRAID#Windows OS Bugs-1036968-2005/01/20-sburns The behavior here is related to monitor work.  The low word of the
@@ -104,7 +93,6 @@ namespace Microsoft.PowerShell
         ///
         /// Anyone checking the exit code of the shell or monitor can mask off the hiword to determine the exit code passed
         /// by the script that the shell last executed.
-        ///
         /// </returns>
         internal static int Start(
             string bannerText,
@@ -138,8 +126,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                 profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
 #else
-                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                    @"\Microsoft\Windows\PowerShell";
+                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
 
                 if (!Directory.Exists(profileDir))
                 {
@@ -172,18 +159,11 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                if (args == null)
-                {
-                    args = new string[0];
-                }
-
                 s_cpp = new CommandLineParameterParser(
                     (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
                     bannerText, helpText);
-                string[] tempArgs = new string[args.GetLength(0)];
-                args.CopyTo(tempArgs, 0);
 
-                s_cpp.Parse(tempArgs);
+                s_cpp.Parse(args);
 
 #if UNIX
                 // On Unix, logging has to be deferred until after command-line parsing
@@ -208,8 +188,19 @@ namespace Microsoft.PowerShell
                     {
                         s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
                     }
+
                     return ExitCodeBadCommandLineParameter;
                 }
+
+#if !UNIX
+                // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
+                // owns the current window (otherwise it does a fast exit anyway). Since there is no 'GET' like API,
+                // we always have to execute this call because we do not know if it has been created yet.
+                // The JumpList does persist as long as the filepath of the executable does not change but there
+                // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
+                // not over-optimize this and always create the JumpList as a non-blocking background task instead.
+                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+#endif
 
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
@@ -276,13 +267,12 @@ namespace Microsoft.PowerShell
                 return (int)exitCode;
             }
         }
+
         private static CommandLineParameterParser s_cpp;
 
 #if UNIX
         /// <summary>
-        ///
         /// The break handler for the program.  Dispatches a break event to the current Executor.
-        ///
         /// </summary>
         private static void MyBreakHandler(object sender, ConsoleCancelEventArgs args)
         {
@@ -304,14 +294,13 @@ namespace Microsoft.PowerShell
                         // Break into script debugger.
                         BreakIntoDebugger();
                     }
+
                     return;
             }
         }
 #else
         /// <summary>
-        ///
         /// The break handler for the program.  Dispatches a break event to the current Executor.
-        ///
         /// </summary>
         /// <param name="signal"></param>
         /// <returns></returns>
@@ -330,6 +319,7 @@ namespace Microsoft.PowerShell
                         // Break into script debugger.
                         BreakIntoDebugger();
                     }
+
                     return true;
 
                 // Run the break handler...
@@ -369,6 +359,7 @@ namespace Microsoft.PowerShell
                     debugger = host._runspaceRef.Runspace.Debugger;
                 }
             }
+
             if (debugger != null)
             {
                 debugger.SetDebuggerStepMode(true);
@@ -379,15 +370,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Spin up a new thread to cancel the current pipeline.  This will allow subsequent break interrupts to be received even
         /// if the cancellation is blocked (which can be the case when the pipeline blocks and nothing implements Cmdlet.Stop
         /// properly).  That is because the OS will not inject another thread when a break event occurs if one has already been
         /// injected and is running.
-        ///
         /// </summary>
         /// <param name="shouldEndSession">
-        ///
         /// if true, then flag the parent ConsoleHost that it should shutdown the session.  If false, then only the current
         /// executing instance is stopped.
         ///
@@ -520,9 +508,7 @@ namespace Microsoft.PowerShell
         #region overrides
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -539,9 +525,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -556,9 +540,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -566,9 +548,7 @@ namespace Microsoft.PowerShell
         public override System.Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -587,6 +567,7 @@ namespace Microsoft.PowerShell
         public void PushRunspace(Runspace newRunspace)
         {
             if (_runspaceRef == null) { return; }
+
             RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
             remoteRunspace.StateChanged += new EventHandler<RunspaceStateEventArgs>(HandleRemoteRunspaceStateChanged);
@@ -648,6 +629,7 @@ namespace Microsoft.PowerShell
                     {
                         PopRunspace();
                     }
+
                     break;
             }
         }
@@ -707,6 +689,7 @@ namespace Microsoft.PowerShell
                 return _isRunspacePushed;
             }
         }
+
         private bool _isRunspacePushed = false;
 
         /// <summary>
@@ -717,6 +700,7 @@ namespace Microsoft.PowerShell
             get
             {
                 if (this.RunspaceRef == null) { return null; }
+
                 return this.RunspaceRef.Runspace;
             }
         }
@@ -729,7 +713,9 @@ namespace Microsoft.PowerShell
                 {
                     return RunspaceRef.OldRunspace as LocalRunspace;
                 }
+
                 if (RunspaceRef == null) { return null; }
+
                 return RunspaceRef.Runspace as LocalRunspace;
             }
         }
@@ -749,6 +735,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.ErrorForegroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.ErrorForegroundColor = value; }
@@ -759,6 +746,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.ErrorBackgroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.ErrorBackgroundColor = value; }
@@ -769,6 +757,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.WarningForegroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.WarningForegroundColor = value; }
@@ -779,6 +768,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.WarningBackgroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.WarningBackgroundColor = value; }
@@ -789,6 +779,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.DebugForegroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.DebugForegroundColor = value; }
@@ -799,6 +790,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.DebugBackgroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.DebugBackgroundColor = value; }
@@ -809,6 +801,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.VerboseForegroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.VerboseForegroundColor = value; }
@@ -819,6 +812,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.VerboseBackgroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.VerboseBackgroundColor = value; }
@@ -829,6 +823,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.ProgressForegroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.ProgressForegroundColor = value; }
@@ -839,6 +834,7 @@ namespace Microsoft.PowerShell
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 get
                 { return _ui.ProgressBackgroundColor; }
+
                 [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
                 set
                 { _ui.ProgressBackgroundColor = value; }
@@ -857,12 +853,11 @@ namespace Microsoft.PowerShell
                 return _consoleColorProxy ?? (_consoleColorProxy = PSObject.AsPSObject(new ConsoleColorProxy(ui)));
             }
         }
+
         private PSObject _consoleColorProxy;
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -879,9 +874,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -898,7 +891,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception/>
 
@@ -925,15 +917,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// If an input loop is running, then starts a new, nested input loop.  If an input loop is not running,
         /// throws an exception.
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        ///
         /// If a nested prompt is entered while the host is not running at least one prompt loop.
-        ///
         /// </exception>
         public override void EnterNestedPrompt()
         {
@@ -951,6 +939,7 @@ namespace Microsoft.PowerShell
                 {
                     IsNested = oldCurrent != null || this.ui.IsCommandCompletionRunning;
                 }
+
                 InputLoop.RunNewInputLoop(this, IsNested);
             }
             finally
@@ -960,14 +949,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        ///
         /// If there is no nested prompt.
-        ///
         /// </exception>
         public override void ExitNestedPrompt()
         {
@@ -978,9 +963,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         public override void NotifyBeginApplication()
         {
@@ -1005,9 +988,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// <seealso cref="NotifyBeginApplication"/>
         /// </summary>
         public override void NotifyEndApplication()
@@ -1040,8 +1021,11 @@ namespace Microsoft.PowerShell
                        ((s_cpp.InitialCommand == null && s_cpp.File == null) || s_cpp.NoExit);
             }
         }
+
         double IHostProvidesTelemetryData.ProfileLoadTimeInMS { get { return _profileLoadTimeInMS; } }
+
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
+
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
 #endif
 
@@ -1054,9 +1038,7 @@ namespace Microsoft.PowerShell
         #region non-overrides
 
         /// <summary>
-        ///
         /// Constructs a new instance
-        ///
         /// </summary>
         internal ConsoleHost()
         {
@@ -1126,9 +1108,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Finalizes the instance
-        ///
         /// </summary>
         ~ConsoleHost()
         {
@@ -1136,9 +1116,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Disposes of this instance, per the IDisposable pattern
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -1165,14 +1143,17 @@ namespace Microsoft.PowerShell
                     {
                         StopTranscribing();
                     }
+
                     if (_outputSerializer != null)
                     {
                         _outputSerializer.End();
                     }
+
                     if (_errorSerializer != null)
                     {
                         _errorSerializer.End();
                     }
+
                     if (_runspaceRef != null)
                     {
                         // NTRAID#Windows Out Of Band Releases-925297-2005/12/14
@@ -1184,6 +1165,7 @@ namespace Microsoft.PowerShell
                         {
                         }
                     }
+
                     _runspaceRef = null;
                     ui = null;
                 }
@@ -1193,16 +1175,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Indicates if the session should be terminated or not.  Typically set by the break handler for Close, Logoff, and
         /// Shutdown events.  Note that the only valid transition for this property is from false to true: it is not legal to
         /// try to set it to false after is was set to true.
-        ///
         /// </summary>
         /// <value>
-        ///
         /// true to shut down the session.  false is only allowed if the property is already false.
-        ///
         /// </value>
         internal bool ShouldEndSession
         {
@@ -1218,6 +1196,7 @@ namespace Microsoft.PowerShell
 
                 return result;
             }
+
             set
             {
                 lock (hostGlobalLock)
@@ -1233,9 +1212,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// The Runspace ref object being used by this Host instance.  A host only opens one Runspace.
-        ///
         /// </summary>
         /// <value></value>
         internal RunspaceRef RunspaceRef
@@ -1248,6 +1225,8 @@ namespace Microsoft.PowerShell
 
         internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
 
+        internal bool OutputFormatSpecified { get; private set; }
+
         internal WrappedSerializer.DataFormat InputFormat { get; private set; }
 
         internal WrappedDeserializer.DataFormat ErrorFormat
@@ -1256,12 +1235,13 @@ namespace Microsoft.PowerShell
             {
                 WrappedDeserializer.DataFormat format = OutputFormat;
 
-                //If this shell is invoked in minishell interop mode and error is redirected,
-                //always write data in error stream in xml format.
-                if (IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
+                // If this shell is invoked in non-interactive, error is redirected, and OutputFormat was not
+                // specified write data in error stream in xml format assuming PowerShell->PowerShell usage.
+                if (!OutputFormatSpecified && IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
                 {
                     format = Serialization.DataFormat.XML;
                 }
+
                 return format;
             }
         }
@@ -1288,6 +1268,7 @@ namespace Microsoft.PowerShell
                             "Output",
                             Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
                 }
+
                 return _outputSerializer;
             }
         }
@@ -1304,6 +1285,7 @@ namespace Microsoft.PowerShell
                             "Error",
                             Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter);
                 }
+
                 return _errorSerializer;
             }
         }
@@ -1328,29 +1310,22 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// The main run loop of the program: processes command line parameters, and starts up a runspace.
-        ///
         /// </summary>
-        ///
         /// <param name="cpp">
         /// Commandline parameter parser. The commandline parameter parser is expected to parse all the
         /// arguments before calling this method.
         /// </param>
-        ///
         /// <param name="isPrestartWarned">
         /// Is there any warning at startup
         /// </param>
-        ///
         /// <returns>
-        ///
         /// The process exit code to be returned by Main.
-        ///
         /// </returns>
 
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
-            Dbg.Assert(null != cpp, "CommandLine parameter parser cannot be null.");
+            Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
             uint exitCode = ExitCodeSuccess;
 
             do
@@ -1375,6 +1350,7 @@ namespace Microsoft.PowerShell
                 }
 
                 OutputFormat = cpp.OutputFormat;
+                OutputFormatSpecified = cpp.OutputFormatSpecified;
                 InputFormat = cpp.InputFormat;
                 _wasInitialCommandEncoded = cpp.WasInitialCommandEncoded;
 
@@ -1424,14 +1400,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Loops over the Host's sole Runspace; opens the runspace, initializes it, then recycles it if the Runspace fails.
-        ///
         /// </summary>
         /// <returns>
-        ///
         /// The process exit code to be returned by Main.
-        ///
         /// </returns>
         private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode, string configurationName)
         {
@@ -1506,6 +1478,7 @@ namespace Microsoft.PowerShell
             {
                 exec.ExecuteCommand(command, out e, options);
             }
+
             if (e != null)
             {
                 ReportException(e, exec);
@@ -1557,10 +1530,8 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
-        ///
         /// </summary>
 
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
@@ -1608,6 +1579,7 @@ namespace Microsoft.PowerShell
                         DefaultInitialSessionState.ClearPSModules();
                         DefaultInitialSessionState.ImportPSModule(defaultImportModulesList);
                     }
+
                     consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
                     OpenConsoleRunspace(consoleRunspace, staMode);
                 }
@@ -1672,6 +1644,31 @@ namespace Microsoft.PowerShell
 
             Executor exec = new Executor(this, false, false);
 
+            // If working directory was specified, set it
+            if (s_cpp != null && s_cpp.WorkingDirectory != null)
+            {
+                Pipeline tempPipeline = exec.CreatePipeline();
+                var command = new Command("Set-Location");
+                command.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
+                tempPipeline.Commands.Add(command);
+
+                Exception exception;
+                if (IsRunningAsync)
+                {
+                    exec.ExecuteCommandAsyncHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+                else
+                {
+                    exec.ExecuteCommandHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+
+                if (exception != null)
+                {
+                    _lastRunspaceInitializationException = exception;
+                    ReportException(exception, exec);
+                }
+            }
+
             if (!string.IsNullOrEmpty(configurationName))
             {
                 // If an endpoint configuration is specified then create a loop-back remote runspace targeting
@@ -1696,10 +1693,7 @@ namespace Microsoft.PowerShell
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
-                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-                {
-                    _runspaceRef.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-                }
+                Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
 
                 string allUsersProfile = HostUtilities.GetFullProfileFileName(null, false);
                 string allUsersHostSpecificProfile = HostUtilities.GetFullProfileFileName(shellId, false);
@@ -1771,6 +1765,7 @@ namespace Microsoft.PowerShell
                 {
                     c = new Command(filePath, false, false);
                 }
+
                 tempPipeline.Commands.Add(c);
 
                 if (initialCommandArgs != null)
@@ -1917,9 +1912,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Escapes backtick and tick characters with a backtick, returns the result
-        ///
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -1936,6 +1929,7 @@ namespace Microsoft.PowerShell
                 {
                     sb.Append(c);
                 }
+
                 sb.Append(c);
             }
 
@@ -2006,19 +2000,13 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Reports an exception according to the exception reporting settings in effect.
-        ///
         /// </summary>
         /// <param name="e">
-        ///
         /// The exception to report.
-        ///
         /// </param>
         /// <param name="header">
-        ///
         /// Optional header message.  Empty or null means "no header"
-        ///
         /// </param>
         private void ReportExceptionFallback(Exception e, string header)
         {
@@ -2102,7 +2090,7 @@ namespace Microsoft.PowerShell
                 if (_displayDebuggerBanner)
                 {
                     WriteDebuggerMessage(ConsoleHostStrings.EnteringDebugger);
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                     _displayDebuggerBanner = false;
                 }
 
@@ -2118,7 +2106,7 @@ namespace Microsoft.PowerShell
                         WriteDebuggerMessage(String.Format(CultureInfo.CurrentCulture, format, breakpoint));
                     }
 
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                 }
 
                 //
@@ -2226,13 +2214,11 @@ namespace Microsoft.PowerShell
         #region aux classes
 
         /// <summary>
-        ///
         /// InputLoop represents the prompt-input-execute loop of the interactive host.  Input loops can be nested, meaning that
         /// one input loop can be interrupted and another started; when the second ends, the first resumes.
         ///
         /// Neither this class' instances nor its static data is threadsafe.  Caller is responsible for ensuring threadsafe
         /// access.
-        ///
         /// </summary>
         private class InputLoop
         {
@@ -2262,13 +2248,10 @@ namespace Microsoft.PowerShell
             // Presently, this will not work if the Run loop is blocked on a ReadLine call.  Whether that's a
             // problem or not depends on when we expect calls to this function to be made.
             /// <summary>
-            ///
             /// </summary>
             /// <returns>True if next input loop is nested, False otherwise.</returns>
             /// <exception cref="InvalidOperationException">
-            ///
             ///  when there is no instanceStack.Count == 0
-            ///
             /// </exception>
 
             internal static bool ExitCurrentLoop()
@@ -2342,10 +2325,8 @@ namespace Microsoft.PowerShell
             // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
             // Removed HandleUnexpectedExceptions infrastructure
             /// <summary>
-            ///
             /// Evaluates the prompt, displays it, gets a command from the console, and executes it.  Repeats until the command
             /// is "exit", or until the shutdown flag is set.
-            ///
             /// </summary>
             internal void Run(bool inputLoopIsNested)
             {
@@ -2393,13 +2374,16 @@ namespace Microsoft.PowerShell
                                 {
                                     prompt = EvaluateDebugPrompt();
                                 }
+
                                 if (prompt == null)
                                 {
                                     prompt = EvaluatePrompt();
                                 }
                             }
+
                             ui.Write(prompt);
                         }
+
                         previousResponseWasEmpty = false;
                         // There could be a profile. So there could be a user defined custom readline command
                         line = ui.ReadLineWithTabCompletion(_exec);
@@ -2418,6 +2402,7 @@ namespace Microsoft.PowerShell
                                 // the output...
                                 ui.WriteLine();
                             }
+
                             inBlockMode = false;
 
                             if (Console.IsInputRedirected)
@@ -2553,7 +2538,7 @@ namespace Microsoft.PowerShell
                     {
                         _parent._isRunningPromptLoop = false;
                     }
-                } // end while
+                }
             }
 
             internal void BlockCommandOutput()
@@ -2847,7 +2832,7 @@ namespace Microsoft.PowerShell
 
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
 
-        private string _savedWindowTitle = "";
+        private string _savedWindowTitle = string.Empty;
         private Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;
         private bool _noExit = true;
@@ -2889,7 +2874,7 @@ namespace Microsoft.PowerShell
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
         private static PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
-    } // ConsoleHost
+    }
 
     /// <summary>
     /// Defines arguments passed to ConsoleHost.CreateRunspace

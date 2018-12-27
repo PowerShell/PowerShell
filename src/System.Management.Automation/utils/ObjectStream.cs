@@ -115,7 +115,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.  Note that
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single object from the stream
         /// </summary>
-        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached</returns>
+        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         internal virtual object Read()
         {
@@ -163,7 +163,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
         /// </exception>
@@ -281,7 +281,7 @@ namespace System.Management.Automation.Internal
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is closed
         /// </exception>
@@ -621,6 +621,7 @@ namespace System.Management.Automation.Internal
 
                     handle = _readWaitHandle;
                 }
+
                 return handle;
             }
         }
@@ -648,6 +649,7 @@ namespace System.Management.Automation.Internal
 
                     handle = _writeWaitHandle;
                 }
+
                 return handle;
             }
         }
@@ -731,6 +733,7 @@ namespace System.Management.Automation.Internal
 
                     writer = _writer;
                 }
+
                 return writer;
             }
         }
@@ -754,6 +757,7 @@ namespace System.Management.Automation.Internal
                 {
                     endOfStream = (_objects.Count == 0 && _isOpen == false);
                 }
+
                 return endOfStream;
             }
         }
@@ -761,7 +765,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.  Note that
@@ -780,6 +784,7 @@ namespace System.Management.Automation.Internal
                 {
                     isOpen = _isOpen;
                 }
+
                 return isOpen;
             }
         }
@@ -797,6 +802,7 @@ namespace System.Management.Automation.Internal
                 {
                     count = _objects.Count;
                 }
+
                 return count;
             }
         }
@@ -808,7 +814,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Wait for data to be readable
         /// </summary>
-        /// <returns>true if EndOfPipeline is not reached.</returns>
+        /// <returns>True if EndOfPipeline is not reached.</returns>
         /// <remarks>
         /// WaitRead does not guarantee that data is present in the stream,
         /// only that data was added when the event was signaled.  Since there may be
@@ -914,6 +920,7 @@ namespace System.Management.Automation.Internal
                         {
                         }
                     }
+
                     if (_writeWaitHandle != null)
                     {
                         try
@@ -949,6 +956,7 @@ namespace System.Management.Automation.Internal
                     {
                     }
                 }
+
                 if (unblockWriters)
                 {
                     try
@@ -989,7 +997,7 @@ namespace System.Management.Automation.Internal
                 WriteReady (this, new EventArgs ());
             }
 #endif
-        } // RaiseEvents
+        }
 
         #endregion private locking code
 
@@ -1060,10 +1068,11 @@ namespace System.Management.Automation.Internal
                     catch (ObjectDisposedException)
                     {
                     }
+
                     RaiseEvents();
                 }
             }
-        } // RaiseEvents
+        }
 
         #endregion internal methods
 
@@ -1072,7 +1081,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read a single object from the stream
         /// </summary>
-        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached</returns>
+        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         internal override object Read()
         {
@@ -1081,6 +1090,7 @@ namespace System.Management.Automation.Internal
             {
                 return result[0];
             }
+
             Diagnostics.Assert(result.Count == 0, "Invalid number of objects returned");
 
             return AutomationNull.Value;
@@ -1090,7 +1100,7 @@ namespace System.Management.Automation.Internal
         /// Read at most <paramref name="count"/> objects
         /// </summary>
         /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
         /// </exception>
@@ -1116,6 +1126,7 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
             }
+
             if (count == 0)
             {
                 return new Collection<object>();
@@ -1135,6 +1146,7 @@ namespace System.Management.Automation.Internal
                         {
                             continue;    // wait some more
                         }
+
                         raiseEvents = true;
                         // NTRAID#Windows Out Of Band Releases-925566-2005/12/07-JonN
                         int objectsAdded = 0;
@@ -1145,6 +1157,7 @@ namespace System.Management.Automation.Internal
                             if (--count <= 0)
                                 break;
                         }
+
                         _objects.RemoveRange(0, objectsAdded);
                     }
                 }
@@ -1164,7 +1177,7 @@ namespace System.Management.Automation.Internal
             }
 
             return results;
-        } // Read (int count)
+        }
 
         /// <summary>
         /// Blocks until the pipeline closes and reads all objects.
@@ -1189,7 +1202,7 @@ namespace System.Management.Automation.Internal
         {
             // NTRAID#Windows Out Of Band Releases-925566-2005/12/07-JonN
             return Read(Int32.MaxValue);
-        } // ReadToEnd
+        }
 
         /// <summary>
         /// Reads objects currently in the stream, but does not block.
@@ -1216,6 +1229,7 @@ namespace System.Management.Automation.Internal
             {
                 return new Collection<object>();
             }
+
             if (maxRequested < 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
@@ -1239,6 +1253,7 @@ namespace System.Management.Automation.Internal
                         {
                             results.Add(_objects[i]);
                         }
+
                         raiseEvents = true;
                         _objects.RemoveRange(0, readCount);
                     }
@@ -1251,8 +1266,9 @@ namespace System.Management.Automation.Internal
                     RaiseEvents();
                 }
             }
+
             return results ?? new Collection<object>();
-        } // NonBlockingRead
+        }
 
         /// <summary>
         /// Peek the next object
@@ -1276,6 +1292,7 @@ namespace System.Management.Automation.Internal
                     result = _objects[0];
                 }
             }
+
             return result;
         }
 
@@ -1294,7 +1311,7 @@ namespace System.Management.Automation.Internal
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is closed
         /// </exception>
@@ -1333,7 +1350,8 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
-            if (null == enumerable)
+
+            if (enumerable == null)
                 a.Add(obj);
             else
             {
@@ -1351,8 +1369,9 @@ namespace System.Management.Automation.Internal
                         // we just ignore it
                         continue;
                     }
+
                     a.Add(o);
-                } // foreach
+                }
             }
 
             int objectsWritten = 0;
@@ -1436,10 +1455,10 @@ namespace System.Management.Automation.Internal
                         RaiseEvents();
                     }
                 }
-            } // end while (count > 0)
+            }
 
             return objectsWritten;
-        } // Write (object obj, bool enumerateCollection)
+        }
 
         #endregion Write Methods
 
@@ -1456,6 +1475,7 @@ namespace System.Management.Automation.Internal
         {
             DataReady += eventHandler;
         }
+
         private void DFT_RemoveHandler_OnDataReady(EventHandler eventHandler)
         {
             DataReady -= eventHandler;
@@ -1517,7 +1537,7 @@ namespace System.Management.Automation.Internal
         }
 
         #endregion IDisposable
-    } // class ObjectStream
+    }
 
     /// <summary>
     /// An object stream using a PSDataCollection as the object store.
@@ -1561,7 +1581,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PSDataCollectionStream(Guid psInstanceId, PSDataCollection<T> storeToUse)
         {
-            if (null == storeToUse)
+            if (storeToUse == null)
             {
                 throw PSTraceSource.NewArgumentNullException("storeToUse");
             }
@@ -1620,6 +1640,7 @@ namespace System.Management.Automation.Internal
                 {
                     endOfStream = (_objects.Count == 0 && !_isOpen);
                 }
+
                 return endOfStream;
             }
         }
@@ -1627,7 +1648,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.
@@ -1661,11 +1682,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (null == _objectReader)
+                if (_objectReader == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _objectReader)
+                        if (_objectReader == null)
                         {
                             _objectReader = new PSDataCollectionReader<T, object>(this);
                         }
@@ -1684,13 +1705,13 @@ namespace System.Management.Automation.Internal
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
-        internal PipelineReader<object> GetObjectReaderForPipeline(String computerName, Guid runspaceId)
+        internal PipelineReader<object> GetObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
-            if (null == _objectReaderForPipeline)
+            if (_objectReaderForPipeline == null)
             {
                 lock (_syncObject)
                 {
-                    if (null == _objectReaderForPipeline)
+                    if (_objectReaderForPipeline == null)
                     {
                         _objectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, object>(this, computerName, runspaceId);
@@ -1708,11 +1729,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (null == _psobjectReader)
+                if (_psobjectReader == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _psobjectReader)
+                        if (_psobjectReader == null)
                         {
                             _psobjectReader = new PSDataCollectionReader<T, PSObject>(this);
                         }
@@ -1731,13 +1752,13 @@ namespace System.Management.Automation.Internal
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
-        internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(String computerName, Guid runspaceId)
+        internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
-            if (null == _psobjectReaderForPipeline)
+            if (_psobjectReaderForPipeline == null)
             {
                 lock (_syncObject)
                 {
-                    if (null == _psobjectReaderForPipeline)
+                    if (_psobjectReaderForPipeline == null)
                     {
                         _psobjectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, PSObject>(this, computerName, runspaceId);
@@ -1759,16 +1780,17 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (null == _writer)
+                if (_writer == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _writer)
+                        if (_writer == null)
                         {
                             _writer = new PSDataCollectionWriter<T>(this) as PipelineWriter;
                         }
                     }
                 }
+
                 return _writer;
             }
         }
@@ -1822,7 +1844,8 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
-            if (null == enumerable)
+
+            if (enumerable == null)
             {
                 objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                     typeof(T), Globalization.CultureInfo.InvariantCulture));
@@ -1841,9 +1864,10 @@ namespace System.Management.Automation.Internal
                         // we just ignore it
                         continue;
                     }
+
                     objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                         typeof(T), Globalization.CultureInfo.InvariantCulture));
-                } // foreach
+                }
             }
 
             _objects.InternalAddRange(_psInstanceId, objectsToAdd);
@@ -1893,7 +1917,6 @@ namespace System.Management.Automation.Internal
         #region Event Handlers
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1903,7 +1926,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1956,5 +1978,5 @@ namespace System.Management.Automation.Internal
         }
         #endregion IDisposable
     }
-} // namespace System.Management.Automation
+}
 

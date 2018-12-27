@@ -70,12 +70,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsHtml
         {
             get { return _asHtml; }
+
             set
             {
                 _isHtmlSet = true;
                 _asHtml = value;
             }
         }
+
         private bool _asHtml;
         private bool _isHtmlSet = false;
 
@@ -150,6 +152,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Clipboard.Clear();
                 }
+
                 return;
             }
 
@@ -306,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         /// Generate HTML fragment data string with header that is required for the clipboard.
         /// </summary>
         /// <param name="html">the html to generate for</param>
-        /// <returns>the resulted string</returns>
+        /// <returns>The resulted string.</returns>
         private static string GetHtmlDataString(string html)
         {
             // The string contains index references to other spots in the string, so we need placeholders so we can compute the offsets.
@@ -406,7 +409,7 @@ EndSelection:<<<<<<<<4";
         /// <param name="sb">the string builder to count its string</param>
         /// <param name="start">optional: the start index to calculate from (default  - start of string)</param>
         /// <param name="end">optional: the end index to calculate to (default - end of string)</param>
-        /// <returns>the number of bytes required to encode the string in UTF-8</returns>
+        /// <returns>The number of bytes required to encode the string in UTF-8.</returns>
         private static int GetByteCount(StringBuilder sb, int start = 0, int end = -1)
         {
             char[] _byteCount = new char[1];
@@ -417,6 +420,7 @@ EndSelection:<<<<<<<<4";
                 _byteCount[0] = sb[i];
                 count += Encoding.UTF8.GetByteCount(_byteCount);
             }
+
             return count;
         }
     }

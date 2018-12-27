@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Id;
             }
+
             set
             {
                 base.Id = value;
@@ -111,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
 
             jobList.Sort((x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
             WriteObject(jobList, true);
-        } // ProcessRecord
+        }
 
         #endregion Overrides
 
@@ -120,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Helper method to find jobs based on parameter set.
         /// </summary>
-        /// <returns>Matching jobs</returns>
+        /// <returns>Matching jobs.</returns>
         protected List<Job> FindJobs()
         {
             List<Job> jobList = new List<Job>();
@@ -131,12 +132,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobList.AddRange(FindJobsMatchingByName(true, false, true, false));
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByInstanceId(true, false, true, false));
                     }
+
                     break;
 
                 case SessionIdParameterSet:
@@ -152,24 +155,28 @@ namespace Microsoft.PowerShell.Commands
                             jobList.AddRange(JobManager.GetJobs(this, true, false, null));
                         }
                     }
+
                     break;
 
                 case CommandParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByCommand(false));
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByState(false));
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByFilter(false));
                     }
+
                     break;
 
                 default:
@@ -190,12 +197,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Filter jobs based on HasMoreData
         /// </summary>
-        ///
         /// <param name="jobList"></param>
-        /// <returns>return the list of jobs after applying HasMoreData filter</returns>
+        /// <returns>Return the list of jobs after applying HasMoreData filter.</returns>
         private List<Job> ApplyHasMoreDataFiltering(List<Job> jobList)
         {
-            bool hasMoreDataParameter = MyInvocation.BoundParameters.ContainsKey("HasMoreData");
+            bool hasMoreDataParameter = MyInvocation.BoundParameters.ContainsKey(nameof(HasMoreData));
 
             if (!hasMoreDataParameter)
             {
@@ -218,13 +224,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the all child jobs with specified ChildJobState in the job list
         /// </summary>
-        ///
         /// <param name="jobList"></param>
-        /// <returns>returns job list including all child jobs with ChildJobState or all if IncludeChildJob is specified</returns>
+        /// <returns>Returns job list including all child jobs with ChildJobState or all if IncludeChildJob is specified.</returns>
         private List<Job> FindChildJobs(List<Job> jobList)
         {
-            bool childJobStateParameter = MyInvocation.BoundParameters.ContainsKey("ChildJobState");
-            bool includeChildJobParameter = MyInvocation.BoundParameters.ContainsKey("IncludeChildJob");
+            bool childJobStateParameter = MyInvocation.BoundParameters.ContainsKey(nameof(ChildJobState));
+            bool includeChildJobParameter = MyInvocation.BoundParameters.ContainsKey(nameof(IncludeChildJob));
 
             List<Job> matches = new List<Job>();
 
@@ -269,9 +274,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<Job> ApplyTimeFiltering(List<Job> jobList)
         {
-            bool beforeParameter = MyInvocation.BoundParameters.ContainsKey("Before");
-            bool afterParameter = MyInvocation.BoundParameters.ContainsKey("After");
-            bool newestParameter = MyInvocation.BoundParameters.ContainsKey("Newest");
+            bool beforeParameter = MyInvocation.BoundParameters.ContainsKey(nameof(Before));
+            bool afterParameter = MyInvocation.BoundParameters.ContainsKey(nameof(After));
+            bool newestParameter = MyInvocation.BoundParameters.ContainsKey(nameof(Newest));
 
             if (!beforeParameter && !afterParameter && !newestParameter)
             {

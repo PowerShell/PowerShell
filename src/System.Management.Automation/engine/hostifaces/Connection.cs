@@ -302,7 +302,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Clones current object
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal RunspaceStateInfo Clone()
         {
             return new RunspaceStateInfo(this);
@@ -334,6 +334,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("runspaceStateInfo");
             }
+
             RunspaceStateInfo = runspaceStateInfo;
         }
 
@@ -505,6 +506,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return t_threadSpecificDefaultRunspace;
             }
+
             set
             {
                 if (value == null || !value.RunspaceIsRemote)
@@ -539,6 +541,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private static Runspace s_primaryRunspace;
 
         /// <summary>
@@ -607,6 +610,7 @@ namespace System.Management.Automation.Runspaces
                 this.apartmentState = value;
             }
         }
+
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
 #endif
 
@@ -798,6 +802,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private static SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
         private static object s_syncObject;
 
@@ -883,6 +888,7 @@ namespace System.Management.Automation.Runspaces
 
                             // Otherwise no change.
                     }
+
                     break;
 
                 case RunspaceAvailability.Available:
@@ -896,6 +902,7 @@ namespace System.Management.Automation.Runspaces
                             this.RunspaceAvailability = Runspaces.RunspaceAvailability.None;
                             break;
                     }
+
                     break;
 
                 case RunspaceAvailability.AvailableForNestedCommand:
@@ -913,6 +920,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 case RunspaceAvailability.Busy:
@@ -928,6 +936,7 @@ namespace System.Management.Automation.Runspaces
                             {
                                 this.RunspaceAvailability = RunspaceAvailability.None;
                             }
+
                             break;
 
                         case PipelineState.Stopping:
@@ -1020,6 +1029,7 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 }
                             }
+
                             break;
 
                         case PipelineState.Running: // this can happen if a nested pipeline is created without entering a nested prompt
@@ -1028,6 +1038,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 default:
@@ -1132,11 +1143,13 @@ namespace System.Management.Automation.Runspaces
                                 this.RunspaceAvailability = (remoteCommand == null && GetCurrentlyRunningPipeline() == null) ?
                                     RunspaceAvailability.Available : RunspaceAvailability.Busy;
                             }
+
                             break;
 
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 case RunspaceAvailability.Available:
@@ -1155,6 +1168,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 default:
@@ -1340,7 +1354,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public abstract RunspaceCapability GetCapabilities();
 
         #endregion
@@ -1389,7 +1403,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public abstract Pipeline CreatePipeline();
 
         /// <summary>
@@ -1486,7 +1500,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Pop the currently running PowerShell from stack.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         internal PowerShell PopRunningPowerShell()
         {
             lock (_syncObject)
@@ -1496,6 +1510,7 @@ namespace System.Management.Automation.Runspaces
                 if (count > 0)
                 {
                     if (count == 1) { _baseRunningPowerShell = null; }
+
                     return _runningPowerShells.Pop();
                 }
             }
@@ -1613,7 +1628,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         ///<param name="transaction">The base transaction</param>
         ///<param name="severity">The severity of error that causes PowerShell to automatically rollback the transaction</param>
-        ///
         public void SetBaseTransaction(System.Transactions.CommittableTransaction transaction, RollbackSeverity severity)
         {
             this.ExecutionContext.TransactionManager.SetBaseTransaction(transaction, severity);
@@ -1622,7 +1636,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Clears the transaction set by SetBaseTransaction()
         /// </summary>
-        ///
         public void ClearBaseTransaction()
         {
             this.ExecutionContext.TransactionManager.ClearBaseTransaction();
@@ -1666,23 +1679,18 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set a variable in session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the item to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value of the item being set.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// name is null
         /// </exception>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1692,29 +1700,25 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("name");
             }
+
             _runspace.SetVariable(name, value);
         }
 
         /// <summary>
         /// Get a variable out of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// name of variable to look up
         /// </param>
-        ///
         /// <returns>
         /// The value of the specified variable.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// name is null
         /// </exception>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1729,17 +1733,16 @@ namespace System.Management.Automation.Runspaces
             {
                 return null;
             }
+
             return _runspace.GetVariable(name);
         }
 
         /// <summary>
         /// Get the list of applications out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1754,11 +1757,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get the list of scripts out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1773,11 +1774,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get the APIs to access drives out of session state
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1789,28 +1788,25 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get/Set the language mode out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
         public virtual PSLanguageMode LanguageMode
         {
             get { return _runspace.LanguageMode; }
+
             set { _runspace.LanguageMode = value; }
         }
 
         /// <summary>
         /// Get the module info out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1823,11 +1819,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get the APIs to access paths and locations out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1839,11 +1833,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get the APIs to access a provider out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1855,11 +1847,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get the APIs to access variables out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1871,11 +1861,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get the APIs to build script blocks and execute script out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -1887,11 +1875,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the instance of the provider interface APIs out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>

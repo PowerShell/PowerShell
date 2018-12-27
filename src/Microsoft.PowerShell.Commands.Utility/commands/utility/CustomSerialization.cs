@@ -12,13 +12,13 @@ namespace System.Management.Automation
     using Dbg = System.Management.Automation.Diagnostics;
 
     /// <summary>
-    /// This class provides functionality for serializing a PSObject
+    /// This class provides functionality for serializing a PSObject.
     /// </summary>
     internal class CustomSerialization
     {
         #region constructor
         /// <summary>
-        /// depth of serialization
+        /// Depth of serialization.
         /// </summary>
         private int _depth;
 
@@ -28,17 +28,17 @@ namespace System.Management.Automation
         private XmlWriter _writer;
 
         /// <summary>
-        /// Whether type information should be included in the xml
+        /// Whether type information should be included in the xml.
         /// </summary>
         private bool _notypeinformation;
 
         /// <summary>
-        /// CustomerSerializer used for formatting the output for _writer
+        /// CustomerSerializer used for formatting the output for _writer.
         /// </summary>
         private CustomInternalSerializer _serializer;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -56,10 +56,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("writer");
             }
+
             if (depth < 1)
             {
                 throw PSTraceSource.NewArgumentException("writer", Serialization.DepthOfOneRequired);
             }
+
             _depth = depth;
             _writer = writer;
             _notypeinformation = notypeinformation;
@@ -67,12 +69,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default depth of serialization
+        /// Default depth of serialization.
         /// </summary>
         public static int MshDefaultSerializationDepth { get; } = 1;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -92,10 +94,10 @@ namespace System.Management.Automation
         private bool _firstCall = true;
 
         /// <summary>
-        /// Serializes passed in object
+        /// Serializes passed in object.
         /// </summary>
         /// <param name="source">
-        /// object to be serialized
+        /// Object to be serialized.
         /// </param>
         internal void Serialize(object source)
         {
@@ -117,10 +119,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializes passed in object
+        /// Serializes passed in object.
         /// </summary>
         /// <param name="source">
-        /// object to be serialized
+        /// Object to be serialized.
         /// </param>
         internal void SerializeAsStream(object source)
         {
@@ -135,7 +137,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes the start of root element
+        /// Writes the start of root element.
         /// </summary>
         private void Start()
         {
@@ -143,7 +145,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Write the end of root element
+        /// Write the end of root element.
         /// </summary>
         internal void Done()
         {
@@ -152,12 +154,13 @@ namespace System.Management.Automation
                 _firstCall = false;
                 Start();
             }
+
             _writer.WriteEndElement();
             _writer.Flush();
         }
 
         /// <summary>
-        /// Flush the writer
+        /// Flush the writer.
         /// </summary>
         internal void DoneAsStream()
         {
@@ -185,36 +188,36 @@ namespace System.Management.Automation
         #region constructor
 
         /// <summary>
-        /// Xml writer to be used
+        /// Xml writer to be used.
         /// </summary>
         private XmlWriter _writer;
 
         /// <summary>
-        /// check first call for every pipeline object to write Object tag else property tag
+        /// Check first call for every pipeline object to write Object tag else property tag.
         /// </summary>
         private bool _firstcall;
 
         /// <summary>
-        /// should the type information to be shown
+        /// Should the type information to be shown.
         /// </summary>
         private bool _notypeinformation;
 
         /// <summary>
-        /// check object call
+        /// Check object call.
         /// </summary>
         private bool _firstobjectcall = true;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="writer">
-        /// Xml writer to be used
+        /// Xml writer to be used.
         /// </param>
         /// <param name="notypeinformation">
-        /// Xml writer to be used
+        /// Xml writer to be used.
         /// </param>
         /// <param name="isfirstcallforObject">
-        /// check first call for every pipeline object to write Object tag else property tag
+        /// Check first call for every pipeline object to write Object tag else property tag.
         /// </param>
         internal CustomInternalSerializer(XmlWriter writer, bool notypeinformation, bool isfirstcallforObject)
         {
@@ -232,7 +235,7 @@ namespace System.Management.Automation
         private bool _isStopping = false;
 
         /// <summary>
-        /// Called from a separate thread will stop the serialization process
+        /// Called from a separate thread will stop the serialization process.
         /// </summary>
         internal void Stop()
         {
@@ -320,11 +323,12 @@ namespace System.Management.Automation
                 WriteOnePrimitiveKnownType(_writer, property, source, pktInfo);
                 return true;
             }
+
             return false;
         }
 
         /// <summary>
-        /// Serializes PSObject whose base objects are of primitive known type
+        /// Serializes PSObject whose base objects are of primitive known type.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="property"></param>
@@ -349,6 +353,7 @@ namespace System.Management.Automation
                     sourceHandled = true;
                 }
             }
+
             return sourceHandled;
         }
 
@@ -381,6 +386,7 @@ namespace System.Management.Automation
                     {
                         WriteDictionary(dictionary, depth);
                     }
+
                     break;
                 case ContainerType.Stack:
                 case ContainerType.Queue:
@@ -389,11 +395,13 @@ namespace System.Management.Automation
                     {
                         WriteEnumerable(enumerable, depth);
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "All containers should be handled in the switch");
                     }
+
                     break;
             }
 
@@ -427,8 +435,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if source is known container type and returns appropriate
-        /// information
+        /// Checks if source is known container type and returns appropriate information.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="ct"></param>
@@ -506,7 +513,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if derived is of type baseType or a type derived from baseType
+        /// Checks if derived is of type baseType or a type derived from baseType.
         /// </summary>
         /// <param name="derived"></param>
         /// <param name="baseType"></param>
@@ -524,19 +531,21 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
+
                 derived = derived.GetTypeInfo().BaseType;
             }
+
             return false;
         }
 
         #region Write PSObject
 
         /// <summary>
-        /// Serializes an PSObject whose baseobject is of primitive type
+        /// Serializes an PSObject whose baseobject is of primitive type.
         /// and which has notes.
         /// </summary>
         /// <param name="source">
-        /// source from which notes are written
+        /// Source from which notes are written.
         /// </param>
         /// <param name="primitive">
         /// primitive object which is written as base object. In most cases it
@@ -653,7 +662,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Object baseObject = mshObject.BaseObject;
+            object baseObject = mshObject.BaseObject;
             if (!_notypeinformation)
                 WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, baseObject.GetType().ToString());
         }
@@ -672,15 +681,16 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             return false;
         }
 
         /// <summary>
-        /// Serialize member set. This method serializes without writing
+        /// Serialize member set. This method serializes without writing.
         /// enclosing tags and attributes.
         /// </summary>
         /// <param name="me">
-        /// enumerable containing members
+        /// Enumerable containing members
         /// </param>
         /// <param name="depth"></param>
         /// <param name="writeEnclosingMemberSetElementTag">
@@ -692,7 +702,6 @@ namespace System.Management.Automation
         {
             Dbg.Assert(me != null, "caller should validate the parameter");
 
-            bool enclosingTagWritten = false;
             foreach (PSMemberInfo info in me)
             {
                 if (!info.ShouldSerialize)
@@ -706,15 +715,11 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                enclosingTagWritten = true;
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
                 WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, info.Name);
                 if (!_notypeinformation)
                     WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, info.GetType().ToString());
                 _writer.WriteString(property.Value.ToString());
-            }
-            if (enclosingTagWritten)
-            {
                 _writer.WriteEndElement();
             }
         }
@@ -724,7 +729,7 @@ namespace System.Management.Automation
         #region properties
 
         /// <summary>
-        /// Serializes properties of PSObject
+        /// Serializes properties of PSObject.
         /// </summary>
         private void WritePSObjectProperties(PSObject source, int depth)
         {
@@ -746,6 +751,7 @@ namespace System.Management.Automation
                         specificProperties.Add(property);
                     }
                 }
+
                 SerializeProperties(specificProperties, CustomSerializationStrings.Properties, depth);
                 return;
             }
@@ -778,17 +784,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializes properties from collection
+        /// Serializes properties from collection.
         /// </summary>
         /// <param name="propertyCollection">
-        /// Collection of properties to serialize
+        /// Collection of properties to serialize.
         /// </param>
         /// <param name="name">
-        /// Name for enclosing element tag
+        /// Name for enclosing element tag.
         /// </param>
         /// <param name="depth">
-        /// depth to which each property should be
-        /// serialized
+        /// Depth to which each property should be serialized.
         /// </param>
         private void SerializeProperties(
             PSMemberInfoInternalCollection<PSPropertyInfo> propertyCollection, string name, int depth)
@@ -826,10 +831,10 @@ namespace System.Management.Automation
         #region enumerable and dictionary
 
         /// <summary>
-        /// Serializes IEnumerable
+        /// Serializes IEnumerable.
         /// </summary>
         /// <param name="enumerable">
-        /// enumerable which is serialized
+        /// Enumerable which is serialized.
         /// </param>
         /// <param name="depth"></param>
         private void WriteEnumerable(IEnumerable enumerable, int depth)
@@ -869,13 +874,14 @@ namespace System.Management.Automation
                     {
                         break;
                     }
+
                     WriteOneObject(item, null, depth);
                 }
             }
         }
 
         /// <summary>
-        /// Serializes IDictionary
+        /// Serializes IDictionary.
         /// </summary>
         /// <param name="dictionary">dictionary which is serialized</param>
         /// <param name="depth"></param>
@@ -943,11 +949,9 @@ namespace System.Management.Automation
         /// Gets the string from PSObject using the information from
         /// types.ps1xml. This string is used for serializing the PSObject.
         /// </summary>
-        ///
         /// <param name="source">
-        /// PSObject to be converted to string
+        /// PSObject to be converted to string.
         /// </param>
-        ///
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>
@@ -990,11 +994,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Reads the information the PSObject
-        /// and returns true if this object should be serialized as
-        /// string
+        /// and returns true if this object should be serialized as string.
         /// </summary>
-        /// <param name="source">PSObject to be serialized</param>
-        /// <returns>true if the object needs to be serialized as a string</returns>
+        /// <param name="source">PSObject to be serialized.</param>
+        /// <returns>True if the object needs to be serialized as a string.</returns>
         private static bool SerializeAsString(PSObject source)
         {
             return source.GetSerializationMethod(null) == SerializationMethod.String;
@@ -1003,7 +1006,7 @@ namespace System.Management.Automation
         #endregion serialize as string
 
         /// <summary>
-        /// compute the serialization depth for an PSObject instance subtree
+        /// Compute the serialization depth for an PSObject instance subtree.
         /// </summary>
         /// <param name="source">PSObject whose serialization depth has to be computed</param>
         /// <param name="depth">current depth</param>
@@ -1027,7 +1030,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes null
+        /// Writes null.
         /// </summary>
         /// <param name="property"></param>
         private void WriteNull(string property)
@@ -1094,7 +1097,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes an item or property in Monad namespace
+        /// Writes an item or property in Monad namespace.
         /// </summary>
         /// <param name="writer">The XmlWriter stream to which the object is serialized.</param>
         /// <param name="property">name of property. Pass null for item</param>
@@ -1112,7 +1115,7 @@ namespace System.Management.Automation
         #region misc
 
         /// <summary>
-        /// Writes start element in Monad namespace
+        /// Writes start element in Monad namespace.
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="elementTag">tag of element</param>
@@ -1122,7 +1125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes attribute in monad namespace
+        /// Writes attribute in monad namespace.
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="name">name of attribute</param>

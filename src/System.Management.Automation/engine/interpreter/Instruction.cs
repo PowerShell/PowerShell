@@ -27,8 +27,11 @@ namespace System.Management.Automation.Interpreter
         public const int UnknownInstrIndex = int.MaxValue;
 
         public virtual int ConsumedStack { get { return 0; } }
+
         public virtual int ProducedStack { get { return 0; } }
+
         public virtual int ConsumedContinuations { get { return 0; } }
+
         public virtual int ProducedContinuations { get { return 0; } }
 
         public int StackBalance
@@ -45,7 +48,7 @@ namespace System.Management.Automation.Interpreter
 
         public virtual string InstructionName
         {
-            get { return GetType().Name.Replace("Instruction", ""); }
+            get { return GetType().Name.Replace("Instruction", string.Empty); }
         }
 
         public override string ToString()
@@ -69,8 +72,11 @@ namespace System.Management.Automation.Interpreter
         public static readonly Instruction Instance = new NotInstruction();
 
         private NotInstruction() { }
+
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
+
         public override int Run(InterpretedFrame frame)
         {
             frame.Push((bool)frame.Pop() ? ScriptingRuntimeHelpers.False : ScriptingRuntimeHelpers.True);

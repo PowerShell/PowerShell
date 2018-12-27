@@ -75,9 +75,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Declare a delegate which returns the encryption key and initialization vector for symmetric encryption algorithm.
     /// </summary>
-    /// <param name="context">The streaming context, which contains the searilization context.</param>
+    /// <param name="context">The streaming context, which contains the serialization context.</param>
     /// <param name="key">Symmetric encryption key.</param>
-    /// <param name="iv">symmetric encryption initialization vector.</param>
+    /// <param name="iv">Symmetric encryption initialization vector.</param>
     /// <returns></returns>
     public delegate bool GetSymmetricEncryptionKey(StreamingContext context, out byte[] key, out byte[] iv);
 
@@ -97,11 +97,13 @@ namespace System.Management.Automation
             {
                 return s_delegate;
             }
+
             set
             {
                 s_delegate = value;
             }
         }
+
         private static GetSymmetricEncryptionKey s_delegate = null;
 
         /// <summary>
@@ -198,7 +200,6 @@ namespace System.Management.Automation
         /// Initializes a new instance of the PSCredential class with a
         /// username and password.
         /// </summary>
-        ///
         /// <param name="userName"> User's name. </param>
         /// <param name="password"> User's password. </param>
         public PSCredential(string userName, SecureString password)
@@ -247,7 +248,6 @@ namespace System.Management.Automation
         /// -- current creds are not compatible with NetworkCredential
         ///    (such as smart card creds or cert creds)
         /// </summary>
-        ///
         /// <returns>
         ///     null if the current object has not been initialized.
         ///     null if the current credentials are incompatible with
@@ -274,9 +274,7 @@ namespace System.Management.Automation
         /// Provides an explicit cast to get a NetworkCredential
         /// from this PSCredential.
         /// </summary>
-        ///
         /// <param name="credential"> PSCredential to convert. </param>
-        ///
         /// <returns>
         ///     null if the current object has not been initialized.
         ///     null if the current credentials are incompatible with
@@ -320,9 +318,7 @@ namespace System.Management.Automation
         ///
         /// for any other format, we simply treat the entire string
         /// as user name and set domain name to "".
-        ///
         /// </summary>
-        ///
         private static bool IsValidUserName(string input,
                                             out string user,
                                             out string domain)
@@ -360,7 +356,6 @@ namespace System.Management.Automation
         /// In any case, the function does not check if the split string
         /// are really valid as user or domain names.
         /// </summary>
-        ///
         private static void SplitUserDomain(string input,
                                             out string user,
                                             out string domain)
@@ -405,7 +400,7 @@ namespace System.Management.Automation
             else
             {
                 user = input;
-                domain = "";
+                domain = string.Empty;
             }
         }
     }

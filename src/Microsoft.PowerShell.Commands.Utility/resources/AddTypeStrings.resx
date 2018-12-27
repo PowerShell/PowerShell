@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CompilationErrorFormat" xml:space="preserve">
-    <value>{0}({1}) : {2}</value>
+  <data name="AlreadyCompiledandLoaded" xml:space="preserve">
+    <value>The source code was already compiled and loaded.</value>
   </data>
   <data name="MethodDefinitionNotPublic" xml:space="preserve">
     <value>The generated type defines no public methods or properties.</value>
@@ -137,9 +137,6 @@
   </data>
   <data name="LanguageAndProviderSpecified" xml:space="preserve">
     <value>Cannot add type. Specify only the Language or CodeDomProvider parameters.</value>
-  </data>
-  <data name="SpecialNetVersionRequired" xml:space="preserve">
-    <value>Cannot add type. The '{0}' language requires Microsoft .NET Framework {1}.</value>
   </data>
   <data name="AmbiguousAssemblyName" xml:space="preserve">
     <value>Cannot add type. The assembly name {0} matches both {1} and {2}.</value>
@@ -161,12 +158,6 @@
   </data>
   <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
     <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
-  </data>
-  <data name="CompilerErrorWithCSC" xml:space="preserve">
-    <value>Cannot add type due to the following exception: {0}. Verify that Microsoft .NET Framework {1}  is installed. On x64-based versions of Windows, you must also install the WOW64 feature.</value>
-  </data>
-  <data name="WrongCompilerParameterCombination" xml:space="preserve">
-    <value>Cannot add type. The '{0}' parameter and the '{1}' parameter cannot both be specified.</value>
   </data>
   <data name="CannotDefineNewType" xml:space="preserve">
     <value>Cannot add type. Definition of new types is not supported in this language mode.</value>

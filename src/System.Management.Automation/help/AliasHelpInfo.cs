@@ -13,7 +13,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the AliasHelpInfo class.
         /// </summary>
-        ///
         /// <remarks>
         /// The constructor is private. The only way to create an
         /// AliasHelpInfo object is through static method <see cref="GetHelpInfo"/>
@@ -51,13 +50,13 @@ namespace System.Management.Automation
         /// Returns the name of alias help.
         /// </summary>
         /// <value>Name of alias help.</value>
-        internal override string Name { get; } = "";
+        internal override string Name { get; } = string.Empty;
 
         /// <summary>
         /// Returns synopsis of alias help.
         /// </summary>
         /// <value>Synopsis of alias help.</value>
-        internal override string Synopsis { get; } = "";
+        internal override string Synopsis { get; } = string.Empty;
 
         /// <summary>
         /// Help category for alias help. This is always HelpCategory.Alias

@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Path to provider location that user is curious about.
@@ -68,28 +68,7 @@ namespace Microsoft.PowerShell.Commands
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
-        /// <summary>
-        /// List of Component's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Component { get; set; } = null;
-
-        /// <summary>
-        /// List of Functionality's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Functionality { get; set; } = null;
-
-        /// <summary>
-        /// List of Role's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Role { get; set; } = null;
-
-        private string _provider = "";
+        private string _provider = string.Empty;
 
         /// <summary>
         /// Changes the view of HelpObject returned
@@ -181,6 +160,24 @@ namespace Microsoft.PowerShell.Commands
         public string Parameter { set; get; }
 
         /// <summary>
+        /// Gets and sets list of Component's to search on.
+        /// </summary>
+        [Parameter]
+        public string[] Component { get; set; }
+
+        /// <summary>
+        /// Gets and sets list of Functionality's to search on.
+        /// </summary>
+        [Parameter]
+        public string[] Functionality { get; set; }
+
+        /// <summary>
+        /// Gets and sets list of Role's to search on.
+        /// </summary>
+        [Parameter]
+        public string[] Role { get; set; }
+
+        /// <summary>
         /// This parameter,if true, will direct get-help cmdlet to
         /// navigate to a URL (stored in the command MAML file under
         /// the uri node).
@@ -196,11 +193,13 @@ namespace Microsoft.PowerShell.Commands
                     VerifyParameterForbiddenInRemoteRunspace(this, "Online");
                 }
             }
+
             get
             {
                 return _showOnlineHelp;
             }
         }
+
         private bool _showOnlineHelp;
 
         // The following variable controls the view.
@@ -290,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // write first help object only once.
-                        if (null != firstHelpInfoObject)
+                        if (firstHelpInfoObject != null)
                         {
                             WriteObjectsOrShowOnlineHelp(firstHelpInfoObject, false);
                             firstHelpInfoObject = null;
@@ -298,6 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
                         WriteObjectsOrShowOnlineHelp(helpInfo, false);
                     }
+
                     countOfHelpInfos++;
                 }
 
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands
                     // show online help
                     s_tracer.WriteLine("Preparing to show help online.");
                     Uri onlineUri = helpInfo.GetUriForOnlineHelp();
-                    if (null != onlineUri)
+                    if (onlineUri != null)
                     {
                         onlineUriFound = true;
                         LaunchOnlineHelp(onlineUri);
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="uriToLaunch"></param>
         private void LaunchOnlineHelp(Uri uriToLaunch)
         {
-            Diagnostics.Assert(null != uriToLaunch, "uriToLaunch should not be null");
+            Diagnostics.Assert(uriToLaunch != null, "uriToLaunch should not be null");
 
             if (!uriToLaunch.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) &&
                 !uriToLaunch.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
@@ -599,11 +599,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
-#if UNIX
-                browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
-                browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
-                browserProcess.Start();
-#else
+
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
                     // We cannot open the URL in browser on headless SKUs.
@@ -612,12 +608,10 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // We can call ShellExecute directly on Full Windows.
                     browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
                     browserProcess.StartInfo.UseShellExecute = true;
                     browserProcess.Start();
                 }
-#endif
             }
             catch (InvalidOperationException ioe)
             {
@@ -628,7 +622,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = we;
             }
 
-            if (null != exception)
+            if (exception != null)
             {
                 if (wrapCaughtException)
                     throw PSTraceSource.NewInvalidOperationException(exception, HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
@@ -708,12 +702,13 @@ namespace Microsoft.PowerShell.Commands
                 foreach (SessionStateCommandEntry getHelpEntry in publicGetHelpEntries)
                 {
                     SessionStateCmdletEntry getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
-                    if ((null != getHelpCmdlet) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
+                    if ((getHelpCmdlet != null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
                     {
                         return true;
                     }
                 }
             }
+
             return false;
         }
 
@@ -731,14 +726,15 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings")]
         public static string GetHelpUri(PSObject commandInfoPSObject)
         {
-            if (null == commandInfoPSObject)
+            if (commandInfoPSObject == null)
             {
                 return string.Empty;
             }
+
             CommandInfo cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
             // GetHelpUri helper method is expected to be used only by System.Management.Automation.CommandInfo
             // objects from types.ps1xml
-            if ((null == cmdInfo) || (string.IsNullOrEmpty(cmdInfo.Name)))
+            if ((cmdInfo == null) || (string.IsNullOrEmpty(cmdInfo.Name)))
             {
                 return string.Empty;
             }
@@ -756,8 +752,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             AliasInfo aliasInfo = cmdInfo as AliasInfo;
-            if ((null != aliasInfo) &&
-                (null != aliasInfo.ExternalCommandMetadata) &&
+            if ((aliasInfo != null) &&
+                (aliasInfo.ExternalCommandMetadata != null) &&
                 (!string.IsNullOrEmpty(aliasInfo.ExternalCommandMetadata.HelpUri)))
             {
                 return aliasInfo.ExternalCommandMetadata.HelpUri;
@@ -776,7 +772,7 @@ namespace Microsoft.PowerShell.Commands
                 // Win8: 651300 if core get-help is present in the runspace (and it is the only get-help command), use
                 // help system directly and avoid perf penalty.
                 var currentContext = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                if ((null != currentContext) && (null != currentContext.HelpSystem))
+                if ((currentContext != null) && (currentContext.HelpSystem != null))
                 {
                     HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory);
                     helpRequest.ProviderContext = new ProviderContext(
@@ -787,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (
                         Uri result in
                             currentContext.HelpSystem.ExactMatchHelp(helpRequest).Select(
-                                helpInfo => helpInfo.GetUriForOnlineHelp()).Where(result => null != result))
+                                helpInfo => helpInfo.GetUriForOnlineHelp()).Where(result => result != null))
                     {
                         return result.OriginalString;
                     }
@@ -801,15 +797,15 @@ namespace Microsoft.PowerShell.Commands
                 // 2. This method is primarily used to get uri faster while serializing the CommandInfo objects (from Get-Command)
                 // 3. Exchange uses Get-Help proxy to not call Get-Help cmdlet at-all while serializing CommandInfo objects
                 // 4. Using HelpSystem directly will not allow Get-Help proxy to do its job.
-                System.Management.Automation.PowerShell getHelpPS = System.Management.Automation.PowerShell.Create(
-                    RunspaceMode.CurrentRunspace).AddCommand("get-help").
-                    AddParameter("Name", cmdName).AddParameter("Category",
-                                                                cmdInfo.HelpCategory.ToString());
+                var getHelpPS = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
+                    .AddCommand("get-help")
+                    .AddParameter("Name", cmdName)
+                    .AddParameter("Category", cmdInfo.HelpCategory.ToString());
                 try
                 {
                     Collection<PSObject> helpInfos = getHelpPS.Invoke();
 
-                    if (null != helpInfos)
+                    if (helpInfos != null)
                     {
                         for (int index = 0; index < helpInfos.Count; index++)
                         {
@@ -817,7 +813,7 @@ namespace Microsoft.PowerShell.Commands
                             if (LanguagePrimitives.TryConvertTo<HelpInfo>(helpInfos[index], out helpInfo))
                             {
                                 Uri result = helpInfo.GetUriForOnlineHelp();
-                                if (null != result)
+                                if (result != null)
                                 {
                                     return result.OriginalString;
                                 }

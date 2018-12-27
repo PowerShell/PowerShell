@@ -8,7 +8,7 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A cmdlet that sets the properties of the TraceSwitch instances that are instantiated in the process
+    /// A cmdlet that sets the properties of the TraceSwitch instances that are instantiated in the process.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "TraceSource", DefaultParameterSetName = "optionsSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113400")]
     [OutputType(typeof(PSTraceSource))]
@@ -20,37 +20,36 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        ///
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
             get { return base.NameInternal; }
+
             set { base.NameInternal = value; }
         }
 
         /// <summary>
-        /// The flags to be set on the TraceSource
+        /// The flags to be set on the TraceSource.
         /// </summary>
-        /// <value></value>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = "optionsSet")]
         public PSTraceSourceOptions Option
         {
             get { return base.OptionsInternal; }
+
             set
             {
                 base.OptionsInternal = value;
             }
-        } // Flags
+        }
 
         /// <summary>
-        /// The parameter which determines the options for output from the
-        /// trace listeners.
+        /// The parameter which determines the options for output from the trace listeners.
         /// </summary>
-        ///
         [Parameter(ParameterSetName = "optionsSet")]
         public TraceOptions ListenerOption
         {
             get { return base.ListenerOptionsInternal; }
+
             set
             {
                 base.ListenerOptionsInternal = value;
@@ -58,56 +57,56 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Adds the file trace listener using the specified file
+        /// Adds the file trace listener using the specified file.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "optionsSet")]
-        [Alias("PSPath","Path")]
+        [Alias("PSPath", "Path")]
         public string FilePath
         {
             get { return base.FileListener; }
+
             set { base.FileListener = value; }
-        } // File
+        }
 
         /// <summary>
-        /// Force parameter to control read-only files
+        /// Force parameter to control read-only files.
         /// </summary>
         [Parameter(ParameterSetName = "optionsSet")]
         public SwitchParameter Force
         {
             get { return base.ForceWrite; }
+
             set { base.ForceWrite = value; }
         }
 
         /// <summary>
-        /// If this parameter is specified the Debugger trace listener
-        /// will be added.
+        /// If this parameter is specified the Debugger trace listener will be added.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "optionsSet")]
         public SwitchParameter Debugger
         {
             get { return base.DebuggerListener; }
+
             set { base.DebuggerListener = value; }
-        } // Debugger
+        }
 
         /// <summary>
-        /// If this parameter is specified the Msh Host trace listener
-        /// will be added.
+        /// If this parameter is specified the Msh Host trace listener will be added.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "optionsSet")]
         public SwitchParameter PSHost
         {
             get { return base.PSHostListener; }
+
             set { base.PSHostListener = value; }
-        } // PSHost
+        }
 
         /// <summary>
-        /// If set, the specified listeners will be removed regardless
-        /// of their type.
+        /// If set, the specified listeners will be removed regardless of their type.
         /// </summary>
-        ///
         [Parameter(ParameterSetName = "removeAllListenersSet")]
         [ValidateNotNullOrEmpty]
         public string[] RemoveListener { get; set; } = new string[] { "*" };
@@ -115,7 +114,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// If set, the specified file trace listeners will be removed.
         /// </summary>
-        ///
         [Parameter(ParameterSetName = "removeFileListenersSet")]
         [ValidateNotNullOrEmpty]
         public string[] RemoveFileListener { get; set; } = new string[] { "*" };
@@ -129,8 +127,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
-        } // Passthru
+        }
+
         private bool _passThru;
 
         #endregion Parameters
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet code
 
         /// <summary>
-        /// Sets the TraceSource properties
+        /// Sets the TraceSource properties.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -155,6 +155,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(matchingSources, true);
                         WriteObject(preconfiguredTraceSources, true);
                     }
+
                     break;
 
                 case "removeAllListenersSet":
@@ -167,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
                     RemoveListenersByName(matchingSources, RemoveFileListener, true);
                     break;
             }
-        } // ProcessRecord
+        }
 
         #endregion Cmdlet code
     }

@@ -1,12 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Tracing;
 using System.IO;
-using System.Threading;
-using System.Security.Principal;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Tracing;
+using System.Threading;
+#if !UNIX
+using System.Security.Principal;
+#endif
 using Microsoft.Win32.SafeHandles;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting.Server
@@ -26,8 +29,10 @@ namespace System.Management.Automation.Remoting.Server
         protected string _initialCommand;
         protected ManualResetEvent allcmdsClosedEvent;
 
+#if !UNIX
         // Thread impersonation.
         protected WindowsIdentity _windowsIdentityToImpersonate;
+#endif
 
         /// <summary>
         /// Count of commands in progress
@@ -133,7 +138,7 @@ namespace System.Management.Automation.Remoting.Server
                     cmdTM = sessionTM.GetCommandTransportManager(psGuid);
                 }
 
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     // not throwing when there is no associated command as the command might have
                     // legitimately closed while the client is sending data. however the client
@@ -198,7 +203,7 @@ namespace System.Management.Automation.Remoting.Server
                     }
 
                     // dont throw if there is no cmdTM as it might have legitimately closed
-                    if (null != cmdTM)
+                    if (cmdTM != null)
                     {
                         cmdTM.Close(null);
                     }
@@ -248,6 +253,7 @@ namespace System.Management.Automation.Remoting.Server
                         // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
                         sessionTM.Close(null);
                     }
+
                     tracer.WriteMessage("END calling close on session transport manager");
                     sessionTM = null;
                 }
@@ -265,7 +271,7 @@ namespace System.Management.Automation.Remoting.Server
                 }
 
                 // dont throw if there is no cmdTM as it might have legitimately closed
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     cmdTM.Close(null);
                 }
@@ -300,11 +306,11 @@ namespace System.Management.Automation.Remoting.Server
             PSSenderInfo senderInfo;
 #if !UNIX
             WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, currentIdentity.Name, null),
+            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, currentIdentity.Name, null),
                 currentIdentity);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #else
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, "", null),
+            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, string.Empty, null),
                 null);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif
@@ -335,6 +341,7 @@ namespace System.Management.Automation.Remoting.Server
                             sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
                         }
                     }
+
                     if (string.IsNullOrEmpty(data))
                     {
                         lock (_syncObject)
@@ -344,19 +351,20 @@ namespace System.Management.Automation.Remoting.Server
                             sessionTM.Close(null);
                             sessionTM = null;
                         }
+
                         throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
                             RemotingErrorIdStrings.IPCUnknownElementReceived, string.Empty);
                     }
 
                     // process data in a thread pool thread..this way Runspace, Command
                     // data can be processed concurrently.
-#if CORECLR
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
-#else
+#if !UNIX
                     Utils.QueueWorkItemWithImpersonation(
-                        _windowsIdentityToImpersonate,
-                        new WaitCallback(ProcessingThreadStart),
-                        data);
+                            _windowsIdentityToImpersonate,
+                            new WaitCallback(ProcessingThreadStart),
+                            data);
+#else
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
                 } while (true);
             }
@@ -465,7 +473,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (null != s_singletonInstance)
+                if (s_singletonInstance != null)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times");
                     return;
@@ -524,7 +532,6 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="initialCommand"></param>
         internal static void Run(string initialCommand)
@@ -591,15 +598,10 @@ namespace System.Management.Automation.Remoting.Server
             originalStdOut = new OutOfProcessTextWriter(namedPipeServer.TextWriter);
             originalStdErr = new NamedPipeErrorTextWriter(namedPipeServer.TextWriter);
 
-            // Flow impersonation if requested.
-            WindowsIdentity currentIdentity = null;
-            try
-            {
-                currentIdentity = WindowsIdentity.GetCurrent();
-            }
-            catch (System.Security.SecurityException) { }
-            _windowsIdentityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ?
-                currentIdentity : null;
+#if !UNIX
+            // Flow impersonation as needed.
+            Utils.TryGetWindowsImpersonatedIdentity(out _windowsIdentityToImpersonate);
+#endif
         }
 
         #endregion

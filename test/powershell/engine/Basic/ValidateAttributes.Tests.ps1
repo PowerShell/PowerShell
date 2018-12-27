@@ -41,7 +41,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
             param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
+            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
                 $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
@@ -81,7 +81,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
             param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
+            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
                 $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
@@ -117,7 +117,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
             param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
+            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
                 $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
@@ -251,7 +251,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>, RangeType: <RangeType>' -TestCases $testCases {
             param($ScriptBlock, $RangeType, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
+            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
                 $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }

@@ -258,7 +258,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="stateInfo"></param>
         internal RunspacePoolStateChangedEventArgs(RunspacePoolStateInfo stateInfo)
@@ -464,6 +463,7 @@ namespace System.Management.Automation.Runspaces
                     return _isActive;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -714,6 +714,7 @@ namespace System.Management.Automation.Runspaces
         public TimeSpan CleanupInterval
         {
             get { return _internalPool.CleanupInterval; }
+
             set { _internalPool.CleanupInterval = value; }
         }
 
@@ -738,7 +739,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (null == InternalStateChanged);
+                    bool firstEntry = (InternalStateChanged == null);
                     InternalStateChanged += value;
                     if (firstEntry)
                     {
@@ -756,7 +757,7 @@ namespace System.Management.Automation.Runspaces
                 lock (_syncObject)
                 {
                     InternalStateChanged -= value;
-                    if (null == InternalStateChanged)
+                    if (InternalStateChanged == null)
                     {
                         _internalPool.StateChanged -=
                             new EventHandler<RunspacePoolStateChangedEventArgs>(OnStateChanged);
@@ -853,7 +854,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (null == InternalRunspaceCreated);
+                    bool firstEntry = (InternalRunspaceCreated == null);
                     InternalRunspaceCreated += value;
                     if (firstEntry)
                     {
@@ -870,7 +871,7 @@ namespace System.Management.Automation.Runspaces
                 lock (_syncObject)
                 {
                     InternalRunspaceCreated -= value;
-                    if (null == InternalRunspaceCreated)
+                    if (InternalRunspaceCreated == null)
                     {
                         _internalPool.RunspaceCreated -= OnRunspaceCreated;
                     }
@@ -1008,7 +1009,7 @@ namespace System.Management.Automation.Runspaces
         ///<summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
-        /// <returns>RunspacePoolCapability</returns>
+        /// <returns>RunspacePoolCapability.</returns>
         public RunspacePoolCapability GetCapabilities()
         {
             return _internalPool.GetCapabilities();

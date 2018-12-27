@@ -50,11 +50,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _module;
             }
+
             set
             {
                 _module = value;
             }
         }
+
         private string[] _module;
 
         /// <summary>
@@ -79,18 +81,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
         /// Specifies the literal path to save updates to
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -99,12 +103,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -117,11 +123,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _recurse;
             }
+
             set
             {
                 _recurse = value;
             }
         }
+
         private bool _recurse;
 
         #endregion
@@ -173,6 +181,7 @@ namespace Microsoft.PowerShell.Commands
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
                         ThrowTerminatingError(e.ErrorRecord);
                     }
+
                     _isInitialized = true;
                 }
 
@@ -205,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="module">module to process</param>
         /// <param name="culture">culture to use</param>
-        /// <returns>true if the module has been processed, false if not</returns>
+        /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             UpdatableHelpInfo currentHelpInfo = null;

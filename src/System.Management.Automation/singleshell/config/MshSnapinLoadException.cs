@@ -132,7 +132,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _isErrorRecordOriginallyNull = true;
                     _errorRecord = new ErrorRecord(
@@ -141,12 +141,13 @@ namespace System.Management.Automation.Runspaces
                         ErrorCategory.NotSpecified,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
 
-        private string _PSSnapin = "";
-        private string _reason = "";
+        private string _PSSnapin = string.Empty;
+        private string _reason = string.Empty;
 
         /// <summary>
         /// Gets message for this exception.

@@ -50,8 +50,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String ClassName
         {
             get { return className; }
+
             set { className = value; }
         }
+
         private String className;
 
         /// <summary>
@@ -65,6 +67,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return methodName; }
         }
+
         private String methodName;
 
         /// <summary>
@@ -78,6 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return propertyName; }
         }
+
         private String propertyName;
 
         /// <summary>
@@ -91,6 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return qualifierName; }
         }
+
         private String qualifierName;
     }
 
@@ -140,6 +145,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             proxys.Add(proxy);
                         }
                     }
+
                     break;
                 case CimBaseCommand.SessionSetName:
                     {
@@ -150,6 +156,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             proxys.Add(proxy);
                         }
                     }
+
                     break;
                 default:
                     return;

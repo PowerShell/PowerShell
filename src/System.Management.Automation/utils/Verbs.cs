@@ -13,7 +13,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -173,7 +172,6 @@ namespace System.Management.Automation
         public const string Step = "Step";
 
         /// <summary>
-        ///
         /// </summary>
         public const string Switch = "Switch";
 
@@ -191,12 +189,11 @@ namespace System.Management.Automation
         /// Continually inspect a resource for changes
         /// </summary>
         public const string Watch = "Watch";
-    }//VerbsCommon
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates data.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -323,12 +320,11 @@ namespace System.Management.Automation
         /// Update a resource with new elements or refresh from a source of truth
         /// </summary>
         public const string Update = "Update";
-    }//VerbsData
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates the lifecycle of something.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -393,7 +389,6 @@ namespace System.Management.Automation
         ///<summary>
         /// Record details about an item in a public store or publishing location
         ///</summary>
-        ///
         public const string Register = "Register";
 
         /// <summary>
@@ -439,20 +434,17 @@ namespace System.Management.Automation
         ///<summary>
         /// Remove details of an item from a public store or publishing location
         ///</summary>
-        ///
         public const string Unregister = "Unregister";
 
         ///<summary>
         /// Suspend execution until an expected event
         ///</summary>
-        ///
         public const string Wait = "Wait";
     }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to diagnose the health of something.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -493,12 +485,11 @@ namespace System.Management.Automation
         /// Trace activities performed by a specified operation
         /// </summary>
         public const string Trace = "Trace";
-    }//VerbsDiagnostic
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to communicate with something.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -534,12 +525,11 @@ namespace System.Management.Automation
         /// TO write - communicate or express. Display data.
         /// </summary>
         public const string Write = "Write";
-    }//VerbsCommunications
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to secure a resource.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -575,7 +565,7 @@ namespace System.Management.Automation
         /// Remove guards from a resource that prevent it from attack or loss
         /// </summary>
         public const string Unprotect = "Unprotect";
-    }//VerbsSecurity
+    }
 
     /// <summary>
     /// Canonical verbs that don't fit into any of the other categories.
@@ -600,7 +590,7 @@ namespace System.Management.Automation
         {
             return VerbDescriptionStrings.ResourceManager.GetString(verb);
         }
-    }//VerbDescriptions
+    }
 
     /// <summary>
     /// Verb Alias prefixes.
@@ -1122,7 +1112,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
         }
-    }//VerbAliasPrefixes
+    }
 
     /// <summary>
     /// Class for Verbs and Groups

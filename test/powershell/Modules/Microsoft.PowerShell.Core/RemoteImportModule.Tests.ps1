@@ -98,7 +98,7 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
         Invoke-Command -Session $pssession -ScriptBlock { $env:PSModulePath += ";$(Split-Path $using:modulePath)"}
         Get-Module TestImport | Should -BeNullOrEmpty
         if ($errorid) {
-            { Import-Module @parameters -ErrorAction Stop } | ShouldBeErrorId $errorid
+            { Import-Module @parameters -ErrorAction Stop } | Should -Throw -ErrorId $errorid
         } else {
             Import-Module @parameters
             $module = Get-Module TestImport

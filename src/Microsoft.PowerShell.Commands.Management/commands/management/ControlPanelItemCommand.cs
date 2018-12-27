@@ -140,6 +140,7 @@ $result
                                     break;
                                 }
                             }
+
                             if (match)
                                 continue;
                         }
@@ -148,9 +149,11 @@ $result
                             _allControlPanelItems.Add(item);
                     }
                 }
+
                 return _allControlPanelItems;
             }
         }
+
         private List<ShellFolderItem> _allControlPanelItems;
 
         #region Cmdlet Overrides
@@ -199,6 +202,7 @@ $result
                     break;
                 }
             }
+
             return result;
         }
 
@@ -253,7 +257,7 @@ $result
             {
                 Dbg.Assert(installation != null, "the CurrentVersion subkey should exist");
 
-                string installationType = (string)installation.GetValue("InstallationType", "");
+                string installationType = (string)installation.GetValue("InstallationType", string.Empty);
 
                 if (installationType.Equals("Server Core"))
                 {
@@ -429,10 +433,11 @@ $result
                     string errMsg = withCategoryFilter
                                         ? ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalNameWithCategory
                                         : ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalName;
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "",
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), string.Empty,
                                                         ErrorCategory.InvalidArgument, CanonicalNames);
                     WriteError(error);
                 }
+
                 return list;
             }
 
@@ -559,12 +564,14 @@ $result
         public string[] Name
         {
             get { return RegularNames; }
+
             set
             {
                 RegularNames = value;
                 _nameSpecified = true;
             }
         }
+
         private bool _nameSpecified = false;
 
         /// <summary>
@@ -576,12 +583,14 @@ $result
         public string[] CanonicalName
         {
             get { return CanonicalNames; }
+
             set
             {
                 CanonicalNames = value;
                 _canonicalNameSpecified = true;
             }
         }
+
         private bool _canonicalNameSpecified = false;
 
         /// <summary>
@@ -593,18 +602,19 @@ $result
         public string[] Category
         {
             get { return CategoryNames; }
+
             set
             {
                 CategoryNames = value;
                 _categorySpecified = true;
             }
         }
+
         private bool _categorySpecified = false;
 
         #endregion "Parameters"
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -691,6 +701,7 @@ $result
         public string[] Name
         {
             get { return RegularNames; }
+
             set { RegularNames = value; }
         }
 
@@ -703,6 +714,7 @@ $result
         public string[] CanonicalName
         {
             get { return CanonicalNames; }
+
             set { CanonicalNames = value; }
         }
 
@@ -715,13 +727,13 @@ $result
         public ControlPanelItem[] InputObject
         {
             get { return ControlPanelItems; }
+
             set { ControlPanelItems = value; }
         }
 
         #endregion "Parameters"
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

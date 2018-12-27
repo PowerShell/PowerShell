@@ -6,32 +6,32 @@ using System.Collections.Generic;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// FormObject used in HtmlWebResponseObject
+    /// FormObject used in HtmlWebResponseObject.
     /// </summary>
     public class FormObject
     {
         /// <summary>
-        /// gets or private sets the Id property
+        /// Gets or private sets the Id property.
         /// </summary>
         public string Id { get; private set; }
 
         /// <summary>
-        /// gets or private sets the Method property
+        /// Gets or private sets the Method property.
         /// </summary>
         public string Method { get; private set; }
 
         /// <summary>
-        /// gets or private sets the Action property
+        /// Gets or private sets the Action property.
         /// </summary>
         public string Action { get; private set; }
 
         /// <summary>
-        /// gets or private sets the Fields property
+        /// Gets or private sets the Fields property.
         /// </summary>
         public Dictionary<string, string> Fields { get; private set; }
 
         /// <summary>
-        /// constructor for FormObject
+        /// Constructor for FormObject.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="method"></param>
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         internal void AddField(string key, string value)
         {
             string test;
-            if (null != key && !Fields.TryGetValue(key, out test))
+            if (key != null && !Fields.TryGetValue(key, out test))
             {
                 Fields[key] = value;
             }

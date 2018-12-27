@@ -19,9 +19,7 @@ namespace Microsoft.PowerShell
     internal partial class ConsoleHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -29,25 +27,17 @@ namespace Microsoft.PowerShell
         /// <param name="defaultChoice"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">
-        ///
         /// If <paramref name="choices"/> is null.
-        ///
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///
         /// If <paramref name="choices"/>.Count is 0.
-        ///
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If <paramref name="defaultChoice"/> is greater than
         ///     the length of <paramref name="choices"/>.
-        ///
         /// </exception>
         /// <exception cref="PromptingException">
-        ///
         ///  when prompt is canceled by, for example, Ctrl-c.
-        ///
         /// </exception>
 
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
@@ -107,7 +97,7 @@ namespace Microsoft.PowerShell
                     WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, false);
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, "", out rlResult, true, true);
+                    string response = ReadChoiceResponse(out rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -197,7 +187,7 @@ namespace Microsoft.PowerShell
 
             Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
 
-            if (null != defaultChoices)
+            if (defaultChoices != null)
             {
                 foreach (int defaultChoice in defaultChoices)
                 {
@@ -253,7 +243,7 @@ namespace Microsoft.PowerShell
                     WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg));
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, "", out rlResult, true, true);
+                    string response = ReadChoiceResponse(out rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -353,10 +343,10 @@ namespace Microsoft.PowerShell
                 WriteLineToConsole();
             }
 
-            string defaultPrompt = "";
+            string defaultPrompt = string.Empty;
             if (defaultChoiceKeys.Count > 0)
             {
-                string prepend = "";
+                string prepend = string.Empty;
                 StringBuilder defaultChoicesBuilder = new StringBuilder();
                 foreach (int defaultChoice in defaultChoiceKeys.Keys)
                 {
@@ -370,6 +360,7 @@ namespace Microsoft.PowerShell
                         "{0}{1}", prepend, defaultStr));
                     prepend = ",";
                 }
+
                 string defaultChoices = defaultChoicesBuilder.ToString();
 
                 if (defaultChoiceKeys.Count == 1)
@@ -410,6 +401,19 @@ namespace Microsoft.PowerShell
             }
 
             WriteToConsole(fg, bg, trimEnd ? text.TrimEnd(null) : text);
+        }
+
+        private string ReadChoiceResponse(out ReadLineResult result)
+        {
+            result = ReadLineResult.endedOnEnter;
+            return InternalTestHooks.ForcePromptForChoiceDefaultOption
+                   ? string.Empty
+                   : ReadLine(
+                       endOnTab: false,
+                       initialContent: string.Empty,
+                       result: out result,
+                       calledFromPipeline: true,
+                       transcribeResult: true);
         }
 
         private void ShowChoiceHelp(Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
@@ -473,4 +477,3 @@ namespace Microsoft.PowerShell
         }
     }
 }   // namespace
-

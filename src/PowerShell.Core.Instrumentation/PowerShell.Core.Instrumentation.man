@@ -26,9 +26,10 @@
       >
     <events xmlns="http://schemas.microsoft.com/win/2004/08/events">
       <!--Defines an event provider for PowerShell Core
-          The Guid for this provider should not be changed. If its
-          changed for any reason, then the manifest needs to be
-          first uninstalled and then installed again (using wevtutil)-->
+          The Guid for this provider should not be changed. If it's
+          changed for any reason, then the old manifest needs to be
+          first uninstalled and then the changed manifest installed
+          (using wevtutil)-->
       <provider
           guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}"
           messageFileName="PowerShell.Core.Instrumentation.dll"
@@ -95,6 +96,29 @@
               task="ScheduledJob"
               template="T_ScheduledJobError"
               value="0xD003"
+              version="1"
+              />
+          <!--ExperimentalFeature event-->
+          <event
+              channel="C_OPERATIONAL"
+              level="win:Error"
+              message="$(string.PS_PROVIDER.event.E_O_ExperimentalFeatureInvalidName.message)"
+              opcode="Constructor"
+              symbol="ExperimentalFeatureInvalidName"
+              task="ExperimentalFeature"
+              template="T_ExperimentalFeatureInvalidName"
+              value="0x3001"
+              version="1"
+              />
+          <event
+              channel="C_OPERATIONAL"
+              level="win:Error"
+              message="$(string.PS_PROVIDER.event.E_O_ExperimentalFeatureReadConfigError.message)"
+              opcode="Constructor"
+              symbol="ExperimentalFeatureReadConfigError"
+              task="ExperimentalFeature"
+              template="T_ExperimentalFeatureReadConfigError"
+              value="0x3002"
               version="1"
               />
           <!--M3P events-->
@@ -2186,10 +2210,11 @@
               />
         </events>
         <channels>
-          <!--There are two channels defined for Windows PowerShell instrumentation
+          <!--There are three channels defined for Windows PowerShell instrumentation
               event provider
-                1. Operational - for high level diagnositc messages
+                1. Operational - for high level diagnostic messages
                 2. Analytic - for high volume high performance trace messages
+                3. Debug - for high volume high performance trace messages
 		-->
           <channel
               chid="C_OPERATIONAL"
@@ -2211,7 +2236,6 @@
           <channel
               chid="C_ANALYTIC"
               enabled="false"
-              isolation="Application"
               message="$(string.PS_CHANNEL_ANALYTIC.ChannelMessage)"
               name="PowerShellCore/Analytic"
               symbol="C_ANALYTIC"
@@ -2238,7 +2262,6 @@
           <channel
               chid="C_DEBUG"
               enabled="false"
-              isolation="Application"
               message="$(string.PS_CHANNEL_DEBUG.ChannelMessage)"
               name="PowerShellCore/Debug"
               symbol="C_DEBUG"
@@ -2261,27 +2284,6 @@
                   data-->
               <bufferSize>64</bufferSize>
             </publishing>
-          </channel>
-          <channel
-              chid="C_ADMIN"
-              enabled="true"
-              isolation="Application"
-              message="$(string.PS_CHANNEL_ADMIN.ChannelMessage)"
-              name="PowerShellCore/Admin"
-              symbol="C_ADMIN"
-              type="Admin"
-              >
-            <logging>
-              <!--this log is not circular, which means user has to
-					  manually clear logs-->
-              <retention>true</retention>
-              <!--max size of the analytic log file is 100 MB.
-					  It's ok to set it to this high a value because
-					  this channel is not enabled by default and the
-					  user will have to turn it on and this is the
-					  maximum size as well-->
-              <maxSize>1048985600</maxSize>
-            </logging>
           </channel>
         </channels>
         <levels>
@@ -2388,6 +2390,12 @@
               name="ExecutePipeline"
               symbol="T_EXECUTEPIEPLINE"
               value="106"
+              />
+          <task
+              message="$(string.PS_PROVIDER.task.T_ExperimentalFeature.message)"
+              name="ExperimentalFeature"
+              symbol="T_EXPERIMENTALFEATURE"
+              value="107"
               />
           <task
               message="$(string.PS_PROVIDER.task.T_ScheduledJob.message)"
@@ -2777,7 +2785,7 @@
         </maps>
         <templates>
           <!--
-            see http://msdn.microsoft.com/en-us/library/aa382747(VS.85).aspx
+            see http://msdn.microsoft.com/library/aa382747(VS.85).aspx
             for definitions of different data types
           -->
           <template tid="T_CorrelationEvent">
@@ -3946,6 +3954,30 @@
             <data
                 inType="win:UnicodeString"
                 name="InnerException"
+                />
+          </template>
+          <template tid="T_ExperimentalFeatureInvalidName">
+            <data
+                inType="win:UnicodeString"
+                name="Name"
+                />
+            <data
+                inType="win:UnicodeString"
+                name="Message"
+                />
+          </template>
+          <template tid="T_ExperimentalFeatureReadConfigError">
+            <data
+                inType="win:UnicodeString"
+                name="Name"
+                />
+            <data
+                inType="win:UnicodeString"
+                name="Message"
+                />
+            <data
+                inType="win:UnicodeString"
+                name="StackTrace"
                 />
           </template>
           <template tid="T_TrackingGuid">
@@ -5448,6 +5480,18 @@
         <string
             id="PS_PROVIDER.task.T_ScheduledJob.message"
             value="PowerShell Scheduled Jobs"
+            />
+        <string
+            id="PS_PROVIDER.event.E_O_ExperimentalFeatureInvalidName.message"
+            value="Experimental Feature Initialization: Ignore the experimental feature '%1' from the config file. %2"
+            />
+        <string
+            id="PS_PROVIDER.event.E_O_ExperimentalFeatureReadConfigError.message"
+            value="Experimental Feature Initialization: Failed to read the config file.%n Exception: %1 %n Message: %2 %n StackTrace: %3 %n"
+            />
+        <string
+            id="PS_PROVIDER.task.T_ExperimentalFeature.message"
+            value="PowerShell Experimental Features"
             />
         <string
             id="PS_PROVIDER.task.T_NamedPipe.message"

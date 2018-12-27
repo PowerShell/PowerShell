@@ -98,6 +98,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _completionText;
             }
         }
@@ -113,6 +114,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _listItemText;
             }
         }
@@ -128,6 +130,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _resultType;
             }
         }
@@ -143,6 +146,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
+
                 return _toolTip;
             }
         }
@@ -202,7 +206,6 @@ namespace System.Management.Automation
         /// <summary>
         /// An null instance of CompletionResult.
         /// </summary>
-        ///
         /// <remarks>
         /// This can be used in argument completion, to indicate that the completion attempt has gone through the
         /// native command argument completion methods.

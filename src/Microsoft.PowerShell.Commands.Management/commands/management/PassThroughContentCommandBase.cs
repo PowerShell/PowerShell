@@ -23,13 +23,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _passThrough;
-            } // get
+            }
 
             set
             {
                 _passThrough = value;
-            } // set
-        } // PassThru
+            }
+        }
 
         /// <summary>
         /// Determines if the provider for the specified path supports ShouldProcess
@@ -61,20 +61,18 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a CmdletProviderContext instance to the current context of
         /// the command.
         /// </summary>
-        ///
         /// <returns>
         /// A CmdletProviderContext instance initialized to the context of the current
         /// command.
         /// </returns>
-        ///
         internal CmdletProviderContext GetCurrentContext()
         {
             CmdletProviderContext currentCommandContext = CmdletProviderContext;
             currentCommandContext.PassThru = PassThru;
             return currentCommandContext;
-        } // GetCurrentContext
+        }
 
         #endregion protected members
-    } // PassThroughContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

@@ -63,7 +63,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="isShuttingDown">true if the method is called from RegisterWaitForSingleObject
         /// callback. This boolean is used to decide whether to UnregisterWait or
@@ -107,9 +106,10 @@ namespace System.Management.Automation.Remoting
                 {
                     cmdTransportKvp.Value.Close(reasonForClose);
                 }
+
                 _activeCmdTransportManagers.Clear();
 
-                if (null != _registeredShutDownWaitHandle)
+                if (_registeredShutDownWaitHandle != null)
                 {
                     // This will not wait for the callback to complete.
                     _registeredShutDownWaitHandle.Unregister(null);
@@ -119,14 +119,14 @@ namespace System.Management.Automation.Remoting
                 // Delete the context only if isShuttingDown != true. isShuttingDown will
                 // be true only when the method is called from RegisterWaitForSingleObject
                 // handler..in which case the context will be freed from the callback.
-                if (null != _shutDownContext)
+                if (_shutDownContext != null)
                 {
                     _shutDownContext = null;
                 }
 
                 // This might happen when client did not send a receive request
                 // but the server is closing
-                if (null != _requestDetails)
+                if (_requestDetails != null)
                 {
                     // Notify that no more data is being sent on this transport.
                     WSManNativeApi.WSManPluginReceiveResult(
@@ -245,6 +245,7 @@ namespace System.Management.Automation.Remoting
                     }
                 }
             }
+
             if ((int)WSManPluginErrorCodes.NoError != result)
             {
                 ReportError(result, "WSManPluginReceiveResult");
@@ -261,7 +262,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="powerShellCmdId"></param>
         /// <returns></returns>
@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting
                             _shutDownContext,
                             -1, // INFINITE
                             true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
-                    if (null == _registeredShutDownWaitHandle)
+                    if (_registeredShutDownWaitHandle == null)
                     {
                         isRegisterWaitForSingleObjectSucceeded = false;
                     }
@@ -410,4 +410,4 @@ namespace System.Management.Automation.Remoting
             this.PowerShellGuidObserver -= new System.EventHandler(this.OnPowershellGuidReported);
         }
     }
-} // namespace System.Management.Automation.Remoting
+}

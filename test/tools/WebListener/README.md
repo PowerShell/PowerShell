@@ -1,6 +1,6 @@
 # WebListener App
 
-ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests.
+ASP.NET Core app for testing HTTP and HTTPS Requests.
 
 ## Run with `dotnet`
 
@@ -10,6 +10,10 @@ dotnet publish --output bin --configuration Release
 cd bin
 dotnet WebListener.dll ServerCert.pfx password 8083 8084 8085 8086
 ```
+
+**NOTE**: `ServerCert.pfx` is no longer a static asset
+and you will need to create your own certificate for this purpose.
+The `SelfSignedCertificate` module in the PowerShell Gallery provides this functionality.
 
 The test site can then be accessed via `http://localhost:8083/`, `https://localhost:8084/`, `https://localhost:8085/`, or `https://localhost:8086/`.
 
@@ -27,9 +31,9 @@ The `WebListener.dll` takes 6 arguments:
 ```powershell
 Import-Module .\build.psm1
 Publish-PSTestTools
-$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort = 8086
-```
+$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort 8086
 
+```
 ## Tests
 
 ### / or /Home/
@@ -277,6 +281,8 @@ Returns Link response headers to test paginated results. The endpoint accepts 3 
   * `nourl` - Returns a Link header that does not include the URI portion. Suppresses `next` link.
   * `malformed` - Returns a malformed Link header. Suppresses `next` link.
   * `multiple` - Returns multiple Link headers instead of a single Link header and returns `next` link if one is available.
+  * `nowhitespace` - Returns `default` links without any whitespace between the semicolon and `rel`
+  * `extrawhitespace` - Returns `default` links with double whitespace between the semicolon and `rel`
 
 The body will contain the same results as `/Get/` with the addition of the `type`, `linknumber`, and `maxlinks` for the current page.
 
@@ -681,4 +687,22 @@ Server: Kestrel
 X-WebListener-Has-Range: false
 Content-Length: 20
 Content-Type: application/octet-stream
+```
+
+### /Retry/{sessionId}/{failureCode}/{failureCount}
+
+This endpoint causes the failure specified by `failureCode` for `failureCount` number of times.
+After that a status 200 is returned with body containing the number of times the failure was caused.
+
+```powershell
+$response = Invoke-WebRequest -Uri 'http://127.0.0.1:8083/Retry?failureCode=599&failureCount=2&sessionid=100&' -MaximumRetryCount 2 -RetryIntervalSec 1
+```
+
+Response Body:
+
+```json
+{
+  "failureResponsesSent":2,
+  "sessionId":100
+}
 ```

@@ -104,6 +104,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     result = MergeOptions(result, instanceRelatedToThisOperation);
                 }
             }
+
             return result;
         }
 

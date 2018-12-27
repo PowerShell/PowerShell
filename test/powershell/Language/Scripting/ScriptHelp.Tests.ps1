@@ -80,6 +80,57 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         #    Useless
         #
         function helpFunc1 {}
+        
+        Set-Item function:dynamicHelpFunc1 -Value {
+            # .SYNOPSIS
+            #
+            #    A relatively useless function.
+            #
+            # .DESCRIPTION
+            #
+            #    A description
+            #
+            #        with indented text and a blank line.
+            #
+            # .NOTES
+            #
+            #    This function is mostly harmless.
+            #
+            # .LINK
+            #
+            #    http://blogs.msdn.com/powershell
+            #
+            # .LINK
+            #
+            #    other commands
+            #
+            # .EXAMPLE
+            #
+            #    If you need an example, you're hopeless.
+            #
+            # .INPUTS
+            #
+            #    Anything you like.
+            #
+            # .OUTPUTS
+            #
+            #    Nothing.
+            #
+            # .COMPONENT
+            #
+            #    Something
+            #
+            # .ROLE
+            #
+            #    CrazyUser
+            #
+            # .FUNCTIONALITY
+            #
+            #    Useless
+            #
+            
+            process { }
+        }
     }
 
     Context 'Get-Help helpFunc1' {
@@ -87,35 +138,40 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         TestHelpFunc1 $x
     }
 
+    Context 'Get-Help dynamicHelpFunc1' {
+        $x = get-help dynamicHelpFunc1
+        TestHelpFunc1 $x
+    }
+
     Context 'get-help helpFunc1 -component blah' {
-        $x = get-help helpFunc1 -component blah -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -component blah -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
     }
 
     Context 'get-help helpFunc1 -component Something' {
-        $x = get-help helpFunc1 -component Something -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -component Something -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpFunc1 $x
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
     Context 'get-help helpFunc1 -role blah' {
-        $x = get-help helpFunc1 -component blah -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -component blah -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
     }
 
     Context 'get-help helpFunc1 -role CrazyUser' {
-        $x = get-help helpFunc1 -role CrazyUser -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -role CrazyUser -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpFunc1 $x
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
     Context '$x = get-help helpFunc1 -functionality blah' {
-        $x = get-help helpFunc1 -functionality blah -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -functionality blah -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
     }
 
     Context '$x = get-help helpFunc1 -functionality Useless' {
-        $x = get-help helpFunc1 -functionality Useless -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -functionality Useless -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpFunc1 $x
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
@@ -131,7 +187,7 @@ Describe 'get-help file' -Tags "CI" {
     }
 
     AfterAll {
-        remove-item $tmpfile -Force -ea silentlycontinue
+        remove-item $tmpfile -Force -ErrorAction silentlycontinue
     }
 
     Context 'get-help file1' {
@@ -184,7 +240,7 @@ Describe 'get-help other tests' -Tags "CI" {
     }
 
     AfterAll {
-        remove-item $tempFile -Force -ea silentlycontinue
+        remove-item $tempFile -Force -ErrorAction silentlycontinue
     }
 
     Context 'get-help missingHelp' {
@@ -556,5 +612,19 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
         It '$x.Parameters.parameter[1].defaultValue' { $x.Parameters.parameter[1].defaultValue | Should -BeExactly '42' }
         It '$x.Parameters.parameter[2].defaultValue' { $x.Parameters.parameter[2].defaultValue | Should -BeExactly 'parameter is mandatory' }
+    }
+
+    Context 'get-help -Examples prompt string should have trailing space' {
+        function foo {
+            <#
+              .EXAMPLE
+              foo bar
+            #>
+              param()
+        }
+
+        It 'prompt should be exactly "PS > " with trailing space' {
+            (Get-Help foo -Examples).examples.example.introduction.Text | Should -BeExactly "PS > "
+        }
     }
 }

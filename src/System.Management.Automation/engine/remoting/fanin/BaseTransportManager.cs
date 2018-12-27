@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Management.Automation.Internal;
-#if !CORECLR
+#if !UNIX
 using System.Security.Principal;
 #endif
 
@@ -234,6 +234,7 @@ namespace System.Management.Automation.Remoting
         internal TypeTable TypeTable
         {
             get { return Fragmentor.TypeTable; }
+
             set { Fragmentor.TypeTable = value; }
         }
 
@@ -268,7 +269,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="data">
         /// data to process
@@ -287,7 +287,7 @@ namespace System.Management.Automation.Remoting
             string stream,
             ReceiveDataCollection.OnDataAvailableCallback dataAvailableCallback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
+            Dbg.Assert(data != null, "Cannot process null data");
 
             s_baseTracer.WriteLine("Processing incoming data for stream {0}.", stream);
 
@@ -320,7 +320,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="remoteObject"></param>
         /// <exception cref="Exception">
@@ -700,7 +699,7 @@ namespace System.Management.Automation.Remoting.Client
 
             lock (_callbackNotificationQueue)
             {
-                if ((null != remoteObject) || (null != transportErrorArgs) || (null != privateData))
+                if ((remoteObject != null) || (transportErrorArgs != null) || (privateData != null))
                 {
                     CallbackNotificationInformation rcvdDataInfo = new CallbackNotificationInformation();
                     rcvdDataInfo.remoteObject = remoteObject;
@@ -737,11 +736,9 @@ namespace System.Management.Automation.Remoting.Client
                     _isServicingCallbacks = true;
 
                     // Start a thread pool thread to process callbacks.
-#if !CORECLR
-                    // Flow thread impersonation as needed.
-                    WindowsIdentity identityToImpersonate = WindowsIdentity.GetCurrent();
-                    identityToImpersonate = (identityToImpersonate.ImpersonationLevel == TokenImpersonationLevel.Impersonation) ?
-                        identityToImpersonate : null;
+#if !UNIX
+                    WindowsIdentity identityToImpersonate;
+                    Utils.TryGetWindowsImpersonatedIdentity(out identityToImpersonate);
 
                     Utils.QueueWorkItemWithImpersonation(
                         identityToImpersonate,
@@ -759,7 +756,7 @@ namespace System.Management.Automation.Remoting.Client
         /// interaction.
         /// </summary>
         /// <param name="remoteObject">Remote data object</param>
-        /// <returns>True if remote data object requires a user response</returns>
+        /// <returns>True if remote data object requires a user response.</returns>
         private bool CheckForInteractiveHostCall(RemoteDataObject<PSObject> remoteObject)
         {
             bool interactiveHostCall = false;
@@ -829,15 +826,15 @@ namespace System.Management.Automation.Remoting.Client
                         rcvdDataInfo = _callbackNotificationQueue.Dequeue();
                     }
                     // Handle callback.
-                    if (null != rcvdDataInfo)
+                    if (rcvdDataInfo != null)
                     {
                         // Handling transport exception in thread-pool thread
-                        if (null != rcvdDataInfo.transportError)
+                        if (rcvdDataInfo.transportError != null)
                         {
                             RaiseErrorHandler(rcvdDataInfo.transportError);
                             break;
                         }
-                        else if (null != rcvdDataInfo.privateData)
+                        else if (rcvdDataInfo.privateData != null)
                         {
                             ProcessPrivateData(rcvdDataInfo.privateData);
                         }
@@ -1141,6 +1138,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdText.Append(cmd.CommandText);
                 cmdText.Append(" | ");
             }
+
             cmdText.Remove(cmdText.Length - 3, 3); // remove ending " | "
 
             RemoteDataObject message;
@@ -1344,7 +1342,7 @@ namespace System.Management.Automation.Remoting.Server
 
         private void OnDataAvailable(byte[] dataToSend, bool isEndFragment)
         {
-            Dbg.Assert(null != dataToSend, "ServerTransportManager cannot send null fragment");
+            Dbg.Assert(dataToSend != null, "ServerTransportManager cannot send null fragment");
             // log to crimson log.
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerSendData, PSOpcode.Send, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
@@ -1423,7 +1421,6 @@ namespace System.Management.Automation.Remoting.Server
         #region Abstract interfaces
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="data"></param>
         /// <param name="flush">
@@ -1438,12 +1435,10 @@ namespace System.Management.Automation.Remoting.Server
         protected abstract void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary);
 
         /// <summary>
-        ///
         /// </summary>
         internal abstract void ReportExecutionStatusAsRunning();
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="reasonForClose">
         /// message describing why the transport manager must be closed
@@ -1514,10 +1509,10 @@ namespace System.Management.Automation.Remoting.Server
         /// <param name="xmlBuffer">The input buffer to search. It must be base-64 encoded XML.</param>
         /// <param name="xmlTag">The XML tag used to identify the value to extract.</param>
         /// <returns>The extracted tag converted from a base-64 string.</returns>
-        internal static System.Byte[] ExtractEncodedXmlElement(String xmlBuffer, String xmlTag)
+        internal static byte[] ExtractEncodedXmlElement(string xmlBuffer, string xmlTag)
         {
-            if (null == xmlBuffer || null == xmlTag)
-                return new System.Byte[1];
+            if (xmlBuffer == null || xmlTag == null)
+                return new byte[1];
 
             // the inboundShellInformation is in Xml format as per the SOAP WSMan spec.
             // Retrieve the string (Base64 encoded) we are interested in.
@@ -1525,22 +1520,20 @@ namespace System.Management.Automation.Remoting.Server
             readerSettings.CheckCharacters = false;
             readerSettings.IgnoreComments = true;
             readerSettings.IgnoreProcessingInstructions = true;
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
             readerSettings.XmlResolver = null;
-#endif
             readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
             readerSettings.MaxCharactersFromEntities = 1024;
             readerSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;
             XmlReader reader = XmlReader.Create(new StringReader(xmlBuffer), readerSettings);
 
-            String additionalData;
+            string additionalData;
             if (XmlNodeType.Element == reader.MoveToContent())
             {
                 additionalData = reader.ReadElementContentAsString(xmlTag, reader.NamespaceURI);
             }
             else // No element found, so return a default value
             {
-                return new System.Byte[1];
+                return new byte[1];
             }
 
             return Convert.FromBase64String(additionalData);

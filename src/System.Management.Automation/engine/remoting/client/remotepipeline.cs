@@ -28,7 +28,7 @@ namespace System.Management.Automation
         private string _historyString;
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
         private CommandCollection _commands = new CommandCollection();
-        private String _computerName;
+        private string _computerName;
         private Guid _runspaceId;
         private ConnectCommandInfo _connectCmdInfo = null;
 
@@ -170,10 +170,11 @@ namespace System.Management.Automation
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             // the above comment copied from RemotePipelineBase which
             // originally copied it from PipelineBase
-            if (null == pipeline)
+            if (pipeline == null)
             {
                 throw PSTraceSource.NewArgumentNullException("pipeline");
             }
+
             if (pipeline._disposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("pipeline");
@@ -335,6 +336,7 @@ namespace System.Management.Automation
             {
                 return _historyString;
             }
+
             set
             {
                 _historyString = value;
@@ -412,7 +414,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
-        /// <returns>An array of zero or more result objects</returns>
+        /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
@@ -426,6 +428,7 @@ namespace System.Management.Automation
             {
                 this.InputStream.Close();
             }
+
             InitPowerShell(true);
 
             Collection<PSObject> results;
@@ -666,6 +669,7 @@ namespace System.Management.Automation
                         _powershell.Dispose();
                         _powershell = null;
                     }
+
                     _inputCollection.Dispose();
                     _inputStream.Dispose();
                     _outputCollection.Dispose();
@@ -746,6 +750,7 @@ namespace System.Management.Automation
                                 return;
                             }
                         }
+
                         break;
                     case PipelineState.Stopping:
                         {
@@ -758,8 +763,10 @@ namespace System.Management.Automation
                                 copyState = PipelineState.Stopped;
                             }
                         }
+
                         break;
                 }
+
                 _pipelineStateInfo = new PipelineStateInfo(copyState, reason);
                 copyStateInfo = _pipelineStateInfo;
 
@@ -779,7 +786,7 @@ namespace System.Management.Automation
                         _pipelineStateInfo.Clone(),
                         previousAvailability,
                         _runspace.RunspaceAvailability));
-            } // lock...
+            }
 
             // using the copyStateInfo here as this piece of code is
             // outside of lock and _pipelineStateInfo might get changed

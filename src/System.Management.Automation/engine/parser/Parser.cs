@@ -100,6 +100,7 @@ namespace System.Management.Automation.Language
                 {
                     DynamicKeyword.Push();
                 }
+
                 result = parser.Parse(fileName, scriptContents, tokenList, out errors, ParseMode.Default);
             }
             catch (Exception e)
@@ -117,6 +118,7 @@ namespace System.Management.Automation.Language
             tokens = tokenList.ToArray();
             return result;
         }
+
         private string _keywordModuleName;
 
         /// <summary>
@@ -276,6 +278,7 @@ namespace System.Management.Automation.Language
             {
                 result = null;
             }
+
             return result;
         }
 
@@ -290,6 +293,7 @@ namespace System.Management.Automation.Language
             {
                 throw new ParseException(parser.ErrorList.ToArray());
             }
+
             return ast;
         }
 
@@ -331,6 +335,7 @@ namespace System.Management.Automation.Language
         }
 
         //public bool V3FeatureUsed { get { return _v3FeatureUsed; } }
+
         internal List<ParseError> ErrorList { get; }
 
         #region Utilities
@@ -383,8 +388,10 @@ namespace System.Management.Automation.Language
                             {
                                 UngetToken(token);
                             }
+
                             return;
                         }
+
                         break;
 
                     case TokenKind.LCurly: ++curlies; break;
@@ -396,8 +403,10 @@ namespace System.Management.Automation.Language
                             {
                                 UngetToken(token);
                             }
+
                             return;
                         }
+
                         break;
 
                     case TokenKind.LBracket: ++braces; break;
@@ -409,8 +418,10 @@ namespace System.Management.Automation.Language
                             {
                                 UngetToken(token);
                             }
+
                             return;
                         }
+
                         break;
 
                     case TokenKind.EndOfInput:
@@ -465,6 +476,7 @@ namespace System.Management.Automation.Language
                 // If _ungotToken is not null, we're in some sort of error state, don't return the token.
                 return null;
             }
+
             return _tokenizer.GetLBracket();
         }
 
@@ -475,6 +487,7 @@ namespace System.Management.Automation.Language
                 _ungotToken = null;
                 return _tokenizer.GetVerbatimCommandArgument();
             }
+
             return null;
         }
 
@@ -525,6 +538,7 @@ namespace System.Management.Automation.Language
                 }
 #endif
             }
+
             _tokenizer.Mode = mode;
         }
 
@@ -606,6 +620,7 @@ namespace System.Management.Automation.Language
             {
                 offset = 0;
             }
+
             return new InternalScriptExtent(scriptExtent.PositionHelper, offset, offset);
         }
 
@@ -637,21 +652,32 @@ namespace System.Management.Automation.Language
                     return (IScriptExtent)obj;
                 }
             }
+
             Diagnostics.Assert(false, "One of the objects must not be null");
             return PositionUtilities.EmptyExtent;
         }
 
         internal static IScriptExtent ExtentOf(Token first, Token last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Ast first, Ast last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Ast first, Token last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Token first, Ast last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(IScriptExtent first, Ast last) { return ExtentOf(first, last.Extent); }
+
         internal static IScriptExtent ExtentOf(IScriptExtent first, Token last) { return ExtentOf(first, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Ast first, IScriptExtent last) { return ExtentOf(first.Extent, last); }
+
         internal static IScriptExtent ExtentOf(Token first, IScriptExtent last) { return ExtentOf(first.Extent, last); }
         //private static IScriptExtent Before(Ast ast) { return Before(ast.Extent); }
+
         internal static IScriptExtent Before(Token token) { return Before(token.Extent); }
+
         internal static IScriptExtent After(Ast ast) { return After(ast.Extent); }
+
         internal static IScriptExtent After(Token token) { return After(token.Extent); }
 
         private static IEnumerable<Ast> GetNestedErrorAsts(params object[] asts)
@@ -789,6 +815,7 @@ namespace System.Management.Automation.Language
                 // mean something different, such as a type literal expression, or a cast.)
                 Resync(restorePoint);
             }
+
             SkipNewlinesAndSemicolons();
 
             return ScriptBlockBodyRule(lCurly, usingStatements, paramBlock, isFilter, predefinedStatementAst);
@@ -810,6 +837,7 @@ namespace System.Management.Automation.Language
                     {
                         result = new List<UsingStatementAst>();
                     }
+
                     var usingStatement = statement as UsingStatementAst;
                     // otherwise returned statement is ErrorStatementAst.
                     // We ignore it here, because error already reported to the parser.
@@ -817,6 +845,7 @@ namespace System.Management.Automation.Language
                     {
                         result.Add(usingStatement);
                     }
+
                     continue;
                 }
 
@@ -920,8 +949,10 @@ namespace System.Management.Automation.Language
                             ParserStrings.MissingExpressionAfterToken,
                             commaToken.Kind.Text());
                     }
+
                     break;
                 }
+
                 parameters.Add(parameter);
                 SkipNewlines();
                 commaToken = PeekToken();
@@ -929,6 +960,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 SkipToken();
             }
 
@@ -974,6 +1006,7 @@ namespace System.Management.Automation.Language
                         var extent = ExtentOf(attributes[0].Extent, attributes[attributes.Count - 1].Extent);
                         return new ParameterAst(extent, new VariableExpressionAst(extent, "__error__", false), attributes, null);
                     }
+
                     return null;
                 }
 
@@ -1022,6 +1055,7 @@ namespace System.Management.Automation.Language
                 {
                     SkipNewlines();
                 }
+
                 attribute = AttributeRule();
             }
 
@@ -1093,6 +1127,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.MissingEndParenthesisInExpression),
                         ParserStrings.MissingEndParenthesisInExpression);
                 }
+
                 SkipNewlines();
                 Token rBracket = NextToken();
                 if (rBracket.Kind != TokenKind.RBracket)
@@ -1179,6 +1214,7 @@ namespace System.Management.Automation.Language
                                 expr = new ErrorExpressionAst(errorPosition);
                                 SyncOnError(true, TokenKind.Comma, TokenKind.RParen, TokenKind.RBracket, TokenKind.NewLine);
                             }
+
                             lastItemExtent = expr.Extent;
                         }
                         else
@@ -1350,6 +1386,7 @@ namespace System.Management.Automation.Language
                                 nameof(ParserStrings.MissingTypename),
                                 ParserStrings.MissingTypename);
                         }
+
                         return new TypeName(typeName.Extent, typeName.Text);
                 }
             }
@@ -1365,6 +1402,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.MissingAssemblyNameSpecification);
                     return new TypeName(typeName.Extent, typeName.Text);
                 }
+
                 return new TypeName(ExtentOf(typeName.Extent, _tokenizer.CurrentExtent()), typeName.Text, assemblyNameSpec);
             }
 
@@ -1427,6 +1465,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 V3SkipNewlines();
 
                 token = PeekToken();
@@ -1442,6 +1481,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.MissingTypename);
                     typeName = new TypeName(commaOrRBracketToken.Extent, ":ErrorTypeName:");
                 }
+
                 genericArguments.Add(typeName);
             }
 
@@ -1465,6 +1505,7 @@ namespace System.Management.Automation.Language
                 SkipToken();
                 return CompleteArrayTypeName(result, openGenericType, NextToken());
             }
+
             if (token.Kind == TokenKind.Comma && !unBracketedGenericArg)
             {
                 SkipToken();
@@ -1480,6 +1521,7 @@ namespace System.Management.Automation.Language
                     openGenericType.AssemblyName = assemblyNameSpec;
                 }
             }
+
             return result;
         }
 
@@ -1551,6 +1593,7 @@ namespace System.Management.Automation.Language
                     {
                         typeForAssemblyQualification.AssemblyName = assemblyName;
                     }
+
                     break;
                 }
 
@@ -1596,6 +1639,7 @@ namespace System.Management.Automation.Language
                         bodyExtent = ExtentOf(After(lCurly), Before(rCurly));
                     }
                 }
+
                 fullBodyExtent = ExtentOf(lCurly, endScriptBlock);
             }
             else
@@ -1638,6 +1682,7 @@ namespace System.Management.Automation.Language
             {
                 statements.Add(predefinedStatementAst);
             }
+
             IScriptExtent statementListExtent = paramBlockAst != null ? paramBlockAst.Extent : null;
             IScriptExtent scriptBlockExtent;
 
@@ -1728,6 +1773,7 @@ namespace System.Management.Automation.Language
                 {
                     startExtent = blockNameToken.Extent;
                 }
+
                 endExtent = blockNameToken.Extent;
 
                 StatementBlockAst statementBlock = StatementBlockRule();
@@ -1776,6 +1822,7 @@ namespace System.Management.Automation.Language
 
                 SkipNewlinesAndSemicolons();
             }
+
         finished_named_block_list:
             CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent);
 
@@ -1859,6 +1906,7 @@ namespace System.Management.Automation.Language
                 {
                     firstStatement = statement;
                 }
+
                 lastStatement = statement;
 
                 SkipNewlinesAndSemicolons();
@@ -2037,6 +2085,7 @@ namespace System.Management.Automation.Language
                         UngetToken(token);
                         statement = null;
                     }
+
                     break;
                 case TokenKind.Else:
                 case TokenKind.ElseIf:
@@ -2050,6 +2099,7 @@ namespace System.Management.Automation.Language
                         SkipNewlines();
                         return StatementRule();
                     }
+
                     goto default;
                 case TokenKind.DynamicKeyword:
                     DynamicKeyword keywordData = DynamicKeyword.GetKeyword(token.Text);
@@ -2078,6 +2128,7 @@ namespace System.Management.Automation.Language
                     {
                         UngetToken(token);
                     }
+
                     statement = PipelineRule();
                     break;
             }
@@ -2145,6 +2196,7 @@ namespace System.Management.Automation.Language
                 {
                     _disableCommaOperator = disableCommaOperator;
                 }
+
                 if (labelExpr != null)
                 {
                     return labelExpr;
@@ -2390,6 +2442,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.MissingEndParenthesisAfterStatement,
                             keyword.Text);
                     }
+
                     return new ErrorStatementAst(ExtentOf(ifToken, Before(rParen)), componentAsts);
                 }
 
@@ -2411,6 +2464,17 @@ namespace System.Management.Automation.Language
 
                 clauses.Add(new IfClause(condition, body));
 
+                // Save a restore point here. In case there is no 'elseif' or 'else' following,
+                // we should resync back here to preserve the possible new lines. The new lines
+                // could be important for the following parsing. For example, in case we are in
+                // a HashExpression, a new line might be needed for parsing the key-value that
+                // is following the if statement:
+                //    @{
+                //       a = if (1) {}
+                //       b = 10
+                //    }
+
+                int restorePoint = _ungotToken == null ? _tokenizer.GetRestorePoint() : _ungotToken.Extent.StartOffset;
                 SkipNewlines();
                 keyword = PeekToken();
 
@@ -2419,8 +2483,7 @@ namespace System.Management.Automation.Language
                     SkipToken();
                     continue;
                 }
-
-                if (keyword.Kind == TokenKind.Else)
+                else if (keyword.Kind == TokenKind.Else)
                 {
                     SkipToken();
                     SkipNewlines();
@@ -2436,6 +2499,12 @@ namespace System.Management.Automation.Language
                         return new ErrorStatementAst(ExtentOf(ifToken, keyword), componentAsts);
                     }
                 }
+                else
+                {
+                    // There is no 'elseif' or 'else' following, so resync back to the possible new lines.
+                    Resync(restorePoint);
+                }
+
                 break;
             }
 
@@ -2705,8 +2774,10 @@ namespace System.Management.Automation.Language
                         {
                             SkipToken();
                         }
+
                         break;
                     }
+
                     errorAsts.Add(clauseCondition);
                     endErrorStatement = clauseCondition.Extent;
                     StatementBlockAst clauseBody = StatementBlockRule();
@@ -2739,6 +2810,7 @@ namespace System.Management.Automation.Language
                                     nameof(ParserStrings.MultipleSwitchDefaultClauses),
                                     ParserStrings.MultipleSwitchDefaultClauses);
                             }
+
                             @default = clauseBody;
                         }
                         else
@@ -2746,6 +2818,7 @@ namespace System.Management.Automation.Language
                             clauses.Add(new SwitchClause(clauseCondition, clauseBody));
                         }
                     }
+
                     SkipNewlinesAndSemicolons();
 
                     Token token = PeekToken();
@@ -2755,6 +2828,7 @@ namespace System.Management.Automation.Language
                         SkipToken();
                         break;
                     }
+
                     if (token.Kind == TokenKind.EndOfInput)
                     {
                         if (!isIncompleteError)
@@ -2765,6 +2839,7 @@ namespace System.Management.Automation.Language
                                 nameof(ParserStrings.MissingEndCurlyBrace),
                                 ParserStrings.MissingEndCurlyBrace);
                         }
+
                         break;
                     }
                 }
@@ -2992,6 +3067,7 @@ namespace System.Management.Automation.Language
                     {
                         _inConfiguration = oldInConfiguration;
                     }
+
                     if (configurationBodyScriptBlock == null)
                     {
                         ReportError(After(lCurly.Extent),
@@ -3061,6 +3137,7 @@ namespace System.Management.Automation.Language
                                             keywordProp.TypeConstraint = typeConstraint.TypeName.Name;
                                             continue;
                                         }
+
                                         var aAst = attr as AttributeAst;
                                         if (aAst != null)
                                         {
@@ -3091,6 +3168,7 @@ namespace System.Management.Automation.Language
                                         }
                                     }
                                 }
+
                                 keywordToAddForThisConfigurationStatement.Properties.Add(keywordProp.Name, keywordProp);
                             }
                         }
@@ -3124,6 +3202,7 @@ namespace System.Management.Automation.Language
                          attribute => (attribute.TypeName.GetReflectionAttributeType() != null) &&
                                       (attribute.TypeName.GetReflectionAttributeType() == typeof(DscLocalConfigurationManagerAttribute)));
                 }
+
                 ScriptBlockExpressionAst bodyAst = configurationBodyScriptBlock as ScriptBlockExpressionAst;
                 IScriptExtent configurationExtent = ExtentOf(startExtent, bodyAst);
                 return new ConfigurationDefinitionAst(configurationExtent,
@@ -3203,6 +3282,7 @@ namespace System.Management.Automation.Language
                     ParserStrings.ParameterRequiresArgument,
                     keywordToken.Text);
             }
+
             return argument;
         }
 
@@ -3281,6 +3361,7 @@ namespace System.Management.Automation.Language
                     forEachToken.Kind.Text());
                 return new ErrorStatementAst(ExtentOf(startOfStatement, endErrorStatement));
             }
+
             SkipNewlines();
 
             Token token = NextToken();
@@ -3404,32 +3485,38 @@ namespace System.Management.Automation.Language
                     forToken.Kind.Text());
                 return new ErrorStatementAst(ExtentOf(labelToken ?? forToken, endErrorStatement));
             }
+
             SkipNewlines();
             PipelineBaseAst initializer = PipelineRule();
             if (initializer != null)
             {
                 endErrorStatement = initializer.Extent;
             }
+
             if (PeekToken().Kind == TokenKind.Semi)
             {
                 endErrorStatement = NextToken().Extent;
             }
+
             SkipNewlines();
             PipelineBaseAst condition = PipelineRule();
             if (condition != null)
             {
                 endErrorStatement = condition.Extent;
             }
+
             if (PeekToken().Kind == TokenKind.Semi)
             {
                 endErrorStatement = NextToken().Extent;
             }
+
             SkipNewlines();
             PipelineBaseAst iterator = PipelineRule();
             if (iterator != null)
             {
                 endErrorStatement = iterator.Extent;
             }
+
             SkipNewlines();
             Token rParen = NextToken();
             StatementBlockAst body = null;
@@ -3442,6 +3529,7 @@ namespace System.Management.Automation.Language
                 {
                     endErrorStatement = lParen.Extent;
                 }
+
                 ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingEndParenthesisAfterStatement),
                     ParserStrings.MissingEndParenthesisAfterStatement,
@@ -3528,6 +3616,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.MissingEndParenthesisAfterStatement,
                         whileToken.Kind.Text());
                 }
+
                 return new ErrorStatementAst(ExtentOf(labelToken ?? whileToken, condition), GetNestedErrorAsts(errorCondition));
             }
 
@@ -3645,6 +3734,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingBraceInObjectDefinition),
                             ParserStrings.MissingBraceInObjectDefinition);
                     }
+
                     return null;
                 }
 
@@ -3710,6 +3800,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.UnexpectedToken,
                                 nameToken.Text);
                         }
+
                         return null;
                     }
 
@@ -4009,6 +4100,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.MissingExpressionAfterKeyword,
                                 whileOrUntilToken.Kind.Text());
                         }
+
                         SkipNewlines();
                         rParen = NextToken();
                         if (rParen.Kind != TokenKind.RParen)
@@ -4042,6 +4134,7 @@ namespace System.Management.Automation.Language
             {
                 return new DoUntilStatementAst(extent, label, condition, body);
             }
+
             return new DoWhileStatementAst(extent, label, condition, body);
         }
 
@@ -4147,12 +4240,14 @@ namespace System.Management.Automation.Language
                         members.Add(member);
                         lastExtent = member.Extent;
                     }
+
                     if (astsOnError != null && astsOnError.Count > 0)
                     {
                         if (nestedAsts == null)
                         {
                             nestedAsts = new List<Ast>();
                         }
+
                         nestedAsts.AddRange(astsOnError);
                         lastExtent = astsOnError.Last().Extent;
                     }
@@ -4264,6 +4359,7 @@ namespace System.Management.Automation.Language
                     {
                         ReportError(attribute.Extent, nameof(ParserStrings.TooManyTypes), ParserStrings.TooManyTypes);
                     }
+
                     continue;
                 }
 
@@ -4284,6 +4380,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.DuplicateQualifier,
                             token.Text);
                     }
+
                     if (privateToken != null)
                     {
                         ReportError(token.Extent,
@@ -4292,6 +4389,7 @@ namespace System.Management.Automation.Language
                             privateToken.Text,
                             token.Text);
                     }
+
                     publicToken = token;
                     SkipToken();
                     break;
@@ -4304,6 +4402,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.DuplicateQualifier,
                             token.Text);
                     }
+
                     if (publicToken != null)
                     {
                         ReportError(token.Extent,
@@ -4312,6 +4411,7 @@ namespace System.Management.Automation.Language
                             publicToken.Text,
                             token.Text);
                     }
+
                     privateToken = token;
                     SkipToken();
                     break;
@@ -4325,6 +4425,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.DuplicateQualifier,
                                 token.Text);
                         }
+
                         hiddenToken = token;
                         lastAttribute = token;
                         SkipToken();
@@ -4338,6 +4439,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.DuplicateQualifier,
                                 token.Text);
                         }
+
                         staticToken = token;
                         lastAttribute = token;
                         SkipToken();
@@ -4373,6 +4475,7 @@ namespace System.Management.Automation.Language
                 {
                     attributes |= PropertyAttributes.Static;
                 }
+
                 if (hiddenToken != null)
                 {
                     attributes |= PropertyAttributes.Hidden;
@@ -4386,6 +4489,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.MissingPropertyTerminator),
                         ParserStrings.MissingPropertyTerminator);
                 }
+
                 SkipNewlinesAndSemicolons();
 
                 // Include the semicolon in the extent but not newline or rcurly as that will look weird, e.g. if an error is reported on the full extent
@@ -4436,10 +4540,12 @@ namespace System.Management.Automation.Language
                 {
                     attributes |= MethodAttributes.Static;
                 }
+
                 if (hiddenToken != null)
                 {
                     attributes |= MethodAttributes.Hidden;
                 }
+
                 return new FunctionMemberAst(ExtentOf(startExtent, functionDefinition), functionDefinition, typeConstraint, attributeList, attributes);
             }
 
@@ -4467,6 +4573,7 @@ namespace System.Management.Automation.Language
             {
                 astsOnError = new List<Ast>();
             }
+
             astsOnError.Add(errAst);
         }
 
@@ -4481,6 +4588,7 @@ namespace System.Management.Automation.Language
             {
                 astsOnError = new List<Ast>();
             }
+
             astsOnError.AddRange(errAsts);
         }
 
@@ -4498,6 +4606,7 @@ namespace System.Management.Automation.Language
                     UngetToken(typeName);
                     return null;
                 }
+
                 return typeName;
             }
             finally
@@ -4575,6 +4684,7 @@ namespace System.Management.Automation.Language
                 nestedAsts.Add(enumDefn);
                 return new ErrorStatementAst(startExtent, nestedAsts);
             }
+
             return enumDefn;
         }
 
@@ -4641,6 +4751,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.MissingPropertyTerminator);
                 }
             }
+
             SkipNewlinesAndSemicolons();
 
             // Include the semicolon in the extent but not newline or rcurly as that will look weird, e.g. if an error is reported on the full extent
@@ -4882,6 +4993,7 @@ namespace System.Management.Automation.Language
                         {
                             workingDirectory = Path.GetDirectoryName(scriptFileName);
                         }
+
                         assemblyFileName = workingDirectory + @"\" + assemblyFileName;
                     }
 
@@ -5039,6 +5151,7 @@ namespace System.Management.Automation.Language
                     baseCallExtent = PositionUtilities.EmptyExtent;
                     baseKeywordExtent = PositionUtilities.EmptyExtent;
                 }
+
                 var invokeMemberAst = new BaseCtorInvokeMemberExpressionAst(baseKeywordExtent, baseCallExtent, baseCtorCallParams);
                 baseCtorCallStatement = new CommandExpressionAst(invokeMemberAst.Extent, invokeMemberAst, null);
             }
@@ -5185,8 +5298,10 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
                         ParserStrings.MissingEndParenthesisInFunctionParameterList);
                 }
+
                 SkipNewlines();
             }
+
             return parameters;
         }
 
@@ -5270,6 +5385,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingTypeLiteralToken),
                             ParserStrings.MissingTypeLiteralToken);
                     }
+
                     break;
                 }
 
@@ -5290,6 +5406,7 @@ namespace System.Management.Automation.Language
                 {
                     exceptionTypes = new List<TypeConstraintAst>();
                 }
+
                 exceptionTypes.Add(typeConstraintAst);
 
                 SkipNewlines();
@@ -5298,6 +5415,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 SkipToken();
             } while (true);
 
@@ -5315,6 +5433,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.MissingCatchHandlerBlock),
                         ParserStrings.MissingCatchHandlerBlock);
                 }
+
                 if (exceptionTypes != null)
                 {
                     if (errorAsts == null)
@@ -5326,6 +5445,7 @@ namespace System.Management.Automation.Language
                         errorAsts.AddRange(exceptionTypes);
                     }
                 }
+
                 return null;
             }
 
@@ -5465,6 +5585,7 @@ namespace System.Management.Automation.Language
                                 nameof(ParserStrings.MissingValueForSupportedCommandInDataSectionStatement),
                                 ParserStrings.MissingValueForSupportedCommandInDataSectionStatement);
                         }
+
                         endErrorStatement = commaToken != null ? commaToken.Extent : supportedCommandToken.Extent;
                         break;
                     }
@@ -5603,6 +5724,7 @@ namespace System.Management.Automation.Language
                         {
                             redirections = new RedirectionAst[CommandBaseAst.MaxRedirections];
                         }
+
                         IScriptExtent unused = null;
                         lastRedirection = RedirectionRule(redirectionToken, redirections, ref unused);
 
@@ -5624,6 +5746,7 @@ namespace System.Management.Automation.Language
                     {
                         startExtent = commandAst.Extent;
                     }
+
                     pipelineElements.Add(commandAst);
                 }
                 else if (pipelineElements.Count > 0 || PeekToken().Kind == TokenKind.Pipe)
@@ -5664,6 +5787,7 @@ namespace System.Management.Automation.Language
                                 nameof(ParserStrings.EmptyPipeElement),
                                 ParserStrings.EmptyPipeElement);
                         }
+
                         break;
                     case TokenKind.AndAnd:
                     case TokenKind.OrOr:
@@ -5678,6 +5802,7 @@ namespace System.Management.Automation.Language
                         {
                             scanning = false;
                         }
+
                         break;
 
                     default:
@@ -5793,6 +5918,7 @@ namespace System.Management.Automation.Language
                     default:
                         throw PSTraceSource.NewArgumentOutOfRangeException("result.FromStream", result.FromStream);
                 }
+
                 ReportError(result.Extent,
                     nameof(ParserStrings.StreamAlreadyRedirected),
                     ParserStrings.StreamAlreadyRedirected,
@@ -5918,6 +6044,7 @@ namespace System.Management.Automation.Language
                                 foundVerbatimArgument = true;
                             }
                         }
+
                         break;
 
                     default:
@@ -5938,6 +6065,7 @@ namespace System.Management.Automation.Language
                                 token.SetIsCommandArgument();
                                 break;
                         }
+
                         break;
                 }
 
@@ -5956,11 +6084,13 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 commaToken = token;
                 if (commandArgs == null)
                 {
                     commandArgs = new List<ExpressionAst>();
                 }
+
                 commandArgs.Add(exprAst);
 
                 SkipToken();
@@ -6090,6 +6220,7 @@ namespace System.Management.Automation.Language
                                 elements.Add(commandName);
                                 break;
                             }
+
                             var parameterToken = (ParameterToken)token;
                             ExpressionAst parameterArgs;
                             IScriptExtent extent;
@@ -6130,6 +6261,7 @@ namespace System.Management.Automation.Language
                                 {
                                     redirections = new RedirectionAst[CommandBaseAst.MaxRedirections];
                                 }
+
                                 RedirectionRule((RedirectionToken)token, redirections, ref endExtent);
                             }
                             else
@@ -6141,6 +6273,7 @@ namespace System.Management.Automation.Language
                                 endExtent = token.Extent;
                                 elements.Add(new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord));
                             }
+
                             break;
 
                         default:
@@ -6179,6 +6312,7 @@ namespace System.Management.Automation.Language
                                 endExtent = ast.Extent;
                                 elements.Add(ast);
                             }
+
                             break;
                     }
 
@@ -6206,6 +6340,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.MissingExpression,
                         firstToken.Text);
                 }
+
                 return null;
             }
 
@@ -6286,6 +6421,7 @@ namespace System.Management.Automation.Language
                     {
                         return ErrorRecoveryParameterInExpression(paramToken, expr);
                     }
+
                     return expr;
                 }
 
@@ -6316,6 +6452,7 @@ namespace System.Management.Automation.Language
                             token.Text);
                         expr = new ErrorExpressionAst(extent);
                     }
+
                     operandStack.Push(expr);
 
                     token = NextToken();
@@ -6339,9 +6476,11 @@ namespace System.Management.Automation.Language
                             break;
                         precedence = operatorStack.Peek().Kind.GetBinaryPrecedence();
                     }
+
                     operatorStack.Push(token);
                     precedence = newPrecedence;
                 }
+
                 rhs = operandStack.Pop();
                 Diagnostics.Assert(operandStack.Count == operatorStack.Count, "Stacks out of sync");
                 while (operandStack.Count > 0)
@@ -6416,6 +6555,7 @@ namespace System.Management.Automation.Language
                     arrayValues.Add(lastExpr);
                     break;
                 }
+
                 arrayValues.Add(lastExpr);
 
                 commaToken = PeekToken();
@@ -6531,6 +6671,7 @@ namespace System.Management.Automation.Language
                             lastAttribute.TypeName.FullName);
                         return new ErrorExpressionAst(ExtentOf(token, lastAttribute));
                     }
+
                     expr = new AttributedExpressionAst(ExtentOf(lastAttribute, child), lastAttribute, child);
                 }
                 else
@@ -6667,6 +6808,7 @@ namespace System.Management.Automation.Language
             {
                 return expr;
             }
+
             return CheckPostPrimaryExpressionOperators(NextMemberAccessToken(true), expr);
         }
 
@@ -6684,6 +6826,7 @@ namespace System.Management.Automation.Language
 
                 return new UsingExpressionAst(childExpr.Extent, childExpr);
             }
+
             return new VariableExpressionAst(variableToken);
         }
 
@@ -6702,6 +6845,7 @@ namespace System.Management.Automation.Language
                 {
                     expr = ElementAccessRule(expr, token);
                 }
+
                 token = NextMemberAccessToken(true);
             }
 
@@ -6729,6 +6873,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 keyValuePairs.Add(pair);
 
                 Token token = PeekToken();
@@ -6833,7 +6978,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: pretend we saw a statement and keep parsing.
 
                     IScriptExtent errorExtent = After(equals);
-                    
+
                     string errorId;
                     string errorMsg;
                     if (parsingSchemaElement)
@@ -6963,6 +7108,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.ExpectedExpression);
                     pipelineAst = new ErrorStatementAst(errorPosition);
                 }
+
                 SkipNewlines();
                 rParen = NextToken();
                 if (rParen.Kind != TokenKind.RParen)
@@ -7029,10 +7175,12 @@ namespace System.Management.Automation.Language
                         _tokenizer.FinishNestedScan(ts);
                     }
                 }
+
                 nestedExpressions.Add(exprAst);
             }
 
             if (_savingTokens) { expandableStringToken.NestedTokens = new ReadOnlyCollection<Token>(newNestedTokens); }
+
             return nestedExpressions;
         }
 
@@ -7052,6 +7200,7 @@ namespace System.Management.Automation.Language
             {
                 expr = new StringConstantExpressionAst(strToken);
             }
+
             return expr;
         }
 
@@ -7183,8 +7332,10 @@ namespace System.Management.Automation.Language
                                 TokenKind.Comma.Text());
                             reportedError = true;
                         }
+
                         break;
                     }
+
                     arguments.Add(argument);
 
                     SkipNewlines();
@@ -7196,6 +7347,7 @@ namespace System.Management.Automation.Language
                         break;
                     }
                 }
+
                 SkipNewlines();
                 rParen = NextToken();
                 if (rParen.Kind != TokenKind.RParen)
@@ -7209,6 +7361,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingEndParenthesisInMethodCall),
                             ParserStrings.MissingEndParenthesisInMethodCall);
                     }
+
                     rParen = null;
                 }
             }
@@ -7216,6 +7369,7 @@ namespace System.Management.Automation.Language
             {
                 _disableCommaOperator = oldDisableCommaOperator;
             }
+
             lastExtent = ExtentFromFirstOf(rParen, comma, arguments.LastOrDefault(), lParen);
             return arguments;
         }
@@ -7253,6 +7407,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.MissingEndSquareBracket),
                         ParserStrings.MissingEndSquareBracket);
                 }
+
                 rBracket = null;
             }
 
@@ -7306,7 +7461,7 @@ namespace System.Management.Automation.Language
         {
             // These types are the ones known to contain
             // strings used by the parser as errors
-            Type[] resxTypes = new []
+            Type[] resxTypes = new[]
             {
                 typeof(ParserStrings),
                 typeof(DiscoveryExceptions),
@@ -7334,6 +7489,7 @@ namespace System.Management.Automation.Language
         {
             get { return t_arrayOfOneArg ?? (t_arrayOfOneArg = new object[1]); }
         }
+
         [ThreadStatic]
         private static object[] t_arrayOfOneArg;
 
@@ -7341,6 +7497,7 @@ namespace System.Management.Automation.Language
         {
             get { return t_arrayOfTwoArgs ?? (t_arrayOfTwoArgs = new object[2]); }
         }
+
         [ThreadStatic]
         private static object[] t_arrayOfTwoArgs;
 
@@ -7425,7 +7582,6 @@ namespace System.Management.Automation.Language
     #region Error related classes
 
     /// <summary>
-    ///
     /// </summary>
     public class ParseError
     {
@@ -7453,7 +7609,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -7462,22 +7617,18 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public IScriptExtent Extent { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public string ErrorId { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public string Message { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public bool IncompleteInput { get; }
     }
@@ -7485,6 +7636,7 @@ namespace System.Management.Automation.Language
     #endregion Error related classes
 
     // Guid is {eba789d9-533b-58d4-cd1f-2e6520e3a9c2}
+
     [EventSource(Name = "Microsoft-PowerShell-Parser")]
     internal class ParserEventSource : EventSource
     {
@@ -7492,14 +7644,23 @@ namespace System.Management.Automation.Language
         internal const int MaxScriptLengthToLog = 50;
 
         public void ParseStart(string FileName, int Length) { WriteEvent(1, FileName, Length); }
+
         public void ParseStop() { WriteEvent(2); }
+
         public void ResolveSymbolsStart() { WriteEvent(3); }
+
         public void ResolveSymbolsStop() { WriteEvent(4); }
+
         public void SemanticChecksStart() { WriteEvent(5); }
+
         public void SemanticChecksStop() { WriteEvent(6); }
+
         public void CheckSecurityStart(string FileName) { WriteEvent(7, FileName); }
+
         public void CheckSecurityStop(string FileName) { WriteEvent(8, FileName); }
+
         public void CompileStart(string FileName, int Length, bool Optimized) { WriteEvent(9, FileName, Length, Optimized); }
+
         public void CompileStop() { WriteEvent(10); }
 
         internal static string GetFileOrScript(string fileName, string input)

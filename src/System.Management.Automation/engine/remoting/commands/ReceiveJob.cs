@@ -51,7 +51,6 @@ namespace Microsoft.PowerShell.Commands
     ///              Receive-PSJob -Job $job -ComputerName "Server2"
     ///              The parameter ComputerName cannot be used with jobs which are
     ///              not PSRemotingJob
-    ///
     /// </summary>
     [Cmdlet(VerbsCommunications.Receive, "Job", DefaultParameterSetName = ReceiveJobCommand.LocationParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113372", RemotingCapability = RemotingCapability.SupportedByCommand)]
@@ -85,11 +84,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
@@ -102,18 +103,20 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get
             {
                 return _computerNames;
             }
+
             set
             {
                 _computerNames = value;
             }
         }
-        private String[] _computerNames;
+
+        private string[] _computerNames;
 
         /// <summary>
         /// Locations for which the results needs to be returned.
@@ -124,18 +127,20 @@ namespace Microsoft.PowerShell.Commands
                    Position = 1)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Location
+        public string[] Location
         {
             get
             {
                 return _locations;
             }
+
             set
             {
                 _locations = value;
             }
         }
-        private String[] _locations;
+
+        private string[] _locations;
 
         /// <summary>
         /// Runspaces for which the results needs to be
@@ -152,11 +157,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _remoteRunspaceInfos;
             }
+
             set
             {
                 _remoteRunspaceInfos = value;
             }
         }
+
         private PSSession[] _remoteRunspaceInfos;
 
         /// <summary>
@@ -170,16 +177,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return !_flush;
             }
+
             set
             {
                 _flush = !value;
                 ValidateWait();
             }
         }
+
         private bool _flush = true;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter NoRecurse
@@ -188,22 +196,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 return !_recurse;
             }
+
             set
             {
                 _recurse = !value;
             }
         }
+
         private bool _recurse = true;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter Force
         { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public override JobState State
         {
@@ -214,7 +222,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override Hashtable Filter
         {
@@ -222,7 +229,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override string[] Command
         {
@@ -233,12 +239,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected const string LocationParameterSet = "Location";
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter Wait
@@ -247,6 +251,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _wait;
             }
+
             set
             {
                 _wait = value;
@@ -255,7 +260,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter AutoRemoveJob
@@ -264,6 +268,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _autoRemoveJob;
             }
+
             set
             {
                 _autoRemoveJob = value;
@@ -271,12 +276,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter WriteEvents
         {
             get { return _writeStateChangedEvents; }
+
             set
             {
                 _writeStateChangedEvents = value;
@@ -284,12 +289,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter WriteJobInResults
         {
             get { return _outputJobFirst; }
+
             set
             {
                 _outputJobFirst = value;
@@ -320,7 +325,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -350,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (remoteJob == null)
                             {
-                                String message = GetMessage(RemotingErrorIdStrings.RunspaceParamNotSupported);
+                                string message = GetMessage(RemotingErrorIdStrings.RunspaceParamNotSupported);
 
                                 WriteError(new ErrorRecord(new ArgumentException(message),
                                     "RunspaceParameterNotSupported", ErrorCategory.InvalidArgument,
@@ -367,9 +371,10 @@ namespace Microsoft.PowerShell.Commands
                                 jobsToWrite.AddRange(childJobs);
                                 //WriteResultsForJobsInCollection(childJobs, false);
 
-                            } // foreach(RemoteRunspaceInfo...
-                        } // foreach ...
+                            }
+                        }
                     }
+
                     break;
 
                 case ComputerNameParameterSet:
@@ -383,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                             // ComputerName parameter can only be used with remoting jobs
                             if (remoteJob == null)
                             {
-                                String message = GetMessage(RemotingErrorIdStrings.ComputerNameParamNotSupported);
+                                string message = GetMessage(RemotingErrorIdStrings.ComputerNameParamNotSupported);
 
                                 WriteError(new ErrorRecord(new ArgumentException(message),
                                     "ComputerNameParameterNotSupported", ErrorCategory.InvalidArgument,
@@ -392,19 +397,20 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            String[] resolvedComputernames = null;
+                            string[] resolvedComputernames = null;
                             ResolveComputerNames(_computerNames, out resolvedComputernames);
 
-                            foreach (String resolvedComputerName in resolvedComputernames)
+                            foreach (string resolvedComputerName in resolvedComputernames)
                             {
                                 // get the required child Job objects
                                 List<Job> childJobs = remoteJob.GetJobsForComputer(resolvedComputerName);
                                 jobsToWrite.AddRange(childJobs);
                                 //WriteResultsForJobsInCollection(childJobs, false);
 
-                            } // foreach (String...
-                        } // foreach ...
+                            }
+                        }
                     }
+
                     break;
 
                 case "Location":
@@ -419,16 +425,17 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (Job job in _jobs)
                             {
-                                foreach (String location in _locations)
+                                foreach (string location in _locations)
                                 {
                                     // get the required child Job objects
                                     List<Job> childJobs = job.GetJobsForLocation(location);
                                     jobsToWrite.AddRange(childJobs);
                                     //WriteResultsForJobsInCollection(childJobs, false);
-                                } // foreach (String...
-                            } // foreach ...
+                                }
+                            }
                         }
                     }
+
                     break;
 
                 case ReceiveJobCommand.InstanceIdParameterSet:
@@ -439,6 +446,7 @@ namespace Microsoft.PowerShell.Commands
                         checkForRecurse = true;
                         //WriteResultsForJobsInCollection(jobs, true);
                     }
+
                     break;
 
                 case ReceiveJobCommand.SessionIdParameterSet:
@@ -448,6 +456,7 @@ namespace Microsoft.PowerShell.Commands
                         checkForRecurse = true;
                         //WriteResultsForJobsInCollection(jobs, true);
                     }
+
                     break;
 
                 case ReceiveJobCommand.NameParameterSet:
@@ -457,6 +466,7 @@ namespace Microsoft.PowerShell.Commands
                         checkForRecurse = true;
                         //WriteResultsForJobsInCollection(jobs, true);
                     }
+
                     break;
             }
 
@@ -519,7 +529,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteResultsForJobsInCollection(jobsToWrite, checkForRecurse, false);
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// StopProcessing - when the command is stopped,
@@ -612,7 +622,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -621,7 +630,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
@@ -660,6 +668,7 @@ namespace Microsoft.PowerShell.Commands
                             job.Debug.DataAdded -= Debug_DataAdded;
                             job.Information.DataAdded -= Information_DataAdded;
                         }
+
                         job.StateChanged -= HandleJobStateChanged;
                     }
                 }
@@ -716,7 +725,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="job">Job object from which to write the results from
         /// </param>
-        ///
         private void WriteJobResults(Job job)
         {
             if (job == null) return;
@@ -911,7 +919,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns all the results from supplied PSDataCollection.
         /// </summary>
         /// <param name="psDataCollection">data collection to read from</param>
-        /// <returns>collection with copy of data</returns>
+        /// <returns>Collection with copy of data.</returns>
         private Collection<T> ReadAll<T>(PSDataCollection<T> psDataCollection)
         {
             if (_flush)
@@ -926,6 +934,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 collection.Add(t);
             }
+
             return collection;
         }
 
@@ -933,7 +942,6 @@ namespace Microsoft.PowerShell.Commands
         /// Write the results from this Job object. It also writes the
         /// results from its child objects recursively.
         /// </summary>
-        ///
         /// <param name="duplicate">Hashtable used for duplicate detection</param>
         /// <param name="job">Job whose results are written</param>
         /// <param name="registerInsteadOfWrite"></param>
@@ -944,6 +952,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
+
             duplicate.Add(job, job);
 
             //Write the results of child jobs
@@ -971,7 +980,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteJobResults(job);
                 WriteJobStateInformationIfRequired(job);
             }
-        } // WriteAllEntities
+        }
 
         /// <summary>
         /// Writes the job objects if required by the cmdlet
@@ -992,7 +1001,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="job"></param>
         /// <remarks>this method should always be called before
@@ -1070,6 +1078,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             PSDataCollection<PSStreamObject> results = sender as PSDataCollection<PSStreamObject>;
 
@@ -1109,6 +1118,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
             }
+
             if (e.JobStateInfo.State == JobState.Blocked)
             {
                 DoUnblockJob(job);
@@ -1139,6 +1149,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1165,6 +1176,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1191,6 +1203,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1217,6 +1230,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1243,6 +1257,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1269,6 +1284,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1295,6 +1311,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDisposed) return;
             }
+
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
@@ -1329,6 +1346,7 @@ namespace Microsoft.PowerShell.Commands
                 // the data got written
                 return default(T);
             }
+
             return collection[index];
         }
 
@@ -1369,6 +1387,7 @@ namespace Microsoft.PowerShell.Commands
                 job.Debug.DataAdded -= Debug_DataAdded;
                 job.Information.DataAdded -= Information_DataAdded;
             }
+
             job.StateChanged -= HandleJobStateChanged;
         }
 
@@ -1385,6 +1404,7 @@ namespace Microsoft.PowerShell.Commands
                 _tracer.WriteMessage(ClassNameTrace, "AutoRemoveJobIfRequired", Guid.Empty, job,
                                      "Job has data and is being removed.");
             }
+
             Job2 job2 = job as Job2;
             if (job2 != null)
             {
@@ -1428,7 +1448,6 @@ namespace Microsoft.PowerShell.Commands
         /// Write the results from this Job object. It also writes the
         /// results from its child objects recursively.
         /// </summary>
-        ///
         /// <param name="job">Job whose results are written</param>
         /// <param name="registerInsteadOfWrite"></param>
         private void WriteJobResultsRecursively(Job job, bool registerInsteadOfWrite)
@@ -1439,7 +1458,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="jobs"></param>
         /// <param name="checkForRecurse"></param>

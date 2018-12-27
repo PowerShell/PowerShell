@@ -251,7 +251,6 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Runs the PowerShell parameter binding algorithm against a CommandAst,
     /// returning information about which parameters were bound.
-    ///
     /// </summary>
     public static class StaticParameterBinder
     {
@@ -342,6 +341,7 @@ namespace System.Management.Automation.Language
                     s_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
                     s_bindCommandRunspace.Open();
                 }
+
                 Runspace.DefaultRunspace = s_bindCommandRunspace;
                 // Static binding always does argument binding (not argument or parameter completion).
                 pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
@@ -355,6 +355,7 @@ namespace System.Management.Automation.Language
 
             return new StaticBindingResult(commandAst, pseudoBinding);
         }
+
         [ThreadStatic]
         static Runspace s_bindCommandRunspace = null;
     }
@@ -483,7 +484,7 @@ namespace System.Management.Automation.Language
                 {
                     CompiledCommandParameter parameter = item.Value.Parameter;
                     CommandElementAst value = null;
-                    Object constantValue = null;
+                    object constantValue = null;
 
                     // This is a single argument
                     AstPair argumentAstPair = bindingInfo.BoundArguments[item.Key] as AstPair;
@@ -594,6 +595,7 @@ namespace System.Management.Automation.Language
                 BindingExceptions.Add(duplicateParameter.ParameterName, new StaticBindingError(duplicateParameter, bindingException));
             }
         }
+
         private PseudoBindingInfo _bindingInfo = null;
 
         private void CreateBindingResultForSyntacticBind(CommandAst commandAst)
@@ -695,12 +697,10 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public Dictionary<string, ParameterBindingResult> BoundParameters { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public Dictionary<string, StaticBindingError> BindingExceptions { get; }
     }
@@ -710,7 +710,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class ParameterBindingResult
     {
-        internal ParameterBindingResult(CompiledCommandParameter parameter, CommandElementAst value, Object constantValue)
+        internal ParameterBindingResult(CompiledCommandParameter parameter, CommandElementAst value, object constantValue)
         {
             this.Parameter = new ParameterMetadata(parameter);
             this.Value = value;
@@ -722,16 +722,15 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public ParameterMetadata Parameter { get; internal set; }
 
         /// <summary>
-        ///
         /// </summary>
-        public Object ConstantValue
+        public object ConstantValue
         {
             get { return _constantValue; }
+
             internal set
             {
                 if (value != null)
@@ -740,14 +739,15 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
         private object _constantValue;
 
         /// <summary>
-        ///
         /// </summary>
         public CommandElementAst Value
         {
             get { return _value; }
+
             internal set
             {
                 _value = value;
@@ -759,6 +759,7 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
         private CommandElementAst _value;
     }
 
@@ -943,7 +944,7 @@ namespace System.Management.Automation.Language
         /// <param name="pipeArgumentType">Indicate the type of the piped-in argument</param>
         /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
-        /// <returns>PseudoBindingInfo</returns>
+        /// <returns>PseudoBindingInfo.</returns>
         internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
         {
             if (command == null)
@@ -969,11 +970,12 @@ namespace System.Management.Automation.Language
                     try
                     {
                         // Tab expansion is called from a trusted function - we should apply ConstrainedLanguage if necessary.
-                        if (ExecutionContext.HasEverUsedConstrainedLanguage)
+                        if (executionContext.HasRunspaceEverUsedConstrainedLanguageMode)
                         {
                             previousLanguageMode = executionContext.LanguageMode;
                             executionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                         }
+
                         _bindingEffective = PrepareCommandElements(executionContext);
                     }
                     finally
@@ -992,6 +994,7 @@ namespace System.Management.Automation.Language
             {
                 _pipelineInputType = pipeArgumentType;
             }
+
             _bindingEffective = ParseParameterArguments(paramAstAtCursor);
 
             if (_bindingEffective)
@@ -1331,6 +1334,7 @@ namespace System.Management.Automation.Language
                             _pipelineInputType = typeof(object);
                         break;
                     }
+
                     preCmdBaseAst = cmdBase;
                 }
             }
@@ -1347,6 +1351,7 @@ namespace System.Management.Automation.Language
             {
                 ast = ast.Parent;
             }
+
             ast.Visit(exportVisitor);
 
             CommandProcessorBase commandProcessor = null;
@@ -1372,6 +1377,7 @@ namespace System.Management.Automation.Language
                     commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, true, context.EngineSessionState);
                 }
             }
+
             return commandProcessor;
         }
 
@@ -1380,7 +1386,6 @@ namespace System.Management.Automation.Language
         /// specified. We always eat the error (such as parameter without value) and continue
         /// to do the binding.
         /// </summary>
-        ///
         /// <param name="paramAstAtCursor">
         /// For parameter completion, if the cursor is pointing at a CommandParameterAst, we
         /// should not try exact matching for that CommandParameterAst. This is to handle the
@@ -1837,6 +1842,7 @@ namespace System.Management.Automation.Language
             {
                 result = true;
             }
+
             return result;
         }
 
@@ -1856,6 +1862,7 @@ namespace System.Management.Automation.Language
                     result = argument;
                     break;
                 }
+
                 nonPositionalArguments.Add(argument);
             }
 
@@ -1912,6 +1919,7 @@ namespace System.Management.Automation.Language
                         _boundArguments.Add(parameterName, new AstArrayPair(parameterName, argList));
                         unboundArguments.Clear();
                     }
+
                     result = true;
                     break;
                 }
@@ -1969,6 +1977,7 @@ namespace System.Management.Automation.Language
                     {
                         _boundArguments.Add(parameterName, new PipeObjectPair(parameterName, _pipelineInputType));
                     }
+
                     result = true;
                     break;
                 }

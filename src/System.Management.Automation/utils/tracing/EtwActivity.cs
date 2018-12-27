@@ -124,10 +124,12 @@ namespace System.Management.Automation.Tracing
                 {
                     throw new ArgumentNullException("callback");
                 }
+
                 if (tracer == null)
                 {
                     throw new ArgumentNullException("tracer");
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.callbackNoParam = callback;
@@ -144,10 +146,12 @@ namespace System.Management.Automation.Tracing
                 {
                     throw new ArgumentNullException("callback");
                 }
+
                 if (tracer == null)
                 {
                     throw new ArgumentNullException("tracer");
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.callbackWithState = callback;
@@ -164,10 +168,12 @@ namespace System.Management.Automation.Tracing
                 {
                     throw new ArgumentNullException("callback");
                 }
+
                 if (tracer == null)
                 {
                     throw new ArgumentNullException("tracer");
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.asyncCallback = callback;
@@ -189,10 +195,12 @@ namespace System.Management.Automation.Tracing
                 {
                     throw new ArgumentNullException("callback");
                 }
+
                 if (tracer == null)
                 {
                     throw new ArgumentNullException("tracer");
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.callbackWithStateAndArgs = callback;
@@ -273,8 +281,8 @@ namespace System.Management.Automation.Tracing
         /// nothing.
         /// </summary>
         /// <param name="activityId"></param>
-        /// <returns>true when provided activity was set, false if current activity
-        /// was found to be same and set was not needed</returns>
+        /// <returns>True when provided activity was set, false if current activity
+        /// was found to be same and set was not needed.</returns>
         public static bool SetActivityId(Guid activityId)
         {
             if (GetActivityId() != activityId)
@@ -282,6 +290,7 @@ namespace System.Management.Automation.Tracing
                 EventProvider.SetActivityId(ref activityId);
                 return true;
             }
+
             return false;
         }
 
@@ -350,7 +359,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="levels">Levels to check </param>
         /// <param name="keywords">Keywords to check</param>
-        /// <returns>True, if any ETW listener is enabled else false</returns>
+        /// <returns>True, if any ETW listener is enabled else false.</returns>
         public bool IsProviderEnabled(byte levels, long keywords)
         {
             return GetProvider().IsEnabled(levels, keywords);
@@ -377,6 +386,7 @@ namespace System.Management.Automation.Tracing
             {
                 throw new ArgumentNullException("callback");
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
 
@@ -391,6 +401,7 @@ namespace System.Management.Automation.Tracing
             {
                 throw new ArgumentNullException("callback");
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
 
@@ -405,6 +416,7 @@ namespace System.Management.Automation.Tracing
             {
                 throw new ArgumentNullException("callback");
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
 
@@ -420,6 +432,7 @@ namespace System.Management.Automation.Tracing
             {
                 throw new ArgumentNullException("callback");
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
 
@@ -494,6 +507,7 @@ namespace System.Management.Automation.Tracing
                     providers[ProviderId] = currentProvider;
                 }
             }
+
             return currentProvider;
         }
 

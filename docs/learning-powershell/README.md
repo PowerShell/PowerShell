@@ -29,9 +29,9 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 - Alternatively you can get the PowerShell by [building it](../../README.md#building-powershell)
 
-[inst-linux]: ../installation/linux.md
-[inst-win]: ../installation/windows.md
-[inst-macos]: ../installation/macos.md
+[inst-linux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
+[inst-win]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
+[inst-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
 
 Getting Started with PowerShell
 ----
@@ -51,7 +51,7 @@ You can use your favorite editor to write scripts.
 We use Visual Studio Code (VS Code) which works on Windows, Linux, and macOS.
 Click on the following link to create your first PowerShell script.
 
-- [Using Visual Studio Code (VS Code)][use-vscode-editor]
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/en-us/powershell/scripting/components/vscode/using-vscode?view=powershell-6)
 
 PowerShell Debugger
 ----
@@ -59,11 +59,10 @@ PowerShell Debugger
 Debugging can help you find bugs and fix problems in your PowerShell scripts.
 Click on the link below to learn more about debugging:
 
-- [Using Visual Studio Code (VS Code)][use-vscode-debugger]
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/en-us/powershell/scripting/components/vscode/using-vscode?view=powershell-6#debugging-with-visual-studio-code)
 - [PowerShell Command-line Debugging][cli-debugging]
 
 [use-vscode-editor]:./using-vscode.md#editing-with-vs-code
-[use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
 [cli-debugging]:./debugging-from-commandline.md
 [get-powershell]:../../README.md#get-powershell
 [build-powershell]:../../README.md#building-the-repository
@@ -100,7 +99,7 @@ Note that all bash commands should continue working on PowerShell session.
 | rm -r &lt;folderName>           |Remove-Item &lt;folderName> -Recurse   |Delete a folder
 | find -name build*               |Get-ChildItem build* -Recurse          |Find a file or folder starting with 'build'
 | grep -Rin "sometext" --include="*.cs" |Get-ChildItem -Recurse -Filter *.cs <br> \| Select-String -Pattern "sometext" | Recursively case-insensitive search for text in files
-
+| curl https://github.com | Invoke-RestMethod https://github.com | Transfer data to or from the web
 
 Recommended Training and Reading
 ----
@@ -112,7 +111,7 @@ Recommended Training and Reading
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
-- [PowerShell TechNet Resources](https://technet.microsoft.com/en-us/scriptcenter/dd742419.aspx) from ScriptCenter
+- [PowerShell Documentation](https://docs.microsoft.com/powershell)
 
 
 Commercial Resources
@@ -120,17 +119,20 @@ Commercial Resources
 - [Windows PowerShell in Action][in-action] by Bruce Payette
 - [Introduction to PowerShell][powershell-intro] from Pluralsight
 - [PowerShell Training and Tutorials][lynda-training] from Lynda.com
+- [Learn Windows PowerShell in a Month of Lunches][learn-powershell] by Don Jones and Jeffrey Hicks
 
 
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
 [powershell-intro]: https://www.pluralsight.com/courses/powershell-intro
 [lynda-training]: https://www.lynda.com/PowerShell-training-tutorials/5779-0.html
+[learn-powershell]: https://www.amazon.com/Learn-Windows-PowerShell-Month-Lunches/dp/1617294160
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
-[basic-cookbooks]: https://msdn.microsoft.com/en-us/powershell/scripting/getting-started/basic-cookbooks
+[Using Windows PowerShell for Administration]: https://docs.microsoft.com/powershell/scripting/getting-started/fundamental/using-windows-powershell-for-administration?view=powershell-6
 [ebook-from-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
 [powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx
 [quick-reference]: http://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
+[basic-cookbooks]:https://docs.microsoft.com/en-us/powershell/scripting/getting-started/fundamental/sample-scripts-for-administration?view=powershell-6

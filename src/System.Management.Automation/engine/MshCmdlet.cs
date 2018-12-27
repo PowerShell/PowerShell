@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Explicit method to convert a SwitchParameter to a boolean value.
         /// </summary>
-        /// <returns>The boolean equivalent of the SwitchParameter</returns>
+        /// <returns>The boolean equivalent of the SwitchParameter.</returns>
         public bool ToBool()
         {
             return _isPresent;
@@ -161,7 +161,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
-        /// <returns>True if they are the same</returns>
+        /// <returns>True if they are the same.</returns>
         public static bool operator ==(SwitchParameter first, SwitchParameter second)
         {
             return first.Equals(second);
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
-        /// <returns>True if they are different</returns>
+        /// <returns>True if they are different.</returns>
         public static bool operator !=(SwitchParameter first, SwitchParameter second)
         {
             return !first.Equals(second);
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
-        /// <returns>True if they are the same</returns>
+        /// <returns>True if they are the same.</returns>
         public static bool operator ==(SwitchParameter first, bool second)
         {
             return first.Equals(second);
@@ -191,7 +191,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
-        /// <returns>True if they are different</returns>
+        /// <returns>True if they are different.</returns>
         public static bool operator !=(SwitchParameter first, bool second)
         {
             return !first.Equals(second);
@@ -201,7 +201,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
-        /// <returns>True if they are the same</returns>
+        /// <returns>True if they are the same.</returns>
         public static bool operator ==(bool first, SwitchParameter second)
         {
             return first.Equals(second);
@@ -211,7 +211,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
-        /// <returns>True if they are different</returns>
+        /// <returns>True if they are different.</returns>
         public static bool operator !=(bool first, SwitchParameter second)
         {
             return !first.Equals(second);
@@ -260,6 +260,7 @@ namespace System.Management.Automation
             {
                 return _commandRuntime.PipelineProcessor.ExecutionFailed;
             }
+
             set
             {
                 _commandRuntime.PipelineProcessor.ExecutionFailed = value;
@@ -277,13 +278,12 @@ namespace System.Management.Automation
         /// </exception>
         public string ExpandString(string source)
         {
-            if (null != _cmdlet)
+            if (_cmdlet != null)
                 _cmdlet.ThrowIfStopping();
             return _context.Engine.Expand(source);
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="type"></param>
@@ -300,7 +300,7 @@ namespace System.Management.Automation
         /// <param name="commandName">The command name to search for</param>
         /// <param name="type">The command type to search for</param>
         /// <param name="arguments">The command arguments used to resolve dynamic parameters</param>
-        /// <returns>A CommandInfo result that represents the resolved command</returns>
+        /// <returns>A CommandInfo result that represents the resolved command.</returns>
         public CommandInfo GetCommand(string commandName, CommandTypes type, object[] arguments)
         {
             CommandInfo result = null;
@@ -358,10 +358,15 @@ namespace System.Management.Automation
         public System.EventHandler<CommandLookupEventArgs> PostCommandLookupAction { get; set; }
 
         /// <summary>
+        /// Gets or sets the action that is invoked everytime the runspace location (cwd) is changed.
+        /// </summary>
+        public System.EventHandler<LocationChangedEventArgs> LocationChangedAction { get; set; }
+
+        /// <summary>
         /// Returns the CmdletInfo object that corresponds to the name argument
         /// </summary>
         /// <param name="commandName">The name of the cmdlet to look for</param>
-        /// <returns>The cmdletInfo object if found, null otherwise</returns>
+        /// <returns>The cmdletInfo object if found, null otherwise.</returns>
         public CmdletInfo GetCmdlet(string commandName)
         {
             return GetCmdlet(commandName, _context);
@@ -372,7 +377,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName">The name of the cmdlet to look for</param>
         /// <param name="context">The execution context instance to use for lookup</param>
-        /// <returns>The cmdletInfo object if found, null otherwise</returns>
+        /// <returns>The cmdletInfo object if found, null otherwise.</returns>
         internal static CmdletInfo GetCmdlet(string commandName, ExecutionContext context)
         {
             CmdletInfo current = null;
@@ -424,7 +429,7 @@ namespace System.Management.Automation
         /// info will both be null on returned object.
         /// </summary>
         /// <param name="cmdletTypeName">the type name of the class implementing this cmdlet</param>
-        /// <returns>CmdletInfo for the cmdlet if found, null otherwise</returns>
+        /// <returns>CmdletInfo for the cmdlet if found, null otherwise.</returns>
         public CmdletInfo GetCmdletByTypeName(string cmdletTypeName)
         {
             if (string.IsNullOrEmpty(cmdletTypeName))
@@ -438,6 +443,7 @@ namespace System.Management.Automation
             {
                 throw e;
             }
+
             if (cmdletType == null)
             {
                 return null;
@@ -450,6 +456,7 @@ namespace System.Management.Automation
                 if (ca != null)
                     break;
             }
+
             if (ca == null)
             {
                 throw PSTraceSource.NewNotSupportedException();
@@ -689,7 +696,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sessionState"></param>
         /// <param name="scriptBlock"></param>
@@ -702,6 +708,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("scriptBlock");
             }
+
             if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("sessionState");
@@ -731,7 +738,7 @@ namespace System.Management.Automation
         /// <param name="scriptBlock">The scriptblock to execute</param>
         /// <param name="input">Optionall input to the command</param>
         /// <param name="args">Arguments to pass to the scriptblock</param>
-        /// <returns>The result of the evaluation</returns>
+        /// <returns>The result of the evaluation.</returns>
         public Collection<PSObject> InvokeScript(
             bool useLocalScope, ScriptBlock scriptBlock, IList input, params object[] args)
         {
@@ -787,7 +794,7 @@ namespace System.Management.Automation
         private Collection<PSObject> InvokeScript(ScriptBlock sb, bool useNewScope,
             PipelineResultTypes writeToPipeline, IList input, params object[] args)
         {
-            if (null != _cmdlet)
+            if (_cmdlet != null)
                 _cmdlet.ThrowIfStopping();
 
             Cmdlet cmdletToUse = null;
@@ -875,17 +882,17 @@ namespace System.Management.Automation
         /// Compile a string into a script block.
         /// </summary>
         /// <param name="scriptText">The source text to compile</param>
-        /// <returns>The compiled script block</returns>
+        /// <returns>The compiled script block.</returns>
         /// <exception cref="ParseException"></exception>
         public ScriptBlock NewScriptBlock(string scriptText)
         {
-            if (null != _commandRuntime)
+            if (_commandRuntime != null)
                 _commandRuntime.ThrowIfStopping();
 
             ScriptBlock result = ScriptBlock.Create(_context, scriptText);
             return result;
         }
-    } //CommandInvocationIntrinsics
+    }
     #endregion Auxiliary
 
     /// <summary>
@@ -969,10 +976,12 @@ namespace System.Management.Automation
                             _pagingParameters = mshCommandRuntime.PagingParameters ?? new PagingParameters(mshCommandRuntime);
                         }
                     }
+
                     return _pagingParameters;
                 }
             }
         }
+
         private PagingParameters _pagingParameters;
 
         #region InvokeCommand
@@ -992,7 +1001,7 @@ namespace System.Management.Automation
                     return _invokeCommand ?? (_invokeCommand = new CommandInvocationIntrinsics(Context, this));
                 }
             }
-        } //InvokeCommand
+        }
         #endregion InvokeCommand
 
         #endregion public members

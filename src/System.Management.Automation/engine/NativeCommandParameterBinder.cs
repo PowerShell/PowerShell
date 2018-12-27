@@ -16,7 +16,6 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for native commands.
     /// </summary>
-    ///
     internal class NativeCommandParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -24,11 +23,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a NativeCommandParameterBinder
         /// </summary>
-        ///
         /// <param name="command">
         /// The NativeCommand to bind to.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// <paramref name="command"/>.Context is null
         /// </exception>
@@ -61,7 +58,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(false, "Unreachable code");
 
             throw new NotSupportedException();
-        } // BindParameter
+        }
 
         internal override object GetDefaultParameterValue(string name)
         {
@@ -78,6 +75,7 @@ namespace System.Management.Automation
                 {
                     _arguments.Append(' ');
                 }
+
                 first = false;
 
                 if (parameter.ParameterNameSpecified)
@@ -135,14 +133,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command arguments in string form
         /// </summary>
-        ///
-        internal String Arguments
+        internal string Arguments
         {
             get
             {
                 return _arguments.ToString();
             }
-        } // Arguments
+        }
+
         private readonly StringBuilder _arguments = new StringBuilder();
 
         #endregion internal members
@@ -168,7 +166,7 @@ namespace System.Management.Automation
                 "array argument and ArrayLiteralAst differ in number of elements");
 
             int currentElement = -1;
-            string separator = "";
+            string separator = string.Empty;
             do
             {
                 string arg;
@@ -182,6 +180,7 @@ namespace System.Management.Automation
                     {
                         break;
                     }
+
                     arg = PSObject.ToStringParser(context, ParserOps.Current(null, list));
 
                     currentElement += 1;
@@ -225,6 +224,7 @@ namespace System.Management.Automation
                             {
                                 _arguments.Append('\\');
                             }
+
                             _arguments.Append('"');
                         }
                         else
@@ -258,8 +258,8 @@ namespace System.Management.Automation
                 // If it's a filesystem location then expand the wildcards
                 if (cwdinfo.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                 {
-                    // On UNIX, paths starting with ~ are not normalized
-                    bool normalizePath = arg.Length == 0 || arg[0] != '~';
+                    // On UNIX, paths starting with ~ or absolute paths are not normalized
+                    bool normalizePath = arg.Length == 0 || !(arg[0] == '~' || arg[0] == '/');
 
                     // See if there are any matching paths otherwise just add the pattern as the argument
                     Collection<PSObject> paths = null;
@@ -275,7 +275,7 @@ namespace System.Management.Automation
                     // Expand paths, but only from the file system.
                     if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))
                     {
-                        var sep = "";
+                        var sep = string.Empty;
                         foreach (var path in paths)
                         {
                             _arguments.Append(sep);
@@ -297,6 +297,7 @@ namespace System.Management.Automation
                             {
                                 _arguments.Append(expandedPath);
                             }
+
                             argExpanded = true;
                         }
                     }
@@ -346,12 +347,14 @@ namespace System.Management.Automation
                 {
                     needQuotes = true;
                 }
+
                 followingBackslash = stringToCheck[i] == '\\';
             }
+
             return needQuotes;
         }
 
-        static private string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
+        private static string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
         {
             if (arrayLiteralAst == null) return " ";
 
@@ -382,4 +385,4 @@ namespace System.Management.Automation
         private NativeCommand _nativeCommand;
 #endregion private members
     }
-} // namespace System.Management.Automation
+}

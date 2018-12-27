@@ -19,7 +19,6 @@ namespace System.Management.Automation
     /// This is the interface between the CommandProcessor and the various
     /// parameter binders required to bind parameters to a cmdlet.
     /// </summary>
-    ///
     internal class CmdletParameterBinderController : ParameterBinderController
     {
         #region tracer
@@ -35,19 +34,15 @@ namespace System.Management.Automation
         /// Initializes the cmdlet parameter binder controller for
         /// the specified cmdlet and engine context
         /// </summary>
-        ///
         /// <param name="cmdlet">
         /// The cmdlet that the parameters will be bound to.
         /// </param>
-        ///
         /// <param name="commandMetadata">
         /// The metadata about the cmdlet.
         /// </param>
-        ///
         /// <param name="parameterBinder">
         /// The default parameter binder to use.
         /// </param>
-        ///
         internal CmdletParameterBinderController(
             Cmdlet cmdlet,
             CommandMetadata commandMetadata,
@@ -95,21 +90,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the specified command-line parameters to the target
         /// </summary>
-        ///
         /// <param name="arguments">
         /// Parameters to the command.
         /// </param>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If any parameters fail to bind,
         /// or
         /// If any mandatory parameters are missing.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If there is an error generating the metadata for dynamic parameters.
         /// </exception>
-        ///
         internal void BindCommandLineParameters(Collection<CommandParameterInternal> arguments)
         {
             s_tracer.WriteLine("Argument count: {0}", arguments.Count);
@@ -298,7 +289,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Process all valid parameter sets, and filter out those that don't take any pipeline input
         /// </summary>
-        ///
         /// <returns>
         /// The new valid parameter set flags
         /// </returns>
@@ -394,6 +384,7 @@ namespace System.Management.Automation
 
                 s_tracer.WriteLine("BIND DEFAULT after [{0}] result [{1}]", bindingStage, isSuccess);
             }
+
             return;
         }
 
@@ -475,6 +466,7 @@ namespace System.Management.Automation
                         _commandRuntime.WriteWarning(message);
                         _warningSet.Add(_commandMetadata.Name + Separator + parameterName);
                     }
+
                     continue;
                 }
             }
@@ -517,7 +509,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="currentParameterSetFlag"></param>
         /// <param name="availableParameterValuePairs"></param>
-        /// <returns>null if no qualified pair found</returns>
+        /// <returns>Null if no qualified pair found.</returns>
         private Dictionary<MergedCompiledCommandParameter, object> GetQualifiedParameterValuePairs(
             uint currentParameterSetFlag,
             Dictionary<MergedCompiledCommandParameter, object> availableParameterValuePairs)
@@ -560,6 +552,7 @@ namespace System.Management.Automation
             {
                 return result;
             }
+
             return null;
         }
 
@@ -604,7 +597,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get all available default parameter value pairs
         /// </summary>
-        /// <returns>return the available parameter value pairs. Otherwise return null</returns>
+        /// <returns>Return the available parameter value pairs. Otherwise return null.</returns>
         private Dictionary<MergedCompiledCommandParameter, object> GetDefaultParameterValuePairs(bool needToGetAlias)
         {
             if (DefaultParameterValues == null)
@@ -663,6 +656,7 @@ namespace System.Management.Automation
                     {
                         keysToRemove.Add(entry.Key);
                     }
+
                     continue;
                 }
 
@@ -740,6 +734,7 @@ namespace System.Management.Automation
                             String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.MultipleParametersMatched, parameterName));
                         _warningSet.Add(cmdletName + Separator + parameterName);
                     }
+
                     continue;
                 }
 
@@ -759,6 +754,7 @@ namespace System.Management.Automation
                                 String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, parameterName));
                             _warningSet.Add(cmdletName + Separator + parameterName);
                         }
+
                         parametersToRemove.Add(matches[0]);
                     }
                 }
@@ -909,7 +905,7 @@ namespace System.Management.Automation
                     else
                     {
                         string argument = StringLiterals.DollarNull;
-                        if (null != parameter.ArgumentValue)
+                        if (parameter.ArgumentValue != null)
                         {
                             try
                             {
@@ -953,6 +949,7 @@ namespace System.Management.Automation
                                 "PositionalParameterNotFound");
                     }
                 }
+
                 if (!DefaultParameterBindingInUse)
                 {
                     throw bindingException;
@@ -968,7 +965,6 @@ namespace System.Management.Automation
         /// Verifies that a single parameter set is selected and throws an exception if
         /// one of there are multiple and one of them is not the default parameter set.
         /// </summary>
-        ///
         private void VerifyParameterSetSelected()
         {
             // Now verify that a parameter set has been selected if any parameter sets
@@ -1006,19 +1002,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Restores the specified parameter to the original value.
         /// </summary>
-        ///
         /// <param name="argumentToBind">
         /// The argument containing the value to restore.
         /// </param>
-        ///
         /// <param name="parameter">
         /// The metadata for the parameter to restore.
         /// </param>
-        ///
         /// <returns>
         /// True if the parameter was restored correctly, or false otherwise.
         /// </returns>
-        ///
         private bool RestoreParameter(CommandParameterInternal argumentToBind, MergedCompiledCommandParameter parameter)
         {
             switch (parameter.BinderAssociation)
@@ -1064,6 +1056,7 @@ namespace System.Management.Automation
                     {
                         _dynamicParameterBinder.BindParameter(argumentToBind.ParameterName, argumentToBind.ArgumentValue, parameter.Parameter);
                     }
+
                     break;
             }
 
@@ -1074,7 +1067,6 @@ namespace System.Management.Automation
         /// Binds the actual arguments to only the formal parameters
         /// for only the parameters in the specified parameter set
         /// </summary>
-        ///
         /// <param name="parameterSets">
         ///     The parameter set used to bind the arguments.
         /// </param>
@@ -1082,7 +1074,6 @@ namespace System.Management.Automation
         ///     The arguments that should be attempted to bind to the parameters of the specified
         ///     parameter binder.
         /// </param>
-        ///
         /// <exception cref="ParameterBindingException">
         /// if multiple parameters are found matching the name.
         /// or
@@ -1199,24 +1190,22 @@ namespace System.Management.Automation
                     result.Add(argument);
                 }
             }
+
             return result;
-        } // BindParameters
+        }
 
         /// <summary>
         /// Determines if a ScriptBlock can be bound directly to the type of the specified parameter
         /// </summary>
-        ///
         /// <param name="parameter">
         /// The metadata of the parameter to check the type of.
         /// </param>
-        ///
         /// <returns>
         /// true if the parameter type is Object, ScriptBlock, derived from ScriptBlock, a
         /// collection of ScriptBlocks, a collection of Objects, or a collection of types derived from
         /// ScriptBlock.
         /// False otherwise.
         /// </returns>
-        ///
         private static bool IsParameterScriptBlockBindable(MergedCompiledCommandParameter parameter)
         {
             bool result = false;
@@ -1273,11 +1262,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the specified parameters to the cmdlet
         /// </summary>
-        ///
         /// <param name="parameters">
         /// The parameters to bind.
         /// </param>
-        ///
         internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters)
         {
             return BindParameters(uint.MaxValue, parameters);
@@ -1290,19 +1277,15 @@ namespace System.Management.Automation
         /// container for further processing of pipeline input and is not bound as the argument
         /// to the parameter.
         /// </summary>
-        ///
         /// <param name="parameterSets">
         /// The parameter set used to bind the arguments.
         /// </param>
-        ///
         /// <param name="argument">
         /// The argument to be bound.
         /// </param>
-        ///
         /// <param name="parameter">
         /// The metadata for the parameter to bind the argument to.
         /// </param>
-        ///
         /// <param name="flags">
         /// Flags for type coercion, validation, and script block binding.
         ///
@@ -1311,12 +1294,10 @@ namespace System.Management.Automation
         /// Object, or PSObject will be stored for execution during pipeline input and not bound as
         /// an argument to the parameter.
         /// </param>
-        ///
         /// <returns>
         /// True if the parameter was successfully bound. False if <paramref name="flags"/>
         /// has the flag <see cref="ParameterBindingFlags.ShouldCoerceType"/> set and the type does not match the parameter type.
         /// </returns>
-        ///
         internal override bool BindParameter(
             uint parameterSets,
             CommandParameterInternal argument,
@@ -1423,9 +1404,11 @@ namespace System.Management.Automation
                                 rethrow = false;
                                 break;
                             }
+
                             e = e.InnerException;
                         }
                     }
+
                     if (rethrow)
                     {
                         throw;
@@ -1440,24 +1423,19 @@ namespace System.Management.Automation
         /// Binds the specified argument to the specified parameter using the appropriate
         /// parameter binder.
         /// </summary>
-        ///
         /// <param name="argument">
         /// The argument to be bound.
         /// </param>
-        ///
         /// <param name="parameter">
         /// The metadata for the parameter to bind the argument to.
         /// </param>
-        ///
         /// <param name="flags">
         /// Flags for type coercion and validation.
         /// </param>
-        ///
         /// <returns>
         /// True if the parameter was successfully bound. False if <paramref name="flags"/>
         /// has the flag <see cref="ParameterBindingFlags.ShouldCoerceType"/> set and the type does not match the parameter type.
         /// </returns>
-        ///
         private bool BindParameter(
             CommandParameterInternal argument,
             MergedCompiledCommandParameter parameter,
@@ -1532,6 +1510,7 @@ namespace System.Management.Automation
                                 parameter.Parameter,
                                 flags);
                     }
+
                     break;
             }
 
@@ -1582,11 +1561,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the remaining arguments to an unbound ValueFromRemainingArguments parameter (Varargs)
         /// </summary>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If there was an error binding the arguments to the parameters.
         /// </exception>
-        ///
         private void HandleRemainingArguments()
         {
             if (UnboundArguments.Count > 0)
@@ -1632,6 +1609,7 @@ namespace System.Management.Automation
                                 ThrowElaboratedBindingException(bindingException);
                             }
                         }
+
                         varargsParameter = parameter;
                     }
                 }
@@ -1697,30 +1675,27 @@ namespace System.Management.Automation
                                 ThrowElaboratedBindingException(pbex);
                             }
                         }
+
                         UnboundArguments.Clear();
                     }
                 }
             }
-        } // HandleRemainingArguments
+        }
 
         /// <summary>
         /// Determines if the cmdlet supports dynamic parameters. If it does,
         /// the dynamic parameter bindable object is retrieved and the unbound
         /// arguments are bound to it.
         /// </summary>
-        ///
         /// <param name="outgoingBindingException">
         /// Returns the underlying parameter binding exception if any was generated.
         /// </param>
-        ///
         /// <exception cref="MetadataException">
         /// If there was an error compiling the parameter metadata.
         /// </exception>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If there was an error binding the arguments to the parameters.
         /// </exception>
-        ///
         private void HandleCommandLineDynamicParameters(out ParameterBindingException outgoingBindingException)
         {
             outgoingBindingException = null;
@@ -1854,10 +1829,10 @@ namespace System.Management.Automation
                                     out outgoingBindingException);
                             }
                         }
-                    } // dynamicParameterCmdlet != null
+                    }
                 }
             }
-        } // HandleCommandLineDynamicParameters
+        }
 
         /// <summary>
         /// This method determines if the unbound mandatory parameters take pipeline input or
@@ -1868,20 +1843,16 @@ namespace System.Management.Automation
         /// consistent across parameter sets or there is no default parameter set then a
         /// ParameterBindingException is thrown with an errorId of AmbiguousParameterSet.
         /// </summary>
-        ///
         /// <param name="validParameterSetCount">
         /// The number of valid parameter sets.
         /// </param>
-        ///
         /// <param name="isPipelineInputExpected">
         /// True if the pipeline is open to receive input.
         /// </param>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If there are multiple valid parameter sets and the missing mandatory parameters are
         /// not consistent across parameter sets, or there is no default parameter set.
         /// </exception>
-        ///
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode", Justification = "Consider Simplifying it.")]
         private Collection<MergedCompiledCommandParameter> GetMissingMandatoryParameters(
             int validParameterSetCount,
@@ -1960,6 +1931,7 @@ namespace System.Management.Automation
                     {
                         availableParameterSetFlags = uint.MaxValue;
                     }
+
                     commandMandatorySets = (_currentParameterSetFlag & availableParameterSetFlags);
                 }
 
@@ -2154,6 +2126,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     if (!latchOnToDefault)
                     {
                         // When we select a mandatory set to latch on, we should try to preserve other parameter sets that contain no mandatory parameters or contain only common mandatory parameters
@@ -2370,6 +2343,7 @@ namespace System.Management.Automation
                                         setThatTakesPipelineInputByPropertyName = 0;
                                         break;
                                     }
+
                                     setThatTakesPipelineInputByPropertyName = promptingSetData.ParameterSet;
                                     foundSetThatTakesPipelineInputByPropertyName = true;
                                 }
@@ -2522,7 +2496,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Preserve potential parameter sets as much as possible
         /// </summary>
-        ///
         /// <param name="chosenMandatorySet">The mandatory set we choose to latch on</param>
         /// <param name="otherMandatorySetsToBeIgnored">Other mandatory parameter sets to be ignored</param>
         /// <param name="chosenSetContainsNonpipelineableMandatoryParameters">Indicate if the chosen mandatory set contains any non-pipelineable mandatory parameters</param>
@@ -2550,12 +2523,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Update _currentParameterSetFlag to ignore the specified mandatory sets
         /// </summary>
-        ///
         /// <remarks>
         /// This method is used only when we try to preserve parameter sets during the mandatory parameter checking.
         /// In cases where this method is used, there must be at least one parameter set declared.
         /// </remarks>
-        ///
         /// <param name="otherMandatorySetsToBeIgnored">the mandatory parameter sets to be ignored</param>
         private void IgnoreOtherMandatoryParameterSets(uint otherMandatorySetsToBeIgnored)
         {
@@ -2588,6 +2559,7 @@ namespace System.Management.Automation
             {
                 parameterSetFlag = uint.MaxValue;
             }
+
             bool isDefaultSet = (defaultParameterSet != 0) && ((defaultParameterSet & parameterSetFlag) != 0);
 
             bool isMandatory = false;
@@ -2641,28 +2613,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Ensures that only one parameter set is valid or throws an appropriate exception
         /// </summary>
-        ///
         /// <param name="prePipelineInput">
         /// If true, it is acceptable to have multiple valid parameter sets as long as one
         /// of those parameter sets take pipeline input.
         /// </param>
-        ///
         /// <param name="setDefault">
         /// If true, the default parameter set will be selected if there is more than
         /// one valid parameter set and one is the default set.
         /// If false, the count of valid parameter sets will be returned but no error
         /// will occur and the default parameter set will not be used.
         /// </param>
-        ///
         /// <returns>
         /// The number of valid parameter sets.
         /// </returns>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If the more than one or zero parameter sets were resolved from the named
         /// parameters.
         /// </exception>
-        ///
         private int ValidateParameterSets(bool prePipelineInput, bool setDefault)
         {
             // Compute how many parameter sets are still valid
@@ -2721,6 +2688,7 @@ namespace System.Management.Automation
                     {
                         ThrowAmbiguousParameterSetException(_currentParameterSetFlag, BindableParameters);
                     }
+
                     validParameterSetCount = resolvedParameterSetCount;
                 }
             }
@@ -2761,14 +2729,16 @@ namespace System.Management.Automation
                         {
                             ThrowAmbiguousParameterSetException(_currentParameterSetFlag, BindableParameters);
                         }
+
                         validParameterSetCount = resolvedParameterSetCount;
                     }
                 }
+
                 Command.SetParameterSetName(CurrentParameterSetName);
             }
 
             return validParameterSetCount;
-        } // ValidateParameterSets
+        }
 
         private int ResolveParameterSetAmbiguityBasedOnMandatoryParameters()
         {
@@ -2776,7 +2746,7 @@ namespace System.Management.Automation
         }
 
         internal static int ResolveParameterSetAmbiguityBasedOnMandatoryParameters(
-            Dictionary<String, MergedCompiledCommandParameter> boundParameters,
+            Dictionary<string, MergedCompiledCommandParameter> boundParameters,
             ICollection<MergedCompiledCommandParameter> unboundParameters,
             MergedCommandParameterMetadata bindableParameters,
             ref uint _currentParameterSetFlag,
@@ -2793,6 +2763,7 @@ namespace System.Management.Automation
             {
                 allParameterSetFlags |= parameterSetMetadata.ParameterSetFlag;
             }
+
             remainingParameterSetsWithNoMandatoryUnboundParameters &= allParameterSetFlags;
 
             Diagnostics.Assert(
@@ -2817,8 +2788,10 @@ namespace System.Management.Automation
                     string currentParameterSetName = bindableParameters.GetParameterSetName(_currentParameterSetFlag);
                     command.SetParameterSetName(currentParameterSetName);
                 }
+
                 return finalParameterSetCount;
             }
+
             return -1;
         }
 
@@ -2869,17 +2842,14 @@ namespace System.Management.Automation
         /// Determines if there are any unbound parameters that take pipeline input
         /// for the specified parameter sets.
         /// </summary>
-        ///
         /// <param name="validParameterSetFlags">
         /// The parameter sets that should be checked for each unbound parameter to see
         /// if it accepts pipeline input.
         /// </param>
-        ///
         /// <returns>
         /// True if there is at least one parameter that takes pipeline input for the
         /// specified parameter sets, or false otherwise.
         /// </returns>
-        ///
         private bool AtLeastOneUnboundValidParameterSetTakesPipelineInput(uint validParameterSetFlags)
         {
             bool result = false;
@@ -2897,16 +2867,14 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // AtLeastOneValidParameterSetTakesPipelineInput
+        }
 
         /// <summary>
         /// Checks for unbound mandatory parameters. If any are found, an exception is thrown.
         /// </summary>
-        ///
         /// <param name="missingMandatoryParameters">
         /// Returns the missing mandatory parameters, if any.
         /// </param>
-        ///
         /// <returns>
         /// True if there are no unbound mandatory parameters. False if there are unbound mandatory parameters.
         /// </returns>
@@ -2924,39 +2892,31 @@ namespace System.Management.Automation
         /// Checks for unbound mandatory parameters. If any are found and promptForMandatory is true,
         /// the user will be prompted for the missing mandatory parameters.
         /// </summary>
-        ///
         /// <param name="validParameterSetCount">
         /// The number of valid parameter sets.
         /// </param>
-        ///
         /// <param name="processMissingMandatory">
         /// If true, unbound mandatory parameters will be processed via user prompting (if allowed by promptForMandatory).
         /// If false, unbound mandatory parameters will cause false to be returned.
         /// </param>
-        ///
         /// <param name="promptForMandatory">
         /// If true, unbound mandatory parameters will cause the user to be prompted. If false, unbound
         /// mandatory parameters will cause an exception to be thrown.
         /// </param>
-        ///
         /// <param name="isPipelineInputExpected">
         /// If true, then only parameters that don't take pipeline input will be prompted for.
         /// If false, any mandatory parameter that has not been specified will be prompted for.
         /// </param>
-        ///
         /// <param name="missingMandatoryParameters">
         /// Returns the missing mandatory parameters, if any.
         /// </param>
-        ///
         /// <returns>
         /// True if there are no unbound mandatory parameters. False if there are unbound mandatory parameters
         /// and promptForMandatory if false.
         /// </returns>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If prompting didn't result in a value for the parameter (only when <paramref name="promptForMandatory"/> is true.)
         /// </exception>
-        ///
         internal bool HandleUnboundMandatoryParameters(
             int validParameterSetCount,
             bool processMissingMandatory,
@@ -3003,7 +2963,7 @@ namespace System.Management.Automation
 
                     Collection<FieldDescription> fieldDescriptionList = CreatePromptDataStructures(missingMandatoryParameters);
 
-                    Dictionary<String, PSObject> parameters =
+                    Dictionary<string, PSObject> parameters =
                         PromptForMissingMandatoryParameters(
                             fieldDescriptionList,
                             missingMandatoryParameters);
@@ -3029,6 +2989,7 @@ namespace System.Management.Automation
                                 result,
                                 "Any error in binding the parameter with type coercion should result in an exception");
                         }
+
                         result = true;
                     }
                 }
@@ -3039,7 +3000,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // HandleUnboundMandatoryParameters
+        }
 
         private Dictionary<string, PSObject> PromptForMissingMandatoryParameters(
             Collection<FieldDescription> fieldDescriptionList,
@@ -3164,6 +3125,7 @@ namespace System.Management.Automation
                 {
                     fDesc.HelpMessage = helpInfo;
                 }
+
                 fDesc.SetParameterType(parameter.Parameter.Type);
                 fDesc.Label = BuildLabel(parameter.Parameter.Name, usedHotKeys);
 
@@ -3180,7 +3142,7 @@ namespace System.Management.Automation
                 fDesc.IsMandatory = true;
 
                 fieldDescriptionList.Add(fDesc);
-            } // foreach unbound parameter
+            }
 
             return fieldDescriptionList;
         }
@@ -3219,6 +3181,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (!built)
             {
                 // try Lower case
@@ -3233,6 +3196,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             if (!built)
             {
                 // try non-letters
@@ -3247,18 +3211,19 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             if (!built)
             {
                 // use first char
                 label.Insert(0, hotKeyPrefix);
             }
+
             return label.ToString();
         }
 
         /// <summary>
         /// Gets the parameter set name for the current parameter set.
         /// </summary>
-        ///
         internal string CurrentParameterSetName
         {
             get
@@ -3273,16 +3238,13 @@ namespace System.Management.Automation
         /// Binds the specified object or its properties to parameters
         /// that accept pipeline input.
         /// </summary>
-        ///
         /// <param name="inputToOperateOn">
         /// The pipeline object to bind.
         /// </param>
-        ///
         /// <returns>
         /// True if the pipeline input was bound successfully or there was nothing
         /// to bind, or false if there was an error.
         /// </returns>
-        ///
         internal bool BindPipelineParameters(PSObject inputToOperateOn)
         {
             bool result;
@@ -3352,17 +3314,16 @@ namespace System.Management.Automation
                 // if it failed some post binding verification step.
                 this.RestoreDefaultParameterValues(ParametersBoundThroughPipelineInput);
             }
+
             return result;
         }
 
         /// <summary>
         /// Binds the pipeline parameters using the specified input and parameter set
         /// </summary>
-        ///
         /// <param name="inputToOperateOn">
         /// The pipeline input to be bound to the parameters.
         /// </param>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If argument transformation fails.
         /// or
@@ -3374,7 +3335,6 @@ namespace System.Management.Automation
         /// or
         /// If there is a failure resetting values prior to binding from the pipeline
         /// </exception>
-        ///
         /// <remarks>
         /// The algorithm for binding the pipeline object is as follows. If any
         /// step is successful true gets returned immediately.
@@ -3392,9 +3352,7 @@ namespace System.Management.Automation
         ///     - attempt to bind input value using type coercion
         /// - If parameter support ValueFromPipelineByPropertyName
         ///     - attempt to bind the vlue of the property with the matching name using type coercion
-        ///
         /// </remarks>
-        ///
         private bool BindPipelineParametersPrivate(PSObject inputToOperateOn)
         {
             if (ParameterBinderBase.bindingTracer.IsEnabled)
@@ -3410,6 +3368,7 @@ namespace System.Management.Automation
 
                 ParameterBinderBase.bindingTracer.WriteLine("RESTORING pipeline parameter's original values");
             }
+
             bool result = false;
 
             // Reset the default values
@@ -3614,6 +3573,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return aParameterWasBound;
         }
 
@@ -3649,6 +3609,7 @@ namespace System.Management.Automation
                 {
                     invalidCast = e.InnerException as PSInvalidCastException;
                 }
+
                 if (invalidCast == null)
                 {
                     parameterBindingException = e;
@@ -3764,7 +3725,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Used for defining the state of the binding state machine.
         /// </summary>
-        ///
         private enum CurrentlyBinding
         {
             ValueFromPipelineNoCoercion = 0,
@@ -3777,29 +3737,23 @@ namespace System.Management.Automation
         /// Invokes any delay bind script blocks and binds the resulting value
         /// to the appropriate parameter.
         /// </summary>
-        ///
         /// <param name="inputToOperateOn">
         /// The input to the script block.
         /// </param>
-        ///
         /// <param name="thereWasSomethingToBind">
         /// Returns True if there was a ScriptBlock to invoke and bind, or false if there
         /// are no ScriptBlocks to invoke.
         /// </param>
-        ///
         /// <returns>
         /// True if the binding succeeds, or false otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// if <paramref name="inputToOperateOn"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ParameterBindingException">
         /// If execution of the script block throws an exception or if it doesn't produce
         /// any output.
         /// </exception>
-        ///
         private bool InvokeAndBindDelayBindScriptBlock(PSObject inputToOperateOn, out bool thereWasSomethingToBind)
         {
             thereWasSomethingToBind = false;
@@ -3909,21 +3863,18 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // InvokeAndBindDelayBindScriptBlock
+        }
 
         /// <summary>
         /// Determines the number of valid parameter sets based on the valid parameter
         /// set flags.
         /// </summary>
-        ///
         /// <param name="parameterSetFlags">
         /// The valid parameter set flags.
         /// </param>
-        ///
         /// <returns>
         /// The number of valid parameter sets in the parameterSetFlags.
         /// </returns>
-        ///
         private static int ValidParameterSetCount(uint parameterSetFlags)
         {
             int result = 0;
@@ -3940,6 +3891,7 @@ namespace System.Management.Automation
                     parameterSetFlags >>= 1;
                 }
             }
+
             return result;
         }
 
@@ -3952,19 +3904,15 @@ namespace System.Management.Automation
         /// Derived classes may override this method to get the default parameter
         /// value in a different way.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the parameter to get the default value of.
         /// </param>
-        ///
         /// <returns>
         /// The value of the parameter specified by name.
         /// </returns>
-        ///
         /// <exception cref="ParameterBindingParameterDefaultValueException">
         /// If the parameter binder encounters an error getting the default value.
         /// </exception>
-        ///
         internal object GetDefaultParameterValue(string name)
         {
             MergedCompiledCommandParameter matchingParameter =
@@ -3997,6 +3945,7 @@ namespace System.Management.Automation
                         {
                             result = _dynamicParameterBinder.GetDefaultParameterValue(name);
                         }
+
                         break;
                 }
             }
@@ -4078,6 +4027,7 @@ namespace System.Management.Automation
                        (_boundObsoleteParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase));
             }
         }
+
         private HashSet<string> _boundObsoleteParameterNames;
 
         /// <summary>
@@ -4106,9 +4056,11 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _shouldProcessParameterBinder;
             }
         }
+
         private ReflectionParameterBinder _shouldProcessParameterBinder;
 
         /// <summary>
@@ -4131,9 +4083,11 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _pagingParameterBinder;
             }
         }
+
         private ReflectionParameterBinder _pagingParameterBinder;
 
         /// <summary>
@@ -4156,15 +4110,16 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _transactionParameterBinder;
             }
         }
+
         private ReflectionParameterBinder _transactionParameterBinder;
 
         /// <summary>
         /// The parameter binder for the CommonParameters.
         /// </summary>
-        ///
         internal ReflectionParameterBinder CommonParametersBinder
         {
             get
@@ -4182,9 +4137,11 @@ namespace System.Management.Automation
                             this.Command,
                             this.CommandLineParameters);
                 }
+
                 return _commonParametersBinder;
             }
         }
+
         private ReflectionParameterBinder _commonParametersBinder;
 
         private class DelayedScriptBlockArgument
@@ -4206,7 +4163,6 @@ namespace System.Management.Automation
         /// but the parameter isn't a ScriptBlock. So we have to wait to bind the parameter
         /// until there is a pipeline object available to invoke the ScriptBlock with.
         /// </summary>
-        ///
         private readonly Dictionary<MergedCompiledCommandParameter, DelayedScriptBlockArgument> _delayBindScriptBlocks =
             new Dictionary<MergedCompiledCommandParameter, DelayedScriptBlockArgument>();
 
@@ -4221,28 +4177,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the specified value to the specified parameter
         /// </summary>
-        ///
         /// <param name="parameterValue">
         /// The value to bind to the parameter
         /// </param>
-        ///
         /// <param name="parameter">
         /// The parameter to bind the value to.
         /// </param>
-        ///
         /// <param name="flags">
         /// Parameter binding flags for type coercion and validation.
         /// </param>
-        ///
         /// <returns>
         /// True if the parameter was successfully bound. False if <paramref name="flags"/>
         /// specifies no coercion and the type does not match the parameter type.
         /// </returns>
-        ///
         /// <exception cref="ParameterBindingParameterDefaultValueException">
         /// If the parameter binder encounters an error getting the default value.
         /// </exception>
-        ///
         private bool BindPipelineParameter(
             object parameterValue,
             MergedCompiledCommandParameter parameter,
@@ -4294,11 +4244,9 @@ namespace System.Management.Automation
         /// This method is called when binding a parameter value that came from a pipeline
         /// object.
         /// </summary>
-        ///
         /// <exception cref="ParameterBindingParameterDefaultValueException">
         /// If the parameter binder encounters an error getting the default value.
         /// </exception>
-        ///
         private void BackupDefaultParameter(MergedCompiledCommandParameter parameter)
         {
             if (!_defaultParameterValues.ContainsKey(parameter.Parameter.Name))
@@ -4317,15 +4265,12 @@ namespace System.Management.Automation
         /// Replaces the values of the parameters with their initial value for the
         /// parameters specified.
         /// </summary>
-        ///
         /// <param name="parameters">
         /// The parameters that should have their default values restored.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameters"/> is null.
         /// </exception>
-        ///
         private void RestoreDefaultParameterValues(IEnumerable<MergedCompiledCommandParameter> parameters)
         {
             if (parameters == null)
@@ -4433,7 +4378,7 @@ namespace System.Management.Automation
         /// <summary>
         /// check to see if the hashtable has been changed since last check
         /// </summary>
-        /// <returns>true for changed; false for not changed</returns>
+        /// <returns>True for changed; false for not changed.</returns>
         public bool ChangeSinceLastCheck()
         {
             bool ret = _isChanged;
@@ -4455,16 +4400,14 @@ namespace System.Management.Automation
         /// <summary>
         /// constructor takes a hash table
         /// </summary>
-        ///
         /// <remarks>
         /// Check for the keys' formats and make it versionable
         /// </remarks>
-        ///
         /// <param name="dictionary">a hashtable instance</param>
         public DefaultParameterDictionary(IDictionary dictionary)
             : this()
         {
-            if (null == dictionary)
+            if (dictionary == null)
             {
                 throw PSTraceSource.NewArgumentNullException("dictionary");
             }
@@ -4620,6 +4563,7 @@ namespace System.Management.Automation
                 string keyAfterTrim = strKey.Trim();
                 return base[keyAfterTrim];
             }
+
             set
             {
                 AddImpl(key, value, isSelfIndexing: true);
@@ -4665,7 +4609,7 @@ namespace System.Management.Automation
         /// <param name="key"></param>
         /// <param name="cmdletName"></param>
         /// <param name="parameterName"></param>
-        /// <returns>Return true if the key is valid, false if not</returns>
+        /// <returns>Return true if the key is valid, false if not.</returns>
         internal static bool CheckKeyIsValid(string key, ref string cmdletName, ref string parameterName)
         {
             if (key == String.Empty)
@@ -4719,7 +4663,6 @@ namespace System.Management.Automation
         /// For parameterName:
         /// When the name is enclosed by quotes, the index returned should be the index of the second quote plus 1 (the length of the key if the key is in a valid format);
         /// When the name is not enclosed by quotes, the index returned should be the length of the key.
-        ///
         /// </returns>
         private static int GetValueToken(int index, string key, ref string name, bool getCmdletName)
         {
@@ -4754,6 +4697,7 @@ namespace System.Management.Automation
                         builder.Append(key[index]);
                         continue;
                     }
+
                     name = builder.ToString().Trim();
                     return name.Length == 0 ? -1 : index;
                 }
@@ -4769,6 +4713,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(name.Length > 0, "name should not be empty at this point");
                 return index;
             }
+
             return -1;
         }
 
@@ -4789,6 +4734,7 @@ namespace System.Management.Automation
                     continue;
                 return index;
             }
+
             return -1;
         }
 

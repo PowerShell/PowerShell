@@ -29,20 +29,15 @@ using DWORD = System.UInt32;
 
 namespace Microsoft.PowerShell.Commands
 {
-    // 2004/12/17-JonN ProcessNameGlobAttribute was deeply wrong.
-    // For example, if you pass in a single Process, it will match
-    // all processes with the same name.
-    // I have removed the globbing code.
-
     #region ProcessBaseCommand
     /// <summary>
-    /// This class implements the base for process commands
+    /// This class implements the base for process commands.
     /// </summary>
     public abstract class ProcessBaseCommand : Cmdlet
     {
         #region Parameters
         /// <summary>
-        /// The various process selection modes
+        /// The various process selection modes.
         /// </summary>
         internal enum MatchMode
         {
@@ -96,12 +91,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _input;
             }
+
             set
             {
                 myMode = MatchMode.ByInput;
                 _input = value;
             }
         }
+
         private Process[] _input = null;
         #endregion Parameters
 
@@ -138,23 +135,23 @@ namespace Microsoft.PowerShell.Commands
             //  before being stopped.  PM confirms that this is fine.
             _matchingProcesses.Sort(ProcessComparison);
             return _matchingProcesses;
-        } // MatchingProcesses
+        }
 
         /// <summary>
-        /// sort function to sort by Name first, then Id
+        /// Sort function to sort by Name first, then Id.
         /// </summary>
         /// <param name="x">first Process object</param>
         /// <param name="y">second Process object</param>
         /// <returns>
-        /// as String.Compare: returns less than zero if x less than y,
-        /// greater than 0 if x greater than y, 0 if x == y
+        /// As String.Compare: returns less than zero if x less than y,
+        /// greater than 0 if x greater than y, 0 if x == y.
         /// </returns>
         private static int ProcessComparison(Process x, Process y)
         {
             int diff = String.Compare(
                 SafeGetProcessName(x),
                 SafeGetProcessName(y),
-                StringComparison.CurrentCultureIgnoreCase);
+                StringComparison.OrdinalIgnoreCase);
             if (0 != diff)
                 return diff;
             return SafeGetProcessId(x) - SafeGetProcessId(y);
@@ -170,11 +167,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveMatchingProcessesByProcessName()
         {
-            if (null == processNames)
+            if (processNames == null)
             {
                 _matchingProcesses = new List<Process>(AllProcesses);
                 return;
             }
+
             foreach (string pattern in processNames)
             {
                 WildcardPattern wildcard =
@@ -187,6 +185,7 @@ namespace Microsoft.PowerShell.Commands
                     found = true;
                     AddIdempotent(process);
                 }
+
                 if (!found &&
                     !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
@@ -200,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ObjectNotFound);
                 }
             }
-        } // MatchingProcessesByProcessName
+        }
 
         /// <summary>
         /// Retrieves the list of all processes matching the Id
@@ -211,11 +210,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveMatchingProcessesById()
         {
-            if (null == processIds)
+            if (processIds == null)
             {
                 Diagnostics.Assert(false, "null processIds");
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             foreach (int processId in processIds)
             {
                 Process process;
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // MatchingProcessesById
+        }
 
         /// <summary>
         /// Retrieves the list of all processes matching the InputObject
@@ -246,20 +246,21 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveProcessesByInput()
         {
-            if (null == InputObject)
+            if (InputObject == null)
             {
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             foreach (Process process in InputObject)
             {
                 SafeRefresh(process);
                 AddIdempotent(process);
             }
-        } // MatchingProcessesByInput
+        }
 
         /// <summary>
-        /// Retrieve the master list of all processes
+        /// Retrieve the master list of all processes.
         /// </summary>
         /// <value></value>
         /// <exception cref="System.Security.SecurityException">
@@ -271,15 +272,17 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (null == _allProcesses)
+                if (_allProcesses == null)
                 {
                     List<Process> processes = new List<Process>();
                     processes.AddRange(Process.GetProcesses());
                     _allProcesses = processes.ToArray();
                 }
+
                 return _allProcesses;
             }
         }
+
         private Process[] _allProcesses = null;
 
         /// <summary>
@@ -347,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(resourceId,
                 processName,
                 processId,
-                (null == innerException) ? "" : innerException.Message);
+                (innerException == null) ? string.Empty : innerException.Message);
             ProcessCommandException exception =
                 new ProcessCommandException(message, innerException);
             exception.ProcessName = processName;
@@ -366,11 +369,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception)
             {
-                return "";
+                return string.Empty;
             }
             catch (InvalidOperationException)
             {
-                return "";
+                return string.Empty;
             }
         }
 
@@ -433,12 +436,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Internal
-    }//ProcessBaseCommand
+    }
     #endregion ProcessBaseCommand
 
     #region GetProcessCommand
     /// <summary>
-    /// This class implements the get-process command
+    /// This class implements the get-process command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Process", DefaultParameterSetName = NameParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113324", RemotingCapability = RemotingCapability.SupportedByCommand)]
@@ -459,9 +462,8 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Has the list of process names on which to this command will work
+        /// Has the list of process names on which to this command will work.
         /// </summary>
-        // [ProcessNameGlobAttribute]
         [Parameter(Position = 0, ParameterSetName = NameParameterSet, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = NameWithUserNameParameterSet, ValueFromPipelineByPropertyName = true)]
         [Alias("ProcessName")]
@@ -469,6 +471,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return processNames; }
+
             set
             {
                 myMode = MatchMode.ByName;
@@ -477,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets/sets an array of process IDs
+        /// Gets/sets an array of process IDs.
         /// </summary>
         [Parameter(ParameterSetName = IdParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = IdWithUserNameParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
@@ -488,6 +491,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -496,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Input is a stream of [collections of] Process objects
+        /// Input is a stream of [collections of] Process objects.
         /// </summary>
         [Parameter(ParameterSetName = InputObjectParameterSet, Mandatory = true, ValueFromPipeline = true)]
         [Parameter(ParameterSetName = InputObjectWithUserNameParameterSet, Mandatory = true, ValueFromPipeline = true)]
@@ -506,6 +510,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.InputObject;
             }
+
             set
             {
                 base.InputObject = value;
@@ -513,7 +518,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Include the UserName
+        /// Include the UserName.
         /// </summary>
         [Parameter(ParameterSetName = NameWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = IdWithUserNameParameterSet, Mandatory = true)]
@@ -521,12 +526,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IncludeUserName
         {
             get { return _includeUserName; }
+
             set { _includeUserName = value; }
         }
+
         private bool _includeUserName = false;
 
         ///<summary>
-        ///To display the modules of a process
+        /// To display the modules of a process.
         ///</summary>
 
         [Parameter(ParameterSetName = NameParameterSet)]
@@ -536,7 +543,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Module { get; set; }
 
         ///<summary>
-        ///To display the fileversioninfo of the main module of a process
+        /// To display the fileversioninfo of the main module of a process.
         ///</summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
@@ -550,7 +557,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Check the elevation mode if IncludeUserName is specified
+        /// Check the elevation mode if IncludeUserName is specified.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -564,13 +571,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Write the process objects
+        /// Write the process objects.
         /// </summary>
         protected override void ProcessRecord()
         {
             foreach (Process process in MatchingProcesses())
             {
-                //if module and fileversion are to be displayed
                 if (Module.IsPresent && FileVersionInfo.IsPresent)
                 {
                     ProcessModule tempmodule = null;
@@ -579,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
                         ProcessModuleCollection modules = process.Modules;
                         foreach (ProcessModule pmodule in modules)
                         {
-                            //assigning to tempmodule to rethrow for exceptions on 64 bit machines
+                            // Assigning to tempmodule to rethrow for exceptions on 64 bit machines
                             tempmodule = pmodule;
                             WriteObject(pmodule.FileVersionInfo, true);
                         }
@@ -617,7 +623,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (Module.IsPresent)
                 {
-                    //if only modules are to be displayed
                     try
                     {
                         WriteObject(process.Modules, true);
@@ -647,11 +652,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (FileVersionInfo.IsPresent)
                 {
-                    //if fileversion of each process is to be displayed
                     try
                     {
                         ProcessModule mainModule = PsUtils.GetMainModule(process);
-                        if (mainModule != null) {
+                        if (mainModule != null)
+                        {
                             WriteObject(mainModule.FileVersionInfo, true);
                         }
                     }
@@ -690,20 +695,20 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : (object)process);
                 }
-            }//for loop
-        } // ProcessRecord
+            }
+        }
 
         #endregion Overrides
 
         #region Privates
 
         /// <summary>
-        /// New PSTypeName added to the process object
+        /// New PSTypeName added to the process object.
         /// </summary>
         private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
 
         /// <summary>
-        /// Add the 'UserName' NoteProperty to the Process object
+        /// Add the 'UserName' NoteProperty to the Process object.
         /// </summary>
         /// <param name="process"></param>
         /// <returns></returns>
@@ -722,7 +727,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieve the UserName through PInvoke
+        /// Retrieve the UserName through PInvoke.
         /// </summary>
         /// <param name="process"></param>
         /// <returns></returns>
@@ -744,7 +749,7 @@ namespace Microsoft.PowerShell.Commands
                     int error;
                     if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { break; }
 
-                    // Set the default length to be 256, so it will be sufficient for most cases
+                    // Set the default length to be 256, so it will be sufficient for most cases.
                     int tokenInfoLength = 256;
                     tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
                     if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
@@ -765,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
 
                     var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
 
-                    // Set the default length to be 256, so it will be sufficient for most cases
+                    // Set the default length to be 256, so it will be sufficient for most cases.
                     int userNameLength = 256, domainNameLength = 256;
                     var userNameStr = new StringBuilder(userNameLength);
                     var domainNameStr = new StringBuilder(domainNameLength);
@@ -792,19 +797,19 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (NotSupportedException)
             {
-                // The Process not started yet, or it's a process from a remote machine
+                // The Process not started yet, or it's a process from a remote machine.
             }
             catch (InvalidOperationException)
             {
-                // The Process has exited, Process.Handle will raise this exception
+                // The Process has exited, Process.Handle will raise this exception.
             }
             catch (Win32Exception)
             {
-                // We might get an AccessDenied error
+                // We might get an AccessDenied error.
             }
             catch (Exception)
             {
-                // I don't expect to get other exceptions,
+                // I don't expect to get other exceptions.
             }
             finally
             {
@@ -824,12 +829,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Privates
-    }//GetProcessCommand
+    }
     #endregion GetProcessCommand
 
     #region WaitProcessCommand
     /// <summary>
-    /// This class implements the Wait-process command
+    /// This class implements the Wait-process command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Wait, "Process", DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135277")]
     public sealed class WaitProcessCommand : ProcessBaseCommand
@@ -853,6 +858,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -861,7 +867,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of the processes to wait on for termination
+        /// Name of the processes to wait on for termination.
         /// </summary>
         [Parameter(
             ParameterSetName = "Name",
@@ -873,6 +879,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return processNames; }
+
             set
             {
                 myMode = MatchMode.ByName;
@@ -881,7 +888,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// If specified, wait for this number of seconds
+        /// If specified, wait for this number of seconds.
         /// </summary>
         [Parameter(Position = 1)]
         [Alias("TimeoutSec")]
@@ -893,12 +900,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _timeout;
             }
+
             set
             {
                 _timeout = value;
                 _timeOutSpecified = true;
             }
         }
+
         private int _timeout = 0;
         private bool _timeOutSpecified;
 
@@ -908,7 +917,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region IDisposable
         /// <summary>
-        ///  Dispose method of IDisposable interface.
+        /// Dispose method of IDisposable interface.
         /// </summary>
         public void Dispose()
         {
@@ -919,6 +928,7 @@ namespace Microsoft.PowerShell.Commands
                     _waitHandle.Dispose();
                     _waitHandle = null;
                 }
+
                 _disposed = true;
             }
         }
@@ -944,12 +954,12 @@ namespace Microsoft.PowerShell.Commands
 
         private List<Process> _processList = new List<Process>();
 
-        //Wait handle which is used by thread to sleep.
+        // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
         private int _numberOfProcessesToWaitFor;
 
         /// <summary>
-        /// gets the list of process
+        /// Gets the list of process.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -969,12 +979,13 @@ namespace Microsoft.PowerShell.Commands
                     WriteNonTerminatingError(process, null, ProcessResources.WaitOnItself, "WaitOnItself", ErrorCategory.ObjectNotFound);
                     continue;
                 }
+
                 _processList.Add(process);
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
-        /// Wait for the process to terminate
+        /// Wait for the process to terminate.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -1010,13 +1021,13 @@ namespace Microsoft.PowerShell.Commands
                     _waitHandle.WaitOne();
                 }
             }
+
             foreach (Process process in _processList)
             {
                 try
                 {
                     if (!process.HasExited)
                     {
-                        //write the error
                         string message = StringUtil.Format(ProcessResources.ProcessNotTerminated, new object[] { process.ProcessName, process.Id });
                         ErrorRecord errorRecord = new ErrorRecord(new TimeoutException(message), "ProcessNotTerminated", ErrorCategory.CloseError, process);
                         WriteError(errorRecord);
@@ -1030,7 +1041,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// StopProcessing
+        /// StopProcessing.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -1041,12 +1052,12 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Overrides
 
-    }//WaitProcessCommand
+    }
     #endregion WaitProcessCommand
 
     #region StopProcessCommand
     /// <summary>
-    /// This class implements the stop-process command
+    /// This class implements the stop-process command.
     /// </summary>
     /// <remarks>
     /// Processes will be sorted before being stopped.  PM confirms
@@ -1060,9 +1071,8 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        /// Has the list of process names on which to this command will work
+        /// Has the list of process names on which to this command will work.
         /// </summary>
-        // [ProcessNameGlobAttribute]
         [Parameter(
             ParameterSetName = "Name",
             Mandatory = true,
@@ -1074,6 +1084,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processNames;
             }
+
             set
             {
                 processNames = value;
@@ -1082,7 +1093,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets/sets an array of process IDs
+        /// Gets/sets an array of process IDs.
         /// </summary>
         [Parameter(
            Position = 0,
@@ -1095,6 +1106,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -1103,7 +1115,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets/sets an array of objects
+        /// Gets/sets an array of objects.
         /// </summary>
         [Parameter(
             Position = 0,
@@ -1117,6 +1129,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.InputObject;
             }
+
             set
             {
                 base.InputObject = value;
@@ -1131,11 +1144,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
         }
 
-        //Addition by v-ramch Mar 18 2008
-        //Added force parameter
         /// <summary>
         /// Specifies whether to force a process to kill
         /// even if it has dependent services.
@@ -1194,7 +1206,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Win32Exception ex)
                 {
-                    // This process could not be stopped, so write a non-terminating error.
                     WriteNonTerminatingError(
                         process, ex, ProcessResources.CouldNotStopProcess,
                         "CouldNotStopProcess", ErrorCategory.CloseError);
@@ -1203,7 +1214,6 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    //check if the process is current process and kill it at last
                     if (Process.GetCurrentProcess().Id == SafeGetProcessId(process))
                     {
                         _shouldKillCurrentProcess = true;
@@ -1212,7 +1222,6 @@ namespace Microsoft.PowerShell.Commands
 
                     if (Platform.IsWindows && !Force)
                     {
-                        // Check if the process is owned by current user
                         if (!IsProcessOwnedByCurrentUser(process))
                         {
                             string message = StringUtil.Format(
@@ -1226,13 +1235,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    //if the process is svchost stop all the dependent services before killing process
-                    if (string.Equals(SafeGetProcessName(process), "SVCHOST", StringComparison.CurrentCultureIgnoreCase))
+                    // If the process is svchost stop all the dependent services before killing process
+                    if (string.Equals(SafeGetProcessName(process), "SVCHOST", StringComparison.OrdinalIgnoreCase))
                     {
                         StopDependentService(process);
                     }
 
-                    // kill the process
                     if (!process.HasExited)
                     {
                         process.Kill();
@@ -1242,8 +1250,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!TryHasExited(process))
                     {
-                        // This process could not be stopped,
-                        // so write a non-terminating error.
                         WriteNonTerminatingError(
                             process, exception, ProcessResources.CouldNotStopProcess,
                             "CouldNotStopProcess", ErrorCategory.CloseError);
@@ -1254,8 +1260,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!TryHasExited(process))
                     {
-                        // This process could not be stopped,
-                        // so write a non-terminating error.
                         WriteNonTerminatingError(
                             process, exception, ProcessResources.CouldNotStopProcess,
                             "CouldNotStopProcess", ErrorCategory.CloseError);
@@ -1266,7 +1270,7 @@ namespace Microsoft.PowerShell.Commands
                 if (PassThru)
                     WriteObject(process);
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Kill the current process here.
@@ -1277,31 +1281,31 @@ namespace Microsoft.PowerShell.Commands
             {
                 StopProcess(Process.GetCurrentProcess());
             }
-        }//EndProcessing
+        }
 
         #endregion Overrides
 
         #region Private
         /// <summary>
-        /// should the current powershell process to be killed
+        /// Should the current powershell process to be killed.
         /// </summary>
         private bool _shouldKillCurrentProcess;
 
         /// <summary>
-        /// Boolean variables to display the warning using shouldcontinue
+        /// Boolean variables to display the warning using ShouldContinue.
         /// </summary>
-        private bool _yesToAll,_noToAll;
+        private bool _yesToAll, _noToAll;
 
         /// <summary>
-        /// Current windows user name
+        /// Current windows user name.
         /// </summary>
         private string _currentUserName;
 
         /// <summary>
-        /// gets the owner of the process
+        /// Gets the owner of the process.
         /// </summary>
         /// <param name="process"></param>
-        /// <returns>returns the owner</returns>
+        /// <returns>Returns the owner.</returns>
         private bool IsProcessOwnedByCurrentUser(Process process)
         {
             const uint TOKEN_QUERY = 0x0008;
@@ -1320,19 +1324,19 @@ namespace Microsoft.PowerShell.Commands
 
                     using (var processUser = new WindowsIdentity(ph))
                     {
-                        return string.Equals(processUser.Name, _currentUserName, StringComparison.CurrentCultureIgnoreCase);
+                        return string.Equals(processUser.Name, _currentUserName, StringComparison.OrdinalIgnoreCase);
                     }
                 }
             }
             catch (IdentityNotMappedException)
             {
-                //Catching IdentityMappedException
-                //Need not throw error.
+                // Catching IdentityMappedException
+                // Need not throw error.
             }
             catch (ArgumentException)
             {
-                //Catching ArgumentException. In Win2k3 Token is zero
-                //Need not throw error.
+                // Catching ArgumentException. In Win2k3 Token is zero
+                // Need not throw error.
             }
             finally
             {
@@ -1343,7 +1347,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Stop the service that depends on the process and its child services
+        /// Stop the service that depends on the process and its child services.
         /// </summary>
         /// <param name="process"></param>
         private void StopDependentService(Process process)
@@ -1361,7 +1365,6 @@ namespace Microsoft.PowerShell.Commands
                         string serviceName = oService.CimInstanceProperties["Name"].Value.ToString();
                         using (var service = new System.ServiceProcess.ServiceController(serviceName))
                         {
-                            //try stopping the service, if cant we are not writing exception
                             try
                             {
                                 service.Stop();
@@ -1383,9 +1386,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// stops the given process throws non terminating error if cant
+        /// Stops the given process throws non terminating error if can't.
         /// <param name="process" >process to be stopped</param>
-        /// <returns>true if process stopped successfully else false</returns>
+        /// <returns>True if process stopped successfully else false.</returns>
         /// </summary>
         private void StopProcess(Process process)
         {
@@ -1406,7 +1409,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = e;
             }
 
-            if (null != exception)
+            if (exception != null)
             {
                 if (!TryHasExited(process))
                 {
@@ -1420,12 +1423,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Private
-    }//StopProcessCommand
+    }
     #endregion StopProcessCommand
 
     #region DebugProcessCommand
     /// <summary>
-    /// This class implements the Debug-process command
+    /// This class implements the Debug-process command.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Debug, "Process", DefaultParameterSetName = "Name", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135206")]
     public sealed class DebugProcessCommand : ProcessBaseCommand
@@ -1449,6 +1452,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return processIds;
             }
+
             set
             {
                 myMode = MatchMode.ById;
@@ -1457,7 +1461,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of the processes to wait on for termination
+        /// Name of the processes to wait on for termination.
         /// </summary>
         [Parameter(
             ParameterSetName = "Name",
@@ -1469,6 +1473,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return processNames; }
+
             set
             {
                 myMode = MatchMode.ByName;
@@ -1481,11 +1486,10 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// gets the list of process and attach the debugger to the processes
+        /// Gets the list of process and attach the debugger to the processes.
         /// </summary>
         protected override void ProcessRecord()
         {
-            //for the processes
             foreach (Process process in MatchingProcesses())
             {
                 string targetMessage = StringUtil.Format(
@@ -1495,7 +1499,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!ShouldProcess(targetMessage)) { continue; }
 
-                // sometimes Idle process has processid zero,so handle that because we cannot attach debugger to it.
+                // Sometimes Idle process has processid zero,so handle that because we cannot attach debugger to it.
                 if (process.Id == 0)
                 {
                     WriteNonTerminatingError(
@@ -1528,12 +1532,12 @@ namespace Microsoft.PowerShell.Commands
 
                 AttachDebuggerToProcess(process);
             }
-        } // ProcessRecord
+        }
 
         #endregion Overrides
 
         /// <summary>
-        /// Attach debugger to the process
+        /// Attach debugger to the process.
         /// </summary>
         private void AttachDebuggerToProcess(Process process)
         {
@@ -1572,7 +1576,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Map the return code from 'AttachDebugger' to error message
+        /// Map the return code from 'AttachDebugger' to error message.
         /// </summary>
         private string MapReturnCodeToErrorMessage(int returnCode)
         {
@@ -1586,6 +1590,7 @@ namespace Microsoft.PowerShell.Commands
                 case 21: errorMessage = ProcessResources.AttachDebuggerReturnCode21; break;
                 default: Diagnostics.Assert(false, "Unreachable code."); break;
             }
+
             return errorMessage;
         }
     }
@@ -1594,7 +1599,7 @@ namespace Microsoft.PowerShell.Commands
     #region StartProcessCommand
 
     /// <summary>
-    /// This class implements the Start-process command
+    /// This class implements the Start-process command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "Process", DefaultParameterSetName = "Default", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135261")]
     [OutputType(typeof(Process))]
@@ -1606,24 +1611,23 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Path/FileName of the process to start
+        /// Path/FileName of the process to start.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath","Path")]
+        [Alias("PSPath", "Path")]
         public string FilePath { get; set; }
 
         /// <summary>
-        /// Arguments for the process
+        /// Arguments for the process.
         /// </summary>
         [Parameter(Position = 1)]
         [Alias("Args")]
-        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ArgumentList { get; set; }
 
         /// <summary>
-        /// Credentials for the process
+        /// Credentials for the process.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("RunAs")]
@@ -1632,61 +1636,67 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _credential; }
+
             set
             {
                 _credential = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private PSCredential _credential;
 
         /// <summary>
-        ///  working directory of the process
+        /// Working directory of the process.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
-        /// load user profile from registry
+        /// Load user profile from registry.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("Lup")]
         public SwitchParameter LoadUserProfile
         {
             get { return _loaduserprofile; }
+
             set
             {
                 _loaduserprofile = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private SwitchParameter _loaduserprofile = SwitchParameter.Present;
 
         /// <summary>
-        /// starts process in a new window
+        /// Starts process in a new window.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("nnw")]
         public SwitchParameter NoNewWindow
         {
             get { return _nonewwindow; }
+
             set
             {
                 _nonewwindow = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private SwitchParameter _nonewwindow;
 
         /// <summary>
-        /// passthru parameter
+        /// PassThru parameter.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// Redirect error
+        /// Redirect error.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("RSE")]
@@ -1694,16 +1704,18 @@ namespace Microsoft.PowerShell.Commands
         public string RedirectStandardError
         {
             get { return _redirectstandarderror; }
+
             set
             {
                 _redirectstandarderror = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private string _redirectstandarderror;
 
         /// <summary>
-        /// Redirect input
+        /// Redirect input.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("RSI")]
@@ -1711,16 +1723,18 @@ namespace Microsoft.PowerShell.Commands
         public string RedirectStandardInput
         {
             get { return _redirectstandardinput; }
+
             set
             {
                 _redirectstandardinput = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private string _redirectstandardinput;
 
         /// <summary>
-        /// Redirect output
+        /// Redirect output.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("RSO")]
@@ -1728,61 +1742,66 @@ namespace Microsoft.PowerShell.Commands
         public string RedirectStandardOutput
         {
             get { return _redirectstandardoutput; }
+
             set
             {
                 _redirectstandardoutput = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private string _redirectstandardoutput;
 
         /// <summary>
-        /// Verb
+        /// Verb.
         /// </summary>
         /// <remarks>
-        /// The 'Verb' parameter is not supported in OneCore PowerShell
-        /// because 'UseShellExecute' is not supported in CoreCLR.
+        /// The 'Verb' parameter is only supported on Windows Desktop.
         /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]
         public string Verb { get; set; }
 
         /// <summary>
-        /// Window style of the process window
+        /// Window style of the process window.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
         public ProcessWindowStyle WindowStyle
         {
             get { return _windowstyle; }
+
             set
             {
                 _windowstyle = value;
                 _windowstyleSpecified = true;
             }
         }
+
         private ProcessWindowStyle _windowstyle = ProcessWindowStyle.Normal;
         private bool _windowstyleSpecified = false;
 
         /// <summary>
-        ///  wait for th eprocess to terminate
+        /// Wait for the process to terminate.
         /// </summary>
         [Parameter]
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
-        ///  Default Environment
+        /// Default Environment.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         public SwitchParameter UseNewEnvironment
         {
             get { return _UseNewEnvironment; }
+
             set
             {
                 _UseNewEnvironment = value;
                 _isDefaultSetParameterSpecified = true;
             }
         }
+
         private SwitchParameter _UseNewEnvironment;
 
         #endregion
@@ -1790,7 +1809,7 @@ namespace Microsoft.PowerShell.Commands
         #region overrides
 
         /// <summary>
-        /// BeginProcessing
+        /// BeginProcessing.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -1826,12 +1845,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            //use ShellExecute by default if we are running on full windows SKUs
+            // Use ShellExecute by default if we are running on full windows SKUs
             startInfo.UseShellExecute = Platform.IsWindowsDesktop;
 
-            //Path = Mandatory parameter -> Will not be empty.
+            // Path = Mandatory parameter -> Will not be empty.
             try
             {
                 CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
@@ -1843,8 +1861,16 @@ namespace Microsoft.PowerShell.Commands
             catch (CommandNotFoundException)
             {
                 startInfo.FileName = FilePath;
+#if UNIX
+                // Arguments are passed incorrectly to the executable used for ShellExecute and not to filename https://github.com/dotnet/corefx/issues/30718
+                // so don't use ShellExecute if arguments are specified
+
+                // Linux relies on `xdg-open` and macOS relies on `open` which behave differently than Windows ShellExecute when running console commands
+                // as a new console will be opened.  So to avoid that, we only use ShellExecute on non-Windows if the filename is not an actual command (like a URI)
+                startInfo.UseShellExecute = (ArgumentList == null);
+#endif
             }
-            //Arguments
+
             if (ArgumentList != null)
             {
                 StringBuilder sb = new StringBuilder();
@@ -1853,13 +1879,13 @@ namespace Microsoft.PowerShell.Commands
                     sb.Append(str);
                     sb.Append(' ');
                 }
+
                 startInfo.Arguments = sb.ToString(); ;
             }
 
-            //WorkingDirectory
             if (WorkingDirectory != null)
             {
-                //WorkingDirectory -> Not Exist -> Throw Error
+                // WorkingDirectory -> Not Exist -> Throw Error
                 WorkingDirectory = ResolveFilePath(WorkingDirectory);
                 if (!Directory.Exists(WorkingDirectory))
                 {
@@ -1868,11 +1894,12 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(er);
                     return;
                 }
+
                 startInfo.WorkingDirectory = WorkingDirectory;
             }
             else
             {
-                //Working Directory not specified -> Assign Current Path.
+                // Working Directory not specified -> Assign Current Path.
                 startInfo.WorkingDirectory = ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path);
             }
 
@@ -1883,7 +1910,6 @@ namespace Microsoft.PowerShell.Commands
                     startInfo.UseShellExecute = false;
                 }
 
-                //UseNewEnvironment
                 if (_UseNewEnvironment)
                 {
                     startInfo.EnvironmentVariables.Clear();
@@ -1891,21 +1917,17 @@ namespace Microsoft.PowerShell.Commands
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
                 }
 
-                //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
 
-                //NewWindow
                 if (_nonewwindow)
                 {
                     startInfo.CreateNoWindow = _nonewwindow;
                 }
 #if !UNIX
-                //LoadUserProfile.
                 startInfo.LoadUserProfile = _loaduserprofile;
 #endif
                 if (_credential != null)
                 {
-                    //Gets NetworkCredentials
                     NetworkCredential nwcredential = _credential.GetNetworkCredential();
                     startInfo.UserName = nwcredential.UserName;
                     if (String.IsNullOrEmpty(nwcredential.Domain))
@@ -1916,10 +1938,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         startInfo.Domain = nwcredential.Domain;
                     }
+
                     startInfo.Password = _credential.Password;
                 }
 
-                //RedirectionInput File Check -> Not Exist -> Throw Error
+                // RedirectionInput File Check -> Not Exist -> Throw Error
                 if (_redirectstandardinput != null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
@@ -1932,12 +1955,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //RedirectionInput == RedirectionOutput -> Throw Error
+                // RedirectionInput == RedirectionOutput -> Throw Error
                 if (_redirectstandardinput != null && _redirectstandardoutput != null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                    if (_redirectstandardinput.Equals(_redirectstandardoutput, StringComparison.CurrentCultureIgnoreCase))
+                    if (_redirectstandardinput.Equals(_redirectstandardoutput, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardInput", "RedirectStandardOutput");
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
@@ -1946,12 +1969,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //RedirectionInput == RedirectionError -> Throw Error
+                // RedirectionInput == RedirectionError -> Throw Error
                 if (_redirectstandardinput != null && _redirectstandarderror != null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                    if (_redirectstandardinput.Equals(_redirectstandarderror, StringComparison.CurrentCultureIgnoreCase))
+                    if (_redirectstandardinput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardInput", "RedirectStandardError");
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
@@ -1960,12 +1983,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //RedirectionOutput == RedirectionError -> Throw Error
+                // RedirectionOutput == RedirectionError -> Throw Error
                 if (_redirectstandardoutput != null && _redirectstandarderror != null)
                 {
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                    if (_redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.CurrentCultureIgnoreCase))
+                    if (_redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardOutput", "RedirectStandardError");
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
@@ -1976,19 +1999,16 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
-                //Verb
                 if (Verb != null) { startInfo.Verb = Verb; }
-                //WindowStyle
+
                 startInfo.WindowStyle = _windowstyle;
             }
 
             string targetMessage = StringUtil.Format(ProcessResources.StartProcessTarget, startInfo.FileName, startInfo.Arguments.Trim());
             if (!ShouldProcess(targetMessage)) { return; }
 
-            //Starts the Process
             Process process = Start(startInfo);
 
-            //Wait and Passthru Implementation.
             if (PassThru.IsPresent)
             {
                 if (process != null)
@@ -2055,7 +2075,7 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Overrides
 
         /// <summary>
-        /// Dispose WaitHandle used to honor -Wait parameter
+        /// Dispose WaitHandle used to honor -Wait parameter.
         /// </summary>
         public void Dispose()
         {
@@ -2102,6 +2122,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     processEnvironment.Remove(entry.Key.ToString());
                 }
+
                 if (entry.Key.ToString().Equals("PATH"))
                 {
                     processEnvironment.Add(entry.Key.ToString(), Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.Machine) + ";" + Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.User));
@@ -2115,24 +2136,6 @@ namespace Microsoft.PowerShell.Commands
 
         private Process Start(ProcessStartInfo startInfo)
         {
-#if UNIX
-            Process process = new Process() { StartInfo = startInfo };
-            SetupInputOutputRedirection(process);
-            process.Start();
-            if (process.StartInfo.RedirectStandardOutput)
-            {
-                process.BeginOutputReadLine();
-            }
-            if (process.StartInfo.RedirectStandardError)
-            {
-                process.BeginErrorReadLine();
-            }
-            if (process.StartInfo.RedirectStandardInput)
-            {
-                WriteToStandardInput(process);
-            }
-            return process;
-#else
             Process process = null;
             if (startInfo.UseShellExecute)
             {
@@ -2140,10 +2143,30 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
+#if UNIX
+                process = new Process() { StartInfo = startInfo };
+                SetupInputOutputRedirection(process);
+                process.Start();
+                if (process.StartInfo.RedirectStandardOutput)
+                {
+                    process.BeginOutputReadLine();
+                }
+
+                if (process.StartInfo.RedirectStandardError)
+                {
+                    process.BeginErrorReadLine();
+                }
+
+                if (process.StartInfo.RedirectStandardInput)
+                {
+                    WriteToStandardInput(process);
+                }
+#else
                 process = StartWithCreateProcess(startInfo);
-            }
-            return process;
 #endif
+            }
+
+            return process;
         }
 
 #if UNIX
@@ -2185,6 +2208,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _outputWriter.Dispose();
             }
+
             if (_errorWriter != null)
             {
                 _errorWriter.Dispose();
@@ -2245,6 +2269,7 @@ namespace Microsoft.PowerShell.Commands
                 string line = reader.ReadToEnd();
                 writer.WriteLine(line);
             }
+
             writer.Dispose();
         }
 #else
@@ -2268,6 +2293,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
+
             SafeFileHandle sf = new SafeFileHandle(hFileHandle, true);
             return sf;
         }
@@ -2281,16 +2307,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 builder.Append("\"");
             }
+
             builder.Append(str);
             if (!flag)
             {
                 builder.Append("\"");
             }
+
             if (!string.IsNullOrEmpty(arguments))
             {
                 builder.Append(" ");
                 builder.Append(arguments);
             }
+
             return builder;
         }
 
@@ -2310,6 +2339,7 @@ namespace Microsoft.PowerShell.Commands
                 builder.Append(strArray2[i]);
                 builder.Append('\0');
             }
+
             builder.Append('\0');
 
             // Use Unicode encoding
@@ -2318,6 +2348,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new InvalidOperationException("EnvironmentBlockTooLong");
             }
+
             return bytes;
         }
 
@@ -2332,12 +2363,12 @@ namespace Microsoft.PowerShell.Commands
             GCHandle pinnedEnvironmentBlock = new GCHandle();
             string message = String.Empty;
 
-            //building the cmdline with the file name given and it's arguments
+            // building the cmdline with the file name given and it's arguments
             StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
 
             try
             {
-                //RedirectionStandardInput
+                // RedirectionStandardInput
                 if (_redirectstandardinput != null)
                 {
                     startinfo.RedirectStandardInput = true;
@@ -2348,7 +2379,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
                 }
-                //RedirectionStandardOutput
+                // RedirectionStandardOutput
                 if (_redirectstandardoutput != null)
                 {
                     startinfo.RedirectStandardOutput = true;
@@ -2359,7 +2390,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
                 }
-                //RedirectionStandardError
+                // RedirectionStandardError
                 if (_redirectstandarderror != null)
                 {
                     startinfo.RedirectStandardError = true;
@@ -2370,40 +2401,40 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
                 }
-                //STARTF_USESTDHANDLES
+                // STARTF_USESTDHANDLES
                 lpStartupInfo.dwFlags = 0x100;
 
                 int creationFlags = 0;
 
                 if (startinfo.CreateNoWindow)
                 {
-                    //No new window: Inherit the parent process's console window
+                    // No new window: Inherit the parent process's console window
                     creationFlags = 0x00000000;
                 }
                 else
                 {
-                    //CREATE_NEW_CONSOLE
+                    // CREATE_NEW_CONSOLE
                     creationFlags |= 0x00000010;
-                    //STARTF_USESHOWWINDOW
+                    // STARTF_USESHOWWINDOW
                     lpStartupInfo.dwFlags |= 0x00000001;
 
                     // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
                     switch (startinfo.WindowStyle)
                     {
                         case ProcessWindowStyle.Normal:
-                            //SW_SHOWNORMAL
+                            // SW_SHOWNORMAL
                             lpStartupInfo.wShowWindow = 1;
                             break;
                         case ProcessWindowStyle.Minimized:
-                            //SW_SHOWMINIMIZED
+                            // SW_SHOWMINIMIZED
                             lpStartupInfo.wShowWindow = 2;
                             break;
                         case ProcessWindowStyle.Maximized:
-                            //SW_SHOWMAXIMIZED
+                            // SW_SHOWMAXIMIZED
                             lpStartupInfo.wShowWindow = 3;
                             break;
                         case ProcessWindowStyle.Hidden:
-                            //SW_HIDE
+                            // SW_HIDE
                             lpStartupInfo.wShowWindow = 0;
                             break;
                     }
@@ -2424,6 +2455,7 @@ namespace Microsoft.PowerShell.Commands
                         AddressOfEnvironmentBlock = pinnedEnvironmentBlock.AddrOfPinnedObject();
                     }
                 }
+
                 bool flag;
 
                 if (_credential != null)
@@ -2464,6 +2496,7 @@ namespace Microsoft.PowerShell.Commands
                             er = er ?? new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                             ThrowTerminatingError(er);
                         }
+
                         goto Label_03AE;
                     }
                     finally
@@ -2473,7 +2506,7 @@ namespace Microsoft.PowerShell.Commands
                             Marshal.ZeroFreeCoTaskMemUnicode(password);
                         }
                     }
-                }//end of if
+                }
 
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpProcessAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpThreadAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
@@ -2507,6 +2540,7 @@ namespace Microsoft.PowerShell.Commands
                 lpProcessInformation.Dispose();
             }
         }
+#endif
 
         /// <summary>
         /// This method will be used only on Windows full desktop.
@@ -2524,9 +2558,9 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
+
             return result;
         }
-#endif
         #endregion
     }
 
@@ -2645,7 +2679,6 @@ namespace Microsoft.PowerShell.Commands
         internal static UInt32 OPEN_EXISTING = 3;
 
         // Methods
-        //    static NativeMethods();
 
         [DllImport(PinvokeDllNames.GetStdHandleDllName, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern IntPtr GetStdHandle(int whichHandle);
@@ -2717,12 +2750,14 @@ namespace Microsoft.PowerShell.Commands
                 : base(true)
             {
             }
+
             [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
             internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
             }
+
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
             protected override bool ReleaseHandle()
@@ -2773,11 +2808,13 @@ namespace Microsoft.PowerShell.Commands
                         this.hStdInput.Dispose();
                         this.hStdInput = null;
                     }
+
                     if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
                     {
                         this.hStdOutput.Dispose();
                         this.hStdOutput = null;
                     }
+
                     if ((this.hStdError != null) && !this.hStdError.IsInvalid)
                     {
                         this.hStdError.Dispose();
@@ -2813,7 +2850,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             public void Dispose()
             {
@@ -2821,7 +2858,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             /// <param name="disposing"></param>
             private void Dispose(bool disposing)
@@ -2863,32 +2900,32 @@ namespace Microsoft.PowerShell.Commands
 
     #region ProcessCommandException
     /// <summary>
-    /// Non-terminating errors occurring in the process noun commands
+    /// Non-terminating errors occurring in the process noun commands.
     /// </summary>
     [Serializable]
     public class ProcessCommandException : SystemException
     {
         #region ctors
         /// <summary>
-        /// unimplemented standard constructor
+        /// Unimplemented standard constructor.
         /// </summary>
-        /// <returns> doesn't return </returns>
+        /// <returns>Doesn't return.</returns>
         public ProcessCommandException() : base()
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// standard constructor
+        /// Standard constructor.
         /// </summary>
         /// <param name="message"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ProcessCommandException(string message) : base(message)
         {
         }
 
         /// <summary>
-        /// standard constructor
+        /// Standard constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -2900,11 +2937,11 @@ namespace Microsoft.PowerShell.Commands
 
         #region Serialization
         /// <summary>
-        /// serialization constructor
+        /// Serialization constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected ProcessCommandException(
             SerializationInfo info,
             StreamingContext context)
@@ -2935,18 +2972,20 @@ namespace Microsoft.PowerShell.Commands
 
         #region Properties
         /// <summary>
-        /// Name of the process which could not be found or operated upon
+        /// Name of the process which could not be found or operated upon.
         /// </summary>
         /// <value></value>
         public string ProcessName
         {
             get { return _processName; }
+
             set { _processName = value; }
         }
+
         private string _processName = String.Empty;
         #endregion Properties
-    } // class ProcessCommandException
+    }
 
     #endregion ProcessCommandException
-}//Microsoft.PowerShell.Commands
+}
 

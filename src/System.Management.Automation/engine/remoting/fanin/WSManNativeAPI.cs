@@ -172,7 +172,7 @@ namespace System.Management.Automation.Remoting.Client
             /// Must be a value type.
             /// </typeparam>
             /// <param name="obj"></param>
-            /// <returns>MarshalledObject</returns>
+            /// <returns>MarshalledObject.</returns>
             internal static MarshalledObject Create<T>(T obj)
             {
                 IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<T>());
@@ -288,17 +288,14 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManUserNameAuthenticationCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
-            ///
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             internal struct WSManUserNameCredentialStruct
             {
                 /// <summary>
-                ///
                 /// </summary>
                 internal WSManAuthenticationMechanism authenticationMechanism;
                 /// <summary>
-                ///
                 /// </summary>
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string userName;
@@ -345,7 +342,7 @@ namespace System.Management.Automation.Remoting.Client
                 _cred = new WSManUserNameCredentialStruct();
                 _cred.authenticationMechanism = authMechanism;
                 _cred.userName = name;
-                if (null != pwd)
+                if (pwd != null)
                 {
                     _cred.password = Marshal.SecureStringToCoTaskMemUnicode(pwd);
                 }
@@ -387,22 +384,18 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal class WSManCertificateThumbprintCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
-            ///
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             private struct WSManThumbprintStruct
             {
                 /// <summary>
-                ///
                 /// </summary>
                 internal WSManAuthenticationMechanism authenticationMechanism;
                 /// <summary>
-                ///
                 /// </summary>
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string certificateThumbprint;
@@ -412,6 +405,7 @@ namespace System.Management.Automation.Remoting.Client
                 /// </summary>
                 internal IntPtr reserved;
             }
+
             private MarshalledObject _data;
 
             /// <summary>
@@ -651,7 +645,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(byte[] data)
             {
-                Dbg.Assert(null != data, "Data cannot be null");
+                Dbg.Assert(data != null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -674,7 +668,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(string data)
             {
-                Dbg.Assert(null != data, "Data cannot be null");
+                Dbg.Assert(data != null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -706,6 +700,7 @@ namespace System.Management.Automation.Remoting.Client
             internal uint Type
             {
                 get { return _internalData.type; }
+
                 set { _internalData.type = value; }
             }
 
@@ -715,6 +710,7 @@ namespace System.Management.Automation.Remoting.Client
             internal int BufferLength
             {
                 get { return _internalData.binaryOrTextData.bufferLength; }
+
                 set { _internalData.binaryOrTextData.bufferLength = value; }
             }
 
@@ -738,6 +734,7 @@ namespace System.Management.Automation.Remoting.Client
                     Marshal.FreeHGlobal(_marshalledBuffer);
                     _marshalledBuffer = IntPtr.Zero;
                 }
+
                 if (_marshalledObject != IntPtr.Zero)
                 {
                     Marshal.FreeHGlobal(_marshalledObject);
@@ -752,7 +749,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             public static implicit operator IntPtr(WSManData_ManToUn data)
             {
-                if (null != data)
+                if (data != null)
                 {
                     return data._marshalledObject;
                 }
@@ -772,6 +769,7 @@ namespace System.Management.Automation.Remoting.Client
             internal uint Type
             {
                 get { return _type; }
+
                 set { _type = value; }
             }
 
@@ -782,6 +780,7 @@ namespace System.Management.Automation.Remoting.Client
             internal int BufferLength
             {
                 get { return _bufferLength; }
+
                 set { _bufferLength = value; }
             }
 
@@ -797,8 +796,8 @@ namespace System.Management.Automation.Remoting.Client
                 }
             }
 
-            private System.Byte[] _data;
-            internal System.Byte[] Data
+            private byte[] _data;
+            internal byte[] Data
             {
                 get
                 {
@@ -829,12 +828,13 @@ namespace System.Management.Automation.Remoting.Client
                             string tempText = Marshal.PtrToStringUni(dataStruct.binaryOrTextData.data, dataStruct.binaryOrTextData.bufferLength);
                             newData._text = tempText;
                         }
+
                         break;
                     case (uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_BINARY:
                         if (dataStruct.binaryOrTextData.bufferLength > 0)
                         {
                             // copy data from unmanaged heap to managed heap.
-                            System.Byte[] dataRecvd = new System.Byte[dataStruct.binaryOrTextData.bufferLength];
+                            byte[] dataRecvd = new byte[dataStruct.binaryOrTextData.bufferLength];
                             Marshal.Copy(
                                 dataStruct.binaryOrTextData.data,
                                 dataRecvd,
@@ -842,10 +842,12 @@ namespace System.Management.Automation.Remoting.Client
                                 dataStruct.binaryOrTextData.bufferLength);
                             newData._data = dataRecvd;
                         }
+
                         break;
                     default:
                         throw new NotSupportedException();
                 }
+
                 return newData;
             }
 
@@ -1039,6 +1041,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.streamIDs = idsArray;
                     result.streamIDsCount = resultInternal.streamIDsCount;
                 }
+
                 return result;
             }
         }
@@ -1098,7 +1101,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="options"></param>
             internal WSManOptionSet(WSManOption[] options)
             {
-                Dbg.Assert(null != options, "options cannot be null");
+                Dbg.Assert(options != null, "options cannot be null");
 
                 int sizeOfOption = Marshal.SizeOf<WSManOption>();
                 _optionSet = new WSManOptionSetStruct();
@@ -1123,7 +1126,6 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            ///
             /// </summary>
             public void Dispose()
             {
@@ -1206,7 +1208,6 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal struct WSManCommandArgSet : IDisposable
         {
@@ -1217,6 +1218,7 @@ namespace System.Management.Automation.Remoting.Client
                 [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr args;
             }
+
             private WSManCommandArgSetInternal _internalData;
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private MarshalledObject _data;
@@ -1306,6 +1308,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.argsCount = resultInternal.argsCount;
                     result.args = tempArgs;
                 }
+
                 return result;
             }
 
@@ -1482,6 +1485,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.environmentVariableSet = WSManEnvironmentVariableSet.UnMarshal(resultInternal.environmentVariableSet);
                     result.name = resultInternal.name;
                 }
+
                 return result;
             }
         }
@@ -1527,6 +1531,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.vars = varsArray;
                     result.varsCount = resultInternal.varsCount;
                 }
+
                 return result;
             }
 
@@ -1558,10 +1563,10 @@ namespace System.Management.Automation.Remoting.Client
                 public int proxyAccessType;
                 public WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct proxyAuthCredentialsStruct;
             }
+
             private MarshalledObject _data;
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="proxyAccessType"></param>
             /// <param name="authCredentials"></param>
@@ -1573,7 +1578,7 @@ namespace System.Management.Automation.Remoting.Client
                 internalInfo.proxyAuthCredentialsStruct = new WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct();
                 internalInfo.proxyAuthCredentialsStruct.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
 
-                if (null != authCredentials)
+                if (authCredentials != null)
                 {
                     internalInfo.proxyAuthCredentialsStruct = authCredentials.CredentialStruct;
                 }
@@ -1748,6 +1753,7 @@ namespace System.Management.Automation.Remoting.Client
                 internal IntPtr operationContext;
                 internal IntPtr asyncCallback;
             }
+
             private MarshalledObject _data;
             private WSManShellAsyncInternal _internalData;
 
@@ -1832,6 +1838,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     result.data = connectData;
                 }
+
                 return result;
             }
 
@@ -1911,8 +1918,8 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Constructs a WSManReceiveDataResult from the unmanaged pointer.
             /// This involves copying data from unmanaged memory to managed heap.
-            /// Currently PowerShell supports only text data on the wire, so this
-            /// method asserts if the data is not text.
+            /// Currently PowerShell supports only binary data on the wire, so this
+            /// method asserts if the data is not binary.
             /// </summary>
             /// <param name="unmanagedData">
             /// Pointer to unmanaged data.
@@ -1934,8 +1941,11 @@ namespace System.Management.Automation.Remoting.Client
                         0,
                         result1.data.binaryData.bufferLength);
                 }
+
+#if !UNIX
                 Dbg.Assert(result1.data.type == (uint)WSManDataType.WSMAN_DATA_TYPE_BINARY,
-                    "ReceiveDataResult can receive only text data");
+                    "ReceiveDataResult can receive only binary data");
+#endif
 
                 WSManReceiveDataResult result = new WSManReceiveDataResult();
                 result.data = dataRecvd;
@@ -2042,6 +2052,7 @@ namespace System.Management.Automation.Remoting.Client
                     result._internalDetails = resultInternal;
                     result.unmanagedHandle = unmanagedData;
                 }
+
                 return result;
             }
 
@@ -2096,6 +2107,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.clientToken = resultInternal.clientToken; // TODO: UnMarshaling needed here!!!!
                     result.httpUrl = resultInternal.httpUrl;
                 }
+
                 return result;
             }
 
@@ -2145,6 +2157,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.issuerThumbprint = resultInternal.issuerThumbprint;
                     result.subjectName = resultInternal.subjectName;
                 }
+
                 return result;
             }
             /// <summary>
@@ -2190,6 +2203,7 @@ namespace System.Management.Automation.Remoting.Client
                     result.selectorSet = WSManSelectorSet.UnMarshal(resultInternal.selectorSet);
                     result.optionSet = WSManOptionSet.UnMarshal(resultInternal.optionSet);
                 }
+
                 return result;
             }
             /// <summary>
@@ -2421,7 +2435,7 @@ namespace System.Management.Automation.Remoting.Client
             // The error code taken from winerror.h used for getting buffer length.
             const int ERROR_INSUFFICIENT_BUFFER = 122;
 
-            string returnval = "";
+            string returnval = string.Empty;
             int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetSessionOptionAsString(wsManAPIHandle,
@@ -2520,7 +2534,6 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out]  ref IntPtr shellOperationHandle);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2541,7 +2554,6 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out]  ref IntPtr shellOperationHandle);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2554,7 +2566,6 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr asyncCallback);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2774,7 +2785,7 @@ namespace System.Management.Automation.Remoting.Client
             // get language code.
             string langCode = CultureInfo.CurrentUICulture.Name;
 
-            string returnval = "";
+            string returnval = string.Empty;
             int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetErrorMessage(wsManAPIHandle,

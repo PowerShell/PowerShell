@@ -135,7 +135,6 @@ namespace System.Management.Automation
         /// This will avoid one help file getting loaded again and again.
         /// (Which should not happen unless some provider is pointing
         /// to a help file that actually doesn't contain the help for it).
-        ///
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 
@@ -170,7 +169,7 @@ namespace System.Management.Automation
             //    of the mshsnapin
             // Otherwise,
             //    Look in the default search path and cmdlet assembly path
-            Collection<String> searchPaths = new Collection<String>();
+            Collection<string> searchPaths = new Collection<string>();
             if (mshSnapInInfo != null)
             {
                 Diagnostics.Assert(!string.IsNullOrEmpty(mshSnapInInfo.ApplicationBase),
@@ -246,6 +245,7 @@ namespace System.Management.Automation
                                     helpInfo.FullHelp.TypeNames.Insert(1, string.Format(CultureInfo.InvariantCulture,
                                         "ProviderHelpInfo#{0}", providerInfo.PSSnapInName));
                                 }
+
                                 AddCache(providerInfo.PSSnapInName + "\\" + helpInfo.Name, helpInfo);
                             }
                         }
@@ -298,7 +298,7 @@ namespace System.Management.Automation
             PSSnapinQualifiedName snapinQualifiedNameForPattern =
                 PSSnapinQualifiedName.GetInstance(pattern);
 
-            if (null == snapinQualifiedNameForPattern)
+            if (snapinQualifiedNameForPattern == null)
             {
                 yield break;
             }
@@ -374,7 +374,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="helpInfo">helpInfo forwarded in</param>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>The help info object after processing</returns>
+        /// <returns>The help info object after processing.</returns>
         override internal HelpInfo ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             if (helpInfo == null)

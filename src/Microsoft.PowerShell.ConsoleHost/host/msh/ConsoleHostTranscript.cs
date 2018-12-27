@@ -26,11 +26,13 @@ namespace Microsoft.PowerShell
 
                 return _isTranscribing;
             }
+
             set
             {
                 _isTranscribing = value;
             }
         }
+
         private bool _isTranscribing;
 
         /*

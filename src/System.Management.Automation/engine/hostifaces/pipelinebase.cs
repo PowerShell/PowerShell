@@ -87,11 +87,11 @@ namespace System.Management.Automation.Runspaces
             PSInformationalBuffers infoBuffers)
             : base(runspace, command)
         {
-            Dbg.Assert(null != inputStream, "Caller Should validate inputstream parameter");
-            Dbg.Assert(null != outputStream, "Caller Should validate outputStream parameter");
-            Dbg.Assert(null != errorStream, "Caller Should validate errorStream parameter");
-            Dbg.Assert(null != infoBuffers, "Caller Should validate informationalBuffers parameter");
-            Dbg.Assert(null != command, "Command cannot be null");
+            Dbg.Assert(inputStream != null, "Caller Should validate inputstream parameter");
+            Dbg.Assert(outputStream != null, "Caller Should validate outputStream parameter");
+            Dbg.Assert(errorStream != null, "Caller Should validate errorStream parameter");
+            Dbg.Assert(infoBuffers != null, "Caller Should validate informationalBuffers parameter");
+            Dbg.Assert(command != null, "Command cannot be null");
 
             // Since we are constructing this pipeline using a commandcollection we dont need
             // to add cmd to CommandCollection again (Initialize does this).. because of this
@@ -126,10 +126,11 @@ namespace System.Management.Automation.Runspaces
             : this(pipeline.Runspace, null, false, pipeline.IsNested)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
-            if (null == pipeline)
+            if (pipeline == null)
             {
                 throw PSTraceSource.NewArgumentNullException("pipeline");
             }
+
             if (pipeline._disposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("pipeline");
@@ -323,6 +324,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     PipelineFinishedEvent.WaitOne();
                 }
+
                 return;
             }
 
@@ -364,7 +366,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
-        /// <returns>An array of zero or more result objects</returns>
+        /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
@@ -504,6 +506,7 @@ namespace System.Management.Automation.Runspaces
                             InputStream.Write(temp);
                         }
                     }
+
                     InputStream.Close();
                 }
 

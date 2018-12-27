@@ -794,7 +794,7 @@ Do you want to continue?</value>
     <value>The background process reported an error with the following message: {0}.</value>
   </data>
   <data name="IPCServerProcessExited" xml:space="preserve">
-    <value>The background process closed or ended abnormally.</value>
+    <value>The background process closed or ended abnormally: {0}.</value>
   </data>
   <data name="IPCErrorProcessingServerData" xml:space="preserve">
     <value>There is an error processing data from the background process. Error reported: {0}.</value>
@@ -1110,6 +1110,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
     <value>{0} authentication requires an explicit user name and password.  Specify the user name and password by using the -Credential parameter and try the command again.</value>
   </data>
+  <data name="BasicAuthOverHttpNotSupported">
+   <value>Basic authentication is not supported over HTTP on Unix.</value>
+  </data>
   <data name="StartJobDefinitionNotFound1" xml:space="preserve">
     <value>Cannot find a scheduled job with name {0}.</value>
     <comment>{0} is the job definition name</comment>
@@ -1196,7 +1199,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The Hyper-V Module for PowerShell is not available on this machine.</value>
   </data>
   <data name="CannotCreateProcessInContainer" xml:space="preserve">
-    <value>Failed to launch PowerShell process inside container with id {0}.</value>
+    <value>Failed to launch PowerShell process ({1}) inside container with id {0} with error: {2}.</value>
   </data>
   <data name="ContainersFeatureNotEnabled" xml:space="preserve">
     <value>The Containers feature may not be enabled on this machine.</value>
@@ -1653,5 +1656,21 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
     <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
+  </data>
+  <data name="ProcessExitInfo" xml:space="preserve">
+    <value>
+      Exit code: {0}
+      Stdout: '{1}'
+      Stderr: '{2}'
+    </value>
+  </data>
+  <data name="ProcessInfoNotRecoverable" xml:space="preserve">
+    <value>Information about the process could not be read: '{0}'.</value>
+  </data>
+  <data name="CannotGetHostInteropTypes" xml:space="preserve">
+    <value>Host system does not have the correct version of Hyper-V schema.</value>
+  </data>
+  <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
+    <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
   </data>
 </root>

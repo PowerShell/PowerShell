@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 <#
 .SYNOPSIS
     Generates a resx file and code file from an ETW manifest
@@ -23,7 +24,7 @@
     The path to the directory to use to create the C# code file.
 
 .EXAMPLE
-    .\ResxGen.ps1 -Manifest ./PowerShell-Core-Instrumentation.man -ResxPath ../../src/System.Management.Automation\resources -CodePath  ../../src/System.Management.Automation/CoreCLR
+    .\tools\ResxGen\ResxGen.ps1 -Manifest .\src\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man -ResxPath .\src\System.Management.Automation\resources -CodePath .\src\System.Management.Automation\CoreCLR
 #>
 [CmdletBinding()]
 param
@@ -48,7 +49,7 @@ param
 
 )
 
-Import-Module .\ResxGen.psm1 -Force
+Import-Module $PSScriptRoot\ResxGen.psm1 -Force
 try
 {
     ConvertTo-Resx -Manifest $Manifest -Name $Name -ResxPath $ResxPath -CodePath $CodePath -Namespace $Namespace

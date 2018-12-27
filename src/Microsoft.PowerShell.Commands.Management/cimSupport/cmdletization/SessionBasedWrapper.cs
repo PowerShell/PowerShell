@@ -60,6 +60,7 @@ namespace Microsoft.PowerShell.Cmdletization
                         _parentJob = null;
                     }
                 }
+
                 _disposed = true;
             }
         }
@@ -74,7 +75,8 @@ namespace Microsoft.PowerShell.Cmdletization
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         protected TSession[] Session
         {
-            get { return _session ?? (_session = new TSession[] {this.DefaultSession}); }
+            get { return _session ?? (_session = new TSession[] { this.DefaultSession }); }
+
             set
             {
                 if (value == null)
@@ -86,6 +88,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 _sessionWasSpecified = true;
             }
         }
+
         private TSession[] _session;
         private bool _sessionWasSpecified;
 
@@ -96,8 +99,10 @@ namespace Microsoft.PowerShell.Cmdletization
         public SwitchParameter AsJob
         {
             get { return _asJob; }
+
             set { _asJob = value; }
         }
+
         private bool _asJob;
 
         /// <summary>
@@ -283,7 +288,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Returns default sessions to use when the user doesn't specify the -Session cmdlet parameter.
         /// </summary>
-        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter</returns>
+        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter.</returns>
         protected abstract TSession DefaultSession { get; }
 
         /// <summary>
@@ -319,6 +324,7 @@ namespace Microsoft.PowerShell.Cmdletization
             NonPipelineResults = Output | Error | Warning | Verbose | Debug | Progress,
             PipelineResults = Results,
         }
+
         private static void DiscardJobOutputs(Job job, JobOutputs jobOutputsToDiscard)
         {
             if (JobOutputs.Output == (jobOutputsToDiscard & JobOutputs.Output))
@@ -367,7 +373,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Queries for object instances in the object model.
         /// </summary>
         /// <param name="query">Query parameters</param>
-        /// <returns>A lazy evaluated collection of object instances</returns>
+        /// <returns>A lazy evaluated collection of object instances.</returns>
         public override void ProcessRecord(QueryBuilder query)
         {
             _parentJob.DisableFlowControlForPendingCmdletActionsQueue();
@@ -523,6 +529,7 @@ namespace Microsoft.PowerShell.Cmdletization
                     associatedSessions.Add(associatedSession);
                 }
             }
+
             if (associatedSessions.Count == 1)
             {
                 return associatedSessions;
@@ -636,6 +643,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 {
                     conflictingParameter = "Confirm";
                 }
+
                 if (conflictingParameter != null)
                 {
                     string errorMessage = string.Format(

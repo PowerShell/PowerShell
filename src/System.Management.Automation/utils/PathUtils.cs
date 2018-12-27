@@ -172,7 +172,7 @@ namespace System.Management.Automation
                 // NOTE: this call will throw
                 ReportFileOpenFailure(cmdlet, resolvedPath, e);
             }
-        } // void MasterStreamOpen
+        }
 
         internal static void ReportFileOpenFailure(Cmdlet cmdlet, string filePath, Exception e)
         {
@@ -275,6 +275,7 @@ namespace System.Management.Automation
                 {
                     ReportMultipleFilesNotSupported(command);
                 }
+
                 if (filePaths.Count == 0)
                 {
                     ReportWildcardingFailure(command, filePath);
@@ -286,6 +287,7 @@ namespace System.Management.Automation
             {
                 path = null;
             }
+
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(command);
@@ -300,6 +302,7 @@ namespace System.Management.Automation
                     ReportWrongProviderType(command, provider.FullName);
                 }
             }
+
             return path;
         }
 
@@ -359,6 +362,7 @@ namespace System.Management.Automation
                     PathInfo currentPath = cmdlet.CurrentProviderLocation(cmdlet.Context.ProviderNames.FileSystem);
                     rootedPath = Path.Combine(currentPath.ProviderPath, moduleNameOrPath);
                 }
+
                 if (string.IsNullOrEmpty(rootedPath))
                 {
                     string personalModuleRoot = ModuleIntrinsics.GetPersonalModulePath();

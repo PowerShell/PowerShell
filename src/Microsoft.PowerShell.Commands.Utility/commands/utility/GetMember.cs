@@ -11,19 +11,19 @@ using System.Reflection;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class with member information that this cmdlet writes to the pipeline
+    /// Class with member information that this cmdlet writes to the pipeline.
     /// </summary>
     public class MemberDefinition
     {
         /// <summary>
-        /// returns the member definition
+        /// Returns the member definition.
         /// </summary>
         public override string ToString()
         {
             return Definition;
         }
         /// <summary>
-        /// Initializes a new instance of this class
+        /// Initializes a new instance of this class.
         /// </summary>
         public MemberDefinition(string typeName, string name, PSMemberTypes memberType, string definition)
         {
@@ -34,22 +34,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// type name
+        /// Type name.
         /// </summary>
         public string TypeName { get; }
 
         /// <summary>
-        /// member name
+        /// Member name.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// member type
+        /// Member type.
         /// </summary>
         public PSMemberTypes MemberType { get; }
 
         /// <summary>
-        /// member definition
+        /// Member definition.
         /// </summary>
         public string Definition { get; }
     }
@@ -62,20 +62,20 @@ namespace Microsoft.PowerShell.Commands
     public class GetMemberCommand : PSCmdlet
     {
         /// <summary>
-        /// The object to retrieve properties from
+        /// The object to retrieve properties from.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; }
 
         /// <summary>
-        /// The member names to be retrieved
+        /// The member names to be retrieved.
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty]
         public string[] Name { set; get; } = new string[] { "*" };
 
         /// <summary>
-        /// The member types to be retrieved
+        /// The member types to be retrieved.
         /// </summary>
         [Parameter]
         [Alias("Type")]
@@ -89,24 +89,24 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _staticParameter = false;
         /// <summary>
-        /// True if we should return static members
+        /// True if we should return static members.
         /// </summary>
         [Parameter]
         public SwitchParameter Static
         {
             set { _staticParameter = value; }
+
             get { return _staticParameter; }
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
         /// <remarks>
         /// Gives the Member matcher guidance on how vigorous the Match should be.
         /// If set to true all members in a given view + membertype are displayed.
-        /// This parameter is added to hide Get/Set property accessor methods by
-        /// default. If a user wants to see these methods, -force should be set to
-        /// true.
+        /// This parameter is added to hide Get/Set property accessor methods by default.
+        /// If a user wants to see these methods, -force should be set to true.
         /// </remarks>
         [Parameter]
         public SwitchParameter Force
@@ -115,6 +115,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return (_matchOptions == MshMemberMatchOptions.IncludeHidden);
             }
+
             set
             {
                 if (value)
@@ -128,12 +129,13 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private MshMemberMatchOptions _matchOptions = MshMemberMatchOptions.None;
 
         private HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
 
         /// <summary>
-        /// This method implements the ProcessRecord method for get-member command
+        /// This method implements the ProcessRecord method for get-member command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -173,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                _typesAlreadyDisplayed.Add(typeName, "");
+                _typesAlreadyDisplayed.Add(typeName, string.Empty);
             }
 
             PSMemberTypes memberTypeToSearch = MemberType;
@@ -230,14 +232,16 @@ namespace Microsoft.PowerShell.Commands
                     if (!Force)
                     {
                         PSMethod memberAsPSMethod = member as PSMethod;
-                        if ((null != memberAsPSMethod) && (memberAsPSMethod.IsSpecial))
+                        if ((memberAsPSMethod != null) && (memberAsPSMethod.IsSpecial))
                         {
                             continue;
                         }
                     }
+
                     members[resultCount] = new MemberDefinition(typeName, member.Name, member.MemberType, member.ToString());
                     resultCount++;
                 }
+
                 Array.Sort<MemberDefinition>(members, 0, resultCount, new MemberComparer());
                 for (int index = 0; index < resultCount; index++)
                 {
@@ -256,12 +260,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return result;
                 }
+
                 return String.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
             }
         }
 
         /// <summary>
-        /// This method implements the End method for get-member command
+        /// This method implements the End method for get-member command.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -277,4 +282,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

@@ -77,7 +77,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
                 $nativeJob.HasMoreData | Should -BeTrue
                 Receive-Job $nativeJob | Should -BeExactly 2
                 Remove-Job $nativeJob
-                { Get-Job $nativeJob -ErrorAction Stop } | ShouldBeErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
+                { Get-Job $nativeJob -ErrorAction Stop } | Should -Throw -ErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
             }
             finally {
                 Remove-Job $nativeJob -Force -ErrorAction SilentlyContinue
@@ -144,7 +144,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         It 'Can Receive-Job and autoremove' {
             $result = Start-Job -Name 'ReceiveJobAutoRemove' -ScriptBlock { 1 + 1 } | Receive-Job -Wait -AutoRemoveJob
             $result | Should -Be 2
-            { Get-Job -Name 'ReceiveJobAutoRemove' -ErrorAction Stop } | ShouldBeErrorId 'JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand'
+            { Get-Job -Name 'ReceiveJobAutoRemove' -ErrorAction Stop } | Should -Throw -ErrorId 'JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand'
         }
 
         It 'Can Receive-Job and keep results' {

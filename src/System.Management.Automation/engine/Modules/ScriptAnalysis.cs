@@ -179,12 +179,14 @@ namespace System.Management.Automation
             // recorded for command/parameter completion.
 
             // function Foo-Bar { ... }
+
             var functionName = functionDefinitionAst.Name;
             DiscoveredFunctions[functionName] = functionDefinitionAst;
             ModuleIntrinsics.Tracer.WriteLine("Discovered function definition: {0}", functionName);
 
             // Check if they've defined any aliases
             // function Foo-Bar { [Alias("Alias1", "...")] param() ... }
+
             var functionBody = functionDefinitionAst.Body;
             if ((functionBody.ParamBlock != null) && (functionBody.ParamBlock.Attributes != null))
             {
@@ -213,6 +215,7 @@ namespace System.Management.Automation
                 {
                     DiscoveredExports.Add(functionName);
                 }
+
                 return AstVisitAction.Continue;
             }
 
@@ -231,19 +234,28 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("Module adds itself to the path.");
                 AddsSelfToPath = true;
             }
+
             return AstVisitAction.SkipChildren;
         }
 
         // We skip a bunch of random statements because we can't really be accurate detecting functions/classes etc. that
         // are conditionally defined.
         public override AstVisitAction VisitIfStatement(IfStatementAst ifStmtAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitForStatement(ForStatementAst forStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitWhileStatement(WhileStatementAst whileStatementAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst methodCallAst) { return AstVisitAction.SkipChildren; }
+
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return AstVisitAction.SkipChildren; }
 
         // Visit one the other variations:
@@ -480,6 +492,7 @@ namespace System.Management.Automation
                                 result[parameterInfo.name] =
                                     GetSafeValueVisitor.GetSafeValue(argumentAst, null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis);
                             }
+
                             break;
                         }
                     }
@@ -553,4 +566,4 @@ namespace System.Management.Automation
         internal string Name { get; set; }
         internal List<string> CommandsToPostFilter { get; set; }
     }
-} // System.Management.Automation
+}

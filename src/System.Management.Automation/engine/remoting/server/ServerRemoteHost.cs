@@ -157,6 +157,7 @@ namespace System.Management.Automation.Remoting
         internal virtual bool AllowPushRunspace
         {
             get { return (_serverDriverRemoteHost != null) ? _serverDriverRemoteHost.AllowPushRunspace : false; }
+
             set { if (_serverDriverRemoteHost != null) { _serverDriverRemoteHost.AllowPushRunspace = value; } }
         }
 
@@ -388,6 +389,7 @@ namespace System.Management.Automation.Remoting
                 {
                     _pushedRunspace.Close();
                 }
+
                 _pushedRunspace = null;
             }
         }
@@ -402,6 +404,7 @@ namespace System.Management.Automation.Remoting
         internal Debugger ServerDebugger
         {
             get { return _debugger; }
+
             set { _debugger = value as ServerRemoteDebugger; }
         }
 

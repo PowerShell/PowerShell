@@ -187,7 +187,7 @@
     <value>Cannot process the command because -Configuration requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
   </data>
   <data name="MissingSettingsFileArgument" xml:space="preserve">
-    <value>Cannot process the command because -SettingsFile requires a file path. Supply a path for the SettingsFile parameter and then try the command again.</value>
+    <value>Cannot process the command because -SettingsFile requires an argument that is a file path.</value>
   </data>
   <data name="InvalidSettingsFileArgument" xml:space="preserve">
     <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
@@ -200,5 +200,8 @@
   </data>
   <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
     <value>Parameter -WindowStyle is not implemented on this platform.</value>
+  </data>
+  <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
+    <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
   </data>
 </root>

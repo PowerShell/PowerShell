@@ -24,14 +24,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Returns an Object value for an operation context
         /// </para>
         /// </summary>
-        public Object Context
+        public object Context
         {
             get
             {
                 return context;
             }
         }
-        internal Object context;
+
+        internal object context;
     }
 
     /// <summary>
@@ -51,6 +52,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return exception;
             }
         }
+
         private Exception exception;
 
         /// <summary>
@@ -263,6 +265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return enableRaisingEvents;
             }
+
             set
             {
                 DebugHelper.WriteLogEx();
@@ -273,6 +276,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
         }
+
         private bool enableRaisingEvents;
 
         /// <summary>
@@ -306,6 +310,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             this.queryExpression,
                             this.operationTimeout);
                     }
+
                     status = Status.Started;
                 }
             }
@@ -329,6 +334,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         DebugHelper.WriteLog("Dispose CimRegisterCimIndication object", 4);
                         this.cimRegisterCimIndication.Dispose();
                     }
+
                     status = Status.Stopped;
                 }
             }

@@ -1,21 +1,24 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Tracing;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Management.Automation.Remoting;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Microsoft.PowerShell.Commands;
-using System.Security.Principal;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
+using System.Management.Automation.Tracing;
+#if !UNIX
+using System.Security.Principal;
+#endif
+using System.Threading;
+using Microsoft.PowerShell.Commands;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -88,6 +91,7 @@ namespace System.Management.Automation
             {
                 return _bypassRunspaceStateCheck;
             }
+
             set
             {
                 _bypassRunspaceStateCheck = value;
@@ -306,6 +310,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
@@ -314,8 +319,10 @@ namespace System.Management.Automation
         public override RunspaceAvailability RunspaceAvailability
         {
             get { return _runspaceAvailability; }
+
             protected set { _runspaceAvailability = value; }
         }
+
         private RunspaceAvailability _runspaceAvailability = RunspaceAvailability.None;
 
         /// <summary>
@@ -465,6 +472,7 @@ namespace System.Management.Automation
         internal string PSSessionName
         {
             get { return RunspacePool.RemoteRunspacePoolInternal.Name; }
+
             set { RunspacePool.RemoteRunspacePoolInternal.Name = value; }
         }
 
@@ -487,6 +495,15 @@ namespace System.Management.Automation
         internal bool CanConnect
         {
             get { return RunspacePool.RemoteRunspacePoolInternal.AvailableForConnection; }
+        }
+
+        /// <summary>
+        /// This is used to indicate a special loopback remote session used for JEA restrictions.
+        /// </summary>
+        internal bool IsConfiguredLoopBack
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -755,7 +772,7 @@ namespace System.Management.Automation
         /// <param name="commandId">Optional command Id to connect to</param>
         /// <param name="host">Optional PSHost</param>
         /// <param name="typeTable">Optional TypeTable</param>
-        /// <returns>Disconnect remote Runspace object</returns>
+        /// <returns>Disconnect remote Runspace object.</returns>
         internal static Runspace GetRemoteRunspace(RunspaceConnectionInfo connectionInfo, Guid sessionId, Guid? commandId, PSHost host, TypeTable typeTable)
         {
             RunspacePool runspacePool = RemoteRunspacePoolInternal.GetRemoteRunspacePool(
@@ -933,7 +950,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public override RunspaceCapability GetCapabilities()
         {
             RunspaceCapability returnCaps = RunspaceCapability.Default;
@@ -1006,7 +1023,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
         {
             return CoreCreatePipeline(null, false, false);
@@ -1097,12 +1114,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">Thrown if
         /// <paramref name="pipeline"/> is null.
         /// </exception>
@@ -1129,6 +1144,7 @@ namespace System.Management.Automation
                     {
                         e.Source = this.ConnectionInfo.ComputerName;
                     }
+
                     throw e;
                 }
 
@@ -1144,7 +1160,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>
@@ -1238,8 +1253,10 @@ namespace System.Management.Automation
                                 _applicationPrivateData = GetApplicationPrivateData();
                                 SetDebugInfo(_applicationPrivateData);
                             }
+
                             break;
                     }
+
                     break;
 
                 case RunspaceState.Disconnected:
@@ -1380,7 +1397,7 @@ namespace System.Management.Automation
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
-        /// <returns>Previous runspace state</returns>
+        /// <returns>Previous runspace state.</returns>
         /// <remarks>
         /// Sets the internal runspace state information member variable. It also
         /// adds RunspaceStateInfo to a queue.
@@ -1574,7 +1591,7 @@ namespace System.Management.Automation
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (null != wsmanConnectionInfo)
+            if (wsmanConnectionInfo != null)
             {
                 // change the runspace's uri to the new URI.
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
@@ -1649,8 +1666,8 @@ namespace System.Management.Automation
         /// <param name="invokeCommand">current invoke-command
         /// instance</param>
         /// <param name="localPipelineId">local pipeline id</param>
-        /// <returns>true, if another invoke-command is running
-        /// before, false otherwise</returns>
+        /// <returns>True, if another invoke-command is running
+        /// before, false otherwise.</returns>
         internal bool IsAnotherInvokeCommandExecuting(InvokeCommandCommand invokeCommand,
             long localPipelineId)
         {
@@ -1800,9 +1817,11 @@ namespace System.Management.Automation
         private UnhandledBreakpointProcessingMode _unhandledBreakpointMode;
         private bool _detachCommand;
 
-        // Impersonation flow
+#if !UNIX
+        // Windows impersonation flow
         private WindowsIdentity _identityToPersonate;
         private bool _identityPersonationChecked;
+#endif
 
         /// <summary>
         /// RemoteDebuggerStopEvent
@@ -1837,6 +1856,7 @@ namespace System.Management.Automation
             {
                 throw new PSArgumentNullException("runspace");
             }
+
             _runspace = runspace;
 
             _unhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
@@ -1855,7 +1875,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">Debugger PSCommand</param>
         /// <param name="output">Output</param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <returns>DebuggerCommandResults.</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
             CheckForValidateState();
@@ -2014,7 +2034,7 @@ namespace System.Management.Automation
         /// <summary>
         /// GetDebuggerStopped
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             CheckForValidateState();
@@ -2030,6 +2050,7 @@ namespace System.Management.Automation
                     foreach (var item in output)
                     {
                         if (item == null) { continue; }
+
                         rtnArgs = item.BaseObject as DebuggerStopEventArgs;
                         if (rtnArgs != null) { break; }
                     }
@@ -2155,6 +2176,7 @@ namespace System.Management.Automation
             {
                 return _unhandledBreakpointMode;
             }
+
             set
             {
                 CheckForValidateState();
@@ -2191,11 +2213,13 @@ namespace System.Management.Automation
             _runspace.RemoteDebuggerStop -= HandleForwardedDebuggerStopEvent;
             _runspace.RemoteDebuggerBreakpointUpdated -= HandleForwardedDebuggerBreakpointUpdatedEvent;
 
+#if !UNIX
             if (_identityToPersonate != null)
             {
                 _identityToPersonate.Dispose();
                 _identityToPersonate = null;
             }
+#endif
         }
 
         #endregion
@@ -2372,16 +2396,17 @@ namespace System.Management.Automation
 
             if (!invokedOnBlockedThread)
             {
-#if CORECLR
-                Threading.ThreadPool.QueueUserWorkItem(
-                    ProcessDebuggerStopEventProc,
-                    args);
-#else
                 // Otherwise run on worker thread.
+#if !UNIX
                 Utils.QueueWorkItemWithImpersonation(
                     _identityToPersonate,
                     ProcessDebuggerStopEventProc,
                     args);
+#else
+                Threading.ThreadPool.QueueUserWorkItem(
+                    ProcessDebuggerStopEventProc,
+                    args);
+
 #endif
             }
         }
@@ -2497,19 +2522,15 @@ namespace System.Management.Automation
                 throw new InvalidRunspaceStateException();
             }
 
+#if !UNIX
             if (!_identityPersonationChecked)
             {
                 _identityPersonationChecked = true;
 
                 // Save identity to impersonate.
-                WindowsIdentity currentIdentity = null;
-                try
-                {
-                    currentIdentity = WindowsIdentity.GetCurrent();
-                }
-                catch (System.Security.SecurityException) { }
-                _identityToPersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ? currentIdentity : null;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToPersonate);
             }
+#endif
         }
 
         private void SetRemoteDebug(bool remoteDebug, RunspaceAvailability? availability)
@@ -2555,6 +2576,7 @@ namespace System.Management.Automation
             {
                 // Debugger is always inactive if RemoteScript is not selected.
                 if (_isActive) { _isActive = false; }
+
                 return;
             }
 
@@ -2568,12 +2590,12 @@ namespace System.Management.Automation
             }
         }
 
-        #endregion
+#endregion
     }
 
-    #endregion
+#endregion
 
-    #region RemoteSessionStateProxy
+#region RemoteSessionStateProxy
 
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
@@ -2591,23 +2613,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a variable in session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the item to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value of the item being set.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// name is null
         /// </exception>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2644,6 +2661,7 @@ namespace System.Management.Automation
                 }
                 else throw;
             }
+
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
@@ -2655,23 +2673,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// name of variable to look up
         /// </param>
-        ///
         /// <returns>
         /// The value of the specified variable.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// name is null
         /// </exception>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2708,6 +2721,7 @@ namespace System.Management.Automation
                 }
                 else throw;
             }
+
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
@@ -2731,11 +2745,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the list of applications out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2778,11 +2790,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the list of scripts out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2825,11 +2835,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access drives out of session state
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2844,11 +2852,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get/Set the language mode out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2884,6 +2890,7 @@ namespace System.Management.Automation
 
                 return (PSLanguageMode)LanguagePrimitives.ConvertTo(result[0], typeof(PSLanguageMode), CultureInfo.InvariantCulture);
             }
+
             set
             {
                 throw new PSNotSupportedException();
@@ -2893,11 +2900,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the module info out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2912,11 +2917,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access paths and locations out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2931,11 +2934,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access a provider out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2950,11 +2951,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access variables out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2969,11 +2968,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to build script blocks and execute script out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2988,11 +2985,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the instance of the provider interface APIs out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -3005,5 +3000,5 @@ namespace System.Management.Automation
         }
     }
 
-    #endregion
+#endregion
 }

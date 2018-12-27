@@ -2,17 +2,20 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Linq;
-using System.Management.Automation;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Remoting.Client;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -49,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         internal void WriteStreamObject(Action<Cmdlet> action)
         {
             action(this);
-        }// WriteStreamObject
+        }
 
         /// <summary>
         /// Resolve all the machine names provided. Basically, if a machine
@@ -78,14 +81,14 @@ namespace Microsoft.PowerShell.Commands
                     resolvedComputerNames[i] = ResolveComputerName(computerNames[i]);
                 }
             }
-        }// ResolveComputerNames
+        }
 
         /// <summary>
         /// Resolves a computer name. If its null or empty
         /// its assumed to be localhost
         /// </summary>
         /// <param name="computerName">computer name to resolve</param>
-        /// <returns>resolved computer name</returns>
+        /// <returns>Resolved computer name.</returns>
         protected string ResolveComputerName(string computerName)
         {
             Diagnostics.Assert(computerName != null, "Null ComputerName");
@@ -109,23 +112,22 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="resourceString">resource String which holds the message
         /// </param>
-        /// <returns>Error message loaded from appropriate resource cache</returns>
-        internal String GetMessage(string resourceString)
+        /// <returns>Error message loaded from appropriate resource cache.</returns>
+        internal string GetMessage(string resourceString)
         {
-            String message = GetMessage(resourceString, null);
+            string message = GetMessage(resourceString, null);
 
             return message;
-        }// GetMessage
+        }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="resourceString"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        internal String GetMessage(string resourceString, params object[] args)
+        internal string GetMessage(string resourceString, params object[] args)
         {
-            String message;
+            string message;
 
             if (args != null)
             {
@@ -135,6 +137,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 message = resourceString;
             }
+
             return message;
         }
 
@@ -219,10 +222,10 @@ namespace Microsoft.PowerShell.Commands
         ///     2. DEFAULTREMOTESHELLNAME variable set
         ///     3. PowerShell
         /// </summary>
-        /// <returns>The shell to launch in the remote machine</returns>
-        protected String ResolveShell(String shell)
+        /// <returns>The shell to launch in the remote machine.</returns>
+        protected string ResolveShell(string shell)
         {
-            String resolvedShell;
+            string resolvedShell;
 
             if (!String.IsNullOrEmpty(shell))
             {
@@ -244,10 +247,10 @@ namespace Microsoft.PowerShell.Commands
         ///     3. WSMan
         /// </summary>
         /// <param name="appName">application name to resolve</param>
-        /// <returns>resolved appname</returns>
-        protected String ResolveAppName(String appName)
+        /// <returns>Resolved appname.</returns>
+        protected string ResolveAppName(string appName)
         {
-            String resolvedAppName;
+            string resolvedAppName;
 
             if (!String.IsNullOrEmpty(appName))
             {
@@ -275,6 +278,7 @@ namespace Microsoft.PowerShell.Commands
         public string UserName;
         public string KeyFilePath;
         public int Port;
+        public string Subsystem;
     }
 
     /// <summary>
@@ -459,13 +463,12 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Alias("Cn")]
-        public virtual String[] ComputerName { get; set; }
+        public virtual string[] ComputerName { get; set; }
 
         /// <summary>
         /// Computer names after they have been resolved
@@ -474,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>If Null or empty string is specified, then localhost is assumed.
         /// The ResolveComputerNames will include this.
         /// </remarks>
-        protected String[] ResolvedComputerNames { get; set; }
+        protected string[] ResolvedComputerNames { get; set; }
 
         /// <summary>
         /// Guid of target virtual machine.
@@ -520,6 +523,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _pscredential;
             }
+
             set
             {
                 _pscredential = value;
@@ -562,8 +566,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public virtual Int32 Port { get; set; }
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        public virtual int Port { get; set; }
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -584,19 +588,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
-        public virtual String ApplicationName
+        public virtual string ApplicationName
         {
             get
             {
                 return _appName;
             }
+
             set
             {
                 _appName = ResolveAppName(value);
             }
         }
 
-        private String _appName;
+        private string _appName;
 
         /// <summary>
         /// Allows the user of the cmdlet to specify a throttling value
@@ -609,7 +614,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        public virtual Int32 ThrottleLimit { set; get; } = 0;
+        public virtual int ThrottleLimit { set; get; } = 0;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -629,8 +634,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter AllowRedirection
         {
             get { return _allowRedirection; }
+
             set { _allowRedirection = value; }
         }
+
         private bool _allowRedirection = false;
 
         /// <summary>
@@ -652,11 +659,13 @@ namespace Microsoft.PowerShell.Commands
                         _sessionOption = new PSSessionOption();
                     }
                 }
+
                 return _sessionOption;
             }
 
             set { _sessionOption = value; }
         }
+
         private PSSessionOption _sessionOption;
         internal const string DEFAULT_SESSION_OPTION = "PSSessionOption";
 
@@ -672,6 +681,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _authMechanism;
             }
+
             set
             {
                 _authMechanism = value;
@@ -679,6 +689,7 @@ namespace Microsoft.PowerShell.Commands
                 ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private AuthenticationMechanism _authMechanism = AuthenticationMechanism.Default;
 
         /// <summary>
@@ -690,12 +701,14 @@ namespace Microsoft.PowerShell.Commands
         public virtual string CertificateThumbprint
         {
             get { return _thumbPrint; }
+
             set
             {
                 _thumbPrint = value;
                 ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private string _thumbPrint = null;
 
         #region SSHHostParameters
@@ -763,6 +776,13 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// This parameter specifies the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        public string Subsystem { get; set; }
+
         #endregion
 
         #endregion Properties
@@ -784,7 +804,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if ((credential != null) && (thumbprint != null))
             {
-                String message = PSRemotingErrorInvariants.FormatResourceString(
+                string message = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                         "CertificateThumbPrint", "Credential");
 
@@ -793,7 +813,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((authentication != AuthenticationMechanism.Default) && (thumbprint != null))
             {
-                String message = PSRemotingErrorInvariants.FormatResourceString(
+                string message = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                         "CertificateThumbPrint", authentication.ToString());
 
@@ -822,6 +842,7 @@ namespace Microsoft.PowerShell.Commands
         private const string KeyFilePathParameter = "KeyFilePath";
         private const string IdentityFilePathAlias = "IdentityFilePath";
         private const string PortParameter = "Port";
+        private const string SubsystemParameter = "Subsystem";
 
         #endregion
 
@@ -842,11 +863,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 Uri uri = new System.Uri("ssh://" + hostname);
                 host = ResolveComputerName(uri.Host);
-                ValidateComputerName(new string[]{host});
+                ValidateComputerName(new string[] { host });
                 if (uri.UserInfo != String.Empty)
                 {
                     userName = uri.UserInfo;
                 }
+
                 if (uri.Port != -1)
                 {
                     port = uri.Port;
@@ -864,7 +886,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Parse the Connection parameter HashTable array.
         /// </summary>
-        /// <returns>Array of SSHConnection objects</returns>
+        /// <returns>Array of SSHConnection objects.</returns>
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
             List<SSHConnection> connections = new List<SSHConnection>();
@@ -898,6 +920,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             connectionInfo.UserName = userName;
                         }
+
                         if (port != -1)
                         {
                             connectionInfo.Port = port;
@@ -914,6 +937,10 @@ namespace Microsoft.PowerShell.Commands
                     else if (paramName.Equals(PortParameter, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.Port = GetSSHConnectionIntParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(SubsystemParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.Subsystem = GetSSHConnectionStringParameter(item[paramName]);
                     }
                     else
                     {
@@ -967,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
                         PSRemotingErrorId.RemoteRunspaceInfoLimitExceeded.ToString(),
                             ErrorCategory.InvalidArgument, Session));
             }
-        } // ValidateRemoteRunspacesSpecified
+        }
 
         /// <summary>
         /// Updates connection info with the data read from cmdlet's parameters and
@@ -1009,9 +1036,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="computerNames">collection of computer
         /// names to validate</param>
-        protected void ValidateComputerName(String[] computerNames)
+        protected void ValidateComputerName(string[] computerNames)
         {
-            foreach (String computerName in computerNames)
+            foreach (string computerName in computerNames)
             {
                 UriHostNameType nametype = Uri.CheckHostName(computerName);
                 if (!(nametype == UriHostNameType.Dns || nametype == UriHostNameType.IPv4 ||
@@ -1029,7 +1056,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates parameter value and returns as string
         /// </summary>
         /// <param name="param">Parameter value to be validated</param>
-        /// <returns>Parameter value as string</returns>
+        /// <returns>Parameter value as string.</returns>
         private static string GetSSHConnectionStringParameter(object param)
         {
             if (param is string paramValue && !string.IsNullOrEmpty(paramValue))
@@ -1044,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates parameter value and returns as integer
         /// </summary>
         /// <param name="param">Parameter value to be validated</param>
-        /// <returns>Parameter value as integer</returns>
+        /// <returns>Parameter value as integer.</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
             if (param is int paramValue)
@@ -1151,11 +1178,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _scriptBlock;
             }
+
             set
             {
                 _scriptBlock = value;
             }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -1179,11 +1208,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _filePath;
             }
+
             set
             {
                 _filePath = value;
             }
         }
+
         private string _filePath;
 
         /// <summary>
@@ -1197,24 +1228,25 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         [Alias("Args")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public virtual Object[] ArgumentList
+        public virtual object[] ArgumentList
         {
             get
             {
                 return _args;
             }
+
             set
             {
                 _args = value;
             }
         }
-        private Object[] _args;
+
+        private object[] _args;
 
         /// <summary>
         /// Indicates that if a job/command is invoked remotely the connection should be severed
         /// right have invocation of job/command.
         /// </summary>
-        ///
         protected bool InvokeAndDisconnect { get; set; } = false;
 
         /// <summary>
@@ -1303,7 +1335,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        public virtual String ConfigurationName { get; set; }
+        public virtual string ConfigurationName { get; set; }
 
         #endregion Parameters
 
@@ -1339,6 +1371,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
 
                     UpdateConnectionInfo(connectionInfo);
@@ -1373,7 +1406,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Operations.Add(operation);
             }
-        }// CreateHelpersForSpecifiedComputerNames
+        }
 
         /// <summary>
         /// Creates helper objects for SSH remoting computer names
@@ -1385,7 +1418,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ParseSshHostName(computerName, out string host, out string userName, out int port);
 
-                var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port);
+                var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port, this.Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -1407,7 +1440,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.UserName,
                     sshConnection.ComputerName,
                     sshConnection.KeyFilePath,
-                    sshConnection.Port);
+                    sshConnection.Port,
+                    sshConnection.Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -1448,7 +1482,7 @@ namespace Microsoft.PowerShell.Commands
                 IThrottleOperation operation = new ExecutionCmdletHelperRunspace(pipelines[i]);
                 Operations.Add(operation);
             }
-        } // CreateHelpersForSpecifiedRunspaces
+        }
 
         /// <summary>
         /// Creates helper objects with the command for the specified
@@ -1514,7 +1548,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Operations.Add(operation);
             }
-        } // CreateHelpersForSpecifiedUris
+        }
 
         /// <summary>
         /// Creates helper objects with the command for the specified
@@ -1707,7 +1741,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Operations.Add(operation);
             }
-        }// CreateHelpersForSpecifiedVMSession
+        }
 
         /// <summary>
         /// Creates helper objects with the command for the specified
@@ -1786,13 +1820,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ResolvedComputerNames = resolvedNameList.ToArray();
-        }// CreateHelpersForSpecifiedContainerSession
+        }
 
         /// <summary>
         /// Creates a pipeline from the powershell
         /// </summary>
         /// <param name="remoteRunspace">runspace on which to create the pipeline</param>
-        /// <returns>a pipeline</returns>
+        /// <returns>A pipeline.</returns>
         internal Pipeline CreatePipeline(RemoteRunspace remoteRunspace)
         {
             // The fix to WinBlue#475223 changed how UsingExpression is handled on the client/server sides, if the remote end is PSv5
@@ -1893,7 +1927,7 @@ namespace Microsoft.PowerShell.Commands
                 ExecutionCmdletHelper helper = (ExecutionCmdletHelper)operation;
                 helper.Pipeline.Input.Close();
             }
-        } // CloseAllInputStreams
+        }
 
         /// <summary>
         /// Writes an error record specifying that creation of remote runspace
@@ -1912,7 +1946,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorCategory.InvalidArgument, uri);
 
             WriteError(errorRecord);
-        } // WriteErrorCreateRemoteRunspaceFailed
+        }
 
         /// <summary>
         /// FilePathComputername parameter set
@@ -2014,23 +2048,25 @@ namespace Microsoft.PowerShell.Commands
                 case PSExecutionCmdlet.LiteralFilePathComputerNameParameterSet:
                 case PSExecutionCmdlet.ComputerNameParameterSet:
                     {
-                        String[] resolvedComputerNames = null;
+                        string[] resolvedComputerNames = null;
                         ResolveComputerNames(ComputerName, out resolvedComputerNames);
                         ResolvedComputerNames = resolvedComputerNames;
 
                         CreateHelpersForSpecifiedComputerNames();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.SSHHostParameterSet:
                 case PSExecutionCmdlet.FilePathSSHHostParameterSet:
                     {
-                        String[] resolvedComputerNames = null;
+                        string[] resolvedComputerNames = null;
                         ResolveComputerNames(HostName, out resolvedComputerNames);
                         ResolvedComputerNames = resolvedComputerNames;
 
                         CreateHelpersForSpecifiedSSHComputerNames();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.SSHHostHashParameterSet:
@@ -2038,6 +2074,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedSSHHashComputerNames();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.FilePathSessionParameterSet:
@@ -2047,6 +2084,7 @@ namespace Microsoft.PowerShell.Commands
 
                         CreateHelpersForSpecifiedRunspaces();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.FilePathUriParameterSet:
@@ -2054,6 +2092,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedUris();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.VMIdParameterSet:
@@ -2063,6 +2102,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedVMSession();
                     }
+
                     break;
 
                 case PSExecutionCmdlet.ContainerIdParameterSet:
@@ -2070,6 +2110,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CreateHelpersForSpecifiedContainerSession();
                     }
+
                     break;
             }
         }
@@ -2112,6 +2153,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
+
                 if (_powershellV2 != null) { return _powershellV2; }
             }
 
@@ -2360,13 +2402,14 @@ namespace Microsoft.PowerShell.Commands
         /// Get all Using expressions that we care about
         /// </summary>
         /// <param name="localScriptBlock"></param>
-        /// <returns>a list of UsingExpressionAsts ordered by the StartOffset</returns>
+        /// <returns>A list of UsingExpressionAsts ordered by the StartOffset.</returns>
         private List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
         {
             if (localScriptBlock == null)
             {
                 throw new ArgumentNullException("localScriptBlock", "Caller needs to make sure the parameter value is not null");
             }
+
             var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(localScriptBlock.Ast);
             return allUsingExprs.Select(usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();
         }
@@ -2415,6 +2458,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _remoteRunspaceIds;
             }
+
             set
             {
                 _remoteRunspaceIds = value;
@@ -2440,19 +2484,20 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [ValidateNotNullOrEmpty()]
-        public virtual String[] Name
+        public virtual string[] Name
         {
             get
             {
                 return _names;
             }
+
             set
             {
                 _names = value;
             }
         }
 
-        private String[] _names;
+        private string[] _names;
 
         /// <summary>
         /// Name of the computer for which the runspace needs to be
@@ -2464,19 +2509,20 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRunspaceCmdlet.ComputerNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public virtual String[] ComputerName
+        public virtual string[] ComputerName
         {
             get
             {
                 return _computerNames;
             }
+
             set
             {
                 _computerNames = value;
             }
         }
 
-        private String[] _computerNames;
+        private string[] _computerNames;
 
         /// <summary>
         /// ID of target container.
@@ -2532,7 +2578,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
             bool writeErrorOnNoMatch)
@@ -2549,12 +2595,12 @@ namespace Microsoft.PowerShell.Commands
         /// the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
             bool writeErrorOnNoMatch,
             SessionFilterState filterState,
-            String configurationName)
+            string configurationName)
         {
             switch (ParameterSetName)
             {
@@ -2651,7 +2697,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByComputerName(bool writeobject,
             bool writeErrorOnNoMatch)
         {
@@ -2713,7 +2759,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspacesByName(bool writeobject,
@@ -2772,7 +2818,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspacesByRunspaceId(bool writeobject,
@@ -2830,7 +2876,7 @@ namespace Microsoft.PowerShell.Commands
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesBySessionId(bool writeobject,
             bool writeErrorOnNoMatch)
         {
@@ -2885,16 +2931,16 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName,
+            string configurationName,
             bool isContainer)
         {
-            String[] inputNames;
+            string[] inputNames;
             TargetMachineType computerType;
             bool supportWildChar;
-            String[] sessionNames = { "*" };
+            string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
@@ -2953,13 +2999,13 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName,
+            string configurationName,
             bool isContainer)
         {
-            String[] inputNames;
+            string[] inputNames;
             TargetMachineType computerType;
             bool supportWildChar;
             WildcardPattern configurationNamePattern =
@@ -3010,12 +3056,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName)
+            string configurationName)
         {
-            String[] sessionNames = { "*" };
+            string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
@@ -3055,10 +3101,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <returns>list of matching runspaces</returns>
+        /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
-            String configurationName)
+            string configurationName)
         {
             WildcardPattern configurationNamePattern =
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
@@ -3119,7 +3165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteInvalidArgumentError(PSRemotingErrorId errorId, string resourceString, object errorArgument)
         {
-            String message = GetMessage(resourceString, errorArgument);
+            string message = GetMessage(resourceString, errorArgument);
 
             WriteError(new ErrorRecord(new ArgumentException(message), errorId.ToString(),
                 ErrorCategory.InvalidArgument, errorArgument));
@@ -3165,6 +3211,7 @@ namespace Microsoft.PowerShell.Commands
                 return pipeline;
             }
         }
+
         protected Pipeline pipeline;
 
         /// <summary>
@@ -3178,6 +3225,7 @@ namespace Microsoft.PowerShell.Commands
                 return internalException;
             }
         }
+
         protected Exception internalException;
 
         /// <summary>
@@ -3231,7 +3279,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-    } // ExecutionCmdletHelper
+    }
 
     /// <summary>
     /// Contains a pipeline and calls InvokeAsync on the pipeline
@@ -3275,6 +3323,7 @@ namespace Microsoft.PowerShell.Commands
                     rPipeline.SetIsNested(true);
                     rPipeline.SetIsSteppable(true);
                 }
+
                 pipeline.InvokeAsync();
             }
             catch (InvalidRunspaceStateException e)
@@ -3292,7 +3341,7 @@ namespace Microsoft.PowerShell.Commands
                 internalException = e;
                 RaiseOperationCompleteEvent();
             }
-        } // StartOperation
+        }
 
         /// <summary>
         /// Closes the pipeline asynchronously
@@ -3315,7 +3364,7 @@ namespace Microsoft.PowerShell.Commands
                 // else ThrottleManager will have
                 RaiseOperationCompleteEvent();
             }
-        } // StopOperation
+        }
 
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
@@ -3341,7 +3390,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             RaiseOperationCompleteEvent(stateEventArgs);
-        } // HandlePipelineStateChanged
+        }
 
         /// <summary>
         /// Raise an OperationComplete Event. The base event will be
@@ -3350,7 +3399,7 @@ namespace Microsoft.PowerShell.Commands
         private void RaiseOperationCompleteEvent()
         {
             RaiseOperationCompleteEvent(null);
-        } // RaiseOperationCompleteEvent
+        }
 
         /// <summary>
         /// Raise an operation complete event.
@@ -3379,8 +3428,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
-        } // RaiseOperationCompleteEvent
-    } // ExecutionCmdletHelperRunspace
+        }
+    }
 
     /// <summary>
     /// This helper class contains a runspace and
@@ -3434,7 +3483,7 @@ namespace Microsoft.PowerShell.Commands
             this.pipeline = pipeline;
             pipeline.StateChanged +=
                 new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
-        } // IREHelperComputerName
+        }
 
         /// <summary>
         /// Call OpenAsync() on the RemoteRunspace
@@ -3450,7 +3499,7 @@ namespace Microsoft.PowerShell.Commands
                 internalException = e;
                 RaiseOperationCompleteEvent();
             }
-        } // StartOperation
+        }
 
         /// <summary>
         /// StopAsync on the pipeline
@@ -3480,7 +3529,7 @@ namespace Microsoft.PowerShell.Commands
                 // this StopOperation to complete
                 RaiseOperationCompleteEvent();
             }
-        } // StopOperation
+        }
 
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
@@ -3528,12 +3577,14 @@ namespace Microsoft.PowerShell.Commands
                             RemoteRunspace.CloseAsync();
                         }
                     }
+
                     break;
 
                 case RunspaceState.Broken:
                     {
                         RaiseOperationCompleteEvent(stateEventArgs);
                     }
+
                     break;
                 case RunspaceState.Closed:
                     {
@@ -3548,9 +3599,10 @@ namespace Microsoft.PowerShell.Commands
                             RaiseOperationCompleteEvent();
                         }
                     }
+
                     break;
-            } // switch (state...
-        } // HandleRunspaceStateChanged
+            }
+        }
 
         /// <summary>
         /// Handles the state changed event for the pipeline.
@@ -3576,9 +3628,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         RemoteRunspace.CloseAsync();
                     }
+
                     break;
-            } // switch(state...
-        } // HandlePipelineStateChanged
+            }
+        }
 
         /// <summary>
         /// Raise an OperationComplete Event. The base event will be
@@ -3587,7 +3640,7 @@ namespace Microsoft.PowerShell.Commands
         private void RaiseOperationCompleteEvent()
         {
             RaiseOperationCompleteEvent(null);
-        } // RaiseOperationCompleteEvent
+        }
 
         /// <summary>
         /// Raise an operation complete event.
@@ -3617,8 +3670,8 @@ namespace Microsoft.PowerShell.Commands
                     OperationState.StopComplete;
             operationStateEventArgs.BaseEvent = baseEventArgs;
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
-        } // RaiseOperationCompleteEvent
-    } // ExecutionCmdletHelperComputerName
+        }
+    }
 
     #region Path Resolver
 
@@ -3654,27 +3707,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves the specified path to PathInfo objects
         /// </summary>
-        ///
         /// <param name="pathToResolve">
         /// The path to be resolved. Each path may contain glob characters.
         /// </param>
-        ///
         /// <param name="isLiteralPath">
         /// True if wildcard expansion should be suppressed for pathToResolve.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, resolves the path even if it doesn't exist.
         /// </param>
-        ///
         /// <param name="cmdlet">
         /// Calling cmdlet
         /// </param>
-        ///
         /// <returns>
         /// A string representing the resolved path.
         /// </returns>
-        ///
         private static PathInfo ResolvePath(
             string pathToResolve,
             bool isLiteralPath,
@@ -3765,10 +3812,680 @@ namespace Microsoft.PowerShell.Commands
                     results));
                 return null;
             }
-        } // ResolvePath
+        }
+    }
+
+    #endregion
+
+    #region QueryRunspaces
+
+    internal class QueryRunspaces
+    {
+        #region Constructor
+
+        internal QueryRunspaces()
+        {
+            _stopProcessing = false;
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Queries all remote computers specified in collection of WSManConnectionInfo objects
+        /// and returns disconnected PSSession objects ready for connection to server.
+        /// Returned sessions can be matched to Guids or Names.
+        /// </summary>
+        /// <param name="connectionInfos">Collection of WSManConnectionInfo objects.</param>
+        /// <param name="host">Host for PSSession objects.</param>
+        /// <param name="stream">Out stream object.</param>
+        /// <param name="runspaceRepository">Runspace repository.</param>
+        /// <param name="throttleLimit">Throttle limit.</param>
+        /// <param name="filterState">Runspace state filter value.</param>
+        /// <param name="matchIds">Array of session Guids to match to.</param>
+        /// <param name="matchNames">Array of session Names to match to.</param>
+        /// <param name="configurationName">Configuration name to match to.</param>
+        /// <returns>Collection of disconnected PSSession objects.</returns>
+        internal Collection<PSSession> GetDisconnectedSessions(Collection<WSManConnectionInfo> connectionInfos, PSHost host,
+                                                               ObjectStream stream, RunspaceRepository runspaceRepository,
+                                                               int throttleLimit, SessionFilterState filterState,
+                                                               Guid[] matchIds, string[] matchNames, string configurationName)
+        {
+            Collection<PSSession> filteredPSSessions = new Collection<PSSession>();
+
+            // Create a query operation for each connection information object.
+            foreach (WSManConnectionInfo connectionInfo in connectionInfos)
+            {
+                Runspace[] runspaces = null;
+
+                try
+                {
+                    runspaces = Runspace.GetRunspaces(connectionInfo, host, BuiltInTypesTable);
+                }
+                catch (System.Management.Automation.RuntimeException e)
+                {
+                    if (e.InnerException is InvalidOperationException)
+                    {
+                        // The Get-WSManInstance cmdlet used to query remote computers for runspaces will throw
+                        // an Invalid Operation (inner) exception if the connectInfo object is invalid, including
+                        // invalid computer names.
+                        // We don't want to propagate the exception so just write error here.
+                        if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                        {
+                            int errorCode;
+                            string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
+                            string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "RemotePSSessionQueryFailed");
+                            Exception reason = new RuntimeException(msg, e.InnerException);
+                            ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
+                            stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
+                        }
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                if (_stopProcessing)
+                {
+                    break;
+                }
+
+                // Add all runspaces meeting filter criteria to collection.
+                if (runspaces != null)
+                {
+                    // Convert configuration name into shell Uri for comparison.
+                    string shellUri = null;
+                    if (!string.IsNullOrEmpty(configurationName))
+                    {
+                        shellUri = (configurationName.IndexOf(
+                                    System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
+                                    configurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + configurationName;
+                    }
+
+                    foreach (Runspace runspace in runspaces)
+                    {
+                        // Filter returned runspaces by ConfigurationName if provided.
+                        if (shellUri != null)
+                        {
+                            // Compare with returned shell Uri in connection info.
+                            WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
+                            if (wsmanConnectionInfo != null &&
+                                !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }
+                        }
+
+                        // Check the repository for an existing viable PSSession for
+                        // this runspace (based on instanceId).  Use the existing
+                        // local runspace instead of the one returned from the server
+                        // query.
+                        PSSession existingPSSession = null;
+                        if (runspaceRepository != null)
+                        {
+                            existingPSSession = runspaceRepository.GetItem(runspace.InstanceId);
+                        }
+
+                        if (existingPSSession != null &&
+                            UseExistingRunspace(existingPSSession.Runspace, runspace))
+                        {
+                            if (TestRunspaceState(existingPSSession.Runspace, filterState))
+                            {
+                                filteredPSSessions.Add(existingPSSession);
+                            }
+                        }
+                        else if (TestRunspaceState(runspace, filterState))
+                        {
+                            filteredPSSessions.Add(new PSSession(runspace as RemoteRunspace));
+                        }
+                    }
+                }
+            }
+
+            // Return only PSSessions that match provided Ids or Names.
+            if ((matchIds != null) && (filteredPSSessions.Count > 0))
+            {
+                Collection<PSSession> matchIdsSessions = new Collection<PSSession>();
+                foreach (Guid id in matchIds)
+                {
+                    bool matchFound = false;
+                    foreach (PSSession psSession in filteredPSSessions)
+                    {
+                        if (_stopProcessing)
+                        {
+                            break;
+                        }
+
+                        if (psSession.Runspace.InstanceId.Equals(id))
+                        {
+                            matchFound = true;
+                            matchIdsSessions.Add(psSession);
+                            break;
+                        }
+                    }
+
+                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                    {
+                        string msg = StringUtil.Format(RemotingErrorIdStrings.SessionIdMatchFailed, id);
+                        Exception reason = new RuntimeException(msg);
+                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionIdMatchFail", ErrorCategory.InvalidOperation, id);
+                        stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
+                    }
+                }
+
+                // Return all found sessions.
+                return matchIdsSessions;
+            }
+            else if ((matchNames != null) && (filteredPSSessions.Count > 0))
+            {
+                Collection<PSSession> matchNamesSessions = new Collection<PSSession>();
+                foreach (string name in matchNames)
+                {
+                    WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
+                    bool matchFound = false;
+                    foreach (PSSession psSession in filteredPSSessions)
+                    {
+                        if (_stopProcessing)
+                        {
+                            break;
+                        }
+
+                        if (namePattern.IsMatch(((RemoteRunspace)psSession.Runspace).RunspacePool.RemoteRunspacePoolInternal.Name))
+                        {
+                            matchFound = true;
+                            matchNamesSessions.Add(psSession);
+                        }
+                    }
+
+                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                    {
+                        string msg = StringUtil.Format(RemotingErrorIdStrings.SessionNameMatchFailed, name);
+                        Exception reason = new RuntimeException(msg);
+                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionNameMatchFail", ErrorCategory.InvalidOperation, name);
+                        stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
+                    }
+                }
+
+                return matchNamesSessions;
+            }
+            else
+            {
+                // Return all collected sessions.
+                return filteredPSSessions;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the existing runspace should be returned to the user
+        /// a.  If the existing runspace is not broken
+        /// b.  If the queried runspace is not connected to a different user.
+        /// </summary>
+        /// <param name="existingRunspace"></param>
+        /// <param name="queriedrunspace"></param>
+        /// <returns></returns>
+        private static bool UseExistingRunspace(
+            Runspace existingRunspace,
+            Runspace queriedrunspace)
+        {
+            Dbg.Assert(existingRunspace != null, "Invalid parameter.");
+            Dbg.Assert(queriedrunspace != null, "Invalid parameter.");
+
+            if (existingRunspace.RunspaceStateInfo.State == RunspaceState.Broken)
+            {
+                return false;
+            }
+
+            if (existingRunspace.RunspaceStateInfo.State == RunspaceState.Disconnected &&
+                queriedrunspace.RunspaceAvailability == RunspaceAvailability.Busy)
+            {
+                return false;
+            }
+
+            // Update existing runspace to have latest DisconnectedOn/ExpiresOn data.
+            existingRunspace.DisconnectedOn = queriedrunspace.DisconnectedOn;
+            existingRunspace.ExpiresOn = queriedrunspace.ExpiresOn;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns Exception message.  If message is WSMan Xml then
+        /// the WSMan message and error code is extracted and returned.
+        /// </summary>
+        /// <param name="e">Exception</param>
+        /// <param name="errorCode">Returned WSMan error code</param>
+        /// <returns>WSMan message.</returns>
+        internal static string ExtractMessage(
+            Exception e,
+            out int errorCode)
+        {
+            errorCode = 0;
+
+            if (e == null ||
+                e.Message == null)
+            {
+                return string.Empty;
+            }
+
+            string rtnMsg = null;
+            try
+            {
+                System.Xml.XmlReaderSettings xmlReaderSettings = InternalDeserializer.XmlReaderSettingsForUntrustedXmlDocument.Clone();
+                xmlReaderSettings.MaxCharactersInDocument = 4096;
+                xmlReaderSettings.MaxCharactersFromEntities = 1024;
+                xmlReaderSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;
+
+                using (System.Xml.XmlReader reader = System.Xml.XmlReader.Create(
+                        new System.IO.StringReader(e.Message), xmlReaderSettings))
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == System.Xml.XmlNodeType.Element)
+                        {
+                            if (reader.LocalName.Equals("Message", StringComparison.OrdinalIgnoreCase))
+                            {
+                                rtnMsg = reader.ReadElementContentAsString();
+                            }
+                            else if (reader.LocalName.Equals("WSManFault", StringComparison.OrdinalIgnoreCase))
+                            {
+                                string errorCodeString = reader.GetAttribute("Code");
+                                if (errorCodeString != null)
+                                {
+                                    try
+                                    {
+                                        // WinRM returns both signed and unsigned 32 bit string values.  Convert to signed 32 bit integer.
+                                        Int64 eCode = Convert.ToInt64(errorCodeString, System.Globalization.NumberFormatInfo.InvariantInfo);
+                                        unchecked
+                                        {
+                                            errorCode = (int)eCode;
+                                        }
+                                    }
+                                    catch (FormatException)
+                                    { }
+                                    catch (OverflowException)
+                                    { }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (System.Xml.XmlException)
+            { }
+
+            return rtnMsg ?? e.Message;
+        }
+
+        /// <summary>
+        /// Discontinue all remote server query operations.
+        /// </summary>
+        internal void StopAllOperations()
+        {
+            _stopProcessing = true;
+        }
+
+        /// <summary>
+        /// Compares the runspace filter state with the runspace state.
+        /// </summary>
+        /// <param name="runspace">Runspace object to test.</param>
+        /// <param name="filterState">Filter state to compare.</param>
+        /// <returns>Result of test.</returns>
+        public static bool TestRunspaceState(Runspace runspace, SessionFilterState filterState)
+        {
+            bool result;
+
+            switch (filterState)
+            {
+                case SessionFilterState.All:
+                    result = true;
+                    break;
+
+                case SessionFilterState.Opened:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Opened);
+                    break;
+
+                case SessionFilterState.Closed:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Closed);
+                    break;
+
+                case SessionFilterState.Disconnected:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Disconnected);
+                    break;
+
+                case SessionFilterState.Broken:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Broken);
+                    break;
+
+                default:
+                    Dbg.Assert(false, "Invalid SessionFilterState value.");
+                    result = false;
+                    break;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns the default type table for built-in PowerShell types.
+        /// </summary>
+        internal static TypeTable BuiltInTypesTable
+        {
+            get
+            {
+                if (s_TypeTable == null)
+                {
+                    lock (s_SyncObject)
+                    {
+                        if (s_TypeTable == null)
+                        {
+                            s_TypeTable = TypeTable.LoadDefaultTypeFiles();
+                        }
+                    }
+                }
+
+                return s_TypeTable;
+            }
+        }
+
+        #endregion
+
+        #region Private Members
+
+        private bool _stopProcessing;
+
+        private static readonly object s_SyncObject = new object();
+        private static TypeTable s_TypeTable;
+
+        #endregion
+    }
+
+    #endregion
+
+    #region SessionFilterState Enum
+
+    /// <summary>
+    /// Runspace states that can be used as filters for querying remote runspaces.
+    /// </summary>
+    public enum SessionFilterState
+    {
+        /// <summary>
+        /// Return runspaces in any state.
+        /// </summary>
+        All = 0,
+
+        /// <summary>
+        /// Return runspaces in Opened state.
+        /// </summary>
+        Opened = 1,
+
+        /// <summary>
+        /// Return runspaces in Disconnected state.
+        /// </summary>
+        Disconnected = 2,
+
+        /// <summary>
+        /// Return runspaces in Closed state.
+        /// </summary>
+        Closed = 3,
+
+        /// <summary>
+        /// Return runspaces in Broken state.
+        /// </summary>
+        Broken = 4
     }
 
     #endregion
 
     #endregion Helper Classes
+}
+
+namespace System.Management.Automation.Remoting
+{
+    /// <summary>
+    /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct
+    /// connection to the server is used
+    /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
+    public enum ProxyAccessType
+    {
+        /// <summary>
+        /// ProxyAccessType is not specified. That means Proxy information (ProxyAccessType, ProxyAuthenticationMechanism
+        /// and ProxyCredential)is not passed to WSMan at all.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// use the Internet Explorer proxy configuration for the current user.
+        ///  Internet Explorer proxy settings for the current active network connection.
+        ///  This option requires the user profile to be loaded, so the option can
+        ///  be directly used when called within a process that is running under
+        ///  an interactive user account identity; if the client application is running
+        ///  under a user context different than the interactive user, the client
+        ///  application has to explicitly load the user profile prior to using this option.
+        /// </summary>
+        IEConfig = 1,
+        /// <summary>
+        /// proxy settings configured for WinHTTP, using the ProxyCfg.exe utility
+        /// </summary>
+        WinHttpConfig = 2,
+        /// <summary>
+        /// Force autodetection of proxy
+        /// </summary>
+        AutoDetect = 4,
+        /// <summary>
+        /// do not use a proxy server - resolves all host names locally
+        /// </summary>
+        NoProxyServer = 8
+    }
+    /// <summary>
+    /// Options for a remote PSSession
+    /// </summary>
+    public sealed class PSSessionOption
+    {
+        /// <summary>
+        /// Creates a new instance of <see cref="PSSessionOption"/>
+        /// </summary>
+        public PSSessionOption()
+        {
+        }
+
+        /// <summary>
+        /// The MaximumConnectionRedirectionCount parameter enables the implicit redirection functionality.
+        /// -1 = no limit
+        ///  0 = no redirection
+        /// </summary>
+        public int MaximumConnectionRedirectionCount { get; set; } = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
+
+        /// <summary>
+        /// If false, underlying WSMan infrastructure will compress data sent on the network.
+        /// If true, data will not be compressed. Compression improves performance by
+        /// reducing the amount of data sent on the network. Compression my require extra
+        /// memory consumption and CPU usage. In cases where available memory / CPU is less,
+        /// set this property to "true".
+        /// By default the value of this property is "false".
+        /// </summary>
+        public bool NoCompression { get; set; } = false;
+
+        /// <summary>
+        /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
+        /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
+        /// already loaded the profile (i.e. in another session).
+        /// </summary>
+        public bool NoMachineProfile { get; set; } = false;
+
+        /// <summary>
+        /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,
+        /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
+        /// </summary>
+        public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
+
+        /// <summary>
+        /// The following is the definition of the input parameter "ProxyAuthentication".
+        /// This parameter takes a set of authentication methods the user can select
+        /// from.  The available options should be as follows:
+        /// - Negotiate: Use the default authentication (as defined by the underlying
+        /// protocol) for establishing a remote connection.
+        /// - Basic:  Use basic authentication for establishing a remote connection
+        /// - Digest: Use Digest authentication for establishing a remote connection
+        ///
+        /// Default is Negotiate.
+        /// </summary>
+        public AuthenticationMechanism ProxyAuthentication
+        {
+            get { return _proxyAuthentication; }
+
+            set
+            {
+                switch (value)
+                {
+                    case AuthenticationMechanism.Basic:
+                    case AuthenticationMechanism.Negotiate:
+                    case AuthenticationMechanism.Digest:
+                        _proxyAuthentication = value;
+                        break;
+                    default:
+                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
+                            value,
+                            AuthenticationMechanism.Basic.ToString(),
+                            AuthenticationMechanism.Negotiate.ToString(),
+                            AuthenticationMechanism.Digest.ToString());
+                        throw new ArgumentException(message);
+                }
+            }
+        }
+
+        private AuthenticationMechanism _proxyAuthentication = AuthenticationMechanism.Negotiate;
+
+        /// <summary>
+        /// The following is the definition of the input parameter "ProxyCredential".
+        /// </summary>
+        public PSCredential ProxyCredential { get; set; }
+
+        /// <summary>
+        /// When connecting over HTTPS, the client does not validate that the server
+        /// certificate is signed by a trusted certificate authority (CA). Use only when
+        /// the remote computer is trusted by other means, for example, if the remote
+        /// computer is part of a network that is physically secure and isolated or the
+        /// remote computer is listed as a trusted host in WinRM configuration
+        /// </summary>
+        public bool SkipCACheck { get; set; }
+
+        /// <summary>
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
+        /// option should only be used for trusted machines.
+        /// </summary>
+        public bool SkipCNCheck { get; set; }
+
+        /// <summary>
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
+        /// option should only be used for trusted machines
+        /// </summary>
+        public bool SkipRevocationCheck { get; set; }
+
+        /// <summary>
+        /// The duration for which PowerShell remoting waits before timing out
+        /// for any operation. The user would like to tweak this timeout
+        /// depending on whether he/she is connecting to a machine in the data
+        /// center or across a slow WAN.
+        ///
+        /// Default: 3*60*1000 == 3minutes
+        /// </summary>
+        public TimeSpan OperationTimeout { get; set; } = TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
+
+        /// <summary>
+        /// Specifies that no encryption will be used when doing remote operations over
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in
+        /// the local configuration
+        /// </summary>
+        public bool NoEncryption { get; set; }
+
+        /// <summary>
+        /// Indicates the request is encoded in UTF16 format rather than UTF8 format;
+        /// UTF8 is the default.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
+        public bool UseUTF16 { get; set; }
+
+        /// <summary>
+        /// Uses Service Principal Name (SPN) along with the Port number during authentication.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
+        public bool IncludePortInSPN { get; set; }
+
+        /// <summary>
+        /// Determines how server in disconnected state deals with cached output
+        /// data when the cache becomes filled.
+        /// Default value is 'block mode' where command execution is blocked after
+        /// the server side data cache becomes filled.
+        /// </summary>
+        public OutputBufferingMode OutputBufferingMode { get; set; } = WSManConnectionInfo.DefaultOutputBufferingMode;
+
+        /// <summary>
+        /// Number of times a connection will be re-attempted when a connection fails due to network
+        /// issues.
+        /// </summary>
+        public int MaxConnectionRetryCount { get; set; } = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
+
+        /// <summary>
+        /// Culture that the remote session should use
+        /// </summary>
+        public CultureInfo Culture { get; set; }
+
+        /// <summary>
+        /// UI culture that the remote session should use
+        /// </summary>
+        public CultureInfo UICulture { get; set; }
+
+        /// <summary>
+        /// Total data (in bytes) that can be received from a remote machine
+        /// targeted towards a command. If null, then the size is unlimited.
+        /// Default is unlimited data.
+        /// </summary>
+        public int? MaximumReceivedDataSizePerCommand { get; set; }
+
+        /// <summary>
+        /// Maximum size (in bytes) of a deserialized object received from a remote machine.
+        /// If null, then the size is unlimited. Default is 200MB object size.
+        /// </summary>
+        public int? MaximumReceivedObjectSize { get; set; } = 200 << 20;
+
+        /// <summary>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public PSPrimitiveDictionary ApplicationArguments { get; set; }
+
+        /// <summary>
+        /// The duration for which PowerShell remoting waits before timing out on a connection to a remote machine.
+        /// Simply put, the timeout for a remote runspace creation.
+        /// The user would like to tweak this timeout depending on whether
+        /// he/she is connecting to a machine in the data center or across a slow WAN.
+        ///
+        /// Default: 3 * 60 * 1000 = 3 minutes
+        /// </summary>
+        public TimeSpan OpenTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
+
+        /// <summary>
+        /// The duration for which PowerShell should wait before it times out on cancel operations
+        /// (close runspace or stop powershell). For instance, when the user hits ctrl-C,
+        /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state.
+        /// The user wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
+        /// A high timeout here like 3 minutes will give the user a feeling that the PowerShell client is not responding.
+        ///
+        /// Default: 60 * 1000 = 1 minute
+        /// </summary>
+        public TimeSpan CancelTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
+
+        /// <summary>
+        /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down.
+        /// This is especially important as these values may have to be configured differently for enterprise administration
+        /// and exchange scenarios.
+        ///
+        /// Default: -1 -> Use current server value for IdleTimeout.
+        /// </summary>
+        public TimeSpan IdleTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
+    }
 }

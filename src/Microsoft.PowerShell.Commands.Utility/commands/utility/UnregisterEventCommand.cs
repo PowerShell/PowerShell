@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "BySource")]
         public string SourceIdentifier
@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
@@ -34,17 +35,17 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "ById")]
         public int SubscriptionId { get; set; } = -1;
 
         /// <summary>
-        /// Flag that determines if we should include subscriptions used to support
-        /// other subscriptions
+        /// Flag that determines if we should include subscriptions used to support other subscriptions.
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }
@@ -55,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _foundMatch = false;
 
         /// <summary>
-        /// Unsubscribe from the event
+        /// Unsubscribe from the event.
         /// </summary>
         protected override void ProcessRecord()
         {

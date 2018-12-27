@@ -78,7 +78,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         /// <param name="helpInfo">HelpInfo object to check</param>
         /// <param name="culture">culture to check</param>
-        /// <returns>true if the other HelpInfo is newer, false if not</returns>
+        /// <returns>True if the other HelpInfo is newer, false if not.</returns>
         internal bool IsNewerVersion(UpdatableHelpInfo helpInfo, CultureInfo culture)
         {
             Debug.Assert(helpInfo != null);
@@ -100,7 +100,7 @@ namespace System.Management.Automation.Help
         /// Checks if a culture is supported
         /// </summary>
         /// <param name="culture">culture to check</param>
-        /// <returns>true if supported, false if not</returns>
+        /// <returns>True if supported, false if not.</returns>
         internal bool IsCultureSupported(CultureInfo culture)
         {
             Debug.Assert(culture != null);
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets a string representation of the supported cultures
         /// </summary>
-        /// <returns>supported cultures in string</returns>
+        /// <returns>Supported cultures in string.</returns>
         internal string GetSupportedCultures()
         {
             if (UpdatableHelpItems.Length == 0)
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Help
         /// Gets the culture version
         /// </summary>
         /// <param name="culture">culture info</param>
-        /// <returns>culture version</returns>
+        /// <returns>Culture version.</returns>
         internal Version GetCultureVersion(CultureInfo culture)
         {
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)

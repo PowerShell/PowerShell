@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
@@ -41,9 +42,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                     Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [AllowNull]
+        [AllowEmptyCollection]
+        [AllowEmptyString]
         public string[] Path
         {
             get { return _paths; }
+
             set { _paths = value; }
         }
 
@@ -52,10 +57,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
+        [AllowNull]
+        [AllowEmptyCollection]
+        [AllowEmptyString]
         public string[] LiteralPath
         {
             get { return _paths; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -70,6 +79,7 @@ namespace Microsoft.PowerShell.Commands
         public override string Filter
         {
             get { return base.Filter; }
+
             set { base.Filter = value; }
         }
 
@@ -80,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] Include
         {
             get { return base.Include; }
+
             set { base.Include = value; }
         }
 
@@ -90,6 +101,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] Exclude
         {
             get { return base.Exclude; }
+
             set { base.Exclude = value; }
         }
 
@@ -111,23 +123,20 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             object result = null;
 
             if (this.PathType == TestPathType.Any && !IsValid)
             {
-                if (Path != null && Path.Length > 0)
+                if (Path != null && Path.Length > 0 && Path[0] != null)
                 {
                     result = InvokeProvider.Item.ItemExistsDynamicParameters(Path[0], context);
                 }
@@ -136,8 +145,9 @@ namespace Microsoft.PowerShell.Commands
                     result = InvokeProvider.Item.ItemExistsDynamicParameters(".", context);
                 }
             }
+
             return result;
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -157,11 +167,38 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (_paths == null || _paths.Length == 0)
+            {
+                WriteError(new ErrorRecord(
+                    new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
+                    "NullPathNotPermitted",
+                    ErrorCategory.InvalidArgument,
+                    Path));
+
+                return;
+            }
+
             CmdletProviderContext currentContext = CmdletProviderContext;
 
             foreach (string path in _paths)
             {
                 bool result = false;
+
+                if (path == null)
+                {
+                    WriteError(new ErrorRecord(
+                        new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
+                        "NullPathNotPermitted",
+                        ErrorCategory.InvalidArgument,
+                        Path));
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    WriteObject(result);
+                    continue;
+                }
 
                 try
                 {
@@ -187,6 +224,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 // Any of the known exceptions means the path does not exist.
                 catch (PSNotSupportedException)
                 {
@@ -203,9 +241,9 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(result);
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // PingPathCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

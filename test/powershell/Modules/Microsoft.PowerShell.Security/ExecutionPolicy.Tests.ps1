@@ -84,7 +84,7 @@ try {
                 $testDirectory =  Join-Path $drive ("MultiMachineTestData\Commands\Cmdlets\Security_TestData\ExecutionPolicyTestData")
                 if(Test-Path $testDirectory)
                 {
-                    Remove-Item -Force -Recurse $testDirectory -ea SilentlyContinue
+                    Remove-Item -Force -Recurse $testDirectory -ErrorAction SilentlyContinue
                 }
                 $null = New-Item $testDirectory -ItemType Directory -Force
                 $remoteTestDirectory = $testDirectory
@@ -521,8 +521,8 @@ ZoneId=$FileType
                 #Clean up
                 $testDirectory = $remoteTestDirectory
 
-                Remove-Item $testDirectory -Recurse -Force -ea SilentlyContinue
-                Remove-Item function:createTestFile -ea SilentlyContinue
+                Remove-Item $testDirectory -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item function:createTestFile -ErrorAction SilentlyContinue
             }
         }
 
@@ -559,21 +559,9 @@ ZoneId=$FileType
 
                     $scriptName = $testScript
 
-                    $exception = $null
-                    try {
-                        & $scriptName
-                    }
-                    catch
-                    {
-                        $exception = $_
-                    }
+                    $exception = { & $scriptName } | Should -Throw -PassThru
 
-                    $exception.Exception | Should -Not -BeNullOrEmpty
-
-                    $exceptionType = $exception.Exception.getType()
-                    $result = $exceptionType
-
-                    $result | Should -Be "System.Management.Automation.PSSecurityException"
+                    $exception.Exception | Should -BeOfType "System.Management.Automation.PSSecurityException"
                 }
             }
 
@@ -609,8 +597,8 @@ ZoneId=$FileType
                 # Clean up
                 $testDirectory = $remoteTestDirectory
 
-                Remove-Item $testDirectory -Recurse -Force -ea SilentlyContinue
-                Remove-Item function:createTestFile -ea SilentlyContinue
+                Remove-Item $testDirectory -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item function:createTestFile -ErrorAction SilentlyContinue
             }
         }
         Context "Validate that 'Unrestricted' execution policy works on OneCore powershell" {
@@ -684,7 +672,7 @@ ZoneId=$FileType
                 $testScript = {Import-Module -Name $module -Force}
                 if($error)
                 {
-                    $testScript | ShouldBeErrorId $error
+                    $testScript | Should -Throw -ErrorId $error
                 }
                 else
                 {
@@ -929,7 +917,7 @@ ZoneId=$FileType
                 $testScript = {Import-Module -Name $module -Force}
                 if($error)
                 {
-                    $testScript | ShouldBeErrorId $error
+                    $testScript | Should -Throw -ErrorId $error
                 }
                 else
                 {
@@ -1028,7 +1016,7 @@ ZoneId=$FileType
                 $testScript | Should -Exist
                 if($error)
                 {
-                    {& $testScript} | ShouldBeErrorId $error
+                    {& $testScript} | Should -Throw -ErrorId $error
                 }
                 else
                 {
@@ -1044,13 +1032,8 @@ ZoneId=$FileType
             [string]
             $policyScope
         )
-        try {
-            Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted
-            throw "No Exception!"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should -Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
-        }
+        { Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted } |
+            Should -Throw -ErrorId "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
     }
 
     function RestoreExecutionPolicy
@@ -1164,14 +1147,9 @@ ZoneId=$FileType
 
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Restricted
-            try
-            {
-                Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
-                throw "Expected exception: ExecutionPolicyOverride"
-            }
-            catch [System.Security.SecurityException] {
-                $_.FullyQualifiedErrorId | Should -Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
-            }
+
+            { Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass } |
+                Should -Throw -ErrorId 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
 
             Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }

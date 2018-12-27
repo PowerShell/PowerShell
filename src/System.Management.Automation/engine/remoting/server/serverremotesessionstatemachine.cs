@@ -201,6 +201,7 @@ namespace System.Management.Automation.Remoting
                 {
                     return;
                 }
+
                 _eventsInProcess = true;
             }
 
@@ -231,6 +232,7 @@ namespace System.Management.Automation.Remoting
                         _eventsInProcess = false;
                         break;
                     }
+
                     eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
@@ -247,7 +249,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// The parameter contains the actual FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -280,7 +281,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -337,7 +337,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -382,7 +381,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -410,7 +408,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -439,7 +436,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -478,7 +474,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -531,6 +526,7 @@ namespace System.Management.Automation.Remoting
                                     break;
                             }
                         }
+
                         break;
 
                     case RemotingTargetInterface.RunspacePool:
@@ -583,7 +579,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -621,11 +616,9 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> does not contains FatalError event.
         /// </exception>
@@ -671,7 +664,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -726,7 +718,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -757,7 +748,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -788,7 +778,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -818,7 +807,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -854,7 +842,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -884,7 +871,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -941,6 +927,7 @@ namespace System.Management.Automation.Remoting
                         // you need to send an encrypted session key to the client
                         _session.SendEncryptedSessionKey();
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySent:
@@ -951,6 +938,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.EstablishedAndKeyExchanged, eventArgs.Reason);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyRequested:
@@ -964,6 +952,7 @@ namespace System.Management.Automation.Remoting
                             _keyExchangeTimer = new Timer(HandleKeyExchangeTimeout, null, BaseTransportManager.ServerDefaultKeepAliveTimeoutMs, Timeout.Infinite);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyReceiveFailed:
@@ -975,12 +964,14 @@ namespace System.Management.Automation.Remoting
 
                         DoClose(this, eventArgs);
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySendFailed:
                     {
                         DoClose(this, eventArgs);
                     }
+
                     break;
             }
         }
@@ -1003,7 +994,7 @@ namespace System.Management.Automation.Remoting
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));
-        } // SetStateHandler
+        }
 
         #endregion Event Handlers
 

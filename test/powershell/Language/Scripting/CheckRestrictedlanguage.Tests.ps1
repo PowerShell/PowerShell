@@ -25,17 +25,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         }
 
         It 'Check default variables' {
-
-            try
-            {
-                {2+$a}.CheckRestrictedLanguage($null, $null, $false)
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -BeExactly 'ParseException'
-            }
-
+            { {2+$a}.CheckRestrictedLanguage($null, $null, $false) } | Should -Throw -ErrorId 'ParseException'
         }
 
         It 'Check union of default + one allowed variables' {
@@ -54,29 +44,11 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         }
 
         It 'Check union of default + one disallowed variables' {
-
-            try
-            {
-                { $a + $b + $c }.CheckRestrictedLanguage($null, (list a b), $false)   # fail
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -BeExactly 'ParseException'
-            }
+            { { $a + $b + $c }.CheckRestrictedLanguage($null, (list a b), $false) } | Should -Throw -ErrorId 'ParseException'
         }
 
         It 'Check union of default + one allowed variable and but not allow environment variable' {
-
-            try
-            {
-                { 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $false)   # fail
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -BeExactly 'ParseException'
-            }
+            { { 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $false) } | Should -Throw -ErrorId 'ParseException'
         }
 
         It 'Check union of default + one allowed variable name and allow environment variable ' {
@@ -90,16 +62,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         }
 
         It 'Check for restricted commands' {
-
-            try
-            {
-                {get-date}.CheckRestrictedLangauge($null, $null, $false)
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -BeExactly 'MethodNotFound'
-            }
+            { {get-date}.CheckRestrictedLangauge($null, $null, $false) } | Should -Throw -ErrorId 'MethodNotFound'
         }
 
         It 'Check for allowed commands and variables' {

@@ -25,11 +25,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _transactedScript;
             }
+
             set
             {
                 _transactedScript = value;
             }
         }
+
         private ScriptBlock _transactedScript;
 
         /// <summary>
@@ -86,6 +88,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // CommitTransactionCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

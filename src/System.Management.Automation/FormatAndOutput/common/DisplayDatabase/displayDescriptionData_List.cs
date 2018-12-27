@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             ListControlBody result = new ListControlBody();
             result.autosize = this.autosize;
-            if (null != defaultEntryDefinition)
+            if (defaultEntryDefinition != null)
             {
                 result.defaultEntryDefinition = this.defaultEntryDefinition.Copy();
             }
@@ -230,6 +230,7 @@ namespace System.Management.Automation
             {
                 EntrySelectedBy = EntrySelectedBy.Get(entrydefn.appliesTo.referenceList);
             }
+
             foreach (ListControlItemDefinition itemdefn in entrydefn.itemDefinitionList)
             {
                 Items.Add(new ListControlEntryItem(itemdefn));
@@ -317,6 +318,7 @@ namespace System.Management.Automation
             {
                 Label = definition.label.text;
             }
+
             FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
             if (fpt != null)
             {

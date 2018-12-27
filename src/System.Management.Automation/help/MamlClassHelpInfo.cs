@@ -6,10 +6,8 @@ using System.Xml;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class MamlClassHelpInfo keeps track of help information to be returned by
     /// class help provider.
-    ///
     /// </summary>
     internal class MamlClassHelpInfo : HelpInfo
     {
@@ -53,7 +51,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode">xmlNode that contains help info</param>
         /// <param name="helpCategory">help category this maml object fits into</param>
-        /// <returns>MamlCommandHelpInfo object created</returns>
+        /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlClassHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
             MamlClassHelpInfo mamlClassHelpInfo = new MamlClassHelpInfo(xmlNode, helpCategory);
@@ -84,7 +82,7 @@ namespace System.Management.Automation
         /// Clone the help object with a new category.
         /// </summary>
         /// <param name="newCategoryToUse"></param>
-        /// <returns>MamlClassHelpInfo</returns>
+        /// <returns>MamlClassHelpInfo.</returns>
         internal MamlClassHelpInfo Copy(HelpCategory newCategoryToUse)
         {
             MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);

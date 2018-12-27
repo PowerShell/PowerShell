@@ -86,7 +86,7 @@ namespace System.Management.Automation
         /// for the specified wildcard pattern.
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match</param>
-        /// <returns>The constructed WildcardPattern object</returns>
+        /// <returns>The constructed WildcardPattern object.</returns>
         /// <remarks> if wildCardType == None, the pattern does not have wild cards</remarks>
         public WildcardPattern(string pattern)
         {
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
         /// <param name="options">Wildcard options</param>
-        /// <returns>The constructed WildcardPattern object</returns>
+        /// <returns>The constructed WildcardPattern object.</returns>
         /// <remarks> if wildCardType == None, the pattern does not have wild cards  </remarks>
         public WildcardPattern(string pattern,
                                WildcardOptions options)
@@ -141,11 +141,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiate internal regex member if not already done.
         /// </summary>
-        ///
-        /// <returns> true on success, false otherwise </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <returns>True on success, false otherwise.</returns>
         private void Init()
         {
             if (_isMatch == null)
@@ -167,7 +163,7 @@ namespace System.Management.Automation
         /// constructor finds a match in the input string.
         /// </summary>
         /// <param name="input">The string to search for a match.</param>
-        /// <returns>true if the wildcard pattern finds a match; otherwise, false</returns>
+        /// <returns>True if the wildcard pattern finds a match; otherwise, false.</returns>
         public bool IsMatch(string input)
         {
             Init();
@@ -248,7 +244,7 @@ namespace System.Management.Automation
         /// <param name="pattern">
         /// String which needs to be checked for the presence of wildcard chars
         /// </param>
-        /// <returns> true if the string has wild card chars, false otherwise. </returns>
+        /// <returns>True if the string has wild card chars, false otherwise..</returns>
         /// <remarks>
         /// Currently { '*', '?', '[' } are considered wild card chars and
         /// '`' is the escape character.
@@ -278,6 +274,7 @@ namespace System.Management.Automation
                     ++index;
                 }
             }
+
             return result;
         }
 
@@ -320,6 +317,7 @@ namespace System.Management.Automation
                     {
                         prevCharWasEscapeChar = true;
                     }
+
                     continue;
                 }
 
@@ -356,7 +354,7 @@ namespace System.Management.Automation
             }
 
             return s;
-        } // Unescape
+        }
 
         private static bool IsWildcardChar(char ch)
         {
@@ -403,16 +401,18 @@ namespace System.Management.Automation
         /// <param name="errorRecord">
         /// ErrorRecord object containing additional information about the error condition.
         /// </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         internal WildcardPatternException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord))
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
             {
                 throw new ArgumentNullException("errorRecord");
             }
+
             _errorRecord = errorRecord;
         }
+
         [NonSerialized]
         private ErrorRecord _errorRecord;
 
@@ -731,10 +731,12 @@ namespace System.Management.Automation
             {
                 regexOptions |= RegexOptions.Compiled;
             }
+
             if ((options & WildcardOptions.IgnoreCase) != 0)
             {
                 regexOptions |= RegexOptions.IgnoreCase;
             }
+
             if ((options & WildcardOptions.CultureInvariant) == WildcardOptions.CultureInvariant)
             {
                 regexOptions |= RegexOptions.CultureInvariant;
@@ -757,6 +759,7 @@ namespace System.Management.Automation
             {
                 regexPattern.Append('\\');
             }
+
             regexPattern.Append(c);
         }
 
@@ -793,6 +796,7 @@ namespace System.Management.Automation
                 {
                     _regexPattern.Remove(0, 3);
                 }
+
                 if (regexPatternString.EndsWith(".*$", StringComparison.Ordinal))
                 {
                     _regexPattern.Remove(_regexPattern.Length - 3, 3);
@@ -824,6 +828,7 @@ namespace System.Management.Automation
                 AppendLiteralCharacter(regexPattern, c);
             }
         }
+
         protected override void AppendLiteralCharacterToBracketExpression(char c)
         {
             AppendLiteralCharacterToBracketExpression(_regexPattern, c);

@@ -15,10 +15,10 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=623621", RemotingCapability = RemotingCapability.None)]
     public class ImportPowerShellDataFileCommand : PSCmdlet
     {
-        bool _isLiteralPath;
+        private bool _isLiteralPath;
 
         /// <summary>
-        /// Path specified, using globbing to resolve
+        /// Path specified, using globbing to resolve.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         [ValidateNotNullOrEmpty]
@@ -26,28 +26,28 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Specifies a path to one or more locations, without globbing
+        /// Specifies a path to one or more locations, without globbing.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByLiteralPath", ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
             get { return _isLiteralPath ? Path : null; }
+
             set { _isLiteralPath = true; Path = value; }
         }
 
         /// <summary>
-        /// For each path, resolve it, parse it and write all hashtables
-        /// to the output stream
+        /// For each path, resolve it, parse it and write all hashtables to the output stream.
         /// </summary>
         protected override void ProcessRecord()
         {
             foreach (var path in Path)
             {
                 var resolved = PathUtils.ResolveFilePath(path, this, _isLiteralPath);
-                if(!string.IsNullOrEmpty(resolved) && System.IO.File.Exists(resolved))
+                if (!string.IsNullOrEmpty(resolved) && System.IO.File.Exists(resolved))
                 {
                     Token[] tokens;
                     ParseError[] errors;
@@ -80,16 +80,16 @@ namespace Microsoft.PowerShell.Commands
         {
             var errorId = "PathNotFound";
             var errorCategory = ErrorCategory.InvalidArgument;
-            var errorMessage = string.Format(UtilityResources.PathDoesNotExist, path);
+            var errorMessage = string.Format(UtilityCommonStrings.PathDoesNotExist, path);
             var exception = new ArgumentException(errorMessage);
             var errorRecord = new ErrorRecord(exception, errorId, errorCategory, path);
             WriteError(errorRecord);
         }
 
-        void WriteInvalidDataFileError(string resolvedPath, string errorId)
+        private void WriteInvalidDataFileError(string resolvedPath, string errorId)
         {
             var errorCategory = ErrorCategory.InvalidData;
-            var errorMessage = string.Format(UtilityResources.CouldNotParseAsPowerShellDataFile, resolvedPath);
+            var errorMessage = string.Format(UtilityCommonStrings.CouldNotParseAsPowerShellDataFile, resolvedPath);
             var exception = new InvalidOperationException(errorMessage);
             var errorRecord = new ErrorRecord(exception, errorId, errorCategory, resolvedPath);
             WriteError(errorRecord);

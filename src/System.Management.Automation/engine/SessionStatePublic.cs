@@ -17,15 +17,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// An instance of SessionState that the APIs should work against.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        ///
         internal SessionState(SessionStateInternal sessionState)
         {
             if (sessionState == null)
@@ -34,12 +31,11 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // SessionState
+        }
 
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
         /// </summary>
-        ///
         /// <param name="context">
         /// An instance of ExecutionContext whose EngineSessionState represents the parent session state.
         /// </param>
@@ -49,7 +45,6 @@ namespace System.Management.Automation
         /// <param name="linkToGlobal">
         /// True if the session state should be linked to the global scope.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
@@ -68,7 +63,7 @@ namespace System.Management.Automation
             }
 
             _sessionState.PublicSessionState = this;
-        } // SessionState
+        }
 
         /// <summary>
         /// Construct a new session state object...
@@ -100,7 +95,7 @@ namespace System.Management.Automation
         /// </summary>
         public CmdletProviderManagementIntrinsics Provider
         {
-            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); } // get
+            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); }
         }
 
         /// <summary>
@@ -116,7 +111,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSVariableIntrinsics PSVariable
         {
-            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); } // get
+            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); }
         }
 
         /// <summary>
@@ -125,6 +120,7 @@ namespace System.Management.Automation
         public PSLanguageMode LanguageMode
         {
             get { return _sessionState.LanguageMode; }
+
             set { _sessionState.LanguageMode = value; }
         }
 
@@ -203,6 +199,7 @@ namespace System.Management.Automation
 
                     throw exception;
                 }
+
                 CommandInfo cinfo = valueToCheck as CommandInfo;
                 if (cinfo != null)
                 {
@@ -222,7 +219,7 @@ namespace System.Management.Automation
                     {
                         exception =
                             new SessionStateException(
-                                "",
+                                string.Empty,
                                 SessionStateCategory.Command,
                                 "CommandIsPrivate",
                                 SessionStateStrings.CommandIsPrivate,
@@ -250,7 +247,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="origin">The origin to check against</param>
         /// <param name="valueToCheck">The object to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, object valueToCheck)
         {
             if (origin == CommandOrigin.Internal)
@@ -260,6 +257,7 @@ namespace System.Management.Automation
             {
                 return (obj.Visibility == SessionStateEntryVisibility.Public);
             }
+
             return true;
         }
         /// <summary>
@@ -267,7 +265,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="origin">The origin to check against</param>
         /// <param name="variable">The variable to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, PSVariable variable)
         {
             if (origin == CommandOrigin.Internal)
@@ -276,6 +274,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("variable");
             }
+
             return (variable.Visibility == SessionStateEntryVisibility.Public);
         }
         /// <summary>
@@ -283,7 +282,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="origin">The origin to check against</param>
         /// <param name="commandInfo">The command to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, CommandInfo commandInfo)
         {
             if (origin == CommandOrigin.Internal)
@@ -292,6 +291,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
+
             return (commandInfo.Visibility == SessionStateEntryVisibility.Public);
         }
 
@@ -302,11 +302,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a reference to the "real" session state object instead of the facade
         /// </summary>
-        ///
         internal SessionStateInternal Internal
         {
             get { return _sessionState; }
-        } // Internal
+        }
         #endregion Internal methods
 
         #region private data
@@ -318,7 +317,7 @@ namespace System.Management.Automation
         private PSVariableIntrinsics _variable;
 
         #endregion private data
-    } // SessionStatePublic
+    }
 
     /// <summary>
     /// This enum defines the visibility of execution environment elements...

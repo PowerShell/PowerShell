@@ -8,16 +8,14 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
-    /// Base class for a variety of commandlets that take color parameters
-    ///
+    /// Base class for a variety of commandlets that take color parameters.
     /// </summary>
 
     public
     class ConsoleColorCmdlet : PSCmdlet
     {
         /// <summary>
-        /// Default ctor
+        /// Default ctor.
         /// </summary>
         public ConsoleColorCmdlet()
         {
@@ -25,9 +23,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
-        /// The -ForegroundColor parameter
-        ///
+        /// The -ForegroundColor parameter.
         /// </summary>
         /// <value></value>
 
@@ -46,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return _fgColor;
             }
+
             set
             {
                 if (value >= (ConsoleColor)0 && value <= (ConsoleColor)15)
@@ -61,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
 
@@ -80,6 +76,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return _bgColor;
             }
+
             set
             {
                 if (value >= (ConsoleColor)0 && value <= (ConsoleColor)15)

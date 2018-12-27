@@ -109,6 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _multilineTables = value;
                 }
             }
+
             get
             {
                 if (_multilineTables.HasValue)
@@ -116,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
         }
+
         private bool? _multilineTables;
 
         internal FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
@@ -137,6 +139,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _showErrorsAsMessages = value;
                 }
             }
+
             get
             {
                 if (_showErrorsAsMessages.HasValue)
@@ -144,6 +147,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
         }
+
         private bool? _showErrorsAsMessages;
 
         /// <summary>
@@ -159,6 +163,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _showErrorsInFormattedOutput = value;
                 }
             }
+
             get
             {
                 if (_showErrorsInFormattedOutput.HasValue)
@@ -166,11 +171,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
         }
+
         private bool? _showErrorsInFormattedOutput;
 
         /// <summary>
         /// string to display in the formatted display (e.g. cell in a table)
-        /// when the evaluation of an MshExpression fails
+        /// when the evaluation of a PSPropertyExpression fails
         /// </summary>
         internal string errorStringInFormattedOutput = "#ERR";
 
@@ -192,6 +198,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _propertyCountForTable = value;
                 }
             }
+
             get
             {
                 if (_propertyCountForTable.HasValue)
@@ -199,6 +206,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return 4;
             }
         }
+
         private int? _propertyCountForTable;
 
         internal List<FormatShapeSelectionOnType> formatShapeSelectionOnTypeList = new List<FormatShapeSelectionOnType>();
@@ -370,19 +378,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return FormatShape.Table.ToString();
             }
+
             if (control is ListControlBody)
             {
                 return FormatShape.List.ToString();
             }
+
             if (control is WideControlBody)
             {
                 return FormatShape.Wide.ToString();
             }
+
             if (control is ComplexControlBody)
             {
                 return FormatShape.Complex.ToString();
             }
-            return "";
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -424,6 +436,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// RULE: valid only for table and wide only
         /// </summary>
         internal bool? autosize = null;
+
+        /// <summary>
+        /// RULE: only valid for table
+        /// </summary>
+        internal bool repeatHeader = false;
     }
 
     /// <summary>
@@ -843,6 +860,7 @@ namespace System.Management.Automation
                     if (result.TypeNames.Count > 0)
                         isEmpty = false;
                 }
+
                 if (entrySelectedByCondition != null)
                 {
                     result.SelectionCondition = new List<DisplayEntry>(entrySelectedByCondition);

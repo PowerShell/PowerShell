@@ -4,18 +4,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Threading;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
-using System.Diagnostics;
+#if !UNIX
 using System.Security.Principal;
+#endif
+using System.Threading;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -174,7 +177,7 @@ namespace System.Management.Automation
             string configurationName)
 #endif
         {
-            Dbg.Assert(null != configData, "ConfigurationData cannot be null");
+            Dbg.Assert(configData != null, "ConfigurationData cannot be null");
 
             _serverCapability = serverCapability;
             _clientPSVersion = psClientVersion;
@@ -410,6 +413,7 @@ namespace System.Management.Automation
                     _rsToUseForSteppablePipeline.Dispose();
                     _rsToUseForSteppablePipeline = null;
                 }
+
                 Closed.SafeInvoke(this, EventArgs.Empty);
             }
         }
@@ -546,7 +550,9 @@ namespace System.Management.Automation
         {
             Debug.Assert(cmdToRun != null, "cmdToRun shouldn't be null");
 
-            cmdToRun.CommandOrigin = CommandOrigin.Internal;
+            // Don't invoke initialization script as trusted (CommandOrigin == Internal) if the system is in lock down mode.
+            cmdToRun.CommandOrigin = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? CommandOrigin.Runspace : CommandOrigin.Internal;
+
             cmdToRun.MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
             PowerShell powershell = PowerShell.Create();
             powershell.AddCommand(cmdToRun).AddCommand("out-default");
@@ -632,11 +638,7 @@ namespace System.Management.Automation
 
             // If the system lockdown policy says "Enforce", do so (unless it's in the
             // more restrictive NoLanguage mode)
-            if ((SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
-                (args.Runspace.ExecutionContext.LanguageMode != PSLanguageMode.NoLanguage))
-            {
-                args.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-            }
+            Utils.EnforceSystemLockDownLanguageMode(args.Runspace.ExecutionContext);
 
             // Set the current location to MyDocuments folder for this runspace.
             // This used to be set to the Personal folder but was changed to MyDocuments folder for
@@ -678,7 +680,7 @@ namespace System.Management.Automation
                 cmdToRun = new Command(_configData.InitializationScriptForOutOfProcessRunspace, true, false);
             }
 
-            if (null != cmdToRun)
+            if (cmdToRun != null)
             {
                 InvokeScript(cmdToRun, args);
 
@@ -720,6 +722,7 @@ namespace System.Management.Automation
                     {
                         DataStructureHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
                     }
+
                     break;
 
                 case RunspacePoolState.Opened:
@@ -727,6 +730,7 @@ namespace System.Management.Automation
                         SendApplicationPrivateDataToClient();
                         DataStructureHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
                     }
+
                     break;
             }
         }
@@ -1037,6 +1041,7 @@ namespace System.Management.Automation
             {
                 countingPipeline.AddParameter("ListImported", true);
             }
+
             countingPipeline
                 .AddParameter("ErrorAction", "SilentlyContinue")
                 .AddCommand("Measure-Object")
@@ -1048,6 +1053,7 @@ namespace System.Management.Automation
             {
                 mainPipeline.AddParameter("ListImported", true);
             }
+
             mainPipeline
                 .AddCommand("Select-Object")
                 .AddParameter("Property", new string[] {
@@ -1727,14 +1733,17 @@ namespace System.Management.Automation
             {
                 throw new PSArgumentNullException("driverInvoker");
             }
+
             if (runspace == null)
             {
                 throw new PSArgumentNullException("runspace");
             }
+
             if (debugger == null)
             {
                 throw new PSArgumentNullException("debugger");
             }
+
             _driverInvoker = driverInvoker;
             _runspace = runspace;
 
@@ -1776,7 +1785,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns debugger stop event args if in debugger stop state.
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             return _wrappedDebugger.Value.GetDebuggerStopArgs();
@@ -1963,6 +1972,7 @@ namespace System.Management.Automation
             {
                 return _wrappedDebugger.Value.UnhandledBreakpointMode;
             }
+
             set
             {
                 _wrappedDebugger.Value.UnhandledBreakpointMode = value;
@@ -2039,7 +2049,9 @@ namespace System.Management.Automation
             private PSDataCollection<PSObject> _output;
             private DebuggerCommandResults _results;
             private Exception _exception;
+#if !UNIX
             private WindowsIdentity _identityToImpersonate;
+#endif
 
             // Constructors
             private ThreadCommandProcessing() { }
@@ -2059,14 +2071,10 @@ namespace System.Management.Automation
             // Methods
             public DebuggerCommandResults Invoke(ManualResetEventSlim startInvokeEvent)
             {
+#if !UNIX
                 // Get impersonation information to flow if any.
-                WindowsIdentity currentIdentity = null;
-                try
-                {
-                    currentIdentity = WindowsIdentity.GetCurrent();
-                }
-                catch (System.Security.SecurityException) { }
-                _identityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ? currentIdentity : null;
+                Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
+#endif
 
                 // Signal thread to process command.
                 Dbg.Assert(!_commandCompleteEvent.IsSet, "Command complete event shoulds always be non-signaled here.");
@@ -2076,8 +2084,13 @@ namespace System.Management.Automation
                 // Wait for completion.
                 _commandCompleteEvent.Wait();
                 _commandCompleteEvent.Reset();
-
-                _identityToImpersonate = null;
+#if !UNIX
+                if (_identityToImpersonate != null)
+                {
+                    _identityToImpersonate.Dispose();
+                    _identityToImpersonate = null;
+                }
+#endif
 
                 // Propagate exception.
                 if (_exception != null)
@@ -2100,18 +2113,17 @@ namespace System.Management.Automation
 
             internal void DoInvoke()
             {
-#if !CORECLR // TODO:CORECLR - WindowsIdentity.Impersonate() is not available. Use WindowsIdentity.RunImplemented to replace it.
-                // Flow impersonation onto thread if needed.
-                WindowsImpersonationContext impersonationContext = null;
-                if ((_identityToImpersonate != null) &&
-                    (_identityToImpersonate.ImpersonationLevel == TokenImpersonationLevel.Impersonation))
-                {
-                    impersonationContext = _identityToImpersonate.Impersonate();
-                }
-#endif
-
                 try
                 {
+#if !UNIX
+                    if (_identityToImpersonate != null)
+                    {
+                        _results = WindowsIdentity.RunImpersonated(
+                            _identityToImpersonate.AccessToken,
+                            () =>_wrappedDebugger.ProcessCommand(_command, _output));
+                        return;
+                    }
+#endif
                     _results = _wrappedDebugger.ProcessCommand(_command, _output);
                 }
                 catch (Exception e)
@@ -2121,19 +2133,6 @@ namespace System.Management.Automation
                 finally
                 {
                     _commandCompleteEvent.Set();
-
-#if !CORECLR // TODO:CORECLR - WindowsIdentity.Impersonate() is not available. Use WindowsIdentity.RunImplemented to replace it.
-                    // Restore previous context to thread.
-                    if (impersonationContext != null)
-                    {
-                        try
-                        {
-                            impersonationContext.Undo();
-                            impersonationContext.Dispose();
-                        }
-                        catch (System.Security.SecurityException) { }
-                    }
-#endif
                 }
             }
         }
@@ -2319,12 +2318,13 @@ namespace System.Management.Automation
 
                 if (isNestedStop)
                 {
-                    // Blocking call for nested debugger execution (Workflow) stop events.
+                    // Blocking call for nested debugger execution (Debug-Runspace) stop events.
                     // The root debugger never makes two EnterDebugMode calls without an ExitDebugMode.
                     if (_nestedDebugStopCompleteEvent == null)
                     {
                         _nestedDebugStopCompleteEvent = new ManualResetEventSlim(false);
                     }
+
                     _nestedDebugging = true;
                     OnEnterDebugMode(_nestedDebugStopCompleteEvent);
                 }
@@ -2496,8 +2496,7 @@ namespace System.Management.Automation
             bool addToHistory)
         {
             // For nested debugger command processing, invoke command on new local runspace since
-            // the root script debugger runspace is unavailable (it is running a PS script or a
-            // workflow function script).
+            // the root script debugger runspace is unavailable (it is running a PS script).
             Runspace runspace = (remoteHost != null) ?
                 RunspaceFactory.CreateRunspace(remoteHost) : RunspaceFactory.CreateRunspace();
 
@@ -2511,6 +2510,7 @@ namespace System.Management.Automation
                 string script = @"
                     param ($Debugger, $Commands, $output)
                     trap { throw $_ }
+
                     $Debugger.ProcessCommand($Commands, $output)
                     ";
 

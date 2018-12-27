@@ -45,6 +45,7 @@ namespace System.Management.Automation
                 return s_commonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -66,6 +67,7 @@ namespace System.Management.Automation
                 return s_optionalCommonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -110,16 +112,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the parameter set
         /// </summary>
-        ///
         /// <param name="parameterSetName">
         /// The name of the valid parameter set.
         /// </param>
-        ///
         internal void SetParameterSetName(string parameterSetName)
         {
             _parameterSetName = parameterSetName;
         }
-        private string _parameterSetName = "";
+
+        private string _parameterSetName = string.Empty;
 
         #region Override Internal
 
@@ -231,7 +232,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="baseName">the base resource name</param>
         /// <param name="resourceId">the resource id</param>
-        /// <returns>the resource string corresponding to baseName and resourceId</returns>
+        /// <returns>The resource string corresponding to baseName and resourceId.</returns>
         /// <exception cref="System.ArgumentException">
         /// Invalid <paramref name="baseName"/> or <paramref name="resourceId"/>, or
         /// string not found in resources
@@ -267,6 +268,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
                 }
+
                 if (retValue == null)
                 {
                     throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
@@ -293,6 +295,7 @@ namespace System.Management.Automation
                     return commandRuntime;
                 }
             }
+
             set
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
@@ -448,7 +451,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteVerbose");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
         /// Display warning information
@@ -485,7 +488,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteWarning");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
         /// Write text into pipeline execution log.
@@ -593,7 +596,7 @@ namespace System.Management.Automation
                 commandRuntime.WriteProgress(sourceId, progressRecord);
             else
                 throw new System.NotImplementedException("WriteProgress");
-        }//WriteProgress
+        }
 
         /// <summary>
         /// Display debug information
@@ -636,7 +639,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteDebug");
             }
-        }//WriteDebug
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -698,7 +701,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -743,7 +746,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         #endregion Write
 
@@ -1608,7 +1611,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke this cmdlet object returning a collection of results.
         /// </summary>
-        /// <returns>The results that were produced by this class</returns>
+        /// <returns>The results that were produced by this class.</returns>
         public IEnumerable Invoke()
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -1623,7 +1626,7 @@ namespace System.Management.Automation
         /// Returns a strongly-typed enumerator for the results of this cmdlet.
         /// </summary>
         /// <typeparam name="T">The type returned by the enumerator</typeparam>
-        /// <returns>An instance of the appropriate enumerator</returns>
+        /// <returns>An instance of the appropriate enumerator.</returns>
         /// <exception cref="InvalidCastException">Thrown when the object returned by the cmdlet cannot be converted to the target type</exception>
         public IEnumerable<T> Invoke<T>()
         {
@@ -1701,7 +1704,6 @@ namespace System.Management.Automation
         /// so that the additional information in
         /// <see cref="System.Management.Automation.ErrorRecord"/>
         /// is available.
-        ///
         /// <see cref="System.Management.Automation.Cmdlet.ThrowTerminatingError"/>
         /// always throws
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
@@ -1804,7 +1806,7 @@ namespace System.Management.Automation
         #endregion Exposed API Override
 
         #endregion public_methods
-    } // Cmdlet
+    }
 
     /// <summary>
     /// This describes the reason why ShouldProcess returned what it returned.

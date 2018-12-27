@@ -14,16 +14,19 @@
 #Switches
 #  -includeide - the script is being run headless, do not perform actions that require response from the console
 #  -interactivetests - requires a human user in front of the machine - loads a script into the ide to test with F5 to ensure the IDE can run scripts
+#  -skip-sudo-check - skips the check that the user has permission to use sudo.  This is required to run in the VSTS Hosted Linux Preview.
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
 
-VERSION="1.1.2"
+VERSION="1.2.0"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=suse
 repobased=false
 gitscriptname="installpsh-suse.psh"
+powershellpackageid=powershell
+pwshlink=/usr/bin/pwsh
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
@@ -87,19 +90,20 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
-SUDO=''
-if (( $EUID != 0 )); then
-    SUDO='sudo'
+#Check for sudo if not root
+if [[ "${CI}" == "true" ]]; then
+    echo "Running on CI (as determined by env var CI set to true), skipping SUDO check."
+    set -- "$@" '-skip-sudo-check'
 fi
 
-#Check that sudo is available
-if [[ "$SUDO" -eq "sudo" ]]; then
-
-    $SUDO -v
-    if [ $? -ne 0 ]; then
-      echo "ERROR: You must either be root or be able to use sudo" >&2
-      exit 5
+SUDO=''
+if (( $EUID != 0 )); then
+    #Check that sudo is available
+    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+        SUDO='sudo'
+    else
+        echo "ERROR: You must either be root or be able to use sudo" >&2
+        #exit 5
     fi
 fi
 
@@ -136,7 +140,22 @@ $SUDO zypper --non-interactive install \
 
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+
+echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-preview' switch is used"
+
+if [[ "'$*'" =~ preview ]] ; then
+    echo
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
+    release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+    pwshlink=/usr/bin/pwsh-preview
+else
+    echo "Finding the latest production release"
+    release=$(curl https://api.github.com/repos/PowerShell/PowerShell/releases | grep -Po '"tag_name":(\d*?,|.*?[^\\]",)' | grep -Po '\d+.\d+.\d+[\da-z.-]*' | grep -v '[a-z]' | sort | tail -n1)
+if
+#DIRECT DOWNLOAD
+package=powershell-${release}-linux-x64.tar.gz
+downloadurl=https://github.com/PowerShell/PowerShell/releases/download/v$release/$package
+
 
 #REPO BASED (Not ready yet)
 #echo "*** Setting up PowerShell Core repo..."
@@ -149,11 +168,6 @@ release=`curl https://api.github.com/repos/powershell/powershell/releases/latest
 #$SUDO zypper refresh
 ## Install PowerShell
 #$SUDO zypper --non-interactive install powershell
-
-#DIRECT DOWNLOAD
-pwshlink=/usr/bin/pwsh
-package=powershell-${release}-linux-x64.tar.gz
-downloadurl=https://github.com/PowerShell/PowerShell/releases/download/v$release/$package
 
 echo "Destination file: $package"
 echo "Source URL: $downloadurl"
@@ -207,13 +221,11 @@ if [[ "'$*'" =~ includeide ]] ; then
     echo
     echo "*** Installing VS Code PowerShell Extension"
     code --install-extension ms-vscode.PowerShell
-fi
-
-
-if [[ "'$*'" =~ -interactivetesting ]] ; then
-    echo "*** Loading test code in VS Code"
-    curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
+    if [[ "'$*'" =~ -interactivetesting ]] ; then
+        echo "*** Loading test code in VS Code"
+        curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
+        code ./testpowershell.ps1
+    fi
 fi
 
 if [[ "$repobased" == true ]] ; then

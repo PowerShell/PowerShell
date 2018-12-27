@@ -82,6 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         // unblocking the waiting thread
                         this.OnComplete();
                     }
+
                     break;
                 case CimPromptType.Normal:
                     try
@@ -106,10 +107,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         // unblocking the waiting thread
                         this.OnComplete();
                     }
+
                     break;
                 default:
                     break;
             }
+
             this.OnComplete();
         }
 
@@ -125,6 +128,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return message;
             }
         }
+
         private string message;
 
         /// <summary>

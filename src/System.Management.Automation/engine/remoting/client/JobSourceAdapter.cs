@@ -28,9 +28,10 @@ namespace System.Management.Automation
         /// <summary>
         /// A friendly Name for this definition
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return _name; }
+
             set { _name = value; }
         }
 
@@ -50,6 +51,7 @@ namespace System.Management.Automation
         public string ModuleName
         {
             get { return _moduleName; }
+
             set { _moduleName = value; }
         }
 
@@ -61,6 +63,7 @@ namespace System.Management.Automation
         public string JobSourceAdapterTypeName
         {
             get { return _jobSourceAdapterTypeName; }
+
             set { _jobSourceAdapterTypeName = value; }
         }
 
@@ -68,7 +71,7 @@ namespace System.Management.Automation
         /// Name of the job that needs to be loaded
         /// from the specified module
         /// </summary>
-        public String Command { get; }
+        public string Command { get; }
 
         private Guid _instanceId;
 
@@ -81,6 +84,7 @@ namespace System.Management.Automation
             {
                 return _instanceId;
             }
+
             set
             {
                 _instanceId = value;
@@ -132,13 +136,13 @@ namespace System.Management.Automation
             {
                 _jobSourceAdapterTypeName = jobSourceAdapterType.Name;
             }
+
             Command = command;
             _name = name;
             _instanceId = Guid.NewGuid();
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -148,7 +152,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -175,12 +178,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Friendly name associated with this specification
         /// </summary>
-        public String Name
+        public string Name
         {
             get
             {
                 return _name;
             }
+
             set
             {
                 if (value == null)
@@ -188,6 +192,7 @@ namespace System.Management.Automation
                 _name = value;
             }
         }
+
         private string _name = string.Empty;
 
         private string _command;
@@ -201,6 +206,7 @@ namespace System.Management.Automation
             {
                 return _command ?? _definition.Command;
             }
+
             set
             {
                 _command = value;
@@ -218,6 +224,7 @@ namespace System.Management.Automation
             {
                 return _definition;
             }
+
             set
             {
                 _definition = value;
@@ -302,7 +309,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="definition"></param>
         /// <param name="parameters"></param>
@@ -313,7 +319,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="definition"></param>
         /// <param name="parameters"></param>
@@ -328,7 +333,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -338,7 +342,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -351,7 +354,7 @@ namespace System.Management.Automation
         /// Utility function to turn a dictionary of name/value pairs into a parameter collection
         /// </summary>
         /// <param name="parameters">The dictionary to convert</param>
-        /// <returns>The converted collection</returns>
+        /// <returns>The converted collection.</returns>
         private static CommandParameterCollection ConvertDictionaryToParameterCollection(IEnumerable<KeyValuePair<string, object>> parameters)
         {
             if (parameters == null)
@@ -362,6 +365,7 @@ namespace System.Management.Automation
             {
                 paramCollection.Add(paramItem);
             }
+
             return paramCollection;
         }
     }
@@ -375,7 +379,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for this store
         /// </summary>
-        public String Name { get; set; } = String.Empty;
+        public string Name { get; set; } = String.Empty;
 
         /// <summary>
         /// Get a token that allows for construction of a job with a previously assigned
@@ -384,7 +388,7 @@ namespace System.Management.Automation
         /// The original job must have been saved using "SaveJobIdForReconstruction"
         /// </summary>
         /// <param name="instanceId">Instance Id of the job to recreate</param>
-        /// <returns>JobIdentifier to be used in job construction</returns>
+        /// <returns>JobIdentifier to be used in job construction.</returns>
         protected JobIdentifier RetrieveJobIdForReuse(Guid instanceId)
         {
             return JobManager.GetJobIdentifier(instanceId, this.GetType().Name);
@@ -403,6 +407,7 @@ namespace System.Management.Automation
             {
                 PSTraceSource.NewArgumentNullException("job", RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
             }
+
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
             if (recurse && job.ChildJobs != null && job.ChildJobs.Count > 0)
             {
@@ -437,7 +442,7 @@ namespace System.Management.Automation
         /// Create a new job with the specified definition
         /// </summary>
         /// <param name="definition">job definition to use</param>
-        /// <returns>job object</returns>
+        /// <returns>Job object.</returns>
         public Job2 NewJob(JobDefinition definition)
         {
             return NewJob(new JobInvocationInfo(definition, new Dictionary<string, object>()));
@@ -451,7 +456,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="definitionName">Job definition name</param>
         /// <param name="definitionPath">Job definition file path</param>
-        /// <returns>Job2 object</returns>
+        /// <returns>Job2 object.</returns>
         public virtual Job2 NewJob(string definitionName, string definitionPath)
         {
             return null;
@@ -461,14 +466,14 @@ namespace System.Management.Automation
         /// Create a new job with the specified JobSpecification
         /// </summary>
         /// <param name="specification">specification</param>
-        /// <returns>job object</returns>
+        /// <returns>Job object.</returns>
         public abstract Job2 NewJob(JobInvocationInfo specification);
 
         /// <summary>
         /// Get the list of jobs that are currently available in this
         /// store
         /// </summary>
-        /// <returns>collection of job objects</returns>
+        /// <returns>Collection of job objects.</returns>
         public abstract IList<Job2> GetJobs();
 
         /// <summary>
@@ -477,8 +482,8 @@ namespace System.Management.Automation
         /// <param name="name">names to match, can support
         ///   wildcard if the store supports</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public abstract IList<Job2> GetJobsByName(string name, bool recurse);
 
         /// <summary>
@@ -486,8 +491,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">command to match</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the specified
-        /// criteria</returns>
+        /// <returns>Collection of jobs that match the specified
+        /// criteria.</returns>
         public abstract IList<Job2> GetJobsByCommand(string command, bool recurse);
 
         /// <summary>
@@ -495,7 +500,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="instanceId">Guid to match</param>
         /// <param name="recurse"></param>
-        /// <returns>job with the specified guid</returns>
+        /// <returns>Job with the specified guid.</returns>
         public abstract Job2 GetJobByInstanceId(Guid instanceId, bool recurse);
 
         /// <summary>
@@ -503,7 +508,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="id">Id to match</param>
         /// <param name="recurse"></param>
-        /// <returns>Job with the specified id</returns>
+        /// <returns>Job with the specified id.</returns>
         public abstract Job2 GetJobBySessionId(int id, bool recurse);
 
         /// <summary>
@@ -511,8 +516,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="state">state to match</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs with the specified
-        /// state</returns>
+        /// <returns>Collection of jobs with the specified
+        /// state.</returns>
         public abstract IList<Job2> GetJobsByState(JobState state, bool recurse);
 
         /// <summary>
@@ -522,8 +527,8 @@ namespace System.Management.Automation
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the
-        /// specified criteria</returns>
+        /// <returns>Collection of jobs that match the
+        /// specified criteria.</returns>
         public abstract IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse);
 
         /// <summary>

@@ -35,12 +35,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = StartJobCommand.DefinitionNameParameterSet)]
+        [ValidateTrustedData]
         [ValidateNotNullOrEmpty]
         public string DefinitionName
         {
             get { return _definitionName; }
+
             set { _definitionName = value; }
         }
+
         private string _definitionName;
 
         /// <summary>
@@ -52,8 +55,10 @@ namespace Microsoft.PowerShell.Commands
         public string DefinitionPath
         {
             get { return _definitionPath; }
+
             set { _definitionPath = value; }
         }
+
         private string _definitionPath;
 
         /// <summary>
@@ -66,8 +71,10 @@ namespace Microsoft.PowerShell.Commands
         public string Type
         {
             get { return _definitionType; }
+
             set { _definitionType = value; }
         }
+
         private string _definitionType;
 
         /// <summary>
@@ -79,12 +86,13 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
-        public virtual String Name
+        public virtual string Name
         {
             get
             {
                 return _name;
             }
+
             set
             {
                 if (!String.IsNullOrEmpty(value))
@@ -93,7 +101,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        private String _name;
+
+        private string _name;
 
         /// <summary>
         /// Command to execute specified as a string. This can be a single
@@ -106,6 +115,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0,
                    Mandatory = true,
                    ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
+        [ValidateTrustedData]
         [Alias("Command")]
         public override ScriptBlock ScriptBlock
         {
@@ -113,6 +123,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.ScriptBlock;
             }
+
             set
             {
                 base.ScriptBlock = value;
@@ -138,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override String[] ComputerName
+        public override string[] ComputerName
         {
             get
             {
@@ -201,6 +212,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Credential;
             }
+
             set
             {
                 base.Credential = value;
@@ -210,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override Int32 Port
+        public override int Port
         {
             get
             {
@@ -232,12 +244,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override String ConfigurationName
+        public override string ConfigurationName
         {
             get
             {
                 return base.ConfigurationName;
             }
+
             set
             {
                 base.ConfigurationName = value;
@@ -258,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override String ApplicationName
+        public override string ApplicationName
         {
             get
             {
@@ -284,12 +297,14 @@ namespace Microsoft.PowerShell.Commands
             Position = 0,
             Mandatory = true,
             ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
+        [ValidateTrustedData]
         public override string FilePath
         {
             get
             {
                 return base.FilePath;
             }
+
             set
             {
                 base.FilePath = value;
@@ -302,13 +317,15 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(
             Mandatory = true,
             ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
-        [Alias("PSPath")]
+        [ValidateTrustedData]
+        [Alias("PSPath","LP")]
         public string LiteralPath
         {
             get
             {
                 return base.FilePath;
             }
+
             set
             {
                 base.FilePath = value;
@@ -328,6 +345,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Authentication;
             }
+
             set
             {
                 base.Authentication = value;
@@ -343,6 +361,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.CertificateThumbprint;
             }
+
             set
             {
                 base.CertificateThumbprint = value;
@@ -418,6 +437,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.SessionOption;
             }
+
             set
             {
                 base.SessionOption = value;
@@ -433,11 +453,14 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(Position = 1,
                    ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
+        [ValidateTrustedData]
         public virtual ScriptBlock InitializationScript
         {
             get { return _initScript; }
+
             set { _initScript = value; }
         }
+
         private ScriptBlock _initScript;
 
         /// <summary>
@@ -450,8 +473,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter RunAs32
         {
             get { return _shouldRunAs32; }
+
             set { _shouldRunAs32 = value; }
         }
+
         private bool _shouldRunAs32;
 
         /// <summary>
@@ -464,16 +489,18 @@ namespace Microsoft.PowerShell.Commands
         public virtual Version PSVersion
         {
             get { return _psVersion; }
+
             set
             {
-                PSSessionConfigurationCommandBase.CheckPSVersion(value);
+                RemotingCommandUtil.CheckPSVersion(value);
 
                 // Check if specified version of PowerShell is installed
-                PSSessionConfigurationCommandUtilities.CheckIfPowerShellVersionIsInstalled(value);
+                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
 
                 _psVersion = value;
             }
         }
+
         private Version _psVersion;
 
         /// <summary>
@@ -485,9 +512,11 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipeline = true,
                    ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
+        [ValidateTrustedData]
         public override PSObject InputObject
         {
             get { return base.InputObject; }
+
             set { base.InputObject = value; }
         }
 
@@ -497,11 +526,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
+        [ValidateTrustedData]
         [Alias("Args")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public override Object[] ArgumentList
+        public override object[] ArgumentList
         {
             get { return base.ArgumentList; }
+
             set { base.ArgumentList = value; }
         }
 
@@ -529,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
             SkipWinRMCheck = true;
 
             base.BeginProcessing();
-        } // CoreBeginProcessing
+        }
 
         /// <summary>
         /// Create a throttle operation using NewProcessConnectionInfo
@@ -616,6 +647,7 @@ namespace Microsoft.PowerShell.Commands
 
                     resolvedPath = paths[0];
                 }
+
                 List<Job2> jobs = JobManager.GetJobToStart(_definitionName, resolvedPath, _definitionType, this, false);
 
                 if (jobs.Count == 0)
@@ -671,7 +703,8 @@ namespace Microsoft.PowerShell.Commands
                     helper.Pipeline.Input.Write(InputObject);
                 }
             }
-        } // ProcessRecord
+        }
+
         private bool _firstProcessRecord = true;
 
         /// <summary>
@@ -682,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // close the input stream on all the pipelines
             CloseAllInputStreams();
-        } // EndProcessing
+        }
 
         #endregion Overrides
 
@@ -707,7 +740,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CloseAllInputStreams();
             }
-        } // Dispose
+        }
 
         #endregion IDisposable Overrides
     }

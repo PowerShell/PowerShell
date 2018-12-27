@@ -206,7 +206,7 @@ namespace System.Management.Automation
             RegisterDataStructureHandlerEventHandlers(DataStructureHandler);
 
             // set the runspace pool and invoke this powershell
-            if (null != rsToUse)
+            if (rsToUse != null)
             {
                 LocalPowerShell.Runspace = rsToUse;
                 if (extraPowerShell != null)
@@ -512,6 +512,7 @@ namespace System.Management.Automation
                             {
                                 UnregisterPowerShellEventHandlers(_extraPowerShell);
                             }
+
                             UnregisterDataStructureHandlerEventHandlers(DataStructureHandler);
                             UnregisterPipelineOutputEventHandlers(_localPowerShellOutput);
 
@@ -522,6 +523,7 @@ namespace System.Management.Automation
                             //localPowerShell.Dispose();
                         }
                     }
+
                     break;
 
                 case PSInvocationState.Stopping:
@@ -529,6 +531,7 @@ namespace System.Management.Automation
                         // abort all pending host calls
                         _remoteHost.ServerMethodExecutor.AbortAllCalls();
                     }
+
                     break;
             }
         }
@@ -555,7 +558,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendOutputDataToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -580,7 +583,7 @@ namespace System.Management.Automation
                     // send the error record to the client
                     DataStructureHandler.SendErrorRecordToClient(errorRecord);
                 }
-            } // lock ...
+            }
         }
 
         /// <summary>
@@ -605,7 +608,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendProgressRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -630,7 +633,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendWarningRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -655,7 +658,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendVerboseRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -680,7 +683,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendDebugRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -705,7 +708,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendInformationRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -736,6 +739,7 @@ namespace System.Management.Automation
                     PSObject data = _localPowerShellOutput[i];
                     DataStructureHandler.SendOutputDataToClient(data);
                 }
+
                 _localPowerShellOutput.Clear();
 
                 //foreach (ErrorRecord errorRecord in localPowerShell.Error)
@@ -744,6 +748,7 @@ namespace System.Management.Automation
                     ErrorRecord errorRecord = LocalPowerShell.Streams.Error[i];
                     DataStructureHandler.SendErrorRecordToClient(errorRecord);
                 }
+
                 LocalPowerShell.Streams.Error.Clear();
             }
             finally

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
+using Microsoft.PowerShell.Commands;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -29,6 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // check if the type is derived from a System.Enum
             // e.g. in C#
             // enum Foo { Red, Black, Green}
+
             if (PSObjectHelper.PSObjectIsEnum(typeNames))
                 return true;
 
@@ -82,11 +84,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            return "";
+            return string.Empty;
         }
 
         internal void Initialize(TerminatingErrorContext errorContext,
-                                    MshExpressionFactory expressionFactory,
+                                    PSPropertyExpressionFactory expressionFactory,
                                     TypeInfoDataBase db,
                                     PSObject so,
                                     FormatShape shape,
@@ -110,6 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                     }
+
                     if (view != null)
                     {
                         // we got a matching view from the database
@@ -150,6 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, parameters.viewName);
                     }
+
                     if (view != null)
                     {
                         _viewGenerator = SelectViewGeneratorFromViewDefinition(
@@ -161,6 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         s_formatViewBindingTracer.WriteLine(viewFound);
                         return;
                     }
+
                     s_formatViewBindingTracer.WriteLine(viewNotFound);
                     // illegal input, we have to terminate
                     ProcessUnknownViewName(errorContext, parameters.viewName, so, db, shape);
@@ -171,6 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                 }
+
                 if (view != null)
                 {
                     _viewGenerator = SelectViewGeneratorFromViewDefinition(
@@ -184,6 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     return;
                 }
+
                 s_formatViewBindingTracer.WriteLine(viewNotFound);
                 // we just select properties out of the object itself
                 _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
@@ -360,7 +367,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static ViewGenerator SelectViewGeneratorFromViewDefinition(
                                         TerminatingErrorContext errorContext,
-                                        MshExpressionFactory expressionFactory,
+                                        PSPropertyExpressionFactory expressionFactory,
                                         TypeInfoDataBase db,
                                         ViewDefinition view,
                                         FormattingCommandLineParameters parameters)
@@ -390,7 +397,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static ViewGenerator SelectViewGeneratorFromProperties(FormatShape shape, PSObject so,
                                     TerminatingErrorContext errorContext,
-                                    MshExpressionFactory expressionFactory,
+                                    PSPropertyExpressionFactory expressionFactory,
                                     TypeInfoDataBase db,
                                     FormattingCommandLineParameters parameters)
         {
@@ -405,7 +412,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // check if we can have a table:
                     // we want to get the # of properties we are going to display
-                    List<MshExpression> expressionList = PSObjectHelper.GetDefaultPropertySet(so);
+                    List<PSPropertyExpression> expressionList = PSObjectHelper.GetDefaultPropertySet(so);
                     if (expressionList.Count == 0)
                     {
                         // we failed to get anything from a property set
@@ -438,6 +445,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 viewGenerator = new ComplexViewGenerator();
             }
+
             Diagnostics.Assert(viewGenerator != null, "viewGenerator != null");
 
             viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
@@ -464,6 +472,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return true;
             }
+
             if (allProperties.Count == 3)
             {
                 foreach (MshResolvedExpressionParameterAssociation property in allProperties)
@@ -478,6 +487,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 return true;
             }
+
             if (allProperties.Count == 4)
             {
                 foreach (MshResolvedExpressionParameterAssociation property in allProperties)
@@ -493,6 +503,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 return true;
             }
+
             if (allProperties.Count == 5)
             {
                 foreach (MshResolvedExpressionParameterAssociation property in allProperties)
@@ -513,7 +524,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-        internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
+        internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
         {
             errors = null;
@@ -533,6 +544,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     outOfBandViewGenerator = new ListViewGenerator();
                 }
+
                 outOfBandViewGenerator.Initialize(errorContext, expressionFactory, db, view, null);
             }
             else
@@ -550,7 +562,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // we must check we have enough properties for a list view
-                if (new MshExpression("*").ResolveNames(so).Count <= 0)
+                if (new PSPropertyExpression("*").ResolveNames(so).Count <= 0)
                 {
                     return null;
                 }
@@ -585,9 +597,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// Helper class to manage the logging of errors resulting from
-    /// evaluations of MshExpression instances
+    /// evaluations of PSPropertyExpression instances
     ///
-    /// Depending on settings, it queues the failing MshExpressionResult
+    /// Depending on settings, it queues the failing PSPropertyExpressionResult
     /// instances and generates a list of out-of-band FormatEntryData
     /// objects to be sent to the output pipeline
     /// </summary>
@@ -599,15 +611,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// log a failed evaluation of an MshExpression
+        /// log a failed evaluation of an PSPropertyExpression
         /// </summary>
-        /// <param name="result">MshExpressionResult containing the failed evaluation data</param>
-        /// <param name="sourceObject">object used to evaluate the MshExpression</param>
-        internal void LogMshExpressionFailedResult(MshExpressionResult result, object sourceObject)
+        /// <param name="result">PSPropertyExpressionResult containing the failed evaluation data</param>
+        /// <param name="sourceObject">object used to evaluate the PSPropertyExpression</param>
+        internal void LogPSPropertyExpressionFailedResult(PSPropertyExpressionResult result, object sourceObject)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
                 return;
-            MshExpressionError error = new MshExpressionError();
+            PSPropertyExpressionError error = new PSPropertyExpressionError();
             error.result = result;
             error.sourceObject = sourceObject;
             _formattingErrorList.Add(error);
@@ -653,7 +665,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// to be written to the error pipeline and clear the list of pending
         /// errors
         /// </summary>
-        /// <returns>list of ErrorRecord objects</returns>
+        /// <returns>List of ErrorRecord objects.</returns>
         internal List<ErrorRecord> DrainFailedResultList()
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -666,6 +678,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (errorRecord != null)
                     retVal.Add(errorRecord);
             }
+
             _formattingErrorList.Clear();
             return retVal;
         }
@@ -674,22 +687,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Conversion between an error internal representation and ErrorRecord
         /// </summary>
         /// <param name="error">internal error object</param>
-        /// <returns>corresponding ErrorRecord instance</returns>
+        /// <returns>Corresponding ErrorRecord instance.</returns>
         private static ErrorRecord GenerateErrorRecord(FormattingError error)
         {
             ErrorRecord errorRecord = null;
             string msg = null;
-            MshExpressionError mshExpressionError = error as MshExpressionError;
-            if (mshExpressionError != null)
+            PSPropertyExpressionError psPropertyExpressionError = error as PSPropertyExpressionError;
+            if (psPropertyExpressionError != null)
             {
                 errorRecord = new ErrorRecord(
-                                mshExpressionError.result.Exception,
-                                "mshExpressionError",
+                                psPropertyExpressionError.result.Exception,
+                                "PSPropertyExpressionError",
                                 ErrorCategory.InvalidArgument,
-                                mshExpressionError.sourceObject);
+                                psPropertyExpressionError.sourceObject);
 
-                msg = StringUtil.Format(FormatAndOut_format_xxx.MshExpressionError,
-                    mshExpressionError.result.ResolvedExpression.ToString());
+                msg = StringUtil.Format(FormatAndOut_format_xxx.PSPropertyExpressionError,
+                    psPropertyExpressionError.result.ResolvedExpression.ToString());
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
 
@@ -706,13 +719,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formattingError.formatString);
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
+
             return errorRecord;
         }
 
         private FormatErrorPolicy _formatErrorPolicy;
 
         /// <summary>
-        /// current list of failed MsExpression evaluations
+        /// current list of failed PSPropertyExpression evaluations
         /// </summary>
         private List<FormattingError> _formattingErrorList = new List<FormattingError>();
     }

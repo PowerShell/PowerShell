@@ -21,6 +21,6 @@ Param (
 Write-Output "Hello"
 "@
         New-Item -Path $testdrive/test.ps1 -Value $script -ItemType File
-        { & $testdrive/test.ps1 } | ShouldBeErrorId "Argument"
+        { & $testdrive/test.ps1 } | Should -Throw -ErrorId "Argument"
     }
 }

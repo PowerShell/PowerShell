@@ -277,7 +277,7 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("baseObject");
             }
 
-            Collection<string> types = new Collection<String>();
+            Collection<string> types = new Collection<string>();
 
             for (Type type = baseObject.GetType(); type != null; type = type.BaseType)
             {

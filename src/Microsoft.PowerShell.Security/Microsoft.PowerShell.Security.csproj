@@ -10,27 +10,11 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="singleshell\installer\MshSecurityMshSnapin.cs" />
     <Compile Remove="gen\SecurityMshSnapinResources.cs" />
 
     <EmbeddedResource Remove="resources\SecurityMshSnapinResources.resx" />
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
+  
 </Project>

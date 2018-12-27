@@ -31,6 +31,8 @@ namespace Microsoft.PowerShell
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
 #pragma warning restore 1573
         {
+            // We need to read the settings file before we create the console host
+            Microsoft.PowerShell.CommandLineParameterParser.EarlyParse(args);
             System.Management.Automation.Runspaces.EarlyStartup.Init();
 
 #if !UNIX
@@ -56,6 +58,7 @@ namespace Microsoft.PowerShell
                 while (!System.Diagnostics.Debugger.IsAttached) {
                     Thread.Sleep(100);
                 }
+
                 System.Diagnostics.Debugger.Break();
             }
 #endif
@@ -85,12 +88,14 @@ namespace Microsoft.PowerShell
                         return exitCode;
                     }
                 }
+
                 System.Environment.FailFast(e.Message, e);
             }
             catch (Exception e)
             {
                 System.Environment.FailFast(e.Message, e);
             }
+
             return exitCode;
         }
     }

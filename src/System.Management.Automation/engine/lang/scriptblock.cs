@@ -24,7 +24,6 @@ namespace System.Management.Automation
     /// An object representing a pre-compiled block of powershell script.
     /// </summary>
     /// <remarks>
-    ///
     /// This class track a block of script in a compiled form. It is also
     /// used for direct invocation of the script block.
     ///
@@ -80,7 +79,6 @@ namespace System.Management.Automation
     /// runspace API.
     ///
     /// This class will handle the logic for direct invocation of script blocks.
-    ///
     /// </remarks>
     public partial class ScriptBlock
     {
@@ -96,6 +94,7 @@ namespace System.Management.Automation
             {
                 sb.SessionStateInternal = context.EngineSessionState;
             }
+
             return sb;
         }
 
@@ -233,6 +232,7 @@ namespace System.Management.Automation
                 suppliedVariables = new Dictionary<string, object>(variables, StringComparer.OrdinalIgnoreCase);
                 context = null;
             }
+
             return GetPowerShellImpl(context, suppliedVariables, false, false, null, args);
         }
 
@@ -336,7 +336,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable", Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline()
         {
@@ -346,7 +346,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable", Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline(CommandOrigin commandOrigin)
         {
@@ -356,7 +356,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Steppable", Justification = "Review this during API naming")]
         public SteppablePipeline GetSteppablePipeline(CommandOrigin commandOrigin, object[] args)
         {
@@ -367,10 +367,9 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
-        /// the script block returned as a collection of PSObjects</returns>
+        /// the script block returned as a collection of PSObjects.</returns>
         /// <exception cref="RuntimeException">Thrown if a script runtime exceptionexception occurred</exception>
         /// <exception cref="FlowControlException">An internal (non-public) exception from a flow control statement</exception>
         public Collection<PSObject> Invoke(params object[] args)
@@ -519,7 +518,18 @@ namespace System.Management.Automation
                                        invocationInfo: null,
                                        propagateAllExceptionsToTop: true,
                                        args: args);
-            Diagnostics.Assert(result.Count == 1, "Code generation ensures we return the correct type");
+
+            // This is needed only for the case where the
+            // method returns [object]. If the argument to 'return'
+            // is a pipeline that emits nothing then result.Count will
+            // be zero so we catch that and "convert" it to null. Note that
+            // the return statement is still required in the method, it
+            // just recieves nothing from it's argument.
+            if (result.Count == 0)
+            {
+                return default(T);
+            }
+
             return (T)result[0];
         }
 
@@ -562,6 +572,7 @@ namespace System.Management.Automation
         public bool IsFilter
         {
             get { return _scriptBlockData.IsFilter; }
+
             set { throw new PSInvalidOperationException(); }
         }
 
@@ -571,6 +582,7 @@ namespace System.Management.Automation
         public bool IsConfiguration
         {
             get { return _scriptBlockData.GetIsConfiguration(); }
+
             set { throw new PSInvalidOperationException(); }
         }
 
@@ -623,6 +635,7 @@ namespace System.Management.Automation
                         result.AddRange(outputType.Type);
                     }
                 }
+
                 return new ReadOnlyCollection<PSTypeName>(result);
             }
         }
@@ -685,6 +698,7 @@ namespace System.Management.Automation
 
                 return SessionStateInternal != null ? SessionStateInternal.PublicSessionState : null;
             }
+
             set
             {
                 if (value == null)
@@ -756,6 +770,7 @@ namespace System.Management.Automation
             {
                 call = DynamicExpression.Dynamic(PSConvertBinder.Get(invokeMethod.ReturnType), invokeMethod.ReturnType, call);
             }
+
             return Expression.Lambda(delegateType, call, parameterExprs).Compile();
         }
 
@@ -811,20 +826,17 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="dollarUnder">
         /// The value of the $_ variable for the script block. If AutomationNull.Value,
         /// the $_ variable is not created.
         /// </param>
-        ///
         /// <param name="input">
         /// The value of the $input variable for the script block. If AutomationNull.Value,
         /// the $input variable is not created.
         /// </param>
-        ///
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
-        /// the script block returned as a collection of PSObjects</returns>
+        /// the script block returned as a collection of PSObjects.</returns>
         /// <exception cref="RuntimeException">A script exception occurred</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>
         internal Collection<PSObject> DoInvoke(object dollarUnder, object input, object[] args)
@@ -868,7 +880,6 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="useLocalScope"></param>
         /// <param name="errorHandlingBehavior"></param>
         /// <param name="dollarUnder">
@@ -881,9 +892,8 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="scriptThis"></param>
         /// <param name="args">The arguments to this script.</param>
-        ///
         /// <returns>The object(s) generated during the execution of
-        /// the script block returned as a collection of PSObjects</returns>
+        /// the script block returned as a collection of PSObjects.</returns>
         /// <exception cref="RuntimeException">A script exception occurred</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>
         internal object DoInvokeReturnAsIs(bool useLocalScope,
@@ -1017,6 +1027,7 @@ namespace System.Management.Automation
                 psScriptRoot = Path.GetDirectoryName(File);
                 psCommandPath = File;
             }
+
             locals.SetAutomaticVariable(AutomaticVariable.PSScriptRoot, psScriptRoot, context);
             locals.SetAutomaticVariable(AutomaticVariable.PSCommandPath, psCommandPath, context);
         }
@@ -1100,11 +1111,13 @@ namespace System.Management.Automation
                     {
                         _pipeline.LinkPipelineSuccessOutput(crt.OutputPipe);
                     }
+
                     if (crt.ErrorOutputPipe != null)
                     {
                         _pipeline.LinkPipelineErrorOutput(crt.ErrorOutputPipe);
                     }
                 }
+
                 _pipeline.StartStepping(_expectInput);
             }
             finally
@@ -1118,7 +1131,7 @@ namespace System.Management.Automation
         /// Process a single input object.
         /// </summary>
         /// <param name="input">The object to process</param>
-        /// <returns>a collection of 0 or more result objects</returns>
+        /// <returns>A collection of 0 or more result objects.</returns>
         public Array Process(object input)
         {
             try
@@ -1172,7 +1185,7 @@ namespace System.Management.Automation
         /// Begin() was called with $false so we won't send any
         /// input to be processed.
         /// </summary>
-        /// <returns>The result of the execution</returns>
+        /// <returns>The result of the execution.</returns>
         public Array Process()
         {
             try
@@ -1312,7 +1325,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // ScriptBlockToPowerShellNotSupportedException
+    }
 
     /// <summary>
     /// Defines Event arguments passed to OnScriptBlockInvocationEventHandler

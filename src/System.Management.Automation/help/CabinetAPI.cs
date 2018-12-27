@@ -95,7 +95,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Provider a CabinetExtractor instance
         /// </summary>
-        /// <returns>Tracer instance</returns>
+        /// <returns>Tracer instance.</returns>
         internal static ICabinetExtractor GetCabinetExtractor()
         {
             if (s_cabinetLoader != null)

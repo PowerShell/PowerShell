@@ -37,7 +37,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
         else {
             [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $defaultDelimiter
         }
-        remove-item -force -ea silentlycontinue TESTDRIVE:/file.csv
+        remove-item -force -ErrorAction silentlycontinue TESTDRIVE:/file.csv
     }
 
     It "Disallow use of null delimiter" {

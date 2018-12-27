@@ -36,8 +36,8 @@ namespace System.Management.Automation.Remoting
         internal ServerRemoteSessionDSHandlerImpl(ServerRemoteSession session,
             AbstractServerSessionTransportManager transportManager)
         {
-            Dbg.Assert(null != session, "session cannot be null.");
-            Dbg.Assert(null != transportManager, "transportManager cannot be null.");
+            Dbg.Assert(session != null, "session cannot be null.");
+            Dbg.Assert(transportManager != null, "transportManager cannot be null.");
 
             _session = session;
             _stateMachine = new ServerRemoteSessionDSHandlerStateMachine(session);
@@ -165,7 +165,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="dataArg">
         /// The received client data.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -191,6 +190,7 @@ namespace System.Management.Automation.Remoting
                         // need to import the clients public key
                         CreateRunspacePoolReceived.SafeInvoke(this, dataArg);
                     }
+
                     break;
 
                 case RemotingDataType.CloseSession:
@@ -223,6 +223,7 @@ namespace System.Management.Automation.Remoting
                         negotiationArg.RemoteData = rcvdData;
                         NegotiationReceived.SafeInvoke(this, negotiationArg);
                     }
+
                     break;
 
                 case RemotingDataType.PublicKey:
@@ -230,6 +231,7 @@ namespace System.Management.Automation.Remoting
                         string remotePublicKey = RemotingDecoder.GetPublicKey(rcvdData.Data);
                         PublicKeyReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(remotePublicKey));
                     }
+
                     break;
 
                 default:

@@ -17,11 +17,9 @@ using System.Threading.Tasks;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    ///
     /// Defines the properties and facilities providing by an hosting application deriving from
     /// <see cref="System.Management.Automation.Host.PSHost"/> that offers dialog-oriented and
     /// line-oriented interactive features.
-    ///
     /// </summary>
     /// <seealso cref="System.Management.Automation.Host.PSHost"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface"/>
@@ -121,7 +119,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         public virtual void WriteLine()
         {
-            WriteLine("");
+            WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -268,6 +266,7 @@ namespace System.Management.Automation.Host
                 return temporaryTranscriptionData;
             }
         }
+
         private TranscriptionData _volatileTranscriptionData;
 
         /// <summary>
@@ -403,6 +402,7 @@ namespace System.Management.Automation.Host
                 _ui=ui;
                 Interlocked.Increment(ref _ui._transcribeOnlyCount);
             }
+
             public void Dispose()
             {
                 if (!_disposed)
@@ -412,6 +412,7 @@ namespace System.Management.Automation.Host
                     GC.SuppressFinalize(this);
                 }
             }
+
             ~TranscribeOnlyCookie() => Dispose();
         }
 
@@ -442,66 +443,79 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader)
+        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader)
         {
             TranscriptionOption transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
             TranscriptionData.Transcripts.Add(transcript);
 
-            LogTranscriptHeader(senderInfo, transcript);
+            LogTranscriptHeader(senderInfo, transcript, useMinimalHeader);
         }
 
-        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript)
+        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript, bool useMinimalHeader = false)
         {
-            string username = Environment.UserDomainName + "\\" + Environment.UserName;
-            string runAsUser = username;
-
-            if (senderInfo != null)
-            {
-                username = senderInfo.UserInfo.Identity.Name;
-            }
-
-            // Add bits from PSVersionTable
-            StringBuilder psVersionInfo = new StringBuilder();
-            Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
-            foreach (string versionKey in versionInfo.Keys)
-            {
-                Object value = versionInfo[versionKey];
-
-                if (value != null)
-                {
-                    var arrayValue = value as object[];
-                    string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
-                    psVersionInfo.AppendLine(versionKey + ": " + valueString);
-                }
-            }
-            string psConfigurationName = string.Empty;
-            if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
-            {
-                psConfigurationName = senderInfo.ConfigurationName;
-            }
             // Transcribe the transcript header
-            string format = InternalHostUserInterfaceStrings.TranscriptPrologue;
-            string line =
-                String.Format(
-                    Globalization.CultureInfo.InvariantCulture,
-                    format,
-                    DateTime.Now,
-                    username,
-                    runAsUser,
-                    psConfigurationName,
-                    Environment.MachineName,
-                    Environment.OSVersion.VersionString,
-                    String.Join(" ", Environment.GetCommandLineArgs()),
-                    System.Diagnostics.Process.GetCurrentProcess().Id,
-                    psVersionInfo.ToString().TrimEnd()
-                    );
+            string line;
+            if (useMinimalHeader)
+            {
+                line =
+                    string.Format(
+                        Globalization.CultureInfo.InvariantCulture,
+                        InternalHostUserInterfaceStrings.MinimalTranscriptPrologue,
+                        DateTime.Now);
+            }
+            else
+            {
+                string username = Environment.UserDomainName + "\\" + Environment.UserName;
+                string runAsUser = username;
+
+                if (senderInfo != null)
+                {
+                    username = senderInfo.UserInfo.Identity.Name;
+                }
+
+                // Add bits from PSVersionTable
+                StringBuilder versionInfoFooter = new StringBuilder();
+                Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
+                foreach (string versionKey in versionInfo.Keys)
+                {
+                    object value = versionInfo[versionKey];
+
+                    if (value != null)
+                    {
+                        var arrayValue = value as object[];
+                        string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
+                        versionInfoFooter.AppendLine(versionKey + ": " + valueString);
+                    }
+                }
+
+                string configurationName = string.Empty;
+                if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
+                {
+                    configurationName = senderInfo.ConfigurationName;
+                }
+
+                line =
+                    string.Format(
+                        Globalization.CultureInfo.InvariantCulture,
+                        InternalHostUserInterfaceStrings.TranscriptPrologue,
+                        DateTime.Now,
+                        username,
+                        runAsUser,
+                        configurationName,
+                        Environment.MachineName,
+                        Environment.OSVersion.VersionString,
+                        string.Join(" ", Environment.GetCommandLineArgs()),
+                        System.Diagnostics.Process.GetCurrentProcess().Id,
+                        versionInfoFooter.ToString().TrimEnd());
+            }
 
             lock (transcript.OutputToLog)
             {
                 transcript.OutputToLog.Add(line);
             }
+
             TranscribeCommandComplete(null);
         }
 
@@ -533,6 +547,7 @@ namespace System.Management.Automation.Host
                 {
                     stoppedTranscript.OutputToLog.Add(message);
                 }
+
                 TranscribeCommandComplete(null);
             }
             catch (Exception)
@@ -709,10 +724,12 @@ namespace System.Management.Automation.Host
                             transcript.Path);
                         throw new ArgumentException(errorMessage);
                     }
+
                     if(!Directory.Exists(baseDirectory))
                     {
                         Directory.CreateDirectory(baseDirectory);
                     }
+
                     if(!File.Exists(transcript.Path))
                     {
                         File.Create(transcript.Path).Dispose();
@@ -757,7 +774,7 @@ namespace System.Management.Automation.Host
 
         #endregion Line-oriented interaction
 
-        # region Dialog-oriented Interaction
+        #region Dialog-oriented Interaction
 
         /// <summary>
         /// Constructs a 'dialog' where the user is presented with a number of fields for which to supply values.
@@ -782,7 +799,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract Dictionary<String, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions);
+        public abstract Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions);
 
         /// <summary>
         /// Prompt for credentials.
@@ -927,8 +944,9 @@ namespace System.Management.Automation.Host
 
             return systemTranscript;
         }
+
         internal static TranscriptionOption systemTranscript = null;
-        private static Object s_systemTranscriptLock = new Object();
+        private static object s_systemTranscriptLock = new Object();
 
         private static TranscriptionOption GetTranscriptOptionFromSettings(Transcription transcriptConfig, TranscriptionOption currentTranscript)
         {
@@ -1057,6 +1075,7 @@ namespace System.Management.Automation.Host
                 Encoding = Utils.GetEncoding(value);
             }
         }
+
         private string _path;
 
         /// <summary>
@@ -1111,6 +1130,7 @@ namespace System.Management.Automation.Host
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
                                 this.Encoding);
                         }
+
                         _contentWriter.AutoFlush = true;
                     }
 
@@ -1123,6 +1143,7 @@ namespace System.Management.Automation.Host
                 OutputBeingLogged.Clear();
             }
         }
+
         private StreamWriter _contentWriter = null;
 
         /// <summary>
@@ -1152,6 +1173,7 @@ namespace System.Management.Automation.Host
 
             _disposed = true;
         }
+
         private bool _disposed = false;
     }
 
@@ -1221,6 +1243,7 @@ namespace System.Management.Automation.Host
                         splitLabel.Append(choices[i].Label.Substring(andPos + 1));
                         hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.Substring(andPos + 1, 1).Trim());
                     }
+
                     hotkeysAndPlainLabels[1, i] = splitLabel.ToString().Trim();
                 }
                 else
@@ -1289,5 +1312,5 @@ namespace System.Management.Automation.Host
             return result;
         }
     }
-} // namespace System.Management.Automation.Host
+}
 

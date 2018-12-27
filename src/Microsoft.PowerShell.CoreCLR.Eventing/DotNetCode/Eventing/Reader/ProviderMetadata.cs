@@ -259,8 +259,10 @@ namespace System.Diagnostics.Eventing.Reader
                 if (standardLevel.Name == name && standardLevel.Value == value)
                     return standardLevel.DisplayName;
             }
+
             return null;
         }
+
         internal string FindStandardOpcodeDisplayName(string name, uint value)
         {
             if (_standardOpcodes == null)
@@ -270,8 +272,10 @@ namespace System.Diagnostics.Eventing.Reader
                 if (standardOpcode.Name == name && standardOpcode.Value == value)
                     return standardOpcode.DisplayName;
             }
+
             return null;
         }
+
         internal string FindStandardKeywordDisplayName(string name, long value)
         {
             if (_standardKeywords == null)
@@ -281,8 +285,10 @@ namespace System.Diagnostics.Eventing.Reader
                 if (standardKeyword.Name == name && standardKeyword.Value == value)
                     return standardKeyword.DisplayName;
             }
+
             return null;
         }
+
         internal string FindStandardTaskDisplayName(string name, uint value)
         {
             if (_standardTasks == null)
@@ -292,6 +298,7 @@ namespace System.Diagnostics.Eventing.Reader
                 if (standardTask.Name == name && standardTask.Value == value)
                     return standardTask.DisplayName;
             }
+
             return null;
         }
 
@@ -353,6 +360,7 @@ namespace System.Diagnostics.Eventing.Reader
                     default:
                         return null;
                 }
+
                 for (int index = 0; index < arraySize; index++)
                 {
                     string generalName = (string)NativeWrapper.EvtGetObjectArrayProperty(elHandle, index, (int)propName);
@@ -437,6 +445,7 @@ namespace System.Diagnostics.Eventing.Reader
                     case ObjectTypeName.Task:
                         return taskList;
                 }
+
                 return null;
             }
             finally
@@ -458,6 +467,7 @@ namespace System.Diagnostics.Eventing.Reader
                     el = (List<EventLevel>)this.GetProviderListProperty(_handle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId.EvtPublisherMetadataLevels);
                     _levels = el.AsReadOnly();
                 }
+
                 return _levels;
             }
         }
@@ -476,6 +486,7 @@ namespace System.Diagnostics.Eventing.Reader
                     eo = (List<EventOpcode>)this.GetProviderListProperty(_handle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId.EvtPublisherMetadataOpcodes);
                     _opcodes = eo.AsReadOnly();
                 }
+
                 return _opcodes;
             }
         }
@@ -493,6 +504,7 @@ namespace System.Diagnostics.Eventing.Reader
                     ek = (List<EventKeyword>)this.GetProviderListProperty(_handle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId.EvtPublisherMetadataKeywords);
                     _keywords = ek.AsReadOnly();
                 }
+
                 return _keywords;
             }
         }
@@ -510,6 +522,7 @@ namespace System.Diagnostics.Eventing.Reader
                     et = (List<EventTask>)this.GetProviderListProperty(_handle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId.EvtPublisherMetadataTasks);
                     _tasks = et.AsReadOnly();
                 }
+
                 return _tasks;
             }
         }
@@ -554,6 +567,7 @@ namespace System.Diagnostics.Eventing.Reader
                             }
                         }
                     }
+
                     return emList.AsReadOnly();
                 }
             }

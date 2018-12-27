@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public AliasProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
@@ -45,11 +45,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes the alias drive
         /// </summary>
-        ///
         /// <returns>
         /// An array of a single PSDriveInfo object representing the alias drive.
         /// </returns>
-        ///
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             string description = SessionStateStrings.AliasDriveDescription;
@@ -65,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(aliasDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
@@ -74,24 +72,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the NewItem cmdlet
         /// </summary>
-        ///
         /// <param name="path">
         /// Ignored.
         /// </param>
-        ///
         /// <param name="type">
         /// Ignored.
         /// </param>
-        ///
         /// <param name="newItemValue">
         /// Ignored.
         /// </param>
-        ///
         /// <returns>
         /// An instance of AliasProviderDynamicParameters which is the dynamic parameters for
         /// NewItem.
         /// </returns>
-        ///
         protected override object NewItemDynamicParameters(string path, string type, object newItemValue)
         {
             return new AliasProviderDynamicParameters();
@@ -100,20 +93,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the NewItem cmdlet
         /// </summary>
-        ///
         /// <param name="path">
         /// Ignored.
         /// </param>
-        ///
         /// <param name="value">
         /// Ignored.
         /// </param>
-        ///
         /// <returns>
         /// An instance of AliasProviderDynamicParameters which is the dynamic parameters for
         /// SetItem.
         /// </returns>
-        ///
         protected override object SetItemDynamicParameters(string path, object value)
         {
             return new AliasProviderDynamicParameters();
@@ -126,15 +115,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a alias from session state
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the alias to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// A DictionaryEntry that represents the value of the alias.
         /// </returns>
-        ///
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -144,26 +130,22 @@ namespace Microsoft.PowerShell.Commands
             AliasInfo value = SessionState.Internal.GetAlias(name, Context.Origin);
 
             return value;
-        } // GetSessionStateItem
+        }
 
         /// <summary>
         /// Since items are often more than their value, this method should
         /// be overridden to provide the value for an item
         /// </summary>
-        ///
         /// <param name="item">
         /// The item to extract the value from.
         /// </param>
-        ///
         /// <returns>
         /// The value of the specified item.
         /// </returns>
-        ///
         /// <remarks>
         /// The default implementation will get
         /// the Value property of a DictionaryEntry
         /// </remarks>
-        ///
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
@@ -177,25 +159,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = aliasInfo.Definition;
             }
+
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Sets the alias of the specified name to the specified value
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the alias to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value for the alias.
         /// </param>
-        ///
         /// <param name="writeItem">
         /// If true, the item that was set should be written to WriteItemObject.
         /// </param>
-        ///
 #pragma warning disable 0162
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
@@ -241,6 +220,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             item = SessionState.Internal.SetAliasValue(name, stringValue, Force, Context.Origin);
                         }
+
                         break;
                     }
 
@@ -258,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             newAliasInfo.SetOptions(dynamicParameters.Options, Force);
                         }
+
                         item = SessionState.Internal.SetAliasItem(newAliasInfo, Force, Context.Origin);
                         break;
                     }
@@ -270,17 +251,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteItemObject(item, item.Name, false);
             }
-        } // SetSessionStateItem
+        }
 #pragma warning restore 0162
 
         /// <summary>
         /// Removes the specified alias from session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the alias to remove from session state.
         /// </param>
-        ///
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -288,35 +267,30 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveAlias(name, Force);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
         /// Gets a flattened view of the alias in session state
         /// </summary>
-        ///
         /// <returns>
         /// An IDictionary representing the flattened view of the aliases in
         /// session state.
         /// </returns>
-        ///
         internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetAliasTable();
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
         /// to perform a check should override this method.
         /// </summary>
-        ///
         /// <param name="item">
         /// The item to verify if it can be renamed.
         /// </param>
-        ///
         /// <returns>
         /// true if the item can be renamed or false otherwise.
         /// </returns>
-        ///
         internal override bool CanRenameItem(object item)
         {
             bool result = false;
@@ -344,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion protected members
 
-    } // AliasProvider
+    }
 
     /// <summary>
     /// The dynamic parameter object for the AliasProvider SetItem and NewItem commands
@@ -354,17 +328,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the option parameter for the alias
         /// </summary>
-        ///
         [Parameter]
         public ScopedItemOptions Options
         {
             get { return _options; }
+
             set
             {
                 _optionsSet = true;
                 _options = value;
             }
         }
+
         private ScopedItemOptions _options;
 
         /// <summary>
@@ -375,6 +350,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _optionsSet; }
         }
+
         private bool _optionsSet = false;
     }
 }

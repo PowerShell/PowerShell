@@ -42,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
@@ -64,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -73,8 +75,10 @@ namespace Microsoft.PowerShell.Commands
         protected Signature Signature
         {
             get { return _signature; }
+
             set { _signature = value; }
         }
+
         private Signature _signature;
 
         /// <summary>
@@ -95,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 _sourcePathOrExtension = value;
             }
         }
+
         private string[] _sourcePathOrExtension;
 
         /// <summary>
@@ -106,11 +111,13 @@ namespace Microsoft.PowerShell.Commands
         public byte[] Content
         {
             get { return _content; }
+
             set
             {
                 _content = value;
             }
         }
+
         private byte[] _content;
 
         //
@@ -122,7 +129,6 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the SignatureCommandsBase class,
         /// using the given command name.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
@@ -326,6 +332,7 @@ namespace Microsoft.PowerShell.Commands
                 _certificate = value;
             }
         }
+
         private X509Certificate2 _certificate;
 
         /// <summary>
@@ -338,7 +345,6 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// Defaults to 'notroot'.
         /// </summary>
-        ///
         [Parameter(Mandatory = false)]
         [ValidateSet("signer", "notroot", "all")]
         public string IncludeChain
@@ -353,6 +359,7 @@ namespace Microsoft.PowerShell.Commands
                 _includeChain = value;
             }
         }
+
         private string _includeChain = "notroot";
 
         /// <summary>
@@ -374,10 +381,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = String.Empty;
                 }
+
                 _timestampServer = value;
             }
         }
-        private string _timestampServer = "";
+
+        private string _timestampServer = string.Empty;
 
         /// <summary>
         /// Gets or sets the hash algorithm used for signing.
@@ -397,6 +406,7 @@ namespace Microsoft.PowerShell.Commands
                 _hashAlgorithm = value;
             }
         }
+
         private string _hashAlgorithm = null;
 
         /// <summary>
@@ -409,11 +419,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -562,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 // reset the read-only attribute
-                if (null != readOnlyFileInfo)
+                if (readOnlyFileInfo != null)
                 {
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 }
@@ -603,11 +615,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get SigningOption value corresponding to a string name
         /// </summary>
-        ///
         /// <param name="optionName"> name of option </param>
-        ///
-        /// <returns> SigningOption </returns>
-        ///
+        /// <returns>SigningOption.</returns>
         private static SigningOption GetSigningOption(string optionName)
         {
             foreach (SigningOptionInfo si in s_sigOptionInfo)

@@ -5,9 +5,7 @@ document.
 
 ## Running Pester Tests
 
-First, restore the correct version of Pester using `Restore-PSPester`.
-
-Then, go to the top level of the PowerShell repository and run: `Start-PSPester`
+Go to the top level of the PowerShell repository and run: `Start-PSPester`
 inside a self-hosted copy of PowerShell.
 
 You can use `Start-PSPester -Tests SomeTestSuite*` to limit the tests run.

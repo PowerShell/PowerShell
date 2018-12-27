@@ -33,7 +33,6 @@ namespace System.Management.Automation
     ///
     /// When the TraceFrame instance is disposed, all errorRecords stored will be
     /// dumped into HelpSystem.LastErrors with context information attached.
-    ///
     /// </summary>
     internal class HelpErrorTracer
     {
@@ -54,7 +53,7 @@ namespace System.Management.Automation
         internal sealed class TraceFrame : IDisposable
         {
             // Following are help context information
-            private string _helpFile = "";
+            private string _helpFile = string.Empty;
 
             // ErrorRecords accumulated during the help content loading.
             private Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();

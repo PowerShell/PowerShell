@@ -4,10 +4,10 @@ Describe "Add-Type" -Tags "CI" {
     BeforeAll {
         $guid = [Guid]::NewGuid().ToString().Replace("-","")
 
-        $code1 = @"
+        $CSharpCode1 = @"
         namespace Test.AddType
         {
-            public class BasicTest1
+            public class CSharpTest1$guid
             {
                 public static int Add1(int a, int b)
                 {
@@ -16,10 +16,10 @@ Describe "Add-Type" -Tags "CI" {
             }
         }
 "@
-        $code2 = @"
+        $CSharpCode2 = @"
         namespace Test.AddType
         {
-            public class BasicTest2
+            public class CSharpTest2$guid
             {
                 public static int Add2(int a, int b)
                 {
@@ -28,41 +28,212 @@ Describe "Add-Type" -Tags "CI" {
             }
         }
 "@
-        $codeFile1 = Join-Path -Path $TestDrive -ChildPath "codeFile1.cs"
-        $codeFile2 = Join-Path -Path $TestDrive -ChildPath "codeFile2.cs"
+        $CSharpFile1 = Join-Path -Path $TestDrive -ChildPath "CSharpFile1.cs"
+        $CSharpFile2 = Join-Path -Path $TestDrive -ChildPath "CSharpFile2.cs"
 
-        Set-Content -Path $codeFile1 -Value $code1 -Force
-        Set-Content -Path $codeFile2 -Value $code2 -Force
+        Set-Content -Path $CSharpFile1 -Value $CSharpCode1 -Force
+        Set-Content -Path $CSharpFile2 -Value $CSharpCode2 -Force
+
+        $codeWarning = @"
+        namespace Test.AddType
+        {
+            public class CSharpTestWarn$guid
+            {
+                public static int Add2(int a, int b)
+                {
+                    return (a + b);
+                }
+            }
+        }
+        #warning Test warning line
+"@
     }
 
     It "Public 'Language' enumeration contains all members" {
-        [Enum]::GetNames("Microsoft.PowerShell.Commands.Language") -join "," | Should -BeExactly "CSharp,VisualBasic"
+        [Enum]::GetNames("Microsoft.PowerShell.Commands.Language") -join "," | Should -BeExactly "CSharp"
     }
 
-    It "Should not throw given a simple class definition" {
-        { Add-Type -TypeDefinition "public static class foo { }" } | Should -Not -Throw
+    It "Should not throw given a simple C# class definition" {
+        # Also we check that '-Language CSharp' is by default.
+        # In subsequent launches from the same session
+        # the test will be passed without real compile - it will return an assembly previously compiled.
+        { Add-Type -TypeDefinition "public static class CSharpfooType { }" } | Should Not Throw
+        [CSharpfooType].Name | Should BeExactly "CSharpfooType"
     }
 
     It "Can use System.Management.Automation.CmdletAttribute" {
         $code = @"
-[System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = System.Management.Automation.ConfirmImpact.High, SupportsPaging = true)]
-public class AttributeTest$guid {}
+using System.Management.Automation;
+[System.Management.Automation.Cmdlet("Get", "Thing$guid", ConfirmImpact = System.Management.Automation.ConfirmImpact.High, SupportsPaging = true)]
+public class AttributeTest$guid : PSCmdlet
+{
+    protected override void EndProcessing()
+
+    {
+        WriteObject("$guid");
+    }
+}
 "@
-        Add-Type -TypeDefinition $code -PassThru | Should -Not -BeNullOrEmpty
+        $cls = Add-Type -TypeDefinition $code -PassThru | Select-Object -First 1
+        $testModule = Import-Module $cls.Assembly -PassThru
+
+        Invoke-Expression -Command "Get-Thing$guid" | Should BeExactly $guid
+
+        Remove-Module $testModule -ErrorAction SilentlyContinue -Force
     }
 
     It "Can load TPA assembly System.Runtime.Serialization.Primitives.dll" {
-        Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru | Should -Not -BeNullOrEmpty
+        $returnedTypes = Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru
+        $returnedTypes.Count | Should BeGreaterThan 0
+        ($returnedTypes[0].Assembly.FullName -Split ",")[0]  | Should BeExactly 'System.Runtime.Serialization.Primitives'
     }
 
-    It "Can compile C# files" {
+    It "Can compile <sourceLanguage> files" -TestCases @(
+        @{
+            type1 = "[Test.AddType.CSharpTest1$guid]"
+            type2 = "[Test.AddType.CSharpTest2$guid]"
+            file1 = $CSharpFile1
+            file2 = $CSharpFile2
+            sourceLanguage = "CSharp"
+        }
+    ) {
+        param($type1, $type2, $file1, $file2, $sourceLanguage)
 
-        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Throw -ErrorId "TypeNotFound"
-        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Throw -ErrorId "TypeNotFound"
+        # The types shouldn't exist before compile the test code.
+        $type1 -as [type] | Should BeNullOrEmpty
+        $type2 -as [type] | Should BeNullOrEmpty
 
-        Add-Type -Path $codeFile1,$codeFile2
+        $returnedTypes = Add-Type -Path $file1,$file2 -PassThru
 
-        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Not -Throw
-        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Not -Throw
+        $type1 = Invoke-Expression -Command $type1
+        $type2 = Invoke-Expression -Command $type2
+
+        # We can compile, load and use new code.
+        $type1::Add1(1, 2) | Should Be 3
+        $type2::Add2(3, 4) | Should Be 7
+
+        # Return the same assembly if source code has not been changed.
+        # Also check that '-LiteralPath' works.
+        $returnedTypes2 = Add-Type -LiteralPath $file1,$file2 -PassThru
+        $returnedTypes[0].Assembly.FullName | Should BeExactly $returnedTypes2[0].Assembly.FullName
+    }
+
+    It "Can compile <sourceLanguage> with MemberDefinition" -TestCases @(
+        @{
+            sourceCode = "public static string TestString() { return UTF8Encoding.UTF8.ToString();}"
+            sourceType = "TestCSharpType1"
+            sourceNS = "TestCSharpNS"
+            sourceUsingNS = "System.Text"
+            sourceRunType = "TestCSharpNS.TestCSharpType1"
+            sourceDefaultNSRunType = "Microsoft.PowerShell.Commands.AddType.AutoGeneratedTypes.TestCSharpType1"
+            expectedResult = "System.Text.UTF8Encoding+UTF8EncodingSealed"
+            sourceLanguage = "CSharp"
+        }
+    ) {
+        param($sourceCode, $sourceType, $sourceNS, $sourceUsingNS, $sourceRunType, $sourceDefaultNSRunType, $expectedResult, $sourceLanguage)
+
+        # Add-Type show parse and compile errors and then finish with an terminationg error.
+        # Catch non-termination information error.
+        { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        # Catch final terminationg error.
+        { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+
+        $returnedTypes = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
+        ([type]$sourceRunType)::TestString() | Should BeExactly $expectedResult
+
+        # Return the same assembly if source code has not been changed.
+        $returnedTypes2 = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
+        $returnedTypes[0].Assembly.FullName | Should BeExactly $returnedTypes2[0].Assembly.FullName
+
+        # With default namespace.
+        Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Language $sourceLanguage
+        ([type]$sourceDefaultNSRunType)::TestString() | Should BeExactly $expectedResult
+    }
+
+    It "Can compile without loading" {
+
+        ## The assembly files cannot be removed once they are loaded, unless the current PowerShell session exits.
+        ## If we use $TestDrive here, then Pester will try to remove them afterward and result in errors.
+        $TempPath = [System.IO.Path]::GetTempFileName()
+        if (Test-Path $TempPath) { Remove-Item -Path $TempPath -Force -Recurse }
+        New-Item -Path $TempPath -ItemType Directory -Force > $null
+
+        $outFile = Join-Path -Path $TempPath -ChildPath "assembly$guid.dll"
+        $outFile2 = Join-Path -Path $TempPath -ChildPath "assembly2$guid.dll"
+
+        $code = @"
+using System.Management.Automation;
+[System.Management.Automation.Cmdlet("Get", "CompileThing$guid", ConfirmImpact = System.Management.Automation.ConfirmImpact.High, SupportsPaging = true)]
+public class AttributeTest$guid : PSCmdlet
+{
+    protected override void EndProcessing()
+
+    {
+        WriteObject("$guid");
+    }
+}
+"@
+
+        $cmdlet = "Get-CompileThing$guid"
+
+        Add-Type -TypeDefinition $code -OutputAssembly $outFile | Should -BeNullOrEmpty
+        # Without -PassThru we don't load output assembly
+        { [type]"System.Management.Automation.AttributeTest$guid" } | Should -Throw
+
+        $outFile | Should -Exist
+        $types = Add-Type -TypeDefinition $code -OutputAssembly $outFile2 -PassThru
+        $types[0].Name | Should -BeExactly "AttributeTest$guid"
+        $outFile2 | Should -Exist
+
+        { Invoke-Expression -Command $cmdlet } | Should Throw
+
+        $testModule = Import-Module -Name $outFile -PassThru
+        & $cmdlet | Should BeExactly $guid
+
+        Remove-Module $testModule -Force
+    }
+
+    It "Can report C# parse and compile errors" {
+        # Add-Type show parse and compile errors and then finish with an terminationg error.
+        # We test only for '-MemberDefinition' because '-Path' uses the same code path.
+        # In the tests the error is that 'using System.Text;' is missing.
+        #
+        # Catch non-termination information error.
+        { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        # Catch final terminationg error.
+        { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+
+        # Catch non-termination information error for CompilerOptions.
+        { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language CSharp -MemberDefinition "public static string TestString() { return ""}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "OutputType parameter requires that the OutputAssembly parameter be specified." {
+        $code = "public static string TestString() {}"
+        { Add-Type -TypeDefinition $code -OutputType Library } | Should -Throw -ErrorId "OUTPUTTYPE_REQUIRES_ASSEMBLY,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "By default Add-Type treats 'warnings as errors'." {
+        { Add-Type -TypeDefinition $codeWarning -WarningAction SilentlyContinue 2>$null } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "IgnoreWarnings suppress 'warnings as errors'." {
+        Add-Type -TypeDefinition $codeWarning -IgnoreWarnings -WarningVariable warnVar -WarningAction SilentlyContinue
+        $warnVar.Count | Should -Be 1
+    }
+
+    It "Throw terminating error when file with non-supported extension is passed to -Path" {
+        $VBFile = Join-Path -Path $TestDrive -ChildPath "VBFile.vb"
+        New-Item -Path $VBFile -ItemType File -Force > $null
+        { Add-Type -Path $VBFile } | Should -Throw -ErrorId "EXTENSION_NOT_SUPPORTED,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "Throw terminating error when specified assembly is not found: <assemblyName>" -TestCases @(
+        @{ assemblyName = "does_not_exist_with_wildcard_*"; errorid = "ErrorLoadingAssembly,Microsoft.PowerShell.Commands.AddTypeCommand"},
+        @{ assemblyName = "../does_not_exist_with_wildcard_*"; errorid = "ErrorLoadingAssembly,Microsoft.PowerShell.Commands.AddTypeCommand"},
+        @{ assemblyName = "${PSHOME}/does_not_exist"; errorid = "System.IO.FileNotFoundException,Microsoft.PowerShell.Commands.AddTypeCommand"},
+        @{ assemblyName = "does_not_exist"; errorid = "PathNotFound,Microsoft.PowerShell.Commands.AddTypeCommand"}
+    ) {
+        param ($assemblyName, $errorid)
+        { Add-Type -AssemblyName $assemblyName } | Should -Throw -ErrorId $errorid
     }
 }

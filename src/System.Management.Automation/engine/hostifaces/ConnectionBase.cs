@@ -42,6 +42,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             InitialSessionState = InitialSessionState.CreateDefault();
             Host = host;
         }
@@ -67,6 +68,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("initialSessionState");
@@ -107,6 +109,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("initialSessionState");
@@ -121,6 +124,7 @@ namespace System.Management.Automation.Runspaces
             {
                 InitialSessionState = initialSessionState.Clone();
             }
+
             this.ThreadOptions = initialSessionState.ThreadOptions;
 
 #if !CORECLR // No ApartmentState In CoreCLR
@@ -170,8 +174,10 @@ namespace System.Management.Automation.Runspaces
         public override RunspaceAvailability RunspaceAvailability
         {
             get { return _runspaceAvailability; }
+
             protected set { _runspaceAvailability = value; }
         }
+
         private RunspaceAvailability _runspaceAvailability = RunspaceAvailability.None;
 
         /// <summary>
@@ -318,11 +324,9 @@ namespace System.Management.Automation.Runspaces
         /// <param name="syncCall">If true runspace is closed synchronously
         /// else runspaces is closed asynchronously
         /// </param>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is BeforeOpen or Opening
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If SessionStateProxy has some method call in progress
         /// </exception>
@@ -404,6 +408,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     WaitForFinishofPipelines();
                 }
+
                 return;
             }
 
@@ -477,7 +482,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a pipeline object in the Disconnected state.
         /// </summary>
-        /// <returns>Pipeline</returns>
+        /// <returns>Pipeline.</returns>
         public override Pipeline CreateDisconnectedPipeline()
         {
             //
@@ -490,7 +495,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a powershell object in the Disconnected state.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         public override PowerShell CreateDisconnectedPowerShell()
         {
             //
@@ -503,7 +508,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public override RunspaceCapability GetCapabilities()
         {
             return RunspaceCapability.Default;
@@ -516,7 +521,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
         {
             return CoreCreatePipeline(null, false, false);
@@ -600,7 +605,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        ///
         /// <param name="command">A valid command string or String.Empty.</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <param name="isNested">True for nested pipeline</param>
@@ -818,12 +822,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">Thrown if
         /// <paramref name="pipeline"/> is null.
         /// </exception>
@@ -858,7 +860,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>
@@ -986,11 +987,13 @@ namespace System.Management.Automation.Runspaces
                     shouldRunAction = true;
                 }
             }
+
             if (shouldRunAction)
             {
                 action();
                 ranit = true;
             }
+
             return ranit;
         }
 
@@ -1002,6 +1005,7 @@ namespace System.Management.Automation.Runspaces
         {
             return _currentlyRunningPipeline;
         }
+
         private Pipeline _currentlyRunningPipeline = null;
 
         /// <summary>
@@ -1347,8 +1351,10 @@ namespace System.Management.Automation.Runspaces
                         );
                     throw e;
                 }
+
                 return DoLanguageMode;
             }
+
             set
             {
                 if (RunspaceState != RunspaceState.Opened)
@@ -1362,6 +1368,7 @@ namespace System.Management.Automation.Runspaces
                         );
                     throw e;
                 }
+
                 DoLanguageMode = value;
             }
         }

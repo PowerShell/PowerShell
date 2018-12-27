@@ -26,6 +26,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override string ToString()

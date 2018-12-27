@@ -355,10 +355,10 @@
     <value>The RepetitionInterval parameter cannot have a value of zero unless the RepetitionDuration parameter also has a zero value. A zero value removes repetition behavior from the Job trigger.</value>
   </data>
   <data name="ErrorRenamingScheduledJob" xml:space="preserve">
-    <value>An error occured while attempting to rename scheduled job from {0} to {1}.</value>
+    <value>An error occurred while attempting to rename scheduled job from {0} to {1}.</value>
   </data>
   <data name="ErrorRenamingScheduledJobWithMessage" xml:space="preserve">
-    <value>An error occured while attempting to rename scheduled job from {0} to {1} with error message: {2}.</value>
+    <value>An error occurred while attempting to rename scheduled job from {0} to {1} with error message: {2}.</value>
   </data>
   <data name="BrokenRenamingScheduledJob" xml:space="preserve">
     <value>An unrecoverable error occurred while renaming the scheduled job from {0} to {1}. The scheduled job will be removed.</value>

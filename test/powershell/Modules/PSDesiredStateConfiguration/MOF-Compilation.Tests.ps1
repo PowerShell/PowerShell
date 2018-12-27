@@ -27,9 +27,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig1
-"@) | should not throw
+"@) | Should -Not -Throw
 
-        "TestDrive:\DscTestConfig1\localhost.mof" | Should Exist
+        "TestDrive:\DscTestConfig1\localhost.mof" | Should -Exist
     }
 
     It "Should be able to compile a MOF from another basic configuration" -Skip:($IsMacOS -or $IsWindows) {
@@ -49,9 +49,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig2
-"@) | should not throw
+"@) | Should -Not -Throw
 
-        "TestDrive:\DscTestConfig2\localhost.mof" | Should Exist
+        "TestDrive:\DscTestConfig2\localhost.mof" | Should -Exist
     }
 
     It "Should be able to compile a MOF from a complex configuration" -Skip:($IsMacOS -or $IsWindows) {
@@ -158,9 +158,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
     }
         WordPressServer -OutputPath TestDrive:\DscTestConfig3
-"@) | should not throw
+"@) | Should -Not -Throw
 
-        "TestDrive:\DscTestConfig3\CentOS.mof" | Should Exist
+        "TestDrive:\DscTestConfig3\CentOS.mof" | Should -Exist
     }
 
     It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux) {
@@ -178,9 +178,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig4
-"@) | should not throw
+"@) | Should -Not -Throw
 
-        "TestDrive:\DscTestConfig4\localhost.mof" | Should Exist
+        "TestDrive:\DscTestConfig4\localhost.mof" | Should -Exist
     }
 
     It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux) {
@@ -208,8 +208,8 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig5
-"@) | should not throw
+"@) | Should -Not -Throw
 
-        "TestDrive:\DscTestConfig5\localhost.mof" | Should Exist
+        "TestDrive:\DscTestConfig5\localhost.mof" | Should -Exist
     }
 }

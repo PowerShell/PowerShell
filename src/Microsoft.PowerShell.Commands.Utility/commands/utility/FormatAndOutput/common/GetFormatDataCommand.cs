@@ -12,8 +12,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Gets formatting information from the loading
-    /// format information database
+    /// Gets formatting information from the loading format information database.
     /// </summary>
     /// <remarks>Currently supports only table controls
     /// </remarks>
@@ -25,8 +24,7 @@ namespace Microsoft.PowerShell.Commands
         private WildcardPattern[] _filter = new WildcardPattern[1];
 
         /// <summary>
-        /// Get Formatting information only for the specified
-        /// typename
+        /// Get Formatting information only for the specified typename.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
@@ -37,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _typename;
             }
+
             set
             {
                 _typename = value;
@@ -65,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         public Version PowerShellVersion { get; set; }
 
         /// <summary>
-        /// set the default filter
+        /// Set the default filter.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -93,14 +92,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Takes out the content from the database and writes them
-        /// out
+        /// Takes out the content from the database and writes them out.
         /// </summary>
         protected override void ProcessRecord()
         {
             bool writeOldWay = PowerShellVersion == null ||
                                PowerShellVersion.Major < 5 ||
-                               PowerShellVersion.Build < 11086;
+                               (PowerShellVersion.Major == 5 && PowerShellVersion.Minor < 1);
 
             TypeInfoDataBase db = this.Context.FormatDBManager.Database;
 
@@ -169,6 +167,7 @@ namespace Microsoft.PowerShell.Commands
                     viewList = new List<FormatViewDefinition>();
                     typedefs.Add(consolidatedTypeName, viewList);
                 }
+
                 viewList.Add(formatdef);
             }// foreach(ViewDefinition...
 
@@ -192,6 +191,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         etd.TypeNames.Add(typeNames[i]);
                     }
+
                     WriteObject(etd);
                 }
             }
@@ -222,6 +222,7 @@ namespace Microsoft.PowerShell.Commands
                     consolidatedTypeName.Add(item.name);
                 }
             }
+
             return consolidatedTypeName;
         }
 
@@ -237,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return false;
         }
     }

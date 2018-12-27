@@ -25,6 +25,7 @@ namespace Microsoft.PowerShell.Commands
         public object LineOutput
         {
             get { return _lineOutput; }
+
             set { _lineOutput = value; }
         }
 
@@ -39,7 +40,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -53,6 +53,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ProcessWrongTypeLineOutput(_lineOutput);
             }
+
             ((OutCommandInner)this.implementation).LineOutput = lo;
 
             base.BeginProcessing();

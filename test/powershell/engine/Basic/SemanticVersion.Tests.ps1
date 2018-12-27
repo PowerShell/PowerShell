@@ -203,12 +203,12 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ name = "Format errors";               errorId = "FormatException";    expectedResult = $false; version = "1.0.cc"  }
         ) {
             param($version, $expectedResult, $errorId)
-            { [SemanticVersion]::new($version) } | ShouldBeErrorId $errorId
+            { [SemanticVersion]::new($version) } | Should -Throw -ErrorId $errorId
             if ($version -eq $null) {
                 # PowerShell convert $null to Empty string
-                { [SemanticVersion]::Parse($version) } | ShouldBeErrorId "FormatException"
+                { [SemanticVersion]::Parse($version) } | Should -Throw -ErrorId "FormatException"
             } else {
-                { [SemanticVersion]::Parse($version) } | ShouldBeErrorId $errorId
+                { [SemanticVersion]::Parse($version) } | Should -Throw -ErrorId $errorId
             }
             $semVer = $null
             [SemanticVersion]::TryParse($_, [ref]$semVer) | Should -Be $expectedResult
@@ -216,15 +216,15 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
         }
 
         It "Negative version arguments" {
-            { [SemanticVersion]::new(-1, 0) } | ShouldBeErrorId "PSArgumentException"
-            { [SemanticVersion]::new(1, -1) } | ShouldBeErrorId "PSArgumentException"
-            { [SemanticVersion]::new(1, 1, -1) } | ShouldBeErrorId "PSArgumentException"
+            { [SemanticVersion]::new(-1, 0) } | Should -Throw -ErrorId "PSArgumentException"
+            { [SemanticVersion]::new(1, -1) } | Should -Throw -ErrorId "PSArgumentException"
+            { [SemanticVersion]::new(1, 1, -1) } | Should -Throw -ErrorId "PSArgumentException"
         }
 
         It "Incompatible 'Version' throws" {
             # Revision isn't supported
-            { [SemanticVersion]::new([Version]::new(0, 0, 0, 4)) } | ShouldBeErrorId "PSArgumentException"
-            { [SemanticVersion]::new([Version]::new("1.2.3.4")) } | ShouldBeErrorId "PSArgumentException"
+            { [SemanticVersion]::new([Version]::new(0, 0, 0, 4)) } | Should -Throw -ErrorId "PSArgumentException"
+            { [SemanticVersion]::new([Version]::new("1.2.3.4")) } | Should -Throw -ErrorId "PSArgumentException"
         }
     }
 
@@ -241,7 +241,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $ser = [PSSerializer]::Serialize($semver)
             $des = [PSSerializer]::Deserialize($ser)
 
-            $des | Should -BeOfType System.Management.Automation.SemanticVersion
+            $des | Should -BeOfType System.Object
             $des.ToString() | Should -Be $expectedResult
         }
     }

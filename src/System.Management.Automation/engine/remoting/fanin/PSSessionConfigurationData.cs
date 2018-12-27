@@ -11,7 +11,6 @@ using System.Text;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    ///
     /// </summary>
     public sealed class PSSessionConfigurationData
     {
@@ -22,7 +21,6 @@ namespace System.Management.Automation.Remoting
         #region Public Properties
 
         /// <summary>
-        ///
         /// </summary>
         public List<string> ModulesToImport
         {
@@ -41,14 +39,14 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
-        public String PrivateData
+        public string PrivateData
         {
             get
             {
                 return _privateData;
             }
+
             internal set
             {
                 _privateData = value;
@@ -209,11 +207,13 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "Unknown option specified");
                     }
+
                     break;
             }
         }

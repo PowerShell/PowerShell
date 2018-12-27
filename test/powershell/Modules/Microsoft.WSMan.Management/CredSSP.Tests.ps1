@@ -40,7 +40,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         @{params=@{Role="Server";DelegateComputer="."};Description="Server role w/ DelegateComputer"}
     ) {
         param ($params)
-        { Enable-WSManCredSSP @params } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.EnableWSManCredSSPCommand"
+        { Enable-WSManCredSSP @params } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.EnableWSManCredSSPCommand"
     }
 
     It "Enable-WSManCredSSP works: <description>" -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(

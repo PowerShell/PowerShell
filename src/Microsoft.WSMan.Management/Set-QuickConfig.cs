@@ -42,8 +42,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter UseSSL
         {
             get { return usessl; }
+
             set { usessl = value; }
         }
+
         private SwitchParameter usessl;
 
         //helper variable
@@ -57,8 +59,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter Force
         {
             get { return force; }
+
             set { force = value; }
         }
+
         private bool force = false;
 
         /// <summary>
@@ -68,8 +72,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter SkipNetworkProfileCheck
         {
             get { return skipNetworkProfileCheck; }
+
             set { skipNetworkProfileCheck = value; }
         }
+
         private bool skipNetworkProfileCheck = false;
 
         /// <summary>
@@ -86,6 +92,7 @@ namespace Microsoft.WSMan.Management
             {
                 return;
             }
+
             QuickConfigRemoting(true);
             QuickConfigRemoting(false);
         }//End BeginProcessing()
@@ -155,10 +162,11 @@ namespace Microsoft.WSMan.Management
                 {
                     source = sourceAttribute.Value;
                 }
-                string rxml = "";
+
+                string rxml = string.Empty;
                 if (enabled.Equals("true"))
                 {
-                    string Err_Msg = "";
+                    string Err_Msg = string.Empty;
                     if (serviceonly)
                     {
                         Err_Msg = WSManResourceLoader.GetResourceString("L_QuickConfigNoServiceChangesNeeded_Message");
@@ -173,6 +181,7 @@ namespace Microsoft.WSMan.Management
                     WriteObject(Err_Msg);
                     return;
                 }
+
                 if (!enabled.Equals("false"))
                 {
                     ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_QuickConfig_InvalidBool_0_ErrorMessage"));
@@ -192,7 +201,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string inputXml = resultopxml.SelectSingleNode(xpathUpdate, nsmgr).OuterXml;
-                if (resultAction.Equals("") || inputXml.Equals(""))
+                if (resultAction.Equals(string.Empty) || inputXml.Equals(string.Empty))
                 {
                     ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_ERR_Message") + WSManResourceLoader.GetResourceString("L_QuickConfig_MissingUpdateXml_0_ErrorMessage"));
                     ErrorRecord er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);
@@ -208,6 +217,7 @@ namespace Microsoft.WSMan.Management
                 {
                     action = "EnableRemoting";
                 }
+
                 rxml = m_SessionObj.Invoke(action, "winrm/config/service", inputXml, 0);
                 XmlDocument finalxml = new XmlDocument();
                 finalxml.LoadXml(rxml);
@@ -222,6 +232,7 @@ namespace Microsoft.WSMan.Management
                     xpathStatus = "/cfg:EnableRemoting_OUTPUT/cfg:Status";
                     xpathResult = "/cfg:EnableRemoting_OUTPUT/cfg:Results";
                 }
+
                 if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.ToString().Equals("succeeded"))
                 {
                     if (serviceonly)
@@ -232,6 +243,7 @@ namespace Microsoft.WSMan.Management
                     {
                         WriteObject(WSManResourceLoader.GetResourceString("L_QuickConfigUpdated_Message"));
                     }
+
                     WriteObject(finalxml.SelectSingleNode(xpathResult, nsmgr).InnerText);
                 }
                 else
@@ -245,6 +257,7 @@ namespace Microsoft.WSMan.Management
                 {
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
+
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
 

@@ -4,39 +4,36 @@ Describe "Tab completion bug fix" -Tags "CI" {
 
     It "Issue#682 - '[system.manage<tab>' should work" {
         $result = TabExpansion2 -inputScript "[system.manage" -cursorColumn "[system.manage".Length
-        $result | Should -Not -BeNullOrEmpty
-        $result.CompletionMatches.Count | Should -Be 1
-        $result.CompletionMatches[0].CompletionText | Should -Be "System.Management"
+        $result.CompletionMatches | Should -HaveCount 1
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "System.Management"
     }
 
     It "Issue#1350 - '1 -sp<tab>' should work" {
         $result = TabExpansion2 -inputScript "1 -sp" -cursorColumn "1 -sp".Length
-        $result | Should -Not -BeNullOrEmpty
-        $result.CompletionMatches.Count | Should -Be 1
-        $result.CompletionMatches[0].CompletionText | Should -Be "-split"
+        $result.CompletionMatches | Should -HaveCount 1
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "-split"
     }
 
     It "Issue#1350 - '1 -a<tab>' should work" {
         $result = TabExpansion2 -inputScript "1 -a" -cursorColumn "1 -a".Length
-        $result | Should -Not -BeNullOrEmpty
-        $result.CompletionMatches.Count | Should -Be 2
-        $result.CompletionMatches[0].CompletionText | Should -Be "-and"
-        $result.CompletionMatches[1].CompletionText | Should -Be "-as"
+        $result.CompletionMatches | Should -HaveCount 2
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "-and"
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly "-as"
     }
     It "Issue#2295 - '[pscu<tab>' should expand to [pscustomobject]" {
         $result = TabExpansion2 -inputScript "[pscu" -cursorColumn "[pscu".Length
-        $result | Should -Not -BeNullOrEmpty
-        $result.CompletionMatches.Count | Should -Be 1
-        $result.CompletionMatches[0].CompletionText | Should -Be "pscustomobject"
+        $result.CompletionMatches | Should -HaveCount 1
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "pscustomobject"
     }
     It "Issue#1345 - 'Import-Module -n<tab>' should work" {
         $cmd = "Import-Module -n"
         $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-        $result.CompletionMatches.Count | Should -Be 3
-        $result.CompletionMatches[0].CompletionText | Should -Be "-Name"
-        $result.CompletionMatches[1].CompletionText | Should -Be "-NoClobber"
-        $result.CompletionMatches[2].CompletionText | Should -Be "-NoOverwrite"
+        $result.CompletionMatches | Should -HaveCount 3
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "-Name"
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly "-NoClobber"
+        $result.CompletionMatches[2].CompletionText | Should -BeExactly "-NoOverwrite"
     }
+
     Context "Issue#3416 - 'Select-Object'" {
         BeforeAll {
             $DatetimeProperties = @((Get-Date).psobject.baseobject.psobject.properties) | Sort-Object -Property Name
@@ -44,25 +41,42 @@ Describe "Tab completion bug fix" -Tags "CI" {
         It "Issue#3416 - 'Select-Object -ExcludeProperty <tab>' should work" {
             $cmd = "Get-Date | Select-Object -ExcludeProperty "
             $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-            $result.CompletionMatches.Count | Should -Be $DatetimeProperties.Count
-            $result.CompletionMatches[0].CompletionText | Should -Be $DatetimeProperties[0].Name # Date
-            $result.CompletionMatches[1].CompletionText | Should -Be $DatetimeProperties[1].Name # DateTime
+            $result.CompletionMatches | Should -HaveCount $DatetimeProperties.Count
+            $result.CompletionMatches[0].CompletionText | Should -BeExactly $DatetimeProperties[0].Name # Date
+            $result.CompletionMatches[1].CompletionText | Should -BeExactly $DatetimeProperties[1].Name # DateTime
        }
        It "Issue#3416 - 'Select-Object -ExpandProperty <tab>' should work" {
            $cmd = "Get-Date | Select-Object -ExpandProperty "
            $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-           $result.CompletionMatches.Count | Should -Be $DatetimeProperties.Count
-           $result.CompletionMatches[0].CompletionText | Should -Be $DatetimeProperties[0].Name # Date
-           $result.CompletionMatches[1].CompletionText | Should -Be $DatetimeProperties[1].Name # DateTime
+           $result.CompletionMatches | Should -HaveCount $DatetimeProperties.Count
+           $result.CompletionMatches[0].CompletionText | Should -BeExactly $DatetimeProperties[0].Name # Date
+           $result.CompletionMatches[1].CompletionText | Should -BeExactly $DatetimeProperties[1].Name # DateTime
        }
     }
-                
+
     It "Issue#3628 - 'Sort-Object @{<tab>' should work" {
         $cmd = "Get-Date | Sort-Object @{"
         $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-        $result.CompletionMatches.Count | Should -Be 3
-        $result.CompletionMatches[0].CompletionText | Should -Be 'Expression'
-        $result.CompletionMatches[1].CompletionText | Should -Be 'Ascending'
-        $result.CompletionMatches[2].CompletionText | Should -Be 'Descending'
+        $result.CompletionMatches | Should -HaveCount 3
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Expression'
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Ascending'
+        $result.CompletionMatches[2].CompletionText | Should -BeExactly 'Descending'
+    }
+
+    It "'Get-Date | Sort-Object @{Expression=<tab>' should work without completion" {
+        $cmd = "Get-Date | Sort-Object @{Expression="
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches | Should -HaveCount 0
+    }
+
+    It "Issue#5322 - 'Get-Date | Sort-Object @{Expression=...;' should work" {
+        $cmd = "Get-Date | Sort-Object @{Expression=...;"
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CurrentMatchIndex | Should -Be -1
+        $result.ReplacementIndex | Should -Be 40
+        $result.ReplacementLength | Should -Be 0
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Expression'
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Ascending'
+        $result.CompletionMatches[2].CompletionText | Should -BeExactly 'Descending'
     }
 }

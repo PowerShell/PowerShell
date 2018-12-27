@@ -116,6 +116,16 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         class C9b { [System.Collections.Generic.List[C9b]] f() { return [C9b]::new() } }
         $c9b = [C9b]::new().f()
         It "Expected a System.Collections.Generic.List[C9b] returned" {  $c9b -is [System.Collections.Generic.List[C9b]] | Should -BeTrue }
+        It 'Methods returning object should return $null if no output was produced' {
+            class Foo {
+                [object] Bar1() { return & {} }
+                static [object] Bar2() { return & {} }
+            }
+            # Test instance method
+            [Foo]::new().Bar1() | Should -BeNullOrEmpty
+            # Test static method
+            [foo]::Bar2() | Should -BeNullOrEmpty
+        }
     }
 
     It 'Positive ParseProperty Attributes Test' {
@@ -380,11 +390,11 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     It "Verb should be Get (class C2)" {$c.VerbName | Should -BeExactly 'Get'}
     It "Noun should be Thing (class C2)" {$c.NounName | Should -BeExactly 'Thing'}
 
-    It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | Should -BeTrue }
+    It  "SupportsShouldProcess should be $true" { $c.SupportsShouldProcess | Should -BeTrue }
     It  "SupportsPaging should be `$true" { $c.SupportsPaging | Should -BeTrue }
     Context "Support ConfirmImpact as an attribute" {
         It  "ConfirmImpact should be high" {
-            [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
+            [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
             $t = [C3].GetCustomAttributes($false)
             $t.Count | Should -Be 1
             $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute
@@ -571,11 +581,19 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 
         It "Access hidden property should still work" { $instance.hiddenZ | Should -Be 42 }
 
-        # Formatting should not include hidden members by default
-        $tableOutput = $instance | Format-Table -HideTableHeaders -AutoSize | Out-String
-        It "Table formatting should not have included hidden member hiddenZ - should contain 10" { $tableOutput.Contains(10) | Should -BeTrue}
-        It "Table formatting should not have included hidden member hiddenZ- should contain 12" { $tableOutput.Contains(12) | Should -BeTrue}
-        It "Table formatting should not have included hidden member hiddenZ - should not contain 42" { $tableOutput.Contains(42) | Should -BeFalse}
+        It "Table formatting should not include hidden member hiddenZ" {
+            $expectedTable = @"
+
+visibleX visibleY
+-------- --------
+      10       12
+
+
+"@
+
+            $tableOutput = $instance | Format-Table -AutoSize | Out-String
+            $tableOutput.Replace("`r","") | Should -BeExactly $expectedTable.Replace("`r","")
+        }
 
         # Get-Member should not include hidden members by default
         $member = $instance | Get-Member hiddenZ
@@ -637,7 +655,7 @@ function test-it([EE]$ee){$ee}
         }
         finally
         {
-            Remove-Module -ea ignore MSFT_2081529
+            Remove-Module -ErrorAction ignore MSFT_2081529
         }
 }
 

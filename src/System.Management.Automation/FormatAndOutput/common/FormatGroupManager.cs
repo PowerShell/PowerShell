@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="groupingExpression">name of the grouping property</param>
         /// <param name="displayLabel">display name of the property</param>
-        internal void Initialize(MshExpression groupingExpression, string displayLabel)
+        internal void Initialize(PSPropertyExpression groupingExpression, string displayLabel)
         {
             _groupingKeyExpression = groupingExpression;
             _label = displayLabel;
@@ -45,13 +45,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// compute the string value of the grouping property
         /// </summary>
         /// <param name="so">object to use to compute the property value</param>
-        /// <returns>true if there was an update</returns>
+        /// <returns>True if there was an update.</returns>
         internal bool UpdateGroupingKeyValue(PSObject so)
         {
             if (_groupingKeyExpression == null)
                 return false;
 
-            List<MshExpressionResult> results = _groupingKeyExpression.GetValues(so);
+            List<PSPropertyExpressionResult> results = _groupingKeyExpression.GetValues(so);
 
             // if we have more that one match, we have to select the first one
             if (results.Count > 0 && results[0].Exception == null)
@@ -70,6 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _groupingKeyDisplayName = results[0].ResolvedExpression.ToString();
                 }
+
                 return update;
             }
 
@@ -83,18 +84,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static bool IsEqual(object first, object second)
         {
-            try
+            if (LanguagePrimitives.TryCompare(first, second, true, CultureInfo.CurrentCulture, out int result))
             {
-                return LanguagePrimitives.Compare(first, second, true, CultureInfo.CurrentCulture) == 0;
+                return result == 0;
             }
-            catch (InvalidCastException)
-            {
-            }
-            catch (ArgumentException)
-            {
-                // Note that this will occur if the objects do not support
-                // IComparable.  We fall back to comparing as strings.
-            }
+
+            // Note that this will occur if the objects do not support
+            // IComparable.  We fall back to comparing as strings.
 
             // being here means the first object doesn't support ICompare
             // or an Exception was raised win Compare
@@ -117,7 +113,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// name of the current grouping key
         /// </summary>
-        private MshExpression _groupingKeyExpression = null;
+        private PSPropertyExpression _groupingKeyExpression = null;
 
         /// <summary>
         /// the current value of the grouping key

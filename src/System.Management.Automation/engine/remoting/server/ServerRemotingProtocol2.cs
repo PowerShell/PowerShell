@@ -93,6 +93,7 @@ namespace System.Management.Automation
             {
                 dsHandlers = new List<ServerPowerShellDataStructureHandler>(_associatedShells.Values);
             }
+
             foreach (var dsHandler in dsHandlers)
             {
                 dsHandler.ProcessConnect();
@@ -123,6 +124,7 @@ namespace System.Management.Automation
 
                         CreateAndInvokePowerShell.SafeInvoke(this, new RemoteDataEventArgs<RemoteDataObject<PSObject>>(receivedData));
                     }
+
                     break;
 
                 case RemotingDataType.GetCommandMetadata:
@@ -132,6 +134,7 @@ namespace System.Management.Automation
 
                         GetCommandMetadata.SafeInvoke(this, new RemoteDataEventArgs<RemoteDataObject<PSObject>>(receivedData));
                     }
+
                     break;
 
                 case RemotingDataType.RemoteRunspaceHostResponseData:
@@ -147,6 +150,7 @@ namespace System.Management.Automation
 
                         HostResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostResponse>(remoteHostResponse));
                     }
+
                     break;
 
                 case RemotingDataType.SetMaxRunspaces:
@@ -156,6 +160,7 @@ namespace System.Management.Automation
 
                         SetMaxRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.SetMinRunspaces:
@@ -165,6 +170,7 @@ namespace System.Management.Automation
 
                         SetMinRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.AvailableRunspaces:
@@ -174,6 +180,7 @@ namespace System.Management.Automation
 
                         GetAvailableRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.ResetRunspaceState:
@@ -183,8 +190,9 @@ namespace System.Management.Automation
 
                         ResetRunspaceState.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
-            } // switch...
+            }
         }
 
         /// <summary>
@@ -194,7 +202,7 @@ namespace System.Management.Automation
         /// <param name="runspacePoolId">runspace pool id</param>
         /// <param name="remoteStreamOptions">remote stream options</param>
         /// <param name="localPowerShell">local PowerShell object</param>
-        /// <returns>ServerPowerShellDataStructureHandler</returns>
+        /// <returns>ServerPowerShellDataStructureHandler.</returns>
         internal ServerPowerShellDataStructureHandler CreatePowerShellDataStructureHandler(
             Guid instanceId, Guid runspacePoolId, RemoteStreamOptions remoteStreamOptions, PowerShell localPowerShell)
         {
@@ -242,6 +250,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
 
@@ -282,6 +291,7 @@ namespace System.Management.Automation
         internal TypeTable TypeTable
         {
             get { return _transportManager.TypeTable; }
+
             set { _transportManager.TypeTable = value; }
         }
 
@@ -344,7 +354,7 @@ namespace System.Management.Automation
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
-            Dbg.Assert(null != data, "Cannot send null object.");
+            Dbg.Assert(data != null, "Cannot send null object.");
             _transportManager.SendDataToClient(data, true);
         }
 
@@ -354,7 +364,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientPowerShellId">powershell id for the
         /// powershell data structure handler</param>
-        /// <returns>ServerPowerShellDataStructureHandler</returns>
+        /// <returns>ServerPowerShellDataStructureHandler.</returns>
         internal ServerPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
             (Guid clientPowerShellId)
         {
@@ -369,6 +379,7 @@ namespace System.Management.Automation
                     dsHandler = null;
                 }
             }
+
             return dsHandler;
         }
 
@@ -619,6 +630,7 @@ namespace System.Management.Automation
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         StopPowerShellReceived.SafeInvoke(this, EventArgs.Empty);
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellInput:
@@ -627,6 +639,7 @@ namespace System.Management.Automation
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         InputReceived.SafeInvoke(this, new RemoteDataEventArgs<object>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellInputEnd:
@@ -635,6 +648,7 @@ namespace System.Management.Automation
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         InputEndReceived.SafeInvoke(this, EventArgs.Empty);
                     }
+
                     break;
 
                 case RemotingDataType.RemotePowerShellHostResponseData:
@@ -650,8 +664,9 @@ namespace System.Management.Automation
 
                         HostResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostResponse>(remoteHostResponse));
                     }
+
                     break;
-            } // switch ...
+            }
         }
 
         /// <summary>
@@ -775,7 +790,7 @@ namespace System.Management.Automation
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
-            Dbg.Assert(null != data, "Cannot send null object.");
+            Dbg.Assert(data != null, "Cannot send null object.");
             // this is from a command execution..let transport manager collect
             // as much data as possible and send bigger buffer to client.
             _transportManager.SendDataToClient(data, false);

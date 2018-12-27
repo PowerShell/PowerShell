@@ -240,7 +240,7 @@ class EventMessage
       The message string to update.
 
     .NOTES
-      See https://msdn.microsoft.com/en-us/library/windows/desktop/ms679351(v=vs.85).aspx.
+      See https://msdn.microsoft.com/library/windows/desktop/ms679351(v=vs.85).aspx.
       Replaceable parameters are limited to %1 ... %99. Width and precision specifiers are
       not currently supported since the manifest does not use them at the time of this writing.
     #>

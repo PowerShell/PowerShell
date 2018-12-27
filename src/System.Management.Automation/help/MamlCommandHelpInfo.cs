@@ -8,10 +8,8 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class MamlCommandHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    ///
     /// </summary>
     internal class MamlCommandHelpInfo : BaseCommandHelpInfo
     {
@@ -36,10 +34,12 @@ namespace System.Management.Automation
             {
                 _component = helpObject.Properties["Component"].Value as string;
             }
+
             if (helpObject.Properties["Role"] != null)
             {
                 _role = helpObject.Properties["Role"].Value as string;
             }
+
             if (helpObject.Properties["Functionality"] != null)
             {
                 _functionality = helpObject.Properties["Functionality"].Value as string;
@@ -253,7 +253,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode">xmlNode that contains help info</param>
         /// <param name="helpCategory">help category this maml object fits into</param>
-        /// <returns>MamlCommandHelpInfo object created</returns>
+        /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlCommandHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
             MamlCommandHelpInfo mamlCommandHelpInfo = new MamlCommandHelpInfo(xmlNode, helpCategory);
@@ -281,7 +281,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="cmdletHelp">provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object</param>
         /// <param name="dynamicParameterHelp">provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object</param>
-        /// <returns>merged command help info object</returns>
+        /// <returns>Merged command help info object.</returns>
         internal MamlCommandHelpInfo MergeProviderSpecificHelp(PSObject cmdletHelp, PSObject[] dynamicParameterHelp)
         {
             if (this._fullHelpObject == null)
@@ -338,7 +338,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private string ExtractText(PSObject psObject)
         {
-            if (null == psObject)
+            if (psObject == null)
             {
                 return string.Empty;
             }
@@ -371,6 +371,7 @@ namespace System.Management.Automation
                         {
                             result.Append(ExtractText(item));
                         }
+
                         break;
                     case "system.management.automation.psobject":
                         result.Append(ExtractText(PSObject.AsPSObject(propertyInfo.Value)));
@@ -396,7 +397,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            System.Management.Automation.Diagnostics.Assert(null != pattern, "pattern cannot be null");
+            System.Management.Automation.Diagnostics.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             if ((!string.IsNullOrEmpty(synopsis)) && (pattern.IsMatch(synopsis)))

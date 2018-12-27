@@ -63,7 +63,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionList.DebugView.InstructionView[]/*!*/ A0
+            public InstructionList.DebugView.InstructionView[] A0
             {
                 get
                 {
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionView[]/*!*/ A0
+            public InstructionView[] A0
             {
                 get
                 {
@@ -151,6 +151,7 @@ namespace System.Management.Automation.Interpreter
                     stackDepth += stackDiff;
                     continuationsDepth += contDiff;
                 }
+
                 return result.ToArray();
             }
 
@@ -166,8 +167,8 @@ namespace System.Management.Automation.Interpreter
                 internal string GetName()
                 {
                     return _index +
-                        (_continuationsDepth == 0 ? "" : " C(" + _continuationsDepth + ")") +
-                        (_stackDepth == 0 ? "" : " S(" + _stackDepth + ")");
+                        (_continuationsDepth == 0 ? string.Empty : " C(" + _continuationsDepth + ")") +
+                        (_stackDepth == 0 ? string.Empty : " S(" + _stackDepth + ")");
                 }
 
                 internal string GetValue()
@@ -302,6 +303,7 @@ namespace System.Management.Automation.Interpreter
                     if (!_instances.TryGetValue(name, out dict)) {
                         _instances[name] = dict = new Dictionary<object, bool>();
                     }
+
                     dict[instr] = true;
                 });
             }
@@ -372,6 +374,7 @@ namespace System.Management.Automation.Interpreter
                         {
                             s_ints = new Instruction[PushIntMaxCachedValue - PushIntMinCachedValue + 1];
                         }
+
                         i -= PushIntMinCachedValue;
                         Emit(s_ints[i] ?? (s_ints[i] = new LoadObjectInstruction(value)));
                         return;
@@ -937,8 +940,10 @@ namespace System.Management.Automation.Interpreter
                     {
                         instruction = new LoadFieldInstruction(field);
                     }
+
                     s_loadFields.Add(field, instruction);
                 }
+
                 return instruction;
             }
         }
@@ -1088,6 +1093,7 @@ namespace System.Management.Automation.Interpreter
                     s_factories[delegateType] = factory;
                 }
             }
+
             return factory(binder);
         }
 

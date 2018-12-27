@@ -13,9 +13,22 @@ using Microsoft.Win32;
 namespace System.Management.Automation
 {
     /// <summary>
+    /// <para>
     /// Encapsulates $PSVersionTable.
+    /// </para>
+    /// <para>
+    /// Provides a simple interface to retrieve details from the PowerShell version table:
+    /// <code>
+    ///    PSVersionInfo.PSVersion;
+    /// </code>
+    /// The above statement retrieves the PowerShell version.
+    /// <code>
+    ///    PSVersionInfo.PSEdition;
+    /// </code>
+    /// The above statement retrieves the PowerShell edition.
+    /// </para>
     /// </summary>
-    internal class PSVersionInfo
+    public class PSVersionInfo
     {
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
@@ -78,11 +91,11 @@ namespace System.Management.Automation
 
             if (productVersion.Contains(" Commits: "))
             {
-                rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+                rawGitCommitId = productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
             }
             else
             {
-                rawGitCommitId = "v" + mainVersion;
+                rawGitCommitId = mainVersion;
             }
 
             s_psV6Version = new SemanticVersion(mainVersion);
@@ -151,7 +164,10 @@ namespace System.Management.Automation
 
         #region Programmer APIs
 
-        internal static Version PSVersion
+        /// <summary>
+        /// Gets the version of PowerShell.
+        /// </summary>
+        public static Version PSVersion
         {
             get
             {
@@ -175,7 +191,10 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string PSEdition
+        /// <summary>
+        /// Gets the edition of PowerShell.
+        /// </summary>
+        public static string PSEdition
         {
             get
             {
@@ -192,7 +211,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 2.0 PowerShell, we still use "1" as the registry version key.
@@ -208,7 +226,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 3.0 PowerShell, we use "3" as the registry version key only for Engine
@@ -257,10 +274,12 @@ namespace System.Management.Automation
             {
                 return version.Minor == s_psV6Version.Minor;
             }
+
             if (version.Major == s_psV5Version.Major)
             {
                 return (version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor);
             }
+
             if (version.Major == s_psV4Version.Major)
             {
                 return (version.Minor == s_psV4Version.Minor);
@@ -533,6 +552,7 @@ namespace System.Management.Automation
             {
                 PreReleaseLabel = preLabelNote.Value as string;
             }
+
             var buildLabelNote = psobj.Properties[BuildLabelPropertyName];
             if (buildLabelNote != null)
             {
@@ -699,8 +719,8 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((dashIndex != - 1 && String.IsNullOrEmpty(preLabel))   ||
-                (plusIndex != - 1 && String.IsNullOrEmpty(buildLabel)) ||
+            if ((dashIndex != -1 && String.IsNullOrEmpty(preLabel))   ||
+                (plusIndex != -1 && String.IsNullOrEmpty(buildLabel)) ||
                 String.IsNullOrEmpty(versionSansLabel))
             {
                 // We have dash and no preReleaseLabel  or
@@ -924,6 +944,7 @@ namespace System.Management.Automation
             // A larger set of pre-release fields has a higher precedence than a smaller set,
             // if all of the preceding identifiers are equal.
             if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
+
             if (String.IsNullOrEmpty(preLabel2)) { return -1; }
 
             var units1 = preLabel1.Split('.');
@@ -946,6 +967,7 @@ namespace System.Management.Automation
                 else
                 {
                     if (isNumber1) { return -1; }
+
                     if (isNumber2) { return 1; }
 
                     int result = String.CompareOrdinal(ac, bc);
@@ -1014,8 +1036,10 @@ namespace System.Management.Automation
                         {
                             return e;
                         }
+
                         break;
                 }
+
                 return PSTraceSource.NewArgumentException("version");
             }
         }

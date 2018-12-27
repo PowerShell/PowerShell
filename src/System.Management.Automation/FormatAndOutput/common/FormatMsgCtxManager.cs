@@ -40,7 +40,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal abstract class OutputContext
         {
             /// <summary>
-            ///
             /// </summary>
             /// <param name="parentContextInStack">parent context in the stack, it can be null</param>
             internal OutputContext(OutputContext parentContextInStack)
@@ -118,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             // notify for Fe, passing the Fe info, before a Pop()
                             this.ge(ged, oc);
                         }
+
                         _stack.Pop();
                     }
                 }

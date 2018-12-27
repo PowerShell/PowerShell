@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 ### The techniques used in this demo are documented at
-### https://azure.microsoft.com/en-us/documentation/articles/powershell-azure-resource-manager/
+### https://azure.microsoft.com/documentation/articles/powershell-azure-resource-manager/
 
 ### Import AzureRM.Profile.NetCore.Preview and AzureRM.Resources.NetCore.Preview modules.
 ### AzureRM.NetCore.Preview is a wrapper module that pulls in these modules

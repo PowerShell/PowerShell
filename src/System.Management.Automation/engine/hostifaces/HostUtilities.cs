@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.PowerShell.Commands;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
@@ -15,6 +14,8 @@ using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Globalization;
+using Microsoft.PowerShell.Commands;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
@@ -147,6 +148,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 command = new PSCommand();
                 command.AddCommand(profilePath, false);
                 commands.Add(command);
@@ -186,7 +188,7 @@ namespace System.Management.Automation
                 basePath = GetAllUsersFolderPath(shellId);
                 if (string.IsNullOrEmpty(basePath))
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
 
@@ -206,7 +208,7 @@ namespace System.Management.Automation
         /// Used internally in GetFullProfileFileName to get the base path for all users profiles.
         /// </summary>
         /// <param name="shellId">The shellId to use.</param>
-        /// <returns>the base path for all users profiles.</returns>
+        /// <returns>The base path for all users profiles.</returns>
         private static string GetAllUsersFolderPath(string shellId)
         {
             string folderPath = string.Empty;
@@ -250,7 +252,7 @@ namespace System.Management.Automation
 
                 if (lineCount == maxLines)
                 {
-                    returnValue.Append("...");
+                    returnValue.Append(PSObjectHelper.Ellipsis);
                     break;
                 }
             }
@@ -277,7 +279,7 @@ namespace System.Management.Automation
 
             // Get the last error
             ArrayList errorList = (ArrayList)localRunspace.GetExecutionContext.DollarErrorVariable;
-            Object lastError = null;
+            object lastError = null;
 
             if (errorList.Count > 0)
             {
@@ -334,7 +336,7 @@ namespace System.Management.Automation
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, Object lastError, ArrayList errorList)
+        internal static ArrayList GetSuggestion(HistoryInfo lastHistory, object lastError, ArrayList errorList)
         {
             ArrayList returnSuggestions = new ArrayList();
 
@@ -484,6 +486,7 @@ namespace System.Management.Automation
                 message = message.Remove(0, partToRemove.Length);
                 matchPattern = true;
             }
+
             return message;
         }
 
@@ -501,6 +504,7 @@ namespace System.Management.Automation
                 message = message.Remove(0, partToRemove.Length);
                 matchPattern = true;
             }
+
             return message;
         }
 
@@ -772,10 +776,18 @@ namespace System.Management.Automation
             {
                 return basePrompt;
             }
-            else
+
+            SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
+
+            // Usernames are case-sensitive on Unix systems
+            if (sshConnectionInfo != null &&
+                !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
+                !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.Ordinal))
             {
-                return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
+                return string.Format(CultureInfo.InvariantCulture, "[{0}@{1}]: {2}", sshConnectionInfo.UserName, sshConnectionInfo.ComputerName, basePrompt);
             }
+
+            return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
         }
 
         internal static bool IsProcessInteractive(InvocationInfo invocationInfo)
@@ -845,6 +857,7 @@ namespace System.Management.Automation
                     e);
             }
 
+            remoteRunspace.IsConfiguredLoopBack = true;
             return remoteRunspace;
         }
 
@@ -869,7 +882,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspace">Runspace to invoke the command on</param>
         /// <param name="command">Command to invoke</param>
-        /// <returns>Collection of command output result objects</returns>
+        /// <returns>Collection of command output result objects.</returns>
         public static Collection<PSObject> InvokeOnRunspace(PSCommand command, Runspace runspace)
         {
             if (command == null)
@@ -902,6 +915,7 @@ namespace System.Management.Automation
                 // Local runspace.  Make a nested PowerShell object as needed.
                 ps.SetIsNested(runspace.GetCurrentlyRunningPipeline() != null);
             }
+
             using (ps)
             {
                 ps.Commands = command;
@@ -918,7 +932,7 @@ namespace System.Management.Automation
         /// </summary>
         public const string PSEditFunction = @"
             param (
-                [Parameter(Mandatory=$true)] [String[]] $FileName
+                [Parameter(Mandatory=$true)] [string[]] $FileName
             )
 
             foreach ($file in $FileName)

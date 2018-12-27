@@ -13,11 +13,11 @@ namespace Microsoft.PowerShell.Commands
 
     internal class TableView
     {
-        private MshExpressionFactory _expressionFactory;
+        private PSPropertyExpressionFactory _expressionFactory;
         private TypeInfoDataBase _typeInfoDatabase;
         private FormatErrorManager _errorManager;
 
-        internal void Initialize(MshExpressionFactory expressionFactory,
+        internal void Initialize(PSPropertyExpressionFactory expressionFactory,
                                  TypeInfoDataBase db)
         {
             _expressionFactory = expressionFactory;
@@ -76,9 +76,10 @@ namespace Microsoft.PowerShell.Commands
                                 // Database does not provide a label(DisplayName) for the current property, use the expression value instead.
                                 displayName = fpt.expression.expressionValue;
                             }
+
                             if (fpt.expression.isScriptBlock)
                             {
-                                MshExpression ex = _expressionFactory.CreateFromExpressionToken(fpt.expression);
+                                PSPropertyExpression ex = _expressionFactory.CreateFromExpressionToken(fpt.expression);
                                 // Using the displayName as a propertyName for a stale PSObject.
                                 const string LastWriteTimePropertyName = "LastWriteTime";
 
@@ -107,10 +108,12 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     if (columnInfo != null)
                     {
                         headerInfo.AddColumn(columnInfo);
                     }
+
                     col++;
                 }
             }
@@ -132,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 if (PSObjectHelper.ShouldShowComputerNameProperty(input))
                 {
                     activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
-                        new MshExpression(RemotingConstants.ComputerNameNoteProperty)));
+                        new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
             }
             else
@@ -165,14 +168,17 @@ namespace Microsoft.PowerShell.Commands
                     if (key != AutomationNull.Value)
                         propertyName = (string)key;
                 }
+
                 if (propertyName == null)
                 {
                     propertyName = association.ResolvedExpression.ToString();
                 }
+
                 ColumnInfo columnInfo = new OriginalColumnInfo(propertyName, propertyName, propertyName, parentCmdlet);
 
                 headerInfo.AddColumn(columnInfo);
             }
+
             return headerInfo;
         }
 
@@ -225,6 +231,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             if (matchingRowDefinition == null)
             {
                 matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -233,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
             if (matchingRowDefinition == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typesWithoutPrefix);
 
@@ -245,6 +252,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
                         }
                     }
+
                     if (matchingRowDefinition == null)
                     {
                         matchingRowDefinition = match.BestMatch as TableRowDefinition;
@@ -274,6 +282,7 @@ namespace Microsoft.PowerShell.Commands
                     // Use the override
                     activeRowItemDefinitionList.Add(rowItem);
                 }
+
                 col++;
             }
 

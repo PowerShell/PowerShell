@@ -28,6 +28,7 @@ namespace Application.Test
                     Console.WriteLine(result.ToString());
                 }
             }
+
             return 0;
         }
     }

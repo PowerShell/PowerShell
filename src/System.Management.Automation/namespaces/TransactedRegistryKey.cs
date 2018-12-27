@@ -190,11 +190,13 @@ namespace Microsoft.PowerShell.Commands.Internal
                             hKeyToReturn.Dispose();
                             hKeyToReturn = txKey;
                         }
+
                         nonTxKey.Dispose();
                         nonTxKey = null;
                     }
                 }
             }
+
             hkResult = hKeyToReturn;
             return error;
         }
@@ -210,18 +212,19 @@ namespace Microsoft.PowerShell.Commands.Internal
                                       System.Transactions.Transaction transaction, SafeTransactionHandle txHandle)
         {
             _hkey = hkey;
-            _keyName = "";
+            _keyName = string.Empty;
             if (systemkey)
             {
                 _state |= STATE_SYSTEMKEY;
             }
+
             if (writable)
             {
                 _state |= STATE_WRITEACCESS;
             }
             // We want to take our own clone so we can dispose it when we want and
             // aren't susceptible to the caller disposing it.
-            if (null != transaction)
+            if (transaction != null)
             {
                 _myTransaction = transaction.Clone();
                 _myTransactionHandle = txHandle;
@@ -240,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             // If myTransaction is not null and is not the same as Transaction.Current
             // this is an invalid operation. The transaction within which the RegistryKey object was created
             // needs to be the same as the transaction being used now.
-            if (null != _myTransaction)
+            if (_myTransaction != null)
             {
                 if (!_myTransaction.Equals(Transaction.Current))
                 {
@@ -255,6 +258,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             {
                 safeTransactionHandle = SafeTransactionHandle.Create();
             }
+
             return safeTransactionHandle;
         }
 
@@ -288,7 +292,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
             }
 
-            if (null != _myTransaction)
+            if (_myTransaction != null)
             {
                 // Dispose the transaction because we cloned it.
                 try
@@ -437,6 +441,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 Microsoft.PowerShell.Commands.Internal.Buffer.memcpy(sd, 0, pSecDescriptor, 0, sd.Length);
                 secAttrs.pSecurityDescriptor = pSecDescriptor;
             }
+
             int disposition = 0;
 
             // By default, the new key will be writable.
@@ -701,6 +706,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     errorCode = Win32Native.ERROR_SUCCESS;
                 }
             }
+
             if (Win32Native.ERROR_SUCCESS != errorCode)
             {
                 Win32Error(errorCode, null);
@@ -884,6 +890,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 key._keyName = _keyName + "\\" + name;
                 return key;
             }
+
             return null;
         }
 
@@ -1087,6 +1094,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                             name = new StringBuilder(currentlen);
                         }
                     }
+
                     names[i] = name.ToString();
                 }
             }
@@ -1102,7 +1110,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="name">Name of value to retrieve.</param>
         /// <returns>The data associated with the value.</returns>
         /// </summary>
-        public Object GetValue(String name)
+        public object GetValue(String name)
         {
             CheckValueReadPermission(name);
             return InternalGetValue(name, null, false, true);
@@ -1117,7 +1125,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="defaultValue">Value to return if name doesn't exist.</param>
         /// <returns>The data associated with the value.</returns>
         /// </summary>
-        public Object GetValue(String name, Object defaultValue)
+        public object GetValue(String name, object defaultValue)
         {
             CheckValueReadPermission(name);
             return InternalGetValue(name, defaultValue, false, true);
@@ -1135,7 +1143,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <returns>The data associated with the value.</returns>
         /// </summary>
         [ComVisible(false)]
-        public Object GetValue(String name, Object defaultValue, RegistryValueOptions options)
+        public object GetValue(String name, object defaultValue, RegistryValueOptions options)
         {
             if (options < RegistryValueOptions.None || options > RegistryValueOptions.DoNotExpandEnvironmentNames)
             {
@@ -1143,12 +1151,13 @@ namespace Microsoft.PowerShell.Commands.Internal
                 string resource = String.Format(CultureInfo.CurrentCulture, resourceTemplate, options.ToString());
                 throw new ArgumentException(resource);
             }
+
             bool doNotExpand = (options == RegistryValueOptions.DoNotExpandEnvironmentNames);
             CheckValueReadPermission(name);
             return InternalGetValue(name, defaultValue, doNotExpand, true);
         }
 
-        internal Object InternalGetValue(String name, Object defaultValue, bool doNotExpand, bool checkSecurity)
+        internal object InternalGetValue(String name, object defaultValue, bool doNotExpand, bool checkSecurity)
         {
             if (checkSecurity)
             {
@@ -1158,7 +1167,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             // Don't require a transaction. We don't want to throw for "Base" keys.
 
-            Object data = defaultValue;
+            object data = defaultValue;
             int type = 0;
             int datasize = 0;
 
@@ -1182,6 +1191,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                         ret = Win32Native.RegQueryValueEx(_hkey, name, null, ref type, blob, ref datasize);
                         data = blob;
                     }
+
                     break;
                 case Win32Native.REG_QWORD:
                     {    // also REG_QWORD_LITTLE_ENDIAN
@@ -1190,6 +1200,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                             // prevent an AV in the edge case that datasize is larger than sizeof(long)
                             goto case Win32Native.REG_BINARY;
                         }
+
                         long blob = 0;
                         BCLDebug.Assert(datasize == 8, "datasize==8");
                         // Here, datasize must be 8 when calling this
@@ -1197,6 +1208,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                         data = blob;
                     }
+
                     break;
                 case Win32Native.REG_DWORD:
                     {    // also REG_DWORD_LITTLE_ENDIAN
@@ -1205,6 +1217,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                             // prevent an AV in the edge case that datasize is larger than sizeof(int)
                             goto case Win32Native.REG_QWORD;
                         }
+
                         int blob = 0;
                         BCLDebug.Assert(datasize == 4, "datasize==4");
                         // Here, datasize must be four when calling this
@@ -1212,6 +1225,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                         data = blob;
                     }
+
                     break;
 
                 case Win32Native.REG_SZ:
@@ -1220,6 +1234,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                         ret = Win32Native.RegQueryValueEx(_hkey, name, null, ref type, blob, ref datasize);
                         data = blob.ToString();
                     }
+
                     break;
 
                 case Win32Native.REG_EXPAND_SZ:
@@ -1231,6 +1246,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                         else
                             data = Environment.ExpandEnvironmentVariables(blob.ToString());
                     }
+
                     break;
                 case Win32Native.REG_MULTI_SZ:
                     {
@@ -1269,6 +1285,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                             {
                                 strings.Add(new String(blob, cur, len - cur));
                             }
+
                             cur = nextNull + 1;
                         }
 
@@ -1276,6 +1293,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                         strings.CopyTo((String[])data, 0);
                         //data = strings.GetAllItems(String.class);
                     }
+
                     break;
                 case Win32Native.REG_NONE:
                 case Win32Native.REG_LINK:
@@ -1356,7 +1374,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="name">Name of value to store data in.</param>
         /// <param name="value">Data to store.</param>
         /// </summary>
-        public void SetValue(String name, Object value)
+        public void SetValue(String name, object value)
         {
             SetValue(name, value, RegistryValueKind.Unknown);
         }
@@ -1368,7 +1386,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="valueKind">The registry data type to use when storing the data.</param>
         /// </summary>
         [ComVisible(false)]
-        public unsafe void SetValue(String name, Object value, RegistryValueKind valueKind)
+        public unsafe void SetValue(String name, object value, RegistryValueKind valueKind)
         {
             if (value == null)
                 throw new ArgumentNullException(RegistryProviderStrings.Arg_Value);
@@ -1416,6 +1434,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                             {
                                 throw new ArgumentException(RegistryProviderStrings.Arg_ValueDataLenBug);
                             }
+
                             ret = Win32Native.RegSetValueEx(_hkey,
                                 name,
                                 0,
@@ -1441,14 +1460,17 @@ namespace Microsoft.PowerShell.Commands.Internal
                                 {
                                     throw new ArgumentException(RegistryProviderStrings.Arg_RegSetStrArrNull);
                                 }
+
                                 sizeInBytes += (dataStrings[i].Length + 1) * 2;
                             }
+
                             sizeInBytes += 2;
 
                             if (MaxValueDataLength < sizeInBytes)
                             {
                                 throw new ArgumentException(RegistryProviderStrings.Arg_ValueDataLenBug);
                             }
+
                             byte[] basePtr = new byte[sizeInBytes];
                             fixed (byte* b = basePtr)
                             {
@@ -1473,6 +1495,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                                     basePtr,
                                     sizeInBytes);
                             }
+
                             break;
                         }
 
@@ -1482,6 +1505,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                         {
                             throw new ArgumentException(RegistryProviderStrings.Arg_ValueDataLenBug);
                         }
+
                         ret = Win32Native.RegSetValueEx(_hkey,
                             name,
                             0,
@@ -1676,6 +1700,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     throw new IOException(Win32Native.GetMessage(errorCode), errorCode);
             }
         }
+
         internal static void Win32ErrorStatic(int errorCode, String str)
         {
             switch (errorCode)
@@ -1733,6 +1758,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                             break;
                     }
                 }
+
                 i++;
             }
 
@@ -1747,10 +1773,12 @@ namespace Microsoft.PowerShell.Commands.Internal
                         i++;
                         continue;
                     }
+
                     path[j] = path[i];
                     i++;
                     j++;
                 }
+
                 path.Length += j - i;
             }
         }
@@ -1783,6 +1811,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     CheckSubKeyReadPermission(subkeyName);
                 }
             }
+
             CheckSubTreePermission(subkeyName, subKeyCheck);
         }
 
@@ -1956,6 +1985,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             {
                 winAccess = Win32Native.KEY_READ | Win32Native.KEY_WRITE;
             }
+
             return winAccess;
         }
 
@@ -1977,6 +2007,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     BCLDebug.Assert(false, "unexpected code path");
                     break;
             }
+
             return winAccess;
         }
 
@@ -2042,10 +2073,11 @@ namespace Microsoft.PowerShell.Commands.Internal
         private void VerifyTransaction()
         {
             // Require a transaction. This will throw for "Base" keys because they aren't associated with a transaction.
-            if (null == _myTransaction)
+            if (_myTransaction == null)
             {
                 throw new InvalidOperationException(RegistryProviderStrings.InvalidOperation_NotAssociatedWithTransaction);
             }
+
             if (!_myTransaction.Equals(Transaction.Current))
             {
                 throw new InvalidOperationException(RegistryProviderStrings.InvalidOperation_MustUseSameTransaction);

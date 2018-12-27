@@ -41,7 +41,12 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(streamWriter))
+                var settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.IndentChars = "  ";
+                settings.NewLineOnAttributes = true;
+
+                using (XmlWriter xmlWriter = XmlWriter.Create(streamWriter, settings))
                 {
                     var writer = new FormatXmlWriter
                     {
@@ -84,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         formatdefs.Add(viewdefinition.InstanceId, viewdefinition);
                     }
+
                     viewList.Add(typedefinition);
                 }
             }
@@ -103,6 +109,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _writer.WriteElementString("TypeName", definition.TypeName);
                 }
+
                 _writer.WriteEndElement(/*</ViewSelectedBy>*/);
 
                 var groupBy = formatdef.Control.GroupBy;
@@ -114,20 +121,24 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _writer.WriteElementString("Label", groupBy.Label);
                     }
+
                     if (groupBy.CustomControl != null)
                     {
                         WriteCustomControl(groupBy.CustomControl);
                     }
+
                     _writer.WriteEndElement(/*</GroupBy>*/);
                 }
+
                 if (formatdef.Control.OutOfBand)
                 {
-                    _writer.WriteElementString("OutOfBand", "");
+                    _writer.WriteElementString("OutOfBand", string.Empty);
                 }
 
                 formatdef.Control.WriteToXml(this);
                 _writer.WriteEndElement(/*</View>*/);
             }
+
             _writer.WriteEndElement(/*</ViewDefinitions>*/);
 
             _writer.WriteEndElement(/*</Configuration>*/);
@@ -138,11 +149,12 @@ namespace Microsoft.PowerShell.Commands
             _writer.WriteStartElement("TableControl");
             if (tableControl.AutoSize)
             {
-                _writer.WriteElementString("AutoSize", "");
+                _writer.WriteElementString("AutoSize", string.Empty);
             }
+
             if (tableControl.HideTableHeaders)
             {
-                _writer.WriteElementString("HideTableHeaders", "");
+                _writer.WriteElementString("HideTableHeaders", string.Empty);
             }
 
             _writer.WriteStartElement("TableHeaders");
@@ -153,16 +165,20 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _writer.WriteElementString("Label", columnheader.Label);
                 }
+
                 if (columnheader.Width > 0)
                 {
                     _writer.WriteElementString("Width", columnheader.Width.ToString(CultureInfo.InvariantCulture));
                 }
+
                 if (columnheader.Alignment != Alignment.Undefined)
                 {
                     _writer.WriteElementString("Alignment", columnheader.Alignment.ToString());
                 }
+
                 _writer.WriteEndElement(/*</TableColumnHeader>*/);
             }
+
             _writer.WriteEndElement(/*</TableHeaders>*/);
 
             _writer.WriteStartElement("TableRowEntries");
@@ -174,10 +190,12 @@ namespace Microsoft.PowerShell.Commands
                     _writer.WriteStartElement("Wrap");
                     _writer.WriteEndElement(/*</Wrap>*/);
                 }
+
                 if (row.SelectedBy != null)
                 {
                     WriteEntrySelectedBy(row.SelectedBy);
                 }
+
                 _writer.WriteStartElement("TableColumnItems");
                 foreach (TableControlColumn coldefn in row.Columns)
                 {
@@ -186,10 +204,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _writer.WriteElementString("Alignment", coldefn.Alignment.ToString());
                     }
+
                     if (!string.IsNullOrEmpty(coldefn.FormatString))
                     {
                         _writer.WriteElementString("FormatString", coldefn.FormatString);
                     }
+
                     WriteDisplayEntry(coldefn.DisplayEntry);
                     _writer.WriteEndElement(/*</TableColumnItem>*/);
                 }
@@ -197,6 +217,7 @@ namespace Microsoft.PowerShell.Commands
                 _writer.WriteEndElement(/*<TableColumnItems>*/);
                 _writer.WriteEndElement(/*<TableRowEntry>*/);
             }
+
             _writer.WriteEndElement(/*</TableRowEntries>*/);
 
             _writer.WriteEndElement(/*</TableControl>*/);
@@ -272,6 +293,7 @@ namespace Microsoft.PowerShell.Commands
                         _writer.WriteElementString("TypeName", typename);
                     }
                 }
+
                 if (entrySelectedBy.SelectionCondition != null)
                 {
                     foreach (var condition in entrySelectedBy.SelectionCondition)
@@ -281,6 +303,7 @@ namespace Microsoft.PowerShell.Commands
                         _writer.WriteEndElement(/*</SelectionCondition>*/);
                     }
                 }
+
                 _writer.WriteEndElement(/*</EntrySelectedBy>*/);
             }
         }
@@ -296,7 +319,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (wideControl.AutoSize)
             {
-                _writer.WriteElementString("AutoSize", "");
+                _writer.WriteElementString("AutoSize", string.Empty);
             }
 
             _writer.WriteStartElement("WideEntries");
@@ -312,10 +335,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _writer.WriteElementString("FormatString", entry.FormatString);
                 }
+
                 _writer.WriteEndElement(/*</WideItem>*/);
 
                 _writer.WriteEndElement(/*</WideEntry>*/);
             }
+
             _writer.WriteEndElement(/*</WideEntries>*/);
 
             _writer.WriteEndElement(/*</WideControl>*/);
@@ -349,9 +374,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteCustomItem(item);
                 }
+
                 _writer.WriteEndElement(/*</CustomItem>*/);
                 _writer.WriteEndElement(/*</CustomEntry>*/);
             }
+
             _writer.WriteEndElement(/*</CustomEntries>*/);
             _writer.WriteEndElement(/*</CustomControl>*/);
         }
@@ -363,8 +390,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int i = 0; i < newline.Count; i++)
                 {
-                    _writer.WriteElementString("NewLine", "");
+                    _writer.WriteElementString("NewLine", string.Empty);
                 }
+
                 return;
             }
 
@@ -381,7 +409,7 @@ namespace Microsoft.PowerShell.Commands
                 _writer.WriteStartElement("ExpressionBinding");
                 if (expr.EnumerateCollection)
                 {
-                    _writer.WriteElementString("EnumerateCollection", "");
+                    _writer.WriteElementString("EnumerateCollection", string.Empty);
                 }
 
                 if (expr.ItemSelectionCondition != null)
@@ -421,6 +449,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteCustomItem(frameItem);
             }
+
             _writer.WriteEndElement(/*</CustomItem>*/);
             _writer.WriteEndElement(/*</Frame>*/);
         }

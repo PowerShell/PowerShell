@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpInfo keeps track of help information to be returned by help system.
     ///
     /// HelpInfo includes information in following aspect,
@@ -21,7 +20,6 @@ namespace System.Management.Automation
     /// etc.
     ///
     /// In general, there will be a specific helpInfo child class for each kind of help provider.
-    ///
     /// </summary>
     internal abstract class HelpInfo
     {
@@ -107,7 +105,7 @@ namespace System.Management.Automation
         /// alias.
         /// </summary>
         /// <value>forward target object name</value>
-        internal string ForwardTarget { get; set; } = "";
+        internal string ForwardTarget { get; set; } = string.Empty;
 
         /// <summary>
         /// Full help object for this help item.
@@ -142,7 +140,7 @@ namespace System.Management.Automation
         /// Returns help information for a parameter(s) identified by pattern
         /// </summary>
         /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>
+        /// <returns>A collection of parameters that match pattern.</returns>
         /// <remarks>
         /// The base method returns an empty list.
         /// </remarks>

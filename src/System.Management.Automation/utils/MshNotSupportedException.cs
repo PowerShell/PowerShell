@@ -25,7 +25,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PSNotSupportedException()
             : base()
         {
@@ -39,7 +39,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected PSNotSupportedException(SerializationInfo info,
                                             StreamingContext context)
                 : base(info, context)
@@ -69,7 +69,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the PSNotSupportedException class.
         /// </summary>
         /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PSNotSupportedException(string message)
             : base(message)
         {
@@ -80,7 +80,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">  </param>
         /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PSNotSupportedException(string message,
                         Exception innerException)
                 : base(message, innerException)
@@ -100,7 +100,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -108,11 +108,13 @@ namespace System.Management.Automation
                         ErrorCategory.NotImplemented,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "NotSupported";
-    } // PSNotSupportedException
-} // System.Management.Automation
+    }
+}
 

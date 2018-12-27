@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public VariableProvider()
         {
-        } // constructor
+        }
 
         #endregion Constructor
 
@@ -45,11 +45,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes the variables drive
         /// </summary>
-        ///
         /// <returns>
         /// An array of a single PSDriveInfo object representing the variables drive.
         /// </returns>
-        ///
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             string description = SessionStateStrings.VariableDriveDescription;
@@ -65,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(variableDrive);
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         #endregion DriveCmdletProvider overrides
 
@@ -74,15 +72,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a variable from session state
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// A PSVariable that represents the variable.
         /// </returns>
-        ///
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -90,24 +85,20 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             return (PSVariable)SessionState.Internal.GetVariable(name, Context.Origin);
-        } // GetSessionStateItem
+        }
 
         /// <summary>
         /// Sets the variable of the specified name to the specified value
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value for the variable.
         /// </param>
-        ///
         /// <param name="writeItem">
         /// If true, the item that was set should be written to WriteItemObject.
         /// </param>
-        ///
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
@@ -146,16 +137,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteItemObject(item, item.Name, false);
             }
-        } // SetSessionStateItem
+        }
 
         /// <summary>
         /// Removes the specified variable from session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable to remove from session state.
         /// </param>
-        ///
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -163,35 +152,30 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveVariable(name, Force);
-        } // RemoveSessionStateItem
+        }
 
         /// <summary>
         /// Gets a flattened view of the variables in session state
         /// </summary>
-        ///
         /// <returns>
         /// An IDictionary representing the flattened view of the variables in
         /// session state.
         /// </returns>
-        ///
         internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetVariableTable();
-        } // GetSessionStateTable
+        }
 
         /// <summary>
         /// Gets the value of the item that is returned from GetItem by
         /// extracting the PSVariable value.
         /// </summary>
-        ///
         /// <param name="item">
         /// The item to extract the value from.
         /// </param>
-        ///
         /// <returns>
         /// The value of the specified item.
         /// </returns>
-        ///
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
@@ -208,22 +192,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = var.Value;
             }
+
             return value;
-        } // GetValueOfItem
+        }
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
         /// to perform a check should override this method.
         /// </summary>
-        ///
         /// <param name="item">
         /// The item to verify if it can be renamed.
         /// </param>
-        ///
         /// <returns>
         /// true if the item can be renamed or false otherwise.
         /// </returns>
-        ///
         internal override bool CanRenameItem(object item)
         {
             bool result = false;
@@ -251,6 +233,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion protected members
 
-    } // VariableProvider
+    }
 }
 

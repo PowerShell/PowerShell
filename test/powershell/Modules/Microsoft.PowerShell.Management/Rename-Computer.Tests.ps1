@@ -13,7 +13,7 @@ try
     Enable-Testhook -testhookName TestStopComputer
 
     # TEST START HERE
-    Describe "Rename-Computer" -Tag Feature {
+    Describe "Rename-Computer" -Tag Feature,RequireAdminOnWindows {
         # if we throw in BeforeEach, the test will fail and the stop will not be called
         BeforeEach {
             if ( ! (Test-TesthookIsSet -testhookName $RenameTesthook) ) {
@@ -65,7 +65,7 @@ try
             It "Renaming '<OldName>' to '<NewName>' creates the right error" -testcase $testcases {
                 param ( $OldName, $NewName, $ExpectedError )
                 Set-TesthookResult -testhookName $RenameResultName -value 0x1
-                { Rename-Computer -ComputerName $OldName -NewName $NewName -ErrorAction Stop } | ShouldBeErrorId $ExpectedError
+                { Rename-Computer -ComputerName $OldName -NewName $NewName -ErrorAction Stop } | Should -Throw -ErrorId $ExpectedError
             }
         }
     }

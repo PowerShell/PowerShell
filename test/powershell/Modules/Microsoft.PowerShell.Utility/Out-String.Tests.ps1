@@ -60,6 +60,6 @@ Describe "Out-String" -Tags "CI" {
 
     It "Should throw error when NoNewLine and Stream are used together" {
         $testArray = "a", "b"
-        { $testArray | Out-String -NoNewLine -Stream } | ShouldBeErrorId  "AmbiguousParameterSet,Microsoft.PowerShell.Commands.OutStringCommand"
+        { $testArray | Out-String -NoNewLine -Stream } | Should -Throw -ErrorId  "AmbiguousParameterSet,Microsoft.PowerShell.Commands.OutStringCommand"
     }
 }

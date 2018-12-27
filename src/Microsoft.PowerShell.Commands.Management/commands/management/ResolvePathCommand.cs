@@ -28,33 +28,33 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _paths;
-            } // get
+            }
 
             set
             {
                 _paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
             get
             {
                 return _paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// Gets or sets the value that determines if the resolved path should
@@ -66,13 +66,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _relative;
-            } // get
+            }
 
             set
             {
                 _relative = value;
-            } // set
-        } // Relative
+            }
+        }
+
         private SwitchParameter _relative;
 
         #endregion Parameters
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
                                 WriteObject(currentPath.Path, enumerateCollection: false);
                                 continue;
                             }
+
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
                             // Do not insert './' if result path is not relative
@@ -124,6 +126,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
+
                             WriteObject(adjustedPath, enumerateCollection: false);
                         }
                     }
@@ -166,9 +169,9 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(result, enumerateCollection: true);
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // ResolvePathCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

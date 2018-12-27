@@ -49,7 +49,7 @@ namespace System.Management.Automation
 
         internal CompiledScriptBlockData(string scriptText, bool isProductCode)
         {
-            this.IsProductCode = isProductCode;
+            _isProductCode = isProductCode;
             _scriptText = scriptText;
             this.Id = Guid.NewGuid();
         }
@@ -116,8 +116,10 @@ namespace System.Management.Automation
                             DebuggerStepThrough = true;
                         }
                     }
+
                     _usesCmdletBinding = cmdletBindingAttribute != null;
                 }
+
                 bool automaticPosition = cmdletBindingAttribute == null || cmdletBindingAttribute.PositionalBinding;
                 var runtimeDefinedParameterDictionary = Ast.GetParameterMetadata(automaticPosition, ref _usesCmdletBinding);
 
@@ -159,14 +161,10 @@ namespace System.Management.Automation
 
         private void ReallyCompile(bool optimize)
         {
+#if LEGACYTELEMETRY
             var sw = new Stopwatch();
             sw.Start();
-
-            if (!IsProductCode && SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File))
-            {
-                this.IsProductCode = true;
-            }
-
+#endif
             bool etwEnabled = ParserEventSource.Log.IsEnabled();
             if (etwEnabled)
             {
@@ -198,11 +196,31 @@ namespace System.Management.Automation
                 return;
             }
 
-            // Call the AMSI API to determine if the script block has malicious content
             var scriptExtent = scriptBlockAst.Extent;
-            if (AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File) == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
+            var scriptFile = scriptExtent.File;
+
+            if (scriptFile != null &&
+                scriptFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)
+                && IsScriptBlockInFactASafeHashtable())
+            {
+                // Skip the scan for .psd1 files if their content is in fact a safe HashtableAst.
+                return;
+            }
+
+            // Call the AMSI API to determine if the script block has malicious content
+            var amsiResult = AmsiUtils.ScanContent(scriptExtent.Text, scriptFile);
+
+            if (amsiResult == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
             {
                 var parseError = new ParseError(scriptExtent, "ScriptContainedMaliciousContent", ParserStrings.ScriptContainedMaliciousContent);
+                throw new ParseException(new[] { parseError });
+            }
+            else if ((amsiResult >= AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_BEGIN) &&
+                     (amsiResult <= AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_END))
+            {
+                // Certain policies set by an administrator blocked this content on this machine
+                var parseError = new ParseError(scriptExtent, "ScriptHasAdminBlockedContent",
+                    StringUtil.Format(ParserStrings.ScriptHasAdminBlockedContent, amsiResult));
                 throw new ParseException(new[] { parseError });
             }
 
@@ -210,11 +228,51 @@ namespace System.Management.Automation
             {
                 HasSuspiciousContent = true;
             }
+
+            // A local function to check if the ScriptBlockAst is in fact a safe HashtableAst.
+            bool IsScriptBlockInFactASafeHashtable()
+            {
+                // NOTE: The code below depends on the current member structure of 'ScriptBlockAst'
+                // to determine if the ScriptBlockAst is in fact just a HashtableAst. If AST types
+                // are enhanced, such as new members added to 'ScriptBlockAst', the code here needs
+                // to be reviewed and changed accordingly.
+
+                if (scriptBlockAst.BeginBlock != null || scriptBlockAst.ProcessBlock != null ||
+                    scriptBlockAst.ParamBlock != null || scriptBlockAst.DynamicParamBlock != null ||
+                    scriptBlockAst.ScriptRequirements != null || scriptBlockAst.UsingStatements.Count > 0 ||
+                    scriptBlockAst.Attributes.Count > 0)
+                {
+                    return false;
+                }
+
+                NamedBlockAst endBlock = scriptBlockAst.EndBlock;
+                if (!endBlock.Unnamed || endBlock.Traps != null || endBlock.Statements.Count != 1)
+                {
+                    return false;
+                }
+
+                PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
+                if (pipelineAst == null)
+                {
+                    return false;
+                }
+
+                HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
+                if (hashtableAst == null)
+                {
+                    return false;
+                }
+
+                // After the above steps, we know the ScriptBlockAst is in fact just a HashtableAst,
+                // now we need to check if the HashtableAst is safe.
+                return IsSafeValueVisitor.Default.IsAstSafe(hashtableAst);
+            }
         }
 
         // We delay parsing scripts loaded on startup, so we save the text.
         private string _scriptText;
         internal IParameterMetadataProvider Ast { get { return _ast ?? DelayParseScriptText(); } }
+
         private IParameterMetadataProvider _ast;
 
         private IParameterMetadataProvider DelayParseScriptText()
@@ -258,12 +316,26 @@ namespace System.Management.Automation
         private bool _compiledOptimized;
         private bool _compiledUnoptimized;
         private bool _hasSuspiciousContent;
+        private bool? _isProductCode;
         internal bool DebuggerHidden { get; set; }
         internal bool DebuggerStepThrough { get; set; }
         internal Guid Id { get; private set; }
+
         internal bool HasLogged { get; set; }
         internal bool IsFilter { get; private set; }
-        internal bool IsProductCode { get; private set; }
+
+        internal bool IsProductCode
+        {
+            get
+            {
+                if (_isProductCode == null)
+                {
+                    _isProductCode = SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
+                }
+
+                return _isProductCode.Value;
+            }
+        }
 
         internal bool GetIsConfiguration()
         {
@@ -281,6 +353,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(_compiledOptimized || _compiledUnoptimized, "HasSuspiciousContent is not set correctly before being compiled");
                 return _hasSuspiciousContent;
             }
+
             set { _hasSuspiciousContent = value; }
         }
 
@@ -318,6 +391,7 @@ namespace System.Management.Automation
                 {
                     InitializeMetadata();
                 }
+
                 return _runtimeDefinedParameterDictionary;
             }
         }
@@ -348,6 +422,27 @@ namespace System.Management.Automation
             }
         }
 
+        internal ExperimentalAttribute ExperimentalAttribute
+        {
+            get
+            {
+                if (_expAttribute == ExperimentalAttribute.None)
+                {
+                    lock (this)
+                    {
+                        if (_expAttribute == ExperimentalAttribute.None)
+                        {
+                            _expAttribute = Ast.GetExperimentalAttributes().FirstOrDefault();
+                        }
+                    }
+                }
+
+                return _expAttribute;
+            }
+        }
+
+        private ExperimentalAttribute _expAttribute = ExperimentalAttribute.None;
+
         public MergedCommandParameterMetadata GetParameterMetadata(ScriptBlock scriptBlock)
         {
             if (_parameterMetadata == null)
@@ -356,18 +451,21 @@ namespace System.Management.Automation
                 {
                     if (_parameterMetadata == null)
                     {
-                        CommandMetadata metadata = new CommandMetadata(scriptBlock, "", LocalPipeline.GetExecutionContextFromTLS());
+                        CommandMetadata metadata = new CommandMetadata(scriptBlock, string.Empty, LocalPipeline.GetExecutionContextFromTLS());
                         _parameterMetadata = metadata.StaticCommandParameterMetadata;
                     }
                 }
             }
+
             return _parameterMetadata;
         }
 
         public override string ToString()
         {
             if (_scriptText != null)
+            {
                 return _scriptText;
+            }
 
             var sbAst = _ast as ScriptBlockAst;
             if (sbAst != null)
@@ -449,6 +547,7 @@ namespace System.Management.Automation
                                    "A cached scriptblock should not have it's session state bound, that causes a memory leak.");
                 return scriptBlock.Clone();
             }
+
             return null;
         }
 
@@ -491,6 +590,7 @@ namespace System.Management.Automation
             {
                 s_cachedScripts.Clear();
             }
+
             var key = Tuple.Create(fileName, fileContents);
             s_cachedScripts.TryAdd(key, scriptBlock);
         }
@@ -503,7 +603,7 @@ namespace System.Management.Automation
             s_cachedScripts.Clear();
         }
 
-        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock("", isProductCode: true);
+        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(string.Empty, isProductCode: true);
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
         {
@@ -627,10 +727,12 @@ namespace System.Management.Automation
             {
                 return errorHandler(AutomationExceptions.CantConvertEmptyPipeline);
             }
+
             if (statements.Count > 1)
             {
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
+
             if (ast.Body.EndBlock.Traps != null && ast.Body.EndBlock.Traps.Any())
             {
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
@@ -691,6 +793,7 @@ namespace System.Management.Automation
         public bool DebuggerHidden
         {
             get { return _scriptBlockData.DebuggerHidden; }
+
             set { _scriptBlockData.DebuggerHidden = value; }
         }
 
@@ -705,6 +808,7 @@ namespace System.Management.Automation
         internal bool DebuggerStepThrough
         {
             get { return _scriptBlockData.DebuggerStepThrough; }
+
             set { _scriptBlockData.DebuggerStepThrough = value; }
         }
 
@@ -716,6 +820,7 @@ namespace System.Management.Automation
         internal bool HasLogged
         {
             get { return _scriptBlockData.HasLogged; }
+
             set { _scriptBlockData.HasLogged = value; }
         }
 
@@ -878,14 +983,17 @@ namespace System.Management.Automation
             {
                 locals.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnder, context);
             }
+
             if (input != AutomationNull.Value)
             {
                 locals.SetAutomaticVariable(AutomaticVariable.Input, input, context);
             }
+
             if (scriptThis != AutomationNull.Value)
             {
                 locals.SetAutomaticVariable(AutomaticVariable.This, scriptThis, context);
             }
+
             SetPSScriptRootAndPSCommandPath(locals, context);
 
             var oldShellFunctionErrorOutputPipe = context.ShellFunctionErrorOutputPipe;
@@ -955,6 +1063,7 @@ namespace System.Management.Automation
                                 e.SetErrorId("EmptyFunctionNameInFunctionDefinitionDictionary");
                                 throw e;
                             }
+
                             if (def.Value == null)
                             {
                                 PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -963,6 +1072,7 @@ namespace System.Management.Automation
                                 e.SetErrorId("NullFunctionBodyInFunctionDefinitionDictionary");
                                 throw e;
                             }
+
                             newScope.FunctionTable.Add(def.Key, new FunctionInfo(def.Key, def.Value, context));
                         }
                     }
@@ -981,6 +1091,7 @@ namespace System.Management.Automation
                                 e.SetErrorId("NullEntryInVariablesDefinitionList");
                                 throw e;
                             }
+
                             string name = psvar.Name;
                             Diagnostics.Assert(!(string.Equals(name, "this") || string.Equals(name, "_") || string.Equals(name, "input")),
                                 "The list of variables to set in the scriptblock's scope cannot contain 'this', '_' or 'input'. These variables should be removed before passing the collection to this routine.");
@@ -1103,6 +1214,7 @@ namespace System.Management.Automation
                         : Compiler.DottedLocalsNameIndexMap,
                     _scriptBlockData.UnoptimizedLocalsMutableTupleCreator);
             }
+
             return locals;
         }
 
@@ -1134,6 +1246,7 @@ namespace System.Management.Automation
                         // We pass in a null SessionStateInternal because the current scope is already set correctly.
                         valueToBind = ((Compiler.DefaultValueExpressionWrapper)valueToBind).GetValue(context, null);
                     }
+
                     wasDefaulted = true;
                 }
                 else
@@ -1205,6 +1318,7 @@ namespace System.Management.Automation
                         return HasProcessBlock ? _scriptBlockData.ProcessBlock : _scriptBlockData.EndBlock;
                 }
             }
+
             switch (clauseToInvoke)
             {
                 case ScriptBlockClauseToInvoke.Begin:
@@ -1226,6 +1340,11 @@ namespace System.Management.Automation
         internal ObsoleteAttribute ObsoleteAttribute
         {
             get { return _scriptBlockData.ObsoleteAttribute; }
+        }
+
+        internal ExperimentalAttribute ExperimentalAttribute
+        {
+            get { return _scriptBlockData.ExperimentalAttribute; }
         }
 
         internal bool Compile(bool optimized)
@@ -1289,6 +1408,7 @@ namespace System.Management.Automation
             // See if we need to encrypt the event log message. This info is all cached by Utils.GetPolicySetting(),
             // so we're not hitting the configuration file for every script block we compile.
             ProtectedEventLogging logSetting = Utils.GetPolicySetting<ProtectedEventLogging>(Utils.SystemWideOnlyConfig);
+            bool wasEncoded = false;
             if (logSetting != null)
             {
                 lock (s_syncObject)
@@ -1306,6 +1426,7 @@ namespace System.Management.Automation
                     // version.
                     if (s_encryptionRecipients != null)
                     {
+                        // Encrypt the raw Text from the scriptblock.  The user may have to deal with any control characters in the data.
                         ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
                         ErrorRecord error = null;
                         byte[] contentBytes = System.Text.Encoding.UTF8.GetBytes(textToLog);
@@ -1327,9 +1448,19 @@ namespace System.Management.Automation
                         else
                         {
                             textToLog = encodedContent;
+                            wasEncoded = true;
                         }
                     }
                 }
+            }
+
+            if (!wasEncoded)
+            {
+                // The logging mechanism(s) cannot handle null and rendering may not be able to handle
+                // null as we have the string defined as a null terminated string in the manifest.
+                // So, replace null characters with the Unicode `SYMBOL FOR NULL`
+                // We don't just remove the characters to preserve the fact that a null character was there.
+                textToLog = textToLog.Replace('\u0000', '\u2400');
             }
 
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)
@@ -1759,6 +1890,7 @@ namespace System.Management.Automation
                     {
                         c = (char) (c | 0x20);
                     }
+
                     return c;
                 }
 
@@ -1814,21 +1946,31 @@ namespace System.Management.Automation
         /// Returns the AST corresponding to the script block.
         /// </summary>
         public Ast Ast { get { return (Ast)_scriptBlockData.Ast; } }
+
         internal IParameterMetadataProvider AstInternal { get { return _scriptBlockData.Ast; } }
 
         internal IScriptExtent[] SequencePoints { get { return _scriptBlockData.SequencePoints; } }
 
         internal Action<FunctionContext> DynamicParamBlock { get { return _scriptBlockData.DynamicParamBlock; } }
+
         internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get { return _scriptBlockData.UnoptimizedDynamicParamBlock; } }
+
         internal Action<FunctionContext> BeginBlock { get { return _scriptBlockData.BeginBlock; } }
+
         internal Action<FunctionContext> UnoptimizedBeginBlock { get { return _scriptBlockData.UnoptimizedBeginBlock; } }
+
         internal Action<FunctionContext> ProcessBlock { get { return _scriptBlockData.ProcessBlock; } }
+
         internal Action<FunctionContext> UnoptimizedProcessBlock { get { return _scriptBlockData.UnoptimizedProcessBlock; } }
+
         internal Action<FunctionContext> EndBlock { get { return _scriptBlockData.EndBlock; } }
+
         internal Action<FunctionContext> UnoptimizedEndBlock { get { return _scriptBlockData.UnoptimizedEndBlock; } }
 
         internal bool HasBeginBlock { get { return AstInternal.Body.BeginBlock != null; } }
+
         internal bool HasProcessBlock { get { return AstInternal.Body.ProcessBlock != null; } }
+
         internal bool HasEndBlock { get { return AstInternal.Body.EndBlock != null; } }
     }
 
@@ -1849,20 +1991,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns a script block that corresponds to the version deserialized
+        /// Returns a script block that corresponds to the version deserialized.
         /// </summary>
-        /// <param name="context">The streaming context for this instance</param>
-        /// <returns>A script block that corresponds to the version deserialized</returns>
-        public Object GetRealObject(StreamingContext context)
+        /// <param name="context">The streaming context for this instance.</param>
+        /// <returns>A script block that corresponds to the version deserialized.</returns>
+        public object GetRealObject(StreamingContext context)
         {
             return ScriptBlock.Create(_scriptText);
         }
 
         /// <summary>
-        /// Implements the ISerializable contract for serializing a scriptblock
+        /// Implements the ISerializable contract for serializing a scriptblock.
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
@@ -1941,6 +2083,7 @@ namespace System.Management.Automation
                 dollarUnder = CurrentPipelineObject;
                 _input.Add(dollarUnder);
             }
+
             if (_scriptBlock.HasProcessBlock)
             {
                 RunClause(_runOptimized ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock, dollarUnder, _input);
@@ -2070,6 +2213,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewInvalidOperationException(AutomationExceptions.DynamicParametersWrongType,
                         PSObject.ToStringParser(this.Context, resultList));
                 }
+
                 return resultList.Count == 0 ? null : PSObject.Base(resultList[0]);
             }
 
@@ -2113,29 +2257,35 @@ namespace System.Management.Automation
             if (_commandRuntime.IsDebugFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Debug,
-                                                   _commandRuntime.Debug ? ActionPreference.Inquire : ActionPreference.SilentlyContinue);
+                                                   _commandRuntime.Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue);
             }
+
             if (_commandRuntime.IsVerboseFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Verbose,
                                                    _commandRuntime.Verbose ? ActionPreference.Continue : ActionPreference.SilentlyContinue);
             }
+
             if (_commandRuntime.IsErrorActionSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Error, _commandRuntime.ErrorAction);
             }
+
             if (_commandRuntime.IsWarningActionSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Warning, _commandRuntime.WarningPreference);
             }
+
             if (_commandRuntime.IsInformationActionSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
             }
+
             if (_commandRuntime.IsWhatIfFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.WhatIf, _commandRuntime.WhatIf);
             }
+
             if (_commandRuntime.IsConfirmFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Confirm,

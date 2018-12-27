@@ -8,8 +8,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting.Client;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -42,7 +42,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Connect all disconnected PS sessions on a remote computer
     /// > Connect-PSSession serverName
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Connect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ConnectPSSessionCommand.NameParameterSet,
@@ -78,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -90,15 +89,17 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return _appName; }
+
             set
             {
                 _appName = ResolveAppName(value);
             }
         }
-        private String _appName;
+
+        private string _appName;
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
@@ -113,15 +114,17 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
-        public String ConfigurationName
+        public string ConfigurationName
         {
             get { return _shell; }
+
             set
             {
                 _shell = ResolveShell(value);
             }
         }
-        private String _shell;
+
+        private string _shell;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -146,8 +149,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AllowRedirection
         {
             get { return _allowRedirection; }
+
             set { _allowRedirection = value; }
         }
+
         private bool _allowRedirection = false;
 
         /// <summary>
@@ -165,6 +170,7 @@ namespace Microsoft.PowerShell.Commands
         public override Guid[] InstanceId
         {
             get { return base.InstanceId; }
+
             set { base.InstanceId = value; }
         }
 
@@ -176,9 +182,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override String[] Name
+        public override string[] Name
         {
             get { return base.Name; }
+
             set { base.Name = value; }
         }
 
@@ -195,6 +202,7 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _psCredential; }
+
             set
             {
                 _psCredential = value;
@@ -202,6 +210,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private PSCredential _psCredential;
 
         /// <summary>
@@ -214,6 +223,7 @@ namespace Microsoft.PowerShell.Commands
         public AuthenticationMechanism Authentication
         {
             get { return _authentication; }
+
             set
             {
                 _authentication = value;
@@ -221,6 +231,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private AuthenticationMechanism _authentication;
 
         /// <summary>
@@ -234,6 +245,7 @@ namespace Microsoft.PowerShell.Commands
         public string CertificateThumbprint
         {
             get { return _thumbprint; }
+
             set
             {
                 _thumbprint = value;
@@ -241,6 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private string _thumbprint;
 
         /// <summary>
@@ -256,8 +269,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
-        [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public Int32 Port { get; set; }
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        public int Port { get; set; }
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -293,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.NameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit { get; set; } = 0;
+        public int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Overriding to suppress this parameter
@@ -414,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
             // Read all objects in the stream pipeline.
             while (_stream.ObjectReader.Count > 0)
             {
-                Object streamObject = _stream.ObjectReader.Read();
+                object streamObject = _stream.ObjectReader.Read();
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
 
@@ -618,6 +631,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _retryList.Add(_session);
                             }
+
                             writeError = false;
                         }
                     }
@@ -711,6 +725,7 @@ namespace Microsoft.PowerShell.Commands
                             StringUtil.Format(RemotingErrorIdStrings.RunspaceConnectFailed, session.Name,
                                 session.Runspace.RunspaceStateInfo.State.ToString()), null);
                     }
+
                     ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, null);
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
                     {
@@ -926,6 +941,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 
@@ -948,6 +964,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 
@@ -1087,425 +1104,4 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
-
-    #region QueryRunspaces
-
-    internal class QueryRunspaces
-    {
-        #region Constructor
-
-        internal QueryRunspaces()
-        {
-            _stopProcessing = false;
-        }
-
-        #endregion
-
-        #region Internal Methods
-
-        /// <summary>
-        /// Queries all remote computers specified in collection of WSManConnectionInfo objects
-        /// and returns disconnected PSSession objects ready for connection to server.
-        /// Returned sessions can be matched to Guids or Names.
-        /// </summary>
-        /// <param name="connectionInfos">Collection of WSManConnectionInfo objects.</param>
-        /// <param name="host">Host for PSSession objects.</param>
-        /// <param name="stream">Out stream object.</param>
-        /// <param name="runspaceRepository">Runspace repository.</param>
-        /// <param name="throttleLimit">Throttle limit.</param>
-        /// <param name="filterState">Runspace state filter value.</param>
-        /// <param name="matchIds">Array of session Guids to match to.</param>
-        /// <param name="matchNames">Array of session Names to match to.</param>
-        /// <param name="configurationName">Configuration name to match to.</param>
-        /// <returns>Collection of disconnected PSSession objects.</returns>
-        internal Collection<PSSession> GetDisconnectedSessions(Collection<WSManConnectionInfo> connectionInfos, PSHost host,
-                                                               ObjectStream stream, RunspaceRepository runspaceRepository,
-                                                               int throttleLimit, SessionFilterState filterState,
-                                                               Guid[] matchIds, string[] matchNames, string configurationName)
-        {
-            Collection<PSSession> filteredPSSessions = new Collection<PSSession>();
-
-            // Create a query operation for each connection information object.
-            foreach (WSManConnectionInfo connectionInfo in connectionInfos)
-            {
-                Runspace[] runspaces = null;
-
-                try
-                {
-                    runspaces = Runspace.GetRunspaces(connectionInfo, host, BuiltInTypesTable);
-                }
-                catch (System.Management.Automation.RuntimeException e)
-                {
-                    if (e.InnerException is InvalidOperationException)
-                    {
-                        // The Get-WSManInstance cmdlet used to query remote computers for runspaces will throw
-                        // an Invalid Operation (inner) exception if the connectInfo object is invalid, including
-                        // invalid computer names.
-                        // We don't want to propagate the exception so just write error here.
-                        if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
-                        {
-                            int errorCode;
-                            string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
-                            string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "RemotePSSessionQueryFailed");
-                            Exception reason = new RuntimeException(msg, e.InnerException);
-                            ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
-                            stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
-                        }
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                if (_stopProcessing)
-                {
-                    break;
-                }
-
-                // Add all runspaces meeting filter criteria to collection.
-                if (runspaces != null)
-                {
-                    // Convert configuration name into shell Uri for comparison.
-                    string shellUri = null;
-                    if (!string.IsNullOrEmpty(configurationName))
-                    {
-                        shellUri = (configurationName.IndexOf(
-                                    System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
-                                    configurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + configurationName;
-                    }
-
-                    foreach (Runspace runspace in runspaces)
-                    {
-                        // Filter returned runspaces by ConfigurationName if provided.
-                        if (shellUri != null)
-                        {
-                            // Compare with returned shell Uri in connection info.
-                            WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
-                            if (wsmanConnectionInfo != null &&
-                                !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
-                            {
-                                continue;
-                            }
-                        }
-
-                        // Check the repository for an existing viable PSSession for
-                        // this runspace (based on instanceId).  Use the existing
-                        // local runspace instead of the one returned from the server
-                        // query.
-                        PSSession existingPSSession = null;
-                        if (runspaceRepository != null)
-                        {
-                            existingPSSession = runspaceRepository.GetItem(runspace.InstanceId);
-                        }
-
-                        if (existingPSSession != null &&
-                            UseExistingRunspace(existingPSSession.Runspace, runspace))
-                        {
-                            if (TestRunspaceState(existingPSSession.Runspace, filterState))
-                            {
-                                filteredPSSessions.Add(existingPSSession);
-                            }
-                        }
-                        else if (TestRunspaceState(runspace, filterState))
-                        {
-                            filteredPSSessions.Add(new PSSession(runspace as RemoteRunspace));
-                        }
-                    }
-                }
-            }
-
-            // Return only PSSessions that match provided Ids or Names.
-            if ((matchIds != null) && (filteredPSSessions.Count > 0))
-            {
-                Collection<PSSession> matchIdsSessions = new Collection<PSSession>();
-                foreach (Guid id in matchIds)
-                {
-                    bool matchFound = false;
-                    foreach (PSSession psSession in filteredPSSessions)
-                    {
-                        if (_stopProcessing)
-                        {
-                            break;
-                        }
-
-                        if (psSession.Runspace.InstanceId.Equals(id))
-                        {
-                            matchFound = true;
-                            matchIdsSessions.Add(psSession);
-                            break;
-                        }
-                    }
-
-                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
-                    {
-                        string msg = StringUtil.Format(RemotingErrorIdStrings.SessionIdMatchFailed, id);
-                        Exception reason = new RuntimeException(msg);
-                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionIdMatchFail", ErrorCategory.InvalidOperation, id);
-                        stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
-                    }
-                }
-
-                // Return all found sessions.
-                return matchIdsSessions;
-            }
-            else if ((matchNames != null) && (filteredPSSessions.Count > 0))
-            {
-                Collection<PSSession> matchNamesSessions = new Collection<PSSession>();
-                foreach (string name in matchNames)
-                {
-                    WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
-                    bool matchFound = false;
-                    foreach (PSSession psSession in filteredPSSessions)
-                    {
-                        if (_stopProcessing)
-                        {
-                            break;
-                        }
-
-                        if (namePattern.IsMatch(((RemoteRunspace)psSession.Runspace).RunspacePool.RemoteRunspacePoolInternal.Name))
-                        {
-                            matchFound = true;
-                            matchNamesSessions.Add(psSession);
-                        }
-                    }
-
-                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
-                    {
-                        string msg = StringUtil.Format(RemotingErrorIdStrings.SessionNameMatchFailed, name);
-                        Exception reason = new RuntimeException(msg);
-                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionNameMatchFail", ErrorCategory.InvalidOperation, name);
-                        stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
-                    }
-                }
-
-                return matchNamesSessions;
-            }
-            else
-            {
-                // Return all collected sessions.
-                return filteredPSSessions;
-            }
-        }
-
-        /// <summary>
-        /// Returns true if the existing runspace should be returned to the user
-        /// a.  If the existing runspace is not broken
-        /// b.  If the queried runspace is not connected to a different user.
-        /// </summary>
-        /// <param name="existingRunspace"></param>
-        /// <param name="queriedrunspace"></param>
-        /// <returns></returns>
-        private static bool UseExistingRunspace(
-            Runspace existingRunspace,
-            Runspace queriedrunspace)
-        {
-            Dbg.Assert(existingRunspace != null, "Invalid parameter.");
-            Dbg.Assert(queriedrunspace != null, "Invalid parameter.");
-
-            if (existingRunspace.RunspaceStateInfo.State == RunspaceState.Broken)
-            {
-                return false;
-            }
-
-            if (existingRunspace.RunspaceStateInfo.State == RunspaceState.Disconnected &&
-                queriedrunspace.RunspaceAvailability == RunspaceAvailability.Busy)
-            {
-                return false;
-            }
-
-            // Update existing runspace to have latest DisconnectedOn/ExpiresOn data.
-            existingRunspace.DisconnectedOn = queriedrunspace.DisconnectedOn;
-            existingRunspace.ExpiresOn = queriedrunspace.ExpiresOn;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Returns Exception message.  If message is WSMan Xml then
-        /// the WSMan message and error code is extracted and returned.
-        /// </summary>
-        /// <param name="e">Exception</param>
-        /// <param name="errorCode">Returned WSMan error code</param>
-        /// <returns>WSMan message</returns>
-        internal static string ExtractMessage(
-            Exception e,
-            out int errorCode)
-        {
-            errorCode = 0;
-
-            if (e == null ||
-                e.Message == null)
-            {
-                return string.Empty;
-            }
-
-            string rtnMsg = null;
-            try
-            {
-                System.Xml.XmlReaderSettings xmlReaderSettings = InternalDeserializer.XmlReaderSettingsForUntrustedXmlDocument.Clone();
-                xmlReaderSettings.MaxCharactersInDocument = 4096;
-                xmlReaderSettings.MaxCharactersFromEntities = 1024;
-                xmlReaderSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;
-
-                using (System.Xml.XmlReader reader = System.Xml.XmlReader.Create(
-                        new System.IO.StringReader(e.Message), xmlReaderSettings))
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.NodeType == System.Xml.XmlNodeType.Element)
-                        {
-                            if (reader.LocalName.Equals("Message", StringComparison.OrdinalIgnoreCase))
-                            {
-                                rtnMsg = reader.ReadElementContentAsString();
-                            }
-                            else if (reader.LocalName.Equals("WSManFault", StringComparison.OrdinalIgnoreCase))
-                            {
-                                string errorCodeString = reader.GetAttribute("Code");
-                                if (errorCodeString != null)
-                                {
-                                    try
-                                    {
-                                        // WinRM returns both signed and unsigned 32 bit string values.  Convert to signed 32 bit integer.
-                                        Int64 eCode = Convert.ToInt64(errorCodeString, System.Globalization.NumberFormatInfo.InvariantInfo);
-                                        unchecked
-                                        {
-                                            errorCode = (int)eCode;
-                                        }
-                                    }
-                                    catch (FormatException)
-                                    { }
-                                    catch (OverflowException)
-                                    { }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (System.Xml.XmlException)
-            { }
-
-            return rtnMsg ?? e.Message;
-        }
-
-        /// <summary>
-        /// Discontinue all remote server query operations.
-        /// </summary>
-        internal void StopAllOperations()
-        {
-            _stopProcessing = true;
-        }
-
-        /// <summary>
-        /// Compares the runspace filter state with the runspace state.
-        /// </summary>
-        /// <param name="runspace">Runspace object to test.</param>
-        /// <param name="filterState">Filter state to compare.</param>
-        /// <returns>Result of test.</returns>
-        public static bool TestRunspaceState(Runspace runspace, SessionFilterState filterState)
-        {
-            bool result;
-
-            switch (filterState)
-            {
-                case SessionFilterState.All:
-                    result = true;
-                    break;
-
-                case SessionFilterState.Opened:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Opened);
-                    break;
-
-                case SessionFilterState.Closed:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Closed);
-                    break;
-
-                case SessionFilterState.Disconnected:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Disconnected);
-                    break;
-
-                case SessionFilterState.Broken:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Broken);
-                    break;
-
-                default:
-                    Dbg.Assert(false, "Invalid SessionFilterState value.");
-                    result = false;
-                    break;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns the default type table for built-in PowerShell types.
-        /// </summary>
-        internal static TypeTable BuiltInTypesTable
-        {
-            get
-            {
-                if (s_TypeTable == null)
-                {
-                    lock (s_SyncObject)
-                    {
-                        if (s_TypeTable == null)
-                        {
-                            s_TypeTable = TypeTable.LoadDefaultTypeFiles();
-                        }
-                    }
-                }
-
-                return s_TypeTable;
-            }
-        }
-
-        #endregion
-
-        #region Private Members
-
-        private bool _stopProcessing;
-
-        private static readonly object s_SyncObject = new object();
-        private static TypeTable s_TypeTable;
-
-        #endregion
-    }
-
-    #endregion
-
-    # region Public SessionFilterState Enum
-
-    /// <summary>
-    /// Runspace states that can be used as filters for querying remote runspaces.
-    /// </summary>
-    public enum SessionFilterState
-    {
-        /// <summary>
-        /// Return runspaces in any state.
-        /// </summary>
-        All = 0,
-
-        /// <summary>
-        /// Return runspaces in Opened state.
-        /// </summary>
-        Opened = 1,
-
-        /// <summary>
-        /// Return runspaces in Disconnected state.
-        /// </summary>
-        Disconnected = 2,
-
-        /// <summary>
-        /// Return runspaces in Closed state.
-        /// </summary>
-        Closed = 3,
-
-        /// <summary>
-        /// Return runspaces in Broken state.
-        /// </summary>
-        Broken = 4
-    }
-
-    #endregion
 }

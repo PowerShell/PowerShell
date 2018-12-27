@@ -4,10 +4,11 @@ param(
     [Parameter(Mandatory)]
     [string] $Path,
     [string[]] $AuthenticodeDualFiles,
-    [string[]] $AuthenticodeFiles
+    [string[]] $AuthenticodeFiles,
+    [string[]] $NuPkgFiles
 )
 
-if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0))
+if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0) -and (!$NuPkgFiles -or $NuPkgFiles.Count -eq 0))
 {
     throw "At least one file must be specified"
 }
@@ -67,6 +68,11 @@ foreach($file in $AuthenticodeDualFiles)
 foreach($file in $AuthenticodeFiles)
 {
     New-FileElement -File $file -SignType 'Authenticode' -XmlDoc $signingXml -Job $job
+}
+
+foreach($file in $NuPkgFiles)
+{
+    New-FileElement -File $file -SignType 'NuGet' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)

@@ -49,18 +49,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
         /// Specifies the literal path to save updates to
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -69,12 +71,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -161,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="module">module to process</param>
         /// <param name="culture">culture to use</param>
-        /// <returns>true if the module has been processed, false if not</returns>
+        /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             Collection<string> resolvedPaths = new Collection<string>();

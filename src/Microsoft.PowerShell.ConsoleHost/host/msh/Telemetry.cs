@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Send the telemetry
         /// </summary>
-        private static void SendTelemetry(string eventName, Dictionary<string,string>payload)
+        private static void SendTelemetry(string eventName, Dictionary<string,string> payload)
         {
             try
             {
@@ -77,6 +77,7 @@ namespace Microsoft.PowerShell
                 {
                     _telemetryClient = new TelemetryClient();
                 }
+
                 _telemetryClient.TrackEvent(eventName, payload, null);
             }
             catch (Exception)

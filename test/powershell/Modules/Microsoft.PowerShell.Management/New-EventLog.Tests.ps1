@@ -14,7 +14,7 @@ Describe "New-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeEach {
         if ($IsNotSkipped) {
-            Remove-EventLog -LogName TestLog -ea Ignore
+            Remove-EventLog -LogName TestLog -ErrorAction Ignore
         }
     }
 

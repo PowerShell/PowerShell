@@ -3,7 +3,7 @@
 Describe "New-Object" -Tags "CI" {
     It "Support 'ComObject' parameter on platforms" {
         if ($IsLinux -or $IsMacOs ) {
-            { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+            { New-Object -ComObject "Shell.Application" } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         } else {
             # It works on NanoServer and IoT too
             (Get-Command "New-Object").Parameters.ContainsKey("ComObject") | Should -BeTrue
@@ -84,19 +84,19 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
     }
 
     It "New-Object with invalid type should throw Exception"{
-        $e = { New-Object -TypeName LiarType -EA Stop } | Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
+        $e = { New-Object -TypeName LiarType -ErrorAction Stop } | Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "PSArgumentException"
     }
 
     It "New-Object with invalid argument should throw Exception"{
-        $e = { New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -EA Stop } |
+        $e = { New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -ErrorAction Stop } |
 	        Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "MethodException"
     }
 
     It "New-Object with abstract class should throw Exception"{
         Add-Type -TypeDefinition "public abstract class AbstractEmployee{public AbstractEmployee(){}}"
-        $e = { New-Object -TypeName AbstractEmployee -EA Stop } |
+        $e = { New-Object -TypeName AbstractEmployee -ErrorAction Stop } |
 		Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "MethodInvocationException"
     }
@@ -106,7 +106,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         {
             Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
         }
-        $e = { New-Object -TypeName Employee -ArgumentList 11 -EA Stop } | Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
+        $e = { New-Object -TypeName Employee -ArgumentList 11 -ErrorAction Stop } | Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "MethodException"
     }
 
@@ -116,12 +116,12 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         {
            Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
         }
-        { New-Object -TypeName Employee -EA Stop } | ShouldBeErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+        { New-Object -TypeName Employee -ErrorAction Stop } | Should -Throw -ErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
     }
 
     It "New-Object with Private Nested class should throw Exception"{
         Add-Type -TypeDefinition "public class WeirdEmployee{public WeirdEmployee(){}private class PrivateNestedWeirdEmployee{public PrivateNestedWeirdEmployee(){}}}"
-        $e = { New-Object -TypeName WeirdEmployee+PrivateNestedWeirdEmployee -EA Stop } | Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
+        $e = { New-Object -TypeName WeirdEmployee+PrivateNestedWeirdEmployee -ErrorAction Stop } | Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "PSArgumentException"
     }
 
@@ -158,7 +158,7 @@ try
         }
 
         It "Should fail with correct error when creating a COM object that dose not exist" {
-            {New-Object -ComObject 'doesnotexist'} | ShouldBeErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
+            {New-Object -ComObject 'doesnotexist'} | Should -Throw -ErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
         }
     }
 }

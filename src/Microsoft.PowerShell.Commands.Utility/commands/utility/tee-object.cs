@@ -8,45 +8,50 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class for Tee-object implementation
+    /// Class for Tee-object implementation.
     /// </summary>
     [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113417")]
     public sealed class TeeObjectCommand : PSCmdlet, IDisposable
     {
         /// <summary>
-        /// object to process
+        /// Object to process.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
         {
             get { return _inputObject; }
+
             set { _inputObject = value; }
         }
+
         private PSObject _inputObject;
 
         /// <summary>
-        /// FilePath parameter
+        /// FilePath parameter.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "File")]
         [Alias("Path")]
         public string FilePath
         {
             get { return _fileName; }
+
             set { _fileName = value; }
         }
+
         private string _fileName;
 
         /// <summary>
-        /// Literal FilePath parameter
+        /// Literal FilePath parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralFile")]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get
             {
                 return _fileName;
             }
+
             set
             {
                 _fileName = value;
@@ -54,29 +59,32 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Append switch
+        /// Append switch.
         /// </summary>
         [Parameter(ParameterSetName = "File")]
         public SwitchParameter Append
         {
             get { return _append; }
+
             set { _append = value; }
         }
+
         private bool _append;
 
         /// <summary>
-        /// Variable parameter
+        /// Variable parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Variable")]
         public string Variable
         {
             get { return _variable; }
+
             set { _variable = value; }
         }
+
         private string _variable;
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -103,7 +111,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -112,7 +119,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {
@@ -133,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -142,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~TeeObjectCommand()
         {
@@ -154,4 +160,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion private
     }
 }
-

@@ -113,10 +113,12 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 throw PSTraceSource.NewArgumentNullException("RunspacePool Guid");
             }
+
             if (connectCommands == null)
             {
                 throw PSTraceSource.NewArgumentNullException("ConnectCommandInfo[]");
             }
+
             if (connectionInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException("WSManConnectionInfo");
@@ -229,6 +231,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal string Name
         {
             get { return _friendlyName; }
+
             set { _friendlyName = value ?? string.Empty; }
         }
 
@@ -292,7 +295,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// runspace.
         /// This is currently supported *only* for remote runspaces.
         /// </summary>
-        /// <returns>True if successful</returns>
+        /// <returns>True if successful.</returns>
         internal override bool ResetRunspaceState()
         {
             // Version check.  Reset Runspace is supported only on PSRP protocol
@@ -362,7 +365,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 callId = DispatchTable.CreateNewCallId();
 
                 DataStructureHandler.SendSetMaxRunspacesToServer(maxRunspaces, callId);
-            } // lock ...
+            }
 
             // this call blocks until the response is received
             object response = DispatchTable.GetResponse(callId, false);
@@ -425,7 +428,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 callId = DispatchTable.CreateNewCallId();
 
                 DataStructureHandler.SendSetMinRunspacesToServer(minRunspaces, callId);
-            } // lock ...
+            }
 
             // this call blocks until the response is received
             object response = DispatchTable.GetResponse(callId, false);
@@ -447,7 +450,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Retrieves the number of runspaces available at the time of calling
         /// this method from the remote server
         /// </summary>
-        /// <returns>The number of runspaces available in the pool</returns>
+        /// <returns>The number of runspaces available in the pool.</returns>
         internal override int GetAvailableRunspaces()
         {
             int availableRunspaces = 0;
@@ -476,7 +479,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
 
                 DataStructureHandler.SendGetAvailableRunspacesToServer(callId);
-            } // lock ...
+            }
 
             // this call blocks until the response is received
             object response = DispatchTable.GetResponse(callId, 0);
@@ -585,7 +588,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // if closeAsyncResult is null, BeginClose is not called. That means
                     // we are getting close event from server, in this case release the
                     // local resources
-                    if (null == _closeAsyncResult)
+                    if (_closeAsyncResult == null)
                     {
                         // Close the local resources.
                         DataStructureHandler.CloseRunspacePoolAsync();
@@ -594,7 +597,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // Delay notifying upper layers of finished state change event
                     // until after transport close ack is received (HandleSessionClosed handler).
                 }
-            } // else if ...
+            }
         }
 
         /// <summary>
@@ -706,7 +709,6 @@ namespace System.Management.Automation.Runspaces.Internal
         internal event EventHandler<CreateCompleteEventArgs> SessionCreateCompleted;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shell"></param>
         internal void CreatePowerShellOnServerAndInvoke(ClientRemotePowerShell shell)
@@ -787,7 +789,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Pop the currently running PowerShell from stack.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         internal PowerShell PopRunningPowerShell()
         {
             PowerShell powershell;
@@ -802,7 +804,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Return the current running PowerShell.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         internal PowerShell GetCurrentRunningPowerShell()
         {
             PowerShell powershell;
@@ -1010,7 +1012,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="callback">AsyncCallback object.</param>
         /// <param name="state">state object.</param>
-        /// <returns>IAsyncResult</returns>
+        /// <returns>IAsyncResult.</returns>
         public override IAsyncResult BeginDisconnect(AsyncCallback callback, object state)
         {
             if (!CanDisconnect)
@@ -1066,14 +1068,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="asyncResult">IAsyncResult object.</param>
         public override void EndDisconnect(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1101,7 +1103,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="callback">ASyncCallback object.</param>
         /// <param name="state">state Object.</param>
-        /// <returns>IAsyncResult</returns>
+        /// <returns>IAsyncResult.</returns>
         public override IAsyncResult BeginConnect(AsyncCallback callback, object state)
         {
             if (!AvailableForConnection)
@@ -1176,14 +1178,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="asyncResult">IAsyncResult object.</param>
         public override void EndConnect(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1225,7 +1227,7 @@ namespace System.Management.Automation.Runspaces.Internal
         ///<summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
-        /// <returns>RunspacePoolCapability</returns>
+        /// <returns>RunspacePoolCapability.</returns>
         public override RunspacePoolCapability GetCapabilities()
         {
             RunspacePoolCapability returnCaps = RunspacePoolCapability.Default;
@@ -1316,6 +1318,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                     throw;
                 }
+
                 foreach (PSObject cmdObject in commandItems)
                 {
                     PSPropertyInfo pspCommandId = cmdObject.Properties["CommandId"];
@@ -1377,6 +1380,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     wsmanConnectionInfo.IdleTimeout = idleTimeout;
                 }
             }
+
             if (pspBufferMode != null)
             {
                 string bufferingMode = pspBufferMode.Value as string;
@@ -1390,6 +1394,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     }
                 }
             }
+
             if (pspResourceUri != null)
             {
                 string strShellUri = pspResourceUri.Value as string;
@@ -1398,6 +1403,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     wsmanConnectionInfo.ShellUri = strShellUri;
                 }
             }
+
             if (pspLocale != null)
             {
                 string localString = pspLocale.Value as string;
@@ -1411,6 +1417,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     { }
                 }
             }
+
             if (pspDataLocale != null)
             {
                 string dataLocalString = pspDataLocale.Value as string;
@@ -1424,6 +1431,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     { }
                 }
             }
+
             if (pspCompressionMode != null)
             {
                 string compressionModeString = pspCompressionMode.Value as string;
@@ -1433,6 +1441,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         ? false : true;
                 }
             }
+
             if (pspEncoding != null)
             {
                 string encodingString = pspEncoding.Value as string;
@@ -1442,6 +1451,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         ? true : false;
                 }
             }
+
             if (pspProfile != null)
             {
                 string machineProfileLoadedString = pspProfile.Value as string;
@@ -1451,6 +1461,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         ? false : true;
                 }
             }
+
             if (pspMaxIdleTimeout != null)
             {
                 int maxIdleTimeout;
@@ -1507,7 +1518,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (timeString != null)
             {
-                string timeoutString = timeString.Replace("PT", "").Replace("S", "");
+                string timeoutString = timeString.Replace("PT", string.Empty).Replace("S", string.Empty);
                 try
                 {
                     // Convert time from seconds to milliseconds.
@@ -1767,7 +1778,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (null != wsmanConnectionInfo)
+            if (wsmanConnectionInfo != null)
             {
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
                 URIRedirectionReported.SafeInvoke(this, eventArgs);
@@ -1995,24 +2006,29 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     powerShell.AddParameter("Credential", wsmanConnectionInfo.Credential);
                 }
+
                 if (wsmanConnectionInfo.CertificateThumbprint != null)
                 {
                     powerShell.AddParameter("CertificateThumbprint", wsmanConnectionInfo.CertificateThumbprint);
                 }
+
                 if (wsmanConnectionInfo.PortSetting != -1)
                 {
                     powerShell.AddParameter("Port", wsmanConnectionInfo.Port);
                 }
+
                 if (CheckForSSL(wsmanConnectionInfo))
                 {
                     powerShell.AddParameter("UseSSL", true);
                 }
+
                 if (!string.IsNullOrEmpty(wsmanConnectionInfo.AppName))
                 {
                     // Remove prepended path character.
                     string appName = wsmanConnectionInfo.AppName.TrimStart('/');
                     powerShell.AddParameter("ApplicationName", appName);
                 }
+
                 powerShell.AddParameter("SessionOption", GetSessionOptions(wsmanConnectionInfo));
 
                 result = powerShell.Invoke();
@@ -2050,24 +2066,29 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     powerShell.AddParameter("Credential", wsmanConnectionInfo.Credential);
                 }
+
                 if (wsmanConnectionInfo.CertificateThumbprint != null)
                 {
                     powerShell.AddParameter("CertificateThumbprint", wsmanConnectionInfo.CertificateThumbprint);
                 }
+
                 if (wsmanConnectionInfo.PortSetting != -1)
                 {
                     powerShell.AddParameter("Port", wsmanConnectionInfo.Port);
                 }
+
                 if (CheckForSSL(wsmanConnectionInfo))
                 {
                     powerShell.AddParameter("UseSSL", true);
                 }
+
                 if (!string.IsNullOrEmpty(wsmanConnectionInfo.AppName))
                 {
                     // Remove prepended path character.
                     string appName = wsmanConnectionInfo.AppName.TrimStart('/');
                     powerShell.AddParameter("ApplicationName", appName);
                 }
+
                 powerShell.AddParameter("SessionOption", GetSessionOptions(wsmanConnectionInfo));
 
                 result = powerShell.Invoke();
@@ -2081,7 +2102,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// object used for Get-WSManInstance queries.
         /// </summary>
         /// <param name="wsmanConnectionInfo">WSManConnectionInfo</param>
-        /// <returns>WSMan session options object</returns>
+        /// <returns>WSMan session options object.</returns>
         private static object GetSessionOptions(WSManConnectionInfo wsmanConnectionInfo)
         {
             Collection<PSObject> result;

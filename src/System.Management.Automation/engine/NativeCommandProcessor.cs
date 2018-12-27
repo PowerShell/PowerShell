@@ -147,15 +147,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes the new instance of NativeCommandProcessor class.
         /// </summary>
-        ///
         /// <param name="applicationInfo">
         /// The information about the application to run.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for this command.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// <paramref name="applicationInfo"/> or <paramref name="context"/> is null
         /// </exception>
@@ -243,15 +240,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a new instance of a ParameterBinderController using a NativeCommandParameterBinder
         /// </summary>
-        ///
         /// <param name="command">
         /// The native command to be run.
         /// </param>
-        ///
         /// <returns>
         /// A new parameter binder controller for the specified command.
         /// </returns>
-        ///
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
             Dbg.Assert(_isPreparedCalled, "parameter binder should not be created before prepared is called");
@@ -280,6 +274,7 @@ namespace System.Management.Automation
                 {
                     NewParameterBinderController(this.Command);
                 }
+
                 return _nativeParameterBinderController;
             }
         }
@@ -452,16 +447,6 @@ namespace System.Management.Automation
                         throw new PipelineStoppedException();
                     }
 
-                    if (!Platform.IsWindows && startInfo.UseShellExecute)
-                    {
-                        // UseShellExecute is not properly supported on Unix. It runs the file with '/bin/sh'.
-                        // Before the behavior is improved (tracked by dotnet/corefx#19956), we use xdg-open/open as the default programs
-                        string executable = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
-                        startInfo.Arguments = "\"" + startInfo.FileName + "\" " + startInfo.Arguments;
-                        startInfo.FileName = executable;
-                        startInfo.UseShellExecute = false;
-                    }
-
                     try
                     {
                         _nativeProcess = new Process() { StartInfo = startInfo };
@@ -548,6 +533,7 @@ namespace System.Management.Automation
                         {
                             inputFormat = ((MinishellParameterBinderController)NativeParameterBinderController).InputFormat;
                         }
+
                         lock (_sync)
                         {
                             if (!_stopped)
@@ -572,7 +558,7 @@ namespace System.Management.Automation
             {
                 exceptionToRethrow = e;
 
-            } // try
+            }
             catch (PipelineStoppedException)
             {
                 // If we're stopping the process, just rethrow this exception...
@@ -733,7 +719,7 @@ namespace System.Management.Automation
             catch (Win32Exception e)
             {
                 exceptionToRethrow = e;
-            } // try
+            }
             catch (PipelineStoppedException)
             {
                 // If we're stopping the process, just rethrow this exception...
@@ -828,6 +814,7 @@ namespace System.Management.Automation
                     {
                         ConstructParentId();
                     }
+
                     return _parentId;
                 }
             }
@@ -845,6 +832,7 @@ namespace System.Management.Automation
                 {
                     result[index] = new ProcessWithParentId(originalProcCollection[index]);
                 }
+
                 return result;
             }
 
@@ -1068,12 +1056,14 @@ namespace System.Management.Automation
                     {
                         sourceId = (long)info.Value;
                     }
+
                     info = temp.Properties["Record"];
                     ProgressRecord rec = null;
                     if (info != null)
                     {
                         rec = info.Value as ProgressRecord;
                     }
+
                     if (rec != null)
                     {
                         this.Command.PSHostInternal.UI.WriteProgress(sourceId, rec);
@@ -1101,20 +1091,19 @@ namespace System.Management.Automation
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = this.Path;
 
-            // On Windows, check the extension list and see if we should try to execute this directly.
-            // Otherwise, use the platform library to check executability
-            if ((Platform.IsWindows && ValidateExtension(this.Path))
-                || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(this.Path)))
+            if (IsExecutable(this.Path))
             {
                 startInfo.UseShellExecute = false;
                 if (redirectInput)
                 {
                     startInfo.RedirectStandardInput = true;
                 }
+
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
                 }
+
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
@@ -1148,6 +1137,7 @@ namespace System.Management.Automation
                 mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
+
             startInfo.Arguments = NativeParameterBinderController.Arguments;
 
             ExecutionContext context = this.Command.Context;
@@ -1278,7 +1268,7 @@ namespace System.Management.Automation
 
             if (_runStandAlone)
             {
-                if (null == s_supportScreenScrape)
+                if (s_supportScreenScrape == null)
                 {
                     try
                     {
@@ -1304,16 +1294,19 @@ namespace System.Management.Automation
             }
         }
 
-        private bool ValidateExtension(string path)
+        // On Windows, check the extension list and see if we should try to execute this directly.
+        // Otherwise, use the platform library to check executability
+        private bool IsExecutable(string path)
         {
-            // Now check the extension and see if it's one of the ones in pathext
+#if UNIX
+            return Platform.NonWindowsIsExecutable(this.Path);
+#else
+
             string myExtension = System.IO.Path.GetExtension(path);
 
-            string pathext = (string)LanguagePrimitives.ConvertTo(
-                this.Command.Context.GetVariableValue(SpecialVariables.PathExtVarPath),
-                typeof(string), CultureInfo.InvariantCulture);
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
             string[] extensionList;
-            if (String.IsNullOrEmpty(pathext))
+            if (string.IsNullOrEmpty(pathext))
             {
                 extensionList = new string[] { ".exe", ".com", ".bat", ".cmd" };
             }
@@ -1321,14 +1314,17 @@ namespace System.Management.Automation
             {
                 extensionList = pathext.Split(Utils.Separators.Semicolon);
             }
+
             foreach (string extension in extensionList)
             {
-                if (String.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
             }
+
             return false;
+#endif
         }
 
         #region Interop for FindExecutable...
@@ -1435,6 +1431,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return false;
         }
 
@@ -1465,6 +1462,7 @@ namespace System.Management.Automation
             // we incrementing refCount on the same thread and before running any processing
             // so it's safe to do it without Interlocked.
             if (process.StartInfo.RedirectStandardOutput) { _refCount++; }
+
             if (process.StartInfo.RedirectStandardError) { _refCount++; }
 
             // once we have _refCount, we can start processing
@@ -1587,6 +1585,7 @@ namespace System.Management.Automation
                         {
                             stream = StringToMinishellStreamConverter.ToMinishellStream(streamName);
                         }
+
                         if (stream == MinishellStream.Unknown)
                         {
                             stream = isOutput ? MinishellStream.Output : MinishellStream.Error;
@@ -1615,6 +1614,7 @@ namespace System.Management.Automation
                                 {
                                     continue;
                                 }
+
                                 obj = new ErrorRecord(new RemoteException(errorMessage),
                                                     "NativeCommandError", ErrorCategory.NotSpecified, errorMessage);
                             }
@@ -1654,6 +1654,7 @@ namespace System.Management.Automation
                                 continue;
                             }
                         }
+
                         result.Add(new ProcessOutputObject(obj, stream));
                     }
                 }
@@ -1856,6 +1857,7 @@ namespace System.Management.Automation
                     // lead to "Broken pipe" exception.
                     // we are ignoring it here
                 }
+
                 _streamWriter = null;
             }
         }
@@ -1919,21 +1921,21 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="hWnd">The window to show...</param>
         /// <param name="nCmdShow">The command to do</param>
-        /// <returns>true it it was successful</returns>
+        /// <returns>True it it was successful.</returns>
         [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
         /// </summary>
-        /// <returns>true if a console was created...</returns>
+        /// <returns>True if a console was created...</returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool AllocConsole();
 
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window
         /// </summary>
-        /// <returns>A handle to the foreground window</returns>
+        /// <returns>A handle to the foreground window.</returns>
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -1941,7 +1943,7 @@ namespace System.Management.Automation
         /// Called to restore the foreground window after allocating a hidden console window
         /// </summary>
         /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
-        /// <returns>true if the window was brought to the foreground</returns>
+        /// <returns>True if the window was brought to the foreground.</returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);

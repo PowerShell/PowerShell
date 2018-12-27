@@ -125,6 +125,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 return _batchSize;
             }
+
             set
             {
                 if (value < 1)
@@ -309,6 +310,7 @@ namespace System.Diagnostics.Eventing.Reader
                     {
                         SeekCommon(offset);
                     }
+
                     return;
             }
         }
@@ -343,6 +345,7 @@ namespace System.Diagnostics.Eventing.Reader
                     EventLogStatus cs = new EventLogStatus(channelNames[i], errorStatuses[i]);
                     list.Add(cs);
                 }
+
                 return list.AsReadOnly();
             }
         }

@@ -280,7 +280,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
           }
         }
 
-        (get-foo5 "foo-message" -ev foo_err1 -ov foo_out1 | get-foo5 -ev foo_err2 -ov foo_out2 | get-foo5 -ev foo_err3 -ov foo_out3) 2>&1 > $null
+        (get-foo5 "foo-message" -ErrorVariable foo_err1 -ov foo_out1 | get-foo5 -ErrorVariable foo_err2 -ov foo_out2 | get-foo5 -ErrorVariable foo_err3 -ov foo_out3) 2>&1 > $null
 
         $foo_out1 | Should -BeExactly "foo-message"
         $foo_out2 | Should -BeExactly "foo-message"
@@ -293,7 +293,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
     Context 'Error variable in multi-command pipeline (with native cmdlet)' {
 
         BeforeAll {
-            (get-foo -ev foo_err | get-item -ev get_item_err ) 2>&1 > $null
+            (get-foo -ErrorVariable foo_err | get-item -ErrorVariable get_item_err ) 2>&1 > $null
         }
 
         It '$foo_err should be "foo-error"' {
@@ -369,11 +369,11 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
             "bar-output"
             write-error  "bar-error"
-            get-foo7 "foo-output" -ev script:foo_err1 -ov script:foo_out1 | get-foo7 -ev script:foo_err2 -ov script:foo_out2
-            get-foo7 "foo-output" -ev script:foo_err3 -ov script:foo_out3 | get-foo7 -ev script:foo_err4 -ov script:foo_out4
+            get-foo7 "foo-output" -ErrorVariable script:foo_err1 -ov script:foo_out1 | get-foo7 -ErrorVariable script:foo_err2 -ov script:foo_out2
+            get-foo7 "foo-output" -ErrorVariable script:foo_err3 -ov script:foo_out3 | get-foo7 -ErrorVariable script:foo_err4 -ov script:foo_out4
         }
 
-        get-bar5 -ev script:bar_err -ov script:bar_out 2>&1 > $null
+        get-bar5 -ErrorVariable script:bar_err -ov script:bar_out 2>&1 > $null
 
         $script:foo_out1 | Should -BeExactly "foo-output"
         $script:foo_err1 | Should -BeExactly "foo-error"

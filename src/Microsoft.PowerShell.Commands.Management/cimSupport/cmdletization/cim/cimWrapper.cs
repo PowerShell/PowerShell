@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return base.Session;
             }
+
             set
             {
                 base.Session = value;
@@ -64,12 +65,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 return this.CmdletDefinitionContext.DefaultThrottleLimit;
             }
+
             set
             {
                 base.ThrottleLimit = value;
                 _throttleLimitIsSetExplicitly = true;
             }
         }
+
         private bool _throttleLimitIsSetExplicitly;
 
         #endregion
@@ -79,7 +82,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Creates a query builder for CIM OM
         /// </summary>
-        /// <returns>Query builder for CIM OM</returns>
+        /// <returns>Query builder for CIM OM.</returns>
         public override QueryBuilder GetQueryBuilder()
         {
             return new CimQuery();
@@ -96,6 +99,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         this.GetDynamicNamespace()));
             }
         }
+
         private CimCmdletInvocationContext _cmdletInvocationContext;
 
         internal CimCmdletDefinitionContext CmdletDefinitionContext
@@ -111,9 +115,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                             this.Cmdlet.CommandInfo.CommandMetadata.SupportsShouldProcess,
                             this.PrivateData);
                 }
+
                 return _cmdletDefinitionContext;
             }
         }
+
         private CimCmdletDefinitionContext _cmdletDefinitionContext;
 
         internal InvocationInfo CmdletInvocationInfo
@@ -130,7 +136,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Returns a new job name to use for the parent job that handles throttling of the child jobs that actually perform querying and method invocation.
         /// </summary>
-        /// <returns>Job name</returns>
+        /// <returns>Job name.</returns>
         protected override string GenerateParentJobName()
         {
             return "CimJob" + Interlocked.Increment(ref CimCmdletAdapter.s_jobNumber).ToString(CultureInfo.InvariantCulture);
@@ -139,7 +145,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Returns default sessions to use when the user doesn't specify the -Session cmdlet parameter.
         /// </summary>
-        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter</returns>
+        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter.</returns>
         protected override CimSession DefaultSession
         {
             get
@@ -161,7 +167,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         /// <param name="session">Remote session to query</param>
         /// <param name="baseQuery">Query parameters</param>
-        /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model</returns>
+        /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.</returns>
         internal override StartableJob CreateQueryJob(CimSession session, QueryBuilder baseQuery)
         {
             CimQuery query = baseQuery as CimQuery;
@@ -175,6 +181,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -201,6 +208,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -301,6 +309,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -344,6 +353,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 s_cimInstanceToSessionOfOrigin.TryGetValue(instance, out result);
             }
+
             return result;
         }
 

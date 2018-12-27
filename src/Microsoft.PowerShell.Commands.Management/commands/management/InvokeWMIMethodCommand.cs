@@ -26,11 +26,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The WMI Object to use
         /// </summary>
-        ///
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {
             get { return _inputObject; }
+
             set { _inputObject = value; }
         }
         /// <summary>
@@ -40,6 +40,7 @@ namespace Microsoft.PowerShell.Commands
         public string Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
         /// <summary>
@@ -49,6 +50,7 @@ namespace Microsoft.PowerShell.Commands
         public string Class
         {
             get { return _className; }
+
             set { _className = value; }
         }
         /// <summary>
@@ -58,6 +60,7 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return _methodName; }
+
             set { _methodName = value; }
         }
 
@@ -71,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
         public object[] ArgumentList
         {
             get { return _argumentList; }
+
             set { _argumentList = value; }
         }
 
@@ -95,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 RunAsJob("Invoke-WMIMethod");
                 return;
             }
+
             if (_inputObject != null)
             {
                 object result = null;
@@ -113,6 +118,7 @@ namespace Microsoft.PowerShell.Commands
                             inParamCount--;
                         }
                     }
+
                     if (!ShouldProcess(
                        StringUtil.Format(WmiResources.WmiMethodNameForConfirmation,
                        _inputObject["__CLASS"].ToString(),
@@ -121,6 +127,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return;
                     }
+
                     result = _inputObject.InvokeMethod(_methodName, inputParameters, null);
                 }
                 catch (ManagementException e)
@@ -133,10 +140,12 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord errorRecord = new ErrorRecord(e, "InvokeWMICOMException", ErrorCategory.InvalidOperation, null);
                     WriteError(errorRecord);
                 }
+
                 if (result != null)
                 {
                     WriteObject(result);
                 }
+
                 return;
             }
             else
@@ -178,6 +187,7 @@ namespace Microsoft.PowerShell.Commands
                         ComputerName = serverName;
                     }
                 }
+
                 foreach (string name in ComputerName)
                 {
                     result = null;
@@ -196,6 +206,7 @@ namespace Microsoft.PowerShell.Commands
                                 ManagementObject mInstance = new ManagementObject(mPath);
                                 mObject = mInstance;
                             }
+
                             ManagementScope mScope = new ManagementScope(mPath, options);
                             mObject.Scope = mScope;
                         }
@@ -206,6 +217,7 @@ namespace Microsoft.PowerShell.Commands
                             mObject = mClass;
                             mObject.Scope = scope;
                         }
+
                         ManagementBaseObject inputParameters = mObject.GetMethodParameters(_methodName);
                         if (_argumentList != null)
                         {
@@ -223,9 +235,11 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     property.Value = argument;
                                 }
+
                                 inParamCount--;
                             }
                         }
+
                         if (!ShouldProcess(
                                 StringUtil.Format(WmiResources.WmiMethodNameForConfirmation,
                            mObject["__CLASS"].ToString(),
@@ -234,6 +248,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             return;
                         }
+
                         result = mObject.InvokeMethod(_methodName, inputParameters, null);
                     }
                     catch (ManagementException e)
@@ -246,6 +261,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorRecord errorRecord = new ErrorRecord(e, "InvokeWMICOMException", ErrorCategory.InvalidOperation, null);
                         WriteError(errorRecord);
                     }
+
                     if (result != null)
                     {
                         WriteObject(result);
@@ -279,6 +295,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             if (needCopy)
             {
                 var copiedArgument = new object[listArgument.Count];
@@ -287,6 +304,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     copiedArgument[index++] = argElement != null ? PSObject.Base(argElement) : null;
                 }
+
                 return copiedArgument;
             }
             else

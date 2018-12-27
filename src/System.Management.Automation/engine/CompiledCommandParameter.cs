@@ -10,36 +10,29 @@ using System.Reflection;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The metadata associated with a parameter
+    /// The metadata associated with a parameter.
     /// </summary>
-    ///
     internal class CompiledCommandParameter
     {
         #region ctor
 
         /// <summary>
         /// Constructs an instance of the CompiledCommandAttribute using the specified
-        /// runtime-defined parameter
+        /// runtime-defined parameter.
         /// </summary>
-        ///
         /// <param name="runtimeDefinedParameter">
-        /// A runtime defined parameter that contains the definition of the parameter and its
-        /// metadata.
+        /// A runtime defined parameter that contains the definition of the parameter and its metadata.
         /// </param>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="runtimeDefinedParameter"/> is null.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If the parameter has more than one <see cref="ParameterAttribute">ParameterAttribute</see>
         /// that defines the same parameter-set name.
         /// </exception>
-        ///
         internal CompiledCommandParameter(RuntimeDefinedParameter runtimeDefinedParameter, bool processingDynamicParameters)
         {
             if (runtimeDefinedParameter == null)
@@ -64,6 +57,18 @@ namespace System.Management.Automation
             // First, process attributes that aren't type conversions
             foreach (Attribute attribute in runtimeDefinedParameter.Attributes)
             {
+                if (processingDynamicParameters)
+                {
+                    // When processing dynamic parameters, the attribute list may contain experimental attributes
+                    // and disabled parameter attributes. We should ignore those attributes.
+                    // When processing non-dynamic parameters, the experimental attributes and disabled parameter
+                    // attributes have already been filtered out when constructing the RuntimeDefinedParameter.
+                    if (attribute is ExperimentalAttribute || attribute is ParameterAttribute param && param.ToHide)
+                    {
+                        continue;
+                    }
+                }
+
                 if (!(attribute is ArgumentTypeConverterAttribute))
                 {
                     ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
@@ -78,7 +83,7 @@ namespace System.Management.Automation
             }
 
             // Now process type converters
-            foreach (ArgumentTypeConverterAttribute attribute in runtimeDefinedParameter.Attributes.OfType<ArgumentTypeConverterAttribute>())
+            foreach (var attribute in runtimeDefinedParameter.Attributes.OfType<ArgumentTypeConverterAttribute>())
             {
                 ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
             }
@@ -98,28 +103,22 @@ namespace System.Management.Automation
         /// Constructs an instance of the CompiledCommandAttribute using the reflection information retrieved
         /// from the enclosing bindable object type.
         /// </summary>
-        ///
         /// <param name="member">
         /// The member information for the parameter
         /// </param>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="member"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="member"/> is not a field or a property.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If the member has more than one <see cref="ParameterAttribute">ParameterAttribute</see>
         /// that defines the same parameter-set name.
         /// </exception>
-        ///
         internal CompiledCommandParameter(MemberInfo member, bool processingDynamicParameters)
         {
             if (member == null)
@@ -169,7 +168,15 @@ namespace System.Management.Automation
 
             foreach (Attribute attr in memberAttributes)
             {
-                ProcessAttribute(member.Name, attr, ref validationAttributes, ref argTransformationAttributes, ref aliases);
+                switch (attr)
+                {
+                    case ExperimentalAttribute _:
+                    case ParameterAttribute param when param.ToHide:
+                        break;
+                    default:
+                        ProcessAttribute(member.Name, attr, ref validationAttributes, ref argTransformationAttributes, ref aliases);
+                        break;
+                }
             }
 
             this.ValidationAttributes = validationAttributes == null
@@ -189,7 +196,7 @@ namespace System.Management.Automation
         internal string Name { get; private set; }
 
         /// <summary>
-        /// The PSTypeName from a PSTypeNameAttribute
+        /// The PSTypeName from a PSTypeNameAttribute.
         /// </summary>
         internal string PSTypeName { get; private set; }
 
@@ -209,7 +216,7 @@ namespace System.Management.Automation
         internal bool IsDynamic { get; private set; }
 
         /// <summary>
-        /// Gets the parameter collection type information
+        /// Gets the parameter collection type information.
         /// </summary>
         internal ParameterCollectionTypeInformation CollectionTypeInformation { get; private set; }
 
@@ -220,51 +227,47 @@ namespace System.Management.Automation
         internal Collection<Attribute> CompiledAttributes { get; private set; }
 
         /// <summary>
-        /// Gets the collection of data generation attributes on this parameter
+        /// Gets the collection of data generation attributes on this parameter.
         /// </summary>
         internal ArgumentTransformationAttribute[] ArgumentTransformationAttributes { get; private set; }
 
         /// <summary>
-        /// Gets the collection of data validation attributes on this parameter
+        /// Gets the collection of data validation attributes on this parameter.
         /// </summary>
         internal ValidateArgumentsAttribute[] ValidationAttributes { get; private set; }
 
         /// <summary>
-        /// Get and private set the obsolete attribute on this parameter
+        /// Get and private set the obsolete attribute on this parameter.
         /// </summary>
         internal ObsoleteAttribute ObsoleteAttribute { get; private set; }
 
         /// <summary>
-        /// If true, null can be bound to the parameter even if the parameter is mandatory
+        /// If true, null can be bound to the parameter even if the parameter is mandatory.
         /// </summary>
-        ///
         internal bool AllowsNullArgument { get; private set; }
 
         /// <summary>
         /// If true, null cannot be bound to the parameter (ValidateNotNull
-        /// and/or ValidateNotNullOrEmpty has been specified)
+        /// and/or ValidateNotNullOrEmpty has been specified).
         /// </summary>
         internal bool CannotBeNull { get; private set; }
 
         /// <summary>
         /// If true, an empty string can be bound to the string parameter
-        /// even if the parameter is mandatory
+        /// even if the parameter is mandatory.
         /// </summary>
-        ///
         internal bool AllowsEmptyStringArgument { get; private set; }
 
         /// <summary>
         /// If true, an empty collection can be bound to the collection/array parameter
-        /// even if the parameter is mandatory
+        /// even if the parameter is mandatory.
         /// </summary>
-        ///
         internal bool AllowsEmptyCollectionArgument { get; private set; }
 
         /// <summary>
         /// Gets or sets the value that tells whether this parameter
-        /// is for the "all" parameter set
+        /// is for the "all" parameter set.
         /// </summary>
-        ///
         internal bool IsInAllSets { get; set; }
 
         /// <summary>
@@ -282,12 +285,10 @@ namespace System.Management.Automation
         /// Gets or sets the parameter set flags that map the parameter sets
         /// for this parameter to the parameter set names.
         /// </summary>
-        ///
         /// <remarks>
         /// This is a bit-field that maps the parameter sets in this parameter
         /// to the parameter sets for the rest of the command.
         /// </remarks>
-        ///
         internal uint ParameterSetFlags { get; set; }
 
         /// <summary>
@@ -296,32 +297,27 @@ namespace System.Management.Automation
         internal Action<object, object> Setter { get; set; }
 
         /// <summary>
-        /// A dictionary of the parameter sets and the parameter set specific data for this parameter
+        /// A dictionary of the parameter sets and the parameter set specific data for this parameter.
         /// </summary>
-        ///
         internal Dictionary<string, ParameterSetSpecificMetadata> ParameterSetData { get; private set; }
 
         /// <summary>
-        /// The alias names for this parameter
+        /// The alias names for this parameter.
         /// </summary>
-        ///
         internal string[] Aliases { get; private set; }
 
         /// <summary>
         /// Determines if this parameter takes pipeline input for any of the specified
         /// parameter set flags.
         /// </summary>
-        ///
         /// <param name="validParameterSetFlags">
         /// The flags for the parameter sets to check to see if the parameter takes
         /// pipeline input.
         /// </param>
-        ///
         /// <returns>
         /// True if the parameter takes pipeline input in any of the specified parameter
         /// sets, or false otherwise.
         /// </returns>
-        ///
         internal bool DoesParameterSetTakePipelineInput(uint validParameterSetFlags)
         {
             if (!IsPipelineParameterInSomeParameterSet)
@@ -345,20 +341,17 @@ namespace System.Management.Automation
             }
 
             return false;
-        } // DoesParameterSetTakePipelineInput
+        }
 
         /// <summary>
         /// Gets the parameter set data for this parameter for the specified parameter set
         /// </summary>
-        ///
         /// <param name="parameterSetFlag">
         /// The parameter set to get the parameter set data for.
         /// </param>
-        ///
         /// <returns>
         /// The parameter set specified data for the specified parameter set.
         /// </returns>
-        ///
         internal ParameterSetSpecificMetadata GetParameterSetData(uint parameterSetFlag)
         {
             ParameterSetSpecificMetadata result = null;
@@ -381,22 +374,20 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
         /// <summary>
-        /// Gets the parameter set data for this parameter for the specified parameter sets
+        /// Gets the parameter set data for this parameter for the specified parameter sets.
         /// </summary>
-        ///
         /// <param name="parameterSetFlags">
         /// The parameter sets to get the parameter set data for.
         /// </param>
-        ///
         /// <returns>
         /// A collection for all parameter set specified data for the parameter sets specified by
         /// the <paramref name="parameterSetFlags"/>.
         /// </returns>
-        ///
         internal IEnumerable<ParameterSetSpecificMetadata> GetMatchingParameterSetData(uint parameterSetFlags)
         {
             foreach (ParameterSetSpecificMetadata setData in ParameterSetData.Values)
@@ -423,12 +414,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Processes the Attribute metadata to generate a CompiledCommandAttribute.
         /// </summary>
-        ///
         /// <exception cref="MetadataException">
         /// If the attribute is a parameter attribute and another parameter attribute
         /// has been processed with the same parameter-set name.
         /// </exception>
-        ///
         private void ProcessAttribute(
             string memberName,
             Attribute attribute,
@@ -436,15 +425,13 @@ namespace System.Management.Automation
             ref Collection<ArgumentTransformationAttribute> argTransformationAttributes,
             ref string[] aliases)
         {
-            // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
-            if (null == attribute)
+            if (attribute == null)
                 return;
 
             CompiledAttributes.Add(attribute);
-            // Now process the attribute based on it's type
 
-            ParameterAttribute paramAttr = attribute as ParameterAttribute;
-            if (paramAttr != null)
+            // Now process the attribute based on it's type
+            if (attribute is ParameterAttribute paramAttr)
             {
                 ProcessParameterAttribute(memberName, paramAttr);
                 return;
@@ -460,6 +447,7 @@ namespace System.Management.Automation
                 {
                     this.CannotBeNull = true;
                 }
+
                 return;
             }
 
@@ -478,6 +466,7 @@ namespace System.Management.Automation
                     Array.Copy(prevAliasNames, aliases, prevAliasNames.Length);
                     Array.Copy(newAliasNames, 0, aliases, prevAliasNames.Length, newAliasNames.Length);
                 }
+
                 return;
             }
 
@@ -528,19 +517,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Extracts the data from the ParameterAttribute and creates the member data as necessary.
         /// </summary>
-        ///
         /// <param name="parameterName">
         /// The name of the parameter.
         /// </param>
-        ///
         /// <param name="parameter">
         /// The instance of the ParameterAttribute to extract the data from.
         /// </param>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter set name has already been declared on this parameter.
         /// </exception>
-        ///
         private void ProcessParameterAttribute(
             string parameterName,
             ParameterAttribute parameter)
@@ -565,6 +550,7 @@ namespace System.Management.Automation
             {
                 IsPipelineParameterInSomeParameterSet = true;
             }
+
             if (parameter.Mandatory)
             {
                 IsMandatoryInSomeParameterSet = true;
@@ -581,7 +567,7 @@ namespace System.Management.Automation
         }
 
         #endregion helper methods
-    } // CompiledCommandParameter
+    }
 
     /// <summary>
     /// The types of collections that are supported as parameter types.
@@ -595,7 +581,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Contains the collection type information for a parameter
+    /// Contains the collection type information for a parameter.
     /// </summary>
     internal class ParameterCollectionTypeInformation
     {
@@ -604,11 +590,9 @@ namespace System.Management.Automation
         /// which exposes the specified Type's collection type in a
         /// simple way.
         /// </summary>
-        ///
         /// <param name="type">
         /// The type to determine the collection information for.
         /// </param>
-        ///
         internal ParameterCollectionTypeInformation(Type type)
         {
             ParameterCollectionType = ParameterCollectionType.NotCollection;
@@ -686,17 +670,16 @@ namespace System.Management.Automation
                 // elementType remains null
                 return;
             }
-        } // ctor
+        }
 
         /// <summary>
-        /// The collection type of the parameter
+        /// The collection type of the parameter.
         /// </summary>
         internal ParameterCollectionType ParameterCollectionType { get; private set; }
 
         /// <summary>
-        /// The type of the elements in the collection
+        /// The type of the elements in the collection.
         /// </summary>
         internal Type ElementType { get; private set; }
     }
 }
-

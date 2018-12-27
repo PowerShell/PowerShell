@@ -58,7 +58,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{operator = "-isnot"; type = "[foo]"; expectedError='TypeNotFound,Microsoft.PowerShell.Commands.InvokeExpressionCommand'}
     ) {
         param($operator, $type, $expectedError)
-        { Invoke-Expression "'Hello' $operator $type" } | ShouldBeErrorId $expectedError
+        { Invoke-Expression "'Hello' $operator $type" } | Should -Throw -ErrorId $expectedError
     }
 
     It "Should succeed in comparing type: <lhs> <operator> <rhs>" -TestCases @(

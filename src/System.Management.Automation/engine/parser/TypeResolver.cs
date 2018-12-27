@@ -1,9 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Commands;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+#if !UNIX
+using System.DirectoryServices;
+#endif
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Language;
@@ -18,12 +23,6 @@ using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Microsoft.Management.Infrastructure;
-using Microsoft.PowerShell.Commands;
-#if !CORECLR
-// System.DirectoryServices are not in CoreCLR
-using System.DirectoryServices;
-#endif
 
 namespace System.Management.Automation.Language
 {
@@ -54,6 +53,7 @@ namespace System.Management.Automation.Language
         internal class AmbiguousTypeException : InvalidCastException
         {
             public string[] Candidates { private set; get; }
+
             public TypeName TypeName { private set; get; }
 
             public AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Language
 
             if (foundType2 != null)
             {
-                exception = new AmbiguousTypeException(typeName, new String[] { foundType.AssemblyQualifiedName, foundType2.AssemblyQualifiedName });
+                exception = new AmbiguousTypeException(typeName, new string[] { foundType.AssemblyQualifiedName, foundType2.AssemblyQualifiedName });
                 return null;
             }
 
@@ -143,6 +143,7 @@ namespace System.Management.Automation.Language
             {
                 return true;
             }
+
             if (!type.IsNestedPublic)
             {
                 return false;
@@ -155,6 +156,7 @@ namespace System.Management.Automation.Language
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -179,6 +181,7 @@ namespace System.Management.Automation.Language
                     {
                         return result;
                     }
+
                     currentScope = currentScope.Parent;
                 }
 
@@ -439,6 +442,7 @@ namespace System.Management.Automation.Language
             {
                 TypeCache.Add(typeName, typeResolutionState, result);
             }
+
             return result;
         }
 
@@ -601,6 +605,7 @@ namespace System.Management.Automation.Language
             {
                 alternateName = typeName + "Attribute";
             }
+
             return alternateName;
         }
 
@@ -652,14 +657,17 @@ namespace System.Management.Automation.Language
             {
                 result = Utils.CombineHashCodes(result, stringComparer.GetHashCode(namespaces[i]));
             }
+
             for (int i = 0; i < assemblies.Length; i++)
             {
                 result = Utils.CombineHashCodes(result, this.assemblies[i].GetHashCode());
             }
+
             foreach (var t in _typesDefined)
             {
                 result = Utils.CombineHashCodes(result, t.GetHashCode());
             }
+
             return result;
         }
     }
@@ -732,12 +740,15 @@ namespace System.Management.Automation
                     { typeof(DateTime),                                    new[] { "datetime" } },
                     { typeof(decimal),                                     new[] { "decimal" } },
                     { typeof(double),                                      new[] { "double" } },
-                    { typeof(DscResourceAttribute),                        new[] { "DscResource"} },
+                    { typeof(DscResourceAttribute),                        new[] { "DscResource" } },
+                    { typeof(ExperimentAction),                            new[] { "ExperimentAction" } },
+                    { typeof(ExperimentalAttribute),                       new[] { "Experimental" } },
+                    { typeof(ExperimentalFeature),                         new[] { "ExperimentalFeature" } },
                     { typeof(float),                                       new[] { "float", "single" } },
                     { typeof(Guid),                                        new[] { "guid" } },
                     { typeof(Hashtable),                                   new[] { "hashtable" } },
                     { typeof(int),                                         new[] { "int", "int32" } },
-                    { typeof(Int16),                                       new[] { "int16" } },
+                    { typeof(Int16),                                       new[] { "short", "int16" } },
                     { typeof(long),                                        new[] { "long", "int64" } },
                     { typeof(CimInstance),                                 new[] { "ciminstance" } },
                     { typeof(CimClass),                                    new[] { "cimclass" } },
@@ -768,9 +779,9 @@ namespace System.Management.Automation
                     { typeof(BigInteger),                                  new[] { "bigint" } },
                     { typeof(SecureString),                                new[] { "securestring" } },
                     { typeof(TimeSpan),                                    new[] { "timespan" } },
-                    { typeof(UInt16),                                      new[] { "uint16" } },
-                    { typeof(UInt32),                                      new[] { "uint32" } },
-                    { typeof(UInt64),                                      new[] { "uint64" } },
+                    { typeof(UInt16),                                      new[] { "ushort", "uint16" } },
+                    { typeof(UInt32),                                      new[] { "uint", "uint32" } },
+                    { typeof(UInt64),                                      new[] { "ulong", "uint64" } },
                     { typeof(Uri),                                         new[] { "uri" } },
                     { typeof(ValidateCountAttribute),                      new[] { "ValidateCount" } },
                     { typeof(ValidateDriveAttribute),                      new[] { "ValidateDrive" } },
@@ -781,6 +792,7 @@ namespace System.Management.Automation
                     { typeof(ValidateRangeAttribute),                      new[] { "ValidateRange" } },
                     { typeof(ValidateScriptAttribute),                     new[] { "ValidateScript" } },
                     { typeof(ValidateSetAttribute),                        new[] { "ValidateSet" } },
+                    { typeof(ValidateTrustedDataAttribute),                new[] { "ValidateTrustedData" } },
                     { typeof(ValidateUserDriveAttribute),                  new[] { "ValidateUserDrive"} },
                     { typeof(Version),                                     new[] { "version" } },
                     { typeof(void),                                        new[] { "void" } },
@@ -793,8 +805,7 @@ namespace System.Management.Automation
                     { typeof(CimSession),                                  new[] { "CimSession" } },
                     { typeof(MailAddress),                                 new[] { "mailaddress" } },
                     { typeof(SemanticVersion),                             new[] { "semver" } },
-#if !CORECLR
-                    // Following types not in CoreCLR
+#if !UNIX
                     { typeof(DirectoryEntry),                              new[] { "adsi" } },
                     { typeof(DirectorySearcher),                           new[] { "adsisearcher" } },
                     { typeof(ManagementClass),                             new[] { "wmiclass" } },
@@ -810,15 +821,18 @@ namespace System.Management.Automation
             {
                 return true;
             }
+
             if (inputType.IsEnum)
             {
                 return true;
             }
+
             if (inputType.IsGenericType)
             {
                 var genericTypeDefinition = inputType.GetGenericTypeDefinition();
                 return genericTypeDefinition == typeof(Nullable<>) || genericTypeDefinition == typeof(FlagsExpression<>);
             }
+
             return (inputType.IsArray && Contains(inputType.GetElementType()));
         }
     }
@@ -857,6 +871,7 @@ namespace System.Management.Automation
             // Add additional utility types that are useful as type accelerators, but aren't
             // fundamentally "core language", or may be unsafe to expose to untrusted input.
             builtinTypeAccelerators.Add("scriptblock", typeof(ScriptBlock));
+            builtinTypeAccelerators.Add("pspropertyexpression", typeof(PSPropertyExpression));
             builtinTypeAccelerators.Add("psvariable", typeof(PSVariable));
             builtinTypeAccelerators.Add("type", typeof(Type));
             builtinTypeAccelerators.Add("psmoduleinfo", typeof(PSModuleInfo));
@@ -875,7 +890,7 @@ namespace System.Management.Automation
         {
             // Taking attributes as special case. In this case, we only want to return the
             // accelerator.
-            if (null == expectedKey || typeof(Attribute).IsAssignableFrom(type))
+            if (expectedKey == null || typeof(Attribute).IsAssignableFrom(type))
             {
                 foreach (KeyValuePair<string, Type> entry in builtinTypeAccelerators)
                 {
@@ -889,11 +904,12 @@ namespace System.Management.Automation
             {
                 Type resultType = null;
                 builtinTypeAccelerators.TryGetValue(expectedKey, out resultType);
-                if (null != resultType && resultType == type)
+                if (resultType != null && resultType == type)
                 {
                     return expectedKey;
                 }
             }
+
             return null;
         }
         /// <summary>
@@ -922,6 +938,7 @@ namespace System.Management.Automation
             {
                 s_allTypeAccelerators.Remove(typeName);
             }
+
             return true;
         }
 
@@ -956,6 +973,7 @@ namespace System.Management.Automation
             {
                 cache.Add(val.Key, val.Value);
             }
+
             foreach (KeyValuePair<string, Type> val in userTypeAccelerators)
             {
                 cache.Add(val.Key, val.Value);

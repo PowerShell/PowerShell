@@ -51,7 +51,7 @@ Describe 'Testing of script internationalization' -Tags "CI" {
 
     It 'Import non existing culture is done correctly' {
 
-        import-localizedData mydata -uiculture nl-NL -ea SilentlyContinue -ev ev
+        import-localizedData mydata -uiculture nl-NL -ErrorAction SilentlyContinue -ErrorVariable ev
 
         $ev | Should -Not -BeNullOrEmpty
         $ev[0].Exception | Should -BeOfType "System.Management.Automation.PSInvalidOperationException"

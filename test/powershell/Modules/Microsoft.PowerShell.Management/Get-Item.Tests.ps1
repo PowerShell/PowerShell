@@ -83,11 +83,11 @@ Describe "Get-Item" -Tags "CI" {
 
     Context "Error Condition Checking" {
         It "Should return an error if the provider does not exist" {
-            { Get-Item BadProvider::/BadFile -ErrorAction Stop } | ShouldBeErrorId "ProviderNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item BadProvider::/BadFile -ErrorAction Stop } | Should -Throw -ErrorId "ProviderNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Should return an error if the drive does not exist" {
-            { Get-Item BadDrive:/BadFile -ErrorAction Stop } | ShouldBeErrorId "DriveNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item BadDrive:/BadFile -ErrorAction Stop } | Should -Throw -ErrorId "DriveNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
     }
 

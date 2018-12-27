@@ -41,12 +41,14 @@ namespace System.Management.Automation.Internal
         internal CommandProcessorBase DownstreamCmdlet
         {
             get { return _downstreamCmdlet; }
+
             set
             {
                 Diagnostics.Assert(_resultList == null, "Tried to set downstream cmdlet when _resultList not null");
                 _downstreamCmdlet = value;
             }
         }
+
         private CommandProcessorBase _downstreamCmdlet;
 
         /// <summary>
@@ -75,12 +77,14 @@ namespace System.Management.Automation.Internal
         internal PipelineWriter ExternalWriter
         {
             get { return _externalWriter; }
+
             set
             {
                 Diagnostics.Assert(_resultList == null, "Tried to set Pipe ExternalWriter when resultList not null");
                 _externalWriter = value;
             }
         }
+
         private PipelineWriter _externalWriter;
 
         /// <summary>
@@ -105,12 +109,14 @@ namespace System.Management.Automation.Internal
         internal bool NullPipe
         {
             get { return _nullPipe; }
+
             set
             {
                 _isRedirected = true;
                 _nullPipe = value;
             }
         }
+
         private bool _nullPipe;
 
         /// <summary>
@@ -147,6 +153,7 @@ namespace System.Management.Automation.Internal
         {
             get { return _downstreamCmdlet != null || _isRedirected; }
         }
+
         private bool _isRedirected;
 
         /// <summary>
@@ -214,6 +221,7 @@ namespace System.Management.Automation.Internal
                     {
                         _errorVariableList = new List<IList>();
                     }
+
                     _errorVariableList.Add(list);
                     break;
                 case VariableStreamKind.Warning:
@@ -221,6 +229,7 @@ namespace System.Management.Automation.Internal
                     {
                         _warningVariableList = new List<IList>();
                     }
+
                     _warningVariableList.Add(list);
                     break;
                 case VariableStreamKind.Output:
@@ -228,6 +237,7 @@ namespace System.Management.Automation.Internal
                     {
                         _outVariableList = new List<IList>();
                     }
+
                     _outVariableList.Add(list);
                     break;
                 case VariableStreamKind.Information:
@@ -235,6 +245,7 @@ namespace System.Management.Automation.Internal
                     {
                         _informationVariableList = new List<IList>();
                     }
+
                     _informationVariableList.Add(list);
                     break;
             }
@@ -322,6 +333,7 @@ namespace System.Management.Automation.Internal
             _isRedirected = true;
             _resultList = resultList;
         }
+
         private readonly List<object> _resultList;
 
         /// <summary>
@@ -336,6 +348,7 @@ namespace System.Management.Automation.Internal
             _isRedirected = true;
             _resultCollection = resultCollection;
         }
+
         private System.Collections.ObjectModel.Collection<PSObject> _resultCollection;
 
         /// <summary>
@@ -366,6 +379,7 @@ namespace System.Management.Automation.Internal
             // assume that there is some stuff to read
             _enumeratorToProcessIsEmpty = false;
         }
+
         private IEnumerator _enumeratorToProcess;
         private bool _enumeratorToProcessIsEmpty;
 
@@ -431,7 +445,7 @@ namespace System.Management.Automation.Internal
             {
                 _resultList.Add(obj);
             }
-            else if (null != _externalWriter)
+            else if (_externalWriter != null)
             {
                 _externalWriter.Write(obj);
             }
@@ -440,7 +454,7 @@ namespace System.Management.Automation.Internal
                 ObjectQueue.Enqueue(obj);
 
                 // This is the "streamlet" recursive call
-                if (null != _downstreamCmdlet && ObjectQueue.Count > OutBufferCount)
+                if (_downstreamCmdlet != null && ObjectQueue.Count > OutBufferCount)
                 {
                     _downstreamCmdlet.DoExecute();
                 }
@@ -502,7 +516,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (null != _externalWriter)
+            if (_externalWriter != null)
                 return;
 
             // If there are objects waiting for the downstream command
@@ -511,7 +525,7 @@ namespace System.Management.Automation.Internal
             {
                 _downstreamCmdlet.DoExecute();
             }
-        } // internal void AddItems(object objects)
+        }
 
         /// <summary>
         /// Returns an object from the pipe. If pipe is empty returns null.
@@ -539,7 +553,7 @@ namespace System.Management.Automation.Internal
 
                 return ParserOps.Current(null, _enumeratorToProcess);
             }
-            else if (null != ExternalReader)
+            else if (ExternalReader != null)
             {
                 try
                 {
@@ -553,6 +567,7 @@ namespace System.Management.Automation.Internal
                         // again if it already reported completion.
                         ExternalReader = null;
                     }
+
                     return o;
                 }
                 catch (PipelineClosedException)
@@ -582,7 +597,7 @@ namespace System.Management.Automation.Internal
         /// not block on ExternalInput, and it does not modify the contents of
         /// the pipe.
         /// </summary>
-        /// <returns>possibly empty array of objects, but not null</returns>
+        /// <returns>Possibly empty array of objects, but not null.</returns>
         internal object[] ToArray()
         {
             if (ObjectQueue == null || ObjectQueue.Count == 0)
@@ -591,4 +606,4 @@ namespace System.Management.Automation.Internal
             return ObjectQueue.ToArray();
         }
     }
-} // namespace System.Management.Automation.Internal
+}

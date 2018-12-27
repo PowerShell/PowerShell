@@ -83,7 +83,6 @@ namespace System.Management.Automation
     ///     Help providers may need to provide functionality in following two area,
     ///         a. caching and indexing to boost performance
     ///         b. localization
-    ///
     /// </summary>
     internal class HelpSystem
     {
@@ -156,7 +155,7 @@ namespace System.Management.Automation
         /// object on fly.
         /// </summary>
         /// <param name="helpRequest">helpRequest object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <returns>An array of HelpInfo object.</returns>
         internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
             if (helpRequest == null)
@@ -236,25 +235,26 @@ namespace System.Management.Automation
 
         // Cache of search paths that are currently active.
         // This will save a lot time when help providers do their searching
-        private Collection<String> _searchPaths = null;
+        private Collection<string> _searchPaths = null;
 
         /// <summary>
         /// Gets the search paths for external snapins/modules that are currently loaded.
         /// If the current shell is single-shell based, then the returned
         /// search path contains all the directories of currently active PSSnapIns/modules.
         /// </summary>
-        /// <returns>a collection of strings representing locations</returns>
+        /// <returns>A collection of strings representing locations.</returns>
         internal Collection<string> GetSearchPaths()
         {
             // return the cache if already present.
-            if (null != _searchPaths)
+            if (_searchPaths != null)
             {
                 return _searchPaths;
             }
-            _searchPaths = new Collection<String>();
+
+            _searchPaths = new Collection<string>();
 
             // add loaded modules paths to the search path
-            if (null != ExecutionContext.Modules)
+            if (ExecutionContext.Modules != null)
             {
                 foreach (PSModuleInfo loadedModule in ExecutionContext.Modules.ModuleTable.Values)
                 {
@@ -278,10 +278,9 @@ namespace System.Management.Automation
         ///     3. if help target is a search pattern or step 2 returns no helpInfo, try to search for help
         ///        (Search for pattern in command name followed by pattern match in help content)
         ///     4. if step 3 returns exact one helpInfo object, try to retrieve exact help.
-        ///
         /// </summary>
         /// <param name="helpRequest">Help request object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <returns>An array of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> DoGetHelp(HelpRequest helpRequest)
         {
             _lastErrors.Clear();
@@ -348,7 +347,6 @@ namespace System.Management.Automation
         /// If the helpInfo returned is not complete, we will forward the
         /// helpInfo object to appropriate help provider for further processing.
         /// (this is implemented by ForwardHelp)
-        ///
         /// </summary>
         /// <param name="helpRequest">Help request object</param>
         /// <returns>HelpInfo object retrieved. Can be Null.</returns>
@@ -387,7 +385,6 @@ namespace System.Management.Automation
         /// This is used in the following known scenarios so far
         ///     1. Alias: helpInfo returned by Alias is not what end user needed.
         ///               The real help can be retrieved from Command help provider.
-        ///
         /// </summary>
         /// <param name="helpInfo"></param>
         /// <param name="helpRequest">Help request object</param>
@@ -459,7 +456,7 @@ namespace System.Management.Automation
         /// Get help that exactly match the target
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>An IEnumerable of HelpInfo object</returns>
+        /// <returns>An IEnumerable of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest)
         {
             int countOfHelpInfosFound = 0;
@@ -603,15 +600,15 @@ namespace System.Management.Automation
         // help providers using reflection. This is not in v1 right now.
         //
         private static HelpProviderInfo[] _providerInfos = new HelpProviderInfo[]
-                            { new HelpProviderInfo("", "AliasHelpProvider", HelpCategory.Alias),
-                              new HelpProviderInfo("", "CommandHelpProvider", HelpCategory.Command),
-                              new HelpProviderInfo("", "ProviderHelpProvider", HelpCategory.Provider),
-                              new HelpProviderInfo("", "OverviewHelpProvider", HelpCategory.Overview),
-                              new HelpProviderInfo("", "GeneralHelpProvider", HelpCategory.General),
-                              new HelpProviderInfo("", "FAQHelpProvider", HelpCategory.FAQ),
-                              new HelpProviderInfo("", "GlossaryHelpProvider", HelpCategory.Glossary),
-                              new HelpProviderInfo("", "HelpFileHelpProvider", HelpCategory.HelpFile),
-                              new HelpProviderInfo("", "DefaultHelpHelpProvider", HelpCategory.DefaultHelp)
+                            { new HelpProviderInfo(string.Empty, "AliasHelpProvider", HelpCategory.Alias),
+                              new HelpProviderInfo(string.Empty, "CommandHelpProvider", HelpCategory.Command),
+                              new HelpProviderInfo(string.Empty, "ProviderHelpProvider", HelpCategory.Provider),
+                              new HelpProviderInfo(string.Empty, "OverviewHelpProvider", HelpCategory.Overview),
+                              new HelpProviderInfo(string.Empty, "GeneralHelpProvider", HelpCategory.General),
+                              new HelpProviderInfo(string.Empty, "FAQHelpProvider", HelpCategory.FAQ),
+                              new HelpProviderInfo(string.Empty, "GlossaryHelpProvider", HelpCategory.Glossary),
+                              new HelpProviderInfo(string.Empty, "HelpFileHelpProvider", HelpCategory.HelpFile),
+                              new HelpProviderInfo(string.Empty, "DefaultHelpHelpProvider", HelpCategory.DefaultHelp)
                             };
 
         private void InitializeHelpProviders()
@@ -764,7 +761,6 @@ namespace System.Management.Automation
         ///
         /// Normally help providers will remove cached help content to make sure new help
         /// requests will be served with content of right culture.
-        ///
         /// </summary>
         internal void ResetHelpProviders()
         {
@@ -818,8 +814,8 @@ namespace System.Management.Automation
     /// </summary>
     internal class HelpProviderInfo
     {
-        internal string AssemblyName = "";
-        internal string ClassName = "";
+        internal string AssemblyName = string.Empty;
+        internal string ClassName = string.Empty;
         internal HelpCategory HelpCategory = HelpCategory.None;
 
         /// <summary>

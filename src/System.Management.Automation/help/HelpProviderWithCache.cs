@@ -7,11 +7,9 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProviderWithCache provides a pseudo implementation of HelpProvider
     /// at which results are cached in a hashtable so that later retrieval can be
     /// faster.
-    ///
     /// </summary>
     internal abstract class HelpProviderWithCache : HelpProvider
     {
@@ -36,7 +34,7 @@ namespace System.Management.Automation
         /// Exact match help for a target.
         /// </summary>
         /// <param name="helpRequest">Help request object</param>
-        /// <returns>The HelpInfo found. Null if nothing is found</returns>
+        /// <returns>The HelpInfo found. Null if nothing is found.</returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             string target = helpRequest.Target;
@@ -111,7 +109,7 @@ namespace System.Management.Automation
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             string target = helpRequest.Target;
@@ -123,7 +121,7 @@ namespace System.Management.Automation
             if (!this.CacheFullyLoaded)
             {
                 IEnumerable<HelpInfo> result = DoSearchHelp(searchHelpRequest);
-                if (null != result)
+                if (result != null)
                 {
                     foreach (HelpInfo helpInfoToReturn in result)
                     {
@@ -162,7 +160,7 @@ namespace System.Management.Automation
         /// Child class of this one may choose to override this function.
         /// </summary>
         /// <param name="target">target string</param>
-        /// <returns>wild card pattern created</returns>
+        /// <returns>Wild card pattern created.</returns>
         internal virtual string GetWildCardPattern(string target)
         {
             if (WildcardPattern.ContainsWildcardCharacters(target))
@@ -179,7 +177,7 @@ namespace System.Management.Automation
         /// whether it want to reuse the logic in SearchHelp for this class.
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal virtual IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
         {
             yield break;
@@ -199,7 +197,7 @@ namespace System.Management.Automation
         /// Get help entry from cache
         /// </summary>
         /// <param name="target">the key for the help entry to retrieve</param>
-        /// <returns>the HelpInfo in cache corresponding the key specified</returns>
+        /// <returns>The HelpInfo in cache corresponding the key specified.</returns>
         internal HelpInfo GetCache(string target)
         {
             return (HelpInfo)_helpCache[target];

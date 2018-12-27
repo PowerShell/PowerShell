@@ -92,7 +92,6 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute.Validate"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    ///
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument
     /// as a whole.  If the argument value is potentially an enumeration,
     /// you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
@@ -143,8 +142,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        ///
-        /// <returns>bool true if the validate succeeded</returns>
+        /// <returns>Bool true if the validate succeeded.</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
         /// All the system exceptions are wrapped in ValidationMetadataException
@@ -259,6 +257,7 @@ namespace System.Management.Automation
             {
                 ValidateElement(enumerator.Current);
             }
+
             enumerator.Reset();
         }
 
@@ -367,6 +366,7 @@ namespace System.Management.Automation
         public bool SupportsTransactions
         {
             get { return _supportsTransactions; }
+
             set
             {
 #if !CORECLR
@@ -378,6 +378,7 @@ namespace System.Management.Automation
 #endif
             }
         }
+
         private bool _supportsTransactions = false;
 
         /// <summary>
@@ -546,8 +547,10 @@ namespace System.Management.Automation
         public string[] ParameterSetName
         {
             get { return _parameterSetName ?? (_parameterSetName = new[] { ParameterAttribute.AllParameterSets }); }
+
             set { _parameterSetName = value; }
         }
+
         private string[] _parameterSetName;
     }
 
@@ -620,11 +623,56 @@ namespace System.Management.Automation
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance that is associated with an experimental feature.
+        /// </summary>
+        public ParameterAttribute(string experimentName, ExperimentAction experimentAction)
+        {
+            ExperimentalAttribute.ValidateArguments(experimentName, experimentAction);
+            ExperimentName = experimentName;
+            ExperimentAction = experimentAction;
+        }
+
         private string _parameterSetName = ParameterAttribute.AllParameterSets;
 
         private string _helpMessage;
         private string _helpMessageBaseName;
         private string _helpMessageResourceId;
+
+        #region Experimental Feature Related Properties
+
+        /// <summary>
+        /// Get name of the experimental feature this attribute is associated with.
+        /// </summary>
+        public string ExperimentName { get; }
+
+        /// <summary>
+        /// Get action for engine to take when the experimental feature is enabled.
+        /// </summary>
+        public ExperimentAction ExperimentAction { get; }
+
+        internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+        internal bool ToShow => EffectiveAction == ExperimentAction.Show;
+
+        /// <summary>
+        /// Get effective action to take at run time.
+        /// </summary>
+        private ExperimentAction EffectiveAction
+        {
+            get
+            {
+                if (_effectiveAction == ExperimentAction.None)
+                {
+                    _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
+                }
+
+                return _effectiveAction;
+            }
+        }
+
+        private ExperimentAction _effectiveAction = default(ExperimentAction);
+
+        #endregion
 
         /// <summary>
         /// Gets and sets the parameter position. If not set, the parameter is named.
@@ -638,6 +686,7 @@ namespace System.Management.Automation
         public string ParameterSetName
         {
             get { return _parameterSetName; }
+
             set
             {
                 _parameterSetName = value;
@@ -684,12 +733,14 @@ namespace System.Management.Automation
             {
                 return _helpMessage;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessage");
                 }
+
                 _helpMessage = value;
             }
         }
@@ -705,12 +756,14 @@ namespace System.Management.Automation
             {
                 return _helpMessageBaseName;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessageBaseName");
                 }
+
                 _helpMessageBaseName = value;
             }
         }
@@ -726,12 +779,14 @@ namespace System.Management.Automation
             {
                 return _helpMessageResourceId;
             }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("HelpMessageResourceId");
                 }
+
                 _helpMessageResourceId = value;
             }
         }
@@ -759,7 +814,6 @@ namespace System.Management.Automation
     public class PSTypeNameAttribute : Attribute
     {
         /// <summary>
-        ///
         /// </summary>
         public string PSTypeName { get; private set; }
 
@@ -885,15 +939,18 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("minLength", minLength);
             }
+
             if (maxLength <= 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxLength", maxLength);
             }
+
             if (maxLength < minLength)
             {
                 throw new ValidationMetadataException("ValidateLengthMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateLengthMaxLengthSmallerThanMinLength);
             }
+
             MinLength = minLength;
             MaxLength = maxLength;
         }
@@ -1006,10 +1063,12 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("minRange");
             }
+
             if (maxRange == null)
             {
                 throw PSTraceSource.NewArgumentNullException("maxRange");
             }
+
             if (maxRange.GetType() != minRange.GetType())
             {
                 bool failure = true;
@@ -1027,6 +1086,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 if (failure)
                 {
                     throw new ValidationMetadataException("MinRangeNotTheSameTypeOfMaxRange", null,
@@ -1058,6 +1118,7 @@ namespace System.Management.Automation
                 throw new ValidationMetadataException("MaxRangeSmallerThanMinRange",
                     null, Metadata.ValidateRangeMaxRangeSmallerThanMinRange);
             }
+
             MinRange = minRange;
             MaxRange = maxRange;
         }
@@ -1117,6 +1178,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangePositiveFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.NonNegative:
                     if (dynamicZero.CompareTo(element) > 0)
@@ -1127,6 +1189,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNonNegativeFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.Negative:
                     if (dynamicZero.CompareTo(element) <= 0)
@@ -1137,6 +1200,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNegativeFailure,
                             element.ToString());
                     }
+
                     break;
                 case ValidateRangeKind.NonPositive:
                     if (dynamicZero.CompareTo(element) < 0)
@@ -1147,6 +1211,7 @@ namespace System.Management.Automation
                             Metadata.ValidateRangeNonPositiveFailure,
                             element.ToString());
                     }
+
                     break;
                 }
         }
@@ -1259,7 +1324,9 @@ namespace System.Management.Automation
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
         /// <example>
+        /// <code>
         /// [ValidatePattern("\s+", ErrorMessage="The text '{0}' did not pass validation of regex '{1}'")]
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
@@ -1320,9 +1387,10 @@ namespace System.Management.Automation
         ///
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
-        ///
         /// <example>
+        /// <code>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
@@ -1433,13 +1501,17 @@ namespace System.Management.Automation
             else if ((ie = arguments as IEnumerable) != null)
             {
                 IEnumerator e = ie.GetEnumerator();
-                for (; e.MoveNext() == true; len++)
-                    ;
+                while (e.MoveNext())
+                {
+                    len++;
+                }
             }
             else if ((ienumerator = arguments as IEnumerator) != null)
             {
-                for (; ienumerator.MoveNext() == true; len++)
-                    ;
+                while (ienumerator.MoveNext())
+                {
+                    len++;
+                }
             }
             else
             {
@@ -1478,15 +1550,18 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("minLength", minLength);
             }
+
             if (maxLength <= 0)
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxLength", maxLength);
             }
+
             if (maxLength < minLength)
             {
                 throw new ValidationMetadataException("ValidateRangeMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateCountMaxLengthSmallerThanMinLength);
             }
+
             MinLength = minLength;
             MaxLength = maxLength;
         }
@@ -1567,9 +1642,10 @@ namespace System.Management.Automation
         ///
         /// The item being validated and a text representation of the validation set
         /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
-        ///
         /// <example>
+        /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
@@ -1627,11 +1703,10 @@ namespace System.Management.Automation
             string objString = element.ToString();
             foreach (string setString in ValidValues)
             {
-                if (CultureInfo.InvariantCulture.
-                        CompareInfo.Compare(setString, objString,
-                                            IgnoreCase
-                                                ? CompareOptions.IgnoreCase
-                                                : CompareOptions.None) == 0)
+                if (CultureInfo.InvariantCulture.CompareInfo.Compare(
+                        setString,
+                        objString,
+                        IgnoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0)
                 {
                     return;
                 }
@@ -1699,6 +1774,36 @@ namespace System.Management.Automation
         /// Get a valid values.
         /// </summary>
         string[] GetValidValues();
+    }
+
+    /// <summary>
+    /// Validates that each parameter argument is Trusted data
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateTrustedDataAttribute : ValidateArgumentsAttribute
+    {
+        /// <summary>
+        /// Validates that the parameter argument is not untrusted
+        /// </summary>
+        /// <param name="arguments">Object to validate</param>
+        /// <param name="engineIntrinsics">
+        /// The engine APIs for the context under which the validation is being
+        /// evaluated.
+        /// </param>
+        /// <exception cref="ValidationMetadataException">
+        /// if the argument is untrusted.
+        /// </exception>
+        protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
+        {
+            if (ExecutionContext.HasEverUsedConstrainedLanguage &&
+                engineIntrinsics.SessionState.Internal.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage)
+            {
+                if (ExecutionContext.IsMarkedAsUntrusted(arguments))
+                {
+                    throw new ValidationMetadataException("ValidateTrustedDataFailure", null, Metadata.ValidateTrustedDataFailure, arguments);
+                }
+            }
+        }
     }
 
     #region Allow
@@ -2095,7 +2200,7 @@ namespace System.Management.Automation
         /// made.
         /// </param>
         /// <param name="inputData"> parameter argument to mutate </param>
-        /// <returns> mutated object(s) </returns>
+        /// <returns>Mutated object(s).</returns>
         /// <remarks>
         /// Return the transformed value of <paramref name="inputData"/>.
         /// Throw <see cref="ArgumentException"/>
@@ -2106,6 +2211,28 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">should be thrown for invalid arguments</exception>
         /// <exception cref="ArgumentTransformationMetadataException">should be thrown for any problems during transformation</exception>
         public abstract object Transform(EngineIntrinsics engineIntrinsics, object inputData);
+
+        /// <summary>
+        /// Transform inputData and track the flow of untrusted object.
+        /// NOTE: All internal handling of ArgumentTransformationAttribute should use this method to track the trustworthiness of
+        /// the data input source by default.
+        /// </summary>
+        /// <remarks>
+        /// The default value for <paramref name="trackDataInputSource"/> is True.
+        /// You should stick to the default value for this parameter in most cases so that data input source is tracked during the transformation.
+        /// The only acceptable exception is when this method is used in Compiler or Binder where you can generate extra code to track input source
+        /// when it's necessary. This is to minimize the overhead when tracking is not needed.
+        /// </remarks>
+        internal object TransformInternal(EngineIntrinsics engineIntrinsics, object inputData, bool trackDataInputSource = true)
+        {
+            object result = Transform(engineIntrinsics, inputData);
+            if (trackDataInputSource && engineIntrinsics != null)
+            {
+                ExecutionContext.PropagateInputSource(inputData, result, engineIntrinsics.SessionState.Internal.LanguageMode);
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// The property is only checked when:

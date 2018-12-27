@@ -11,7 +11,6 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProvider defines the interface to be implemented by help providers.
     ///
     /// Help Providers:
@@ -40,7 +39,6 @@ namespace System.Management.Automation
     ///     2. ExactMatchHelp:
     ///     3. SearchHelp:
     ///     4. ProcessForwardedHelp
-    ///
     /// </summary>
     internal abstract class HelpProvider
     {
@@ -142,7 +140,7 @@ namespace System.Management.Automation
         /// Retrieve help info that exactly match the target.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>List of HelpInfo objects retrieved</returns>
+        /// <returns>List of HelpInfo objects retrieved.</returns>
         internal abstract IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest);
 
         /// <summary>
@@ -155,7 +153,7 @@ namespace System.Management.Automation
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal abstract IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent);
 
         /// <summary>
@@ -206,7 +204,6 @@ namespace System.Management.Automation
         ///
         /// This will be called either from search help or exact match help
         /// to find the error.
-        ///
         /// </summary>
         /// <param name="exception"></param>
         /// <param name="target"></param>
@@ -223,7 +220,7 @@ namespace System.Management.Automation
         /// Each Shell ( minishell ) will have its own path specified by the
         /// application base folder, which should be the same as $pshome
         /// </summary>
-        /// <returns>string representing base directory of the executing shell.</returns>
+        /// <returns>String representing base directory of the executing shell.</returns>
         internal string GetDefaultShellSearchPath()
         {
             string shellID = this.HelpSystem.ExecutionContext.ShellID;
@@ -243,10 +240,10 @@ namespace System.Management.Automation
         /// Gets the search paths. If the current shell is single-shell based, then the returned
         /// search path contains all the directories of currently active PSSnapIns
         /// </summary>
-        /// <returns>a collection of string representing locations</returns>
+        /// <returns>A collection of string representing locations.</returns>
         internal Collection<string> GetSearchPaths()
         {
-            Collection<String> searchPaths = this.HelpSystem.GetSearchPaths();
+            Collection<string> searchPaths = this.HelpSystem.GetSearchPaths();
 
             Diagnostics.Assert(searchPaths != null,
                 "HelpSystem returned an null search path");

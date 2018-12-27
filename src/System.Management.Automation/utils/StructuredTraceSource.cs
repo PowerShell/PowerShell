@@ -226,10 +226,7 @@ namespace System.Management.Automation
     ///
     /// For instance, the Exception flag will enable tracing on these methods:
     ///     TraceException
-    ///
-    ///
     /// </summary>
-    ///
     /// <remarks>
     /// To get an instance of this class a user should define a static
     /// field of the type StructuredTraceSource, and assign the results of GetTracer() to it.
@@ -254,27 +251,22 @@ namespace System.Management.Automation
         /// Constructor that determines the name of the trace
         /// flag in the config file.
         /// </summary>
-        ///
         /// <param name="fullName">
         /// The full name for the trace category. This is different from the name parameter as
         /// it is not limited to 16 characters.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the category that this class
         /// will control the tracing for. This parameter must always be 16 characters to ensure
         /// proper formatting of the output.
         /// </param>
-        ///
         /// <param name="description">
         /// The description to describe what the category
         /// is used for.
         /// </param>
-        ///
         /// <param name="traceHeaders">
         /// If true, the line headers will be traced, if false, only the trace message will be traced.
         /// </param>
-        ///
         internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
         {
             if (String.IsNullOrEmpty(fullName))
@@ -304,6 +296,7 @@ namespace System.Management.Automation
                         _flags = (PSTraceSourceOptions)Enum.Parse(typeof(PSTraceSourceOptions), options, true);
                     }
                 }
+
                 ShowHeaders = traceHeaders;
                 Description = description;
             }
@@ -377,18 +370,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Outputs a header when a new StructuredTraceSource object is created
         /// </summary>
-        ///
         /// <param name="callingAssembly">
         /// The assembly that created the instance of the StructuredTraceSource.
         /// </param>
-        ///
         /// <remarks>
         /// A header will be output that contains information such as;
         /// the category and description of the new trace object,
         /// the assembly in which the new trace object
         /// will be stored.
         /// </remarks>
-        ///
         internal void TracerObjectHeader(
             Assembly callingAssembly)
         {
@@ -466,6 +456,7 @@ namespace System.Management.Automation
                 }
                 catch { }
             }
+
             return null;
         }
 
@@ -479,6 +470,7 @@ namespace System.Management.Automation
                 }
                 catch { }
             }
+
             return null;
         }
 
@@ -492,6 +484,7 @@ namespace System.Management.Automation
                 }
                 catch { }
             }
+
             return null;
         }
 
@@ -569,6 +562,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
 
@@ -605,7 +599,7 @@ namespace System.Management.Automation
                                 eventHandlerOutputFormatter,
                                 eventHandlerLeavingFormatter,
                                 methodName,
-                                "");
+                                string.Empty);
                 }
                 catch
                 {
@@ -616,6 +610,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
 
@@ -668,6 +663,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
         #endregion PSTraceSourceOptions.Events methods/helpers
@@ -729,6 +725,7 @@ namespace System.Management.Automation
                     // normal operation.
                 }
             }
+
             return null;
         }
 
@@ -848,15 +845,12 @@ namespace System.Management.Automation
         /// Traces the specified formatted output when PSTraceSourceOptions.Warning
         /// is enabled.
         /// </summary>
-        ///
         /// <param name="warningMessageFormat">
         /// The format string containing the error message
         /// </param>
-        ///
         /// <param name="args">
         /// The arguments for the format string
         /// </param>
-        ///
         internal void TraceWarning(
             string warningMessageFormat,
             params object[] args)
@@ -875,15 +869,12 @@ namespace System.Management.Automation
         /// Traces the specified formatted output when PSTraceSourceOptions.Verbose
         /// is enabled.
         /// </summary>
-        ///
         /// <param name="verboseMessageFormat">
         /// The format string containing the error message
         /// </param>
-        ///
         /// <param name="args">
         /// The arguments for the format string
         /// </param>
-        ///
         internal void TraceVerbose(
             string verboseMessageFormat,
             params object[] args)
@@ -901,11 +892,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="format">
         /// The format string
         /// </param>
-        ///
         internal void WriteLine(string format)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -921,10 +910,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="format">The format string</param>
         /// <param name="arg1"></param>
-        ///
         internal void WriteLine(string format, object arg1)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -940,11 +927,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="format">The format string</param>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        ///
         internal void WriteLine(string format, object arg1, object arg2)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -960,12 +945,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="format">The format string</param>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
         /// <param name="arg3"></param>
-        ///
         internal void WriteLine(string format, object arg1, object arg2, object arg3)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -981,13 +964,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="format">The format string</param>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
         /// <param name="arg3"></param>
         /// <param name="arg4"></param>
-        ///
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -1003,14 +984,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="format">The format string</param>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
         /// <param name="arg3"></param>
         /// <param name="arg4"></param>
         /// <param name="arg5"></param>
-        ///
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4, object arg5)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -1026,7 +1005,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="format">The format string</param>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
@@ -1034,7 +1012,6 @@ namespace System.Management.Automation
         /// <param name="arg4"></param>
         /// <param name="arg5"></param>
         /// <param name="arg6"></param>
-        ///
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -1050,11 +1027,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled
         /// </summary>
-        ///
         /// <param name="arg">
         /// The object to be output
         /// </param>
-        ///
         internal void WriteLine(object arg)
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
@@ -1066,24 +1041,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Formats the specified text and then traces it
         /// </summary>
-        ///
         /// <param name="flag">
         /// The flag that met the criteria to have this line traced.
         /// </param>
-        ///
         /// <param name="classFormatter">
         /// This is the trace class formatter. For instance,
         /// TraceError has a formatter like "ERROR: {0}"
         /// </param>
-        ///
         /// <param name="format">
         /// Additional format string
         /// </param>
-        ///
         /// <param name="args">
         /// Arguments for the additional format string
         /// </param>
-        ///
         private void FormatOutputLine(
             PSTraceSourceOptions flag,
             string classFormatter,
@@ -1181,6 +1151,7 @@ namespace System.Management.Automation
                 // raised while a thread is shutting down during
                 // normal operation.
             }
+
             return methodAndParameters.ToString();
         }
 
@@ -1304,19 +1275,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Composes a line of trace output and then writes it
         /// </summary>
-        ///
         /// <param name="flag">
         /// The flag that caused the line to be traced
         /// </param>
-        ///
         /// <param name="format">
         /// The string to write with format symbols if necessary
         /// </param>
-        ///
         /// <param name="args">
         /// Arguments to the format string
         /// </param>
-        ///
         /// <remarks>
         /// The line is composed by prefixing the process name, thread ID,
         /// and tick count. Then the indenting is added. Then the
@@ -1436,7 +1403,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the full name of the trace source category
         /// </summary>
-        ///
         internal string FullName { get; } = String.Empty;
 
         private string _name;
@@ -1444,11 +1410,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the TraceSource on demand
         /// </summary>
-        ///
         internal TraceSource TraceSource
         {
             get { return _traceSource ?? (_traceSource = new MonadTraceSource(_name)); }
         }
+
         private TraceSource _traceSource;
 
         #endregion Class helper methods and properties
@@ -1499,7 +1465,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the TraceSource name (also known as category).
         /// </summary>
-        ///
         /// <remarks>
         /// Note, this name is truncated to 16 characters due to limitations
         /// in the TraceSource class.
@@ -1521,6 +1486,7 @@ namespace System.Management.Automation
             {
                 return TraceSource.Switch;
             }
+
             set
             {
                 TraceSource.Switch = value;
@@ -1534,7 +1500,7 @@ namespace System.Management.Automation
         /// Storage for all the PSTraceSource instances.
         /// </summary>
         /// <value></value>
-        internal static Dictionary<String, PSTraceSource> TraceCatalog { get; } = new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
+        internal static Dictionary<string, PSTraceSource> TraceCatalog { get; } = new Dictionary<string, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Storage for trace source instances which have not been instantiated but for which
@@ -1543,18 +1509,16 @@ namespace System.Management.Automation
         /// If the PSTraceSource cannot be found in the TraceCatalog, the same name is used
         /// to look in this dictionary to see if the PSTraceSource has been pre-configured.
         /// </summary>
-        ///
-        internal static Dictionary<String, PSTraceSource> PreConfiguredTraceSource { get; } = new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
+        internal static Dictionary<string, PSTraceSource> PreConfiguredTraceSource { get; } = new Dictionary<string, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         #endregion TraceCatalog
-    }      // class PSTraceSource : Switch
+    }
 
     #region ScopeTracer object/helpers
     /// <summary>
     /// A light-weight object to manage the indention of
     /// trace output for each thread.
     /// </summary>
-    ///
     /// <remarks>
     /// An instance of this object is returned when any scoping
     /// Trace method (like TraceMethod, TraceProperty, etc.)
@@ -1562,7 +1526,6 @@ namespace System.Management.Automation
     /// level for the thread is incremented.
     /// The Dispose method will decrement the thread indent level.
     /// </remarks>
-    ///
     internal class ScopeTracer : IDisposable
     {
         /// <summary>
@@ -1570,16 +1533,13 @@ namespace System.Management.Automation
         /// and raises the indent level in thread
         /// local storage.
         /// </summary>
-        ///
         /// <param name="tracer">
         /// The trace object that is to be used for output
         /// </param>
-        ///
         /// <param name="flag">
         /// The PSTraceSourceOptions that is causing the scope object to
         /// be created.
         /// </param>
-        ///
         /// <param name="scopeOutputFormatter">
         /// This format string is used to determine the
         /// general output format for the scope. For instance,
@@ -1587,16 +1547,13 @@ namespace System.Management.Automation
         /// to "Entering: {0}: {1}" where {0} is the name of the
         /// method and {1} is the additional formatted info provided.
         /// </param>
-        ///
         /// <param name="leavingScopeFormatter">
         /// The format string used to determine the general output
         /// format for the scope when the Dispose method is called.
         /// </param>
-        ///
         /// <param name="scopeName">
         /// The name of the scope that is being traced
         /// </param>
-        ///
         internal ScopeTracer(
             PSTraceSource tracer,
             PSTraceSourceOptions flag,
@@ -1613,7 +1570,7 @@ namespace System.Management.Automation
                 scopeOutputFormatter,
                 leavingScopeFormatter,
                 scopeName,
-                "");
+                string.Empty);
         }
 
         /// <summary>
@@ -1621,16 +1578,13 @@ namespace System.Management.Automation
         /// and raises the indent level in thread
         /// local storage.
         /// </summary>
-        ///
         /// <param name="tracer">
         /// The trace object that is to be used for output
         /// </param>
-        ///
         /// <param name="flag">
         /// The PSTraceSourceOptions that is causing the scope object to
         /// be created.
         /// </param>
-        ///
         /// <param name="scopeOutputFormatter">
         /// This format string is used to determine the
         /// general output format for the scope. For instance,
@@ -1638,25 +1592,20 @@ namespace System.Management.Automation
         /// to "Entering: {0}: {1}" where {0} is the name of the
         /// method and {1} is the additional formatted info provided.
         /// </param>
-        ///
         /// <param name="leavingScopeFormatter">
         /// The format string used to determine the general output
         /// format for the scope when the Dispose method is called.
         /// </param>
-        ///
         /// <param name="scopeName">
         /// The name of the scope that is being traced
         /// </param>
-        ///
         /// <param name="format">
         /// The format of any additional arguments which will be appended
         /// to the line of trace output
         /// </param>
-        ///
         /// <param name="args">
         /// Arguments to the format string.
         /// </param>
-        ///
         internal ScopeTracer(
             PSTraceSource tracer,
             PSTraceSourceOptions flag,
@@ -1687,18 +1636,16 @@ namespace System.Management.Automation
                     scopeOutputFormatter,
                     leavingScopeFormatter,
                     scopeName,
-                    "");
+                    string.Empty);
             }
         }
 
         /// <summary>
         /// Helper for the ScopeTracer constructor
         /// </summary>
-        ///
         /// <param name="flag">
         /// The flag that caused this line of tracing to be traced.
         /// </param>
-        ///
         /// <param name="scopeOutputFormatter">
         /// This format string is used to determine the
         /// general output format for the scope. For instance,
@@ -1706,25 +1653,20 @@ namespace System.Management.Automation
         /// to "Entering: {0}: {1}" where {0} is the name of the
         /// method and {1} is the additional formatted info provided.
         /// </param>
-        ///
         /// <param name="leavingScopeFormatter">
         /// The format string used to determine the general output
         /// format for the scope when the Dispose method is called.
         /// </param>
-        ///
         /// <param name="scopeName">
         /// The name of the scope being entered
         /// </param>
-        ///
         /// <param name="format">
         /// The format of any additional arguments which will be appended
         /// to the "Entering" line of trace output
         /// </param>
-        ///
         /// <param name="args">
         /// Arguments to the format string.
         /// </param>
-        ///
         internal void ScopeTracerHelper(
             PSTraceSourceOptions flag,
             string scopeOutputFormatter,
@@ -1785,6 +1727,7 @@ namespace System.Management.Automation
             {
                 _tracer.OutputLine(_flag, _leavingScopeFormatter, _scopeName);
             }
+
             GC.SuppressFinalize(this);
         }
 
@@ -1873,7 +1816,6 @@ namespace System.Management.Automation
     /// the configuration infrastructure which attributes are supported in
     /// the XML app-config file for our trace source.
     /// </summary>
-    ///
     internal class MonadTraceSource : TraceSource
     {
         internal MonadTraceSource(string name)
@@ -1885,7 +1827,6 @@ namespace System.Management.Automation
         /// Tells the config infrastructure which attributes are supported
         /// for our TraceSource
         /// </summary>
-        ///
         /// <returns>
         /// A string array with the names of the attributes supported by our
         /// trace source.

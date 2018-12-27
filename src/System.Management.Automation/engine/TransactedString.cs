@@ -19,13 +19,12 @@ namespace Microsoft.PowerShell.Commands.Management
         /// <summary>
         /// Constructor for the TransactedString class.
         /// </summary>
-        public TransactedString() : this("")
+        public TransactedString() : this(string.Empty)
         {
         }
 
         /// <summary>
         /// Constructor for the TransactedString class.
-        ///
         /// <param name="value">
         /// The initial value of the transacted string.
         /// </param>
@@ -64,6 +63,7 @@ namespace Microsoft.PowerShell.Commands.Management
         {
             enlistment.Done();
         }
+
         void IEnlistmentNotification.Prepare(PreparingEnlistment preparingEnlistment)
         {
             preparingEnlistment.Prepared();
@@ -71,7 +71,6 @@ namespace Microsoft.PowerShell.Commands.Management
 
         /// <summary>
         /// Append text to the transacted string.
-        ///
         /// <param name="text">
         /// The text to append.
         /// </param>
@@ -92,7 +91,6 @@ namespace Microsoft.PowerShell.Commands.Management
 
         /// <summary>
         /// Remove text from the transacted string.
-        ///
         /// <param name="startIndex">
         /// The position in the string from which to start removing.
         /// </param>
@@ -196,5 +194,5 @@ namespace Microsoft.PowerShell.Commands.Management
             }
         }
     }
-} // namespace Microsoft.Test.Management.Automation
+}
 

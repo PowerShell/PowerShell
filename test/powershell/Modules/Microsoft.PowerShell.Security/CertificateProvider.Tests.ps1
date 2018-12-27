@@ -62,10 +62,10 @@ Describe "Certificate Provider tests" -Tags "CI" {
             (get-item cert:\LocalMachine , cert:\CurrentUser).Count | Should -Be 2
         }
         it "Should return PathNotFound when getting a non-existant certificate store" {
-            {Get-Item cert:\IDONTEXIST -ErrorAction Stop} | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            {Get-Item cert:\IDONTEXIST -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
         it "Should return PathNotFound when getting a non-existant certificate" {
-            {Get-Item cert:\currentuser\my\IDONTEXIST -ErrorAction Stop} | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            {Get-Item cert:\currentuser\my\IDONTEXIST -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
     }
     Context "Get-ChildItem tests"{

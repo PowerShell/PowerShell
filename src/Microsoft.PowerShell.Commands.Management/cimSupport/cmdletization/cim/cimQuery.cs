@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             if (LanguagePrimitives.IsNull(o))
             {
-                return "null"; // based on an example at http://msdn.microsoft.com/en-us/library/aa394054(VS.85).aspx
+                return "null"; // based on an example at http://msdn.microsoft.com/library/aa394054(VS.85).aspx
             }
 
             o = CimValueConverter.ConvertFromDotNetToCim(o);
@@ -95,9 +95,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 if ((bool)LanguagePrimitives.ConvertTo(o, typeof(bool), CultureInfo.InvariantCulture))
                 {
-                    return "TRUE"; // based on http://msdn.microsoft.com/en-us/library/aa394054(VS.85).aspx
+                    return "TRUE"; // based on http://msdn.microsoft.com/library/aa394054(VS.85).aspx
                 }
-                return "FALSE"; // based on http://msdn.microsoft.com/en-us/library/aa394054(VS.85).aspx
+
+                return "FALSE"; // based on http://msdn.microsoft.com/library/aa394054(VS.85).aspx
             }
 
             throw CimValueConverter.GetInvalidCastException(
@@ -317,6 +318,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 throw new ArgumentNullException("optionName");
             }
+
             if (optionValue == null)
             {
                 throw new ArgumentNullException("optionValue");
@@ -360,13 +362,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return CimCmdletAdapter.GetSessionOfOriginFromCimInstance(_associatedObject);
             }
+
             return null;
         }
 
         /// <summary>
         /// Returns a string that represents the current CIM query
         /// </summary>
-        /// <returns>A string that represents the current CIM query</returns>
+        /// <returns>A string that represents the current CIM query.</returns>
         public override string ToString()
         {
             return _wqlCondition.ToString();

@@ -31,7 +31,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
     )  {
         param ($str, $ReturnHashTable)
         $errRecord = $null
-        { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord) } | ShouldBeErrorId "ArgumentException"
+        { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord) } | Should -Throw -ErrorId "ArgumentException"
     }
 
     Context 'Empty key name' {    

@@ -12,12 +12,10 @@ namespace System.Management.Automation
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
     /// that is used the the Monad components to produce trace output.
     /// </summary>
-    ///
     /// <remarks>
     /// It is permitted to subclass <see cref="PSTraceSource"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
-    ///
     /// <!--
     /// IF YOU ARE NOT PART OF THE MONAD DEVELOPMENT TEAM PLEASE
     /// DO NOT USE THIS CLASS!!!!!
@@ -29,10 +27,7 @@ namespace System.Management.Automation
     ///
     /// For instance, the Exception flag will enable tracing on these methods:
     ///     TraceException
-    ///
-    ///
     /// </summary>
-    ///
     /// <remarks>
     /// To get an instance of this class a user should define a public static
     /// field of the type PSTraceSource, decorated it with an attribute of
@@ -59,23 +54,19 @@ namespace System.Management.Automation
         /// <summary>
         /// A helper to get an instance of the PSTraceSource class
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the category that this class
         /// will control the tracing for.
         /// </param>
-        ///
         /// <param name="description">
         /// The description to describe what the category
         /// is used for.
         /// </param>
-        ///
         /// <returns>
         /// An instance of the PSTraceSource class which is initialized
         /// to trace for the specified category. If multiple callers ask for the same category,
         /// the same PSTraceSource will be returned.
         /// </returns>
-        ///
         internal static PSTraceSource GetTracer(
             string name,
             string description)
@@ -86,27 +77,22 @@ namespace System.Management.Automation
         /// <summary>
         /// A helper to get an instance of the PSTraceSource class
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the category that this class
         /// will control the tracing for.
         /// </param>
-        ///
         /// <param name="description">
         /// The description to describe what the category
         /// is used for.
         /// </param>
-        ///
         /// <param name="traceHeaders">
         /// If true, the line headers will be traced, if false, only the trace message will be traced.
         /// </param>
-        ///
         /// <returns>
         /// An instance of the PSTraceSource class which is initialized
         /// to trace for the specified category. If multiple callers ask for the same category,
         /// the same PSTraceSource will be returned.
         /// </returns>
-        ///
         internal static PSTraceSource GetTracer(
             string name,
             string description,
@@ -186,6 +172,7 @@ namespace System.Management.Automation
                     // Trace the object specific tracer information
                     result.TracerObjectHeader(Assembly.GetCallingAssembly());
                 }
+
                 return result;
             }
         }
@@ -238,7 +225,7 @@ namespace System.Management.Automation
         /// <param name="paramName">
         /// The name of the parameter whose argument value was null
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentNullException NewArgumentNullException(string paramName)
         {
             if (String.IsNullOrEmpty(paramName))
@@ -266,7 +253,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Objects corresponding to {0}, {1}, etc. in the resource string
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentNullException NewArgumentNullException(
             string paramName, string resourceString, params object[] args)
         {
@@ -274,6 +261,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("paramName");
             }
+
             if (String.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
@@ -296,13 +284,14 @@ namespace System.Management.Automation
         /// <param name="paramName">
         /// The name of the parameter whose argument value was invalid
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentException NewArgumentException(string paramName)
         {
             if (String.IsNullOrEmpty(paramName))
             {
                 throw new ArgumentNullException("paramName");
             }
+
             string message = StringUtil.Format(AutomationExceptions.Argument, paramName);
             // Note that the message param comes first
             var e = new PSArgumentException(message, paramName);
@@ -324,7 +313,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Objects corresponding to {0}, {1}, etc. in the resource string
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentException NewArgumentException(
             string paramName, string resourceString, params object[] args)
         {
@@ -332,6 +321,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("paramName");
             }
+
             if (String.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
@@ -349,7 +339,7 @@ namespace System.Management.Automation
         /// Traces the Message and StackTrace properties of the exception
         /// and returns the new exception
         /// </summary>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSInvalidOperationException NewInvalidOperationException()
         {
             string message = StringUtil.Format(AutomationExceptions.InvalidOperation,
@@ -370,7 +360,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Objects corresponding to {0}, {1}, etc. in the resource string
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSInvalidOperationException NewInvalidOperationException(
             string resourceString, params object[] args)
         {
@@ -399,7 +389,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Objects corresponding to {0}, {1}, etc. in the resource string
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSInvalidOperationException NewInvalidOperationException(
             Exception innerException,
             string resourceString, params object[] args)
@@ -420,7 +410,7 @@ namespace System.Management.Automation
         /// and returns the new exception. This is not allowed to call other
         /// Throw*Exception variants, since they call this.
         /// </summary>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSNotSupportedException NewNotSupportedException()
         {
             string message = StringUtil.Format(AutomationExceptions.NotSupported,
@@ -435,16 +425,13 @@ namespace System.Management.Automation
         /// and returns the new exception. This is not allowed to call other
         /// Throw*Exception variants, since they call this.
         /// </summary>
-        ///
         /// <param name="resourceString">
         /// The template string for this error
         /// </param>
-        ///
         /// <param name="args">
         /// Objects corresponding to {0}, {1}, etc. in the resource string
         /// </param>
-        ///
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSNotSupportedException NewNotSupportedException(
             string resourceString,
             params object[] args)
@@ -465,7 +452,7 @@ namespace System.Management.Automation
         /// and returns the new exception. This is not allowed to call other
         /// Throw*Exception variants, since they call this.
         /// </summary>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSNotImplementedException NewNotImplementedException()
         {
             string message = StringUtil.Format(AutomationExceptions.NotImplemented,
@@ -487,13 +474,14 @@ namespace System.Management.Automation
         /// <param name="actualValue">
         /// The value of the argument causing the exception
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(string paramName, object actualValue)
         {
             if (String.IsNullOrEmpty(paramName))
             {
                 throw new ArgumentNullException("paramName");
             }
+
             string message = StringUtil.Format(AutomationExceptions.ArgumentOutOfRange, paramName);
             var e = new PSArgumentOutOfRangeException(paramName, actualValue, message);
 
@@ -517,7 +505,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Objects corresponding to {0}, {1}, etc. in the resource string
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(
             string paramName, object actualValue, string resourceString, params object[] args)
         {
@@ -525,6 +513,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("paramName");
             }
+
             if (String.IsNullOrEmpty(resourceString))
             {
                 throw NewArgumentNullException("resourceString");
@@ -545,7 +534,7 @@ namespace System.Management.Automation
         /// <param name="objectName">
         /// The name of the disposed object
         /// </param>
-        /// <returns>Exception instance ready to throw</returns>
+        /// <returns>Exception instance ready to throw.</returns>
         /// <remarks>
         /// Note that the parameter is the object name and not the message.
         /// </remarks>
@@ -555,6 +544,7 @@ namespace System.Management.Automation
             {
                 throw NewArgumentNullException("objectName");
             }
+
             string message = StringUtil.Format(AutomationExceptions.ObjectDisposed, objectName);
             var e = new PSObjectDisposedException(objectName, message);
 
@@ -562,6 +552,6 @@ namespace System.Management.Automation
         }
 
         #endregion TraceFlags.New*Exception methods/helpers
-    }      // class PSTraceSource
+    }
 }
 

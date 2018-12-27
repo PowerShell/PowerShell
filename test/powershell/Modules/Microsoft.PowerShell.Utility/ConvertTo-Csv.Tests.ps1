@@ -91,7 +91,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
         { $testObject | ConvertTo-Csv -IncludeTypeInformation -NoTypeInformation } | 
-            ShouldBeErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
+            Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
     }
 
 }

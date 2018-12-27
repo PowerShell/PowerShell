@@ -26,7 +26,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
         It "Remove-Job can remove a job" {
             Remove-Job $j -Force
-            { Get-Job $j -ErrorAction Stop } | ShouldBeErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
+            { Get-Job $j -ErrorAction Stop } | Should -Throw -ErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
         }
         It "Receive-Job can retrieve job results" {
             Wait-Job -Timeout 60 -id $j.id | Should -Not -BeNullOrEmpty
@@ -60,6 +60,9 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
         It "Stop-Job will stop a job" {
             Stop-Job -Id $j.Id
+            $out = Receive-Job $j -ErrorVariable err
+            $out | Should -BeNullOrEmpty
+            $err | Should -BeNullOrEmpty
             $j.State | Should -BeExactly "Stopped"
         }
         It "Remove-Job will not remove a running job" {

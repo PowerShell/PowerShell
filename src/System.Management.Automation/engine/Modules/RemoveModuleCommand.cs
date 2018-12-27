@@ -32,8 +32,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             set { _name = value; }
+
             get { return _name; }
         }
+
         private string[] _name = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace Microsoft.PowerShell.Commands
         public PSModuleInfo[] ModuleInfo
         {
             set { _moduleInfo = value; }
+
             get { return _moduleInfo; }
         }
+
         private PSModuleInfo[] _moduleInfo = Utils.EmptyArray<PSModuleInfo>();
 
         /// <summary>
@@ -62,6 +66,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force
         {
             get { return BaseForce; }
+
             set { BaseForce = value; }
         }
 
@@ -84,6 +89,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (FullyQualifiedName != null)
             {
+                // TODO:
+                // Paths in the module name may fail here because
+                // they the wrong directory separator or are relative.
+                // Fix with the code below:
+                // FullyQualifiedName = FullyQualifiedName.Select(ms => ms.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path)).ToArray();
                 foreach (var m in Context.Modules.GetModules(FullyQualifiedName, false))
                 {
                     modulesToRemove.Add(m, new List<PSModuleInfo> { m });
@@ -170,6 +180,7 @@ namespace Microsoft.PowerShell.Commands
                                                              ErrorCategory.PermissionDenied, module);
                             WriteError(er);
                         }
+
                         continue;
                     }
 
@@ -189,6 +200,7 @@ namespace Microsoft.PowerShell.Commands
                                 string message = StringUtil.Format(Modules.CoreModuleCannotBeRemoved, module.Name);
                                 this.WriteWarning(message);
                             }
+
                             continue;
                         }
                         // Specify the overall module name if there is only one.
@@ -206,6 +218,7 @@ namespace Microsoft.PowerShell.Commands
                     // Add module to remove list.
                     moduleList.Add(module);
                 }
+
                 actualModulesToRemove[entry.Key] = moduleList;
             }
 
@@ -343,6 +356,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         isEngineModule = false;
                     }
+
                     if (!WildcardPattern.ContainsWildcardCharacters(n))
                         hasWildcards = false;
                 }
@@ -364,4 +378,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion Remove-Module
-} // Microsoft.PowerShell.Commands
+}

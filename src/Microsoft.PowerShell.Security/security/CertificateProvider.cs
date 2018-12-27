@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CodeSigningCert
         {
             get { return _codeSigningCert; }
+
             set { _codeSigningCert = value; }
         }
 
@@ -113,6 +114,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 match = true;
             }
+
             return match;
         }
 
@@ -160,7 +162,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Currently, we only support one dynamic parameter: DeleteKey
     /// If provided, we will delete the private key when we remove a certificate
-    ///
     /// </summary>
     internal sealed class ProviderRemoveItemDynamicParameters
     {
@@ -214,12 +215,14 @@ namespace Microsoft.PowerShell.Commands
                 fResult = Security.NativeMethods.CertCloseStore(handle, 0);
                 handle = IntPtr.Zero;
             }
+
             return fResult;
         }
 
         public IntPtr Handle
         {
             get { return handle; }
+
             set { handle = value; }
         }
     }
@@ -246,6 +249,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _storeHandle = null;        // release the old handle
             }
+
             if (_storeHandle == null)
             {
                 _valid = false;
@@ -326,6 +330,7 @@ namespace Microsoft.PowerShell.Commands
                 throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.CRYPT_E_NOT_FOUND);
             }
+
             if (Valid)
             {
                 certContext = Security.NativeMethods.CertEnumCertificatesInStore(
@@ -336,6 +341,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 certContext = IntPtr.Zero;
             }
+
             return certContext;
         }
 
@@ -348,6 +354,7 @@ namespace Microsoft.PowerShell.Commands
                 throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.CRYPT_E_NOT_FOUND);
             }
+
             if (Valid)
             {
                 if (DownLevelHelper.HashLookupSupported())
@@ -376,6 +383,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             break;
                         }
+
                         X509Certificate2 cert = new X509Certificate2(certContext);
                         if (String.Equals(
                                     cert.Thumbprint,
@@ -387,6 +395,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return certContext;
         }
 
@@ -549,14 +558,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// On demand create the Regex to avoid a hit to startup perf.
         /// </summary>
-        ///
         /// <remarks>
         /// Note, its OK that staticLock is being used here because only
         /// IsValidPath is calling this static property so we shouldn't
         /// have any deadlocks due to other locked static members calling
         /// this property.
         /// </remarks>
-        ///
         private static Regex s_certPathRegex = null;
         private static Regex CertPathRegex
         {
@@ -570,6 +577,7 @@ namespace Microsoft.PowerShell.Commands
                         s_certPathRegex = new Regex(certPathPattern, options);
                     }
                 }
+
                 return s_certPathRegex;
             }
         }
@@ -609,27 +617,23 @@ namespace Microsoft.PowerShell.Commands
                     AddItemToCache(StoreLocation.LocalMachine.ToString(),
                                    machine);
 
-                    AddItemToCache("", s_storeLocations);
+                    AddItemToCache(string.Empty, s_storeLocations);
                 }
             }
-        } // constructor
+        }
 
         /// <summary>
         /// Removes an item at the specified path
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the item to remove.
         /// </param>
-        ///
         /// <param name="recurse">
         /// Recursively remove.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         ///     destination is null or empty.
@@ -709,16 +713,13 @@ namespace Microsoft.PowerShell.Commands
         /// Provider.  We currently only support one dynamic parameter,
         /// "DeleteKey," that delete private key when we delete a certificate.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item for which to get the dynamic parameters.
         /// </param>
-        ///
         /// <param name="recurse">
         /// Ignored.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
@@ -731,19 +732,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Moves an item at the specified path to the given destination.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the item to move.
         /// </param>
-        ///
         /// <param name="destination">
         /// The path of the destination.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  Moved items are written to the context's pipeline.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         ///     destination is null or empty.
@@ -859,7 +856,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a certificate store with the given path.
         /// </summary>
-        ///
         /// <remarks>
         /// New-Item doesn't go through the method "ItemExists". But for the
         /// CertificateProvider, New-Item can create an X509Store and return
@@ -868,30 +864,23 @@ namespace Microsoft.PowerShell.Commands
         /// X509Certificate2 objects to be shown to the user, so we also need
         /// to import the PKI module in this method, if we haven't tried it yet.
         /// </remarks>
-        ///
         /// <param name="path">
         /// The path of the certificate store to create.
         /// </param>
-        ///
         ///<param name="type">
         /// Ignored.
         /// Only support store.
         /// </param>
-        ///
         /// <param name="value">
         /// Ignored
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  The new certificate store object is
         /// written to the context's pipeline.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         /// </exception>
-        ///
-        ///
         protected override void NewItem(
                 string path,
                 string type,
@@ -925,6 +914,7 @@ namespace Microsoft.PowerShell.Commands
                 string errorId = "CannotCreateUserStore";
                 ThrowInvalidOperation(errorId, message);
             }
+
             Security.NativeMethods.CertOpenStoreFlags StoreFlags =
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_CREATE_NEW_FLAG |
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
@@ -957,7 +947,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes the cert: drive.
         /// </summary>
-        ///
         /// <returns>
         /// A collection that contains the PSDriveInfo object
         /// that represents the cert: drive.
@@ -978,26 +967,22 @@ namespace Microsoft.PowerShell.Commands
             drives.Add(drive);
 
             return drives;
-        } // InitializeDefaultDrives
+        }
 
         /// <summary>
         /// Determines if the item at the given path is a store-location
         /// or store with items in it.
         /// </summary>
-        ///
         /// <param name="path">
         /// The full path to the item.
         /// </param>
-        ///
         /// <returns>
         /// True if the path refers to a store location, or store that contains
         /// certificates.  False otherwise.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Path is null
         /// </exception>
-        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -1046,6 +1031,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 
@@ -1054,11 +1040,9 @@ namespace Microsoft.PowerShell.Commands
         /// An example path looks like this:
         ///     cert:\CurrentUser\My\5F98EBBFE735CDDAE00E33E0FD69050EF9220254
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the item to check.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is valid, false otherwise.
         /// </returns>
@@ -1076,7 +1060,6 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the store location, store, or certificate exists
         /// at the specified path.
         /// </summary>
-        ///
         /// <remarks>
         /// The method ItemExists will be hit by all built-in cmdlets that interact
         /// with the CertificateProvider except for the New-Item. They are:
@@ -1090,20 +1073,16 @@ namespace Microsoft.PowerShell.Commands
         ///     Remove-Item
         /// So we import the PKI module in this method if we haven't tried yet.
         /// </remarks>
-        ///
         /// <param name="path">
         /// The path of the item to check.
         /// </param>
-        ///
         /// <returns>
         /// True if a the store location, store, or certificate exists
         /// at the specified path.  False otherwise.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Path is null
         /// </exception>
-        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -1114,7 +1093,6 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate password mismatch
         ///  -- etc
         /// </exception>
-        ///
         protected override bool ItemExists(string path)
         {
             if (!_hasAttemptedToLoadPkiModule)
@@ -1164,22 +1142,18 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", result);
             return result;
-        } // ItemExists
+        }
 
         /// <summary>
         /// Gets the store location, store, or certificate
         /// at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the item to retrieve.
         /// </param>
-        ///
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Path is null
         /// </exception>
-        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -1190,7 +1164,6 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate password mismatch
         ///  -- etc
         /// </exception>
-        ///
         protected override void GetItem(string path)
         {
             bool isContainer = false;
@@ -1257,15 +1230,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the parent of the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of which to get the parent.
         /// </param>
-        ///
         /// <param name="root">
         /// The root of the drive.
         /// </param>
-        ///
         /// <returns>
         /// The parent of the given path.
         /// </returns>
@@ -1279,11 +1249,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the name of the leaf element of the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The fully qualified path to the item.
         /// </param>
-        ///
         /// <returns>
         /// The leaf element of the specified path.
         /// </returns>
@@ -1383,7 +1351,6 @@ namespace Microsoft.PowerShell.Commands
         /// Invokes the certificate management UI (certmgr.msc)
         /// for any path.
         /// </summary>
-        ///
         /// <param name="path">
         /// Ignored.
         /// </param>
@@ -1399,9 +1366,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process.Start(System.IO.Path.Combine(certPath, certmgr));
             }
-        } // InvokeDefaultAction
+        }
 
-        static private string EnsureDriveIsRooted(string path)
+        private static string EnsureDriveIsRooted(string path)
         {
             string result = path;
 
@@ -1424,9 +1391,9 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", result);
             return result;
-        } // EnsureDriveIsRooted
+        }
 
-        static private ErrorRecord CreateErrorRecord(string path,
+        private static ErrorRecord CreateErrorRecord(string path,
                                               CertificateProviderItem itemType)
         {
             Exception e = null;
@@ -1537,7 +1504,7 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(er);
         }
 
-        static private string NormalizePath(string path)
+        private static string NormalizePath(string path)
         {
             if (path.Length > 0)
             {
@@ -1556,7 +1523,7 @@ namespace Microsoft.PowerShell.Commands
             return path;
         }
 
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_pathSeparators);
             string[] result = null;
@@ -1591,10 +1558,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Delete private key
         /// </summary>
-        ///
         /// <param name="pProvInfo"> key prov info </param>
-        ///
-        /// <returns> no return </returns>
+        /// <returns>No return.</returns>
 
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptSetProperty(System.IntPtr,System.String,System.Void*,System.Int32,System.Int32)")]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptFreeObject(System.IntPtr)")]
@@ -1702,6 +1667,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ThrowErrorRemoting(stat);
                     }
+
                     hCNGKey = IntPtr.Zero;
                 }
                 finally
@@ -1719,14 +1685,10 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the cert store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        ///
         /// <param name="storeName"> the store name </param>
-        ///
         /// <param name="fDeleteKey"> boolean to specify whether or not to delete private key </param>
-        ///
         /// <param name = "sourcePath"> source path </param>
-        ///
-        /// <returns> no return </returns>
+        /// <returns>No return.</returns>
 
         private void RemoveCertStore(string storeName, bool fDeleteKey, string sourcePath)
         {
@@ -1785,16 +1747,11 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the a single cert from the store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        ///
         /// <param name="cert"> an X509Certificate2 object </param>
-        ///
         /// <param name="fDeleteKey"> boolean to specify whether or not to delete private key </param>
-        ///
         /// <param name="fMachine"> machine context or user </param>
-        ///
         /// <param name = "sourcePath"> source path </param>
-        ///
-        /// <returns> no return </returns>
+        /// <returns>No return.</returns>
         private void RemoveCertItem(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
         {
             if (cert != null)
@@ -1825,16 +1782,11 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the cert from the store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        ///
         /// <param name="cert"> an X509Certificate2 object </param>
-        ///
         /// <param name="fDeleteKey"> boolean to specify whether or not to delete private key </param>
-        ///
         /// <param name="fMachine"> machine context or user </param>
-        ///
         /// <param name = "sourcePath"> source path </param>
-        ///
-        /// <returns> no return </returns>
+        /// <returns>No return.</returns>
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoRemove(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
@@ -1912,11 +1864,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Commit store for UserDS store
         /// </summary>
-        ///
         /// <param name="storeHandle"> an IntPtr for store handle </param>
-        ///
-        /// <returns> no return </returns>
-        ///
+        /// <returns>No return.</returns>
         private void CommitUserDS(IntPtr storeHandle)
         {
             if (!Security.NativeMethods.CertControlStore(
@@ -1932,17 +1881,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Delete the cert from the original store and add to the destination store
         /// </summary>
-        ///
         /// <param name="destination"> destination path </param>
-        ///
         /// <param name="cert"> an X509Certificate2 </param>
-        ///
         /// <param name="store"> an X509NativeStore </param>
-        ///
         /// <param name="sourcePath"> source path </param>
-        ///
-        /// <returns> no return </returns>
-        ///
+        /// <returns>No return.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoMove(string destination, X509Certificate2 cert, X509NativeStore store, string sourcePath)
         {
@@ -1999,14 +1942,10 @@ namespace Microsoft.PowerShell.Commands
         /// fetches the store-location/store/certificate at the
         /// specified path.
         /// </summary>
-        ///
         /// <param name="path"> path to the item </param>
         /// <param name="test"> True if this is to only for an ItemExists call. Returns True / False.</param>
-        ///
         /// <param name="isContainer"> set to true if item exists and is a container </param>
-        ///
-        /// <returns> item at the path </returns>
-        ///
+        /// <returns>Item at the path.</returns>
         private object GetItemAtPath(string path, bool test, out bool isContainer)
         {
             Utils.CheckArgForNull(path, "path");
@@ -2068,6 +2007,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             ThrowItemNotFound(path, CertificateProviderItem.StoreLocation);
                         }
+
                         break;
 
                     case 2:
@@ -2088,7 +2028,7 @@ namespace Microsoft.PowerShell.Commands
                         //
                         // items at paths of depth 3 are certificates.
                         //
-                        string storePath = GetParentPath(path, "");
+                        string storePath = GetParentPath(path, string.Empty);
                         string[] storePathElements = GetPathElements(storePath);
 
                         //
@@ -2126,6 +2066,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             item = new X509Certificate2(certContext);
                         }
+
                         store.FreeCert(certContext);
 
                         break;
@@ -2143,24 +2084,20 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return item;
-        } // GetItem
+        }
 
         /// <summary>
         /// Gets the child items of a given store, or location.
         /// </summary>
-        ///
         /// <param name="path">
         /// The full path of the store or location to enumerate.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, recursively enumerates the child items as well.
         /// </param>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Path is null or empty.
         /// </exception>
-        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -2171,7 +2108,6 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate password mismatch
         ///  -- etc
         /// </exception>
-        ///
         protected override void GetChildItems(string path, bool recurse)
         {
             path = NormalizePath(path);
@@ -2182,20 +2118,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the child names of a given store, or location.
         /// </summary>
-        ///
         /// <param name="path">
         /// The full path of the store or location to enumerate.
         /// </param>
-        ///
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Path is null or empty.
         /// </exception>
-        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -2206,29 +2138,25 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate password mismatch
         ///  -- etc
         /// </exception>
-        ///
         protected override void GetChildNames(
             string path,
             ReturnContainers returnContainers)
         {
             path = NormalizePath(path);
             GetChildItemsOrNames(path, false, returnContainers, true, GetFilter());
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Determines if the item at the specified path is a store
         /// or location.
         /// </summary>
-        ///
         /// <returns>
         /// True if the item at the specified path is a store or location.
         /// False otherwise.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Path is null or empty.
         /// </exception>
-        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -2239,7 +2167,6 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate password mismatch
         ///  -- etc
         /// </exception>
-        ///
         protected override bool IsItemContainer(string path)
         {
             path = NormalizePath(path);
@@ -2265,7 +2192,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("result = {0}", isContainer);
             return isContainer;
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for get-item on the Certificate
@@ -2273,17 +2200,14 @@ namespace Microsoft.PowerShell.Commands
         /// "CodeSigning," that returns only certificates good for signing
         /// code or scripts.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item for which to get the dynamic parameters.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         protected override object GetItemDynamicParameters(string path)
         {
             return new CertificateProviderCodeSigningDynamicParameters();
@@ -2295,16 +2219,13 @@ namespace Microsoft.PowerShell.Commands
         /// "CodeSigning," that returns only certificates good for signing
         /// code or scripts.
         /// </summary>
-        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item for which to get the dynamic parameters.
         /// </param>
-        ///
         /// <param name="recurse">
         /// Ignored.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
@@ -2322,24 +2243,15 @@ namespace Microsoft.PowerShell.Commands
         /// Helper function to get store-location/store/cert at
         /// the specified path.
         /// </summary>
-        ///
         /// <param name="path"> path to the item  </param>
-        ///
         /// <param name="recurse"> whether we need to recursively find all </param>
-        ///
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        ///
         /// <param name="returnNames"> whether we only need the names </param>
-        ///
         /// <param name="filter"> filter info </param>
-        ///
-        /// <returns> Does not return a value </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <returns> Does not return a value.</returns>
         private void GetChildItemsOrNames(
             string path,
             bool recurse,
@@ -2400,6 +2312,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteItemObject(thingToReturn, l.LocationName, true);
                     }
+
                     childPath = l.LocationName;
                     if (recurse)
                     {
@@ -2446,13 +2359,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get the name of the specified certificate
         /// </summary>
-        ///
         /// <param name="cert">  </param>
-        ///
-        /// <returns> cert name  </returns>
-        ///
+        /// <returns>Cert name .</returns>
         /// <remarks> we use Thumbprint as the name  </remarks>
-        ///
         private static string GetCertName(X509Certificate2 cert)
         {
             return cert.Thumbprint;
@@ -2461,17 +2370,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get cert objects or their name at the specified path
         /// </summary>
-        ///
         /// <param name="path"> path to cert </param>
-        ///
         /// <param name="pathElements"> path elements </param>
-        ///
         /// <param name="returnNames"> whether we should return only the names (instead of objects) </param>
-        ///
         /// <param name="filter"> filter info </param>
-        ///
-        /// <returns> Does not return a value </returns>
-        ///
+        /// <returns>Does not return a value.</returns>
         private void GetCertificatesOrNames(string path,
                                              string[] pathElements,
                                              bool returnNames,
@@ -2511,8 +2414,10 @@ namespace Microsoft.PowerShell.Commands
                         PSObject myPsObj = new PSObject(cert);
                         thingToReturn = (object)myPsObj;
                     }
+
                     WriteItemObject(thingToReturn, certPath, false);
                 }
+
                 certContext = store.GetNextCert(certContext);
             }
         }
@@ -2520,11 +2425,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get X509StoreLocation object at path
         /// </summary>
-        ///
         /// <param name="path">  </param>
-        ///
-        /// <returns> X509StoreLocation object </returns>
-        ///
+        /// <returns>X509StoreLocation object.</returns>
         private X509StoreLocation GetStoreLocation(string path)
         {
             //
@@ -2545,14 +2447,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get the X509NativeStore object at path
         /// </summary>
-        ///
         /// <param name="path"> path to store  </param>
         /// <param name="test"> True if this should be a test for path existence. Returns True or False</param>
-        ///
         /// <param name="pathElements"> path elements </param>
-        ///
-        /// <returns> X509NativeStore object </returns>
-        ///
+        /// <returns>X509NativeStore object.</returns>
         private X509NativeStore GetStore(string path, bool test, string[] pathElements)
         {
             X509StoreLocation location = GetStoreLocation(pathElements[0]);
@@ -2577,15 +2475,10 @@ namespace Microsoft.PowerShell.Commands
         /// gets the X509NativeStore at the specified path.
         /// Adds to cache if not already there.
         /// </summary>
-        ///
         /// <param name="storePath"> path to the store </param>
-        ///
         /// <param name="storeName"> name of store (path leaf element) </param>
-        ///
         /// <param name="storeLocation"> location of store (CurrentUser or LocalMachine) </param>
-        ///
-        /// <returns> X509NativeStore object </returns>
-        ///
+        /// <returns>X509NativeStore object.</returns>
         private X509NativeStore GetStore(string storePath,
                                    string storeName,
                                    X509StoreLocation storeLocation)
@@ -2594,6 +2487,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowItemNotFound(storePath, CertificateProviderItem.Store);
             }
+
             if (s_storeCache != null)
             {
                 if (s_storeCache.Location != storeLocation ||
@@ -2617,19 +2511,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets X509NativeStore objects or their name at the specified path.
         /// </summary>
-        ///
         /// <param name="path"> path to the store </param>
-        ///
         /// <param name="recurse"> recursively return all items if true </param>
-        ///
         /// <param name="returnNames">  </param>
-        ///
         /// <param name="filter"> filter info </param>
-        ///
-        /// <returns> Does not return a value </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <returns> Does not return a value.</returns>
         private void GetStoresOrNames(
             string path,
             bool recurse,
@@ -2730,6 +2616,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return filter;
         }
 
@@ -2741,6 +2628,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 includeArchivedCerts = true;
             }
+
             return includeArchivedCerts;
         }
 
@@ -2767,6 +2655,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     break;
 
                 case CertificatePurpose.DocumentEncryption:
@@ -2774,6 +2663,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     break;
 
                 default:
@@ -2921,7 +2811,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    } // CertificateProvider
+    }
 
     /// <summary>
     /// Defines a class to represent a store location in the certificate
@@ -2957,6 +2847,7 @@ namespace Microsoft.PowerShell.Commands
                 _location = value;
             }
         }
+
         private StoreLocation _location = StoreLocation.CurrentUser;
 
         /// <summary>
@@ -3040,6 +2931,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 match = true;
             }
+
             return match;
         }
 
@@ -3200,7 +3092,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly char[] s_separators = new char[] { '/', '\\' };
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_separators);
             string[] result = null;
@@ -3312,7 +3204,7 @@ namespace Microsoft.PowerShell.Commands
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
             if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) &&
-                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
+                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture) == -1)
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
                 try
@@ -3390,6 +3282,7 @@ namespace Microsoft.PowerShell.Commands
 
                 s_isWin8Set = true;
             }
+
             return s_isWin8;
         }
 

@@ -36,6 +36,7 @@ namespace System.Management.Automation.Interpreter
         public bool IsBoxed
         {
             get { return (_flags & IsBoxedFlag) != 0; }
+
             set
             {
                 if (value)
@@ -121,6 +122,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return 0;
             }
+
             return _parameter.GetHashCode() ^ _index.GetHashCode();
         }
 
@@ -162,6 +164,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     existing.ChildScopes = new List<VariableScope>();
                 }
+
                 existing.ChildScopes.Add(newScope);
             }
             else
@@ -226,6 +229,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return DefineLocal(var, 0).Index;
             }
+
             return index;
         }
 
@@ -243,6 +247,7 @@ namespace System.Management.Automation.Interpreter
                 local = scope.Variable;
                 return true;
             }
+
             if (_closureVariables != null && _closureVariables.TryGetValue(var, out local))
             {
                 return true;
@@ -263,6 +268,7 @@ namespace System.Management.Automation.Interpreter
             {
                 res[keyValue.Key] = keyValue.Value.Variable;
             }
+
             return res;
         }
 
@@ -291,6 +297,7 @@ namespace System.Management.Automation.Interpreter
             {
                 _closureVariables = new Dictionary<ParameterExpression, LocalVariable>();
             }
+
             LocalVariable result = new LocalVariable(_closureVariables.Count, true, false);
             _closureVariables.Add(variable, result);
             return result;

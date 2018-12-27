@@ -30,7 +30,10 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool SiteBinderCanOptimize { get { return false; } }
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
@@ -38,7 +41,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">object to retrieve the PSMemberInfo from</param>
         /// <param name="memberName">name of the member to be retrieved</param>
-        /// <returns>The PSMemberInfo corresponding to memberName from obj</returns>
+        /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
             PSProperty property;
@@ -62,7 +65,7 @@ namespace System.Management.Automation
                 object invokeGetValue = entry.InvokeGet(memberName);
                 // if entry.Properties[memberName] returns empty value and invokeGet non-empty
                 // value..take invokeGet's value. This will fix bug Windows Bug 121188.
-                if ((null == collection) || ((null == collection.Value) && (null != invokeGetValue)))
+                if ((collection == null) || ((collection.Value == null) && (invokeGetValue != null)))
                 {
                     valueToTake = invokeGetValue;
                 }
@@ -115,6 +118,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return null;
         }
 
@@ -129,7 +133,7 @@ namespace System.Management.Automation
         /// to the properties available in it.
         /// </summary>
         /// <param name="obj">object to get all the member information from</param>
-        /// <returns>all members in obj</returns>
+        /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
             DirectoryEntry entry = (DirectoryEntry)obj;
@@ -160,6 +164,7 @@ namespace System.Management.Automation
                     members.Add(new PSProperty(property.PropertyName, this, obj, property) as T);
                 }
             }
+
             return members;
         }
 
@@ -171,7 +176,7 @@ namespace System.Management.Automation
         /// Returns the value from a property coming from a previous call to GetMember
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to GetMember</param>
-        /// <returns>The value of the property</returns>
+        /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
             return property.adapterData;
@@ -187,7 +192,7 @@ namespace System.Management.Automation
         {
             PropertyValueCollection values = property.adapterData as PropertyValueCollection;
 
-            if (null != values)
+            if (values != null)
             {
                 // This means GetMember returned PropertyValueCollection
                 try
@@ -249,7 +254,7 @@ namespace System.Management.Automation
         /// Returns true if the property is settable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is settable</returns>
+        /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
             return true;
@@ -259,7 +264,7 @@ namespace System.Management.Automation
         /// Returns true if the property is gettable
         /// </summary>
         /// <param name="property">property to check</param>
-        /// <returns>true if the property is gettable</returns>
+        /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
             return true;
@@ -270,7 +275,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">PSProperty obtained in a previous GetMember</param>
         /// <param name="forDisplay">True if the result is for display purposes only</param>
-        /// <returns>the name of the type corresponding to the member</returns>
+        /// <returns>The name of the type corresponding to the member.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
             object value = null;
@@ -281,6 +286,7 @@ namespace System.Management.Automation
             catch (GetValueException)
             {
             }
+
             var type = value == null ? typeof(object) : value.GetType();
             return forDisplay ? ToStringCodeMethods.Type(type) : type.FullName;
         }
@@ -300,7 +306,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="method">the non empty return from GetMethods</param>
         /// <param name="arguments">the arguments to use</param>
-        /// <returns>the return value for the method</returns>
+        /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
             ParameterInformation[] parameters = new ParameterInformation[arguments.Length];
@@ -348,7 +354,7 @@ namespace System.Management.Automation
             // this code is reached only on exception
             // check if there is a dotnet method, invoke the dotnet method if available
             PSMethod dotNetmethod = s_dotNetAdapter.GetDotNetMethod<PSMethod>(method.baseObject, method.name);
-            if (null != dotNetmethod)
+            if (dotNetmethod != null)
             {
                 return dotNetmethod.Invoke(arguments);
             }
@@ -359,7 +365,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of the method in the object
         /// </summary>
-        /// <returns>the string representation of the method in the object</returns>
+        /// <returns>The string representation of the method in the object.</returns>
         protected override string MethodToString(PSMethod method)
         {
             StringBuilder returnValue = new StringBuilder();
@@ -368,6 +374,7 @@ namespace System.Management.Automation
                 returnValue.Append(overload);
                 returnValue.Append(", ");
             }
+
             returnValue.Remove(returnValue.Length - 2, 2);
             return returnValue.ToString();
         }

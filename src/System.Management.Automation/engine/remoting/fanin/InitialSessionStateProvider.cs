@@ -66,10 +66,10 @@ namespace System.Management.Automation.Remoting
         internal string AssemblyName;
         internal string EndPointConfigurationTypeName;
         internal Type EndPointConfigurationType;
-        internal Nullable<int> MaxReceivedObjectSizeMB;
-        internal Nullable<int> MaxReceivedCommandSizeMB;
+        internal int? MaxReceivedObjectSizeMB;
+        internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
-        internal Nullable<PSThreadOptions> ShellThreadOptions;
+        internal PSThreadOptions? ShellThreadOptions;
 
 #if !CORECLR // No ApartmentState In CoreCLR
         internal Nullable<System.Threading.ApartmentState> ShellThreadApartmentState;
@@ -141,12 +141,14 @@ namespace System.Management.Automation.Remoting
                         AssertValueNotAssigned(SESSIONCONFIGTOKEN, SessionConfigurationData);
                         SessionConfigurationData = PSSessionConfigurationData.Create(optionValue);
                     }
+
                     break;
                 case CONFIGFILEPATH:
                     {
                         AssertValueNotAssigned(CONFIGFILEPATH, ConfigFilePath);
                         ConfigFilePath = optionValue.ToString();
                     }
+
                     break;
                 default:
                     // we dont need to evaluate PSVersion and other custom authz
@@ -180,9 +182,9 @@ namespace System.Management.Automation.Remoting
         /// <returns>
         /// If value is specified, specified value as int . otherwise null.
         /// </returns>
-        private static Nullable<int> GetIntValueInBytes(string optionValueInMB)
+        private static int? GetIntValueInBytes(string optionValueInMB)
         {
-            Nullable<int> result = null;
+            int? result = null;
             try
             {
                 double variableValue = (double)LanguagePrimitives.ConvertTo(optionValueInMB,
@@ -287,12 +289,12 @@ namespace System.Management.Automation.Remoting
             }
 
             // assign defaults after parsing the xml content.
-            if (null == result.MaxReceivedObjectSizeMB)
+            if (result.MaxReceivedObjectSizeMB == null)
             {
                 result.MaxReceivedObjectSizeMB = BaseTransportManager.MaximumReceivedObjectSize;
             }
 
-            if (null == result.MaxReceivedCommandSizeMB)
+            if (result.MaxReceivedCommandSizeMB == null)
             {
                 result.MaxReceivedCommandSizeMB = BaseTransportManager.MaximumReceivedDataSize;
             }
@@ -301,7 +303,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException">
@@ -363,7 +364,6 @@ namespace System.Management.Automation.Remoting
         public abstract InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
@@ -383,7 +383,7 @@ namespace System.Management.Automation.Remoting
         /// User Identity for which this information is requested
         /// </param>
         /// <returns></returns>
-        public virtual Nullable<int> GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
+        public virtual int? GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedObjectSize;
         }
@@ -397,7 +397,7 @@ namespace System.Management.Automation.Remoting
         /// User Identity for which this information is requested
         /// </param>
         /// <returns></returns>
-        public virtual Nullable<int> GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
+        public virtual int? GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedDataSize;
         }
@@ -433,7 +433,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="isDisposing"></param>
         protected virtual void Dispose(bool isDisposing)
@@ -445,7 +444,6 @@ namespace System.Management.Automation.Remoting
         #region GetInitialSessionState from 3rd party shell ids
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shellId"></param>
         /// <param name="initializationParameters">
@@ -504,7 +502,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shellId">
         /// shellId for which the assembly is getting loaded
@@ -540,7 +537,7 @@ namespace System.Management.Automation.Remoting
                     assemblyName, shellId);
 
                 assembly = LoadSsnStateProviderAssembly(applicationBase, assemblyName);
-                if (null == assembly)
+                if (assembly == null)
                 {
                     throw PSTraceSource.NewArgumentException("assemblyName", RemotingErrorIdStrings.UnableToLoadAssembly,
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -548,7 +545,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // configuration xml specified an assembly and typetoload.
-            if (null != assembly)
+            if (assembly != null)
             {
                 try
                 {
@@ -557,7 +554,7 @@ namespace System.Management.Automation.Remoting
                         typeToLoad, shellId);
 
                     Type type = assembly.GetType(typeToLoad, true, true);
-                    if (null == type)
+                    if (type == null)
                     {
                         throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                             typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -673,14 +670,15 @@ namespace System.Management.Automation.Remoting
                     s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
 
-                if (null != result)
+                if (result != null)
                 {
                     return result;
                 }
+
                 s_tracer.WriteLine("Loading assembly from path {0}", applicationBase);
                 try
                 {
-                    String assemblyPath;
+                    string assemblyPath;
                     if (!Path.IsPathRooted(assemblyName))
                     {
                         if (!String.IsNullOrEmpty(applicationBase) && Directory.Exists(applicationBase))
@@ -697,6 +695,7 @@ namespace System.Management.Automation.Remoting
                         //Rooted path of dll is provided.
                         assemblyPath = assemblyName;
                     }
+
                     result = Assembly.LoadFrom(assemblyPath);
                 }
                 catch (FileLoadException e)
@@ -720,6 +719,7 @@ namespace System.Management.Automation.Remoting
                     Directory.SetCurrentDirectory(originalDirectory);
                 }
             }
+
             return result;
         }
 
@@ -808,7 +808,6 @@ namespace System.Management.Automation.Remoting
     internal sealed class DefaultRemotePowerShellConfiguration : PSSessionConfiguration
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <returns></returns>
@@ -898,7 +897,6 @@ namespace System.Management.Automation.Remoting
         internal TypeValidationCallback ValidationCallback;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="callback"></param>
@@ -1030,7 +1028,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1062,7 +1059,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1094,7 +1090,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1126,7 +1121,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1147,7 +1141,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1195,7 +1188,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1248,7 +1240,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1444,7 +1435,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="context">execution context</param>
         /// <param name="scriptInfo">the ExternalScriptInfo object</param>
-        /// <returns>configuration hashtable</returns>
+        /// <returns>Configuration hashtable.</returns>
         internal static Hashtable LoadConfigFile(ExecutionContext context, ExternalScriptInfo scriptInfo)
         {
             object result;
@@ -1474,7 +1465,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="table">configuration hashtable</param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns>true if valid, false otherwise</returns>
+        /// <returns>True if valid, false otherwise.</returns>
         internal static bool VerifyConfigTable(Hashtable table, PSCmdlet cmdlet, string path)
         {
             bool hasSchemaVersion = false;
@@ -1513,7 +1504,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static void ValidatePS1XMLExtension(string key, string[] paths, string filePath)
         {
@@ -1541,7 +1531,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static void ValidatePS1OrPSM1Extension(string key, string[] paths, string filePath)
         {
@@ -1571,7 +1560,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="table"></param>
         /// <param name="filePath"></param>
@@ -2073,7 +2061,7 @@ namespace System.Management.Automation.Remoting
                     throw ioe;
                 }
 
-                if (null != modules)
+                if (modules != null)
                 {
                     Collection<ModuleSpecification> modulesToImport = new Collection<ModuleSpecification>();
                     foreach (object module in modules)
@@ -2087,14 +2075,14 @@ namespace System.Management.Automation.Remoting
                         else
                         {
                             Hashtable moduleHash = module as Hashtable;
-                            if (null != moduleHash)
+                            if (moduleHash != null)
                             {
                                 moduleSpec = new ModuleSpecification(moduleHash);
                             }
                         }
 
                         // Now add the moduleSpec to modulesToImport
-                        if (null != moduleSpec)
+                        if (moduleSpec != null)
                         {
                             if (string.Equals(InitialSessionState.CoreModule, moduleSpec.Name,
                                               StringComparison.OrdinalIgnoreCase))
@@ -2115,6 +2103,7 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     iss.ImportPSModule(modulesToImport);
                 }
             }
@@ -2485,7 +2474,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // If it's just a string, this is a visible command
-                String command = commandObject as String;
+                string command = commandObject as string;
                 if (!String.IsNullOrEmpty(command))
                 {
                     ProcessVisibleCommand(iss, command, commandModuleNames);
@@ -2584,6 +2573,7 @@ namespace System.Management.Automation.Remoting
                     {
                         currentParameterModification[parameterModification] = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     }
+
                     HashSet<string> currentParameterModificationValue = (HashSet<string>)currentParameterModification[parameterModification];
 
                     foreach (string parameterModificationValue in TryGetStringArray(parameter[parameterModification]))
@@ -2888,6 +2878,7 @@ namespace System.Management.Automation.Remoting
                         }
                     }
                 }
+
                 return null;
             }
 
@@ -2904,6 +2895,7 @@ namespace System.Management.Automation.Remoting
                     return null;
                 }
             }
+
             return result;
         }
     }

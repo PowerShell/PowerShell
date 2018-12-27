@@ -30,11 +30,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return catalogFilePath;
             }
+
             set
             {
                 catalogFilePath = value;
             }
         }
+
         private string catalogFilePath;
 
         /// <summary>
@@ -47,11 +49,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return path;
             }
+
             set
             {
                 path = value;
             }
         }
+
         private string[] path;
         //
         // name of this command
@@ -94,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
                     {
-                        if (ShouldProcess("Including path " + tempPath.ProviderPath, "", ""))
+                        if (ShouldProcess("Including path " + tempPath.ProviderPath, string.Empty, string.Empty))
                         {
                             paths.Add(tempPath.ProviderPath);
                         }
@@ -152,6 +156,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return catalogVersion;
             }
+
             set
             {
                 catalogVersion = value;
@@ -226,8 +231,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Detailed
         {
             get { return detailed; }
+
             set { detailed = value; }
         }
+
         private bool detailed = false;
 
         /// <summary>
@@ -240,6 +247,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return filesToSkip;
             }
+
             set
             {
                 filesToSkip = value;
@@ -250,6 +258,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string[] filesToSkip = null;
         internal WildcardPattern[] excludedPatterns = null;
 

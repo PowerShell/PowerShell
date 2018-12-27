@@ -93,35 +93,20 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
-            try
-            {
-                & $powershell -outp blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "IncorrectValueForFormatParameter"
-            }
+            { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
 
         It "Verify Validate Dollar Error Populated should throw exception" {
             $origEA = $ErrorActionPreference
             $ErrorActionPreference = "Stop"
-            try
-            {
-                $a = 1,2,3
+            $a = 1,2,3
+            $e = {
                 $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
-                $_.FullyQualifiedErrorId | Should -Be "CommandNotFoundException"
-            }
-            finally
-            {
-                $ErrorActionPreference = $origEA
-            }
+            } | Should -Throw -ErrorId "CommandNotFoundException" -PassThru
+
+            $e.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
+
+            $ErrorActionPreference = $origEA
         }
 
         It "Verify Validate Output Format As Text Explicitly Child Single Shell does not throw" {
@@ -131,15 +116,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
-            try
-            {
-                & $powershell -input blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "IncorrectValueForFormatParameter"
-            }
+            { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
     Context "CommandLine" {
@@ -321,6 +298,19 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             # Join (multiple lines) and remove whitespace (we don't care about spacing) to verify we converted to string (by generating a table)
             -join (& $powershell -noprofile -outputFormat text { [PSCustomObject]@{X=10;Y=20} }) -replace "\s","" | Should -Be "XY--1020"
         }
+
+        It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
+            $p = [Diagnostics.Process]::new()
+            $p.StartInfo.FileName = "pwsh"
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes("throw 'boom'"))
+            $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
+            $p.StartInfo.UseShellExecute = $false
+            $p.StartInfo.RedirectStandardError = $true
+            $p.Start() | Out-Null
+            $out = $p.StandardError.ReadToEnd()
+            $out | Should -Not -BeNullOrEmpty
+            $out.Split([Environment]::NewLine)[0] | Should -BeExactly "boom"
+        }
     }
 
     Context "Redirected standard output" {
@@ -388,7 +378,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input: <InteractiveSwitch>" -TestCases @(
+        It "Interactive redirected input: <InteractiveSwitch>" -Pending:($IsWindows) -TestCases @(
             @{InteractiveSwitch = ""}
             @{InteractiveSwitch = " -IntERactive"}
             @{InteractiveSwitch = " -i"}
@@ -415,7 +405,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             EnsureChildHasExited $process
         }
 
-        It "Interactive redirected input w/ initial command" {
+        It "Interactive redirected input w/ initial command" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -429,7 +419,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input explicit prompting (-File -)" {
+        It "Redirected input explicit prompting (-File -)" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
@@ -442,7 +432,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input no prompting (-Command -)" {
+        It "Redirected input no prompting (-Command -)" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -Command -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -475,7 +465,7 @@ foo
             EnsureChildHasExited $process
         }
 
-        It "Redirected input w/ nested prompt" {
+        It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$nestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$host.EnterNestedPrompt()`n")
@@ -496,15 +486,7 @@ foo
                 recurse $args
             }
 
-            try
-            {
-                recurse "args"
-                Throw "Incorrect exception"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "CallDepthOverflow"
-            }
+            { recurse "args" } | Should -Throw -ErrorId "CallDepthOverflow"
         }
     }
 
@@ -558,6 +540,74 @@ foo
             foreach ($expectedMatch in $expectedMatches)
             {
                 $outString | Should -Match $expectedMatch
+            }
+        }
+    }
+
+    Context "-WorkingDirectory parameter" {
+        BeforeAll {
+            $folderName = (New-Guid).ToString() + " test";
+            New-Item -Path ~/$folderName -ItemType Directory
+            $ExitCodeBadCommandLineParameter = 64
+        }
+
+        AfterAll {
+            Remove-Item ~/$folderName -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Can set working directory to '<value>'" -TestCases @(
+            @{ value = "~"            ; expectedPath = $((Get-Item ~).FullName) },
+            @{ value = "~/$folderName"; expectedPath = $((Get-Item ~/$folderName).FullName) },
+            @{ value = "~\$folderName"; expectedPath = $((Get-Item ~\$folderName).FullName) }
+        ) {
+            param($value, $expectedPath)
+            $output = & $powershell -NoProfile -WorkingDirectory "$value" -Command '(Get-Location).Path'
+            $output | Should -BeExactly $expectedPath
+        }
+
+        It "Can use '<parameter>' to set working directory" -TestCases @(
+            @{ parameter = '-workingdirectory' },
+            @{ parameter = '-wd' },
+            @{ parameter = '-wo' }
+        ) {
+            param($parameter)
+            $output = & $powershell -NoProfile $parameter ~ -Command "`$pwd.Path"
+            $output | Should -BeExactly $((Get-Item ~).FullName)
+        }
+
+        It "Error case if -WorkingDirectory isn't given argument as last on command line" {
+            $output = & $powershell -WorkingDirectory 2>&1
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+            $output | Should -Not -BeNullOrEmpty
+        }
+
+        It "-WorkingDirectory should be processed before profiles" {
+
+            if (Test-Path $PROFILE) {
+                $currentProfile = Get-Content $PROFILE
+            }
+            else {
+                New-Item -ItemType File -Path $PROFILE -Force
+            }
+
+            @"
+                (Get-Location).Path
+                Set-Location $testdrive
+"@ > $PROFILE
+
+            try {
+                $out = pwsh -workingdirectory ~ -c '(Get-Location).Path'
+                $out | Should -HaveCount 2
+                $out[0] | Should -BeExactly (Get-Item ~).FullName
+                $out[1] | Should -BeExactly "$testdrive"
+            }
+            finally {
+                if ($currentProfile) {
+                    Set-Content $PROFILE -Value $currentProfile
+                }
+                else {
+                    Remove-Item $PROFILE
+                }
             }
         }
     }
@@ -667,12 +717,36 @@ Describe "Pwsh exe resources tests" -Tag CI {
     It "Resource strings are embedded in the executable" -Skip:(!$IsWindows) {
         $pwsh = Get-Item -Path "$PSHOME\pwsh.exe"
         $pwsh.VersionInfo.FileVersion | Should -BeExactly $PSVersionTable.PSVersion.ToString().Split("-")[0]
-        "v" + $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
+        $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
         $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
     }
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {
         $osversion = [System.Environment]::OSVersion.Version
         $psversiontable.os | Should -MatchExactly "$($osversion.Major).$($osversion.Minor)"
+    }
+}
+
+Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
+    BeforeAll {
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $dirnames = "[T]est","[Test","T][est","Test"
+        $testcases = @()
+        foreach ( $d in $dirnames ) {
+            $null = New-Item -type Directory -path "${TESTDRIVE}/$d"
+            $testcases += @{ Dirname = $d }
+        }
+    }
+
+    It "pwsh can startup in a directory named <dirname>" -testcases $testcases {
+        param ( $dirname )
+        try {
+            Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
+            $result = & $powershell -c '(Get-Item .).Name'
+            $result | Should -BeExactly $dirname
+        }
+        finally {
+            Pop-Location
+        }
     }
 }

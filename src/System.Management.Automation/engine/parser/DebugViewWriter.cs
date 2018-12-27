@@ -86,6 +86,7 @@ namespace System.Management.Automation.Language {
         private void Indent() {
             _delta += Tab;
         }
+
         private void Dedent() {
             _delta -= Tab;
         }
@@ -106,6 +107,7 @@ namespace System.Management.Automation.Language {
                     id = ids.Count + 1;
                     ids.Add(e, id);
                 }
+
                 return id;
             }
         }
@@ -181,6 +183,7 @@ namespace System.Management.Automation.Language {
                     Write(new String(' ', Depth));
                     break;
             }
+
             Write(s);
             _flow = after;
         }
@@ -189,6 +192,7 @@ namespace System.Management.Automation.Language {
             _out.WriteLine();
             _column = 0;
         }
+
         private void Write(string s) {
             _out.Write(s);
             _column += s.Length;
@@ -212,6 +216,7 @@ namespace System.Management.Automation.Language {
                     flow &= ~Flow.Break;
                 }
             }
+
             return flow;
         }
 
@@ -278,6 +283,7 @@ namespace System.Management.Automation.Language {
                 if (variable.IsByRef) {
                     Out("&");
                 }
+
                 Out(" ");
                 VisitParameter(variable);
             });
@@ -294,12 +300,15 @@ namespace System.Management.Automation.Language {
                         if (open == '{' || expressions.Count > 1) {
                             NewLine();
                         }
+
                         isFirst = false;
                     } else {
                         Out(separator.ToString(), Flow.NewLine);
                     }
+
                     visit(e);
                 }
+
                 Dedent();
             }
 
@@ -318,6 +327,7 @@ namespace System.Management.Automation.Language {
             if (open == '{') {
                 NewLine();
             }
+
             Out(close.ToString(), Flow.Break);
         }
 
@@ -403,16 +413,19 @@ namespace System.Management.Automation.Language {
                             op
                     );
                 }
+
                 Out(beforeOp, op, Flow.Space | Flow.Break);
 
                 if (parenthesizeRight) {
                     Out("(", Flow.None);
                 }
+
                 Visit(node.Right);
                 if (parenthesizeRight) {
                     Out(Flow.None, ")", Flow.Break);
                 }
             }
+
             return node;
         }
 
@@ -428,6 +441,7 @@ namespace System.Management.Automation.Language {
             } else {
                 Out(GetDisplayName(node.Name));
             }
+
             return node;
         }
 
@@ -474,6 +488,7 @@ namespace System.Management.Automation.Language {
                 Dedent();
                 Out(Flow.NewLine, ") {", Flow.NewLine);
             }
+
             Indent();
             Visit(node.IfTrue);
             Dedent();
@@ -516,6 +531,7 @@ namespace System.Management.Automation.Language {
                         value));
                 }
             }
+
             return node;
         }
 
@@ -523,21 +539,27 @@ namespace System.Management.Automation.Language {
             if (type == typeof(UInt32)) {
                 return "U";
             }
+
             if (type == typeof(Int64)) {
                 return "L";
             }
+
             if (type == typeof(UInt64)) {
                 return "UL";
             }
+
             if (type == typeof(Double)) {
                 return "D";
             }
+
             if (type == typeof(Single)) {
                 return "F";
             }
+
             if (type == typeof(Decimal)) {
                 return "M";
             }
+
             return null;
         }
 
@@ -628,6 +650,7 @@ namespace System.Management.Automation.Language {
                         // Need to have parenthesis for the right operand.
                         return child == binary.Right;
                 }
+
                 return true;
             }
 
@@ -782,6 +805,7 @@ namespace System.Management.Automation.Language {
             } else {
                 Out("<UnknownType>");
             }
+
             Out(".");
             Out(node.Method.Name);
             VisitExpressions('(', node.Arguments);
@@ -795,9 +819,11 @@ namespace System.Management.Automation.Language {
                 VisitExpressions('[', node.Expressions);
             } else {
                 // .NewArray MyType {expr1, expr2}
+
                 Out(".NewArray " + node.Type.ToString(), Flow.Space);
                 VisitExpressions('{', node.Expressions);
             }
+
             return node;
         }
 
@@ -813,6 +839,7 @@ namespace System.Management.Automation.Language {
             } else {
                 VisitExpressions('{', node.Arguments);
             }
+
             return node;
         }
 
@@ -859,6 +886,7 @@ namespace System.Management.Automation.Language {
                     Out(Flow.Space, ".TypeEqual", Flow.Space);
                     break;
             }
+
             Out(node.TypeOperand.ToString());
             return node;
         }
@@ -902,6 +930,7 @@ namespace System.Management.Automation.Language {
                     } else {
                         Out(".Throw", Flow.Space);
                     }
+
                     break;
                 case ExpressionType.IsFalse:
                     Out(".IsFalse");
@@ -946,6 +975,7 @@ namespace System.Management.Automation.Language {
                     Out("++");
                     break;
             }
+
             return node;
         }
 
@@ -995,15 +1025,17 @@ namespace System.Management.Automation.Language {
             if (node.ContinueLabel != null) {
                 DumpLabel(node.ContinueLabel);
             }
+
             Out(" {", Flow.NewLine);
             Indent();
             Visit(node.Body);
             Dedent();
             Out(Flow.NewLine, "}");
             if (node.BreakLabel != null) {
-                Out("", Flow.NewLine);
+                Out(string.Empty, Flow.NewLine);
                 DumpLabel(node.BreakLabel);
             }
+
             return node;
         }
 
@@ -1013,6 +1045,7 @@ namespace System.Management.Automation.Language {
                 Visit(test);
                 Out("):", Flow.NewLine);
             }
+
             Indent(); Indent();
             Visit(node.Body);
             Dedent(); Dedent();
@@ -1033,6 +1066,7 @@ namespace System.Management.Automation.Language {
                 Dedent(); Dedent();
                 NewLine();
             }
+
             Out("}");
             return node;
         }
@@ -1040,13 +1074,15 @@ namespace System.Management.Automation.Language {
         protected override CatchBlock VisitCatchBlock(CatchBlock node) {
             Out(Flow.NewLine, "} .Catch (" + node.Test.ToString());
             if (node.Variable != null) {
-                Out(Flow.Space, "");
+                Out(Flow.Space, string.Empty);
                 VisitParameter(node.Variable);
             }
+
             if (node.Filter != null) {
                 Out(") .If (", Flow.Break);
                 Visit(node.Filter);
             }
+
             Out(") {", Flow.NewLine);
             Indent();
             Visit(node.Body);
@@ -1150,6 +1186,7 @@ namespace System.Management.Automation.Language {
             if (String.IsNullOrEmpty(lambda.Name)) {
                 return "#Lambda" + GetLambdaId(lambda);
             }
+
             return GetDisplayName(lambda.Name);
         }
 
@@ -1163,6 +1200,7 @@ namespace System.Management.Automation.Language {
                     return true;
                 }
             }
+
             return false;
         }
 

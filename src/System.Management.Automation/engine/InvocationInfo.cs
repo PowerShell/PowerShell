@@ -33,15 +33,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for InvocationInfo object
         /// </summary>
-        ///
         /// <param name="commandInfo">
         /// The command information the invocation info represents.
         /// </param>
-        ///
         /// <param name="scriptPosition">
         /// The position representing the invocation, or the position representing the error.
         /// </param>
-        ///
         internal InvocationInfo(CommandInfo commandInfo, IScriptExtent scriptPosition)
             : this(commandInfo, scriptPosition, null)
         {
@@ -51,19 +48,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for InvocationInfo object
         /// </summary>
-        ///
         /// <param name="commandInfo">
         /// The command information the invocation info represents.
         /// </param>
-        ///
         /// <param name="scriptPosition">
         /// The position representing the invocation, or the position representing the error.
         /// </param>
-        ///
         /// <param name="context">
         /// The context in which the InvocationInfo is being created.
         /// </param>
-        ///
         internal InvocationInfo(CommandInfo commandInfo, IScriptExtent scriptPosition, ExecutionContext context)
         {
             MyCommand = commandInfo;
@@ -119,6 +112,7 @@ namespace System.Management.Automation
             {
                 scriptEndPosition = scriptPosition;
             }
+
             _scriptPosition = new ScriptExtent(scriptPosition, scriptEndPosition);
 
             MyCommand = RemoteCommandInfo.FromPSObjectForRemoting(psObject);
@@ -130,7 +124,7 @@ namespace System.Management.Automation
             var list = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_PipelineIterationInfo");
             if (list != null)
             {
-                PipelineIterationInfo = (int[])list.ToArray(typeof(Int32));
+                PipelineIterationInfo = (int[])list.ToArray(typeof(int));
             }
             else
             {
@@ -209,6 +203,7 @@ namespace System.Management.Automation
                 return _boundParameters ??
                        (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }
+
             internal set { _boundParameters = value; }
         }
 
@@ -218,6 +213,7 @@ namespace System.Management.Automation
         public List<object> UnboundArguments
         {
             get { return _unboundArguments ?? (_unboundArguments = new List<object>()); }
+
             internal set { _unboundArguments = value; }
         }
 
@@ -252,7 +248,7 @@ namespace System.Management.Automation
         /// <value>The script name or "" if there was no script.</value>
         public string ScriptName
         {
-            get { return ScriptPosition.File ?? ""; }
+            get { return ScriptPosition.File ?? string.Empty; }
         }
 
         /// <summary>
@@ -315,7 +311,8 @@ namespace System.Management.Automation
         /// <value>The name string.</value>
         public string InvocationName
         {
-            get { return _invocationName ?? ""; }
+            get { return _invocationName ?? string.Empty; }
+
             internal set { _invocationName = value; }
         }
 
@@ -383,6 +380,7 @@ namespace System.Management.Automation
                     return _scriptPosition;
                 }
             }
+
             set { _scriptPosition = value; }
         }
 
@@ -455,9 +453,7 @@ namespace System.Management.Automation
     public class RemoteCommandInfo : CommandInfo
     {
         /// <summary>
-        ///
         /// </summary>
-        ///
         private RemoteCommandInfo(string name, CommandTypes type)
             : base(name, type)
         {
@@ -487,6 +483,7 @@ namespace System.Management.Automation
                 commandInfo._definition = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Definition");
                 commandInfo.Visibility = RemotingDecoder.GetPropertyValue<SessionStateEntryVisibility>(psObject, "CommandInfo_Visibility");
             }
+
             return commandInfo;
         }
 

@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return Length(str, 0);
         }
+
         internal virtual int Length(string str, int offset)
         {
             return str.Length - offset;
@@ -37,6 +38,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetHeadSplitLength(str, 0, displayCells);
         }
+
         internal virtual int GetHeadSplitLength(string str, int offset, int displayCells)
         {
             int len = str.Length - offset;
@@ -47,6 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return GetTailSplitLength(str, 0, displayCells);
         }
+
         internal virtual int GetTailSplitLength(string str, int offset, int displayCells)
         {
             int len = str.Length - offset;
@@ -63,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="offset">offset inside the string</param>
         /// <param name="displayCells">number of display cells</param>
         /// <param name="head">if true compute from the head (i.e. k++) else from the tail (i.e. k--)</param>
-        /// <returns>number of characters that would fit</returns>
+        /// <returns>Number of characters that would fit.</returns>
         protected int GetSplitLengthInternalHelper(string str, int offset, int displayCells, bool head)
         {
             int filledDisplayCellsCount = 0; // number of cells that are filled in
@@ -99,6 +102,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 k = (head) ? (k + 1) : (k - 1);
             }
+
             return charactersAdded;
         }
         #endregion
@@ -154,7 +158,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal virtual void ExecuteBufferPlayBack(DoPlayBackCall playback) { }
 
-        ///
         /// <summary>
         /// The number of columns the current device has
         /// </summary>
@@ -187,6 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             _isStopping = true;
         }
+
         private bool _isStopping;
 
         internal void CheckStopProcessing()

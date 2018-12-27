@@ -172,21 +172,15 @@ Describe "Assign readonly/constant variables" -Tags "CI" {
 
 Describe "Attribute error position" -Tags "CI" {
     It "Ambiguous overloads" {
-        try
-        {
+        $e =  {
             & {
                 param(
                     [ValidateNotNull(1,2,3,4)]
                     $param
                 )
             }
-            throw "Should have thrown"
-        }
-        catch
-        {
-            $_.InvocationInfo.Line | Should -Match ValidateNotNull
-            $_.FullyQualifiedErrorId | Should -Be MethodCountCouldNotFindBest
-        }
+        } | Should -Throw -PassThru -ErrorId 'MethodCountCouldNotFindBest'
+        $e.InvocationInfo.Line | Should -Match ValidateNotNull
     }
 }
 
@@ -216,5 +210,96 @@ Describe "Members of System.Type" -Tags "CI" {
 
         [type] | Get-Member ImplementedInterfaces | Should -Be 'System.Collections.Generic.IEnumerable[type] ImplementedInterfaces {get;}'
         [MyType].ImplementedInterfaces | Should -Be System.Collections.IEnumerable
+    }
+}
+
+Describe "Hash expression with if statement as value" -Tags "CI" {
+    BeforeAll {
+        # With no extra new lines after if-statement
+        $hash1 = @{
+            a = if (1) {'a'}
+            b = 'b'
+            c = if (0) {2} elseif (1) {'c'}
+            d = 'd'
+            e = if (0) {2} elseif (0) {2} else {'e'}
+            f = 'f'
+            g = if (0) {2} else {'g'}
+            h = 'h'
+        }
+
+        # With extra new lines after if-statement
+        $hash2 = @{
+            a = if (1) {'a'}
+
+            b = 'b'
+            c = if (0) {2} elseif (1) {'c'}
+
+            d = 'd'
+            e = if (0) {2} elseif (0) {2} else {'e'}
+
+            f = 'f'
+            g = if (0) {2} else {'g'}
+
+            h = 'h'
+        }
+
+        # With expanded if-statement
+        $hash3 = @{
+            a = if (1)
+                {
+                    'a'
+                }
+            b = 'b'
+            c = if (0)
+                {
+                    2
+                }
+                elseif (1)
+                {
+                    'c'
+                }
+            d = 'd'
+            e = if (0)
+                {
+                    2
+                }
+                elseif (0)
+                {
+                    2
+                }
+                else
+                {
+                    'e'
+                }
+            f = 'f'
+            g = if (0)
+                {
+                    2
+                }
+                else
+                {
+                    'g'
+                }
+            h = 'h'
+        }
+
+        $testCases = @(
+            @{ name = "No extra new lines"; hash = $hash1 }
+            @{ name = "With extra new lines"; hash = $hash2 }
+            @{ name = "With expanded if-statement"; hash = $hash3 }
+        )
+    }
+
+    It "Key-value pairs after an if-statement-value in a HashExpression should continue to be parsed - <name>" -TestCases $testCases {
+        param($hash)
+
+        $hash['a'] | Should -BeExactly 'a'
+        $hash['b'] | Should -BeExactly 'b'
+        $hash['c'] | Should -BeExactly 'c'
+        $hash['d'] | Should -BeExactly 'd'
+        $hash['e'] | Should -BeExactly 'e'
+        $hash['f'] | Should -BeExactly 'f'
+        $hash['g'] | Should -BeExactly 'g'
+        $hash['h'] | Should -BeExactly 'h'
     }
 }

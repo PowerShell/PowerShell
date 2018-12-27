@@ -28,25 +28,30 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary> the number</summary>
         [Parameter(ParameterSetName = netSetName, Mandatory = true, Position = 0)]
+        [ValidateTrustedData]
         public string TypeName { get; set; } = null;
 
 #if !UNIX
         private Guid _comObjectClsId = Guid.Empty;
-        /// <summary> the ProgID of the Com object</summary>
+        /// <summary>
+        /// The ProgID of the Com object.
+        /// </summary>
         [Parameter(ParameterSetName = "Com", Mandatory = true, Position = 0)]
+        [ValidateTrustedData]
         public string ComObject { get; set; } = null;
 #endif
 
         /// <summary>
-        /// The parameters for the constructor
+        /// The parameters for the constructor.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = netSetName, Mandatory = false, Position = 1)]
+        [ValidateTrustedData]
         [Alias("Args")]
         public object[] ArgumentList { get; set; } = null;
 
         /// <summary>
-        /// True if we should have an error when Com objects will use an interop assembly
+        /// True if we should have an error when Com objects will use an interop assembly.
         /// </summary>
         [Parameter(ParameterSetName = "Com")]
         public SwitchParameter Strict { get; set; }
@@ -56,10 +61,11 @@ namespace Microsoft.PowerShell.Commands
         /// gets the properties to be set.
         /// </summary>
         [Parameter]
+        [ValidateTrustedData]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary Property { get; set; }
 
-        # endregion parameters
+        #endregion parameters
 
         #region private
         private object CallConstructor(Type type, ConstructorInfo[] constructors, object[] args)
@@ -141,26 +147,42 @@ namespace Microsoft.PowerShell.Commands
                         if (e.InnerException != null && e.InnerException is TypeResolver.AmbiguousTypeException)
                         {
                             ThrowTerminatingError(
-                            new ErrorRecord(
-                                e,
-                                "AmbiguousTypeReference",
-                                ErrorCategory.InvalidType, null));
+                                new ErrorRecord(
+                                    e,
+                                    "AmbiguousTypeReference",
+                                    ErrorCategory.InvalidType,
+                                    targetObject: null));
                         }
 
                         mshArgE = PSTraceSource.NewArgumentException(
-                        "TypeName",
-                        NewObjectStrings.TypeNotFound,
-                        TypeName);
+                            "TypeName",
+                            NewObjectStrings.TypeNotFound,
+                            TypeName);
+
                         ThrowTerminatingError(
                             new ErrorRecord(
                                 mshArgE,
                                 "TypeNotFound",
-                                ErrorCategory.InvalidType, null));
+                                ErrorCategory.InvalidType,
+                                targetObject: null));
                     }
+
                     throw e;
                 }
 
                 Diagnostics.Assert(type != null, "LanguagePrimitives.TryConvertTo failed but returned true");
+
+                if (type.IsByRefLike)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            PSTraceSource.NewInvalidOperationException(
+                                NewObjectStrings.CannotInstantiateBoxedByRefLikeType,
+                                type),
+                            nameof(NewObjectStrings.CannotInstantiateBoxedByRefLikeType),
+                            ErrorCategory.InvalidOperation,
+                            targetObject: null));
+                }
 
                 if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
@@ -190,6 +212,7 @@ namespace Microsoft.PowerShell.Commands
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                         }
+
                         WriteObject(_newObject);
                         return;
                     }
@@ -214,6 +237,7 @@ namespace Microsoft.PowerShell.Commands
                                 "ConstructorCalledThrowException",
                                 ErrorCategory.InvalidOperation, null));
                         }
+
                         WriteObject(_newObject);
                         return;
                     }
@@ -230,6 +254,7 @@ namespace Microsoft.PowerShell.Commands
                             // Win8:649519
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                         }
+
                         WriteObject(_newObject);
                         return;
                     }
@@ -287,15 +312,17 @@ namespace Microsoft.PowerShell.Commands
                          ErrorCategory.InvalidArgument, comObject));
                     }
                 }
+
                 if (comObject != null && Property != null)
                 {
                     // Win8:649519
                     comObject = LanguagePrimitives.SetObjectProperties(comObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                 }
+
                 WriteObject(comObject);
             }
 #endif
-        }//protected override void BeginProcessing()
+        }
 
         #endregion Overrides
 
@@ -370,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
         private class ComCreateInfo
         {
-            public Object objectCreated;
+            public object objectCreated;
             public bool success;
             public Exception e;
         }
@@ -397,6 +424,7 @@ namespace Microsoft.PowerShell.Commands
                     info.success = false;
                     return;
                 }
+
                 info.objectCreated = SafeCreateInstance(type, ArgumentList);
                 info.success = true;
             }
@@ -422,6 +450,7 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(mshArgE, "CannotLoadComObjectType", ErrorCategory.InvalidType, null));
                 }
+
                 return SafeCreateInstance(type, ArgumentList);
             }
             catch (COMException e)
@@ -473,10 +502,10 @@ namespace Microsoft.PowerShell.Commands
         // HResult code '-2147417850' - Cannot change thread mode after it is set.
         private const int RPC_E_CHANGED_MODE = unchecked((int)0x80010106);
         private const string netSetName = "Net";
-    }//internal class NewObjectCommand: PSCmdlet
+    }
 
     /// <summary>
-    /// Native methods for dealing with COM objects
+    /// Native methods for dealing with COM objects.
     /// </summary>
     internal class NewObjectNativeMethods
     {

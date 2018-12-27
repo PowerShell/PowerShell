@@ -23,7 +23,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable variable twice should throw Exception"{
 		New-Variable foo bogus
 
-		$e = { New-Variable foo bar -Scope 1 -EA Stop } |
+		$e = { New-Variable foo bar -Scope 1 -ErrorAction Stop } |
 		    Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateException"
 
@@ -38,7 +38,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable ReadOnly variable twice should throw Exception"{
 		New-Variable foo bogus -option ReadOnly
 
-		$e = { New-Variable foo bar -Scope 1 -EA Stop } |
+		$e = { New-Variable foo bar -Scope 1 -ErrorAction Stop } |
 		    Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateException"
 
@@ -197,11 +197,11 @@ Describe "New-Variable" -Tags "CI" {
 
     Context "Scope Tests" {
     BeforeAll {
-        if ( get-variable -scope global -name globalVar1 -ea SilentlyContinue )
+        if ( get-variable -scope global -name globalVar1 -ErrorAction SilentlyContinue )
         {
             Remove-Variable -scope global -name globalVar1
         }
-        if ( get-variable -scope script -name scriptvar -ea SilentlyContinue )
+        if ( get-variable -scope script -name scriptvar -ErrorAction SilentlyContinue )
         {
             remove-variable -scope script -name scriptvar
         }
@@ -222,7 +222,7 @@ Describe "New-Variable" -Tags "CI" {
         get-variable -Scope global -name globalVar1 -ValueOnly | Should -Be 1
     }
     It "Should be able to create a local scope variable using the local switch" {
-        Get-Variable -scope local -name localvar -ValueOnly -ea silentlycontinue | Should -BeNullOrEmpty
+        Get-Variable -scope local -name localvar -ValueOnly -ErrorAction silentlycontinue | Should -BeNullOrEmpty
         New-Variable -Scope local -Name localVar -value 10
         get-variable -scope local -name localvar -ValueOnly | Should -Be 10
     }

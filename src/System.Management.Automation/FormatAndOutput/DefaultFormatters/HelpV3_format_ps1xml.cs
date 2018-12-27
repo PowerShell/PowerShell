@@ -100,9 +100,11 @@ namespace System.Management.Automation.Runspaces
                             .AddScriptBlockExpressionBinding(@"function GetParam
 {
     if(-not $_.Parameters) { return $null }
+
     $_.Parameters.Parameter | ForEach-Object {
         if($_.type) { $param = ""[$($_.type.name)] `$$($_.name), "" }
         else { $param = ""[object] `$$($_.name), "" }
+
         $params += $param
     }
 
@@ -254,19 +256,11 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                     .EndEntry()
                 .EndControl();
 
-            var control6 = CustomControl.Create()
-                    .StartEntry()
-                        .AddText(StringUtil.Format("[{0}]", HelpDisplayStrings.CommonWorkflowParameters))
-                    .EndEntry()
-                .EndControl();
-
             var control5 = CustomControl.Create()
                     .StartEntry()
                         .AddPropertyExpressionBinding(@"name")
                         .AddText(" ")
                         .AddPropertyExpressionBinding(@"Parameter", enumerateCollection: true, customControl: sharedControls[1])
-                        .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.WorkflowCommonParameters -eq $true", customControl: control6)
-                        .AddText(" ")
                         .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.CommonParameters -eq $true", customControl: control7)
                         .AddNewline()
                         .AddNewline()
@@ -340,18 +334,6 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                     .EndEntry()
                 .EndControl();
 
-            var control15 = CustomControl.Create()
-                    .StartEntry()
-                        .AddText(HelpDisplayStrings.CommonWorkflowParameters)
-                        .AddNewline()
-                        .StartFrame(leftIndent: 4)
-                            .AddText(HelpDisplayStrings.BaseWorkflowCmdletInformation)
-                        .EndFrame()
-                        .AddNewline()
-                        .AddNewline()
-                    .EndEntry()
-                .EndControl();
-
             var control14 = CustomControl.Create()
                     .StartEntry()
                         .AddText("-")
@@ -376,21 +358,11 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                     .EndEntry()
                 .EndControl();
 
-            var control11 = CustomControl.Create()
-                    .StartEntry()
-                        .AddText("[")
-                        .AddText(HelpDisplayStrings.CommonWorkflowParameters)
-                        .AddText("]")
-                    .EndEntry()
-                .EndControl();
-
             var control10 = CustomControl.Create()
                     .StartEntry()
                         .AddPropertyExpressionBinding(@"name")
                         .AddText(" ")
                         .AddPropertyExpressionBinding(@"Parameter", enumerateCollection: true, customControl: sharedControls[1])
-                        .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.WorkflowCommonParameters -eq $true", customControl: control11)
-                        .AddText(" ")
                         .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.CommonParameters -eq $true", customControl: control12)
                         .AddNewline()
                         .AddNewline()
@@ -429,7 +401,6 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
                             .AddPropertyExpressionBinding(@"Parameters", customControl: control13)
-                            .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.WorkflowCommonParameters -eq $true", customControl: control15)
                             .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.CommonParameters -eq $true", customControl: control16)
                             .AddScriptBlockExpressionBinding(@" ", selectedByScript: "($_.CommonParameters -eq $false) -and ($_.parameters.parameter.count -eq 0)", customControl: control17)
                         .EndFrame()
@@ -493,18 +464,6 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
                             .AddText(HelpDisplayStrings.BaseCmdletInformation)
-                        .EndFrame()
-                        .AddNewline()
-                        .AddNewline()
-                    .EndEntry()
-                .EndControl();
-
-            var control29 = CustomControl.Create()
-                    .StartEntry()
-                        .AddText(HelpDisplayStrings.CommonWorkflowParameters)
-                        .AddNewline()
-                        .StartFrame(leftIndent: 4)
-                            .AddText(HelpDisplayStrings.BaseWorkflowCmdletInformation)
                         .EndFrame()
                         .AddNewline()
                         .AddNewline()
@@ -584,21 +543,11 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                     .EndEntry()
                 .EndControl();
 
-            var control21 = CustomControl.Create()
-                    .StartEntry()
-                        .AddText("[")
-                        .AddText(HelpDisplayStrings.CommonWorkflowParameters)
-                        .AddText("]")
-                    .EndEntry()
-                .EndControl();
-
             var control20 = CustomControl.Create()
                     .StartEntry()
                         .AddPropertyExpressionBinding(@"name")
                         .AddText(" ")
                         .AddPropertyExpressionBinding(@"Parameter", enumerateCollection: true, customControl: sharedControls[1])
-                        .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.WorkflowCommonParameters -eq $true", customControl: control21)
-                        .AddText(" ")
                         .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.CommonParameters -eq $true", customControl: control22)
                         .AddNewline()
                         .AddNewline()
@@ -637,7 +586,6 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
                             .AddPropertyExpressionBinding(@"Parameters", customControl: control23)
-                            .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.WorkflowCommonParameters -eq $true", customControl: control29)
                             .AddScriptBlockExpressionBinding(@" ", selectedByScript: "$_.CommonParameters -eq $true", customControl: control30)
                             .AddScriptBlockExpressionBinding(@" ", selectedByScript: "($_.CommonParameters -eq $false) -and ($_.parameters.parameter.count -eq 0)", customControl: control31)
                             .AddNewline()

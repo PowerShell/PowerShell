@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     [Alias("gtz")]
     public class GetTimeZoneCommand : PSCmdlet
     {
-#region Parameters
+        #region Parameters
 
         /// <summary>
         /// A list of the local time zone ids that the cmdlet should look up.
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name { get; set; }
 
-#endregion Parameters
+        #endregion Parameters
 
         /// <summary>
         /// Implementation of the ProcessRecord method for Get-TimeZone
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else // ParameterSetName == "Name"
             {
-                if (null != Name)
+                if (Name != null)
                 {
                     // lookup each time zone name (or wildcard pattern)
                     foreach (string tzname in Name)
@@ -124,13 +124,13 @@ namespace Microsoft.PowerShell.Commands
     [Alias("stz")]
     public class SetTimeZoneCommand : PSCmdlet
     {
-#region string constants
+        #region string constants
 
         private const string TimeZoneTarget = "Local System";
 
-#endregion string constants
+        #endregion string constants
 
-#region Parameters
+        #region Parameters
 
         /// <summary>
         /// The name of the local time zone that the system should use.
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
-#endregion Parameters
+        #endregion Parameters
 
         /// <summary>
         /// Implementation of the ProcessRecord method for Get-TimeZone
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#region Helper functions
+        #region Helper functions
 
         /// <summary>
         /// True if the current process has access to change the time zone setting.
@@ -424,9 +424,9 @@ namespace Microsoft.PowerShell.Commands
             throw new Win32Exception(error);
         }
 
-#endregion Helper functions
+        #endregion Helper functions
 
-#region Win32 interop helper
+        #region Win32 interop helper
 
         internal class NativeMethods
         {
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
             {
             }
 
-#region Native DLL locations
+            #region Native DLL locations
 
             private const string SetDynamicTimeZoneApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
             private const string GetTimeZoneInformationForYearApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
@@ -449,9 +449,9 @@ namespace Microsoft.PowerShell.Commands
             private const string CloseHandleApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
             private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";
 
-#endregion Native DLL locations
+            #endregion Native DLL locations
 
-#region Win32 SetDynamicTimeZoneInformation imports
+            #region Win32 SetDynamicTimeZoneInformation imports
 
             /// <summary>
             /// Used to marshal win32 SystemTime structure to managed code layer
@@ -604,9 +604,9 @@ namespace Microsoft.PowerShell.Commands
             [DllImport(GetTimeZoneInformationForYearApiDllName, SetLastError = true)]
             public static extern bool GetTimeZoneInformationForYear([In] ushort wYear, [In] ref DYNAMIC_TIME_ZONE_INFORMATION pdtzi, ref TIME_ZONE_INFORMATION ptzi);
 
-#endregion Win32 SetDynamicTimeZoneInformation imports
+            #endregion Win32 SetDynamicTimeZoneInformation imports
 
-#region Win32 AdjustTokenPrivilege imports
+            #region Win32 AdjustTokenPrivilege imports
 
             /// <summary>
             /// Definition of TOKEN_QUERY constant from Win32 API
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Definition of SE_TIME_ZONE_NAME constant from Win32 API
             /// </summary>
-            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; //http://msdn.microsoft.com/en-us/library/bb530716(VS.85).aspx
+            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; //http://msdn.microsoft.com/library/bb530716(VS.85).aspx
 
             /// <summary>
             /// PInvoke GetCurrentProcess API
@@ -715,9 +715,9 @@ namespace Microsoft.PowerShell.Commands
                 public int Attributes;
             }
 
-#endregion Win32 AdjustTokenPrivilege imports
+            #endregion Win32 AdjustTokenPrivilege imports
 
-#region Win32 SendMessage imports
+            #region Win32 SendMessage imports
 
             /// <summary>
             /// Definition of WM_SETTINGCHANGE constant from Win32 API
@@ -748,10 +748,10 @@ namespace Microsoft.PowerShell.Commands
             [DllImport(SendMessageTimeoutApiDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, ref int lpdwResult);
 
-#endregion Win32 SendMessage imports
+            #endregion Win32 SendMessage imports
         }
 
-#endregion Win32 interop helper
+        #endregion Win32 interop helper
     }
 
 #endif
@@ -760,14 +760,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal static class TimeZoneHelper
     {
-#region Error Ids
+        #region Error Ids
 
         internal const string TimeZoneNotFoundError = "TimeZoneNotFound";
         internal const string MultipleMatchingTimeZonesError = "MultipleMatchingTimeZones";
         internal const string InsufficientPermissionsError = "InsufficientPermissions";
         internal const string SetTimeZoneFailedError = "SetTimeZoneFailed";
 
-#endregion Error Ids
+        #endregion Error Ids
 
         /// <summary>
         /// Find the system time zone by checking first against StandardName and then,

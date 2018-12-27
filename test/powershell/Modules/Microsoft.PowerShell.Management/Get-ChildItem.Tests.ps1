@@ -38,20 +38,60 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
         }
 
-        It "Should list the contents of the home directory" {
-            pushd $HOME
-            (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
-            popd
+        It "Should list the contents of the root folder using Drive:\ notation" {
+            (Get-ChildItem TestDrive:\).Name.Length | Should -BeGreaterThan 0
         }
 
-        It "Should have a the proper fields and be populated" {
+        It "Should list the contents of the root folder using Drive:\ notation from within another folder" {
+            try
+            {
+                Push-Location -Path TestDrive:\$item_E
+                (Get-ChildItem TestDrive:\ -File).Name.Length | Should -BeExactly 4
+            }
+            finally
+            {
+                Pop-Location
+            }
+        }
+
+        It "Should list the contents of the current folder using Drive: notation when in the root" {
+            (Get-ChildItem TestDrive:).Name.Length | Should -BeGreaterThan 0
+        }
+
+        It "Should list the contents of the current folder using Drive: notation when not in the root" {
+            try
+            {
+                Push-Location -Path TestDrive:\$item_E
+                (Get-ChildItem TestDrive:).Name | Should -BeExactly $item_G
+            }
+            finally
+            {
+                Pop-Location
+            }
+        }
+
+        It "Should list the contents of the home directory" {
+            Push-Location $HOME
+            (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
+            Pop-Location
+        }
+
+        It "Should have all the proper fields and be populated" {
             $var = Get-Childitem .
 
             $var.Name.Length   | Should -BeGreaterThan 0
             $var.Mode.Length   | Should -BeGreaterThan 0
             $var.LastWriteTime | Should -BeGreaterThan 0
             $var.Length.Length | Should -BeGreaterThan 0
+        }
 
+        It "Should have mode property populated for protected files on Windows" -Skip:(!$IsWindows) {
+            $files = Get-Childitem -Force ~\NT*
+            $files.Count | Should -BeGreaterThan 0
+            foreach ($file in $files)
+            {
+                $file.Mode | Should -Not -BeNullOrEmpty
+            }
         }
 
         It "Should list files in sorted order" {
@@ -101,7 +141,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
         }
-        
+
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
             param($Parameters, $ExpectedCount)
 
@@ -119,6 +159,15 @@ Describe "Get-ChildItem" -Tags "CI" {
             Remove-Item $file2 -ErrorAction SilentlyContinue -Force
             (Get-ChildItem -Path $searchRoot -File -Recurse).Count | Should -Be 1
             (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should -Be 1
+        }
+
+        # VSTS machines don't have a page file
+        It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending {
+            # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
+            $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
+            $file | Should not be $null
+            $file.Count | Should be 1
+            $file.Name | Should be "pagefile.sys"
         }
     }
 

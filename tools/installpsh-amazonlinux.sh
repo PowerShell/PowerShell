@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 #Companion code for the blog https://cloudywindows.com
 #call this code direction from the web with:
@@ -18,12 +20,13 @@
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
 
-VERSION="1.1.2"
+VERSION="1.2.0"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=amazonlinux
 repobased=false
 gitscriptname="installpsh-amazonlinux.psh"
+pwshlink=/usr/bin/pwsh
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
@@ -120,19 +123,20 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
-SUDO=''
-if (( $EUID != 0 )); then
-    SUDO='sudo'
+#Check for sudo if not root
+if [[ "${CI}" == "true" ]]; then
+    echo "Running on CI (as determined by env var CI set to true), skipping SUDO check."
+    set -- "$@" '-skip-sudo-check'
 fi
 
-#Check that sudo is available
-if [[ "$SUDO" -eq "sudo" ]]; then
-
-    $SUDO -v
-    if [ $? -ne 0 ]; then
-      echo "ERROR: You must either be root or be able to use sudo" >&2
-      exit 5
+SUDO=''
+if (( $EUID != 0 )); then
+    #Check that sudo is available
+    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+        SUDO='sudo'
+    else
+        echo "ERROR: You must either be root or be able to use sudo" >&2
+        #exit 5
     fi
 fi
 
@@ -149,16 +153,28 @@ $SUDO yum install -y \
         libcurl \
         openssl \
         libuuid.x86_64 \
+        tar \
+        gzip \
     && yum clean all
 
 ##END Check requirements and prerequisites
 
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+
+echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-preview' switch is used"
+
+if [[ "'$*'" =~ preview ]] ; then
+    echo
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
+    release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+    pwshlink=/usr/bin/pwsh-preview
+else
+    echo "Finding the latest production release"
+    release=$(curl https://api.github.com/repos/PowerShell/PowerShell/releases | grep -Po '"tag_name":(\d*?,|.*?[^\\]",)' | grep -Po '\d+.\d+.\d+[\da-z.-]*' | grep -v '[a-z]' | sort | tail -n1)
+fi
 
 #DIRECT DOWNLOAD
-pwshlink=/usr/bin/pwsh
 package=powershell-${release}-linux-x64.tar.gz
 downloadurl=https://github.com/PowerShell/PowerShell/releases/download/v$release/$package
 
@@ -210,7 +226,7 @@ fi
 
 if [[ "'$*'" =~ -interactivetesting ]] ; then
     echo
-    echo "Amazon Linux does not have a desktop manager to support vscode, ignoring -includeide"
+    echo "Amazon Linux does not have a desktop manager to support vscode, ignoring -interactivetesting"
 fi
 
 if [[ "$repobased" == true ]] ; then

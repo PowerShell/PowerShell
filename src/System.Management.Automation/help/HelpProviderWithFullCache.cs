@@ -6,7 +6,6 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProviderWithFullCache provides a pseudo implementation of HelpProvider
     /// at which results are fully cached in a hashtable after initial cache load.
     ///
@@ -14,7 +13,6 @@ namespace System.Management.Automation
     /// help contents for this provider can be loaded once and be used for later
     /// search. So logically class derived from this class only need to provide
     /// a way to load and initialize help cache.
-    ///
     /// </summary>
     internal abstract class HelpProviderWithFullCache : HelpProviderWithCache
     {
@@ -30,13 +28,14 @@ namespace System.Management.Automation
         /// since this is no need for children class to override this member.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>The HelpInfo found. Null if nothing is found</returns>
+        /// <returns>The HelpInfo found. Null if nothing is found.</returns>
         internal sealed override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             if (!this.CacheFullyLoaded)
             {
                 LoadCache();
             }
+
             this.CacheFullyLoaded = true;
 
             return base.ExactMatchHelp(helpRequest);
@@ -62,13 +61,14 @@ namespace System.Management.Automation
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal sealed override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             if (!this.CacheFullyLoaded)
             {
                 LoadCache();
             }
+
             this.CacheFullyLoaded = true;
 
             return base.SearchHelp(helpRequest, searchOnlyContent);
@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// since this is no need for children class to override this member.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal sealed override IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
         {
             return null;

@@ -8,20 +8,19 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     using System.Management.Automation;
 
     /// <summary>
-    /// Implements a facade around ShowCommandParameterInfo and its deserialized counterpart
+    /// Implements a facade around ShowCommandParameterInfo and its deserialized counterpart.
     /// </summary>
     public class ShowCommandParameterType
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandParameterType class based on a Type object
+        /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
-        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandParameterType(Type other)
         {
-            if (null == other)
+            if (other == null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -43,15 +42,14 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandParameterType class based on a Type object
+        /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
-        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandParameterType(PSObject other)
         {
-            if (null == other)
+            if (other == null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -74,37 +72,37 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// The full name of the outermost type
+        /// The full name of the outermost type.
         /// </summary>
         public string FullName { get; private set; }
 
         /// <summary>
-        /// Whether or not this type is an enum
+        /// Whether or not this type is an enum.
         /// </summary>
         public bool IsEnum { get; private set; }
 
         /// <summary>
-        /// Whether or not this type is an dictionary
+        /// Whether or not this type is an dictionary.
         /// </summary>
         public bool ImplementsDictionary { get; private set; }
 
         /// <summary>
-        /// Whether or not this enum has a flag attribute
+        /// Whether or not this enum has a flag attribute.
         /// </summary>
         public bool HasFlagAttribute { get; private set; }
 
         /// <summary>
-        /// Whether or not this type is an array type
+        /// Whether or not this type is an array type.
         /// </summary>
         public bool IsArray { get; private set; }
 
         /// <summary>
-        /// Gets the inner type, if this corresponds to an array type
+        /// Gets the inner type, if this corresponds to an array type.
         /// </summary>
         public ShowCommandParameterType ElementType { get; private set; }
 
         /// <summary>
-        /// Whether or not this type is a string
+        /// Whether or not this type is a string.
         /// </summary>
         public bool IsString
         {
@@ -115,7 +113,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Whether or not this type is an script block
+        /// Whether or not this type is an script block.
         /// </summary>
         public bool IsScriptBlock
         {
@@ -126,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Whether or not this type is a bool
+        /// Whether or not this type is a bool.
         /// </summary>
         public bool IsBoolean
         {
@@ -137,7 +135,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Whether or not this type is a switch parameter
+        /// Whether or not this type is a switch parameter.
         /// </summary>
         public bool IsSwitch
         {
@@ -148,7 +146,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// If this is an enum value, return the list of potential values
+        /// If this is an enum value, return the list of potential values.
         /// </summary>
         public ArrayList EnumValues { get; private set; }
     }

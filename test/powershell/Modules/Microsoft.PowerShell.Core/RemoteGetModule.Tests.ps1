@@ -3,18 +3,28 @@
 Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (!$IsWindows) {
+
+        if (!$IsWindows)
+        {
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
-        } else {
-            $pssession = New-RemoteSession
-            # pending https://github.com/PowerShell/PowerShell/issues/4819
-            # $cimsession = New-RemoteSession -CimSession
+            return
         }
+
+        $pssession = New-RemoteSession
+        # pending https://github.com/PowerShell/PowerShell/issues/4819
+        # $cimsession = New-RemoteSession -CimSession
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+
+        if (!$IsWindows)
+        {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return
+        }
+
+        if ($pssession -ne $null) { Remove-PSSession $pssession -ErrorAction SilentlyContinue }
     }
 
     It "Get-Module fails if not using -ListAvailable with '<parameter>'" -TestCases @(
@@ -23,7 +33,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
     ) {
         param($parameter, $value)
         $parameters = @{$parameter=$value}
-        { Get-Module @parameters -ErrorAction Stop } | ShouldBeErrorId "RemoteDiscoveryWorksOnlyInListAvailableMode,Microsoft.PowerShell.Commands.GetModuleCommand"
+        { Get-Module @parameters -ErrorAction Stop } | Should -Throw -ErrorId "RemoteDiscoveryWorksOnlyInListAvailableMode,Microsoft.PowerShell.Commands.GetModuleCommand"
     }
 
     It "Get-Module succeeds using -ListAvailable with '<parameter>'" -TestCases @(
@@ -73,7 +83,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
     }
 
     It "Failure if -Name and -FullyQualifiedName are both specified" {
-        { Get-Module -Name foo -FullyQualifiedName @{ModuleName='foo'} -ErrorAction Stop } | ShouldBeErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.GetModuleCommand"
+        { Get-Module -Name foo -FullyQualifiedName @{ModuleName='foo'} -ErrorAction Stop } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.GetModuleCommand"
     }
 
     It "Get-Module supports pipeline" {

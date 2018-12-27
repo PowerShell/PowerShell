@@ -33,11 +33,13 @@ namespace Microsoft.WSMan.Management
         public bool SkipCACheck
         {
             get { return _SkipCACheck; }
+
             set
             {
                 _SkipCACheck = value;
             }
         }
+
         private bool _SkipCACheck;
 
         /// <summary>
@@ -46,26 +48,29 @@ namespace Microsoft.WSMan.Management
         public bool SkipCNCheck
         {
             get { return _SkipCNCheck; }
+
             set
             {
                 _SkipCNCheck = value;
             }
         }
+
         private bool _SkipCNCheck;
 
         /// <summary>
         /// property
         /// </summary>
-        ///
         public bool SkipRevocationCheck
         {
             get { return _SkipRevocationCheck; }
+
             set
             {
                 _SkipRevocationCheck = value;
             }
 
         }
+
         private bool _SkipRevocationCheck;
 
         /// <summary>
@@ -74,11 +79,13 @@ namespace Microsoft.WSMan.Management
         public bool UseEncryption
         {
             get { return _useencryption; }
+
             set
             {
                 _useencryption = value;
             }
         }
+
         private bool _useencryption = true;
 
         /// <summary>
@@ -87,11 +94,13 @@ namespace Microsoft.WSMan.Management
         public bool UseUtf16
         {
             get { return _UTF16; }
+
             set
             {
                 _UTF16 = value;
             }
         }
+
         private bool _UTF16;
 
         /// <summary>
@@ -100,11 +109,13 @@ namespace Microsoft.WSMan.Management
         public ProxyAuthentication ProxyAuthentication
         {
             get { return _ProxyAuthentication; }
+
             set
             {
                 _ProxyAuthentication = value;
             }
         }
+
         private ProxyAuthentication _ProxyAuthentication;
 
         /// <summary>
@@ -114,6 +125,7 @@ namespace Microsoft.WSMan.Management
         public int SPNPort
         {
             get { return _SPNPort; }
+
             set
             {
                 _SPNPort = value;
@@ -128,11 +140,13 @@ namespace Microsoft.WSMan.Management
         public int OperationTimeout
         {
             get { return _OperationTimeout; }
+
             set
             {
                 _OperationTimeout = value;
             }
         }
+
         private int _OperationTimeout;
 
         /// <summary>
@@ -141,11 +155,13 @@ namespace Microsoft.WSMan.Management
         public NetworkCredential ProxyCredential
         {
             get { return _ProxyCredential; }
+
             set
             {
                 _ProxyCredential = value;
             }
         }
+
         private NetworkCredential _ProxyCredential;
 
         /// <summary>
@@ -154,6 +170,7 @@ namespace Microsoft.WSMan.Management
         public ProxyAccessType ProxyAccessType
         {
             get { return _proxyaccesstype; }
+
             set
             {
                 _proxyaccesstype = value;

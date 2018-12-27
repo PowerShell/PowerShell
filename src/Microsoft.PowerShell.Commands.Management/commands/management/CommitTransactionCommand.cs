@@ -25,6 +25,6 @@ namespace Microsoft.PowerShell.Commands
                 this.Context.TransactionManager.Commit();
             }
         }
-    } // CommitTransactionCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

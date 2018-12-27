@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="id">Local repository scheduled job definition id</param>
         /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>ScheduledJobDefinition object</returns>
+        /// <returns>ScheduledJobDefinition object.</returns>
         internal ScheduledJobDefinition GetJobDefinitionById(
             Int32 id,
             bool writeErrorsAndWarnings = true)
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="ids">Local repository scheduled job definition ids</param>
         /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>List of ScheduledJobDefinition objects</returns>
+        /// <returns>List of ScheduledJobDefinition objects.</returns>
         internal List<ScheduledJobDefinition> GetJobDefinitionsById(
             Int32[] ids,
             bool writeErrorsAndWarnings = true)
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="name">Scheduled job definition name</param>
         /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>ScheduledJobDefinition object</returns>
+        /// <returns>ScheduledJobDefinition object.</returns>
         internal ScheduledJobDefinition GetJobDefinitionByName(
             string name,
             bool writeErrorsAndWarnings = true)
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="names">Scheduled job definition names</param>
         /// <param name="writeErrorsAndWarnings">Errors/warnings are written to host</param>
-        /// <returns>List of ScheduledJobDefinition objects</returns>
+        /// <returns>List of ScheduledJobDefinition objects.</returns>
         internal List<ScheduledJobDefinition> GetJobDefinitionsByName(
             string[] names,
             bool writeErrorsAndWarnings = true)
@@ -370,10 +370,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionParamValues);
             }
+
             if (repInterval < TimeSpan.FromMinutes(1))
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionIntervalValue);
             }
+
             if (repInterval > repDuration)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidRepetitionInterval);

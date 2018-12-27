@@ -13,35 +13,21 @@ When adding new tests, place them in the directories as [outlined below](#test-l
 
 ## CI System
 
-We use [AppVeyor](http://www.appveyor.com/) as a continuous integration (CI) system for Windows
-and [Travis CI](http://www.travis-ci.com) for non-Windows platforms.
+We use [Azure DevOps](https://azure.microsoft.com/en-us/solutions/devops) as a continuous integration (CI) system for Windows
+and non-Windows platforms.
 
-### AppVeyor
-
-In the `README.md` at the top of the repo, you can see AppVeyor badge.
+In the `README.md` at the top of the repository, you can see Azure CI badge.
 It indicates the last build status of `master` branch.
 Hopefully, it's green:
 
-![AppVeyor-Badge-Green.png](Images/AppVeyor-Badge-Green.png)
-
-This badge is **clickable**; you can open corresponding build page with logs, artifacts, and tests results.
-From there you can easily navigate to the build history.
-
-### Travis CI
-
-Travis CI works similarly to AppVeyor.
-For Travis CI there will be multiple badges.
-The badges indicate the last build status of `master` branch for different platforms.
-Hopefully, it's green:
-
-![Travis-CI-Badge-Green.png](Images/Travis-CI-Badge-Green.png)
+![AzDevOps-Success.png](Images/AzDevOps-Success.png)
 
 This badge is **clickable**; you can open corresponding build page with logs, artifacts, and tests results.
 From there you can easily navigate to the build history.
 
 ### Getting CI Results
 
-CI System builds (AppVeyor and Travis CI) and runs tests on every pull request and provides quick feedback about it.
+CI System builds and runs tests on every pull request and provides quick feedback about it.
 
 ![AppVeyor-Github](Images/AppVeyor-Github.png)
 
@@ -108,13 +94,10 @@ Currently, we have a minuscule number of tests which are run by using xUnit.
 When working on new features or fixes, it is natural to want to run those tests locally before making a PR.
 Three helper functions are part of the build.psm1 module to help with that:
 
-* `Restore-PSPester` will restore Pester, which is needed to run `Start-PSPester`
 * `Start-PSPester` will execute all Pester tests which are run by the CI system
 * `Start-PSxUnit` will execute the available xUnit tests run by the CI system
 
 Our CI system runs these as well; there should be no difference between running these on your dev system, versus in CI.
-
-Make sure that you run `Restore-PSPester` before running `Start-PSPester`, or it will fail to run.
 
 When running tests in this way, be sure that you have started PowerShell with `-noprofile` as some tests will fail if the
 environment is not the default or has any customization.

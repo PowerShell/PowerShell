@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// Adds an event to the event queue
+        /// Adds an event to the event queue.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public string SourceIdentifier
@@ -26,15 +26,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
-        /// Data relating to this event
+        /// Data relating to this event.
         /// </summary>
         [Parameter(Position = 1)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -44,15 +46,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sender;
             }
+
             set
             {
                 _sender = value;
             }
         }
+
         private PSObject _sender = null;
 
         /// <summary>
-        /// Data relating to this event
+        /// Data relating to this event.
         /// </summary>
         [Parameter(Position = 2)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -62,6 +66,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _eventArguments;
             }
+
             set
             {
                 if (_eventArguments != null)
@@ -70,10 +75,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private PSObject[] _eventArguments = new PSObject[0];
 
         /// <summary>
-        /// Data relating to this event
+        /// Data relating to this event.
         /// </summary>
         [Parameter(Position = 3)]
         public PSObject MessageData
@@ -82,17 +88,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _messageData;
             }
+
             set
             {
                 _messageData = value;
             }
         }
+
         private PSObject _messageData = null;
 
         #endregion parameters
 
         /// <summary>
-        /// Add the event to the event queue
+        /// Add the event to the event queue.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -112,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Object messageSender = null;
+            object messageSender = null;
             if (_sender != null) { messageSender = _sender.BaseObject; }
 
             // And then generate the event

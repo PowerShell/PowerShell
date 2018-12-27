@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Types of breakpoints
+    /// Types of breakpoints.
     /// </summary>
     public enum BreakpointType
     {
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     };
 
     /// <summary>
-    /// This class implements Remove-PSBreakpoint
+    /// This class implements Remove-PSBreakpoint.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = "Script", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113325")]
     [OutputType(typeof(Breakpoint))]
@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region parameters
         /// <summary>
-        /// Scripts of the breakpoints to output
+        /// Scripts of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
         [Parameter(ParameterSetName = "Script", Position = 0, ValueFromPipeline = true)]
@@ -47,15 +47,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _script;
             }
+
             set
             {
                 _script = value;
             }
         }
+
         private string[] _script;
 
         /// <summary>
-        /// IDs of the breakpoints to output
+        /// IDs of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
         [Parameter(ParameterSetName = "Id", Mandatory = true, Position = 0, ValueFromPipeline = true)]
@@ -66,15 +68,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _id;
             }
+
             set
             {
                 _id = value;
             }
         }
+
         private int[] _id;
 
         /// <summary>
-        /// Variables of the breakpoints to output
+        /// Variables of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
         [Parameter(ParameterSetName = "Variable", Mandatory = true)]
@@ -85,15 +89,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _variable;
             }
+
             set
             {
                 _variable = value;
             }
         }
+
         private string[] _variable;
 
         /// <summary>
-        /// Commands of the breakpoints to output
+        /// Commands of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
         [Parameter(ParameterSetName = "Command", Mandatory = true)]
@@ -104,15 +110,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _command;
             }
+
             set
             {
                 _command = value;
             }
         }
+
         private string[] _command;
 
         /// <summary>
-        /// Commands of the breakpoints to output
+        /// Commands of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Type is OK for a cmdlet parameter")]
@@ -124,17 +132,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _type;
             }
+
             set
             {
                 _type = value;
             }
         }
+
         private BreakpointType[] _type;
 
         #endregion parameters
 
         /// <summary>
-        /// remove breakpoints
+        /// Remove breakpoints.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -206,6 +216,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return true;
                                 }
+
                                 break;
 
                             case BreakpointType.Command:
@@ -213,6 +224,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return true;
                                 }
+
                                 break;
 
                             case BreakpointType.Variable:
@@ -220,6 +232,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return true;
                                 }
+
                                 break;
                         }
 
