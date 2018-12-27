@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
             set-strictmode -v 2

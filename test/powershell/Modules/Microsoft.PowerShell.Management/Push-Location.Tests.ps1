@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 Describe "Test-Push-Location" -Tags "CI" {
     New-Variable -Name startDirectory -Value $(Get-Location).Path -Scope Global -Force
 

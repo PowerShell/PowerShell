@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
     $testAliases        = "TestAliases"

@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 Describe "Remove-Item" -Tags "CI" {
     $testpath = $TestDrive
     $testfile = "testfile.txt"

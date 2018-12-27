@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 	It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{
 		New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true

@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 Describe "Get-ItemProperty" -Tags "CI" {
     $currentDirectory = Split-Path $PSScriptRoot -Leaf
     $parentDirectory  = Split-Path (Join-Path -Path $PSScriptRoot -ChildPath "..") -Leaf

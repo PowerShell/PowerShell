@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 Add-TestDynamicType
 

@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "")]
-param()
 
 Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
     It "Get-Alias Bogus Scope Name should throw PSArgumentException"{
