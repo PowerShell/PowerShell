@@ -17,8 +17,10 @@ namespace System.Management.Automation.Unicode
     /// </summary>
     internal static partial class SimpleCaseFolding
     {
-        private static ushort refL1 = L1[0];
-        private static ushort refL3 = L3[0];
+        //private static ref ushort refL1 => ref L1[0];
+        //private static ref ushort refL3 => ref L3[0];
+        //private static ushort refL1 = L3[0];
+        //private static ushort refL3 = L3[0];
 
         /// <summary>
         /// Simple case folding of the char (Utf16).
@@ -32,13 +34,17 @@ namespace System.Management.Automation.Unicode
         {
             //var v = Unsafe.Add(ref refL1, 1);
             //var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
-            //var v = Unsafe.Add(ref L1, c >> 8);
-            //var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
+            var v = Unsafe.Add(ref L1[0], c >> 8);
+            var ch = Unsafe.Add(ref L3[0], v + (c & 0xFF));
 
             //var v = L1[c >> 8];
             //var ch = L3[v + (c & 0xFF)];
-            var v = Unsafe.Add(ref refL1, c >> 8);
-            var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
+            //ref ushort L1a = ref L1[0];
+            //ref ushort L3a = ref L3[0];
+            //var v = Unsafe.Add(ref L1a, c >> 8);
+            //var ch = Unsafe.Add(ref L3a, v + (c & 0xFF));
+            //var v = Unsafe.Add(ref refL1, c >> 8);
+            //var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
             //var ch = Unsafe.Add(ref refL3, Unsafe.Add(ref refL1, c >> 8) + (c & 0xFF));
             //ushort ch = (ushort)v;
 
