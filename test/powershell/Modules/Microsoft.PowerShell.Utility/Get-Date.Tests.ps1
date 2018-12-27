@@ -29,7 +29,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
         $seconds | Should -Be "1577836800"
         if ($isLinux) {
-            $seconds | Should -Be (Get-Date --date='01/01/2020 UTC' +%s)
+            $seconds | Should -Be (date --date='01/01/2020 UTC' +%s)
         }
     }
 
