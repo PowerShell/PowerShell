@@ -580,7 +580,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// throw if file does not exist
         /// </summary>
-        /// <param name="filePath"> path to file</param>
+        /// <param name="filePath">path to file</param>
         /// <returns>Does not return a value.</returns>
         internal static void CheckIfFileExists(string filePath)
         {
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Internal
         /// check to see if the specified cert is suitable to be
         /// used as a code signing cert
         /// </summary>
-        /// <param name="c"> certificate object</param>
+        /// <param name="c">certificate object</param>
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
@@ -611,7 +611,7 @@ namespace System.Management.Automation.Internal
         /// used as an encryption cert for PKI encryption. Note
         /// that this cert doesn't require the private key.
         /// </summary>
-        /// <param name="c"> certificate object</param>
+        /// <param name="c">certificate object</param>
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForEncryption(X509Certificate2 c)
         {
@@ -658,7 +658,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// check if the specified cert has a private key in it
         /// </summary>
-        /// <param name="cert"> certificate object</param>
+        /// <param name="cert">certificate object</param>
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertHasPrivatekey(X509Certificate2 cert)
         {
@@ -668,7 +668,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the EKUs of a cert
         /// </summary>
-        /// <param name="cert"> certificate object</param>
+        /// <param name="cert">certificate object</param>
         /// <returns>A collection of cert eku strings.</returns>
         [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert an int to a DWORD
         /// </summary>
-        /// <param name="n"> signed int number</param>
+        /// <param name="n">signed int number</param>
         /// <returns>DWORD.</returns>
         internal static DWORD GetDWORDFromInt(int n)
         {
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert a DWORD to int
         /// </summary>
-        /// <param name="n"> number</param>
+        /// <param name="n">number</param>
         /// <returns>Int.</returns>
         internal static int GetIntFromDWORD(DWORD n)
         {

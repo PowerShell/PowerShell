@@ -4037,7 +4037,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="type">
         /// The type as specified by the user that should be parsed into a RegistryValueKind enum.
         /// </param>
-        /// <param name="kind"> output for the RegistryValueKind for the string</param>
+        /// <param name="kind">output for the RegistryValueKind for the string</param>
         /// <returns>
         /// true if the conversion succeeded
         /// </returns>
