@@ -420,7 +420,7 @@ namespace System.Management.Automation
         /// help item. Forcing each ExactMatchHelp to go through command discovery
         /// will make sure helpInfo for invalid command will not be returned.
         /// </remarks>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
@@ -778,7 +778,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the command.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file).</param>
+        /// <param name="helpFileIdentifier">Help file identifier (either name of PSSnapIn or simply full path to help file).</param>
         /// <param name="commandName">Name of the command.</param>
         /// <param name="helpCategory"></param>
         /// <returns>HelpInfo object.</returns>
@@ -807,7 +807,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the CommandInfo.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (simply full path to help file).</param>
+        /// <param name="helpFileIdentifier">Help file identifier (simply full path to help file).</param>
         /// <param name="commandInfo"></param>
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, CommandInfo commandInfo)
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Search help for a specific target.
         /// </summary>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content of all cmdlets.
         /// Otherwise, searches for pattern in the cmdlet names.
@@ -1216,8 +1216,8 @@ namespace System.Management.Automation
         /// Checks whether <paramref name="target"/> matches any of the patterns
         /// present in <paramref name="patterns"/>
         /// </summary>
-        /// <param name="target">content to search in.</param>
-        /// <param name="patterns">string patterns to look for.</param>
+        /// <param name="target">Content to search in.</param>
+        /// <param name="patterns">String patterns to look for.</param>
         /// <returns>
         /// true if <paramref name="target"/> contains any of the patterns
         /// present in <paramref name="patterns"/>
