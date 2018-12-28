@@ -2549,7 +2549,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the appropriate method overload for the given arguments and returns its result.
         /// </summary>
-        /// <param name="invocationConstraints">constraints </param>
+        /// <param name="invocationConstraints">constraints</param>
         /// <param name="arguments">arguments to the method</param>
         /// <returns>Return value from the method.</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>

@@ -6485,7 +6485,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="options">The set of options that are used while importing a module</param>
         /// <param name="manifestProcessingFlags">The manifest processing flags to use when processing the module</param>
         /// <param name="loadTypes">load the types files mentioned in the snapin registration</param>
-        /// <param name="loadFormats">Load the formst files mentioned in the snapin registration </param>
+        /// <param name="loadFormats">Load the formst files mentioned in the snapin registration</param>
         /// <param name="prefix">Command name prefix</param>
         /// <param name="found">Sets this to true if an assembly was found.</param>
         /// <returns>THe module info object that was created...</returns>
@@ -6516,7 +6516,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">The manifest processing flags to use when processing the module</param>
         /// <param name="prefix">Command name prefix</param>
         /// <param name="loadTypes">load the types files mentioned in the snapin registration</param>
-        /// <param name="loadFormats">Load the formst files mentioned in the snapin registration </param>
+        /// <param name="loadFormats">Load the formst files mentioned in the snapin registration</param>
         /// <param name="found">Sets this to true if an assembly was found.</param>
         /// <param name="shortModuleName">Short name for module.</param>
         /// <param name="disableFormatUpdates"></param>

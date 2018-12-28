@@ -31,8 +31,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serialization constructor for class PSSecurityException
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">streaming context</param>
         /// <returns>Constructed object.</returns>
         protected PSSecurityException(SerializationInfo info,
                            StreamingContext context)
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class PSSecurityException
         /// </summary>
-        /// <param name="message">  </param>
+        /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
         public PSSecurityException(string message)
             : base(message)
@@ -69,8 +69,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class PSSecurityException
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         /// <returns>Constructed object.</returns>
         public PSSecurityException(string message,
                                 Exception innerException)

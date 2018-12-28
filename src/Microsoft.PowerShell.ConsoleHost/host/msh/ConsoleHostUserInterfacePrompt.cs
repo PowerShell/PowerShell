@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell
         /// <param name="desc">the field to be read</param>
         /// <param name="fieldEchoOnPrompt">true to echo user input</param>
         /// <param name="listInput">true if the field is a list</param>
-        /// <param name="endListInput">valid only if listInput is true. set to true if the input signals end of list input </param>
+        /// <param name="endListInput">valid only if listInput is true. set to true if the input signals end of list input</param>
         /// <param name="cancelled">true iff the input is canceled, e.g., by Ctrl-C or Ctrl-Break</param>
         /// <returns>Processed input string to be converted with LanguagePrimitives.ConvertTo.</returns>
         private string PromptReadInput(string fieldPrompt, FieldDescription desc, bool fieldEchoOnPrompt,

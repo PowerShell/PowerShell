@@ -1509,7 +1509,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="operandString">The result of converting operand to a string.</param>
         /// <param name="matchInfo">The input object in filter mode.</param>
-        /// <param name="matchResult">The match info object - this will be null if this.quiet is set. </param>
+        /// <param name="matchResult">The match info object - this will be null if this.quiet is set.</param>
         /// <returns>True if the input object matched.</returns>
         private bool DoMatchWorker(string operandString, MatchInfo matchInfo, out MatchInfo matchResult)
         {

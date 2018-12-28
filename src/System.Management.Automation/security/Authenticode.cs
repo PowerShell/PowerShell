@@ -60,10 +60,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Sign a file
         /// </summary>
-        /// <param name="option"> option that controls what gets embedded in the signature blob  </param>
-        /// <param name="fileName"> name of file to sign </param>
-        /// <param name="certificate"> signing cert  </param>
-        /// <param name="timeStampServerUrl"> URL of time stamping server  </param>
+        /// <param name="option">option that controls what gets embedded in the signature blob</param>
+        /// <param name="fileName">name of file to sign</param>
+        /// <param name="certificate">signing cert</param>
+        /// <param name="timeStampServerUrl">URL of time stamping server</param>
         /// <param name="hashAlgorithm"> The name of the hash
         /// algorithm to use. </param>
         /// <returns>Does not return a value.</returns>
@@ -256,8 +256,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get signature on the specified file
         /// </summary>
-        /// <param name="fileName"> name of file to check </param>
-        /// <param name="fileContent"> content of file to check </param>
+        /// <param name="fileName">name of file to check</param>
+        /// <param name="fileContent">content of file to check</param>
         /// <returns>Signature object.</returns>
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.
