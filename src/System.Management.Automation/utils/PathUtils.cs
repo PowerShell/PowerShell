@@ -20,10 +20,10 @@ namespace System.Management.Automation
         /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
-        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting).</param>
-        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path).</param>
-        /// <param name="encoding">encoding (this method will convert the command line string to an Encoding instance).</param>
-        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
+        /// <param name="cmdlet">Cmdlet that is opening the file (used mainly for error reporting).</param>
+        /// <param name="filePath">Path to the file (as specified on the command line - this method will resolve the path).</param>
+        /// <param name="encoding">Encoding (this method will convert the command line string to an Encoding instance).</param>
+        /// <param name="defaultEncoding">If <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
         /// <param name="NoClobber"></param>
@@ -54,10 +54,10 @@ namespace System.Management.Automation
         /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
-        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting).</param>
-        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path).</param>
-        /// <param name="resolvedEncoding">encoding (this method will convert the command line string to an Encoding instance).</param>
-        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
+        /// <param name="cmdlet">Cmdlet that is opening the file (used mainly for error reporting).</param>
+        /// <param name="filePath">Path to the file (as specified on the command line - this method will resolve the path).</param>
+        /// <param name="resolvedEncoding">Encoding (this method will convert the command line string to an Encoding instance).</param>
+        /// <param name="defaultEncoding">If <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
         /// <param name="NoClobber"></param>

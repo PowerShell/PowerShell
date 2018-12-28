@@ -19,7 +19,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to write.</param>
+        /// <param name="stream">The stream to write.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public ObjectWriter([In, Out] ObjectStreamBase stream)
         {
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Write objects to the underlying stream
         /// </summary>
-        /// <param name="obj">object or enumeration to read from.</param>
+        /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Internal
         /// Handle WriteReady events from the underlying stream
         /// </summary>
         /// <param name="sender">The stream raising the event.</param>
-        /// <param name="args">standard event args.</param>
+        /// <param name="args">Standard event args.</param>
         private void OnWriteReady (object sender, EventArgs args)
         {
             if (WriteReady != null)
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing PSDataCollectionStream
         /// </summary>
-        /// <param name="stream">the stream to write.</param>
+        /// <param name="stream">The stream to write.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the specified stream is null
         /// </exception>

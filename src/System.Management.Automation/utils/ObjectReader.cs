@@ -21,7 +21,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read.</param>
+        /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Internal
         /// Handle DataReady events from the underlying stream
         /// </summary>
         /// <param name="sender">The stream raising the event.</param>
-        /// <param name="args">standard event args.</param>
+        /// <param name="args">Standard event args.</param>
         private void OnDataReady(object sender, EventArgs args)
         {
             // call any event handlers on this, replacing the
@@ -222,7 +222,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected abstract void Dispose(bool disposing);
 
         #endregion IDisposable
@@ -240,7 +240,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read.</param>
+        /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public ObjectReader([In, Out] ObjectStream stream)
             : base(stream)
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -350,7 +350,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read.</param>
+        /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public PSObjectReader([In, Out] ObjectStream stream)
             : base(stream)
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -498,7 +498,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read.</param>
+        /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public PSDataCollectionReader(PSDataCollectionStream<DataStoreType> stream)
             : base(stream)
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -657,7 +657,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read.</param>
+        /// <param name="stream">The stream to read.</param>
         /// <param name="computerName"></param>
         /// <param name="runspaceId"></param>
         internal PSDataCollectionPipelineReader(PSDataCollectionStream<DataStoreType> stream,
@@ -793,7 +793,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Converts to the return type based on language primitives
         /// </summary>
-        /// <param name="inputObject">input object to convert.</param>
+        /// <param name="inputObject">Input object to convert.</param>
         /// <returns>Input object converted to the specified return type.</returns>
         private ReturnType ConvertToReturnType(object inputObject)
         {
@@ -815,7 +815,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
