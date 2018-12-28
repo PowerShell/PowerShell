@@ -360,6 +360,13 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
         $help.Category | Should -BeExactly "Alias"
         $help.Synopsis | Should -BeExactly "Where-Object"
     }
+
+    It "Help alias should be same as Get-Help alias" {
+        Set-Alias -Name testAlias1 -Value Where-Object
+        $help1 = Get-Help testAlias*
+        $help2 = help testAlias*
+        Compare-Object $help1 $help2 | Should -BeNullOrEmpty
+    }
 }
 
 Describe "help function uses full view by default" -Tags "CI" {
