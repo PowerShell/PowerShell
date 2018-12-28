@@ -227,7 +227,7 @@ namespace System.Management.Automation
             if (errorRecord == null)
                 return string.Empty;
             if (null != errorRecord.ErrorDetails &&
-                !String.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
+                !string.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
             {
                 return errorRecord.ErrorDetails.Message;
             }
@@ -252,7 +252,7 @@ namespace System.Management.Automation
             if (ed == null)
                 return e.Message;
             string detailsMessage = ed.Message;
-            return (String.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
+            return (string.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
         }
 
         internal static Exception RetrieveException(ErrorRecord errorRecord)

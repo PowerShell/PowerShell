@@ -32,7 +32,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("locationStack");
             }
 
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 throw PSTraceSource.NewArgumentException("stackName");
             }

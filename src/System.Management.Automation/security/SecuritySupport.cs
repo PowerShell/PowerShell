@@ -285,7 +285,7 @@ namespace System.Management.Automation.Internal
                     {
                         string policy = Environment.GetEnvironmentVariable("PSExecutionPolicyPreference");
 
-                        if (!String.IsNullOrEmpty(policy))
+                        if (!string.IsNullOrEmpty(policy))
                             return ParseExecutionPolicy(policy);
                         else
                             return ExecutionPolicy.Undefined;
@@ -296,7 +296,7 @@ namespace System.Management.Automation.Internal
                     {
                         string policy = GetLocalPreferenceValue(shellId, scope);
 
-                        if (!String.IsNullOrEmpty(policy))
+                        if (!string.IsNullOrEmpty(policy))
                             return ParseExecutionPolicy(policy);
                         else
                             return ExecutionPolicy.Undefined;
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Internal
                         // Be sure we aren't being called by Group Policy
                         // itself. A group policy should never block a logon /
                         // logoff script.
-                        if (String.IsNullOrEmpty(groupPolicyPreference) || HasGpScriptParent)
+                        if (string.IsNullOrEmpty(groupPolicyPreference) || HasGpScriptParent)
                         {
                             return ExecutionPolicy.Undefined;
                         }
@@ -378,7 +378,7 @@ namespace System.Management.Automation.Internal
         /// <returns>True when file has product binary signature.</returns>
         public static bool IsProductBinary(string file)
         {
-            if (String.IsNullOrEmpty(file) || (!IO.File.Exists(file)))
+            if (string.IsNullOrEmpty(file) || (!IO.File.Exists(file)))
             {
                 return false;
             }
@@ -1552,7 +1552,7 @@ namespace System.Management.Automation
 
         internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(string content, string sourceMetadata, bool warmUp)
         {
-            if (String.IsNullOrEmpty(sourceMetadata))
+            if (string.IsNullOrEmpty(sourceMetadata))
             {
                 sourceMetadata = String.Empty;
             }

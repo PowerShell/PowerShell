@@ -322,23 +322,23 @@ namespace System.Management.Automation.Provider
 
                     throw PSTraceSource.NewArgumentException("parent");
                 }
-                else if (String.IsNullOrEmpty(parent) &&
-                         String.IsNullOrEmpty(child))
+                else if (string.IsNullOrEmpty(parent) &&
+                         string.IsNullOrEmpty(child))
                 {
                     // If both are empty, just return the empty string.
 
                     result = String.Empty;
                 }
-                else if (String.IsNullOrEmpty(parent) &&
-                         !String.IsNullOrEmpty(child))
+                else if (string.IsNullOrEmpty(parent) &&
+                         !string.IsNullOrEmpty(child))
                 {
                     // If the parent is empty but the child is not, return the
                     // child
 
                     result = child.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                 }
-                else if (!String.IsNullOrEmpty(parent) &&
-                         String.IsNullOrEmpty(child))
+                else if (!string.IsNullOrEmpty(parent) &&
+                         string.IsNullOrEmpty(child))
                 {
                     // If the child is empty but the parent is not, return the
                     // parent with the path separator appended.
@@ -449,7 +449,7 @@ namespace System.Management.Automation.Provider
 
                 // Verify the parameters
 
-                if (String.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path))
                 {
                     throw PSTraceSource.NewArgumentException("path");
                 }
@@ -629,7 +629,7 @@ namespace System.Management.Automation.Provider
                     Stack<string> parentNavigationStack = TokenizePathToStack(normalizedBasePath, commonBase);
                     int parentPopCount = parentNavigationStack.Count;
 
-                    if (String.IsNullOrEmpty(commonBase))
+                    if (string.IsNullOrEmpty(commonBase))
                     {
                         parentPopCount--;
                     }
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Provider
                     // ..\..\dir*
                     // In that case (as above,) we keep the ..\..\directory1
                     // instead of ".." as would usually be returned
-                    if (!String.IsNullOrEmpty(commonBase))
+                    if (!string.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
                             (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparator)))
@@ -748,7 +748,7 @@ namespace System.Management.Automation.Provider
             {
                 // Verify the parameters
 
-                if (String.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path))
                 {
                     throw PSTraceSource.NewArgumentException("path");
                 }
@@ -772,7 +772,7 @@ namespace System.Management.Automation.Provider
                     string parentPath = GetParentPath(path, null);
 
                     // No parent, return the entire path
-                    if (String.IsNullOrEmpty(parentPath))
+                    if (string.IsNullOrEmpty(parentPath))
                         result = path;
                     // If the parent path ends with the path separator, we can't split
                     // the path based on that
@@ -952,7 +952,7 @@ namespace System.Management.Automation.Provider
             {
                 result = true;
             }
-            else if (this.PSDriveInfo != null && !String.IsNullOrEmpty(this.PSDriveInfo.Root) &&
+            else if (this.PSDriveInfo != null && !string.IsNullOrEmpty(this.PSDriveInfo.Root) &&
                      path.StartsWith(this.PSDriveInfo.Root, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
@@ -986,7 +986,7 @@ namespace System.Management.Automation.Provider
                 // if its valid
 
                 string childName = GetChildName(tempPath);
-                if (String.IsNullOrEmpty(childName))
+                if (string.IsNullOrEmpty(childName))
                 {
                     // Push the parent on and then stop
                     tokenizedPathStack.Push(tempPath);
@@ -1104,7 +1104,7 @@ namespace System.Management.Automation.Provider
 
             while (normalizedPathStack.Count > 0)
             {
-                if (String.IsNullOrEmpty(leafElement))
+                if (string.IsNullOrEmpty(leafElement))
                 {
                     leafElement = normalizedPathStack.Pop();
                 }

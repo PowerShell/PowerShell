@@ -509,13 +509,13 @@ namespace System.Management.Automation
 
             if (forShellId)
             {
-                if (String.IsNullOrEmpty(first))
+                if (string.IsNullOrEmpty(first))
                 {
                     resourceStr = DiscoveryExceptions.RequiresShellIDInvalidForSingleShell;
                 }
                 else
                 {
-                    resourceStr = String.IsNullOrEmpty(second)
+                    resourceStr = string.IsNullOrEmpty(second)
                             ? DiscoveryExceptions.RequiresInterpreterNotCompatibleNoPath
                             : DiscoveryExceptions.RequiresInterpreterNotCompatible;
                 }

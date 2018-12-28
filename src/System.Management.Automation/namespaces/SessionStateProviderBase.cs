@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary table = GetSessionStateTable();
             if (table != null)
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     isContainer = true;
                     item = table.Values;
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
             string name,
             object value)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 WriteError(new ErrorRecord(
                     PSTraceSource.NewArgumentNullException("name"),
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path"></param>
         protected override void ClearItem(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 WriteError(new ErrorRecord(
                     PSTraceSource.NewArgumentNullException("path"),
@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void GetChildItems(string path, bool recurse)
         {
             CommandOrigin origin = this.Context.Origin;
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 IDictionary dictionary = null;
 
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void GetChildNames(string path, ReturnContainers returnContainers)
         {
             CommandOrigin origin = this.Context.Origin;
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 IDictionary dictionary = null;
 
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 try
                 {
@@ -545,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 result = true;
             }
@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override bool IsValidPath(string path)
         {
-            return !String.IsNullOrEmpty(path);
+            return !string.IsNullOrEmpty(path);
         }
 
         /// <summary>
@@ -605,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void RemoveItem(string path, bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("path");
@@ -679,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void NewItem(string path, string type, object newItem)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("path");
@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void CopyItem(string path, string copyPath, bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("path");
@@ -772,7 +772,7 @@ namespace Microsoft.PowerShell.Commands
             // If copyPath is null or empty, that means we are trying to copy
             // the item to itself so it should be a no-op.
 
-            if (String.IsNullOrEmpty(copyPath))
+            if (string.IsNullOrEmpty(copyPath))
             {
                 // Just get the item for -passthru
                 GetItem(path);
@@ -863,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void RenameItem(string name, string newName)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("name");
@@ -1102,7 +1102,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         internal SessionStateProviderBaseContentReaderWriter(string path, SessionStateProviderBase provider)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }

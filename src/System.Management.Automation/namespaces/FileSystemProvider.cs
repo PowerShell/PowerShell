@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (!String.IsNullOrEmpty(helpItemName))
+                if (!string.IsNullOrEmpty(helpItemName))
                 {
                     CmdletInfo.SplitCmdletName(helpItemName, out verb, out noun);
                 }
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
                     return String.Empty;
                 }
 
-                if (String.IsNullOrEmpty(verb) || String.IsNullOrEmpty(noun))
+                if (string.IsNullOrEmpty(verb) || string.IsNullOrEmpty(noun))
                 {
                     return String.Empty;
                 }
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
 
-            if (String.IsNullOrEmpty(drive.Root))
+            if (string.IsNullOrEmpty(drive.Root))
             {
                 throw PSTraceSource.NewArgumentException("drive.Root");
             }
@@ -1031,7 +1031,7 @@ namespace Microsoft.PowerShell.Commands
         protected override bool IsValidPath(string path)
         {
             //Path passed should be fully qualified path.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 return false;
             }
@@ -1102,7 +1102,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool isContainer = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 // The parameter was null, throw an exception
                 throw PSTraceSource.NewArgumentException("path");
@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void InvokeDefaultAction(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -1431,7 +1431,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Don't handle full paths, paths that the user is already trying to
             // filter, or paths they are trying to escape.
-            if ((!String.IsNullOrEmpty(filter)) ||
+            if ((!string.IsNullOrEmpty(filter)) ||
                 (path.Contains(StringLiterals.DefaultPathSeparator, StringComparison.Ordinal)) ||
                 (path.Contains(StringLiterals.AlternatePathSeparator, StringComparison.Ordinal)) ||
                 (path.Contains(StringLiterals.EscapeCharacter)))
@@ -1472,7 +1472,7 @@ namespace Microsoft.PowerShell.Commands
             ReturnContainers returnContainers)
         {
             // Verify parameters
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -1819,7 +1819,7 @@ namespace Microsoft.PowerShell.Commands
 
             string switchParamString = sb.ToString();
 
-            if (!String.IsNullOrEmpty(switchParamString))
+            if (!string.IsNullOrEmpty(switchParamString))
             {
                 // Remove unnecessary PLUS sign
                 switchParamEvaluator = new FlagsExpression<FileAttributes>(switchParamString.Substring(1));
@@ -1882,14 +1882,14 @@ namespace Microsoft.PowerShell.Commands
         {
             // Check the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
             path = NormalizePath(path);
 
-            if (String.IsNullOrEmpty(newName))
+            if (string.IsNullOrEmpty(newName))
 
             {
                 throw PSTraceSource.NewArgumentException("newName");
@@ -2031,12 +2031,12 @@ namespace Microsoft.PowerShell.Commands
 
             // Verify parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(type))
+            if (string.IsNullOrEmpty(type))
             {
                 type = "file";
             }
@@ -2125,7 +2125,7 @@ namespace Microsoft.PowerShell.Commands
                     bool isDirectory = false;
                     string strTargetPath = value.ToString();
 
-                    if (String.IsNullOrEmpty(strTargetPath))
+                    if (string.IsNullOrEmpty(strTargetPath))
                     {
                         throw PSTraceSource.NewArgumentNullException("value");
                     }
@@ -2507,7 +2507,7 @@ namespace Microsoft.PowerShell.Commands
         private void CreateDirectory(string path, bool streamOutput)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(path),
+                !string.IsNullOrEmpty(path),
                 "The caller should verify path");
 
             // Get the parent path
@@ -2578,7 +2578,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -2603,7 +2603,7 @@ namespace Microsoft.PowerShell.Commands
 
                     string parentPath = GetParentPath(path, root);
 
-                    if (!String.IsNullOrEmpty(parentPath) &&
+                    if (!string.IsNullOrEmpty(parentPath) &&
                         String.Compare(
                             parentPath,
                             previousParent,
@@ -2624,7 +2624,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     previousParent = parentPath;
-                } while (!String.IsNullOrEmpty(previousParent));
+                } while (!string.IsNullOrEmpty(previousParent));
 
                 // Now create the missing directories
 
@@ -2670,7 +2670,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void RemoveItem(string path, bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -2881,7 +2881,7 @@ namespace Microsoft.PowerShell.Commands
                 // Loop through each of the contained files and remove them.
                 IEnumerable<FileInfo> files = null;
 
-                if (!String.IsNullOrEmpty(Filter))
+                if (!string.IsNullOrEmpty(Filter))
                 {
                     files = directory.EnumerateFiles(Filter);
                 }
@@ -3138,7 +3138,7 @@ namespace Microsoft.PowerShell.Commands
         {
             error = null;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -3240,7 +3240,7 @@ namespace Microsoft.PowerShell.Commands
 
             // verify parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -3346,12 +3346,12 @@ namespace Microsoft.PowerShell.Commands
             string destinationPath,
             bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(destinationPath))
+            if (string.IsNullOrEmpty(destinationPath))
             {
                 throw PSTraceSource.NewArgumentException("destinationPath");
             }
@@ -3598,7 +3598,7 @@ namespace Microsoft.PowerShell.Commands
 
                     IEnumerable<FileInfo> files = null;
 
-                    if (String.IsNullOrEmpty(Filter))
+                    if (string.IsNullOrEmpty(Filter))
                     {
                         files = directory.EnumerateFiles();
                     }
@@ -4537,7 +4537,7 @@ namespace Microsoft.PowerShell.Commands
             // Make the remote path
             var remoteFilePath = MakeRemotePath(ps, destinationPath, file.Name);
 
-            if (String.IsNullOrEmpty(remoteFilePath))
+            if (string.IsNullOrEmpty(remoteFilePath))
             {
                 Exception e = new ArgumentException(String.Format(CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, destinationPath));
                 WriteError(new ErrorRecord(e, "RemotePathNotFound", ErrorCategory.WriteError, destinationPath));
@@ -4726,7 +4726,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
                 if (IsUNCPath(path))
                 {
@@ -4776,7 +4776,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static bool IsPathRoot(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 return false;
             }
@@ -4809,7 +4809,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             string basePath)
         {
-            if (String.IsNullOrEmpty(path) || !IsValidPath(path))
+            if (string.IsNullOrEmpty(path) || !IsValidPath(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -4835,7 +4835,7 @@ namespace Microsoft.PowerShell.Commands
                 basePath = EnsureDriveIsRooted(basePath);
 
                 result = path;
-                if (String.IsNullOrEmpty(result))
+                if (string.IsNullOrEmpty(result))
                 {
                     break;
                 }
@@ -4878,7 +4878,7 @@ namespace Microsoft.PowerShell.Commands
 
                             string directoryPath = GetParentPath(result, String.Empty);
 
-                            if (String.IsNullOrEmpty(directoryPath))
+                            if (string.IsNullOrEmpty(directoryPath))
                             {
                                 return String.Empty;
                             }
@@ -5063,7 +5063,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((
                     !(path + StringLiterals.DefaultPathSeparator).StartsWith(
                     basePath + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)) &&
-                    (!String.IsNullOrEmpty(basePath))
+                    (!string.IsNullOrEmpty(basePath))
                     )
                 {
                     result = String.Empty;
@@ -5072,7 +5072,7 @@ namespace Microsoft.PowerShell.Commands
                     Stack<string> parentNavigationStack = TokenizePathToStack(basePath, commonBase);
                     int parentPopCount = parentNavigationStack.Count;
 
-                    if (String.IsNullOrEmpty(commonBase))
+                    if (string.IsNullOrEmpty(commonBase))
                     {
                         parentPopCount--;
                     }
@@ -5091,7 +5091,7 @@ namespace Microsoft.PowerShell.Commands
                     // ..\..\dir*
                     // In that case (as above,) we keep the ..\..\directory1
                     // instead of ".." as would usually be returned
-                    if (!String.IsNullOrEmpty(commonBase))
+                    if (!string.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
                             (!path.EndsWith(StringLiterals.DefaultPathSeparator)))
@@ -5118,7 +5118,7 @@ namespace Microsoft.PowerShell.Commands
                     // on the value of basePath.
                     if (IsPathRoot(path))
                     {
-                        if (String.IsNullOrEmpty(basePath))
+                        if (string.IsNullOrEmpty(basePath))
                         {
                             result = path;
                             break;
@@ -5153,7 +5153,7 @@ namespace Microsoft.PowerShell.Commands
             } while (false);
 
 #if !UNIX
-            if (!String.IsNullOrEmpty(alternateDataStream))
+            if (!string.IsNullOrEmpty(alternateDataStream))
             {
                 result = result + alternateDataStream;
             }
@@ -5241,7 +5241,7 @@ namespace Microsoft.PowerShell.Commands
                 // if its valid
 
                 string childName = GetChildName(tempPath);
-                if (String.IsNullOrEmpty(childName))
+                if (string.IsNullOrEmpty(childName))
                 {
                     // Push the parent on and then stop
                     s_tracer.WriteLine("tokenizedPathStack.Push({0})", tempPath);
@@ -5264,7 +5264,7 @@ namespace Microsoft.PowerShell.Commands
                 if (tempPath.Length >= previousParent.Length ||
                     IsPathRoot(tempPath))
                 {
-                    if (String.IsNullOrEmpty(basePath))
+                    if (string.IsNullOrEmpty(basePath))
                     {
                         s_tracer.WriteLine("tokenizedPathStack.Push({0})", tempPath);
                         tokenizedPathStack.Push(tempPath);
@@ -5396,7 +5396,7 @@ namespace Microsoft.PowerShell.Commands
 
             while (normalizedPathStack.Count > 0)
             {
-                if (String.IsNullOrEmpty(leafElement))
+                if (string.IsNullOrEmpty(leafElement))
                 {
                     leafElement = normalizedPathStack.Pop();
                 }
@@ -5426,7 +5426,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Verify the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -5494,7 +5494,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override bool IsItemContainer(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -5528,12 +5528,12 @@ namespace Microsoft.PowerShell.Commands
         {
             // Check the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(destination))
+            if (string.IsNullOrEmpty(destination))
             {
                 throw PSTraceSource.NewArgumentException("destination");
             }
@@ -5636,7 +5636,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify file.");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destination),
+                !string.IsNullOrEmpty(destination),
                 "THe caller should verify destination.");
 
             try
@@ -5763,7 +5763,7 @@ namespace Microsoft.PowerShell.Commands
                 "The caller should verify directory.");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destination),
+                !string.IsNullOrEmpty(destination),
                 "The caller should verify destination.");
 
             try
@@ -5901,7 +5901,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         public void GetProperty(string path, Collection<string> providerSpecificPickList)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6034,7 +6034,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // verify parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6205,7 +6205,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             Collection<string> propertiesToClear)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6328,7 +6328,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         public IContentReader GetContentReader(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6502,7 +6502,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         public IContentWriter GetContentWriter(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6632,7 +6632,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         public void ClearContent(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -6675,7 +6675,7 @@ namespace Microsoft.PowerShell.Commands
                         streamName = writerDynamicParameters.Stream;
                     }
 
-                    if (String.IsNullOrEmpty(streamName))
+                    if (string.IsNullOrEmpty(streamName))
                     {
                         // See if they've used the inline stream syntax. They have more than one colon.
                         int firstColon = path.IndexOf(':');
@@ -7712,7 +7712,7 @@ namespace Microsoft.PowerShell.Commands
             var links = new List<string>();
 #if UNIX
             string link = Platform.NonWindowsInternalGetTarget(filePath);
-            if (!String.IsNullOrEmpty(link))
+            if (!string.IsNullOrEmpty(link))
             {
                 links.Add(link);
             }
@@ -8098,9 +8098,9 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static bool WinCreateJunction(string path, string target)
         {
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
-                if (!String.IsNullOrEmpty(target))
+                if (!string.IsNullOrEmpty(target))
                 {
                     using (SafeHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericWrite))
                     {

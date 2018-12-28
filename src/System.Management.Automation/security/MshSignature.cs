@@ -366,7 +366,7 @@ namespace System.Management.Automation
                     resourceString = MshSignature.MshSignature_NotSupportedFileFormat;
                     arg = System.IO.Path.GetExtension(filePath);
 
-                    if (String.IsNullOrEmpty(arg))
+                    if (string.IsNullOrEmpty(arg))
                     {
                         resourceString = MshSignature.MshSignature_NotSupportedFileFormat_NoExtension;
                         arg = null;

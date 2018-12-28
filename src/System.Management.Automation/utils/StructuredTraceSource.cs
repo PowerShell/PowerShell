@@ -269,7 +269,7 @@ namespace System.Management.Automation
         /// </param>
         internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
         {
-            if (String.IsNullOrEmpty(fullName))
+            if (string.IsNullOrEmpty(fullName))
             {
                 // 2005/04/13-JonN In theory this should be ArgumentException,
                 // but I don't want to deal with loading the string in this
@@ -1686,7 +1686,7 @@ namespace System.Management.Automation
 
             StringBuilder output = new StringBuilder();
 
-            if (!String.IsNullOrEmpty(scopeOutputFormatter))
+            if (!string.IsNullOrEmpty(scopeOutputFormatter))
             {
                 output.AppendFormat(
                     CultureInfo.CurrentCulture,
@@ -1694,7 +1694,7 @@ namespace System.Management.Automation
                     _scopeName);
             }
 
-            if (!String.IsNullOrEmpty(format))
+            if (!string.IsNullOrEmpty(format))
             {
                 output.AppendFormat(
                     CultureInfo.CurrentCulture,
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
 
             // Trace out the scope name
 
-            if (!String.IsNullOrEmpty(_leavingScopeFormatter))
+            if (!string.IsNullOrEmpty(_leavingScopeFormatter))
             {
                 _tracer.OutputLine(_flag, _leavingScopeFormatter, _scopeName);
             }

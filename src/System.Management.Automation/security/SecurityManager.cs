@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell
                 if (!IsLocalFile(fi.FullName))
                 {
                     // Get the signature of the file.
-                    if (String.IsNullOrEmpty(script.ScriptContents))
+                    if (string.IsNullOrEmpty(script.ScriptContents))
                     {
                         reasonMessage = StringUtil.Format(Authenticode.Reason_FileContentUnavailable, path);
                         reason = new UnauthorizedAccessException(reasonMessage);
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell
                 // make it so.
 
                 // Get the signature of the file.
-                if (String.IsNullOrEmpty(script.ScriptContents))
+                if (string.IsNullOrEmpty(script.ScriptContents))
                 {
                     reasonMessage = StringUtil.Format(Authenticode.Reason_FileContentUnavailable, path);
                     reason = new UnauthorizedAccessException(reasonMessage);

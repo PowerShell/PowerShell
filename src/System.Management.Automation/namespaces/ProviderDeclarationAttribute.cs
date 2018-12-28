@@ -35,7 +35,7 @@ namespace System.Management.Automation.Provider
         {
             // verify parameters
 
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 throw PSTraceSource.NewArgumentNullException("providerName");
             }

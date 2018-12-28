@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             return (PSVariable)SessionState.Internal.GetVariable(name, Context.Origin);
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             PSVariable variable = null;
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(name),
+                !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
             SessionState.Internal.RemoveVariable(name, Force);

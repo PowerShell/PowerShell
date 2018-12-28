@@ -117,7 +117,7 @@ namespace System.Management.Automation
         private static IEnumerable<LogProvider> GetLogProvider(LogContext logContext)
         {
             System.Diagnostics.Debug.Assert(logContext != null);
-            System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(logContext.ShellId));
+            System.Diagnostics.Debug.Assert(!string.IsNullOrEmpty(logContext.ShellId));
 
             return GetLogProvider(logContext.ShellId);
         }

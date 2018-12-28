@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (String.IsNullOrEmpty(module.HelpInfoUri))
+            if (string.IsNullOrEmpty(module.HelpInfoUri))
             {
                 if (!noErrors)
                 {
@@ -464,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="name">Module name with globbing.</param>
         private void ProcessModuleWithGlobbing(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.ModuleNameNullOrEmpty));
                 WriteError(e.ErrorRecord);
