@@ -4088,6 +4088,7 @@ $RawUI.SetBufferContents(
                 // Porting note: non-Windows platforms use `clear`
                 return @"
 & (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+""`e[3J"" # clear the scrollback buffer
 # .Link
 # https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
