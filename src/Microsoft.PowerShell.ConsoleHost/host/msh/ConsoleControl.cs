@@ -2536,7 +2536,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            if (String.IsNullOrEmpty(output))
+            if (string.IsNullOrEmpty(output))
                 return;
 
             // Native WriteConsole doesn't support output buffer longer than 64K.

@@ -156,7 +156,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                    if (!string.IsNullOrEmpty(m_SessionObj.Error))
                     {
                         XmlDocument ErrorDoc = new XmlDocument();
                         ErrorDoc.LoadXml(m_SessionObj.Error);

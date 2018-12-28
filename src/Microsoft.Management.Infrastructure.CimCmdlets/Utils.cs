@@ -78,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static bool IsDefaultComputerName(string computerName)
         {
-            return String.IsNullOrEmpty(computerName);
+            return string.IsNullOrEmpty(computerName);
         }
 
         /// <summary>

@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
             returnValue.Append(String.Join(", ", _property));
             returnValue.Append(" from ");
             returnValue.Append(Class);
-            if (!String.IsNullOrEmpty(Filter))
+            if (!string.IsNullOrEmpty(Filter))
             {
                 returnValue.Append(" where ");
                 returnValue.Append(Filter);

@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 string errid = ErrorId;
-                if (String.IsNullOrEmpty(errid))
+                if (string.IsNullOrEmpty(errid))
                 {
                     errid = e.GetType().FullName;
                 }
@@ -331,14 +331,14 @@ namespace Microsoft.PowerShell.Commands
                     TargetObject
                     );
 
-                if (this.Exception != null && !String.IsNullOrEmpty(msg))
+                if (this.Exception != null && !string.IsNullOrEmpty(msg))
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(msg);
                 }
             }
 
             string recact = RecommendedAction;
-            if (!String.IsNullOrEmpty(recact))
+            if (!string.IsNullOrEmpty(recact))
             {
                 if (errorRecord.ErrorDetails == null)
                 {
@@ -348,13 +348,13 @@ namespace Microsoft.PowerShell.Commands
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }
 
-            if (!String.IsNullOrEmpty(CategoryActivity))
+            if (!string.IsNullOrEmpty(CategoryActivity))
                 errorRecord.CategoryInfo.Activity = CategoryActivity;
-            if (!String.IsNullOrEmpty(CategoryReason))
+            if (!string.IsNullOrEmpty(CategoryReason))
                 errorRecord.CategoryInfo.Reason = CategoryReason;
-            if (!String.IsNullOrEmpty(CategoryTargetName))
+            if (!string.IsNullOrEmpty(CategoryTargetName))
                 errorRecord.CategoryInfo.TargetName = CategoryTargetName;
-            if (!String.IsNullOrEmpty(CategoryTargetType))
+            if (!string.IsNullOrEmpty(CategoryTargetType))
                 errorRecord.CategoryInfo.TargetType = CategoryTargetType;
 
             /* 2005/01/25 removing throw-error
@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;
-                if (!String.IsNullOrEmpty(CategoryActivity))
+                if (!string.IsNullOrEmpty(CategoryActivity))
                     errorRecord.CategoryInfo.Activity = CategoryActivity;
                 else
                     errorRecord.CategoryInfo.Activity = "Write-Error";

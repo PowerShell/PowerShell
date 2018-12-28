@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.Commands
                     CultureInfo.InvariantCulture,
                     GetMethodTemplate(language), typeName, sourceCodeText);
 
-            if (!String.IsNullOrEmpty(typeNamespace))
+            if (!string.IsNullOrEmpty(typeNamespace))
             {
                 return usingSource + String.Format(
                     CultureInfo.InvariantCulture,
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Generate an error if they've specified an output
             // assembly type without an output assembly
-            if (String.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey(nameof(OutputType)))
+            if (string.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey(nameof(OutputType)))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
         // These assemblies are used, when ReferencedAssemblies parameter is not specified.
         private static Lazy<IEnumerable<PortableExecutableReference>> s_defaultAssemblies = new Lazy<IEnumerable<PortableExecutableReference>>(InitDefaultRefAssemblies);
 
-        private bool InMemory { get { return String.IsNullOrEmpty(_outputAssembly); } }
+        private bool InMemory { get { return string.IsNullOrEmpty(_outputAssembly); } }
 
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
@@ -1005,7 +1005,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if (!String.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
+            if (!string.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
             {
                 CompileToAssembly(syntaxTrees, compilationOptions, emitOptions);
             }
@@ -1316,7 +1316,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int hash;
 
-            if (String.IsNullOrEmpty(st.FilePath))
+            if (string.IsNullOrEmpty(st.FilePath))
             {
                 // If the file name does not exist, the source text is set by the user using parameters.
                 // In this case, we assume that the source text is of a small size and we can re-allocate by ToString().

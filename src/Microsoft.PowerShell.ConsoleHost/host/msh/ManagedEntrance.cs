@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell
             Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
 
 #if DEBUG
-            if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
+            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Attach the debugger to continue...");
                 while (!System.Diagnostics.Debugger.IsAttached) {

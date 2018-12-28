@@ -194,7 +194,7 @@ namespace Microsoft.WSMan.Management
                 return null;
             }
 
-            if (String.IsNullOrEmpty(drive.Root) == false)
+            if (string.IsNullOrEmpty(drive.Root) == false)
             {
                 AssertError(helper.GetResourceMsgFromResourcetext("NewDriveRootDoesNotExist"), false);
                 return null;
@@ -355,7 +355,7 @@ namespace Microsoft.WSMan.Management
             string childname = String.Empty;
             string strPathCheck = String.Empty;
 
-            if (path.Length == 0 && String.IsNullOrEmpty(childname))
+            if (path.Length == 0 && string.IsNullOrEmpty(childname))
             {
                 return true;
             }
@@ -585,7 +585,7 @@ namespace Microsoft.WSMan.Management
 
             string childname = string.Empty;
 
-            if (path.Length == 0 && String.IsNullOrEmpty(childname))
+            if (path.Length == 0 && string.IsNullOrEmpty(childname))
             {
                 WriteItemObject(GetItemPSObjectWithTypeName(WSManStringLiterals.rootpath, WSManStringLiterals.ContainerChildValue, null, null, null, WsManElementObjectTypes.WSManConfigElement), WSManStringLiterals.rootpath, true);
                 return;
@@ -889,7 +889,7 @@ namespace Microsoft.WSMan.Management
 
             string ChildName = string.Empty;
 
-            if (path.Length == 0 && String.IsNullOrEmpty(ChildName))
+            if (path.Length == 0 && string.IsNullOrEmpty(ChildName))
             {
                 AssertError(helper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
                 return;
@@ -994,7 +994,7 @@ namespace Microsoft.WSMan.Management
                         XmlDocument xmlPlugins = FindResourceValue(sessionobj, uri, null);
                         string currentpluginname = string.Empty;
                         GetPluginNames(xmlPlugins, out objPluginNames, out currentpluginname, path);
-                        if (String.IsNullOrEmpty(currentpluginname))
+                        if (string.IsNullOrEmpty(currentpluginname))
                         {
                             if (!this.clearItemIsCalled)
                             {
@@ -1048,7 +1048,7 @@ namespace Microsoft.WSMan.Management
 
                             if (WSManStringLiterals.ConfigRunAsPasswordName.Equals(ChildName, StringComparison.OrdinalIgnoreCase))
                             {
-                                if(String.IsNullOrEmpty(
+                                if(string.IsNullOrEmpty(
                                     pluginConfiguration.GetOneConfiguration(
                                         String.Format(
                                             CultureInfo.InvariantCulture,
@@ -1261,7 +1261,7 @@ namespace Microsoft.WSMan.Management
                         }
                         finally
                         {
-                            if (!String.IsNullOrEmpty(pluginConfiguration.ServerSession.Error))
+                            if (!string.IsNullOrEmpty(pluginConfiguration.ServerSession.Error))
                             {
                                 AssertError(pluginConfiguration.ServerSession.Error, true);
                             }
@@ -1316,7 +1316,7 @@ namespace Microsoft.WSMan.Management
                                 {
                                     if (dynParams.Concatenate)
                                     {
-                                        if (!String.IsNullOrEmpty(value.ToString()))
+                                        if (!string.IsNullOrEmpty(value.ToString()))
                                         {
                                             // ',' is used as the delimiter in WSMan for TrustedHosts.
                                             value = SplitAndUpdateStringUsingDelimiter(sessionobj, uri, ChildName, value.ToString(), ",");
@@ -1434,7 +1434,7 @@ namespace Microsoft.WSMan.Management
             string childname = String.Empty;
             string strPathCheck = String.Empty;
 
-            if (path.Length == 0 && String.IsNullOrEmpty(childname))
+            if (path.Length == 0 && string.IsNullOrEmpty(childname))
             {
                 return true;
             }
@@ -1779,7 +1779,7 @@ namespace Microsoft.WSMan.Management
                     }
                     finally
                     {
-                        if (!String.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
+                        if (!string.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
                         {
                             AssertError(((IWSManSession)sessionobj).Error, true);
                         }
@@ -2079,7 +2079,7 @@ namespace Microsoft.WSMan.Management
                 WSManProviderNewItemPluginParameters niParams = DynamicParameters as WSManProviderNewItemPluginParameters;
                 if (niParams != null)
                 {
-                    if (String.IsNullOrEmpty(niParams.File))
+                    if (string.IsNullOrEmpty(niParams.File))
                     {
                         mshObj.Properties.Add(new PSNoteProperty("Name", niParams.Plugin));
                         mshObj.Properties.Add(new PSNoteProperty("Filename", niParams.FileName));
@@ -2285,7 +2285,7 @@ namespace Microsoft.WSMan.Management
                 }
                 finally
                 {
-                    if (!String.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
+                    if (!string.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
                     {
                         AssertError(((IWSManSession)sessionobj).Error, true);
                     }
@@ -2336,7 +2336,7 @@ namespace Microsoft.WSMan.Management
                 mshObject = new PSObject(element);
             }
 
-            if (!String.IsNullOrEmpty(ExtendedTypeName))
+            if (!string.IsNullOrEmpty(ExtendedTypeName))
             {
                 StringBuilder types = new StringBuilder(string.Empty);
                 if (mshObject != null)
@@ -2716,7 +2716,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
+                if (!string.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
                 {
                     AssertError(((IWSManSession)sessionobj).Error, true);
                 }
@@ -2741,7 +2741,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
+                if (!string.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
                 {
                     AssertError(((IWSManSession)sessionobj).Error, true);
                 }
@@ -2790,7 +2790,7 @@ namespace Microsoft.WSMan.Management
 
                     Marshal.ReleaseComObject(value);
 
-                    if (!String.IsNullOrEmpty(strXmlValue))
+                    if (!string.IsNullOrEmpty(strXmlValue))
                     {
                         xmlEnumResources = new XmlDocument();
                         strXmlValue = "<WsManResults>" + strXmlValue + "</WsManResults>";
@@ -2801,7 +2801,7 @@ namespace Microsoft.WSMan.Management
                 }
                 finally
                 {
-                    if (!String.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
+                    if (!string.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
                     {
                         AssertError(((IWSManSession)sessionobj).Error, true);
                     }
@@ -2837,7 +2837,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
+                if (!string.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
                 {
                     AssertError(((IWSManSession)sessionobj).Error, true);
                 }
@@ -2863,7 +2863,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
+                if (!string.IsNullOrEmpty(((IWSManSession)sessionobj).Error))
                 {
                     AssertError(((IWSManSession)sessionobj).Error, true);
                 }
@@ -2924,7 +2924,7 @@ namespace Microsoft.WSMan.Management
                         valuexml = valuexml + ((IWSManEnumerator)value).ReadItem();
                     }
 
-                    if ((valuexml != string.Empty) && !(String.IsNullOrEmpty(valuexml)))
+                    if ((valuexml != string.Empty) && !(string.IsNullOrEmpty(valuexml)))
                     {
                         valuexml = "<WsManResults>" + valuexml + "</WsManResults>";
                     }
@@ -3030,7 +3030,7 @@ namespace Microsoft.WSMan.Management
                         result = true;
                     }
                 }
-            else if (!String.IsNullOrEmpty(value))
+            else if (!string.IsNullOrEmpty(value))
             {
                 foreach (string key in pkeys)
                 {
@@ -3117,7 +3117,7 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                if (!String.IsNullOrEmpty(ExtendedTypeName))
+                if (!string.IsNullOrEmpty(ExtendedTypeName))
                 {
                     StringBuilder types = new StringBuilder(string.Empty);
                     if (mshObject != null)
@@ -3183,7 +3183,7 @@ namespace Microsoft.WSMan.Management
                     existingvalue = mshObject.Properties[childname].Value.ToString();
                 }
 
-                if (!String.IsNullOrEmpty(existingvalue))
+                if (!string.IsNullOrEmpty(existingvalue))
                 {
                     string[] existingsplitvalues = existingvalue.Split(new string[] { Delimiter }, StringSplitOptions.None);
                     string[] newvalues = value.Split(new string[] { Delimiter }, StringSplitOptions.None);
@@ -3450,7 +3450,7 @@ namespace Microsoft.WSMan.Management
 
             //Get the wsman host name to find the session object
             string host = GetHostName(path);
-            if (String.IsNullOrEmpty(host))
+            if (string.IsNullOrEmpty(host))
             {
                 throw new InvalidOperationException("InvalidPath");
             }
@@ -3627,7 +3627,7 @@ namespace Microsoft.WSMan.Management
                         result = WSManStringLiterals.containerListener;
                     else
                     {
-                        if (!String.IsNullOrEmpty(hostname))
+                        if (!string.IsNullOrEmpty(hostname))
                         {
                             Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
                             if (ChildName.Equals(hostname, StringComparison.OrdinalIgnoreCase))
@@ -3903,7 +3903,7 @@ namespace Microsoft.WSMan.Management
             //Get the wsman host name to find the session object
             string host = GetHostName(path);
 
-            if (String.IsNullOrEmpty(host))
+            if (string.IsNullOrEmpty(host))
             {
                 return false;
 
@@ -3922,7 +3922,7 @@ namespace Microsoft.WSMan.Management
             //Get URI to pass to WsMan Automation API
             string uri = NormalizePath(path, host);
 
-            if (String.IsNullOrEmpty(uri))
+            if (string.IsNullOrEmpty(uri))
             {
                 return false;
             }
@@ -3951,7 +3951,7 @@ namespace Microsoft.WSMan.Management
                     XmlDocument outxml = FindResourceValue(sessionobj, uri, null);
                     string currentpluginname = String.Empty;
                     GetPluginNames(outxml, out objPluginNames, out currentpluginname, path);
-                    if (String.IsNullOrEmpty(currentpluginname))
+                    if (string.IsNullOrEmpty(currentpluginname))
                     {
                         return false;
                     }
@@ -4210,7 +4210,7 @@ namespace Microsoft.WSMan.Management
 
             //Get the wsman host name to find the session object
             string host = GetHostName(path);
-            if (String.IsNullOrEmpty(host))
+            if (string.IsNullOrEmpty(host))
             {
                 throw new InvalidOperationException("InvalidPath");
             }
@@ -4880,7 +4880,7 @@ namespace Microsoft.WSMan.Management
                     XmlAttributeCollection attributecol = nodelistPlugin.Item(0).Attributes;
 
                     XmlNode runAsUserNode = attributecol.GetNamedItem(WSManStringLiterals.ConfigRunAsUserName);
-                    bool runAsUserPresent = runAsUserNode != null && !String.IsNullOrEmpty(runAsUserNode.Value);
+                    bool runAsUserPresent = runAsUserNode != null && !string.IsNullOrEmpty(runAsUserNode.Value);
 
                     for (int i = 0; i <= attributecol.Count - 1; i++)
                     {

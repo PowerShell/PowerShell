@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
                     // try to translate the SID to a more friendly username
                     // just stick with the SID if anything goes wrong
                     string installed = (string)obj["InstalledBy"];
-                    if (!String.IsNullOrEmpty(installed))
+                    if (!string.IsNullOrEmpty(installed))
                     {
                         try
                         {

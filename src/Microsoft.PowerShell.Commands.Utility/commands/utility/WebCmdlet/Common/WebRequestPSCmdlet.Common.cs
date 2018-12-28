@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell.Commands
                                         }
                                     }
 
-                                    if (!String.IsNullOrEmpty(detailMsg))
+                                    if (!string.IsNullOrEmpty(detailMsg))
                                     {
                                         er.ErrorDetails = new ErrorDetails(detailMsg);
                                     }

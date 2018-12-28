@@ -1660,7 +1660,7 @@ namespace Microsoft.PowerShell.Commands
                     objServiceShouldBeDisposed = true;
                 }
 
-                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+                Diagnostics.Assert(!string.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if
                 // there is no such service.  This checks whether
@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
                     // Modify startup type or display name or credential
-                    if (!String.IsNullOrEmpty(DisplayName)
+                    if (!string.IsNullOrEmpty(DisplayName)
                         || ServiceStartupType.InvalidValue != StartupType || Credential != null)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
@@ -2055,9 +2055,9 @@ namespace Microsoft.PowerShell.Commands
         [ArchitectureSensitive]
         protected override void BeginProcessing()
         {
-            Diagnostics.Assert(!String.IsNullOrEmpty(Name),
+            Diagnostics.Assert(!string.IsNullOrEmpty(Name),
                 "null ServiceName");
-            Diagnostics.Assert(!String.IsNullOrEmpty(BinaryPathName),
+            Diagnostics.Assert(!string.IsNullOrEmpty(BinaryPathName),
                 "null BinaryPathName");
 
             // confirm the operation first
@@ -2336,7 +2336,7 @@ namespace Microsoft.PowerShell.Commands
                     objServiceShouldBeDisposed = true;
                 }
 
-                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+                Diagnostics.Assert(!string.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if there is no such service.
                 // This checks whether the service actually exists.

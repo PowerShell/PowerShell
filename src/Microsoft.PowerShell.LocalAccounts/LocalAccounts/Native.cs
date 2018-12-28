@@ -126,7 +126,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
 
         public UNICODE_STRING(string s)
         {
-            buffer = String.IsNullOrEmpty(s) ? String.Empty : s;
+            buffer = string.IsNullOrEmpty(s) ? String.Empty : s;
             Length = (UInt16)(2 * buffer.Length);
             MaximumLength = Length;
         }

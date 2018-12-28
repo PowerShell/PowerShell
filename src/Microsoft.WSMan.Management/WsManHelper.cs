@@ -182,7 +182,7 @@ namespace Microsoft.WSMan.Management
                 throw new ArgumentNullException("resourceManager");
             }
 
-            if (String.IsNullOrEmpty(resourceName))
+            if (string.IsNullOrEmpty(resourceName))
             {
                 throw new ArgumentNullException("resourceName");
             }
@@ -703,7 +703,7 @@ namespace Microsoft.WSMan.Management
                 if (credential.UserName != null)
                 {
                     nwCredential = credential.GetNetworkCredential();
-                    if (String.IsNullOrEmpty(nwCredential.Domain))
+                    if (string.IsNullOrEmpty(nwCredential.Domain))
                     {
                         if ( authentication.Equals(AuthenticationMechanism.Digest) || authentication.Equals(AuthenticationMechanism.Basic) )
                         {
@@ -987,7 +987,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_wsmanObject.Error))
+                if (!string.IsNullOrEmpty(m_wsmanObject.Error))
                 {
                     AssertError(m_wsmanObject.Error, true, computername);
                 }
