@@ -1831,7 +1831,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Provides a mode property for FileSystemInfo
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping a FileSystemInfo.</param>
+        /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         public static string Mode(PSObject instance)
         {
