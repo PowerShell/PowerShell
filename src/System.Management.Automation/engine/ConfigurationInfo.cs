@@ -93,7 +93,7 @@ namespace System.Management.Automation
         /// <param name="helpFile">
         /// The help file for the configuration.
         /// </param>
-        /// <param name="isMetaConfig">The configuration is a meta configuration</param>
+        /// <param name="isMetaConfig">The configuration is a meta configuration.</param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="configuration"/> is null.
         /// </exception>

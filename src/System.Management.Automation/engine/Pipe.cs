@@ -341,7 +341,7 @@ namespace System.Management.Automation.Internal
         /// written onto an Collection[PSObject] which is more useful
         /// in many circumstances than arraylist
         /// </summary>
-        /// <param name="resultCollection">The collection to write into</param>
+        /// <param name="resultCollection">The collection to write into.</param>
         internal Pipe(System.Collections.ObjectModel.Collection<PSObject> resultCollection)
         {
             Diagnostics.Assert(resultCollection != null, "resultCollection cannot be null");
@@ -355,7 +355,7 @@ namespace System.Management.Automation.Internal
         /// This pipe writes into another pipeline processor allowing
         /// pipelines to be chained together...
         /// </summary>
-        /// <param name="context">The execution context object for this engine instance</param>
+        /// <param name="context">The execution context object for this engine instance.</param>
         /// <param name="outputPipeline">The pipeline to write into...</param>
         internal Pipe(ExecutionContext context, PipelineProcessor outputPipeline)
         {
@@ -389,7 +389,7 @@ namespace System.Management.Automation.Internal
         /// Writes an object to the pipe.  This could recursively call to the
         /// downstream cmdlet, or write the object to the external output.
         /// </summary>
-        /// <param name="obj">The object to add to the pipe</param>
+        /// <param name="obj">The object to add to the pipe.</param>
         /// <remarks>
         /// AutomationNull.Value is ignored
         /// </remarks>

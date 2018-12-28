@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of <see cref="SettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
         /// </summary>
-        /// <param name="exception">Exception that triggered the associated event</param>
+        /// <param name="exception">Exception that triggered the associated event.</param>
         internal SettingValueExceptionEventArgs(Exception exception)
         {
             Exception = exception;
@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of <see cref="GettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
         /// </summary>
-        /// <param name="exception">Exception that triggered the associated event</param>
+        /// <param name="exception">Exception that triggered the associated event.</param>
         internal GettingValueExceptionEventArgs(Exception exception)
         {
             Exception = exception;
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// This method has no effect for <see cref="PSObjectPropertyDescriptor"/>.
         /// CanResetValue returns false.
         /// </summary>
-        /// <param name="component">This parameter is ignored for <see cref="PSObjectPropertyDescriptor"/></param>
+        /// <param name="component">This parameter is ignored for <see cref="PSObjectPropertyDescriptor"/>.</param>
         public override void ResetValue(object component) { }
 
         /// <summary>

@@ -414,7 +414,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion from a string.
         /// </summary>
-        /// <param name="version">The version to parse</param>
+        /// <param name="version">The version to parse.</param>
         /// <exception cref="FormatException"></exception>
         /// <exception cref="OverflowException"></exception>
         public SemanticVersion(string version)
@@ -431,11 +431,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
-        /// <param name="patch">The patch version</param>
-        /// <param name="preReleaseLabel">The pre-release label for the version</param>
-        /// <param name="buildLabel">The build metadata for the version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="patch">The patch version.</param>
+        /// <param name="preReleaseLabel">The pre-release label for the version.</param>
+        /// <param name="buildLabel">The build metadata for the version.</param>
         /// <exception cref="FormatException">
         /// If <paramref name="preReleaseLabel"/> don't match 'LabelUnitRegEx'.
         /// If <paramref name="buildLabel"/> don't match 'LabelUnitRegEx'.
@@ -461,10 +461,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
-        /// <param name="patch">The minor version</param>
-        /// <param name="label">The label for the version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="patch">The minor version.</param>
+        /// <param name="label">The label for the version.</param>
         /// <exception cref="PSArgumentException">
         /// <exception cref="FormatException">
         /// If <paramref name="label"/> don't match 'LabelRegEx'.
@@ -488,9 +488,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
-        /// <param name="patch">The minor version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="patch">The minor version.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/>, <paramref name="minor"/>, or <paramref name="patch"/> is less than 0.
         /// </exception>
@@ -511,8 +511,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
-        /// <param name="minor">The minor version</param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/> or <paramref name="minor"/> is less than 0.
         /// </exception>
@@ -521,7 +521,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Construct a SemanticVersion.
         /// </summary>
-        /// <param name="major">The major version</param>
+        /// <param name="major">The major version.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="major"/> is less than 0.
         /// </exception>
@@ -621,7 +621,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Parse <paramref name="version"/> and return the result if it is a valid <see cref="SemanticVersion"/>, otherwise throws an exception.
         /// </summary>
-        /// <param name="version">The string to parse</param>
+        /// <param name="version">The string to parse.</param>
         /// <returns></returns>
         /// <exception cref="PSArgumentException"></exception>
         /// <exception cref="FormatException"></exception>
@@ -642,8 +642,8 @@ namespace System.Management.Automation
         /// Parse <paramref name="version"/> and return true if it is a valid <see cref="SemanticVersion"/>, otherwise return false.
         /// No exceptions are raised.
         /// </summary>
-        /// <param name="version">The string to parse</param>
-        /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/></param>
+        /// <param name="version">The string to parse.</param>
+        /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/>.</param>
         public static bool TryParse(string version, out SemanticVersion result)
         {
             if (version != null)

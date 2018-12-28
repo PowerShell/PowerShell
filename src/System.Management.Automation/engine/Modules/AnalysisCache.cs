@@ -445,7 +445,7 @@ namespace System.Management.Automation
         /// Also re-cache the module if the cached item is stale.
         /// </summary>
         /// <param name="modulePath">Path to the module to get exported types from.</param>
-        /// <param name="context">Current Context</param>
+        /// <param name="context">Current Context.</param>
         /// <returns></returns>
         internal static ConcurrentDictionary<string, TypeAttributes> GetExportedClasses(string modulePath, ExecutionContext context)
         {

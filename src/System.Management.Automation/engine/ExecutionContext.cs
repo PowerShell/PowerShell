@@ -677,7 +677,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Routine to create a command(processor) instance using the factory.
         /// </summary>
-        /// <param name="command">The name of the command to lookup</param>
+        /// <param name="command">The name of the command to lookup.</param>
         /// <param name="dotSource"></param>
         /// <returns>The command processor object.</returns>
         internal CommandProcessorBase CreateCommand(string command, bool dotSource)
@@ -1422,8 +1422,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Report an initialization-time error.
         /// </summary>
-        /// <param name="resourceString">resource string</param>
-        /// <param name="arguments">arguments</param>
+        /// <param name="resourceString">resource string.</param>
+        /// <param name="arguments">arguments.</param>
         internal void ReportEngineStartupError(string resourceString, params object[] arguments)
         {
             try
@@ -1453,7 +1453,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Report an initialization-time error
         /// </summary>
-        /// <param name="error">error to report</param>
+        /// <param name="error">error to report.</param>
         internal void ReportEngineStartupError(string error)
         {
             try
@@ -1640,8 +1640,8 @@ namespace System.Management.Automation
         /// with LoadFrom, which are in a different loaded context than Load, can still be used to
         /// resolve types.
         /// </summary>
-        /// <param name="sender">The event sender</param>
-        /// <param name="args">The event args</param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="args">The event args.</param>
         /// <returns>The resolve assembly or null if not found.</returns>
         private static Assembly PowerShellAssemblyResolveHandler(object sender, ResolveEventArgs args)
         {

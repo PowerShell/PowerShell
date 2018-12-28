@@ -541,7 +541,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return a single-quoted string. Any embedded single quotes will be doubled.
         /// </summary>
-        /// <param name="name">The string to quote</param>
+        /// <param name="name">The string to quote.</param>
         /// <returns>The quoted string.</returns>
         private string QuoteName(string name)
         {
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return a single-quoted string using the AbsoluteUri member to ensure it is escaped correctly
         /// </summary>
-        /// <param name="name">The Uri to quote</param>
+        /// <param name="name">The Uri to quote.</param>
         /// <returns>The quoted AbsoluteUri.</returns>
         private string QuoteName(Uri name)
         {
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return a single-quoted string from a Version object
         /// </summary>
-        /// <param name="name">The Version object to quote</param>
+        /// <param name="name">The Version object to quote.</param>
         /// <returns>The quoted Version string.</returns>
         private string QuoteName(Version name)
         {
@@ -578,8 +578,8 @@ namespace Microsoft.PowerShell.Commands
         /// Takes a collection of strings and returns the collection
         /// quoted.
         /// </summary>
-        /// <param name="names">The list to quote</param>
-        /// <param name="streamWriter">Streamwriter to get end of line character from</param>
+        /// <param name="names">The list to quote.</param>
+        /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns>The quoted list.</returns>
         private string QuoteNames(IEnumerable names, StreamWriter streamWriter)
         {
@@ -653,8 +653,8 @@ namespace Microsoft.PowerShell.Commands
         /// Takes a collection of "module specifications" (string or hashtable)
         /// and returns the collection as a string that can be inserted into a module manifest
         /// </summary>
-        /// <param name="moduleSpecs">The list to quote</param>
-        /// <param name="streamWriter">Streamwriter to get end of line character from</param>
+        /// <param name="moduleSpecs">The list to quote.</param>
+        /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns>The quoted list.</returns>
         private string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
         {
@@ -739,8 +739,8 @@ namespace Microsoft.PowerShell.Commands
         /// Takes a collection of file names and returns the collection
         /// quoted.
         /// </summary>
-        /// <param name="names">The list to quote</param>
-        /// <param name="streamWriter">Streamwriter to get end of line character from</param>
+        /// <param name="names">The list to quote.</param>
+        /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns>The quoted list.</returns>
         private string QuoteFiles(IEnumerable names, StreamWriter streamWriter)
         {
@@ -889,10 +889,10 @@ namespace Microsoft.PowerShell.Commands
         /// for a particular key. It returns a formatted string that includes
         /// a comment describing the key as well as the key and its value.
         /// </summary>
-        /// <param name="key">The manifest key to use</param>
-        /// <param name="resourceString">resourceString that holds the message</param>
-        /// <param name="value">The formatted manifest fragment</param>
-        /// <param name="streamWriter">Streamwriter to get end of line character from</param>
+        /// <param name="key">The manifest key to use.</param>
+        /// <param name="resourceString">resourceString that holds the message.</param>
+        /// <param name="value">The formatted manifest fragment.</param>
+        /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns></returns>
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {

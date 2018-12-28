@@ -202,9 +202,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the begin scriptblock at the start of processing
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void BeginProcessing()
         {
             Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
@@ -283,9 +283,9 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the processing script blocks on the current pipeline object
         /// which is passed as it's only parameter.
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void ProcessRecord()
         {
             Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
@@ -838,9 +838,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the end scriptblock when the pipeline is complete
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void EndProcessing()
         {
             if (ParameterSetName != "ScriptBlockSet") return;
@@ -1617,9 +1617,9 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the script block passing in the current pipeline object as
         /// it's only parameter.
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void ProcessRecord()
         {
             if (_inputObject == AutomationNull.Value)
