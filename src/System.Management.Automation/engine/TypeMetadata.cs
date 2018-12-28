@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A copy constructor that creates a deep copy of the <paramref name="other"/> ParameterSetMetadata object.
         /// </summary>
-        /// <param name="other">object to copy.</param>
+        /// <param name="other">Object to copy.</param>
         internal ParameterSetMetadata(ParameterSetMetadata other)
         {
             if (other == null)
@@ -424,7 +424,7 @@ namespace System.Management.Automation
         /// A copy constructor that creates a deep copy of the <paramref name="other"/> ParameterMetadata object.
         /// Instances of Attribute and Type classes are copied by reference.
         /// </summary>
-        /// <param name="other">object to copy.</param>
+        /// <param name="other">Object to copy.</param>
         public ParameterMetadata(ParameterMetadata other)
         {
             if (other == null)

@@ -313,7 +313,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="name">The name of the variable.</param>
         /// <param name="origin">The command origin (where the scope was created), used to decide if the variable is visible.</param>
-        /// <param name="fromNewOrSet">true if looking up the variable as part of a new or set variable operation.</param>
+        /// <param name="fromNewOrSet">True if looking up the variable as part of a new or set variable operation.</param>
         /// <param name="variable">The variable, if one is found in scope.</param>
         /// <exception cref="SessionStateException">Thrown if the variable is not visible based on CommandOrigin.</exception>
         /// <returns>True if there is a variable in scope, false otherwise.</returns>

@@ -165,7 +165,7 @@ namespace System.Management.Automation
         /// value of true to false.
         /// </exception>
         /// <exception cref="PSArgumentNullException">If <paramref name="component"/> is null.</exception>
-        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not
+        /// <exception cref="PSArgumentException">If <paramref name="component"/> is not
         /// an <see cref="PSObject"/> or an <see cref="PSObjectTypeDescriptor"/>.</exception>
         public override object GetValue(object component)
         {
@@ -263,7 +263,7 @@ namespace System.Management.Automation
         /// from its default value of true to false.
         /// </exception>
         /// <exception cref="PSArgumentNullException">If <paramref name="component"/> is null.</exception>
-        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not an
+        /// <exception cref="PSArgumentException">If <paramref name="component"/> is not an
         /// <see cref="PSObject"/> or an <see cref="PSObjectTypeDescriptor"/>.
         /// </exception>
         public override void SetValue(object component, object value)

@@ -535,8 +535,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSObject wrapping obj (accessible through BaseObject).
         /// </summary>
-        /// <param name="obj">object we are wrapping.</param>
-        /// <exception cref="ArgumentNullException">if <paramref name="obj"/> is null.</exception>
+        /// <param name="obj">Object we are wrapping.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="obj"/> is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
         public PSObject(object obj)
         {
@@ -1011,11 +1011,11 @@ namespace System.Management.Automation
         /// If obj is an PSObject it will be returned as is, otherwise
         /// a new PSObject will be created based on obj.
         /// </summary>
-        /// <param name="obj">object to be wrapped.</param>
+        /// <param name="obj">Object to be wrapped.</param>
         /// <returns>
         /// obj or a new PSObject whose BaseObject is obj
         /// </returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="obj"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="obj"/> is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
         public static PSObject AsPSObject(object obj)
         {
@@ -1241,8 +1241,8 @@ namespace System.Management.Automation
         /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
         /// </param>
         /// <param name="separator">The separator between elements, if this is an enumeration.</param>
-        /// <param name="format">the format to be passed to ToString.</param>
-        /// <param name="formatProvider">the formatProvider to be passed to ToString.</param>
+        /// <param name="format">The format to be passed to ToString.</param>
+        /// <param name="formatProvider">The formatProvider to be passed to ToString.</param>
         /// <param name="recurse">true if we should enumerate values or properties which would cause recursive
         /// calls to this method. Such recursive calls will have recurse set to false, limiting the depth.</param>
         /// <param name="unravelEnumeratorOnRecurse">If recurse is false, this parameter is not considered. If it is true
@@ -1490,7 +1490,7 @@ namespace System.Management.Automation
         /// concatenated using $ofs.
         /// </summary>
         /// <returns>The string representation for baseObject.</returns>
-        /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString.</exception>
+        /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public override string ToString()
         {
             //If ToString value from deserialization is available,
@@ -1508,10 +1508,10 @@ namespace System.Management.Automation
         /// CodeMethod or ScriptMethod will be used, if available. Enumerations items are
         /// concatenated using $ofs.
         /// </summary>
-        /// <param name="format">repassed to baseObject's IFormattable if present.</param>
-        /// <param name="formatProvider">repassed to baseObject's IFormattable if present.</param>
+        /// <param name="format">Repassed to baseObject's IFormattable if present.</param>
+        /// <param name="formatProvider">Repassed to baseObject's IFormattable if present.</param>
         /// <returns>The string representation for baseObject.</returns>
-        /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString.</exception>
+        /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public string ToString(string format, IFormatProvider formatProvider)
         {
             //If ToString value from deserialization is available,
@@ -2028,7 +2028,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set base object
         /// </summary>
-        /// <param name="value">object which is set as core.</param>
+        /// <param name="value">Object which is set as core.</param>
         /// <param name="overrideTypeInfo">If true, overwrite the type information.</param>
         ///<remarks>This method is to be used only by Serialization code</remarks>
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
@@ -2458,7 +2458,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// ToString implementation for Type
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping a Type.</param>
+        /// <param name="instance">Instance of PSObject wrapping a Type.</param>
         public static string Type(PSObject instance)
         {
             if (instance == null)
@@ -2472,7 +2472,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// ToString implementation for XmlNode
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping an XmlNode.</param>
+        /// <param name="instance">Instance of PSObject wrapping an XmlNode.</param>
         public static string XmlNode(PSObject instance)
         {
             XmlNode node = (XmlNode)instance?.BaseObject;
@@ -2487,7 +2487,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// ToString implementation for XmlNodeList
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping an XmlNodeList.</param>
+        /// <param name="instance">Instance of PSObject wrapping an XmlNodeList.</param>
         public static string XmlNodeList(PSObject instance)
         {
             XmlNodeList nodes = (XmlNodeList)instance?.BaseObject;

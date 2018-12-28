@@ -361,7 +361,7 @@ namespace System.Management.Automation
         /// Version.TryParse will be used to convert the string to a Version
         /// object.
         /// </summary>
-        /// <param name="versionString">string representing version.</param>
+        /// <param name="versionString">String representing version.</param>
         /// <returns>A Version Object.</returns>
         internal static Version StringToVersion(string versionString)
         {

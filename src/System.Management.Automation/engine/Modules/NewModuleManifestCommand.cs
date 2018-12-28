@@ -890,7 +890,7 @@ namespace Microsoft.PowerShell.Commands
         /// a comment describing the key as well as the key and its value.
         /// </summary>
         /// <param name="key">The manifest key to use.</param>
-        /// <param name="resourceString">resourceString that holds the message.</param>
+        /// <param name="resourceString">ResourceString that holds the message.</param>
         /// <param name="value">The formatted manifest fragment.</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns></returns>
