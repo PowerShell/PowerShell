@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Helper method to set the WriteStreamType property
         /// based on note properties of a PSObject object.
         /// </summary>
-        /// <param name="so">PSObject</param>
+        /// <param name="so">PSObject.</param>
         internal void SetStreamTypeFromPSObject(
             System.Management.Automation.PSObject so)
         {

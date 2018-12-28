@@ -762,7 +762,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This constructor is used when the type exists and is currently loaded.
         /// </summary>
-        /// <param name="type">The type</param>
+        /// <param name="type">The type.</param>
         public PSTypeName(Type type)
         {
             _type = type;
@@ -775,7 +775,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This constructor is used when the type may not exist, or is not loaded.
         /// </summary>
-        /// <param name="name">The name of the type</param>
+        /// <param name="name">The name of the type.</param>
         public PSTypeName(string name)
         {
             Name = name;

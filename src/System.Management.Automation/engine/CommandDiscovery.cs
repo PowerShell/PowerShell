@@ -25,9 +25,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for event args object
         /// </summary>
-        /// <param name="commandName">The name of the command we're searching for</param>
-        /// <param name="commandOrigin">The origin of the command internal or runspace (external)</param>
-        /// <param name="context">The execution context for this command</param>
+        /// <param name="commandName">The name of the command we're searching for.</param>
+        /// <param name="commandOrigin">The origin of the command internal or runspace (external).</param>
+        /// <param name="context">The execution context for this command.</param>
         internal CommandLookupEventArgs(string commandName, CommandOrigin commandOrigin, ExecutionContext context)
         {
             CommandName = commandName;
@@ -516,8 +516,8 @@ namespace System.Management.Automation
         /// used to determine compatibility between the versions in the requires statement and
         /// the installed version. The version can be PSSnapin or msh
         /// </summary>
-        /// <param name="requires">versions in the requires statement</param>
-        /// <param name="installed">version installed</param>
+        /// <param name="requires">versions in the requires statement.</param>
+        /// <param name="installed">version installed.</param>
         /// <returns>
         /// true if requires and installed's major version match and requires' minor version
         /// is smaller than or equal to installed's

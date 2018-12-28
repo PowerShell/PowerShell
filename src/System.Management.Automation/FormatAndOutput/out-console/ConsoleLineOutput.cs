@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// write a line to the output device
         /// </summary>
-        /// <param name="s">line to write</param>
+        /// <param name="s">line to write.</param>
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
@@ -245,9 +245,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// constructor for the ConsoleLineOutput
         /// </summary>
-        /// <param name="hostConsole">PSHostUserInterface to wrap</param>
-        /// <param name="paging">true if we require prompting for page breaks</param>
-        /// <param name="errorContext">error context to throw exceptions</param>
+        /// <param name="hostConsole">PSHostUserInterface to wrap.</param>
+        /// <param name="paging">true if we require prompting for page breaks.</param>
+        /// <param name="errorContext">error context to throw exceptions.</param>
         internal ConsoleLineOutput(PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
         {
             if (hostConsole == null)
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">string to write.</param>
         private void OnWriteLine(string s)
         {
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// This is called when the WriteLineHelper needs to write a line whose length
         /// is the same as the width of the screen buffer
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">string to write.</param>
         private void OnWrite(string s)
         {
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
@@ -468,8 +468,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// prompt handler with the given prompt
             /// </summary>
-            /// <param name="s">prompt string to be used</param>
-            /// <param name="cmdlet">the Cmdlet using this prompt handler</param>
+            /// <param name="s">prompt string to be used.</param>
+            /// <param name="cmdlet">the Cmdlet using this prompt handler.</param>
             internal PromptHandler(string s, ConsoleLineOutput cmdlet)
             {
                 if (string.IsNullOrEmpty(s))
@@ -482,8 +482,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// determine how many rows the prompt should take.
             /// </summary>
-            /// <param name="cols">current number of columns on the screen</param>
-            /// <param name="displayCells">string manipulation helper</param>
+            /// <param name="cols">current number of columns on the screen.</param>
+            /// <param name="displayCells">string manipulation helper.</param>
             /// <returns></returns>
             internal int ComputePromptLines(DisplayCells displayCells, int cols)
             {
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// do the actual prompting
             /// </summary>
-            /// <param name="console">PSHostUserInterface instance to prompt to</param>
+            /// <param name="console">PSHostUserInterface instance to prompt to.</param>
             internal PromptResponse PromptUser(PSHostUserInterface console)
             {
                 // NOTE: assume the values passed to ComputePromptLines are still valid

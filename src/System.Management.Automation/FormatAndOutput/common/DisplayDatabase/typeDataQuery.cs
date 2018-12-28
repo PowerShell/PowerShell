@@ -589,8 +589,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// given an appliesTo list, it finds all the types that are contained (following type
         /// group references)
         /// </summary>
-        /// <param name="db">database to use</param>
-        /// <param name="appliesTo">object to lookup</param>
+        /// <param name="db">database to use.</param>
+        /// <param name="appliesTo">object to lookup.</param>
         /// <returns></returns>
         internal static AppliesTo GetAllApplicableTypes(TypeInfoDataBase db, AppliesTo appliesTo)
         {
