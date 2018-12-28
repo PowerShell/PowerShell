@@ -81,7 +81,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         $ev | Should -BeNullOrEmpty
     }
 
-    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Get- is prepended to commands" {
         (& 'location').Path | Should -Be (get-location).Path
     }

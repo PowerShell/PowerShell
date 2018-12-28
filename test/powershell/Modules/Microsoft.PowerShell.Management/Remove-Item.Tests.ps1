@@ -24,28 +24,28 @@ Describe "Remove-Item" -Tags "CI" {
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
 	It "Should be able to call the rm alias" {
 	    { rm $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
 	It "Should be able to call the del alias" {
 	    { del $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
 	It "Should be able to call the erase alias" {
 	    { erase $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	# PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
 	It "Should be able to call the ri alias" {
 	    { ri $testfilepath } | Should -Not -Throw
 

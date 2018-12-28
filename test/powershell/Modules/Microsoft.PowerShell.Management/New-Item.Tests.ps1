@@ -68,7 +68,7 @@ Describe "New-Item" -Tags "CI" {
         Test-Path $FullyQualifiedFolder | Should -BeTrue
     }
 
-    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should create a file using the ni alias" {
         ni -Name $testfile -Path $tmpDirectory -ItemType file
 

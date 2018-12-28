@@ -38,13 +38,13 @@ Describe "Get-ItemProperty" -Tags "CI" {
 	$output.PSProvider.Name | Should -Be "FileSystem"
     }
 
-    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should be able to use the gp alias without error" {
 	{ gp . }  | Should -Not -Throw
 	{ gp .. } | Should -Not -Throw
     }
 
-    # PSAvoidUsingCmdletAliases warnings should be ignored here as the use of aliases is intentional.
+    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should have the same results between alias and cmdlet" {
 	$alias  = gp -Path $testfile -Name fullname
 	$cmdlet = Get-ItemProperty -Path $testfile -Name fullname
