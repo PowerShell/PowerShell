@@ -240,7 +240,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (String.IsNullOrEmpty(extraInfo))
+            if (string.IsNullOrEmpty(extraInfo))
             {
                 ReportOperationComplete(
                     requestDetails,

@@ -904,7 +904,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void ConnectAsync()
         {
             Dbg.Assert(!isClosed, "object already disposed");
-            Dbg.Assert(!String.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
 
             ReceivedDataCollection.PrepareForStreamConnect();
             // additional content with connect shell call. Negotiation and connect related messages
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             Dbg.Assert(!isClosed, "object already disposed");
-            Dbg.Assert(!String.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
             Dbg.Assert(WSManAPIData != null, "WSManApiData should always be created before session creation.");
 
             List<WSManNativeApi.WSManOption> shellOptions = new List<WSManNativeApi.WSManOption>(WSManAPIData.CommonOptionSet);

@@ -334,7 +334,7 @@ namespace System.Management.Automation.Remoting
         /// executed.</returns>
         internal Collection<RemoteHostCall> PerformSecurityChecksOnHostMessage(string computerName)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(computerName),
+            Dbg.Assert(!string.IsNullOrEmpty(computerName),
                 "Computer Name must be passed for use in warning messages");
             _computerName = computerName;
             Collection<RemoteHostCall> prerequisiteCalls = new Collection<RemoteHostCall>();

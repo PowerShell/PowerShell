@@ -139,7 +139,7 @@ namespace System.Management.Automation
             // If the flow statement has no label, it always matches (because it just means, break or continue from
             // the most nested loop.)  Otherwise, compare the labels.
 
-            return String.IsNullOrEmpty(flowLabel) || flowLabel.Equals(loopLabel, StringComparison.OrdinalIgnoreCase);
+            return string.IsNullOrEmpty(flowLabel) || flowLabel.Equals(loopLabel, StringComparison.OrdinalIgnoreCase);
         }
     }
 
@@ -1786,7 +1786,7 @@ namespace System.Management.Automation
             Type exceptionType, IScriptExtent errorPosition, string resourceIdAndErrorId, string resourceString, Exception innerException, params object[] args)
         {
             // errToken may be null
-            if (String.IsNullOrEmpty(resourceIdAndErrorId))
+            if (string.IsNullOrEmpty(resourceIdAndErrorId))
                 throw PSTraceSource.NewArgumentException("resourceIdAndErrorId");
             // innerException may be null
             // args may be null or empty
@@ -1806,7 +1806,7 @@ namespace System.Management.Automation
                     message = StringUtil.Format(resourceString, args);
                 }
 
-                if (String.IsNullOrEmpty(message))
+                if (string.IsNullOrEmpty(message))
                 {
                     Dbg.Assert(false,
                         "Could not load text for parser exception '"
@@ -1862,8 +1862,8 @@ namespace System.Management.Automation
         {
             // errToken may be null
             // only assert -- be permissive at runtime
-            Dbg.Assert(!String.IsNullOrEmpty(message), "message was null or empty");
-            Dbg.Assert(!String.IsNullOrEmpty(errorId), "errorId was null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(message), "message was null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(errorId), "errorId was null or empty");
             // innerException may be null
 
             RuntimeException e;
@@ -1967,7 +1967,7 @@ namespace System.Management.Automation
                     message = StringUtil.Format(resourceString, args);
                 }
 
-                if (String.IsNullOrEmpty(message))
+                if (string.IsNullOrEmpty(message))
                 {
                     message = "Could not load text for msh script tracing message id '" + messageId + "'";
                     Dbg.Assert(false, message);

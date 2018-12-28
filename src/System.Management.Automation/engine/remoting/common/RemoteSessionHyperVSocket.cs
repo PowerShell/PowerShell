@@ -502,7 +502,7 @@ namespace System.Management.Automation.Remoting
             //
             if (isFirstConnection)
             {
-                if (String.IsNullOrEmpty(networkCredential.UserName))
+                if (string.IsNullOrEmpty(networkCredential.UserName))
                 {
                     throw new PSDirectException(
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername));
@@ -520,13 +520,13 @@ namespace System.Management.Automation.Remoting
 
                 if (isFirstConnection)
                 {
-                    if (String.IsNullOrEmpty(networkCredential.Domain))
+                    if (string.IsNullOrEmpty(networkCredential.Domain))
                     {
                         networkCredential.Domain = "localhost";
                     }
 
-                    bool emptyPassword = String.IsNullOrEmpty(networkCredential.Password);
-                    bool emptyConfiguration = String.IsNullOrEmpty(configurationName);
+                    bool emptyPassword = string.IsNullOrEmpty(networkCredential.Password);
+                    bool emptyConfiguration = string.IsNullOrEmpty(configurationName);
 
                     byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
                     byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);

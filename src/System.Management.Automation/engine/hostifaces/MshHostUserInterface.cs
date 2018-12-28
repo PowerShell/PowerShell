@@ -986,7 +986,7 @@ namespace System.Management.Automation.Host
 
         internal static string GetTranscriptPath(string baseDirectory, bool includeDate)
         {
-            if (String.IsNullOrEmpty(baseDirectory))
+            if (string.IsNullOrEmpty(baseDirectory))
             {
                 baseDirectory = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }

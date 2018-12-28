@@ -3813,7 +3813,7 @@ namespace System.Management.Automation
                 message = StringUtil.Format(resourceString, args);
             }
 
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
             {
                 message = "Could not load text for msh script tracing message id '" + messageId + "'";
                 Diagnostics.Assert(false, message);
@@ -3839,7 +3839,7 @@ namespace System.Management.Automation
         internal void TraceScriptFunctionEntry(FunctionContext functionContext)
         {
             var methodName = functionContext._functionName;
-            if (String.IsNullOrEmpty(functionContext._file))
+            if (string.IsNullOrEmpty(functionContext._file))
             {
                 Trace("TraceEnteringFunction", ParserStrings.TraceEnteringFunction, methodName);
             }

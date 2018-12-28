@@ -1836,7 +1836,7 @@ namespace System.Management.Automation
             int i = 0;
             while (e != null && i++ < 10)
             {
-                if (!String.IsNullOrEmpty(e.StackTrace))
+                if (!string.IsNullOrEmpty(e.StackTrace))
                 {
                     stack = e.StackTrace;
                 }
@@ -2367,7 +2367,7 @@ namespace System.Management.Automation
                 FileInfo file = obj as FileInfo;
                 string filePath = file != null ? file.FullName : PSObject.ToStringParser(context, obj);
 
-                if (String.IsNullOrEmpty(filePath))
+                if (string.IsNullOrEmpty(filePath))
                 {
                     throw InterpreterError.NewInterpreterException(filePath,
                         typeof(RuntimeException), errorExtent, "InvalidFilenameOption", ParserStrings.InvalidFilenameOption);

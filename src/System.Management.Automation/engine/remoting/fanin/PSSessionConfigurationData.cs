@@ -76,7 +76,7 @@ namespace System.Management.Automation.Remoting
         {
             PSSessionConfigurationData configuration = new PSSessionConfigurationData();
 
-            if (String.IsNullOrEmpty(configurationData)) return configuration;
+            if (string.IsNullOrEmpty(configurationData)) return configuration;
 
             configurationData = Unescape(configurationData);
 

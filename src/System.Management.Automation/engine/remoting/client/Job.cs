@@ -432,7 +432,7 @@ namespace System.Management.Automation
         protected Job(string command, string name)
             : this(command)
         {
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 _name = name;
             }
@@ -472,7 +472,7 @@ namespace System.Management.Automation
             Id = token.Id;
             InstanceId = token.InstanceId;
 
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 _name = name;
             }
@@ -3358,11 +3358,11 @@ namespace System.Management.Automation
 
                         errorDetails += message;
                     }
-                    else if (!String.IsNullOrEmpty(transException.Message))
+                    else if (!string.IsNullOrEmpty(transException.Message))
                     {
                         errorDetails += transException.Message;
                     }
-                    else if (!String.IsNullOrEmpty(transException.TransportMessage))
+                    else if (!string.IsNullOrEmpty(transException.TransportMessage))
                     {
                         errorDetails += transException.TransportMessage;
                     }

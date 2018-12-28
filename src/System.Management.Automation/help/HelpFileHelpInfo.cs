@@ -91,12 +91,12 @@ namespace System.Management.Automation
         /// <returns>HelpFileHelpInfo object created based on information provided.</returns>
         internal static HelpFileHelpInfo GetHelpInfo(string name, string text, string filename)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             HelpFileHelpInfo helpfileHelpInfo = new HelpFileHelpInfo(name, text, filename);
 
-            if (String.IsNullOrEmpty(helpfileHelpInfo.Name))
+            if (string.IsNullOrEmpty(helpfileHelpInfo.Name))
                 return null;
 
             helpfileHelpInfo.AddCommonHelpProperties();

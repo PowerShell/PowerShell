@@ -7188,7 +7188,7 @@ namespace Microsoft.PowerShell
             string userName = GetPropertyValue<string>(pso, "UserName");
             System.Security.SecureString password = GetPropertyValue<System.Security.SecureString>(pso, "Password");
 
-            if (String.IsNullOrEmpty(userName))
+            if (string.IsNullOrEmpty(userName))
             {
                 return PSCredential.Empty;
             }

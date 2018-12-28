@@ -251,10 +251,10 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (String.IsNullOrEmpty(baseName))
+                if (string.IsNullOrEmpty(baseName))
                     throw PSTraceSource.NewArgumentNullException("baseName");
 
-                if (String.IsNullOrEmpty(resourceId))
+                if (string.IsNullOrEmpty(resourceId))
                     throw PSTraceSource.NewArgumentNullException("resourceId");
 
                 ResourceManager manager = ResourceManagerCache.GetResourceManager(this.GetType().Assembly, baseName);
@@ -682,7 +682,7 @@ namespace System.Management.Automation
                 if (commandRuntime2 != null)
                 {
                     string source = this.MyInvocation.PSCommandPath;
-                    if (String.IsNullOrEmpty(source))
+                    if (string.IsNullOrEmpty(source))
                     {
                         source = this.MyInvocation.MyCommand.Name;
                     }

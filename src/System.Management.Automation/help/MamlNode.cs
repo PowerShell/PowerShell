@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeError(xmlNode, childNode);
             }
 
-            if (String.IsNullOrEmpty(term))
+            if (string.IsNullOrEmpty(term))
                 return null;
 
             PSObject mshObject = new PSObject();
@@ -1226,11 +1226,11 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool IsEmptyLine(string line)
         {
-            if (String.IsNullOrEmpty(line))
+            if (string.IsNullOrEmpty(line))
                 return true;
 
             string trimedLine = line.Trim();
-            if (String.IsNullOrEmpty(trimedLine))
+            if (string.IsNullOrEmpty(trimedLine))
                 return true;
 
             return false;

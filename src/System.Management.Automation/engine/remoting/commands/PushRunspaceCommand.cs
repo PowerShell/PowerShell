@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            if (String.IsNullOrEmpty(ConfigurationName))
+            if (string.IsNullOrEmpty(ConfigurationName))
             {
                 if ((ParameterSetName == EnterPSSessionCommand.ComputerNameParameterSet) ||
                     (ParameterSetName == EnterPSSessionCommand.UriParameterSet))
@@ -1214,7 +1214,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Dbg.Assert(!String.IsNullOrEmpty(ContainerId), "ContainerId has to be set.");
+                Dbg.Assert(!string.IsNullOrEmpty(ContainerId), "ContainerId has to be set.");
 
                 ContainerConnectionInfo connectionInfo = null;
 

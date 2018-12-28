@@ -123,9 +123,9 @@ namespace System.Management.Automation
         /// </summary>
         internal void Validate()
         {
-            if (String.IsNullOrEmpty(Target)
+            if (string.IsNullOrEmpty(Target)
                 && HelpCategory == HelpCategory.None
-                && String.IsNullOrEmpty(Provider)
+                && string.IsNullOrEmpty(Provider)
                 && Component == null
                 && Role == null
                 && Functionality == null
@@ -136,9 +136,9 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (String.IsNullOrEmpty(Target))
+            if (string.IsNullOrEmpty(Target))
             {
-                if (!String.IsNullOrEmpty(Provider) &&
+                if (!string.IsNullOrEmpty(Provider) &&
                     (HelpCategory == HelpCategory.None || HelpCategory == HelpCategory.Provider)
                 )
                 {

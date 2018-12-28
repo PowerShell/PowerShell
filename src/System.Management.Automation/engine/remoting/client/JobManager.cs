@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <returns>Whether the type is registered already.</returns>
         public bool IsRegistered(string typeName)
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 return false;
             }
