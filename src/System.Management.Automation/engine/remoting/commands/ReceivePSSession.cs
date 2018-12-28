@@ -1152,8 +1152,8 @@ namespace Microsoft.PowerShell.Commands
         /// Helper method to attempt to retrieve a disconnected runspace object
         /// from the server, based on the provided session object.
         /// </summary>
-        /// <param name="session">PSSession.</param>
-        /// <returns>PSSession.</returns>
+        /// <param name="session">PSSession session object.</param>
+        /// <returns>PSSession disconnected runspace object.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
             RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
