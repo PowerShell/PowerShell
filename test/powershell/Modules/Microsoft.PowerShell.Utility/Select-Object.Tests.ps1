@@ -20,12 +20,10 @@ Describe "Select-Object" -Tags "CI" {
 	$result | Should -Be $expected
     }
 
-	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should be able to use the alias" {
 	{ $dirObject | select } | Should -Not -Throw
     }
 
-	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should have same result when using alias" {
 	$result   = $dirObject | select
 	$expected = $dirObject | Select-Object

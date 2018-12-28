@@ -67,7 +67,6 @@ Describe "Import-Alias" -Tags "CI" {
 	    { Import-Alias $pesteraliasfile } | Should -Not -throw
 	}
 
-	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
 	It "Should be able to import file via the Import-Alias alias of ipal" {
 	    { ipal $pesteraliasfile } | Should -Not -throw
 	}
@@ -77,7 +76,6 @@ Describe "Import-Alias" -Tags "CI" {
 	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
 	}
 
-	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
 	It "Should be able to use ipal alias to import an alias file and perform cmd" {
 	    (ipal $pesteraliasfile)
 	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"

@@ -11,12 +11,10 @@ Describe "Format-List" -Tags "CI" {
         { $in | Format-List } | Should -Not -BeNullOrEmpty
     }
 
-    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should be able to call the alias" {
         { $in | fl } | Should -Not -BeNullOrEmpty
     }
 
-    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should have the same output whether choosing alias or not" {
         $expected = $in | Format-List | Out-String
         $actual   = $in | fl          | Out-String

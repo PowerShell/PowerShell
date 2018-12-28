@@ -4,7 +4,6 @@ Describe "Format-Custom" -Tags "CI" {
 
     Context "Check Format-Custom aliases" {
 
-        # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
         It "Should have the same output between the alias and the unaliased function" {
             $nonaliased = Get-FormatData | Format-Custom
             $aliased    = Get-FormatData | fc

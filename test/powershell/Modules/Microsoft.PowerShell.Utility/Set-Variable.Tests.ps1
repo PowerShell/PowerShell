@@ -166,14 +166,12 @@ Describe "Set-Variable" -Tags "CI" {
 	$testVar | Should -Be 2
     }
 
-	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should be able to be called with the set alias" {
 	set testVar -Value 1
 
 	$testVar | Should -Be 1
     }
 
-	# PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should be able to be called with the sv alias" {
 	sv testVar -Value 2
 

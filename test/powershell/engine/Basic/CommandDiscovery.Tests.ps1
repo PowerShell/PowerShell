@@ -81,7 +81,6 @@ Describe "Command Discovery tests" -Tags "CI" {
         $ev | Should -BeNullOrEmpty
     }
 
-    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Get- is prepended to commands" {
         (& 'location').Path | Should -Be (get-location).Path
     }

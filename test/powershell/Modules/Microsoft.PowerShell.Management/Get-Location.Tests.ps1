@@ -15,7 +15,6 @@ Describe "Get-Location" -Tags "CI" {
 	(Get-Location).Path | Should -BeExactly $currentDirectory
     }
 
-    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "Should do exactly the same thing as its alias" {
 	(pwd).Path | Should -BeExactly (Get-Location).Path
     }

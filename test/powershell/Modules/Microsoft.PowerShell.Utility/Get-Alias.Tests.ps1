@@ -185,7 +185,6 @@ Describe "Get-Alias" -Tags "CI" {
         }
     }
 
-    # PSAvoidUsingCmdletAliases script analyzer rule should be ignored for this test.
     It "should return an array of objects" {
         $val = Get-Alias a*
         $alias = gal a*
