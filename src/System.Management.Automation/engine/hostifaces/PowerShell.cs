@@ -821,7 +821,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
         /// </summary>
-        /// <param name="runspace">runspace mode.</param>
+        /// <param name="runspace">Runspace mode.</param>
         /// <returns>An instance of PowerShell.</returns>
         public static PowerShell Create(RunspaceMode runspace)
         {
@@ -3666,8 +3666,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the steppable pipeline from the powershell object
         /// </summary>
-        /// <param name="context">engine execution context.</param>
-        /// <param name="commandOrigin">command origin.</param>
+        /// <param name="context">Engine execution context.</param>
+        /// <param name="commandOrigin">Command origin.</param>
         /// <returns>Steppable pipeline object.</returns>
         private SteppablePipeline GetSteppablePipeline(ExecutionContext context, CommandOrigin commandOrigin)
         {
@@ -3920,7 +3920,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the state of this powershell instance.
         /// </summary>
-        /// <param name="stateInfo">the state info to set.</param>
+        /// <param name="stateInfo">The state info to set.</param>
         internal void SetStateChanged(PSInvocationStateInfo stateInfo)
         {
             PSInvocationStateInfo copyStateInfo = stateInfo;
@@ -4233,9 +4233,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects.</param>
-        /// <param name="output">output object.</param>
-        /// <param name="settings">invocation settings.</param>
+        /// <param name="input">Input objects.</param>
+        /// <param name="output">Output object.</param>
+        /// <param name="settings">Invocation settings.</param>
         private void CoreInvokeHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             RunspacePool pool = _rsConnection as RunspacePool;
@@ -4318,9 +4318,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects.</param>
-        /// <param name="output">output object.</param>
-        /// <param name="settings">invocation settings.</param>
+        /// <param name="input">Input objects.</param>
+        /// <param name="output">Output object.</param>
+        /// <param name="settings">Invocation settings.</param>
         private void CoreInvokeRemoteHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             RunspacePool pool = _rsConnection as RunspacePool;
@@ -4352,9 +4352,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects.</param>
-        /// <param name="output">output object.</param>
-        /// <param name="settings">invocation settings.</param>
+        /// <param name="input">Input objects.</param>
+        /// <param name="output">Output object.</param>
+        /// <param name="settings">Invocation settings.</param>
         private void CoreInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             bool isRemote = false;

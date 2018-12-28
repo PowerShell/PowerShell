@@ -25,8 +25,8 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline initialized with a command string
         /// </summary>
         /// <param name="runspace">The associated Runspace/></param>
-        /// <param name="command">command string.</param>
-        /// <param name="addToHistory">if true, add pipeline to history.</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="addToHistory">If true, add pipeline to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>
         /// <exception cref="ArgumentNullException">
         /// Command is null and add to history is true
@@ -783,7 +783,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the new execution state.
         /// </summary>
-        /// <param name="state">the new state.</param>
+        /// <param name="state">The new state.</param>
         /// <param name="reason">
         /// An exception indicating that state change is the result of an error,
         /// otherwise; null.
@@ -823,7 +823,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the new execution state
         /// </summary>
-        /// <param name="state">the new state.</param>
+        /// <param name="state">The new state.</param>
         protected void SetPipelineState(PipelineState state)
         {
             SetPipelineState(state, null);

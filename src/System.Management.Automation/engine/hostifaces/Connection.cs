@@ -326,7 +326,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="runspaceStateInfo">The information about
         /// current state of the runspace.</param>
-        /// <exception cref="ArgumentNullException">runspaceStateInfo is null
+        /// <exception cref="ArgumentNullException">RunspaceStateInfo is null
         /// </exception>
         internal RunspaceStateEventArgs(RunspaceStateInfo runspaceStateInfo)
         {
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline from a command string.
         /// </summary>
         /// <param name="command">A valid command string.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
@@ -1445,7 +1445,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates a nested pipeline.
         /// </summary>
         /// <param name="command">A valid command string.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Command specified in commandString.
         /// </returns>
