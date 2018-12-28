@@ -1010,7 +1010,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Retrieves the dynamic parameters required for the Get-Item cmdlet
         /// </summary>
-        /// <param name="path">The path of the file to process</param>
+        /// <param name="path">The path of the file to process.</param>
         /// <returns>An instance of the FileSystemProviderGetItemDynamicParameters class that represents the dynamic parameters.</returns>
         protected override object GetItemDynamicParameters(string path)
         {
@@ -1831,7 +1831,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Provides a mode property for FileSystemInfo
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping a FileSystemInfo</param>
+        /// <param name="instance">instance of PSObject wrapping a FileSystemInfo.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         public static string Mode(PSObject instance)
         {
@@ -2796,8 +2796,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Retrieves the dynamic parameters required for the Remove-Item cmdlet
         /// </summary>
-        /// <param name="path">The path of the file to process</param>
-        /// <param name="recurse">Whether to recurse into containers</param>
+        /// <param name="path">The path of the file to process.</param>
+        /// <param name="recurse">Whether to recurse into containers.</param>
         /// <returns>An instance of the FileSystemProviderRemoveItemDynamicParameters class that represents the dynamic parameters.</returns>
         protected override object RemoveItemDynamicParameters(string path, bool recurse)
         {
@@ -5192,8 +5192,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the common base path of two paths
         /// </summary>
-        /// <param name="path1">One path</param>
-        /// <param name="path2">Another path</param>
+        /// <param name="path1">One path.</param>
+        /// <param name="path2">Another path.</param>
         private string GetCommonBase(string path1, string path2)
         {
             // Always see if the shorter path is a substring of the
@@ -7023,7 +7023,7 @@ namespace Microsoft.PowerShell.Commands
             /// Creates a hard link using the native API.
             /// </summary>
             /// <param name="name">Name of the hard link.</param>
-            /// <param name="existingFileName">Path to the target of the hard link</param>
+            /// <param name="existingFileName">Path to the target of the hard link.</param>
             /// <param name="SecurityAttributes"></param>
             /// <returns></returns>
             [DllImport(PinvokeDllNames.CreateHardLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]

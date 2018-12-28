@@ -227,7 +227,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the command.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file)</param>
+        /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file).</param>
         /// <param name="helpCategory">Help Category for search.</param>
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromResourceHelpCache(string helpFileIdentifier, HelpCategory helpCategory)

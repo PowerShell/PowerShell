@@ -233,7 +233,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts log context to string
         /// </summary>
-        /// <param name="context">log context</param>
+        /// <param name="context">log context.</param>
         /// <returns>String representation.</returns>
         protected static string LogContextToString(LogContext context)
         {

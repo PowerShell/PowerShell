@@ -704,8 +704,8 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Get the common base path of two paths
         /// </summary>
-        /// <param name="path1">One path</param>
-        /// <param name="path2">Another path</param>
+        /// <param name="path1">One path.</param>
+        /// <param name="path2">Another path.</param>
         private string GetCommonBase(string path1, string path2)
         {
             // Always see if the shorter path is a substring of the

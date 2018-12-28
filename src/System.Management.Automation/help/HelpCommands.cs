@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Validates input parameters
         /// </summary>
-        /// <param name="cat">Category specified by the user</param>
+        /// <param name="cat">Category specified by the user.</param>
         /// <exception cref="ArgumentException">
         /// If the request cant be serviced.
         /// </exception>

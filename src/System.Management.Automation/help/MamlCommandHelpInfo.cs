@@ -217,7 +217,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add user-defined command help data to command help.
         /// </summary>
-        /// <param name="userDefinedData">User defined data object</param>
+        /// <param name="userDefinedData">User defined data object.</param>
         internal void AddUserDefinedData(UserDefinedHelpData userDefinedData)
         {
             if (userDefinedData == null)
@@ -251,8 +251,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a MamlCommandHelpInfo object from an XmlNode.
         /// </summary>
-        /// <param name="xmlNode">xmlNode that contains help info</param>
-        /// <param name="helpCategory">help category this maml object fits into</param>
+        /// <param name="xmlNode">xmlNode that contains help info.</param>
+        /// <param name="helpCategory">help category this maml object fits into.</param>
         /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlCommandHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
@@ -279,8 +279,8 @@ namespace System.Management.Automation
         /// <remarks>
         /// A new MamlCommandHelpInfo is created to avoid polluting the provider help cache.
         /// </remarks>
-        /// <param name="cmdletHelp">provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object</param>
-        /// <param name="dynamicParameterHelp">provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object</param>
+        /// <param name="cmdletHelp">provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object.</param>
+        /// <param name="dynamicParameterHelp">provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object.</param>
         /// <returns>Merged command help info object.</returns>
         internal MamlCommandHelpInfo MergeProviderSpecificHelp(PSObject cmdletHelp, PSObject[] dynamicParameterHelp)
         {
@@ -310,7 +310,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Extracts text for a given property from the full help object
         /// </summary>
-        /// <param name="psObject">FullHelp object</param>
+        /// <param name="psObject">FullHelp object.</param>
         /// <param name="propertyName">
         /// Name of the property for which text needs to be extracted.
         /// </param>

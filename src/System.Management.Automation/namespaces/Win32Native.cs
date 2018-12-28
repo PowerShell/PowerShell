@@ -134,9 +134,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <summary>
         /// Retrieves the current process token.
         /// </summary>
-        /// <param name="processHandle">process handle</param>
-        /// <param name="desiredAccess">token access</param>
-        /// <param name="tokenHandle">process token</param>
+        /// <param name="processHandle">process handle.</param>
+        /// <param name="desiredAccess">token access.</param>
+        /// <param name="tokenHandle">process token.</param>
         /// <returns>The current process token.</returns>
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]

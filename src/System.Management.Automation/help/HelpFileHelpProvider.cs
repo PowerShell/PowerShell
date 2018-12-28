@@ -291,7 +291,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Load help file based on the file path.
         /// </summary>
-        /// <param name="path">file path to load help from</param>
+        /// <param name="path">file path to load help from.</param>
         /// <returns>Help info object loaded from the file.</returns>
         private HelpInfo LoadHelpFile(string path)
         {
