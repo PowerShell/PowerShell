@@ -1879,7 +1879,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return a single-quoted string. Any embedded single quotes will be doubled.
         /// </summary>
-        /// <param name="name">The string to quote</param>
+        /// <param name="name">The string to quote.</param>
         /// <returns>The quoted string.</returns>
         internal static string QuoteName(object name)
         {
@@ -1891,7 +1891,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return a script block string wrapped in curly braces.
         /// </summary>
-        /// <param name="sb">The string to wrap</param>
+        /// <param name="sb">The string to wrap.</param>
         /// <returns>The wrapped string.</returns>
         internal static string WrapScriptBlock(object sb)
         {
@@ -2079,7 +2079,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Combines an array of strings into a single string block
         /// </summary>
-        /// <param name="values">string values</param>
+        /// <param name="values">string values.</param>
         /// <returns>String block.</returns>
         internal static string CombineStringArray(string[] values)
         {
