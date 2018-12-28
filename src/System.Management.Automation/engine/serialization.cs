@@ -5895,7 +5895,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the <see cref="PSPrimitiveDictionary"/> class with contents
         /// copied from the <paramref name="other"/> hashtable.
         /// </summary>
-        /// <param name="other">hashtable to copy into the new instance of <see cref="PSPrimitiveDictionary"/>.</param>
+        /// <param name="other">hashtable to copy into the new instance of <see cref="PSPrimitiveDictionary"/></param>
         /// <exception cref="ArgumentException">
         /// This constructor will throw if the <paramref name="other"/> hashtable contains keys that are not a strings
         /// or values that are not one of primitive types that will work during PowerShell remoting handshake.

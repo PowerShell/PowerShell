@@ -24,7 +24,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline initialized with a command string
         /// </summary>
-        /// <param name="runspace">The associated Runspace/>.</param>
+        /// <param name="runspace">The associated Runspace/></param>
         /// <param name="command">command string.</param>
         /// <param name="addToHistory">if true, add pipeline to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>

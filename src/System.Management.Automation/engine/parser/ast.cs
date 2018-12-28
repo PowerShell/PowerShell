@@ -2833,7 +2833,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the using statement including the using keyword.</param>
         /// <param name="aliasName">The name of the alias.</param>
-        /// <param name="moduleSpecification">The module being aliased. Hashtable that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/>.</param>
+        /// <param name="moduleSpecification">The module being aliased. Hashtable that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/></param>
         public UsingStatementAst(IScriptExtent extent, StringConstantExpressionAst aliasName, HashtableAst moduleSpecification)
             : base(extent)
         {
@@ -5956,7 +5956,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the redirection.</param>
         /// <param name="from">The stream to read from.</param>
-        /// <param name="to">The stream to write to - must always be <see cref="RedirectionStream.Output"/>.</param>
+        /// <param name="to">The stream to write to - must always be <see cref="RedirectionStream.Output"/></param>
         /// <exception cref="PSArgumentNullException">If <paramref name="extent"/> is null.</exception>
         public MergingRedirectionAst(IScriptExtent extent, RedirectionStream from, RedirectionStream to)
             : base(extent, from)
@@ -7386,8 +7386,8 @@ namespace System.Management.Automation.Language
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
         /// </param>
-        /// <param name="attribute">The attribute being applied to <paramref name="child"/>.</param>
-        /// <param name="child">The expression being attributed by <paramref name="attribute"/>.</param>
+        /// <param name="attribute">The attribute being applied to <paramref name="child"/></param>
+        /// <param name="child">The expression being attributed by <paramref name="attribute"/></param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="attribute"/>, or <paramref name="child"/> is null.
         /// </exception>
@@ -8118,7 +8118,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Check if the type names a <see cref="System.Type"/>, false otherwise.
         /// </summary>
-        /// <param name="type">The given <see cref="System.Type"/>.</param>
+        /// <param name="type">The given <see cref="System.Type"/></param>
         /// <returns>Returns true if the type names a <see cref="System.Type"/>, false otherwise.</returns>
         /// <remarks>
         ///  This helper function is now used to check 'Void' type only;
@@ -8827,7 +8827,7 @@ namespace System.Management.Automation.Language
         /// The name of the variable.  A leading '$' or '@' is not removed, those characters are assumed to be part of
         /// the variable name.
         /// </param>
-        /// <param name="splatted">True if splatting, like <c>@PSBoundParameters</c>, false otherwise, like <c>$false</c>.</param>
+        /// <param name="splatted">True if splatting, like <c>@PSBoundParameters</c>, false otherwise, like <c>$false</c></param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="variableName"/> is null, or if <paramref name="variableName"/>
         /// is an empty string.

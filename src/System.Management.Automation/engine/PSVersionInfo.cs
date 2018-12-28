@@ -643,7 +643,7 @@ namespace System.Management.Automation
         /// No exceptions are raised.
         /// </summary>
         /// <param name="version">The string to parse.</param>
-        /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/>.</param>
+        /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/></param>
         public static bool TryParse(string version, out SemanticVersion result)
         {
             if (version != null)

@@ -5165,7 +5165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="localeID">The Locale ID (LCID) to be converted.</param>
         /// <param name="localeName">Destination of the Locale name.</param>
-        /// <param name="localeNameSize">Capacity of <paramref name="localeName"/>.</param>
+        /// <param name="localeNameSize">Capacity of <paramref name="localeName"/></param>
         /// <param name="flags"></param>
         /// <returns></returns>
         [DllImport(PInvokeDllNames.LCIDToLocaleNameDllName, SetLastError = true, CharSet = CharSet.Unicode)]

@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// This method has no effect for <see cref="PSObjectPropertyDescriptor"/>.
         /// CanResetValue returns false.
         /// </summary>
-        /// <param name="component">This parameter is ignored for <see cref="PSObjectPropertyDescriptor"/>.</param>
+        /// <param name="component">This parameter is ignored for <see cref="PSObjectPropertyDescriptor"/></param>
         public override void ResetValue(object component) { }
 
         /// <summary>

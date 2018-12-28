@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
         /// The property typically won't need conversion, but it could.  The value is more likely in
         /// need of conversion.
         /// </summary>
-        /// <param name="dictionary">The dictionary that potentially implement <see cref="IDictionary&lt;TKey,TValue&gt;"/>.</param>
+        /// <param name="dictionary">The dictionary that potentially implement <see cref="IDictionary&lt;TKey,TValue&gt;"/></param>
         /// <param name="key">The object representing the key.</param>
         /// <param name="value">The value to assign.</param>
         internal static void DoConversionsForSetInGenericDictionary(IDictionary dictionary, ref object key, ref object value)
