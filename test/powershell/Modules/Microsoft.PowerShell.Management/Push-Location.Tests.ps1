@@ -3,7 +3,7 @@
 Describe "Test-Push-Location" -Tags "CI" {
     New-Variable -Name startDirectory -Value $(Get-Location).Path -Scope Global -Force
 
-    BeforeEach { cd $startDirectory }
+    BeforeEach { Set-Location $startDirectory }
 
     It "Should be called without error" {
 	{ Push-Location } | Should -Not -Throw
@@ -41,7 +41,7 @@ Describe "Test-Push-Location" -Tags "CI" {
 	pushd ..
 	$aliasDirectory = $(Get-Location).Path
 
-	cd $startDirectory
+	Set-Location $startDirectory
 	Push-Location ..
 	$cmdletDirectory = $(Get-Location).Path
 
@@ -53,5 +53,5 @@ Describe "Test-Push-Location" -Tags "CI" {
     }
 
     # final cleanup
-    cd $startDirectory
+    Set-Location $startDirectory
 }

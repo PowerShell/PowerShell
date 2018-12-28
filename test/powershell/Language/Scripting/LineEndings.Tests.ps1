@@ -113,7 +113,7 @@ Describe 'Line endings' -Tags "CI" {
 
         # wrap the content in the specified begin and end quoting characters.
         $content = "$($Begin)$($expected)$($End)"
-        $actual = iex $content
+        $actual = Invoke-Expression $content
 
         # $actual should be the content string ($expected) without the begin and end quoting characters.
         $actual | Should -BeExactly $expected

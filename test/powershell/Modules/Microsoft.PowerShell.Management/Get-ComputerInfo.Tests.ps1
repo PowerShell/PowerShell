@@ -1019,7 +1019,7 @@ try {
                 $computerInformation = Get-ComputerInfoForTest
                 $propertyNames = Get-PropertyNamesForComputerInfoTest
                 $Expected = New-ExpectedComputerInfo $propertyNames
-                $testCases = $propertyNames | %{ @{ "Property" = $_ } }
+                $testCases = $propertyNames | ForEach-Object { @{ "Property" = $_ } }
             }
 
             #

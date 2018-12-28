@@ -855,7 +855,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -937,7 +937,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -988,14 +988,14 @@ try
                             $PriorityClass
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {gps -pid $pid | foo} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Total 5} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Priority normal} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $pid | foo} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $pid | foo -Total 5} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {Get-Process -pid $pid | foo -Priority normal} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1006,15 +1006,15 @@ try
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $pid | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $pid | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -id $pid | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
         }
 
@@ -1034,7 +1034,7 @@ try
                             $ipaddress
                         )
 
-                        "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                        "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                     }
                 }
 
@@ -1625,7 +1625,7 @@ try
 
         It "Strange parameter names should trigger an error" {
             try {
-                Invoke-Command $session { function attack(${foo="$(calc)"}){echo "It is done."}}
+                Invoke-Command $session { function attack(${foo="$(calc)"}){Write-Output "It is done."}}
                 $module = Import-PSSession -Session $session -CommandName attack -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
                 $expectedError | Should -Not -BeNullOrEmpty
             } finally {
@@ -1864,7 +1864,7 @@ try
             $oldNumberOfHandlers | Should -Be $newNumberOfHandlers
 
             ## Private functions from the implicit remoting module shouldn't get imported into global scope
-            @(dir function:*Implicit* -ErrorAction SilentlyContinue).Count | Should -Be 0
+            @(Get-ChildItem function:*Implicit* -ErrorAction SilentlyContinue).Count | Should -Be 0
         }
     }
 
@@ -1945,9 +1945,9 @@ try
         It "Should have a new session when the disconnected session cannot be re-connected" -Pending {
             ## Disconnect session and make it un-connectable.
             Disconnect-PSSession $session
-            start powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
+            Start-Process powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
 
-            sleep 3
+            Start-Sleep 3
 
             ## This time a new session is created because the old one is unavailable.
             $dSessionPid = Get-RemoteVariable pid
@@ -1970,7 +1970,7 @@ try
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
 
-        It "Select -First should work with implicit remoting" {
+        It "Select-Object -First should work with implicit remoting" {
             $bar = foo | Select-Object -First 2
             $bar | Should -Not -BeNullOrEmpty
             $bar.Count | Should -Be 2
