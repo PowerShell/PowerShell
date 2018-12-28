@@ -779,7 +779,7 @@ namespace System.Management.Automation.Help
         /// Gets the parameter attribute from parameter metadata
         /// </summary>
         /// <param name="attributes">Parameter attributes.</param>
-        /// <returns>Parameter attributes.</returns>
+        /// <returns>Collection of parameter attributes.</returns>
         private static Collection<ParameterAttribute> GetParameterAttribute(Collection<Attribute> attributes)
         {
             Collection<ParameterAttribute> paramAttributes = new Collection<ParameterAttribute>();
@@ -801,7 +801,7 @@ namespace System.Management.Automation.Help
         /// Gets the validate set attribute from parameter metadata
         /// </summary>
         /// <param name="attributes">Parameter attributes.</param>
-        /// <returns>Parameter attributes.</returns>
+        /// <returns>Collection of parameter attributes.</returns>
         private static Collection<ValidateSetAttribute> GetValidateSetAttribute(Collection<Attribute> attributes)
         {
             Collection<ValidateSetAttribute> validateSetAttributes = new Collection<ValidateSetAttribute>();
