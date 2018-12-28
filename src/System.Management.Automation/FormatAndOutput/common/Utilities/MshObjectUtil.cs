@@ -114,9 +114,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Retrieve the display name. It looks for a well known property and,
         /// if not found, it uses some heuristics to get a "close" match
         /// </summary>
-        /// <param name="target">shell object to process</param>
-        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
-        /// <returns>resolved PSPropertyExpression; null if no match was found</returns>
+        /// <param name="target">shell object to process.</param>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression.</param>
+        /// <returns>Resolved PSPropertyExpression; null if no match was found.</returns>
         internal static PSPropertyExpression GetDisplayNameExpression(PSObject target, PSPropertyExpressionFactory expressionFactory)
         {
             // first try to get the expression from the object (types.ps1xml data)
@@ -161,9 +161,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// it gets the display name value
         /// </summary>
-        /// <param name="target">shell object to process</param>
-        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
-        /// <returns>PSPropertyExpressionResult if successful; null otherwise</returns>
+        /// <param name="target">shell object to process.</param>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression.</param>
+        /// <returns>PSPropertyExpressionResult if successful; null otherwise.</returns>
         internal static PSPropertyExpressionResult GetDisplayName(PSObject target, PSPropertyExpressionFactory expressionFactory)
         {
             // get the expression to evaluate
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// This is necessary only to consider IDictionaries as IEnumerables, since LanguagePrimitives.GetEnumerable does not.
         /// </summary>
-        /// <param name="obj">object to extract the IEnumerable from</param>
+        /// <param name="obj">object to extract the IEnumerable from.</param>
         internal static IEnumerable GetEnumerable(object obj)
         {
             PSObject mshObj = obj as PSObject;
@@ -272,11 +272,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// helper to convert an PSObject into a string
         /// It takes into account enumerations (use display name)
         /// </summary>
-        /// <param name="so">shell object to process</param>
-        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
-        /// <param name="enumerationLimit">limit on IEnumerable enumeration</param>
-        /// <param name="formatErrorObject">stores errors during string conversion</param>
-        /// <returns>string representation</returns>
+        /// <param name="so">shell object to process.</param>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression.</param>
+        /// <param name="enumerationLimit">limit on IEnumerable enumeration.</param>
+        /// <param name="formatErrorObject">stores errors during string conversion.</param>
+        /// <returns>String representation.</returns>
         internal static string SmartToString(PSObject so, PSPropertyExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject)
         {
             if (so == null)
@@ -304,6 +304,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     throw new PipelineStoppedException();
                                 }
+
                                 if (enumerationLimit >= 0)
                                 {
                                     if (enumCount == enumerationLimit)
@@ -311,6 +312,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         sb.Append(Ellipsis);
                                         break;
                                     }
+
                                     enumCount++;
                                 }
 
@@ -318,6 +320,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     sb.Append(", ");
                                 }
+
                                 sb.Append(GetObjectName(be.Current, expressionFactory));
                                 if (first)
                                     first = false;
@@ -331,6 +334,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     throw new PipelineStoppedException();
                                 }
+
                                 if (enumerationLimit >= 0)
                                 {
                                     if (enumCount == enumerationLimit)
@@ -338,6 +342,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         sb.Append(Ellipsis);
                                         break;
                                     }
+
                                     enumCount++;
                                 }
 
@@ -345,12 +350,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 {
                                     sb.Append(", ");
                                 }
+
                                 sb.Append(GetObjectName(x, expressionFactory));
                                 if (first)
                                     first = false;
                             }
                         }
                     }
+
                     sb.Append("}");
                     return sb.ToString();
                 }
@@ -367,6 +374,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatErrorObject.sourceObject = so;
                     formatErrorObject.exception = e;
                 }
+
                 return string.Empty;
             }
         }
@@ -381,12 +389,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// format an object using a provided format string directive
         /// </summary>
-        /// <param name="directive">format directive object to use</param>
-        /// <param name="val">object to format</param>
-        /// <param name="enumerationLimit">limit on IEnumerable enumeration</param>
-        /// <param name="formatErrorObject">formatting error object, if present</param>
-        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
-        /// <returns>string representation</returns>
+        /// <param name="directive">format directive object to use.</param>
+        /// <param name="val">object to format.</param>
+        /// <param name="enumerationLimit">limit on IEnumerable enumeration.</param>
+        /// <param name="formatErrorObject">formatting error object, if present.</param>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression.</param>
+        /// <returns>String representation.</returns>
         internal static string FormatField(FieldFormattingDirective directive, object val, int enumerationLimit,
             StringFormatError formatErrorObject, PSPropertyExpressionFactory expressionFactory)
         {
@@ -432,7 +440,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static PSMemberSet MaskDeserializedAndGetStandardMembers(PSObject so)
         {
-            Diagnostics.Assert(so != null, "Shell Object to process cannot be null");
+            Diagnostics.Assert(so != null, "Shell object to process cannot be null");
             var typeNames = so.InternalTypeNames;
             Collection<string> typeNamesWithoutDeserializedPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
             if (typeNamesWithoutDeserializedPrefix == null)
@@ -466,6 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             retVal.Add(new PSPropertyExpression(prop));
                         }
                     }
+
                     return retVal;
                 }
             }
@@ -476,8 +485,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// helper to retrieve the default property set of a shell object
         /// </summary>
-        /// <param name="so">shell object to process</param>
-        /// <returns>resolved expression; empty list if not found</returns>
+        /// <param name="so">shell object to process.</param>
+        /// <returns>Resolved expression; empty list if not found.</returns>
         internal static List<PSPropertyExpression> GetDefaultPropertySet(PSObject so)
         {
             List<PSPropertyExpression> retVal = GetDefaultPropertySet(so.PSStandardMembers);
@@ -523,14 +532,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// helper to retrieve the value of an PSPropertyExpression and to format it
         /// </summary>
-        /// <param name="so">shell object to process</param>
-        /// <param name="enumerationLimit">limit on IEnumerable enumeration</param>
-        /// <param name="ex">expression to use for retrieval</param>
-        /// <param name="directive">format directive to use for formatting</param>
+        /// <param name="so">shell object to process.</param>
+        /// <param name="enumerationLimit">limit on IEnumerable enumeration.</param>
+        /// <param name="ex">expression to use for retrieval.</param>
+        /// <param name="directive">format directive to use for formatting.</param>
         /// <param name="formatErrorObject"></param>
-        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
-        /// <param name="result"> not null if an error condition arose</param>
-        /// <returns>formatted string</returns>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression.</param>
+        /// <param name="result">not null if an error condition arose.</param>
+        /// <returns>Formatted string.</returns>
         internal static string GetExpressionDisplayValue(
             PSObject so,
             int enumerationLimit,
@@ -553,6 +562,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return string.Empty;
             }
+
             return PSObjectHelper.FormatField(directive, result.Result, enumerationLimit, formatErrorObject, expressionFactory);
         }
 
@@ -626,8 +636,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// create an expression from an expression token
         /// </summary>
-        /// <param name="et">expression token to use</param>
-        /// <returns>constructed expression</returns>
+        /// <param name="et">expression token to use.</param>
+        /// <returns>Constructed expression.</returns>
         /// <exception cref="ParseException"></exception>
         internal PSPropertyExpression CreateFromExpressionToken(ExpressionToken et)
         {
@@ -637,9 +647,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// create an expression from an expression token
         /// </summary>
-        /// <param name="et">expression token to use</param>
-        /// <param name="loadingInfo">The context from which the file was loaded</param>
-        /// <returns>constructed expression</returns>
+        /// <param name="et">expression token to use.</param>
+        /// <param name="loadingInfo">The context from which the file was loaded.</param>
+        /// <returns>Constructed expression.</returns>
         /// <exception cref="ParseException"></exception>
         internal PSPropertyExpression CreateFromExpressionToken(ExpressionToken et, DatabaseLoadingInfo loadingInfo)
         {

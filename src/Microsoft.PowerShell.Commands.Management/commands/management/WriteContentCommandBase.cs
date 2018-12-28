@@ -239,6 +239,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Content.GetContentWriterDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Content.GetContentWriterDynamicParameters(".", context);
         }
 
@@ -324,9 +325,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the list of paths accepted by the user
         /// </summary>
-        /// <param name="unfilteredPaths">The list of unfiltered paths</param>
-        /// <param name="currentContext">The current context</param>
-        /// <returns>The list of paths accepted by the user</returns>
+        /// <param name="unfilteredPaths">The list of unfiltered paths.</param>
+        /// <param name="currentContext">The current context.</param>
+        /// <returns>The list of paths accepted by the user.</returns>
         private string[] GetAcceptedPaths(string[] unfilteredPaths, CmdletProviderContext currentContext)
         {
             Collection<PathInfo> pathInfos = ResolvePaths(unfilteredPaths, true, false, currentContext);

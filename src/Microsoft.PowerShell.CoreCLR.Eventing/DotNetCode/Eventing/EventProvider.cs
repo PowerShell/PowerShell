@@ -452,6 +452,7 @@ namespace System.Diagnostics.Eventing
                     t_returnCode = WriteEventErrorCode.EventTooBig;
                     return false;
                 }
+
                 unsafe
                 {
                     fixed (char* pdata = eventMessage)
@@ -466,6 +467,7 @@ namespace System.Diagnostics.Eventing
                     }
                 }
             }
+
             return true;
         }
 
@@ -549,6 +551,7 @@ namespace System.Diagnostics.Eventing
                 SetLastError((int)status);
                 return false;
             }
+
             return true;
         }
 
@@ -587,6 +590,7 @@ namespace System.Diagnostics.Eventing
                 SetLastError((int)status);
                 return false;
             }
+
             return true;
         }
 
@@ -679,30 +683,37 @@ namespace System.Diagnostics.Eventing
                             {
                                 userDataPtr[stringPosition[0]].DataPointer = (ulong)v0;
                             }
+
                             if (dataString[1] != null)
                             {
                                 userDataPtr[stringPosition[1]].DataPointer = (ulong)v1;
                             }
+
                             if (dataString[2] != null)
                             {
                                 userDataPtr[stringPosition[2]].DataPointer = (ulong)v2;
                             }
+
                             if (dataString[3] != null)
                             {
                                 userDataPtr[stringPosition[3]].DataPointer = (ulong)v3;
                             }
+
                             if (dataString[4] != null)
                             {
                                 userDataPtr[stringPosition[4]].DataPointer = (ulong)v4;
                             }
+
                             if (dataString[5] != null)
                             {
                                 userDataPtr[stringPosition[5]].DataPointer = (ulong)v5;
                             }
+
                             if (dataString[6] != null)
                             {
                                 userDataPtr[stringPosition[6]].DataPointer = (ulong)v6;
                             }
+
                             if (dataString[7] != null)
                             {
                                 userDataPtr[stringPosition[7]].DataPointer = (ulong)v7;
@@ -724,6 +735,7 @@ namespace System.Diagnostics.Eventing
                 SetLastError((int)status);
                 return false;
             }
+
             return true;
         }
 
@@ -750,6 +762,7 @@ namespace System.Diagnostics.Eventing
                 SetLastError((int)status);
                 return false;
             }
+
             return true;
         }
 

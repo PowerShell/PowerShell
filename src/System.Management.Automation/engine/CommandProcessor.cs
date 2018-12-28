@@ -70,7 +70,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="useLocalScope"></param>
         /// <param name="sessionState"></param>
-        /// <param name="fromScriptFile">True when the script to be executed came from a file (as opposed to a function, or interactive input)</param>
+        /// <param name="fromScriptFile">True when the script to be executed came from a file (as opposed to a function, or interactive input).</param>
         internal CommandProcessor(IScriptCommandInfo scriptCommandInfo, ExecutionContext context, bool useLocalScope, bool fromScriptFile, SessionStateInternal sessionState)
             : base(scriptCommandInfo as CommandInfo)
         {
@@ -129,9 +129,11 @@ namespace System.Management.Automation
                 {
                     NewParameterBinderController(this.Command);
                 }
+
                 return _cmdletParameterBinderController;
             }
         }
+
         private CmdletParameterBinderController _cmdletParameterBinderController;
 
         /// <summary>
@@ -141,6 +143,7 @@ namespace System.Management.Automation
         {
             get { return _obsoleteAttribute; }
         }
+
         private ObsoleteAttribute _obsoleteAttribute;
 
         /// <summary>
@@ -391,6 +394,7 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
+
                     exceptionToThrow = rte;
                 }
                 catch (LoopFlowException)
@@ -409,6 +413,7 @@ namespace System.Management.Automation
                 {
                     _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 }
+
                 if (exceptionToThrow != null)
                 {
                     // This cmdlet threw an exception, so
@@ -653,6 +658,7 @@ namespace System.Management.Automation
             {
                 inputToOperateOn = PSObject.AsPSObject(inputObject);
             }
+
             Command.CurrentPipelineObject = inputToOperateOn;
 
             return this.CmdletParameterBinderController.BindPipelineParameters(inputToOperateOn);
@@ -732,6 +738,7 @@ namespace System.Management.Automation
 
                 throw commandException;
             }
+
             if (initError != null)
             {
                 // Log a command health event
@@ -813,9 +820,9 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request</param>
-        /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <param name="helpTarget">help target to request.</param>
+        /// <param name="helpCategory">help category to request.</param>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (this.arguments != null)

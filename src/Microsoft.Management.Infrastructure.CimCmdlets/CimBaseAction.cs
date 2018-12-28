@@ -50,11 +50,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.context;
             }
+
             set
             {
                 this.context = value;
             }
         }
+
         private XOperationContextBase context;
     }//End Class
 
@@ -80,7 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Block current thread until action completed
         /// </para>
         /// </summary>
-        /// <returns>Response from user</returns>
+        /// <returns>Response from user.</returns>
         public virtual CimResponseType GetResponse()
         {
             this.Block();
@@ -168,7 +170,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// other objects. Only unmanaged resources can be disposed.
         /// </para>
         /// </summary>
-        /// <param name="disposing">Whether it is directly called</param>
+        /// <param name="disposing">Whether it is directly called.</param>
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.

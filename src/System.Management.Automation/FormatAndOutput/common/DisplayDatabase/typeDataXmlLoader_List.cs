@@ -51,6 +51,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.ReportMissingNode(XmlTags.ListEntriesNode);
                     return null; // fatal error
                 }
+
                 return listBody;
             }
         }
@@ -98,6 +99,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 if (listBody.optionalEntryList == null)
                 {
                     //Error at XPath {0} in file {1}: There must be at least one default {2}.
@@ -177,6 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             lved.itemDefinitionList = null;
                             return; //fatal
                         }
+
                         lved.itemDefinitionList.Add(lvid);
                     }
                     else
@@ -195,6 +198,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
         }
+
         private ListControlItemDefinition LoadListControlItemDefinition(XmlNode propertyEntryNode)
         {
             using (this.StackFrame(propertyEntryNode))
@@ -222,6 +226,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
+
                         itemSelectionConditionNodeFound = true;
                         condition = LoadItemSelectionCondition(n);
                         if (condition == null)
@@ -236,6 +241,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
+
                         labelNodeFound = true;
                         labelToken = LoadLabel(n);
                         if (labelToken == null)
@@ -270,6 +276,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
                     lvid.formatTokenList.Add(fpt);
                 }
+
                 return lvid;
             }
         }
@@ -290,6 +297,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
+
                         expressionNodeFound = true;
                         if (!expressionMatch.ProcessNode(n))
                             return null;

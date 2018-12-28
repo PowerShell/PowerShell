@@ -263,7 +263,7 @@ namespace System.Management.Automation.Remoting
             int result = WSManPluginConstants.ExitCodeSuccess;
             WSManPluginShellSession mgdShellSession;
             WSManPluginOperationShutdownContext context;
-            System.Byte[] convertedBase64 = null;
+            byte[] convertedBase64 = null;
 
             try
             {
@@ -277,7 +277,6 @@ namespace System.Management.Automation.Remoting
                 {
                     serverTransportMgr = new WSManPluginServerTransportManager(BaseTransportManager.DefaultFragmentSize, new PSRemotingCryptoHelperServer());
                 }
-
                 else
                 {
                     serverTransportMgr = new WSManPluginServerTransportManager(BaseTransportManager.DefaultFragmentSize, null);
@@ -442,6 +441,7 @@ namespace System.Management.Automation.Remoting
                     //this will called OperationComplete
                     PerformCloseOperation(context);
                 }
+
                 return;
             }
 
@@ -534,8 +534,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Retrieves a WSManPluginShellSession if matched.
         /// </summary>
-        /// <param name="key">Shell context (WSManPluginRequest.unmanagedHandle)</param>
-        /// <returns>null WSManPluginShellSession if not matched. The object if matched.</returns>
+        /// <param name="key">Shell context (WSManPluginRequest.unmanagedHandle).</param>
+        /// <returns>Null WSManPluginShellSession if not matched. The object if matched.</returns>
         private WSManPluginShellSession GetFromActiveShellSessions(
             IntPtr key)
         {
@@ -563,6 +563,7 @@ namespace System.Management.Automation.Remoting
                     count = _activeShellSessions.Count;
                 }
             }
+
             if (-1 != count)
             {
                 // Raise session count changed event
@@ -573,10 +574,10 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Triggers a shell close from an event handler.
         /// </summary>
-        /// <param name="source">Shell context</param>
+        /// <param name="source">Shell context.</param>
         /// <param name="e"></param>
         private void HandleShellSessionClosed(
-            Object source,
+            object source,
             EventArgs e)
         {
             DeleteFromActiveShellSessions((IntPtr)source);
@@ -621,6 +622,7 @@ namespace System.Management.Automation.Remoting
                         inputFunctionName));
                 return false;
             }
+
             return true;
         }
 
@@ -1000,7 +1002,7 @@ namespace System.Management.Automation.Remoting
         /// Helper method to retrieve the WSMan client token from the __WINRM_RUNAS_CLIENT_TOKEN__
         /// environment variable, which is set in the WSMan layer for Virtual or RunAs accounts.
         /// </summary>
-        /// <returns>ClientToken IntPtr</returns>
+        /// <returns>ClientToken IntPtr.</returns>
         private IntPtr GetRunAsClientToken()
         {
             string clientTokenStr = System.Environment.GetEnvironmentVariable(WSManRunAsClientTokenName);
@@ -1040,6 +1042,7 @@ namespace System.Management.Automation.Remoting
                     {
                         return false;
                     }
+
                     isProtocolVersionDeclared = true;
                 }
 
@@ -1419,8 +1422,8 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
             WSManPluginErrorCodes error = WSManPluginErrorCodes.NoError;
-            String errorMessage = String.Empty;
-            String stackTrace = String.Empty;
+            string errorMessage = String.Empty;
+            string stackTrace = String.Empty;
 
             if (reasonForClose != null)
             {
@@ -1549,7 +1552,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
-        /// <param name="errorMessage">Pre-formatted localized string</param>
+        /// <param name="errorMessage">Pre-formatted localized string.</param>
         /// <returns></returns>
         internal static void ReportOperationComplete(
             WSManNativeApi.WSManPluginRequest requestDetails,

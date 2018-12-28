@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -89,15 +89,17 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return _appName; }
+
             set
             {
                 _appName = ResolveAppName(value);
             }
         }
-        private String _appName;
+
+        private string _appName;
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
@@ -112,15 +114,17 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
-        public String ConfigurationName
+        public string ConfigurationName
         {
             get { return _shell; }
+
             set
             {
                 _shell = ResolveShell(value);
             }
         }
-        private String _shell;
+
+        private string _shell;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -145,8 +149,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AllowRedirection
         {
             get { return _allowRedirection; }
+
             set { _allowRedirection = value; }
         }
+
         private bool _allowRedirection = false;
 
         /// <summary>
@@ -164,6 +170,7 @@ namespace Microsoft.PowerShell.Commands
         public override Guid[] InstanceId
         {
             get { return base.InstanceId; }
+
             set { base.InstanceId = value; }
         }
 
@@ -175,9 +182,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override String[] Name
+        public override string[] Name
         {
             get { return base.Name; }
+
             set { base.Name = value; }
         }
 
@@ -194,6 +202,7 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return _psCredential; }
+
             set
             {
                 _psCredential = value;
@@ -201,6 +210,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private PSCredential _psCredential;
 
         /// <summary>
@@ -213,6 +223,7 @@ namespace Microsoft.PowerShell.Commands
         public AuthenticationMechanism Authentication
         {
             get { return _authentication; }
+
             set
             {
                 _authentication = value;
@@ -220,6 +231,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private AuthenticationMechanism _authentication;
 
         /// <summary>
@@ -233,6 +245,7 @@ namespace Microsoft.PowerShell.Commands
         public string CertificateThumbprint
         {
             get { return _thumbprint; }
+
             set
             {
                 _thumbprint = value;
@@ -240,6 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
+
         private string _thumbprint;
 
         /// <summary>
@@ -255,8 +269,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
-        [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public Int32 Port { get; set; }
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        public int Port { get; set; }
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -292,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.NameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit { get; set; } = 0;
+        public int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Overriding to suppress this parameter
@@ -413,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
             // Read all objects in the stream pipeline.
             while (_stream.ObjectReader.Count > 0)
             {
-                Object streamObject = _stream.ObjectReader.Read();
+                object streamObject = _stream.ObjectReader.Read();
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
 
@@ -617,6 +631,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _retryList.Add(_session);
                             }
+
                             writeError = false;
                         }
                     }
@@ -710,6 +725,7 @@ namespace Microsoft.PowerShell.Commands
                             StringUtil.Format(RemotingErrorIdStrings.RunspaceConnectFailed, session.Name,
                                 session.Runspace.RunspaceStateInfo.State.ToString()), null);
                     }
+
                     ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, null);
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
                     {
@@ -771,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a collection of PSSession objects based on cmdlet parameters.
         /// </summary>
-        /// <param name="overrideParam">OverrideParameter</param>
+        /// <param name="overrideParam">OverrideParameter.</param>
         /// <returns>Collection of PSSession objects in disconnected state.</returns>
         private Collection<PSSession> CollectDisconnectedSessions(OverrideParameter overrideParam = OverrideParameter.None)
         {
@@ -893,8 +909,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the connect throttling complete event from the ThrottleManager.
         /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="eventArgs">EventArgs</param>
+        /// <param name="sender">Sender.</param>
+        /// <param name="eventArgs">EventArgs.</param>
         private void HandleThrottleConnectComplete(object sender, EventArgs eventArgs)
         {
             _operationsComplete.Set();
@@ -925,6 +941,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 
@@ -947,6 +964,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 

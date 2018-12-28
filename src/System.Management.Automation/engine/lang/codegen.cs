@@ -23,6 +23,7 @@ namespace System.Management.Automation.Language
             {
                 return string.Empty;
             }
+
             StringBuilder sb = new StringBuilder(value.Length);
             foreach (char c in value)
             {
@@ -33,6 +34,7 @@ namespace System.Management.Automation.Language
                     sb.Append(c);
                 }
             }
+
             return sb.ToString();
         }
 
@@ -48,6 +50,7 @@ namespace System.Management.Automation.Language
             {
                 return string.Empty;
             }
+
             return value
                 .Replace("<#", "<`#")
                 .Replace("#>", "#`>");
@@ -67,6 +70,7 @@ namespace System.Management.Automation.Language
             {
                 return string.Empty;
             }
+
             StringBuilder sb = new StringBuilder(value.Length);
             foreach (char c in value)
             {
@@ -77,6 +81,7 @@ namespace System.Management.Automation.Language
                     sb.Append(c);
                 }
             }
+
             return sb.ToString();
         }
 
@@ -94,6 +99,7 @@ namespace System.Management.Automation.Language
             {
                 return string.Empty;
             }
+
             return value
                 .Replace("`", "``")
                 .Replace("}", "`}")

@@ -19,8 +19,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MetadataException with serialization parameters
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected MetadataException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MetadataException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public MetadataException(string message) : base(message)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
@@ -47,8 +47,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MetadataException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public MetadataException(string message, Exception innerException) : base(message, innerException)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
@@ -101,8 +101,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException with serialization parameters
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected ValidationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException with the message set
@@ -112,13 +112,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public ValidationMetadataException(string message) : this(message, false) { }
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public ValidationMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
         internal ValidationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
@@ -150,6 +150,7 @@ namespace System.Management.Automation
         {
             get { return _swallowException; }
         }
+
         private bool _swallowException = false;
     }
 
@@ -164,8 +165,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException with serialization parameters
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException with the message set
@@ -175,13 +176,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public ArgumentTransformationMetadataException(string message) : base(message) { }
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public ArgumentTransformationMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
         internal ArgumentTransformationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
@@ -201,8 +202,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException with serialization parameters
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected ParsingMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException with the message set
@@ -212,13 +213,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public ParsingMetadataException(string message) : base(message) { }
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public ParsingMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
         internal ParsingMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :

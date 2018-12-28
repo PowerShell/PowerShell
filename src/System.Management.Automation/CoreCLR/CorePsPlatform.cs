@@ -192,6 +192,7 @@ namespace System.Management.Automation
             {
                 // ignore if there is a failure
             }
+
             _tempDirectory = null;
         }
 
@@ -244,6 +245,7 @@ namespace System.Management.Automation
             {
                 envHome = GetTemporaryDirectory();
             }
+
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
             string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
@@ -281,6 +283,7 @@ namespace System.Management.Automation
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgDataHomeDefault;
                     }
                     else
@@ -305,6 +308,7 @@ namespace System.Management.Automation
                                 return GetTemporaryDirectory();
                             }
                         }
+
                         return xdgModuleDefault;
                     }
                     else
@@ -403,20 +407,24 @@ namespace System.Management.Automation
             {
                 envHome = Platform.GetTemporaryDirectory();
             }
+
             switch (folder)
             {
                 case System.Environment.SpecialFolder.ProgramFiles:
                     folderPath = "/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.ProgramFilesX86:
                     folderPath = "/usr/bin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.System:
                 case System.Environment.SpecialFolder.SystemX86:
                     folderPath = "/sbin";
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+
                     break;
                 case System.Environment.SpecialFolder.Personal:
                     folderPath = envHome;
@@ -435,6 +443,7 @@ namespace System.Management.Automation
                             folderPath = String.Empty;
                         }
                     }
+
                     break;
                 default:
                     throw new NotSupportedException();
@@ -572,6 +581,7 @@ namespace System.Management.Automation
                     {
                         s_userName = NativeMethods.GetUserName();
                     }
+
                     return s_userName ?? string.Empty;
                 }
             }
@@ -591,6 +601,7 @@ namespace System.Management.Automation
                             return dir;
                         }
                     }
+
                     return "/tmp";
                 }
             }
@@ -637,6 +648,7 @@ namespace System.Management.Automation
                     {
                         return invalidPid;
                     }
+
                     return Int32.Parse(parts[3]);
                 }
                 catch (Exception)

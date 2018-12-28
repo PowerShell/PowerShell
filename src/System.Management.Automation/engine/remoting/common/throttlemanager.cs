@@ -123,11 +123,13 @@ namespace System.Management.Automation.Remoting
             {
                 return _ignoreStop;
             }
+
             set
             {
                 _ignoreStop = true;
             }
         }
+
         private bool _ignoreStop = false;
 
         #region Runspace Debug
@@ -158,7 +160,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// RaiseRunspaceDebugStopEvent
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         internal void RaiseRunspaceDebugStopEvent(System.Management.Automation.Runspaces.Runspace runspace)
         {
             RunspaceDebugStop.SafeInvoke(this, new StartRunspaceDebugProcessingEventArgs(runspace));
@@ -200,7 +202,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Allows the consumer to override the default throttle limit
         /// </summary>
-        internal Int32 ThrottleLimit
+        internal int ThrottleLimit
         {
             set
             {
@@ -209,12 +211,14 @@ namespace System.Management.Automation.Remoting
                     _throttleLimit = value;
                 }
             }
+
             get
             {
                 return _throttleLimit;
             }
         }
-        private Int32 _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
+
+        private int _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
 
         #endregion Public (internal) Properties
 
@@ -223,7 +227,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Submit a list of operations that need to be throttled
         /// </summary>
-        /// <param name="operations">list of operations to be throttled</param>
+        /// <param name="operations">list of operations to be throttled.</param>
         /// <remarks>Once the operations are added to the queue, the method will
         /// start operations from the queue
         /// </remarks>
@@ -256,7 +260,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Add a single operation to the queue
         /// </summary>
-        /// <param name="operation">Operation to be added</param>
+        /// <param name="operation">Operation to be added.</param>
         internal void AddOperation(IThrottleOperation operation)
         {
             // add item to the queue
@@ -279,7 +283,7 @@ namespace System.Management.Automation.Remoting
 
             // start operations from queue if possible
             StartOperationsFromQueue();
-        }// AddOperation
+        }
 
         /// <summary>
         /// Stop throttling operations
@@ -287,8 +291,8 @@ namespace System.Management.Automation.Remoting
         /// <remarks>Calling this method will also affect other cmdlets which
         /// could have potentially submitComplete operations for processing
         /// </remarks>
-        /// <returns>number of objects cleared from queue without being
-        /// stopped</returns>
+        /// <returns>Number of objects cleared from queue without being
+        /// stopped.</returns>
         internal void StopAllOperations()
         {
             // if stopping is already in progress, make it a no op
@@ -362,7 +366,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Stop the specified operation
         /// </summary>
-        /// <param name="operation">operation which needs to be stopped</param>
+        /// <param name="operation">operation which needs to be stopped.</param>
         internal void StopOperation(IThrottleOperation operation)
         {
             // StopOperation is being called a second time
@@ -439,7 +443,7 @@ namespace System.Management.Automation.Remoting
             _startOperationQueue = new List<IThrottleOperation>();
             _stopOperationQueue = new List<IThrottleOperation>();
             _syncObject = new Object();
-        }// ThrottleManager
+        }
 
         #endregion Constructors
 
@@ -450,7 +454,7 @@ namespace System.Management.Automation.Remoting
         /// the <see cref="System.Management.Automation.Remoting.IThrottleOperation"/>
         /// interface
         /// </summary>
-        /// <param name="source">sender of the event</param>
+        /// <param name="source">sender of the event.</param>
         /// <param name="stateEventArgs">Event information object which describes the event
         /// which triggered this method</param>
         private void OperationCompleteHandler(object source, OperationStateEventArgs stateEventArgs)
@@ -533,7 +537,7 @@ namespace System.Management.Automation.Remoting
             {
                 operation.StartOperation();
             }
-        } //StartOneOperationFromQueue
+        }
 
         /// <summary>
         /// Start operations to the limit possible from the queue
@@ -623,7 +627,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Object used to synchronize access to the queues
         /// </summary>
-        private Object _syncObject;
+        private object _syncObject;
 
         private bool _submitComplete = false;                    // to check if operations have been submitComplete
         private bool _stopping = false;                      // if stop is in process
@@ -732,6 +736,7 @@ namespace System.Management.Automation.Remoting
                     OperationComplete += new EventHandler<OperationStateEventArgs>(Operation_OperationComplete);
                 }
             }
+
             remove
             {
                 InternalEvent -= value;

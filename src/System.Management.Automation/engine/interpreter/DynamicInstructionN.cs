@@ -43,6 +43,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ProducedStack { get { return _isVoid ? 0 : 1; } }
+
         public override int ConsumedStack { get { return _argumentCount; } }
 
         public override int Run(InterpretedFrame frame)

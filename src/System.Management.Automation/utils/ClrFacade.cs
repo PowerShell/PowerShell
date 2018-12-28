@@ -91,6 +91,7 @@ namespace System.Management.Automation
                 EncodingRegisterProvider();
                 s_defaultEncoding = new UTF8Encoding(false);
             }
+
             return s_defaultEncoding;
         }
 
@@ -113,6 +114,7 @@ namespace System.Management.Automation
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
+
             return s_oemEncoding;
         }
 
@@ -307,7 +309,7 @@ namespace System.Management.Automation
             TimeZoneInfo curZone = TimeZoneInfo.Local;
             TimeSpan tickOffset = curZone.GetUtcOffset(date);
             long OffsetMins = (tickOffset.Ticks / TimeSpan.TicksPerMinute);
-            IFormatProvider frmInt32 = (IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int32));
+            IFormatProvider frmInt32 = (IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(int));
 
             // If the offset is more than that what can be specified in DMTF format, then
             // convert the date to UniversalTime
@@ -342,11 +344,12 @@ namespace System.Management.Automation
             Int64 microsec = ((date.Ticks - dtTemp.Ticks) * 1000) / TimeSpan.TicksPerMillisecond;
 
             // fill the microseconds field
-            String strMicrosec = microsec.ToString((IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int64)));
+            string strMicrosec = microsec.ToString((IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int64)));
             if (strMicrosec.Length > 6)
             {
                 strMicrosec = strMicrosec.Substring(0, 6);
             }
+
             dmtfDateTime = dmtfDateTime + strMicrosec.PadLeft(6, '0');
             // adding the UTC offset
             dmtfDateTime = dmtfDateTime + UtcString;

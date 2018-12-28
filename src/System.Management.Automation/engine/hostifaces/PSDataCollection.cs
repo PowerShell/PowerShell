@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The item about to be added.
         /// </summary>
-        public Object ItemAdded { get; }
+        public object ItemAdded { get; }
 
         /// <summary>
         /// PowerShell InstanceId which added this data.
@@ -197,8 +197,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <param name="valueToConvert">The value to convert.</param>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(bool valueToConvert)
@@ -209,8 +209,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <param name="valueToConvert">The value to convert.</param>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(string valueToConvert)
@@ -221,8 +221,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <param name="valueToConvert">The value to convert.</param>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(int valueToConvert)
@@ -233,8 +233,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <param name="valueToConvert">The value to convert.</param>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(byte valueToConvert)
@@ -253,8 +253,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <param name="valueToConvert">The value to convert.</param>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(Hashtable valueToConvert)
@@ -268,8 +268,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="valueToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <param name="valueToConvert">The value to convert.</param>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(T valueToConvert)
@@ -283,8 +283,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap the argument in a PSDataCollection
         /// </summary>
-        /// <param name="arrayToConvert">The value to convert</param>
-        /// <returns>New collection of value, marked as Complete</returns>
+        /// <param name="arrayToConvert">The value to convert.</param>
+        /// <returns>New collection of value, marked as Complete.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(object[] arrayToConvert)
@@ -297,6 +297,7 @@ namespace System.Management.Automation
                     psdc.Add(LanguagePrimitives.ConvertTo<T>(ae));
                 }
             }
+
             psdc.Complete();
             return psdc;
         }
@@ -325,8 +326,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a PSDataCollection from an ISerializable context
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         protected PSDataCollection(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -391,6 +392,7 @@ namespace System.Management.Automation
         public int DataAddedCount
         {
             get { return _dataAddedFrequency; }
+
             set
             {
                 bool raiseDataAdded = false;
@@ -435,6 +437,7 @@ namespace System.Management.Automation
                 _serializeInput = value;
             }
         }
+
         private bool _serializeInput = false;
 
         /// <summary>
@@ -459,6 +462,7 @@ namespace System.Management.Automation
                     return _sourceGuid;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -481,6 +485,7 @@ namespace System.Management.Automation
                     return _releaseOnEnumeration;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -502,6 +507,7 @@ namespace System.Management.Automation
                     return _isEnumerated;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -559,6 +565,7 @@ namespace System.Management.Automation
                         tempCompleted(this, EventArgs.Empty);
                     }
                 }
+
                 if (raiseDataAdded)
                 {
                     RaiseDataAddedEvent(_lastPsInstanceId, _lastIndex);
@@ -584,6 +591,7 @@ namespace System.Management.Automation
                     return _blockingEnumerator;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -648,6 +656,7 @@ namespace System.Management.Automation
                     return _data[index];
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -662,6 +671,7 @@ namespace System.Management.Automation
                     {
                         value = (T)(Object)GetSerializedObject(value);
                     }
+
                     _data[index] = value;
                 }
             }
@@ -730,6 +740,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentOutOfRangeException("index", index,
                         PSDataBufferStrings.IndexOutOfRange, 0, _data.Count - 1);
                 }
+
                 RemoveItem(index);
             }
         }
@@ -1051,6 +1062,7 @@ namespace System.Management.Automation
             {
                 return this[index];
             }
+
             set
             {
                 PSDataCollection<T>.VerifyValueType(value);
@@ -1161,7 +1173,7 @@ namespace System.Management.Automation
         /// <returns>
         /// A new collection with a copy of all the elements in the current collection.
         /// </returns>
-        /// <param name="readCount">maximum number of elements to read</param>
+        /// <param name="readCount">maximum number of elements to read.</param>
         internal Collection<T> ReadAndRemove(int readCount)
         {
             Dbg.Assert(_data != null, "Collection cannot be null");
@@ -1280,8 +1292,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implements the ISerializable contract for serializing a PSDataCollection
         /// </summary>
-        /// <param name="info">Serialization information for this instance</param>
-        /// <param name="context">The streaming context for this instance</param>
+        /// <param name="info">Serialization information for this instance.</param>
+        /// <param name="context">The streaming context for this instance.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -1320,6 +1332,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return _readWaitHandle;
             }
         }
@@ -1387,7 +1400,7 @@ namespace System.Management.Automation
         private Guid _lastPsInstanceId;
         private int _lastIndex;
 
-        private void RaiseDataAddingEvent(Guid psInstanceId, Object itemAdded)
+        private void RaiseDataAddingEvent(Guid psInstanceId, object itemAdded)
         {
             // A temporary variable is used as the DataAdding may
             // reach null (because of -='s) after the null check
@@ -1596,6 +1609,7 @@ namespace System.Management.Automation
                     return index;
                 }
             }
+
             return -1;
         }
 
@@ -1641,7 +1655,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Object deserialized = PSSerializer.Deserialize(PSSerializer.Serialize(value));
+                object deserialized = PSSerializer.Deserialize(PSSerializer.Serialize(value));
                 if (deserialized == null)
                 {
                     return null;
@@ -1660,7 +1674,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            Object baseObject = PSObject.Base(result);
+            object baseObject = PSObject.Base(result);
             if (baseObject == null)
             {
                 return true;
@@ -1690,17 +1704,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Sync object for this collection
         /// </summary>
-        internal Object SyncObject { get; } = new object();
+        internal object SyncObject { get; } = new object();
 
         /// <summary>
         /// Reference count variable
         /// </summary>
-        internal Int32 RefCount
+        internal int RefCount
         {
             get
             {
                 return _refCount;
             }
+
             set
             {
                 lock (SyncObject)
@@ -1760,7 +1775,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Release all the resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -1776,6 +1791,7 @@ namespace System.Management.Automation
                     {
                         return;
                     }
+
                     _isDisposed = true;
                 }
 
@@ -1918,7 +1934,7 @@ namespace System.Management.Automation
         /// true if the enumerator successfully advanced to the next element;
         /// otherwise, false.
         /// </returns>
-        /// <param name="block">true - to block when no elements are available</param>
+        /// <param name="block">true - to block when no elements are available.</param>
         public bool MoveNext(bool block)
         {
             lock (_collToEnumerate.SyncObject)
@@ -1932,6 +1948,7 @@ namespace System.Management.Automation
                         {
                             _collToEnumerate[_index] = default(W);
                         }
+
                         _index++;
                         return true;
                     }
@@ -2025,11 +2042,13 @@ namespace System.Management.Automation
         internal PSDataCollection<ProgressRecord> Progress
         {
             get { return progress; }
+
             set
             {
                 progress = value;
             }
         }
+
         internal PSDataCollection<ProgressRecord> progress;
 
         /// <summary>
@@ -2039,11 +2058,13 @@ namespace System.Management.Automation
         internal PSDataCollection<VerboseRecord> Verbose
         {
             get { return verbose; }
+
             set
             {
                 verbose = value;
             }
         }
+
         internal PSDataCollection<VerboseRecord> verbose;
 
         /// <summary>
@@ -2053,11 +2074,13 @@ namespace System.Management.Automation
         internal PSDataCollection<DebugRecord> Debug
         {
             get { return debug; }
+
             set
             {
                 debug = value;
             }
         }
+
         internal PSDataCollection<DebugRecord> debug;
 
         /// <summary>

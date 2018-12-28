@@ -122,8 +122,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Build an output object
         /// </summary>
-        /// <param name="data">The data to output</param>
-        /// <param name="stream">stream to which data belongs</param>
+        /// <param name="data">The data to output.</param>
+        /// <param name="stream">stream to which data belongs.</param>
         internal ProcessOutputObject(object data, MinishellStream stream)
         {
             Data = data;
@@ -274,6 +274,7 @@ namespace System.Management.Automation
                 {
                     NewParameterBinderController(this.Command);
                 }
+
                 return _nativeParameterBinderController;
             }
         }
@@ -532,6 +533,7 @@ namespace System.Management.Automation
                         {
                             inputFormat = ((MinishellParameterBinderController)NativeParameterBinderController).InputFormat;
                         }
+
                         lock (_sync)
                         {
                             if (!_stopped)
@@ -758,7 +760,7 @@ namespace System.Management.Automation
         /// if the process handle is invalid (as seems to be the case with an ntvdm)
         /// then we try to get a fresh handle based on the original process id.
         /// </summary>
-        /// <param name="processToKill">The process to kill</param>
+        /// <param name="processToKill">The process to kill.</param>
         private static void KillProcess(Process processToKill)
         {
             if (NativeCommandProcessor.IsServerSide)
@@ -812,6 +814,7 @@ namespace System.Management.Automation
                     {
                         ConstructParentId();
                     }
+
                     return _parentId;
                 }
             }
@@ -829,6 +832,7 @@ namespace System.Management.Automation
                 {
                     result[index] = new ProcessWithParentId(originalProcCollection[index]);
                 }
+
                 return result;
             }
 
@@ -1052,12 +1056,14 @@ namespace System.Management.Automation
                     {
                         sourceId = (long)info.Value;
                     }
+
                     info = temp.Properties["Record"];
                     ProgressRecord rec = null;
                     if (info != null)
                     {
                         rec = info.Value as ProgressRecord;
                     }
+
                     if (rec != null)
                     {
                         this.Command.PSHostInternal.UI.WriteProgress(sourceId, rec);
@@ -1092,10 +1098,12 @@ namespace System.Management.Automation
                 {
                     startInfo.RedirectStandardInput = true;
                 }
+
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
                 }
+
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
@@ -1129,6 +1137,7 @@ namespace System.Management.Automation
                 mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
+
             startInfo.Arguments = NativeParameterBinderController.Arguments;
 
             ExecutionContext context = this.Command.Context;
@@ -1422,6 +1431,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return false;
         }
 
@@ -1452,6 +1462,7 @@ namespace System.Management.Automation
             // we incrementing refCount on the same thread and before running any processing
             // so it's safe to do it without Interlocked.
             if (process.StartInfo.RedirectStandardOutput) { _refCount++; }
+
             if (process.StartInfo.RedirectStandardError) { _refCount++; }
 
             // once we have _refCount, we can start processing
@@ -1574,6 +1585,7 @@ namespace System.Management.Automation
                         {
                             stream = StringToMinishellStreamConverter.ToMinishellStream(streamName);
                         }
+
                         if (stream == MinishellStream.Unknown)
                         {
                             stream = isOutput ? MinishellStream.Output : MinishellStream.Error;
@@ -1602,6 +1614,7 @@ namespace System.Management.Automation
                                 {
                                     continue;
                                 }
+
                                 obj = new ErrorRecord(new RemoteException(errorMessage),
                                                     "NativeCommandError", ErrorCategory.NotSpecified, errorMessage);
                             }
@@ -1641,6 +1654,7 @@ namespace System.Management.Automation
                                 continue;
                             }
                         }
+
                         result.Add(new ProcessOutputObject(obj, stream));
                     }
                 }
@@ -1843,6 +1857,7 @@ namespace System.Management.Automation
                     // lead to "Broken pipe" exception.
                     // we are ignoring it here
                 }
+
                 _streamWriter = null;
             }
         }
@@ -1905,22 +1920,22 @@ namespace System.Management.Automation
         /// Code to control the display properties of the a window...
         /// </summary>
         /// <param name="hWnd">The window to show...</param>
-        /// <param name="nCmdShow">The command to do</param>
-        /// <returns>true it it was successful</returns>
+        /// <param name="nCmdShow">The command to do.</param>
+        /// <returns>True it it was successful.</returns>
         [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
         /// </summary>
-        /// <returns>true if a console was created...</returns>
+        /// <returns>True if a console was created...</returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool AllocConsole();
 
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window
         /// </summary>
-        /// <returns>A handle to the foreground window</returns>
+        /// <returns>A handle to the foreground window.</returns>
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -1928,7 +1943,7 @@ namespace System.Management.Automation
         /// Called to restore the foreground window after allocating a hidden console window
         /// </summary>
         /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
-        /// <returns>true if the window was brought to the foreground</returns>
+        /// <returns>True if the window was brought to the foreground.</returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -2067,7 +2082,7 @@ namespace System.Management.Automation
         /// with a specified error message, serialized Exception and
         /// serialized InvocationInfo
         /// </summary>
-        /// <param name="message">The message that describes the error. </param>
+        /// <param name="message">The message that describes the error.</param>
         /// <param name="serializedRemoteException">
         /// serialized exception from remote msh
         /// </param>

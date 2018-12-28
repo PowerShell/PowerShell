@@ -294,6 +294,7 @@ namespace System.Management.Automation.Host
         public virtual bool DebuggerEnabled
         {
             get { return false; }
+
             set { throw new PSNotImplementedException(); }
         }
     }
@@ -331,4 +332,4 @@ namespace System.Management.Automation.Host
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         Runspace Runspace { get; }
     }
-}   // namespace System.Management.Automation.Host
+}

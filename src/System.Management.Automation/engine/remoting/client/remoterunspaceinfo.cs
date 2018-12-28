@@ -61,7 +61,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the computer target
         /// </summary>
-        public String ComputerName
+        public string ComputerName
         {
             get
             {
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Id of the container target
         /// </summary>
-        public String ContainerId
+        public string ContainerId
         {
             get
             {
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the virtual machine target
         /// </summary>
-        public String VMName
+        public string VMName
         {
             get
             {
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shell which is executed in the remote machine
         /// </summary>
-        public String ConfigurationName { get; }
+        public string ConfigurationName { get; }
 
         /// <summary>
         /// InstanceID that identifies this runspace
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Friendly name for identifying this runspace
         /// </summary>
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Indicates whether the specified runspace is available
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the transport used.
         /// </summary>
-        public String Transport => GetTransportName();
+        public string Transport => GetTransportName();
 
         #endregion Public Properties
 
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// ToString method override
         /// </summary>
-        /// <returns>string</returns>
+        /// <returns>String.</returns>
         public override string ToString()
         {
             // PSSession is a PowerShell type name and so should not be localized.
@@ -221,7 +221,7 @@ namespace System.Management.Automation.Runspaces
         /// new runspace is a reconstructed runspace having the same Guid
         /// as the existing runspace.
         /// </summary>
-        /// <param name="remoteRunspace">Runspace to insert</param>
+        /// <param name="remoteRunspace">Runspace to insert.</param>
         /// <returns>Boolean indicating if runspace was inserted.</returns>
         internal bool InsertRunspace(RemoteRunspace remoteRunspace)
         {
@@ -322,7 +322,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Generates and returns the runspace name
         /// </summary>
-        /// <returns>auto generated name</returns>
+        /// <returns>Auto generated name.</returns>
         private string GetTransportName()
         {
             if (_remoteRunspace.ConnectionInfo is WSManConnectionInfo)
@@ -358,8 +358,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns shell configuration name with shell prefix removed.
         /// </summary>
-        /// <param name="shell">shell configuration name</param>
-        /// <returns>display shell name</returns>
+        /// <param name="shell">shell configuration name.</param>
+        /// <returns>Display shell name.</returns>
         private string GetDisplayShellName(string shell)
         {
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
@@ -375,9 +375,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Generates a unique runspace id.
         /// </summary>
-        /// <param name="rtnId">Returned Id</param>
-        /// <returns>Returned name</returns>
-        internal static String GenerateRunspaceName(out int rtnId)
+        /// <param name="rtnId">Returned Id.</param>
+        /// <returns>Returned name.</returns>
+        internal static string GenerateRunspaceName(out int rtnId)
         {
             int id = GenerateRunspaceId();
             rtnId = id;
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Increments and returns a session unique runspace Id.
         /// </summary>
-        /// <returns>Id</returns>
+        /// <returns>Id.</returns>
         internal static int GenerateRunspaceId()
         {
             return System.Threading.Interlocked.Increment(ref s_seed);

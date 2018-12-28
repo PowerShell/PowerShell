@@ -288,6 +288,7 @@ namespace System.Management.Automation
 
                 return GetPropertyDynamicParameters(providerInstance, providerPaths[0], providerSpecificPickList, newContext);
             }
+
             return null;
         }
 
@@ -368,6 +369,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -658,6 +660,7 @@ namespace System.Management.Automation
 
                 return SetPropertyDynamicParameters(providerInstance, providerPaths[0], propertyValue, newContext);
             }
+
             return null;
         }
 
@@ -738,6 +741,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1018,6 +1022,7 @@ namespace System.Management.Automation
 
                 return ClearPropertyDynamicParameters(providerInstance, providerPaths[0], propertyToClear, newContext);
             }
+
             return null;
         }
 
@@ -1099,13 +1104,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion ClearProperty
 
         #endregion IPropertyCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

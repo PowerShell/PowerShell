@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        internal abstract void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo);
+        internal abstract void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo);
 
         /// <summary>
         /// Provider interface function for logging engine lifecycle event
@@ -75,7 +75,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal abstract void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail);
+        internal abstract void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail);
 
         /// <summary>
         /// Provider interface function for logging provider health event
@@ -194,11 +194,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sb">string builder.</param>
         /// <param name="additionalInfo">additional information.</param>
-        protected static void AppendAdditionalInfo(StringBuilder sb, Dictionary<String, String> additionalInfo)
+        protected static void AppendAdditionalInfo(StringBuilder sb, Dictionary<string, string> additionalInfo)
         {
             if (additionalInfo != null)
             {
-                foreach (KeyValuePair<String, String> value in additionalInfo)
+                foreach (KeyValuePair<string, string> value in additionalInfo)
                 {
                     sb.AppendLine(StringUtil.Format("{0} = {1}", value.Key, value.Value));
                 }
@@ -233,8 +233,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts log context to string
         /// </summary>
-        /// <param name="context">log context</param>
-        /// <returns>string representation</returns>
+        /// <param name="context">log context.</param>
+        /// <returns>String representation.</returns>
         protected static string LogContextToString(LogContext context)
         {
             StringBuilder sb = new StringBuilder(LogContextInitialSize);
@@ -298,7 +298,7 @@ namespace System.Management.Automation
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
         }
 
@@ -335,7 +335,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
         }
 

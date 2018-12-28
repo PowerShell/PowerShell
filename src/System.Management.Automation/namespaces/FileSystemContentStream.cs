@@ -452,6 +452,7 @@ namespace Microsoft.PowerShell.Commands
                 _reader.Peek();
                 _alreadyDetectEncoding = true;
             }
+
             Seek(0, SeekOrigin.End);
 
             if (backCount == 0)
@@ -466,6 +467,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 builder.Insert(0, character);
             }
+
             string actualDelimiter = builder.ToString();
             long currentBlock = 0;
             string lastDelimiterMatch = null;
@@ -697,6 +699,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return true;
                 }
+
                 return false;
             }
         }
@@ -789,6 +792,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     attributesToClear |= FileAttributes.ReadOnly;
                 }
+
                 File.SetAttributes(_path, (File.GetAttributes(filePath) & ~attributesToClear));
             }
 
@@ -857,11 +861,11 @@ namespace Microsoft.PowerShell.Commands
         /// and then monitors for changes.  Once a change appears, it reopens the streams
         /// and seeks to the last read position.
         /// </summary>
-        /// <param name="filePath">The path of the file to read / monitor</param>
-        /// <param name="fileMode">The FileMode of the file (ie: Open / Append)</param>
-        /// <param name="fileAccess">The access properties of the file (ie: Read / Write)</param>
-        /// <param name="fileShare">The sharing properties of the file (ie: Read / ReadWrite)</param>
-        /// <param name="fileEncoding">The encoding of the file</param>
+        /// <param name="filePath">The path of the file to read / monitor.</param>
+        /// <param name="fileMode">The FileMode of the file (ie: Open / Append).</param>
+        /// <param name="fileAccess">The access properties of the file (ie: Read / Write).</param>
+        /// <param name="fileShare">The sharing properties of the file (ie: Read / ReadWrite).</param>
+        /// <param name="fileEncoding">The encoding of the file.</param>
         private void WaitForChanges(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, Encoding fileEncoding)
         {
             // Close the old stream, and store our current position.
@@ -948,6 +952,7 @@ namespace Microsoft.PowerShell.Commands
             // Seek to the place we last left off.
             _stream.Seek(_fileOffset, SeekOrigin.Begin);
             if (_reader != null) { _reader.DiscardBufferedData(); }
+
             if (_backReader != null) { _backReader.DiscardBufferedData(); }
         }
 
@@ -967,7 +972,9 @@ namespace Microsoft.PowerShell.Commands
             _stream.Seek(offset, origin);
 
             if (_writer != null) { _writer.Flush(); }
+
             if (_reader != null) { _reader.DiscardBufferedData(); }
+
             if (_backReader != null) { _backReader.DiscardBufferedData(); }
         }
 
@@ -1042,6 +1049,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(line);
                 }
             }
+
             return content;
         }
 
@@ -1233,7 +1241,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Peek the next character
         /// </summary>
-        /// <returns>Return -1 if we reach the head of the file</returns>
+        /// <returns>Return -1 if we reach the head of the file.</returns>
         public override int Peek()
         {
             if (_charCount == 0)
@@ -1251,7 +1259,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read the next character
         /// </summary>
-        /// <returns>Return -1 if we reach the head of the file</returns>
+        /// <returns>Return -1 if we reach the head of the file.</returns>
         public override int Read()
         {
             if (_charCount == 0)
@@ -1272,8 +1280,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="buffer">Output buffer.</param>
         /// <param name="index">Start position to write with.</param>
         /// <param name="count">Number of bytes to read.</param>
-        /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
-        /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
+        /// <returns>Return the number of characters read, or -1 if we reach the head of the file.</returns>
+        /// <returns>Return the number of characters read, or -1 if we reach the head of the file.</returns>
         public override int Read(char[] buffer, int index, int count)
         {
             return ReadSpan(new Span<char>(buffer, index, count));
@@ -1321,7 +1329,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read a line from the current stream
         /// </summary>
-        /// <returns>Return null if we reach the head of the file</returns>
+        /// <returns>Return null if we reach the head of the file.</returns>
         public override string ReadLine()
         {
             if (_charCount == 0 && RefillCharBuffer() == -1)

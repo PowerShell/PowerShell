@@ -14,7 +14,7 @@ namespace System.Management.Automation
     {
         #region Context Properties
 
-        internal String Severity { get; set; } = string.Empty;
+        internal string Severity { get; set; } = string.Empty;
 
         /// <summary>
         /// Name of the host.

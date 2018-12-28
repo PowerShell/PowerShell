@@ -201,6 +201,7 @@ namespace System.Management.Automation.Remoting
                 {
                     return;
                 }
+
                 _eventsInProcess = true;
             }
 
@@ -231,6 +232,7 @@ namespace System.Management.Automation.Remoting
                         _eventsInProcess = false;
                         break;
                     }
+
                     eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
@@ -524,6 +526,7 @@ namespace System.Management.Automation.Remoting
                                     break;
                             }
                         }
+
                         break;
 
                     case RemotingTargetInterface.RunspacePool:
@@ -892,8 +895,8 @@ namespace System.Management.Automation.Remoting
         /// This method contains all the logic for handling the state machine
         /// for key exchange. All the different scenarios are covered in this
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">event args</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">event args.</param>
         private void DoKeyExchange(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             //There are corner cases with disconnect that can result in client receiving outdated key exchange packets
@@ -924,6 +927,7 @@ namespace System.Management.Automation.Remoting
                         // you need to send an encrypted session key to the client
                         _session.SendEncryptedSessionKey();
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySent:
@@ -934,6 +938,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.EstablishedAndKeyExchanged, eventArgs.Reason);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyRequested:
@@ -947,6 +952,7 @@ namespace System.Management.Automation.Remoting
                             _keyExchangeTimer = new Timer(HandleKeyExchangeTimeout, null, BaseTransportManager.ServerDefaultKeepAliveTimeoutMs, Timeout.Infinite);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyReceiveFailed:
@@ -958,12 +964,14 @@ namespace System.Management.Automation.Remoting
 
                         DoClose(this, eventArgs);
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySendFailed:
                     {
                         DoClose(this, eventArgs);
                     }
+
                     break;
             }
         }
@@ -971,7 +979,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handles the timeout for key exchange
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
         {
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeyRequested, "timeout should only happen when waiting for a key");

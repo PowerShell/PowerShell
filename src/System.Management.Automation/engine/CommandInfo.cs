@@ -235,6 +235,7 @@ namespace System.Management.Automation
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set
             {
                 _context = value;
@@ -244,6 +245,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ExecutionContext _context;
 
         /// <summary>
@@ -314,6 +316,7 @@ namespace System.Management.Automation
             {
                 return CopiedCommand == null ? _visibility : CopiedCommand.Visibility;
             }
+
             set
             {
                 if (CopiedCommand == null)
@@ -331,6 +334,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private SessionStateEntryVisibility _visibility = SessionStateEntryVisibility.Public;
 
         /// <summary>
@@ -581,8 +585,10 @@ namespace System.Management.Automation
         internal CommandMetadata ExternalCommandMetadata
         {
             get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
+
             set { _externalCommandMetadata = value; }
         }
+
         private CommandMetadata _externalCommandMetadata;
 
         /// <summary>
@@ -591,7 +597,7 @@ namespace System.Management.Automation
         /// algorithm.
         /// </summary>
         /// <param name="name">The name of the parameter to resolve.</param>
-        /// <returns>The parameter that matches this name</returns>
+        /// <returns>The parameter that matches this name.</returns>
         public ParameterMetadata ResolveParameter(string name)
         {
             MergedCommandParameterMetadata merged = GetMergedCommandParameterMetadataSafely();
@@ -614,9 +620,11 @@ namespace System.Management.Automation
 
                     _parameterSets = new ReadOnlyCollection<CommandParameterSetInfo>(parameterSetInfo);
                 }
+
                 return _parameterSets;
             }
         }
+
         internal ReadOnlyCollection<CommandParameterSetInfo> _parameterSets;
 
         /// <summary>
@@ -678,6 +686,7 @@ namespace System.Management.Automation
             {
                 result = GetCacheableMetadata(CommandMetadata);
             }
+
             return result;
         }
 
@@ -753,7 +762,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This constructor is used when the type exists and is currently loaded.
         /// </summary>
-        /// <param name="type">The type</param>
+        /// <param name="type">The type.</param>
         public PSTypeName(Type type)
         {
             _type = type;
@@ -766,7 +775,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This constructor is used when the type may not exist, or is not loaded.
         /// </summary>
-        /// <param name="name">The name of the type</param>
+        /// <param name="name">The name of the type.</param>
         public PSTypeName(string name)
         {
             Name = name;
@@ -856,6 +865,7 @@ namespace System.Management.Automation
                             TypeResolver.TryResolveType(Name, out _type);
                         }
                     }
+
                     if (_type == null)
                     {
                         // We ignore the exception.
@@ -874,18 +884,20 @@ namespace System.Management.Automation
                 return _type;
             }
         }
+
         private Type _type;
 
         /// <summary>
         /// When a type is defined by PowerShell, the ast for that type.
         /// </summary>
         public TypeDefinitionAst TypeDefinitionAst { get; private set; }
+
         private bool _typeWasCalculated;
 
         /// <summary>
         /// Returns a String that represents the current PSTypeName.
         /// </summary>
-        /// <returns> String that represents the current PSTypeName.</returns>
+        /// <returns>String that represents the current PSTypeName.</returns>
         public override string ToString()
         {
             return Name ?? string.Empty;

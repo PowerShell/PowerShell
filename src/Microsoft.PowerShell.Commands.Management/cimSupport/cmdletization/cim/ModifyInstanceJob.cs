@@ -65,6 +65,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     PSObject pso = PSObject.AsPSObject(_resultFromModifyInstance);
                     AddShowComputerNameMarker(pso);
                 }
+
                 _resultFromModifyInstanceHasBeenPassedThru = true;
                 return _resultFromModifyInstance;
             }

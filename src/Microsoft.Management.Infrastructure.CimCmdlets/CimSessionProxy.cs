@@ -39,6 +39,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.nameSpace;
             }
         }
+
         protected string nameSpace;
 
         /// <summary>
@@ -53,6 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.proxy;
             }
         }
+
         protected CimSessionProxy proxy;
     }
 
@@ -127,7 +129,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Performs pre processing of given result object.
         /// </summary>
         /// <param name="resultObject"></param>
-        /// <returns>Pre-processed object</returns>
+        /// <returns>Pre-processed object.</returns>
         object Process(object resultObject);
     }
     #endregion
@@ -143,11 +145,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="action">CimBaseAction object bound to the event</param>
+        /// <param name="action">CimBaseAction object bound to the event.</param>
         public CmdletActionEventArgs(CimBaseAction action)
         {
             this.Action = action;
         }
+
         public readonly CimBaseAction Action;
     }
 
@@ -159,8 +162,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="operationCancellation">Object used to cancel the operation</param>
-        /// <param name="operation">Async observable operation</param>
+        /// <param name="operationCancellation">Object used to cancel the operation.</param>
+        /// <param name="operation">Async observable operation.</param>
         public OperationEventArgs(IDisposable operationCancellation,
             IObservable<object> operation,
             bool theSuccess)
@@ -169,6 +172,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operation = operation;
             this.success = theSuccess;
         }
+
         public readonly IDisposable operationCancellation;
         public readonly IObservable<object> operation;
         public readonly bool success;
@@ -223,7 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// otherwise insert it into the cache.
         /// </para>
         /// </summary>
-        /// <param name="session">CimSession to be added</param>
+        /// <param name="session">CimSession to be added.</param>
         internal static void AddCimSessionToTemporaryCache(CimSession session)
         {
             if (session != null)
@@ -248,7 +252,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>Wrapper function to remove CimSession from cache</para>
         /// </summary>
         /// <param name="session"></param>
-        /// <param name="dispose">Whether need to dispose the <see cref="CimSession"/> object</param>
+        /// <param name="dispose">Whether need to dispose the <see cref="CimSession"/> object.</param>
         private static void RemoveCimSessionFromTemporaryCache(CimSession session,
             bool dispose)
         {
@@ -291,7 +295,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If refcount became 0, call dispose on the <see cref="CimSession"/> object.
         /// </para>
         /// </summary>
-        /// <param name="session">CimSession to be added</param>
+        /// <param name="session">CimSession to be added.</param>
         internal static void RemoveCimSessionFromTemporaryCache(CimSession session)
         {
             RemoveCimSessionFromTemporaryCache(session, true);
@@ -304,8 +308,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles new cmdlet action come from
         /// the operations related to the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event</param>
-        /// <param name="actionArgs">Event args</param>
+        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="actionArgs">Event args.</param>
         public delegate void NewCmdletActionHandler(
             object cimSession,
             CmdletActionEventArgs actionArgs);
@@ -319,8 +323,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles operation creation and complete
         /// issued by the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event</param>
-        /// <param name="actionArgs">Event args</param>
+        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="actionArgs">Event args.</param>
         public delegate void OperationEventHandler(
             object cimSession,
             OperationEventArgs actionArgs);
@@ -412,6 +416,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return;
                 }
             }
+
             String cimsessionComputerName = cimInstance.GetCimSessionComputerName();
             CreateSetSession(cimsessionComputerName, null, null, null, false);
             this.isDefaultSession = (cimsessionComputerName  == ConstValue.NullComputerName);
@@ -425,7 +430,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
-        /// <param name="operOptions">Used when create async operation</param>
+        /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(string computerName, CimSessionOptions sessionOptions, CimOperationOptions operOptions)
         {
             CreateSetSession(computerName, null, sessionOptions, operOptions, false);
@@ -437,7 +442,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Then create wrapper object.
         /// </summary>
         /// <param name="computerName"></param>
-        /// <param name="operOptions">Used when create async operation</param>
+        /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(string computerName, CimOperationOptions operOptions)
         {
             CreateSetSession(computerName, null, null, operOptions, false);
@@ -457,7 +462,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Create wrapper object by given session object
         /// </summary>
         /// <param name="session"></param>
-        /// <param name="operOptions">Used when create async operation</param>
+        /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(CimSession session, CimOperationOptions operOptions)
         {
             CreateSetSession(null, session, null, operOptions, false);
@@ -484,6 +489,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this.CancelOperation = null;
                 this.operation = null;
             }
+
             InitOption(operOptions);
             this.protocol = ProtocolType.Wsman;
             this.isTemporaryCimSession = temporaryCimSession;
@@ -520,6 +526,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     this.session = CreateCimSessionByComputerName(computerName);
                 }
+
                 this.isTemporaryCimSession = true;
             }
 
@@ -527,6 +534,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 AddCimSessionToTemporaryCache(this.session);
             }
+
             this.invocationContextObject = new InvocationContext(this);
             DebugHelper.WriteLog("Protocol {0}, Is temporary session ? {1}", 1, this.protocol, this.isTemporaryCimSession);
         }
@@ -546,6 +554,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 this.options.Timeout = TimeSpan.FromSeconds((double)value);
             }
+
             get
             {
                 return (UInt32)this.options.Timeout.TotalSeconds;
@@ -563,6 +572,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 this.options.ResourceUri= value;
             }
+
             get
             {
                 return this.options.ResourceUri;
@@ -579,6 +589,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.options.EnableMethodResultStreaming;
             }
+
             set
             {
                 DebugHelper.WriteLogEx("EnableMethodResultStreaming {0}", 0, value);
@@ -663,6 +674,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.options = new CimOperationOptions();
             }
+
             this.EnableMethodResultStreaming = true;
             this.EnablePSSemantics();
         }
@@ -722,6 +734,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     this.operation = null;
                 }
+
                 if (this.session != null && this.ContextObject == null)
                 {
                     DebugHelper.WriteLog("Dispose this proxy object @ RemoveOperation");
@@ -755,6 +768,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 DebugHelper.WriteLog("Ignore action since OnNewCmdletAction is null.", 5);
             }
+
             this.PostNewActionEvent(actionArgs);
         }
 
@@ -778,6 +792,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 temp(this.session, args);
             }
+
             this.PostOperationCreateEvent(args);
         }
 
@@ -801,6 +816,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 temp(this.session, args);
             }
+
             this.PostOperationDeleteEvent(args);
             this.RemoveOperation(operation);
             this.operationName = null;
@@ -850,9 +866,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         parameters.Append(",");
                     }
+
                     parameters.Append(string.Format(CultureInfo.CurrentUICulture, @"'{0}' = {1}", key, parameterList[key]));
                 }
             }
+
             string operationStartMessage = string.Format(CultureInfo.CurrentUICulture,
                 Strings.CimOperationStart,
                 operation,
@@ -964,8 +982,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Handle async event triggered by <see cref="CimResultObserver<T>"/>
         /// </para>
         /// </summary>
-        /// <param name="observer">object triggered the event</param>
-        /// <param name="resultArgs">async result event argument</param>
+        /// <param name="observer">object triggered the event.</param>
+        /// <param name="resultArgs">async result event argument.</param>
         internal void ResultEventHandler(
             object observer,
             AsyncResultEventArgsBase resultArgs)
@@ -980,6 +998,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         AsyncResultCompleteEventArgs args = resultArgs as AsyncResultCompleteEventArgs;
                         this.FireOperationDeletedEvent(args.observable, true);
                     }
+
                     break;
                 case AsyncResultType.Exception:
                     {
@@ -990,8 +1009,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             this.FireNewActionEvent(action);
                         }
+
                         this.FireOperationDeletedEvent(args.observable, false);
                     }
+
                     break;
                 case AsyncResultType.Result:
                     {
@@ -1002,6 +1023,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             AddShowComputerNameMarker(resultObject);
                         }
+
                         if (this.ObjectPreProcess != null)
                         {
                             resultObject = this.ObjectPreProcess.Process(resultObject);
@@ -1012,6 +1034,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         CimWriteResultObject action = new CimWriteResultObject(resultObject, this.ContextObject);
                         this.FireNewActionEvent(action);
                     }
+
                     break;
                 default:
                     break;
@@ -1047,6 +1070,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CDXML_CLIXML_TEST"));
         }
+
         private object PostProcessCimInstance(object resultObject)
         {
             DebugHelper.WriteLogEx();
@@ -1055,9 +1079,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 string serializedForm = PSSerializer.Serialize(resultObject as CimInstance, depth: 1);
                 object deserializedObject = PSSerializer.Deserialize(serializedForm);
                 object returnObject = (deserializedObject is PSObject) ? (deserializedObject as PSObject).BaseObject : deserializedObject;
-                DebugHelper.WriteLogEx("Deserialized Object is {0}, type {1}", 1, returnObject, returnObject.GetType());
+                DebugHelper.WriteLogEx("Deserialized object is {0}, type {1}", 1, returnObject, returnObject.GetType());
                 return returnObject;
             }
+
             return resultObject;
         }
 #endif
@@ -1468,6 +1493,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.session;
             }
         }
+
         private CimSession session;
 
         /// <summary>
@@ -1481,6 +1507,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.targetCimInstance;
             }
         }
+
         private CimInstance targetCimInstance = null;
 
         /// <summary>
@@ -1510,6 +1537,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return this.options;
             }
         }
+
         private CimOperationOptions options;
 
         /// <summary>
@@ -1579,6 +1607,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this._cancelOperation = value;
                 Interlocked.Exchange(ref this._cancelOperationDisposed, 0);
             }
+
             get
             {
                 return this._cancelOperation;
@@ -1596,6 +1625,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return protocol;
             }
         }
+
         private ProtocolType protocol;
 
         /// <summary>
@@ -1607,11 +1637,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.contextObject = value;
             }
+
             get
             {
                 return this.contextObject;
             }
         }
+
         private XOperationContextBase contextObject;
 
         /// <summary>
@@ -1629,11 +1661,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.objectPreprocess = value;
             }
+
             get
             {
                 return this.objectPreprocess;
             }
         }
+
         private IObjectPreProcess objectPreprocess;
 
         /// <summary>
@@ -1689,6 +1723,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         this.options.Dispose();
                         this.options = null;
                     }
+
                     DisposeTemporaryCimSession();
                 }
             }
@@ -1870,6 +1905,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     throw new InvalidOperationException(Strings.OperationInProgress);
                 }
             }
+
             DebugHelper.WriteLog("KeyOnly {0},", 1, this.options.KeysOnly);
         }
 
@@ -1937,14 +1973,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 DebugHelper.WriteLog("<<<<<<<<<< Use protocol WSMAN {0}", 1, computerName);
                 option = new WSManSessionOptions();
             }
+
             if (timeout != 0)
             {
                 option.Timeout = TimeSpan.FromSeconds((double)timeout);
             }
+
             if (credential != null)
             {
                 option.AddDestinationCredentials(credential);
             }
+
             DebugHelper.WriteLogEx("returned option :{0}.", 1, option);
             return option;
         }
@@ -2072,6 +2111,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return false;
                 }
             }
+
             if (context.PropertyName != null)
             {
                 pattern = new WildcardPattern(context.PropertyName, WildcardOptions.IgnoreCase);
@@ -2095,6 +2135,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return match;
                 }
             }
+
             if (context.MethodName != null)
             {
                 pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
@@ -2118,6 +2159,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return match;
                 }
             }
+
             if (context.QualifierName != null)
             {
                 pattern = new WildcardPattern(context.QualifierName, WildcardOptions.IgnoreCase);
@@ -2141,6 +2183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return match;
                 }
             }
+
             DebugHelper.WriteLog("CimClass '{0}' is qualified.", 1, cimClass.CimSystemProperties.ClassName);
             return true;
         }
@@ -2245,7 +2288,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Then create wrapper object.
         /// </summary>
         /// <param name="originalProxy"><see cref="CimSessionProxy"/> object to clone.</param>
-        /// <param name="passThru">PassThru, true means output the modified instance; otherwise does not output</param>
+        /// <param name="passThru">PassThru, true means output the modified instance; otherwise does not output.</param>
         public CimSessionProxySetCimInstance(CimSessionProxy originalProxy, bool passThru)
             : base(originalProxy)
         {

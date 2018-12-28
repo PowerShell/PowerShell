@@ -89,7 +89,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for HelpSystem.
         /// </summary>
-        /// <param name="context">Execution context for this help system</param>
+        /// <param name="context">Execution context for this help system.</param>
         internal HelpSystem(ExecutionContext context)
         {
             if (context == null)
@@ -154,8 +154,8 @@ namespace System.Management.Automation
         /// Variants of this function are defined below, which will create help request
         /// object on fly.
         /// </summary>
-        /// <param name="helpRequest">helpRequest object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <param name="helpRequest">helpRequest object.</param>
+        /// <returns>An array of HelpInfo object.</returns>
         internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
             if (helpRequest == null)
@@ -235,14 +235,14 @@ namespace System.Management.Automation
 
         // Cache of search paths that are currently active.
         // This will save a lot time when help providers do their searching
-        private Collection<String> _searchPaths = null;
+        private Collection<string> _searchPaths = null;
 
         /// <summary>
         /// Gets the search paths for external snapins/modules that are currently loaded.
         /// If the current shell is single-shell based, then the returned
         /// search path contains all the directories of currently active PSSnapIns/modules.
         /// </summary>
-        /// <returns>a collection of strings representing locations</returns>
+        /// <returns>A collection of strings representing locations.</returns>
         internal Collection<string> GetSearchPaths()
         {
             // return the cache if already present.
@@ -250,7 +250,8 @@ namespace System.Management.Automation
             {
                 return _searchPaths;
             }
-            _searchPaths = new Collection<String>();
+
+            _searchPaths = new Collection<string>();
 
             // add loaded modules paths to the search path
             if (ExecutionContext.Modules != null)
@@ -278,8 +279,8 @@ namespace System.Management.Automation
         ///        (Search for pattern in command name followed by pattern match in help content)
         ///     4. if step 3 returns exact one helpInfo object, try to retrieve exact help.
         /// </summary>
-        /// <param name="helpRequest">Help request object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>An array of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> DoGetHelp(HelpRequest helpRequest)
         {
             _lastErrors.Clear();
@@ -347,7 +348,7 @@ namespace System.Management.Automation
         /// helpInfo object to appropriate help provider for further processing.
         /// (this is implemented by ForwardHelp)
         /// </summary>
-        /// <param name="helpRequest">Help request object</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>HelpInfo object retrieved. Can be Null.</returns>
         internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
@@ -386,7 +387,7 @@ namespace System.Management.Automation
         ///               The real help can be retrieved from Command help provider.
         /// </summary>
         /// <param name="helpInfo"></param>
-        /// <param name="helpRequest">Help request object</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>Never returns null.</returns>
         /// <remarks>helpInfos is not null or empty.</remarks>
         private IEnumerable<HelpInfo> ForwardHelp(HelpInfo helpInfo, HelpRequest helpRequest)
@@ -454,8 +455,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get help that exactly match the target
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
-        /// <returns>An IEnumerable of HelpInfo object</returns>
+        /// <param name="helpRequest">help request object.</param>
+        /// <returns>An IEnumerable of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest)
         {
             int countOfHelpInfosFound = 0;
@@ -820,9 +821,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="assemblyName">assembly that contains this help provider</param>
-        /// <param name="className">the class that implements this help provider</param>
-        /// <param name="helpCategory">help category of this help provider</param>
+        /// <param name="assemblyName">assembly that contains this help provider.</param>
+        /// <param name="className">the class that implements this help provider.</param>
+        /// <param name="helpCategory">help category of this help provider.</param>
         internal HelpProviderInfo(string assemblyName, string className, HelpCategory helpCategory)
         {
             this.AssemblyName = assemblyName;

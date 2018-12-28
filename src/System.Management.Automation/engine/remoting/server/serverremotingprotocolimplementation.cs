@@ -113,7 +113,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Raise the public key received event
         /// </summary>
-        /// <param name="receivedData">received data</param>
+        /// <param name="receivedData">received data.</param>
         /// <remarks>This method is a hook to be called
         /// from the transport manager</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)
@@ -190,6 +190,7 @@ namespace System.Management.Automation.Remoting
                         // need to import the clients public key
                         CreateRunspacePoolReceived.SafeInvoke(this, dataArg);
                     }
+
                     break;
 
                 case RemotingDataType.CloseSession:
@@ -222,6 +223,7 @@ namespace System.Management.Automation.Remoting
                         negotiationArg.RemoteData = rcvdData;
                         NegotiationReceived.SafeInvoke(this, negotiationArg);
                     }
+
                     break;
 
                 case RemotingDataType.PublicKey:
@@ -229,6 +231,7 @@ namespace System.Management.Automation.Remoting
                         string remotePublicKey = RemotingDecoder.GetPublicKey(rcvdData.Data);
                         PublicKeyReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(remotePublicKey));
                     }
+
                     break;
 
                 default:

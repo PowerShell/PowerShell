@@ -229,7 +229,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if this object is safe to be written
         /// </summary>
-        /// <returns>true if safe, false otherwise</returns>
+        /// <returns>True if safe, false otherwise.</returns>
         internal override bool SafeForExport()
         {
             if (!base.SafeForExport())
@@ -336,6 +336,7 @@ namespace System.Management.Automation
             {
                 Label = colheaderdefinition.label.text;
             }
+
             Alignment = (Alignment)colheaderdefinition.alignment;
             Width = colheaderdefinition.width;
         }
@@ -348,9 +349,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Public constructor for TableControlColumnHeader.
         /// </summary>
-        /// <param name="label">Could be null if no label to specify</param>
-        /// <param name="width">The Value should be non-negative</param>
-        /// <param name="alignment">The default value is Alignment.Undefined</param>
+        /// <param name="label">Could be null if no label to specify.</param>
+        /// <param name="width">The Value should be non-negative.</param>
+        /// <param name="alignment">The default value is Alignment.Undefined.</param>
         public TableControlColumnHeader(string label, int width, Alignment alignment)
         {
             if (width < 0)
@@ -442,6 +443,7 @@ namespace System.Management.Automation
             {
                 SelectedBy = EntrySelectedBy.Get(rowdefinition.appliesTo.referenceList);
             }
+
             foreach (TableRowItemDefinition itemdef in rowdefinition.rowItemDefinitionList)
             {
                 FieldPropertyToken fpt = itemdef.formatTokenList[0] as FieldPropertyToken;
@@ -592,11 +594,13 @@ namespace System.Management.Automation
                 {
                     row.SelectedBy.TypeNames = new List<string>(entrySelectedByType);
                 }
+
                 if (entrySelectedByCondition != null)
                 {
                     row.SelectedBy.SelectionCondition = new List<DisplayEntry>(entrySelectedByCondition);
                 }
             }
+
             _table.Rows.Add(row);
             return new TableRowDefinitionBuilder(this, row);
         }

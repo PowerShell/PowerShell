@@ -15,14 +15,14 @@ namespace System.Management.Automation.ComInterop
     /// </summary>
     internal class ComParamDesc
     {
-        # region private fields
+        #region private fields
 
         private readonly VarEnum _vt;
         private readonly string _name;
 
-        # endregion
+        #endregion
 
-        # region ctor
+        #region ctor
 
         /// <summary>
         /// Creates a representation for the parameter of a COM method
@@ -122,9 +122,9 @@ namespace System.Management.Automation.ComInterop
             return result.ToString();
         }
 
-        # endregion
+        #endregion
 
-        # region properties
+        #region properties
 
         public bool IsOut { get; }
 
@@ -141,7 +141,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal object DefaultValue { get; }
 
-        # endregion
+        #endregion
     }
 }
 

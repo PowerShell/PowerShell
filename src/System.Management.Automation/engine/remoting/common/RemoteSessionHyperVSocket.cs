@@ -44,12 +44,14 @@ namespace System.Management.Automation.Remoting
         public Guid VmId
         {
             get { return _vmId; }
+
             set { _vmId = value; }
         }
 
         public Guid ServiceId
         {
             get { return _serviceId; }
+
             set { _vmId = value; }
         }
 
@@ -293,6 +295,7 @@ namespace System.Management.Automation.Remoting
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -300,6 +303,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -307,6 +311,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -440,6 +445,7 @@ namespace System.Management.Automation.Remoting
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -447,6 +453,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -454,6 +461,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -478,9 +486,9 @@ namespace System.Management.Automation.Remoting
         /// Connect to Hyper-V socket server.  This is a blocking call until a
         /// connection occurs or the timeout time has elapsed.
         /// </summary>
-        /// <param name="networkCredential">The credential used for authentication</param>
-        /// <param name="configurationName">The configuration name of the PS session</param>
-        /// <param name="isFirstConnection">Whether this is the first connection</param>
+        /// <param name="networkCredential">The credential used for authentication.</param>
+        /// <param name="configurationName">The configuration name of the PS session.</param>
+        /// <param name="isFirstConnection">Whether this is the first connection.</param>
         public bool Connect(
             NetworkCredential networkCredential,
             string configurationName,
@@ -520,10 +528,10 @@ namespace System.Management.Automation.Remoting
                     bool emptyPassword = String.IsNullOrEmpty(networkCredential.Password);
                     bool emptyConfiguration = String.IsNullOrEmpty(configurationName);
 
-                    Byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
-                    Byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
-                    Byte[] password = Encoding.Unicode.GetBytes(networkCredential.Password);
-                    Byte[] response = new Byte[4]; // either "PASS" or "FAIL"
+                    byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
+                    byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
+                    byte[] password = Encoding.Unicode.GetBytes(networkCredential.Password);
+                    byte[] response = new byte[4]; // either "PASS" or "FAIL"
                     string responseString;
 
                     //
@@ -588,7 +596,7 @@ namespace System.Management.Automation.Remoting
                             HyperVSocket.Send(Encoding.ASCII.GetBytes("NONEMPTYCF"));
                             HyperVSocket.Receive(response);
 
-                            Byte[] configName = Encoding.Unicode.GetBytes(configurationName);
+                            byte[] configName = Encoding.Unicode.GetBytes(configurationName);
                             HyperVSocket.Send(configName);
                         }
                     }

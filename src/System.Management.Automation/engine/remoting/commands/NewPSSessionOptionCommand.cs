@@ -30,8 +30,10 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumRedirection
         {
             get { return _maximumRedirection.Value; }
+
             set { _maximumRedirection = value; }
         }
+
         private int? _maximumRedirection;
 
         /// <summary>
@@ -76,9 +78,11 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumReceivedDataSizePerCommand
         {
             get { return _maxRecvdDataSizePerCommand.Value; }
+
             set { _maxRecvdDataSizePerCommand = value; }
         }
-        private Nullable<int> _maxRecvdDataSizePerCommand;
+
+        private int? _maxRecvdDataSizePerCommand;
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
@@ -88,9 +92,11 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumReceivedObjectSize
         {
             get { return _maxRecvdObjectSize.Value; }
+
             set { _maxRecvdObjectSize = value; }
         }
-        private Nullable<int> _maxRecvdObjectSize;
+
+        private int? _maxRecvdObjectSize;
 
         /// <summary>
         /// Specifies the output mode on the server when it is in Disconnected mode
@@ -133,8 +139,10 @@ namespace Microsoft.PowerShell.Commands
                 return _openTimeout.HasValue ? _openTimeout.Value :
                     RunspaceConnectionInfo.DefaultOpenTimeout;
             }
+
             set { _openTimeout = value; }
         }
+
         private int? _openTimeout;
 
         /// <summary>
@@ -156,8 +164,10 @@ namespace Microsoft.PowerShell.Commands
                 return _cancelTimeout.HasValue ? _cancelTimeout.Value :
                     BaseTransportManager.ClientCloseTimeoutMs;
             }
+
             set { _cancelTimeout = value; }
         }
+
         private int? _cancelTimeout;
 
         /// <summary>
@@ -176,8 +186,10 @@ namespace Microsoft.PowerShell.Commands
                 return _idleTimeout.HasValue ? _idleTimeout.Value
                     : RunspaceConnectionInfo.DefaultIdleTimeout;
             }
+
             set { _idleTimeout = value; }
         }
+
         private int? _idleTimeout;
 #endif
 
@@ -227,8 +239,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SkipCACheck
         {
             get { return _skipcacheck; }
+
             set { _skipcacheck = value; }
         }
+
         private bool _skipcacheck;
 
         /// <summary>
@@ -241,8 +255,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SkipCNCheck
         {
             get { return _skipcncheck; }
+
             set { _skipcncheck = value; }
         }
+
         private bool _skipcncheck;
 
 #if !UNIX
@@ -257,8 +273,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter SkipRevocationCheck
         {
             get { return _skiprevocationcheck; }
+
             set { _skiprevocationcheck = value; }
         }
+
         private bool _skiprevocationcheck;
 
         /// <summary>
@@ -268,16 +286,18 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("OperationTimeoutMSec")]
         [ValidateRange(0, Int32.MaxValue)]
-        public Int32 OperationTimeout
+        public int OperationTimeout
         {
             get
             {
                 return (_operationtimeout.HasValue ? _operationtimeout.Value :
                     BaseTransportManager.ClientDefaultOperationTimeoutMs);
             }
+
             set { _operationtimeout = value; }
         }
-        private Int32? _operationtimeout;
+
+        private int? _operationtimeout;
 
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".
@@ -289,11 +309,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoEncryption
         {
             get { return _noencryption; }
+
             set
             {
                 _noencryption = value;
             }
         }
+
         private bool _noencryption;
 
         /// <summary>
@@ -306,11 +328,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter UseUTF16
         {
             get { return _useutf16; }
+
             set
             {
                 _useutf16 = value;
             }
         }
+
         private bool _useutf16;
 
         /// <summary>
@@ -321,8 +345,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IncludePortInSPN
         {
             get { return _includePortInSPN; }
+
             set { _includePortInSPN = value; }
         }
+
         private bool _includePortInSPN;
 
 #endif
@@ -351,6 +377,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.OperationTimeout = TimeSpan.FromMilliseconds(_operationtimeout.Value);
             }
+
             result.NoEncryption = this.NoEncryption;
             result.UseUTF16 = this.UseUTF16;
             result.IncludePortInSPN = this.IncludePortInSPN;
@@ -370,6 +397,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.Culture = this.Culture;
             }
+
             if (this.UICulture != null)
             {
                 result.UICulture = this.UICulture;
@@ -379,10 +407,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.OpenTimeout = TimeSpan.FromMilliseconds(_openTimeout.Value);
             }
+
             if (_cancelTimeout.HasValue)
             {
                 result.CancelTimeout = TimeSpan.FromMilliseconds(_cancelTimeout.Value);
             }
+
             if (_idleTimeout.HasValue)
             {
                 result.IdleTimeout = TimeSpan.FromMilliseconds(_idleTimeout.Value);

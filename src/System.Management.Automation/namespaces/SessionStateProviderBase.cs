@@ -109,6 +109,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = ((DictionaryEntry)item).Value;
             }
+
             return value;
         }
 
@@ -323,6 +324,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     sortedEntries.Add(entry);
                 }
+
                 sortedEntries.Sort(
                     delegate (DictionaryEntry left, DictionaryEntry right)
                     {
@@ -1055,21 +1057,21 @@ namespace Microsoft.PowerShell.Commands
         /// Always returns null
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object GetContentReaderDynamicParameters(string path) { return null; }
 
         /// <summary>
         /// Always returns null
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object GetContentWriterDynamicParameters(string path) { return null; }
 
         /// <summary>
         /// Always returns null
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>null</returns>
+        /// <returns>Null.</returns>
         public object ClearContentDynamicParameters(string path) { return null; }
 
         #endregion
@@ -1109,6 +1111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("provider");
             }
+
             _path = path;
             _provider = provider;
         }
@@ -1145,12 +1148,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = getItemValueResult as IList ?? new object[] { getItemValueResult };
                     }
+
                     _contentRead = true;
                 }
             }
 
             return result;
         }
+
         private bool _contentRead;
 
         /// <summary>

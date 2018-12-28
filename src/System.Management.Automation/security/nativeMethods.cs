@@ -498,8 +498,8 @@ namespace System.Management.Automation.Security
         [DllImport(PinvokeDllNames.CryptAcquireContextDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
         bool CryptAcquireContext(ref IntPtr hProv,
-                                 String strContainerName,
-                                 String strProviderName,
+                                 string strContainerName,
+                                 string strProviderName,
                                  int nProviderType,
                                  uint uiProviderFlags);
 
@@ -514,19 +514,19 @@ namespace System.Management.Automation.Security
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
         int NCryptOpenStorageProvider(ref IntPtr hProv,
-                                      String strProviderName,
+                                      string strProviderName,
                                       uint dwFlags);
 
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
         int NCryptOpenKey(IntPtr hProv,
                           ref IntPtr hKey,
-                          String strKeyName,
+                          string strKeyName,
                           uint dwLegacySpec,
                           uint dwFlags);
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern unsafe
-        int NCryptSetProperty(IntPtr hProv, String pszProperty, void* pbInput, int cbInput, int dwFlags);
+        int NCryptSetProperty(IntPtr hProv, string pszProperty, void* pbInput, int cbInput, int dwFlags);
 
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
@@ -1911,6 +1911,7 @@ namespace System.Management.Automation.Security
             catch (Exception)
             {
             }
+
             return DllExists;
         }
     }

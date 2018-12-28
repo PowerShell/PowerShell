@@ -283,11 +283,17 @@ namespace System.Management.Automation.Remoting
         private object SelectTargetObject(PSHost host)
         {
             if (host == null || host.UI == null) { return null; }
+
             if (_methodInfo.InterfaceType == typeof(PSHost)) { return host; }
+
             if (_methodInfo.InterfaceType == typeof(IHostSupportsInteractiveSession)) { return host; }
+
             if (_methodInfo.InterfaceType == typeof(PSHostUserInterface)) { return host.UI; }
+
             if (_methodInfo.InterfaceType == typeof(IHostUISupportsMultipleChoiceSelection)) { return host.UI; }
+
             if (_methodInfo.InterfaceType == typeof(PSHostRawUserInterface)) { return host.UI.RawUI; }
+
             throw RemoteHostExceptions.NewUnknownTargetClassException(_methodInfo.InterfaceType.ToString());
         }
 
@@ -323,10 +329,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="computerName">computer name to use in
         /// warning messages</param>
-        /// <returns>a collection of remote host calls which will
+        /// <returns>A collection of remote host calls which will
         /// have to be executed before this host call can be
-        /// executed</returns>
-        internal Collection<RemoteHostCall> PerformSecurityChecksOnHostMessage(String computerName)
+        /// executed.</returns>
+        internal Collection<RemoteHostCall> PerformSecurityChecksOnHostMessage(string computerName)
         {
             Dbg.Assert(!String.IsNullOrEmpty(computerName),
                 "Computer Name must be passed for use in warning messages");
@@ -386,7 +392,7 @@ namespace System.Management.Automation.Remoting
                                     computerName, RemotingErrorIdStrings.RemoteHostPromptSecureStringPrompt));
                             }
                         }
-                    }// end of foreach
+                    }
 
                     if (havePSCredential)
                     {
@@ -399,8 +405,8 @@ namespace System.Management.Automation.Remoting
                         Parameters[0] = modifiedCaption;
                         Parameters[1] = modifiedMessage;
                     }
-                }// end of if (parameters ...
-            }// if (remoteHostCall.MethodId ...
+                }
+            }
 
             // Check if the incoming message is a readline as secure string
             // if so do the following:
@@ -431,9 +437,9 @@ namespace System.Management.Automation.Remoting
         /// Used in ensuring that remote prompt messages are
         /// tagged with "Windows PowerShell Credential Request"
         /// </summary>
-        /// <param name="caption">caption to modify</param>
-        /// <returns>new modified caption</returns>
-        private String ModifyCaption(string caption)
+        /// <param name="caption">caption to modify.</param>
+        /// <returns>New modified caption.</returns>
+        private string ModifyCaption(string caption)
         {
             string pscaption = CredUI.PromptForCredential_DefaultCaption;
 
@@ -454,11 +460,11 @@ namespace System.Management.Automation.Remoting
         /// contain a warning that they originate from a
         /// different computer
         /// </summary>
-        /// <param name="message">original message to modify</param>
+        /// <param name="message">original message to modify.</param>
         /// <param name="computerName">computername to include in the
         /// message</param>
-        /// <returns>message which contains a warning as well</returns>
-        private String ModifyMessage(string message, string computerName)
+        /// <returns>Message which contains a warning as well.</returns>
+        private string ModifyMessage(string message, string computerName)
         {
             string modifiedMessage = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.RemoteHostPromptForCredentialModifiedMessage,
@@ -475,9 +481,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="computerName">computer name to include
         /// in warning</param>
-        /// <param name="resourceString">resource string to use</param>
-        /// <returns>a constructed remote host call message
-        /// which will display the warning</returns>
+        /// <param name="resourceString">resource string to use.</param>
+        /// <returns>A constructed remote host call message
+        /// which will display the warning.</returns>
         private RemoteHostCall ConstructWarningMessageForSecureString(string computerName,
             string resourceString)
         {
@@ -497,8 +503,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="computerName">computer name to include
         /// in warning</param>
-        /// <returns>a constructed remote host call message
-        /// which will display the warning</returns>
+        /// <returns>A constructed remote host call message
+        /// which will display the warning.</returns>
         private RemoteHostCall ConstructWarningMessageForGetBufferContents(string computerName)
         {
             string warning = PSRemotingErrorInvariants.FormatResourceString(
@@ -611,7 +617,9 @@ namespace System.Management.Automation.Remoting
         {
             object result = RemoteHostEncoder.DecodePropertyValue(psObject, RemoteDataNameStrings.MethodException, typeof(Exception));
             if (result == null) { return null; }
+
             if (result is Exception) { return (Exception)result; }
+
             throw RemoteHostExceptions.NewDecodingFailedException();
         }
 

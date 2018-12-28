@@ -55,12 +55,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession[] CimSession
         {
             get { return cimsession;}
+
             set
             {
                 cimsession = value;
                 base.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession[] cimsession;
 
         /// <summary>
@@ -80,12 +82,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
                 base.SetParameter(value, nameComputerName);
             }
         }
+
         private String[] computername;
 
         /// <summary>
@@ -101,12 +105,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32[] Id
         {
             get { return id;}
+
             set
             {
                 id = value;
                 base.SetParameter(value, nameId);
             }
         }
+
         private UInt32[] id;
 
         /// <summary>
@@ -122,12 +128,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Guid[] InstanceId
         {
             get { return instanceid;}
+
             set
             {
                 instanceid = value;
                 base.SetParameter(value, nameInstanceId);
             }
         }
+
         private Guid[] instanceid;
 
         /// <summary>
@@ -143,12 +151,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] Name
         {
             get { return name;}
+
             set
             {
                 name = value;
                 base.SetParameter(value, nameName);
             }
         }
+
         private String[] name;
 
         #endregion

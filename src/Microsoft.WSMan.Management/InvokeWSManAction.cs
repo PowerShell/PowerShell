@@ -38,8 +38,10 @@ namespace Microsoft.WSMan.Management
         public String Action
         {
             get { return action; }
+
             set { action = value; }
         }
+
         private String action;
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace Microsoft.WSMan.Management
         public String ApplicationName
         {
             get { return applicationname; }
+
             set { applicationname = value; }
         }
+
         private String applicationname = null;
 
         /// <summary>
@@ -66,6 +70,7 @@ namespace Microsoft.WSMan.Management
         public String ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
@@ -76,6 +81,7 @@ namespace Microsoft.WSMan.Management
 
             }
         }
+
         private String computername = null;
 
         /// <summary>
@@ -91,8 +97,10 @@ namespace Microsoft.WSMan.Management
         public Uri ConnectionURI
         {
             get { return connectionuri; }
+
             set { connectionuri = value; }
         }
+
         private Uri connectionuri;
 
         /// <summary>
@@ -106,8 +114,10 @@ namespace Microsoft.WSMan.Management
         public String FilePath
         {
             get { return filepath; }
+
             set { filepath = value; }
         }
+
         private String filepath;
 
         /// <summary>
@@ -123,8 +133,10 @@ namespace Microsoft.WSMan.Management
         public Hashtable OptionSet
         {
             get { return optionset; }
+
             set { optionset = value; }
         }
+
         private Hashtable optionset;
 
         /// <summary>
@@ -137,8 +149,10 @@ namespace Microsoft.WSMan.Management
         public Int32 Port
         {
             get { return port; }
+
             set { port = value; }
         }
+
         private Int32 port = 0;
 
         /// <summary>
@@ -155,8 +169,10 @@ namespace Microsoft.WSMan.Management
         public Hashtable SelectorSet
         {
             get { return selectorset; }
+
             set { selectorset = value; }
         }
+
         private Hashtable selectorset;
 
         /// <summary>
@@ -171,8 +187,10 @@ namespace Microsoft.WSMan.Management
         public SessionOption SessionOption
         {
             get { return sessionoption; }
+
             set { sessionoption = value; }
         }
+
         private SessionOption sessionoption;
 
         /// <summary>
@@ -186,8 +204,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter UseSSL
         {
             get { return usessl; }
+
             set { usessl = value; }
         }
+
         private SwitchParameter usessl;
 
         /// <summary>
@@ -201,8 +221,10 @@ namespace Microsoft.WSMan.Management
         public Hashtable ValueSet
         {
             get { return valueset; }
+
             set { valueset = value; }
         }
+
         private Hashtable valueset;
 
         /// <summary>
@@ -217,8 +239,10 @@ namespace Microsoft.WSMan.Management
         public Uri ResourceURI
         {
             get { return resourceuri; }
+
             set { resourceuri = value; }
         }
+
         private Uri resourceuri;
 
         private WSManHelper helper;
@@ -269,10 +293,12 @@ namespace Microsoft.WSMan.Management
                 {
                     helper.AssertError(m_wsmanObject.Error, true, resourceuri);
                 }
+
                 if (!String.IsNullOrEmpty(m_session.Error))
                 {
                     helper.AssertError(m_session.Error, true, resourceuri);
                 }
+
                 if (m_session != null)
                     Dispose(m_session);
 

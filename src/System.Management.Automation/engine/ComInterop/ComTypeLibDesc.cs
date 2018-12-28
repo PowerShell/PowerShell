@@ -62,8 +62,8 @@ namespace System.Management.Automation.ComInterop
         /// and creates a IDynamicMetaObjectProvider that allows to instantiate coclasses
         /// and get actual values for the enums.
         /// </summary>
-        /// <param name="typeLibGuid">Type Library Guid</param>
-        /// <returns>ComTypeLibDesc object</returns>
+        /// <param name="typeLibGuid">Type Library Guid.</param>
+        /// <returns>ComTypeLibDesc object.</returns>
         [System.Runtime.Versioning.ResourceExposure(System.Runtime.Versioning.ResourceScope.Machine)]
         [System.Runtime.Versioning.ResourceConsumption(System.Runtime.Versioning.ResourceScope.Machine, System.Runtime.Versioning.ResourceScope.Machine)]
         public static ComTypeLibInfo CreateFromGuid(Guid typeLibGuid)
@@ -81,8 +81,8 @@ namespace System.Management.Automation.ComInterop
         /// and creates a IDynamicMetaObjectProvider that allows to instantiate coclasses
         /// and get actual values for the enums.
         /// </summary>
-        /// <param name="rcw">OLE automation compatible RCW</param>
-        /// <returns>ComTypeLibDesc object</returns>
+        /// <param name="rcw">OLE automation compatible RCW.</param>
+        /// <returns>ComTypeLibDesc object.</returns>
         public static ComTypeLibInfo CreateFromObject(object rcw)
         {
             if (Marshal.IsComObject(rcw) == false)

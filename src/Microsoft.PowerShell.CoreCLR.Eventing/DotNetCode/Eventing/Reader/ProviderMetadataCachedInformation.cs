@@ -60,6 +60,7 @@ namespace System.Diagnostics.Eventing.Reader
                     return _providerName;
                 }
             }
+
             public CultureInfo TheCultureInfo
             {
                 get
@@ -86,6 +87,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     return _theTime;
                 }
+
                 set
                 {
                     _theTime = value;
@@ -183,6 +185,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     pm = new ProviderMetadata(key.ProviderName, _session, key.TheCultureInfo);
                 }
+
                 AddCacheEntry(key, pm);
                 return pm;
             }
@@ -213,6 +216,7 @@ namespace System.Diagnostics.Eventing.Reader
                     {
                         pm = new ProviderMetadata(key.ProviderName, _session, key.TheCultureInfo);
                     }
+
                     AddCacheEntry(key, pm);
                 }
 

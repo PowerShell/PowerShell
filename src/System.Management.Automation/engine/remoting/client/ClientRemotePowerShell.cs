@@ -28,7 +28,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Constructor which creates a client remote powershell
         /// </summary>
-        /// <param name="shell">powershell instance </param>
+        /// <param name="shell">powershell instance.</param>
         /// <param name="runspacePool">The runspace pool associated with
         /// this shell</param>
         internal ClientRemotePowerShell(PowerShell shell, RemoteRunspacePoolInternal runspacePool)
@@ -73,7 +73,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Set the state information of the client powershell
         /// </summary>
-        /// <param name="stateInfo">state information to set</param>
+        /// <param name="stateInfo">state information to set.</param>
         internal void SetStateInfo(PSInvocationStateInfo stateInfo)
         {
             shell.SetStateChanged(stateInfo);
@@ -99,6 +99,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 return inputstream;
             }
+
             set
             {
                 inputstream = value;
@@ -123,6 +124,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 return outputstream;
             }
+
             set
             {
                 outputstream = value;
@@ -215,7 +217,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Initialize the client remote powershell instance
         /// </summary>
-        /// <param name="inputstream">input for execution</param>
+        /// <param name="inputstream">input for execution.</param>
         /// <param name="errorstream">error stream to which
         /// data needs to be written to</param>
         /// <param name="informationalBuffers">informational buffers
@@ -359,8 +361,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// server side. It is added to the error collection of the
         /// client powershell
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleErrorReceived(object sender, RemoteDataEventArgs<ErrorRecord> eventArgs)
         {
             using (s_tracer.TraceEventHandlers())
@@ -375,8 +377,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// server side. It is added to the output collection of the
         /// client powershell
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleOutputReceived(object sender, RemoteDataEventArgs<object> eventArgs)
         {
             using (s_tracer.TraceEventHandlers())
@@ -398,8 +400,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// The invocation state of the server powershell has changed.
         /// The state of the client powershell is reflected accordingly
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleInvocationStateInfoReceived(object sender,
             RemoteDataEventArgs<PSInvocationStateInfo> eventArgs)
         {
@@ -468,7 +470,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// and close the remote runspace/pool if the stop call failed due
         /// to network outage problems.
         /// </summary>
-        /// <param name="ex">Exception</param>
+        /// <param name="ex">Exception.</param>
         private void CheckAndCloseRunspaceAfterStop(Exception ex)
         {
             PSRemotingTransportException transportException = ex as PSRemotingTransportException;
@@ -511,8 +513,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Handler for handling any informational message received
         /// from the server side.
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleInformationalMessageReceived(object sender,
             RemoteDataEventArgs<InformationalMessage> eventArgs)
         {
@@ -526,18 +528,21 @@ namespace System.Management.Automation.Runspaces.Internal
                         {
                             informationalBuffers.AddDebug((DebugRecord)infoMessage.Message);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellVerbose:
                         {
                             informationalBuffers.AddVerbose((VerboseRecord)infoMessage.Message);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellWarning:
                         {
                             informationalBuffers.AddWarning((WarningRecord)infoMessage.Message);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellProgress:
@@ -546,12 +551,14 @@ namespace System.Management.Automation.Runspaces.Internal
                                 typeof(ProgressRecord), System.Globalization.CultureInfo.InvariantCulture);
                             informationalBuffers.AddProgress(progress);
                         }
+
                         break;
 
                     case RemotingDataType.PowerShellInformationStream:
                         {
                             informationalBuffers.AddInformation((InformationRecord)infoMessage.Message);
                         }
+
                         break;
                 }
             }
@@ -672,7 +679,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Execute the specified host call
         /// </summary>
-        /// <param name="hostcall">host call to execute</param>
+        /// <param name="hostcall">host call to execute.</param>
         private void ExecuteHostCall(RemoteHostCall hostcall)
         {
             if (hostcall.IsVoidMethod)
@@ -724,7 +731,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// all the powershell objects associated with the
         /// runspace pool to Failed
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
+        /// <param name="sender">sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event
         /// contains information on the reason associated with the
         /// runspace pool entering a Broken state</param>
@@ -821,6 +828,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.AutoDisconnectStarting,
                                 this.computerName, maxRetryConnectionTimeMinutes, warningRecord);
                     }
+
                     break;
 
                 case ConnectionStatus.AutoDisconnectSucceeded:
@@ -845,6 +853,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.InternalErrorAbort,
                                 this.computerName, maxRetryConnectionTimeMinutes, errorRecord);
                     }
+
                     break;
             }
 
@@ -945,7 +954,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)

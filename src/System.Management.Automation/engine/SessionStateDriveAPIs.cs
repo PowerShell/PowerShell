@@ -249,6 +249,7 @@ namespace System.Management.Automation
 
             return result;
         }
+
         private static char[] s_charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
 
         /// <summary>
@@ -398,6 +399,7 @@ namespace System.Management.Automation
                         null,
                         e);
             }
+
             return result;
         }
 
@@ -631,6 +633,7 @@ namespace System.Management.Automation
                     // DriveNotFoundException which will be thrown by the caller
                 }
             }
+
             return result;
         }
 
@@ -733,13 +736,14 @@ namespace System.Management.Automation
                     e,
                     Severity.Warning);
             }
+
             return result;
         }
 
         /// <summary>
         /// Auto-mounts a built-in drive.
         /// </summary>
-        /// <param name="name">The name of the drive to load</param>
+        /// <param name="name">The name of the drive to load.</param>
         /// <returns></returns>
         internal PSDriveInfo AutomountBuiltInDrive(string name)
         {
@@ -1174,6 +1178,7 @@ namespace System.Management.Automation
                                 {
                                     ProvidersCurrentWorkingDrive[drive.Provider] = null;
                                 }
+
                                 break;
                             }
                         }
@@ -1320,7 +1325,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSDriveInfo> Drives(string scope)
         {
-            Dictionary<String, PSDriveInfo> driveTable = new Dictionary<String, PSDriveInfo>();
+            Dictionary<string, PSDriveInfo> driveTable = new Dictionary<string, PSDriveInfo>();
 
             SessionStateScope startingScope = _currentScope;
 
@@ -1332,7 +1337,7 @@ namespace System.Management.Automation
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(startingScope);
             DriveInfo[] alldrives = DriveInfo.GetDrives();
-            Collection<String> driveNames = new Collection<String>();
+            Collection<string> driveNames = new Collection<string>();
             foreach (DriveInfo drive in alldrives)
             {
                 driveNames.Add(drive.Name.Substring(0, 1));
@@ -1415,6 +1420,7 @@ namespace System.Management.Automation
             {
                 results.Add(drive);
             }
+
             return results;
         }
 
@@ -1441,7 +1447,7 @@ namespace System.Management.Automation
                     _currentDrive = value;
             }
         }
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

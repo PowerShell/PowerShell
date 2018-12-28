@@ -67,7 +67,7 @@ namespace System.Management.Automation
         /// <param name="workflowsCalled">
         /// The workflows referenced within <paramref name="xamlDefinition"/>.
         /// </param>
-        /// <param name="module">module</param>
+        /// <param name="module">module.</param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
@@ -248,6 +248,7 @@ namespace System.Management.Automation
         {
             get { return _definition; }
         }
+
         private string _definition = string.Empty;
 
         /// <summary>
@@ -268,6 +269,7 @@ namespace System.Management.Automation
         {
             get { return _workflowsCalled ?? Utils.EmptyReadOnlyCollection<WorkflowInfo>(); }
         }
+
         private ReadOnlyCollection<WorkflowInfo> _workflowsCalled;
 
         internal override HelpCategory HelpCategory

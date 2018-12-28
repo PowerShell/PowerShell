@@ -69,7 +69,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
     }
     # Test set is the same for all file formats
     foreach ($testCsv in $testCSVfiles) {
-       $FileName = (dir $testCsv).Name
+       $FileName = (Get-ChildItem $testCsv).Name
         Context "Next test file: $FileName" {
             BeforeAll {
                 $CustomHeaderParams = @{Header = $customHeader; Delimiter = ","}

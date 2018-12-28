@@ -40,6 +40,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 obj.TypeNames.Insert(0, PartialPSTypeName);
                 return obj;
             }
+
             return resultObject;
         }
     }
@@ -65,7 +66,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve ciminstances
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
         public void GetCimInstance(GetCimInstanceCommand cmdlet)
         {
             GetCimInstanceInternal(cmdlet);
@@ -96,8 +97,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             this.SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
+
                         proxys.Add(proxy);
                     }
+
                     break;
                 case CimBaseCommand.ClassNameComputerSet:
                 case CimBaseCommand.QueryComputerSet:
@@ -109,8 +112,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             this.SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
+
                         proxys.Add(proxy);
                     }
+
                     break;
                 case CimBaseCommand.ClassNameSessionSet:
                 case CimBaseCommand.CimInstanceSessionSet:
@@ -123,12 +128,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             this.SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
+
                         proxys.Add(proxy);
                     }
+
                     break;
                 default:
                     break;
             }
+
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.ClassNameComputerSet:
@@ -152,6 +160,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             proxy.EnumerateInstancesAsync(nameSpace, GetClassName(cmdlet));
                         }
                     }
+
                     break;
                 case CimBaseCommand.CimInstanceComputerSet:
                 case CimBaseCommand.CimInstanceSessionSet:
@@ -163,6 +172,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             proxy.GetInstanceAsync(nameSpace, instance);
                         }
                     }
+
                     break;
                 case CimBaseCommand.QueryComputerSet:
                 case CimBaseCommand.QuerySessionSet:
@@ -173,6 +183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             ConstValue.GetQueryDialectWithDefault(GetQueryDialect(cmdlet)),
                             GetQuery(cmdlet));
                     }
+
                     break;
                 case CimBaseCommand.ResourceUriSessionSet:
                 case CimBaseCommand.ResourceUriComputerSet:
@@ -180,6 +191,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         proxy.EnumerateInstancesAsync(GetNamespace(cmdlet), GetClassName(cmdlet));
                     }
+
                     break;
                 default:
                     break;
@@ -202,6 +214,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return (cmdlet as SetCimInstanceCommand).ComputerName;
             }
+
             return null;
         }
 
@@ -219,6 +232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return (cmdlet as SetCimInstanceCommand).Namespace;
             }
+
             return null;
         }
 
@@ -236,6 +250,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return (cmdlet as SetCimInstanceCommand).CimSession;
             }
+
             return null;
         }
 
@@ -245,6 +260,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return (cmdlet as GetCimInstanceCommand).ClassName;
             }
+
             return null;
         }
 
@@ -262,6 +278,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return (cmdlet as SetCimInstanceCommand).Query;
             }
+
             return null;
         }
 
@@ -276,6 +293,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -298,13 +316,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             propertyList.Append(",");
                         }
+
                         propertyList.Append(property);
                     }
                 }
+
                 return (cmd.Filter == null) ?
                     String.Format(CultureInfo.CurrentUICulture, queryWithoutWhere, propertyList, cmd.ClassName) :
                     String.Format(CultureInfo.CurrentUICulture, queryWithWhere, propertyList, cmd.ClassName, cmd.Filter);
             }
+
             return null;
         }
 
@@ -322,6 +343,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return (cmdlet as SetCimInstanceCommand).QueryDialect;
             }
+
             return null;
         }
 
@@ -339,6 +361,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return (cmdlet as SetCimInstanceCommand).CimInstance;
             }
+
             return null;
         }
         #endregion
@@ -375,6 +398,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     proxy.ResourceUri = removeCimInstance.ResourceUri;
                 }
+
                 CimRemoveCimInstanceContext context = new CimRemoveCimInstanceContext(
                     ConstValue.GetNamespace(removeCimInstance.Namespace),
                     proxy);
@@ -388,6 +412,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     proxy.ResourceUri = setCimInstance.ResourceUri;
                 }
+
                 CimSetCimInstanceContext context = new CimSetCimInstanceContext(
                     ConstValue.GetNamespace(setCimInstance.Namespace),
                     setCimInstance.Property,

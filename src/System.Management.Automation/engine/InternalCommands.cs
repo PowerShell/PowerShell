@@ -69,8 +69,10 @@ namespace Microsoft.PowerShell.Commands
         public PSObject InputObject
         {
             set { _inputObject = value; }
+
             get { return _inputObject; }
         }
+
         private PSObject _inputObject = AutomationNull.Value;
 
         #region ScriptBlockSet
@@ -87,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _scripts.Insert(0, value);
             }
+
             get
             {
                 return null;
@@ -108,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                     _scripts.AddRange(value);
             }
+
             get
             {
                 return null;
@@ -127,6 +131,7 @@ namespace Microsoft.PowerShell.Commands
                 _endScript = value;
                 _setEndScript = true;
             }
+
             get
             {
                 return _endScript;
@@ -149,6 +154,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                     _scripts.AddRange(value);
             }
+
             get { return null; }
         }
 
@@ -167,8 +173,10 @@ namespace Microsoft.PowerShell.Commands
         public string MemberName
         {
             set { _propertyOrMethodName = value; }
+
             get { return _propertyOrMethodName; }
         }
+
         private string _propertyOrMethodName;
         private string _targetString;
         private DynamicPropertyGetter _propGetter;
@@ -183,8 +191,10 @@ namespace Microsoft.PowerShell.Commands
         public object[] ArgumentList
         {
             set { _arguments = value; }
+
             get { return _arguments; }
         }
+
         private object[] _arguments;
 
         #endregion PropertyAndMethodSet
@@ -192,9 +202,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the begin scriptblock at the start of processing
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void BeginProcessing()
         {
             Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
@@ -273,9 +283,9 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the processing script blocks on the current pipeline object
         /// which is passed as it's only parameter.
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void ProcessRecord()
         {
             Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
@@ -301,6 +311,7 @@ namespace Microsoft.PowerShell.Commands
                                 args: Utils.EmptyArray<object>());
                         }
                     }
+
                     break;
                 case "PropertyAndMethodSet":
 
@@ -340,6 +351,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                         }
+
                         return;
                     }
 
@@ -378,6 +390,7 @@ namespace Microsoft.PowerShell.Commands
                                                                       _propertyOrMethodName, possibleMatches));
                                 return;
                             }
+
                             if (members.Count == 1)
                             {
                                 member = members[0];
@@ -404,6 +417,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     WriteObject(member.Value);
                                 }
+
                                 return;
                             }
 
@@ -601,6 +615,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
                 }
+
                 WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousMethodName,
                                                       "AmbiguousMethodName", _inputObject,
                                                       _propertyOrMethodName, possibleMatches));
@@ -622,6 +637,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     arglist.AppendFormat(CultureInfo.InvariantCulture, ", {0}", GetStringRepresentation(_arguments[i]));
                 }
+
                 string methodAction = String.Format(CultureInfo.InvariantCulture,
                     InternalCommandStrings.ForEachObjectMethodActionWithArguments,
                     targetMethod.Name, arglist);
@@ -697,6 +713,7 @@ namespace Microsoft.PowerShell.Commands
                         object result = hash[_propertyOrMethodName];
                         WriteToPipelineWithUnrolling(result);
                     }
+
                     return true;
                 }
             }
@@ -705,6 +722,7 @@ namespace Microsoft.PowerShell.Commands
                 // Ignore invalid operation exception, it can happen if the dictionary
                 // has keys that can't be compared to property.
             }
+
             return false;
         }
 
@@ -766,7 +784,7 @@ namespace Microsoft.PowerShell.Commands
             // Cannot invoke certain methods in ConstrainedLanguage mode
             if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                Object baseObject = PSObject.Base(inputObject);
+                object baseObject = PSObject.Base(inputObject);
 
                 if (!CoreTypes.Contains(baseObject.GetType()))
                 {
@@ -820,9 +838,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the end scriptblock when the pipeline is complete
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void EndProcessing()
         {
             if (ParameterSetName != "ScriptBlockSet") return;
@@ -859,8 +877,10 @@ namespace Microsoft.PowerShell.Commands
         public PSObject InputObject
         {
             set { _inputObject = value; }
+
             get { return _inputObject; }
         }
+
         private PSObject _inputObject = AutomationNull.Value;
 
         private ScriptBlock _script;
@@ -874,6 +894,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _script = value;
             }
+
             get
             {
                 return _script;
@@ -919,6 +940,7 @@ namespace Microsoft.PowerShell.Commands
         public string Property
         {
             set { _property = value; }
+
             get { return _property; }
         }
 
@@ -965,6 +987,7 @@ namespace Microsoft.PowerShell.Commands
                 _value = value;
                 _valueNotSpecified = false;
             }
+
             get { return _value; }
         }
 
@@ -989,6 +1012,7 @@ namespace Microsoft.PowerShell.Commands
                 _binaryOperator = TokenKind.Ieq;
                 _forceBooleanEvaluation = false;
             }
+
             get { return _binaryOperator == TokenKind.Ieq; }
         }
 
@@ -1000,6 +1024,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CEQ
         {
             set { _binaryOperator = TokenKind.Ceq; }
+
             get { return _binaryOperator == TokenKind.Ceq; }
         }
 
@@ -1011,6 +1036,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NE
         {
             set { _binaryOperator = TokenKind.Ine; }
+
             get { return _binaryOperator == TokenKind.Ine; }
         }
 
@@ -1022,6 +1048,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CNE
         {
             set { _binaryOperator = TokenKind.Cne; }
+
             get { return _binaryOperator == TokenKind.Cne; }
         }
 
@@ -1033,6 +1060,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter GT
         {
             set { _binaryOperator = TokenKind.Igt; }
+
             get { return _binaryOperator == TokenKind.Igt; }
         }
 
@@ -1044,6 +1072,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CGT
         {
             set { _binaryOperator = TokenKind.Cgt; }
+
             get { return _binaryOperator == TokenKind.Cgt; }
         }
 
@@ -1055,6 +1084,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter LT
         {
             set { _binaryOperator = _binaryOperator = TokenKind.Ilt; }
+
             get { return _binaryOperator == TokenKind.Ilt; }
         }
 
@@ -1066,6 +1096,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CLT
         {
             set { _binaryOperator = TokenKind.Clt; }
+
             get { return _binaryOperator == TokenKind.Clt; }
         }
 
@@ -1077,6 +1108,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter GE
         {
             set { _binaryOperator = TokenKind.Ige; }
+
             get { return _binaryOperator == TokenKind.Ige; }
         }
 
@@ -1088,6 +1120,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CGE
         {
             set { _binaryOperator = TokenKind.Cge; }
+
             get { return _binaryOperator == TokenKind.Cge; }
         }
 
@@ -1099,6 +1132,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter LE
         {
             set { _binaryOperator = TokenKind.Ile; }
+
             get { return _binaryOperator == TokenKind.Ile; }
         }
 
@@ -1110,6 +1144,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CLE
         {
             set { _binaryOperator = TokenKind.Cle; }
+
             get { return _binaryOperator == TokenKind.Cle; }
         }
 
@@ -1121,6 +1156,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Like
         {
             set { _binaryOperator = TokenKind.Ilike; }
+
             get { return _binaryOperator == TokenKind.Ilike; }
         }
 
@@ -1131,6 +1167,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CLike
         {
             set { _binaryOperator = TokenKind.Clike; }
+
             get { return _binaryOperator == TokenKind.Clike; }
         }
 
@@ -1142,6 +1179,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NotLike
         {
             set { _binaryOperator = TokenKind.Inotlike; }
+
             get { return false; }
         }
 
@@ -1152,6 +1190,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CNotLike
         {
             set { _binaryOperator = TokenKind.Cnotlike; }
+
             get { return _binaryOperator == TokenKind.Cnotlike; }
         }
 
@@ -1163,6 +1202,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Match
         {
             set { _binaryOperator = TokenKind.Imatch; }
+
             get { return _binaryOperator == TokenKind.Imatch; }
         }
 
@@ -1173,6 +1213,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CMatch
         {
             set { _binaryOperator = TokenKind.Cmatch; }
+
             get { return _binaryOperator == TokenKind.Cmatch; }
         }
 
@@ -1184,6 +1225,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NotMatch
         {
             set { _binaryOperator = TokenKind.Inotmatch; }
+
             get { return _binaryOperator == TokenKind.Inotmatch; }
         }
 
@@ -1194,6 +1236,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CNotMatch
         {
             set { _binaryOperator = TokenKind.Cnotmatch; }
+
             get { return _binaryOperator == TokenKind.Cnotmatch; }
         }
 
@@ -1205,6 +1248,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Contains
         {
             set { _binaryOperator = TokenKind.Icontains; }
+
             get { return _binaryOperator == TokenKind.Icontains; }
         }
 
@@ -1215,6 +1259,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CContains
         {
             set { _binaryOperator = TokenKind.Ccontains; }
+
             get { return _binaryOperator == TokenKind.Ccontains; }
         }
 
@@ -1226,6 +1271,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NotContains
         {
             set { _binaryOperator = TokenKind.Inotcontains; }
+
             get { return _binaryOperator == TokenKind.Inotcontains; }
         }
 
@@ -1236,6 +1282,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CNotContains
         {
             set { _binaryOperator = TokenKind.Cnotcontains; }
+
             get { return _binaryOperator == TokenKind.Cnotcontains; }
         }
 
@@ -1247,6 +1294,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter In
         {
             set { _binaryOperator = TokenKind.In; }
+
             get { return _binaryOperator == TokenKind.In; }
         }
 
@@ -1257,6 +1305,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CIn
         {
             set { _binaryOperator = TokenKind.Cin; }
+
             get { return _binaryOperator == TokenKind.Cin; }
         }
 
@@ -1268,6 +1317,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NotIn
         {
             set { _binaryOperator = TokenKind.Inotin; }
+
             get { return _binaryOperator == TokenKind.Inotin; }
         }
 
@@ -1278,6 +1328,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CNotIn
         {
             set { _binaryOperator = TokenKind.Cnotin; }
+
             get { return _binaryOperator == TokenKind.Cnotin; }
         }
 
@@ -1288,6 +1339,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Is
         {
             set { _binaryOperator = TokenKind.Is; }
+
             get { return _binaryOperator == TokenKind.Is; }
         }
 
@@ -1298,6 +1350,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IsNot
         {
             set { _binaryOperator = TokenKind.IsNot; }
+
             get { return _binaryOperator == TokenKind.IsNot; }
         }
 
@@ -1308,6 +1361,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Not
         {
             set { _binaryOperator = TokenKind.Not; }
+
             get { return _binaryOperator == TokenKind.Not; }
         }
 
@@ -1385,6 +1439,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _operationDelegate = GetCallSiteDelegateBoolean(ExpressionType.Equal, ignoreCase: true);
                     }
+
                     break;
                 case TokenKind.Ceq:
                     _operationDelegate = GetCallSiteDelegate(ExpressionType.Equal, ignoreCase: false);
@@ -1485,6 +1540,7 @@ namespace Microsoft.PowerShell.Commands
                                     (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
                                 break;
                         }
+
                         break;
                     }
                 case TokenKind.Ccontains:
@@ -1512,6 +1568,7 @@ namespace Microsoft.PowerShell.Commands
                                     (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
                                 break;
                         }
+
                         break;
                     }
                 case TokenKind.Is:
@@ -1548,6 +1605,7 @@ namespace Microsoft.PowerShell.Commands
 
                             _convertedValue = LanguagePrimitives.ConvertTo<Type>(_convertedValue);
                         }
+
                         break;
                 }
             }
@@ -1559,9 +1617,9 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the script block passing in the current pipeline object as
         /// it's only parameter.
         /// </summary>
-        /// <exception cref="ParseException">could not parse script</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
+        /// <exception cref="ParseException">could not parse script.</exception>
+        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
         protected override void ProcessRecord()
         {
             if (_inputObject == AutomationNull.Value)
@@ -1589,20 +1647,24 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // The binary operation is specified explicitly by the user and the -Value parameter is
                     // not specified
-                    ThrowTerminatingError(ForEachObjectCommand.
-                            GenerateNameParameterError("Value",
-                                                       InternalCommandStrings.ValueNotSpecifiedForWhereObject,
-                                                       "ValueNotSpecifiedForWhereObject", null));
+                    ThrowTerminatingError(
+                        ForEachObjectCommand.GenerateNameParameterError(
+                            "Value",
+                            InternalCommandStrings.ValueNotSpecifiedForWhereObject,
+                            "ValueNotSpecifiedForWhereObject",
+                            target: null));
                 }
 
                 // The binary operation needs to be specified if the user specifies both the -Property and -Value
                 if (!_valueNotSpecified && (_binaryOperator == TokenKind.Ieq && _forceBooleanEvaluation))
                 {
                     // The -Property and -Value are specified explicitly by the user but the binary operation is not
-                    ThrowTerminatingError(ForEachObjectCommand.
-                            GenerateNameParameterError("Operator",
-                                                       InternalCommandStrings.OperatorNotSpecified,
-                                                       "OperatorNotSpecified", null));
+                    ThrowTerminatingError(
+                        ForEachObjectCommand.GenerateNameParameterError(
+                            "Operator",
+                            InternalCommandStrings.OperatorNotSpecified,
+                            "OperatorNotSpecified",
+                            target: null));
                 }
 
                 bool strictModeWithError = false;
@@ -1646,7 +1708,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the value based on the given property name
         /// </summary>
-        /// <returns>the value of the property</returns>
+        /// <returns>The value of the property.</returns>
         private object GetValue(ref bool error)
         {
             if (LanguagePrimitives.IsNull(InputObject))
@@ -1654,13 +1716,15 @@ namespace Microsoft.PowerShell.Commands
                 if (Context.IsStrictVersion(2))
                 {
                     WriteError(
-                        ForEachObjectCommand.
-                            GenerateNameParameterError("InputObject",
-                                                       InternalCommandStrings.InputObjectIsNull,
-                                                       "InputObjectIsNull", _inputObject,
-                                                       _property));
+                        ForEachObjectCommand.GenerateNameParameterError(
+                            "InputObject",
+                            InternalCommandStrings.InputObjectIsNull,
+                            "InputObjectIsNull",
+                            _inputObject,
+                            _property));
                     error = true;
                 }
+
                 return null;
             }
 
@@ -1695,11 +1759,13 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 WriteError(
-                    ForEachObjectCommand.
-                        GenerateNameParameterError("Property",
-                                                   InternalCommandStrings.AmbiguousPropertyOrMethodName,
-                                                   "AmbiguousPropertyName", _inputObject,
-                                                   _property, possibleMatches));
+                    ForEachObjectCommand.GenerateNameParameterError(
+                        "Property",
+                        InternalCommandStrings.AmbiguousPropertyOrMethodName,
+                        "AmbiguousPropertyName",
+                        _inputObject,
+                        _property,
+                        possibleMatches));
                 error = true;
             }
             else if (members.Count == 0)
@@ -1804,6 +1870,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     results.Add(member);
                 }
+
                 return new ReadOnlyPSMemberInfoCollection<PSMemberInfo>(results);
             }
 
@@ -1827,8 +1894,10 @@ namespace Microsoft.PowerShell.Commands
         public int Trace
         {
             set { _trace = value; }
+
             get { return _trace; }
         }
+
         private int _trace = -1;
 
         /// <summary>
@@ -1838,8 +1907,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Step
         {
             set { _step = value; }
+
             get { return (SwitchParameter)_step; }
         }
+
         private bool? _step;
 
         /// <summary>
@@ -1849,8 +1920,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Strict
         {
             set { _strict = value; }
+
             get { return (SwitchParameter)_strict; }
         }
+
         private bool? _strict;
 
         /// <summary>
@@ -1860,8 +1933,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Off
         {
             get { return _off; }
+
             set { _off = value; }
         }
+
         private bool _off;
 
         /// <summary>
@@ -1918,8 +1993,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Off
         {
             get { return _off; }
+
             set { _off = value; }
         }
+
         private SwitchParameter _off;
 
         /// <summary>
@@ -1941,12 +2018,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return PSVersionInfo.PSVersion;
                     }
+
                     if (versionStr.Contains("."))
                     {
                         // If the string contains a '.', let the Version constructor handle the conversion.
                         return inputData;
                     }
                 }
+
                 if (version is double)
                 {
                     // The conversion to int below is wrong, but the usual conversions will turn
@@ -1989,8 +2068,10 @@ namespace Microsoft.PowerShell.Commands
         public Version Version
         {
             get { return _version; }
+
             set { _version = value; }
         }
+
         private Version _version;
 
         /// <summary>
@@ -2002,6 +2083,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _version = new Version(0, 0);
             }
+
             Context.EngineSessionState.CurrentScope.StrictModeVersion = _version;
         }
     }

@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="inner"></param>
-        /// <param name="context">the context starting the operation, which generated the error</param>
+        /// <param name="context">the context starting the operation, which generated the error.</param>
         /// <param name="cimResultContext">the CimResultContext used to provide ErrorSource, etc. info.</param>
         /// <returns></returns>
         internal static ErrorRecord ErrorRecordFromAnyException(
@@ -129,6 +129,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 errorRecord.CategoryInfo.TargetName = cimException.ErrorSource;
             }
+
             return errorRecord;
         }
 
@@ -153,6 +154,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 theTargetObject = cimResultContext.ErrorSource;
             }
+
             if (theTargetObject == null)
             {
                 if (context != null)
@@ -163,6 +165,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     }
                 }
             }
+
             ErrorRecord coreErrorRecord = new ErrorRecord(
                 exception: exception,
                 errorId: errorId,
@@ -394,6 +397,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return exception;
             }
         }
+
         private Exception exception;
 
         /// <summary>

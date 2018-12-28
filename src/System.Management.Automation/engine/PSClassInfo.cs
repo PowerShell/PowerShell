@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates members of the class.
         /// </summary>
-        /// <param name="members">Updated members</param>
+        /// <param name="members">Updated members.</param>
         public void UpdateMembers(IList<PSClassMemberInfo> members)
         {
             if (members != null)

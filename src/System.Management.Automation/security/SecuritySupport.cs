@@ -176,6 +176,7 @@ namespace System.Management.Automation.Internal
                     {
                         PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.CurrentUser, shellId, executionPolicy);
                     }
+
                     break;
                 }
 
@@ -190,6 +191,7 @@ namespace System.Management.Automation.Internal
                     {
                         PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.AllUsers, shellId, executionPolicy);
                     }
+
                     break;
                 }
             }
@@ -225,6 +227,7 @@ namespace System.Management.Automation.Internal
                 {
                     _hasGpScriptParent = IsCurrentProcessLaunchedByGpScript();
                 }
+
                 return _hasGpScriptParent.Value;
             }
         }
@@ -267,6 +270,7 @@ namespace System.Management.Automation.Internal
                 // our goal here is to not have the Group Policy execution policy
                 // affect logon / logoff scripts.
             }
+
             return foundGpScriptParent;
         }
 
@@ -312,6 +316,7 @@ namespace System.Management.Automation.Internal
                         {
                             return ExecutionPolicy.Undefined;
                         }
+
                         return ParseExecutionPolicy(groupPolicyPreference);
                     }
             }
@@ -369,8 +374,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns true if file has product binary signature
         /// </summary>
-        /// <param name="file">Name of file to check</param>
-        /// <returns>True when file has product binary signature</returns>
+        /// <param name="file">Name of file to check.</param>
+        /// <returns>True when file has product binary signature.</returns>
         public static bool IsProductBinary(string file)
         {
             if (String.IsNullOrEmpty(file) || (!IO.File.Exists(file)))
@@ -417,7 +422,7 @@ namespace System.Management.Automation.Internal
         /// Returns the value of the Execution Policy as retrieved
         /// from group policy.
         /// </summary>
-        /// <returns>NULL if it is not defined at this level</returns>
+        /// <returns>NULL if it is not defined at this level.</returns>
         private static string GetGroupPolicyValue(string shellId, ExecutionPolicyScope scope)
         {
             ConfigScope[] scopeKey = null;
@@ -455,7 +460,7 @@ namespace System.Management.Automation.Internal
         /// Returns the value of the Execution Policy as retrieved
         /// from the local preference.
         /// </summary>
-        /// <returns>NULL if it is not defined at this level</returns>
+        /// <returns>NULL if it is not defined at this level.</returns>
         private static string GetLocalPreferenceValue(string shellId, ExecutionPolicyScope scope)
         {
             switch (scope)
@@ -479,7 +484,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the pass / fail result of calling the SAFER API
         /// </summary>
-        /// <param name="path">The path to the file in question</param>
+        /// <param name="path">The path to the file in question.</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
         [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
@@ -575,9 +580,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// throw if file does not exist
         /// </summary>
-        /// <param name="filePath"> path to file </param>
-        /// <returns> Does not return a value </returns>
-        /// <remarks>  </remarks>
+        /// <param name="filePath">path to file.</param>
+        /// <returns>Does not return a value.</returns>
         internal static void CheckIfFileExists(string filePath)
         {
             if (!File.Exists(filePath))
@@ -590,9 +594,8 @@ namespace System.Management.Automation.Internal
         /// check to see if the specified cert is suitable to be
         /// used as a code signing cert
         /// </summary>
-        /// <param name="c"> certificate object </param>
-        /// <returns> true on success, false otherwise </returns>
-        /// <remarks>  </remarks>
+        /// <param name="c">certificate object.</param>
+        /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
             if (!CertHasPrivatekey(c))
@@ -608,9 +611,8 @@ namespace System.Management.Automation.Internal
         /// used as an encryption cert for PKI encryption. Note
         /// that this cert doesn't require the private key.
         /// </summary>
-        /// <param name="c"> certificate object </param>
-        /// <returns> true on success, false otherwise </returns>
-        /// <remarks>  </remarks>
+        /// <param name="c">certificate object.</param>
+        /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForEncryption(X509Certificate2 c)
         {
             return (
@@ -645,6 +647,7 @@ namespace System.Management.Automation.Internal
                     {
                         return true;
                     }
+
                     break;
                 }
             }
@@ -655,9 +658,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// check if the specified cert has a private key in it
         /// </summary>
-        /// <param name="cert"> certificate object </param>
-        /// <returns> true on success, false otherwise </returns>
-        /// <remarks>  </remarks>
+        /// <param name="cert">certificate object.</param>
+        /// <returns>True on success, false otherwise.</returns>
         internal static bool CertHasPrivatekey(X509Certificate2 cert)
         {
             return cert.HasPrivateKey;
@@ -666,9 +668,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the EKUs of a cert
         /// </summary>
-        /// <param name="cert"> certificate object </param>
-        /// <returns> a collection of cert eku strings </returns>
-        /// <remarks>  </remarks>
+        /// <param name="cert">certificate object.</param>
+        /// <returns>A collection of cert eku strings.</returns>
         [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
@@ -725,9 +726,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert an int to a DWORD
         /// </summary>
-        /// <param name="n"> signed int number  </param>
-        /// <returns> DWORD </returns>
-        /// <remarks>  </remarks>
+        /// <param name="n">signed int number.</param>
+        /// <returns>DWORD.</returns>
         internal static DWORD GetDWORDFromInt(int n)
         {
             UInt32 result = BitConverter.ToUInt32(BitConverter.GetBytes(n), 0);
@@ -737,9 +737,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert a DWORD to int
         /// </summary>
-        /// <param name="n"> number </param>
-        /// <returns> int </returns>
-        /// <remarks>  </remarks>
+        /// <param name="n">number.</param>
+        /// <returns>Int.</returns>
         internal static int GetIntFromDWORD(DWORD n)
         {
             Int64 n64 = n - 0x100000000L;
@@ -762,6 +761,7 @@ namespace System.Management.Automation.Internal
         internal CertificatePurpose Purpose
         {
             get { return _purpose; }
+
             set { _purpose = value; }
         }
 
@@ -771,6 +771,7 @@ namespace System.Management.Automation.Internal
         internal bool SSLServerAuthentication
         {
             get { return _sslServerAuthentication; }
+
             set { _sslServerAuthentication = value; }
         }
 
@@ -821,33 +822,41 @@ namespace System.Management.Automation.Internal
                         {
                             ekuT = ekuT + ",";
                         }
+
                         ekuT = ekuT + _eku[i];
                     }
                 }
+
                 if (_purpose == CertificatePurpose.CodeSigning)
                 {
                     if (ekuT.Length != 0)
                     {
                         ekuT = ekuT + ",";
                     }
+
                     ekuT = ekuT + CodeSigningOid;
                 }
+
                 if (_purpose == CertificatePurpose.DocumentEncryption)
                 {
                     if (ekuT.Length != 0)
                     {
                         ekuT = ekuT + ",";
                     }
+
                     ekuT = ekuT + DocumentEncryptionOid;
                 }
+
                 if (_sslServerAuthentication)
                 {
                     if (ekuT.Length != 0)
                     {
                         ekuT = ekuT + ",";
                     }
+
                     ekuT = ekuT + szOID_PKIX_KP_SERVER_AUTH;
                 }
+
                 if (ekuT.Length != 0)
                 {
                     filterString = AppendFilter(filterString, "eku", ekuT);
@@ -857,6 +866,7 @@ namespace System.Management.Automation.Internal
                         filterString = AppendFilter(filterString, "key", "*");
                     }
                 }
+
                 if (_expiringInDays >= 0)
                 {
                     filterString = AppendFilter(
@@ -869,6 +879,7 @@ namespace System.Management.Automation.Internal
                 {
                     filterString = null;
                 }
+
                 return filterString;
             }
         }
@@ -895,12 +906,14 @@ namespace System.Management.Automation.Internal
                     throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.E_INVALID_DATA);
                 }
+
                 newfilter = name + "=" + newfilter;
                 if (filterString.Length != 0)
                 {
                     newfilter = "&" + newfilter;
                 }
             }
+
             return filterString + newfilter;
         }
 
@@ -1016,7 +1029,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds Ascii armour to a byte stream in Base64 format
         /// </summary>
-        /// <param name="bytes">The bytes to encode</param>
+        /// <param name="bytes">The bytes to encode.</param>
         internal static string GetAsciiArmor(byte[] bytes)
         {
             StringBuilder output = new StringBuilder();
@@ -1032,11 +1045,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes Ascii armour from a byte stream
         /// </summary>
-        /// <param name="actualContent">The Ascii armored content</param>
-        /// <param name="beginMarker">The marker of the start of the Base64 content</param>
-        /// <param name="endMarker">The marker of the end of the Base64 content</param>
-        /// <param name="startIndex">The beginning of where the Ascii armor was detected</param>
-        /// <param name="endIndex">The end of where the Ascii armor was detected</param>
+        /// <param name="actualContent">The Ascii armored content.</param>
+        /// <param name="beginMarker">The marker of the start of the Base64 content.</param>
+        /// <param name="endMarker">The marker of the end of the Base64 content.</param>
+        /// <param name="startIndex">The beginning of where the Ascii armor was detected.</param>
+        /// <param name="endIndex">The end of where the Ascii armor was detected.</param>
         internal static byte[] RemoveAsciiArmor(string actualContent, string beginMarker, string endMarker, out int startIndex, out int endIndex)
         {
             byte[] messageBytes = null;
@@ -1092,6 +1105,7 @@ namespace System.Management.Automation
             _identifier = identifier;
             this.Certificates = new X509Certificate2Collection();
         }
+
         private string _identifier = null;
 
         /// <summary>
@@ -1103,6 +1117,7 @@ namespace System.Management.Automation
             _pendingCertificate = certificate;
             this.Certificates = new X509Certificate2Collection();
         }
+
         private X509Certificate2 _pendingCertificate = null;
 
         /// <summary>
@@ -1395,7 +1410,7 @@ namespace System.Management.Automation
         private void ProcessResolvedCertificates(ResolutionPurpose purpose, List<X509Certificate2> certificatesToProcess, out ErrorRecord error)
         {
             error = null;
-            HashSet<String> processedThumbprints = new HashSet<string>();
+            HashSet<string> processedThumbprints = new HashSet<string>();
 
             foreach (X509Certificate2 certificate in certificatesToProcess)
             {
@@ -1523,8 +1538,8 @@ namespace System.Management.Automation
         /// Caller is responsible for calling AmsiCloseSession when a "session" (script)
         /// is complete, and for calling AmsiUninitialize when the runspace is being torn down.
         /// </summary>
-        /// <param name="content">The string to be scanned</param>
-        /// <param name="sourceMetadata">Information about the source (filename, etc.)</param>
+        /// <param name="content">The string to be scanned.</param>
+        /// <param name="sourceMetadata">Information about the source (filename, etc.).</param>
         /// <returns>AMSI_RESULT_DETECTED if malware was detected in the sample.</returns>
         internal static AmsiNativeMethods.AMSI_RESULT ScanContent(string content, string sourceMetadata)
         {
@@ -1709,6 +1724,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         public static bool AmsiUninitializeCalled = false;
         public static bool AmsiInitialized = false;
         public static bool AmsiCleanedUp = false;

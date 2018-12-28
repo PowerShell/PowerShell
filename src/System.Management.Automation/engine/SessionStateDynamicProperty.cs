@@ -334,6 +334,7 @@ namespace System.Management.Automation
 
                 return NewPropertyDynamicParameters(providerInstance, providerPaths[0], propertyName, type, value, newContext);
             }
+
             return null;
         }
 
@@ -422,6 +423,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -698,6 +700,7 @@ namespace System.Management.Automation
 
                 return RemovePropertyDynamicParameters(providerInstance, providerPaths[0], propertyName, newContext);
             }
+
             return null;
         }
 
@@ -778,6 +781,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1167,6 +1171,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
         }
 
@@ -1260,6 +1265,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1651,6 +1657,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
         }
 
@@ -1745,6 +1752,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -2065,6 +2073,7 @@ namespace System.Management.Automation
                     destinationProperty,
                     newContext);
             }
+
             return null;
         }
 
@@ -2153,13 +2162,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion RenameProperty
 
         #endregion IDynamicPropertyCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

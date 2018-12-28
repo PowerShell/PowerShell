@@ -17,8 +17,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// create a grouping cache
         /// </summary>
-        /// <param name="callBack">notification callback to be called when the desired number of objects is reached</param>
-        /// <param name="objectCount">max number of objects to be cached</param>
+        /// <param name="callBack">notification callback to be called when the desired number of objects is reached.</param>
+        /// <param name="objectCount">max number of objects to be cached.</param>
         internal OutputGroupQueue(FormattedObjectsCache.ProcessCachedGroupNotification callBack, int objectCount)
         {
             _notificationCallBack = callBack;
@@ -28,8 +28,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// create a time-bounded grouping cache
         /// </summary>
-        /// <param name="callBack">notification callback to be called when the desired number of objects is reached</param>
-        /// <param name="groupingDuration">max amount of time to cache of objects</param>
+        /// <param name="callBack">notification callback to be called when the desired number of objects is reached.</param>
+        /// <param name="groupingDuration">max amount of time to cache of objects.</param>
         internal OutputGroupQueue(FormattedObjectsCache.ProcessCachedGroupNotification callBack, TimeSpan groupingDuration)
         {
             _notificationCallBack = callBack;
@@ -39,8 +39,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// add an object to the cache
         /// </summary>
-        /// <param name="o">object to add</param>
-        /// <returns>objects the cache needs to return. It can be null</returns>
+        /// <param name="o">object to add.</param>
+        /// <returns>Objects the cache needs to return. It can be null.</returns>
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
             FormatStartData fsd = o as FormatStartData;
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// remove a single object from the queue
         /// </summary>
-        /// <returns>object retrieved, null if queue is empty</returns>
+        /// <returns>Object retrieved, null if queue is empty.</returns>
         internal PacketInfoData Dequeue()
         {
             if (_queue.Count == 0)
@@ -211,14 +211,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// delegate to allow notifications when the autosize queue is about to be drained
         /// </summary>
-        /// <param name="formatStartData"> current Fs control message</param>
-        /// <param name="objects">enumeration of PacketInfoData objects </param>
+        /// <param name="formatStartData">current Fs control message.</param>
+        /// <param name="objects">enumeration of PacketInfoData objects.</param>
         internal delegate void ProcessCachedGroupNotification(FormatStartData formatStartData, List<PacketInfoData> objects);
 
         /// <summary>
         /// decide right away if we need a front end cache (e.g. printing)
         /// </summary>
-        /// <param name="cacheFrontEnd">if true, create a front end cache object</param>
+        /// <param name="cacheFrontEnd">if true, create a front end cache object.</param>
         internal FormattedObjectsCache(bool cacheFrontEnd)
         {
             if (cacheFrontEnd)
@@ -228,8 +228,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// if needed, add a back end autosize (grouping) cache
         /// </summary>
-        /// <param name="callBack">notification callback to be called when the desired number of objects is reached</param>
-        /// <param name="objectCount">max number of objects to be cached</param>
+        /// <param name="callBack">notification callback to be called when the desired number of objects is reached.</param>
+        /// <param name="objectCount">max number of objects to be cached.</param>
         internal void EnableGroupCaching(ProcessCachedGroupNotification callBack, int objectCount)
         {
             if (callBack != null)
@@ -239,8 +239,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// if needed, add a back end autosize (grouping) cache
         /// </summary>
-        /// <param name="callBack">notification callback to be called when the desired number of objects is reached</param>
-        /// <param name="groupingDuration">max amount of time to cache of objects</param>
+        /// <param name="callBack">notification callback to be called when the desired number of objects is reached.</param>
+        /// <param name="groupingDuration">max amount of time to cache of objects.</param>
         internal void EnableGroupCaching(ProcessCachedGroupNotification callBack, TimeSpan groupingDuration)
         {
             if (callBack != null)
@@ -251,8 +251,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// add an object to the cache. the behavior depends on the object added, the
         /// objects already in the cache and the cache settings
         /// </summary>
-        /// <param name="o">object to add</param>
-        /// <returns>list of objects the cache is flushing</returns>
+        /// <param name="o">object to add.</param>
+        /// <returns>List of objects the cache is flushing.</returns>
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
             // if neither there, pass thru
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// remove all the objects from the cache
         /// </summary>
-        /// <returns>all the objects that were in the cache</returns>
+        /// <returns>All the objects that were in the cache.</returns>
         internal List<PacketInfoData> Drain()
         {
             // if neither there,we did not cache at all

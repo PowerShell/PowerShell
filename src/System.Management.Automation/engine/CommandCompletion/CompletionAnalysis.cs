@@ -99,6 +99,7 @@ namespace System.Management.Automation
             var typeInferenceContext = new TypeInferenceContext(powerShell);
             return InitializeCompletionContext(typeInferenceContext);
         }
+
         internal CompletionContext CreateCompletionContext(TypeInferenceContext typeInferenceContext)
         {
             return InitializeCompletionContext(typeInferenceContext);
@@ -136,6 +137,7 @@ namespace System.Management.Automation
             {
                 typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last());
             }
+
             ExecutionContext executionContext = typeInferenceContext.ExecutionContext;
 
             return new CompletionContext
@@ -255,6 +257,7 @@ namespace System.Management.Automation
                 {
                     errorStatement = last as ErrorStatementAst;
                     if (errorStatement != null) { break; }
+
                     last = last.Parent;
                 }
 
@@ -273,6 +276,7 @@ namespace System.Management.Automation
                                     return true;
                                 }
                             }
+
                             break;
 
                         default:
@@ -313,6 +317,7 @@ namespace System.Management.Automation
                     previousLanguageMode = completionContext.ExecutionContext.LanguageMode;
                     completionContext.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                 }
+
                 return GetResultHelper(completionContext, out replacementIndex, out replacementLength, false);
             }
             finally
@@ -394,6 +399,7 @@ namespace System.Management.Automation
                         {
                             result = CompletionCompleters.CompleteCommandParameter(completionContext);
                         }
+
                         break;
 
                     case TokenKind.Dot:
@@ -438,6 +444,7 @@ namespace System.Management.Automation
                                           select new CompletionResult(completionText, entry.ListItemText, entry.ResultType, entry.ToolTip)).ToList();
                             }
                         }
+
                         break;
 
                     case TokenKind.Comma:
@@ -465,6 +472,7 @@ namespace System.Management.Automation
                             bool unused;
                             result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                         }
+
                         break;
                     case TokenKind.AtCurly:
                         // Handle scenarios such as 'Sort-Object @{<tab>' and  'gci | Format-Table @{'
@@ -481,6 +489,7 @@ namespace System.Management.Automation
                             replacementIndex += 1;
                             replacementLength = 0;
                         }
+
                         break;
 
                     case TokenKind.Number:
@@ -496,6 +505,7 @@ namespace System.Management.Automation
                             replacementIndex = completionContext.ReplacementIndex;
                             replacementLength = completionContext.ReplacementLength;
                         }
+
                         break;
 
                     case TokenKind.Redirection:
@@ -507,6 +517,7 @@ namespace System.Management.Automation
                             completionContext.ReplacementLength = replacementLength = 0;
                             result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
                         }
+
                         break;
 
                     case TokenKind.Minus:
@@ -524,6 +535,7 @@ namespace System.Management.Automation
                             result = CompletionCompleters.CompleteStatementFlags(statementKind, completionContext.WordToComplete);
                             break;
                         }
+
                         break;
 
                     case TokenKind.DynamicKeyword:
@@ -569,6 +581,7 @@ namespace System.Management.Automation
                                 bool unused;
                                 result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                             }
+
                             break;
                         }
                     default:
@@ -591,6 +604,7 @@ namespace System.Management.Automation
                             replacementIndex = -1;
                             replacementLength = -1;
                         }
+
                         break;
                 }
             }
@@ -616,6 +630,7 @@ namespace System.Management.Automation
                     //
                     isLineContinuationBeforeCursor = completionContext.TokenBeforeCursor.Kind == TokenKind.LineContinuation;
                 }
+
                 bool skipAutoCompleteForCommandCall = isCursorLineEmpty && !isLineContinuationBeforeCursor;
                 bool lastAstIsExpressionAst = lastAst is ExpressionAst;
                 if (!isQuotedString &&
@@ -733,6 +748,7 @@ namespace System.Management.Automation
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
                                             ref replacementIndex, ref replacementLength, out unused);
                                     }
+
                                     break;
                                 default:
                                     break;
@@ -870,6 +886,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             hashTableAst = tempHashtableAst;
             if (hashTableAst != null)
             {
@@ -877,6 +894,7 @@ namespace System.Management.Automation
                 completionContext.ReplacementLength = 0;
                 return CompletionCompleters.CompleteHashtableKey(completionContext, hashTableAst);
             }
+
             return null;
         }
 
@@ -920,6 +938,7 @@ namespace System.Management.Automation
                     if (typeName != null)
                         return typeName;
                 }
+
                 return null;
             }
 
@@ -944,6 +963,7 @@ namespace System.Management.Automation
                     hasNewLine = true;
                 }
             }
+
             return stringToComplete;
         }
 
@@ -960,6 +980,7 @@ namespace System.Management.Automation
                     keyValuePairWithCursor = kvp;
                     break;
                 }
+
                 if (!isCursorInString)
                 {
                     //
@@ -1000,6 +1021,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return keyValuePairWithCursor;
         }
 
@@ -1033,7 +1055,7 @@ namespace System.Management.Automation
                             DynamicKeywordProperty property;
                             if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out property))
                             {
-                                List<String> existingValues = null;
+                                List<string> existingValues = null;
                                 WildcardPattern wildcardPattern = null;
                                 bool isDependsOnProperty = String.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
                                 bool hasNewLine = false;
@@ -1041,7 +1063,7 @@ namespace System.Management.Automation
                                 if ((property.ValueMap != null && property.ValueMap.Count > 0) || isDependsOnProperty)
                                 {
                                     shouldContinue = false;
-                                    existingValues = new List<String>();
+                                    existingValues = new List<string>();
                                     if (String.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
                                     {
                                         var arrayAst = Ast.GetAncestorAst<ArrayLiteralAst>(lastAst);
@@ -1078,6 +1100,7 @@ namespace System.Management.Automation
                                     {
                                         replacementIndex = completionContext.CursorPosition.Offset - replacementLength;
                                     }
+
                                     completionContext.ReplacementIndex = replacementIndex;
                                     string matchString = stringToComplete + "*";
                                     wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
@@ -1094,6 +1117,7 @@ namespace System.Management.Automation
                                         // Fallback to all allowed values
                                         matchedResults = orderedValues;
                                     }
+
                                     foreach (var value in matchedResults)
                                     {
                                         string completionText = isCursorInString ? value : stringQuote + value + stringQuote;
@@ -1137,6 +1161,7 @@ namespace System.Management.Automation
                                                     }
                                                 }
                                             }
+
                                             var matchedResults = allResources.Where(r => wildcardPattern.IsMatch(r));
                                             if (matchedResults == null || !matchedResults.Any())
                                             {
@@ -1163,6 +1188,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -1170,6 +1196,7 @@ namespace System.Management.Automation
         {
             // When it's the content of a quoted string, we only handle variable/member completion
             if (isQuotedString) { return null; }
+
             var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
 
@@ -1299,6 +1326,7 @@ namespace System.Management.Automation
             {
                 configureAst = Ast.GetAncestorAst<ConfigurationDefinitionAst>(configureAst.Parent);
             }
+
             return configureAst;
         }
 
@@ -1368,6 +1396,7 @@ namespace System.Management.Automation
                     {
                         results = new List<CompletionResult>();
                     }
+
                     results.Add(new CompletionResult(
                         keyword.Keyword,
                         keyword.Keyword,
@@ -1441,6 +1470,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
             if (result != null) return result;
 
@@ -1476,6 +1506,7 @@ namespace System.Management.Automation
                                     replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
                                     replacementLength += cursorAst.Extent.Text.Length;
                                 }
+
                                 return result;
                             }
                             else
@@ -1567,6 +1598,7 @@ namespace System.Management.Automation
                 {
                     result.AddRange(keywordResult);
                 }
+
                 return result;
             }
 
@@ -1579,12 +1611,14 @@ namespace System.Management.Automation
                 if (isSingleDash)
                 {
                     if (isQuotedString) { return result; }
+
                     var res = CompletionCompleters.CompleteCommandParameter(completionContext);
                     if (res.Count != 0)
                     {
                         return res;
                     }
                 }
+
                 return CompletionCompleters.CompleteCommandArgument(completionContext);
             }
 
@@ -1653,6 +1687,7 @@ namespace System.Management.Automation
                         replacementIndex += tokenAtCursorText.Length;
                         replacementLength = 0;
                     }
+
                     return result;
                 }
             }
@@ -1766,8 +1801,10 @@ namespace System.Management.Automation
                             property.PropertyType.ToString() + " " + property.Name));
                     }
                 }
+
                 return result;
             }
+
             return null;
         }
 

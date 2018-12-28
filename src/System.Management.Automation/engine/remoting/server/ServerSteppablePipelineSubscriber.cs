@@ -53,6 +53,7 @@ namespace System.Management.Automation
                         _processSubscriber = _eventManager.SubscribeEvent(this, "RunProcessRecord", Guid.NewGuid().ToString(), null,
                             new PSEventReceivedEventHandler(this.HandleProcessRecord), true, false, true);
                     }
+
                     _initialized = true;
                 }
             }
@@ -130,6 +131,7 @@ namespace System.Management.Automation
                 {
                     return;
                 }
+
                 driver.ProcessingInput = true;
                 driver.Pulsed = false;
             }
@@ -174,6 +176,7 @@ namespace System.Management.Automation
                         {
                             output = driver.SteppablePipeline.Process(driver.InputEnumerator.Current);
                         }
+
                         foreach (object o in output)
                         {
                             if (driver.PipelineState != PSInvocationState.Running)
@@ -265,7 +268,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Fires the start event
         /// </summary>
-        /// <param name="driver">steppable pipeline driver</param>
+        /// <param name="driver">steppable pipeline driver.</param>
         internal void FireStartSteppablePipeline(ServerSteppablePipelineDriver driver)
         {
             lock (_syncObject)
@@ -281,7 +284,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Fires the process record event
         /// </summary>
-        /// <param name="driver">steppable pipeline driver</param>
+        /// <param name="driver">steppable pipeline driver.</param>
         internal void FireHandleProcessRecord(ServerSteppablePipelineDriver driver)
         {
             lock (_syncObject)

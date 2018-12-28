@@ -190,8 +190,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the provider-specific cmdlet help based on input cmdletName
         /// </summary>
-        /// <param name="cmdletName">cmdletName on which to get provider-specific help</param>
-        /// <returns>An mshObject that contains provider-specific commandlet help</returns>
+        /// <param name="cmdletName">cmdletName on which to get provider-specific help.</param>
+        /// <returns>An mshObject that contains provider-specific commandlet help.</returns>
         internal PSObject GetCmdletHelp(string cmdletName)
         {
             if (String.IsNullOrEmpty(cmdletName))
@@ -261,8 +261,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the provider-specific dynamic parameter help based on input parameter name
         /// </summary>
-        /// <param name="parameters">an array of parameters to retrieve help</param>
-        /// <returns>an array of mshObject that contains the parameter help</returns>
+        /// <param name="parameters">an array of parameters to retrieve help.</param>
+        /// <returns>An array of mshObject that contains the parameter help.</returns>
         internal PSObject[] GetDynamicParameterHelp(string[] parameters)
         {
             if (parameters == null || parameters.Length == 0)
@@ -345,8 +345,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create providerHelpInfo from an xmlNode
         /// </summary>
-        /// <param name="xmlNode">xml node that contains the provider help info</param>
-        /// <returns>the providerHelpInfo object created</returns>
+        /// <param name="xmlNode">xml node that contains the provider help info.</param>
+        /// <returns>The providerHelpInfo object created.</returns>
         internal static ProviderHelpInfo Load(XmlNode xmlNode)
         {
             ProviderHelpInfo providerHelpInfo = new ProviderHelpInfo(xmlNode);

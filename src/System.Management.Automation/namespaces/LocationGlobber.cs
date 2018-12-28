@@ -242,6 +242,7 @@ namespace System.Management.Automation
                     throw pathNotFound;
                 }
             }
+
             return result;
         }
 
@@ -476,6 +477,7 @@ namespace System.Management.Automation
                 userPath = GetDriveQualifiedPath(relativePath, drive);
                 itemPath = GetProviderPath(path, context);
             }
+
             s_pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
 
             Collection<string> stringResult = new Collection<string>();
@@ -870,6 +872,7 @@ namespace System.Management.Automation
                     throw errorRecord.Exception;
                 }
             }
+
             return results;
         }
 
@@ -1198,11 +1201,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a provider specific path for given PowerShell path.
         /// </summary>
-        /// <param name="path">Path to resolve</param>
-        /// <param name="context">Cmdlet context</param>
-        /// <param name="isTrusted">When true bypass trust check</param>
-        /// <param name="provider">Provider</param>
-        /// <param name="drive">Drive</param>
+        /// <param name="path">Path to resolve.</param>
+        /// <param name="context">Cmdlet context.</param>
+        /// <param name="isTrusted">When true bypass trust check.</param>
+        /// <param name="provider">Provider.</param>
+        /// <param name="drive">Drive.</param>
         /// <returns></returns>
         internal string GetProviderPath(
             string path,
@@ -1294,6 +1297,7 @@ namespace System.Management.Automation
                 {
                     result = GetProviderSpecificPath(drive, relativePath, context);
                 }
+
                 provider = drive.Provider;
             }
 
@@ -1525,6 +1529,7 @@ namespace System.Management.Automation
                     {
                         separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index-1);
                     }
+
                     if (separator == -1 || index < separator)
                     {
                         // We must have a drive specified
@@ -1713,25 +1718,22 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            // Is it the global scope?
-
             if (String.Compare(
                     driveName,
                     StringLiterals.Global,
                     StringComparison.OrdinalIgnoreCase) == 0)
             {
+                // It's the global scope.
                 s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
             }
-
-            // Is it the local scope?
-
             else if (String.Compare(
                         driveName,
                         StringLiterals.Local,
                         StringComparison.OrdinalIgnoreCase) == 0)
             {
+                // It's the local scope.
                 s_tracer.WriteLine("match found: {0}", driveName);
                 result = true;
                 scope = _sessionState.Internal.CurrentScope;
@@ -2645,6 +2647,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
+
             s_tracer.WriteLine("path = {0}", path);
 
             NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
@@ -2665,7 +2668,7 @@ namespace System.Management.Automation
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<String> leafElements = new Stack<String>();
+                    Stack<string> leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
@@ -2729,6 +2732,7 @@ namespace System.Management.Automation
                                             path);
                                     throw invalidOperation;
                                 }
+
                                 path = newParentPath;
                             }
                             else
@@ -3163,6 +3167,7 @@ namespace System.Management.Automation
                 {
                     separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
                 }
+
                 if (separator == -1 || index < separator)
                 {
                     // Remove the \ or / if it follows the drive indicator
@@ -3438,12 +3443,7 @@ namespace System.Management.Automation
                                 {
                                     string parentPath = RemoveMshQualifier(mshQualifiedParentPath, drive);
 
-                                    childPath =
-                                        _sessionState.Internal.
-                                            MakePath(
-                                                parentPath,
-                                                child,
-                                                context);
+                                    childPath = _sessionState.Internal.MakePath(parentPath, child, context);
 
                                     childPath = GetMshQualifiedPath(childPath, drive);
                                 }
@@ -3490,13 +3490,7 @@ namespace System.Management.Automation
                         {
                             string parentPath = RemoveMshQualifier(resolvedPath, drive);
 
-                            childPath =
-                                _sessionState.Internal.
-                                    MakePath(
-                                        parentPath,
-                                        backslashEscapedLeafElement,
-                                        context);
-
+                            childPath = _sessionState.Internal.MakePath(parentPath, backslashEscapedLeafElement, context);
                             childPath = GetMshQualifiedPath(childPath, drive);
                         }
 
@@ -3633,7 +3627,7 @@ namespace System.Management.Automation
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<String> leafElements = new Stack<String>();
+                    Stack<string> leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
@@ -3711,6 +3705,7 @@ namespace System.Management.Automation
                                             path);
                                     throw invalidOperation;
                                 }
+
                                 path = newParentPath;
                             }
                             else
@@ -3749,6 +3744,7 @@ namespace System.Management.Automation
                             {
                                 path = String.Empty;
                             }
+
                             leafElements.Push(leafElement);
                             s_pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
                         }
@@ -3882,6 +3878,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             Dbg.Diagnostics.Assert(
                 result != null,
                 "This method should at least return the path or more if it has glob characters");
@@ -4036,12 +4033,7 @@ namespace System.Management.Automation
 
                                 if (navigationProvider != null)
                                 {
-                                    childPath =
-                                        navigationProvider.
-                                        MakePath(
-                                            unescapedDir,
-                                            child,
-                                            context);
+                                    childPath = navigationProvider.MakePath(unescapedDir, child, context);
                                 }
 
                                 s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
@@ -4411,7 +4403,7 @@ namespace System.Management.Automation
 
             s_tracer.WriteLine("result = {0}; childName = {1}", result, childName);
             return result;
-        } //IsChildNameAMatch
+        }
 
         /// <summary>
         /// Converts a back tick '`' escape into back slash escape for
@@ -4694,6 +4686,7 @@ namespace System.Management.Automation
                         throw e;
                     }
                 }
+
                 result = path;
             }
 
@@ -4715,6 +4708,7 @@ namespace System.Management.Automation
                     {
                         includeString.AppendFormat("{0} ", includeFilter);
                     }
+
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
                 }
 
@@ -4726,6 +4720,7 @@ namespace System.Management.Automation
                     {
                         excludeString.AppendFormat("{0} ", excludeFilter);
                     }
+
                     s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());
                 }
             }

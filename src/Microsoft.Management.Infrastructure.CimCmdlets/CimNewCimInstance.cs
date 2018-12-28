@@ -59,7 +59,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// either remotely or locally
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
         public void NewCimInstance(NewCimInstanceCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
@@ -81,6 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet);
 
                         }
+
                         break;
                     case CimBaseCommand.ResourceUriSessionSet:
                     case CimBaseCommand.ResourceUriComputerSet:
@@ -93,6 +94,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet);
 
                         }
+
                         break;
                     case CimBaseCommand.CimClassComputerSet:
                     case CimBaseCommand.CimClassSessionSet:
@@ -103,6 +105,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet);
 
                         }
+
                         break;
                     default:
                         return;
@@ -148,6 +151,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             proxys.Add(CreateSessionProxy(computerName, cmdlet));
                         }
                     }
+
                     break;
                 case CimBaseCommand.CimClassSessionSet:
                 case CimBaseCommand.ClassNameSessionSet:
@@ -156,6 +160,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         proxys.Add(CreateSessionProxy(session, cmdlet));
                     }
+
                     break;
             }
 
@@ -256,8 +261,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="properties"></param>
         /// <param name="cmdlet"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">See CimProperty.Create</exception>
-        /// <exception cref="ArgumentException">CimProperty.Create</exception>
+        /// <exception cref="ArgumentNullException">See CimProperty.Create.</exception>
+        /// <exception cref="ArgumentException">CimProperty.Create.</exception>
         private CimInstance CreateCimInstance(
             string className,
             string cimNamespace,
@@ -289,6 +294,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     flag = CimFlags.Key;
                 }
+
                 object propertyValue = GetBaseObject(enumerator.Value);
 
                 DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
@@ -309,6 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
 
             }
+
             return cimInstance;
         }
 
@@ -321,8 +328,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="properties"></param>
         /// <param name="cmdlet"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">See CimProperty.Create</exception>
-        /// <exception cref="ArgumentException">CimProperty.Create</exception>
+        /// <exception cref="ArgumentNullException">See CimProperty.Create.</exception>
+        /// <exception cref="ArgumentException">CimProperty.Create.</exception>
         private CimInstance CreateCimInstance(
             CimClass cimClass,
             IDictionary properties,
@@ -333,6 +340,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return cimInstance;
             }
+
             List<string> notfoundProperties = new List<string>();
             foreach (string property in properties.Keys)
             {
@@ -342,9 +350,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     cmdlet.ThrowInvalidProperty(notfoundProperties, cmdlet.CimClass.CimSystemProperties.ClassName, @"Property", action, properties);
                     return null;
                 }
+
                 object propertyValue = GetBaseObject(properties[property]);
                 cimInstance.CimInstanceProperties[property].Value = propertyValue;
             }
+
             return cimInstance;
         }
 

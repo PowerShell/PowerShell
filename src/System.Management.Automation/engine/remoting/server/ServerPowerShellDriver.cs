@@ -50,17 +50,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
-        /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
-        /// <param name="noInput">whether there is input for this powershell</param>
-        /// <param name="clientPowerShellId">the client powershell id</param>
-        /// <param name="clientRunspacePoolId">the client runspacepool id</param>
+        /// <param name="powershell">decoded powershell object.</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes.</param>
+        /// <param name="noInput">whether there is input for this powershell.</param>
+        /// <param name="clientPowerShellId">the client powershell id.</param>
+        /// <param name="clientRunspacePoolId">the client runspacepool id.</param>
         /// <param name="runspacePoolDriver">runspace pool driver
         /// which is creating this powershell driver</param>
-        /// <param name="apartmentState">apartment state for this powershell</param>
+        /// <param name="apartmentState">apartment state for this powershell.</param>
         /// <param name="hostInfo">host info using which the host for
         /// this powershell will be constructed</param>
-        /// <param name="streamOptions">serialization options for the streams in this powershell</param>
+        /// <param name="streamOptions">serialization options for the streams in this powershell.</param>
         /// <param name="addToHistory">
         /// true if the command is to be added to history list of the runspace. false, otherwise.
         /// </param>
@@ -80,16 +80,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
-        /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
-        /// <param name="noInput">whether there is input for this powershell</param>
-        /// <param name="clientPowerShellId">the client powershell id</param>
-        /// <param name="clientRunspacePoolId">the client runspacepool id</param>
+        /// <param name="powershell">decoded powershell object.</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes.</param>
+        /// <param name="noInput">whether there is input for this powershell.</param>
+        /// <param name="clientPowerShellId">the client powershell id.</param>
+        /// <param name="clientRunspacePoolId">the client runspacepool id.</param>
         /// <param name="runspacePoolDriver">runspace pool driver
         /// which is creating this powershell driver</param>
         /// <param name="hostInfo">host info using which the host for
         /// this powershell will be constructed</param>
-        /// <param name="streamOptions">serialization options for the streams in this powershell</param>
+        /// <param name="streamOptions">serialization options for the streams in this powershell.</param>
         /// <param name="addToHistory">
         /// true if the command is to be added to history list of the runspace. false, otherwise.
         /// </param>
@@ -111,16 +111,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
-        /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
-        /// <param name="noInput">whether there is input for this powershell</param>
-        /// <param name="clientPowerShellId">the client powershell id</param>
-        /// <param name="clientRunspacePoolId">the client runspacepool id</param>
+        /// <param name="powershell">decoded powershell object.</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes.</param>
+        /// <param name="noInput">whether there is input for this powershell.</param>
+        /// <param name="clientPowerShellId">the client powershell id.</param>
+        /// <param name="clientRunspacePoolId">the client runspacepool id.</param>
         /// <param name="runspacePoolDriver">runspace pool driver
         /// which is creating this powershell driver</param>
         /// <param name="hostInfo">host info using which the host for
         /// this powershell will be constructed</param>
-        /// <param name="streamOptions">serialization options for the streams in this powershell</param>
+        /// <param name="streamOptions">serialization options for the streams in this powershell.</param>
         /// <param name="addToHistory">
         /// true if the command is to be added to history list of the runspace. false, otherwise.
         /// </param>
@@ -139,17 +139,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers
         /// </summary>
-        /// <param name="powershell">decoded powershell object</param>
-        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes</param>
-        /// <param name="noInput">whether there is input for this powershell</param>
-        /// <param name="clientPowerShellId">the client powershell id</param>
-        /// <param name="clientRunspacePoolId">the client runspacepool id</param>
+        /// <param name="powershell">decoded powershell object.</param>
+        /// <param name="extraPowerShell">extra pipeline to be run after <paramref name="powershell"/> completes.</param>
+        /// <param name="noInput">whether there is input for this powershell.</param>
+        /// <param name="clientPowerShellId">the client powershell id.</param>
+        /// <param name="clientRunspacePoolId">the client runspacepool id.</param>
         /// <param name="runspacePoolDriver">runspace pool driver
         /// which is creating this powershell driver</param>
-        /// <param name="apartmentState">apartment state for this powershell</param>
+        /// <param name="apartmentState">apartment state for this powershell.</param>
         /// <param name="hostInfo">host info using which the host for
         /// this powershell will be constructed</param>
-        /// <param name="streamOptions">serialization options for the streams in this powershell</param>
+        /// <param name="streamOptions">serialization options for the streams in this powershell.</param>
         /// <param name="addToHistory">
         /// true if the command is to be added to history list of the runspace. false, otherwise.
         /// </param>
@@ -460,7 +460,7 @@ namespace System.Management.Automation
         /// Handle state changed information from PowerShell
         /// and send it to the client
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">sender of this event.</param>
         /// <param name="eventArgs">arguments describing state changed
         /// information for this powershell</param>
         private void HandlePowerShellInvocationStateChanged(object sender,
@@ -512,6 +512,7 @@ namespace System.Management.Automation
                             {
                                 UnregisterPowerShellEventHandlers(_extraPowerShell);
                             }
+
                             UnregisterDataStructureHandlerEventHandlers(DataStructureHandler);
                             UnregisterPipelineOutputEventHandlers(_localPowerShellOutput);
 
@@ -522,6 +523,7 @@ namespace System.Management.Automation
                             //localPowerShell.Dispose();
                         }
                     }
+
                     break;
 
                 case PSInvocationState.Stopping:
@@ -529,6 +531,7 @@ namespace System.Management.Automation
                         // abort all pending host calls
                         _remoteHost.ServerMethodExecutor.AbortAllCalls();
                     }
+
                     break;
             }
         }
@@ -536,8 +539,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles DataAdded event from the Output of the powershell
         /// </summary>
-        /// <param name="sender">sender of this information</param>
-        /// <param name="e">arguments describing this event</param>
+        /// <param name="sender">sender of this information.</param>
+        /// <param name="e">arguments describing this event.</param>
         private void HandleOutputDataAdded(object sender, DataAddedEventArgs e)
         {
             int index = e.Index;
@@ -561,8 +564,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles DataAdded event from Error of the PowerShell
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="e">arguments describing this event</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="e">arguments describing this event.</param>
         private void HandleErrorDataAdded(object sender, DataAddedEventArgs e)
         {
             int index = e.Index;
@@ -586,8 +589,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles DataAdded event from Progress of PowerShell
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this information, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleProgressAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -611,8 +614,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles DataAdded event from Warning of PowerShell
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this information, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleWarningAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -636,8 +639,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles DataAdded from Verbose of PowerShell
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
-        /// <param name="eventArgs">sender of this information</param>
+        /// <param name="sender">sender of this information, unused.</param>
+        /// <param name="eventArgs">sender of this information.</param>
         private void HandleVerboseAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -661,8 +664,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles DataAdded from Debug of PowerShell
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
-        /// <param name="eventArgs">sender of this information</param>
+        /// <param name="sender">sender of this information, unused.</param>
+        /// <param name="eventArgs">sender of this information.</param>
         private void HandleDebugAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -686,8 +689,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles DataAdded from Information of PowerShell
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
-        /// <param name="eventArgs">sender of this information</param>
+        /// <param name="sender">sender of this information, unused.</param>
+        /// <param name="eventArgs">sender of this information.</param>
         private void HandleInformationAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
@@ -736,6 +739,7 @@ namespace System.Management.Automation
                     PSObject data = _localPowerShellOutput[i];
                     DataStructureHandler.SendOutputDataToClient(data);
                 }
+
                 _localPowerShellOutput.Clear();
 
                 //foreach (ErrorRecord errorRecord in localPowerShell.Error)
@@ -744,6 +748,7 @@ namespace System.Management.Automation
                     ErrorRecord errorRecord = LocalPowerShell.Streams.Error[i];
                     DataStructureHandler.SendErrorRecordToClient(errorRecord);
                 }
+
                 LocalPowerShell.Streams.Error.Clear();
             }
             finally
@@ -759,8 +764,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Stop the local powershell
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">unused</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">unused.</param>
         private void HandleStopReceived(object sender, EventArgs eventArgs)
         {
             do // false loop
@@ -811,8 +816,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Add input to the local powershell's input collection
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleInputReceived(object sender, RemoteDataEventArgs<object> eventArgs)
         {
             // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).
@@ -826,8 +831,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Close the input collection of the local powershell
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleInputEndReceived(object sender, EventArgs eventArgs)
         {
             // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).
@@ -852,8 +857,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle a host message response received
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleHostResponseReceived(object sender, RemoteDataEventArgs<RemoteHostResponse> eventArgs)
         {
             _remoteHost.ServerMethodExecutor.HandleRemoteHostResponseFromClient(eventArgs.Data);

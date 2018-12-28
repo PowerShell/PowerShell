@@ -139,8 +139,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns help information for a parameter(s) identified by pattern
         /// </summary>
-        /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>
+        /// <param name="pattern">pattern to search for parameters.</param>
+        /// <returns>A collection of parameters that match pattern.</returns>
         /// <remarks>
         /// The base method returns an empty list.
         /// </remarks>

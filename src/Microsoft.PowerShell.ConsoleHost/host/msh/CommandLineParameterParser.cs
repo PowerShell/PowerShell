@@ -195,6 +195,7 @@ namespace Microsoft.PowerShell
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
             if (hostUI == null) { throw new PSArgumentNullException("hostUI"); }
+
             _hostUI = hostUI;
 
             _bannerText = bannerText;
@@ -478,6 +479,7 @@ namespace Microsoft.PowerShell
 
                 return false;
             }
+
             PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
             return true;
         }
@@ -629,6 +631,7 @@ namespace Microsoft.PowerShell
             {
                 _hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
             }
+
             _hostUI.WriteLine(string.Empty);
         }
 
@@ -865,8 +868,10 @@ namespace Microsoft.PowerShell
                             ConsoleHost.DefaultInitialSessionState.ImportPSModule(new string[] { arg });
                             moduleCount++;
                         }
+
                         ++i;
                     }
+
                     if (moduleCount < 1)
                     {
                         _hostUI.WriteErrorLine("No modules specified for -module option");
@@ -901,7 +906,6 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-
                 else if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
                     // Parse setting file arg and write error
@@ -1068,6 +1072,7 @@ namespace Microsoft.PowerShell
                     boolValue = false;
                     return true;
                 }
+
                 boolValue = false;
                 return false;
             }
@@ -1137,6 +1142,7 @@ namespace Microsoft.PowerShell
                                 possibleParameters.Append(validParameter);
                             }
                         }
+
                         if (possibleParameters.Length > 0)
                         {
                             WriteCommandLineError(
@@ -1146,6 +1152,7 @@ namespace Microsoft.PowerShell
                             return false;
                         }
                     }
+
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
                         showHelp: true);
@@ -1200,9 +1207,11 @@ namespace Microsoft.PowerShell
                     {
                         _collectedArgs.Add(new CommandParameter(null, arg));
                     }
+
                     ++i;
                 }
             }
+
             return true;
         }
 
@@ -1284,11 +1293,13 @@ namespace Microsoft.PowerShell
                     cmdLineCmdSB.Append(args[i] + " ");
                     ++i;
                 }
+
                 if (cmdLineCmdSB.Length > 0)
                 {
                     // remove the last blank
                     cmdLineCmdSB.Remove(cmdLineCmdSB.Length - 1, 1);
                 }
+
                 _commandLineCommand = cmdLineCmdSB.ToString();
             }
 

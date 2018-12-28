@@ -159,7 +159,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a string representation of this breakpoint.
         /// </summary>
-        /// <returns>A string representation of this breakpoint</returns>
+        /// <returns>A string representation of this breakpoint.</returns>
         public override string ToString()
         {
             return IsScriptBreakpoint
@@ -209,6 +209,7 @@ namespace System.Management.Automation
             {
                 return (Script == null || Script.Equals(invocationInfo.ScriptName, StringComparison.OrdinalIgnoreCase));
             }
+
             return false;
         }
     }
@@ -264,7 +265,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the string representation of this breakpoint
         /// </summary>
-        /// <returns>The string representation of this breakpoint</returns>
+        /// <returns>The string representation of this breakpoint.</returns>
         public override string ToString()
         {
             return IsScriptBreakpoint
@@ -339,7 +340,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a string representation of this breakpoint.
         /// </summary>
-        /// <returns>A string representation of this breakpoint</returns>
+        /// <returns>A string representation of this breakpoint.</returns>
         public override string ToString()
         {
             return Column == 0
@@ -519,6 +520,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             debugger.RemoveLineBreakpoint(this);
         }
     }

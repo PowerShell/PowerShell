@@ -159,6 +159,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 value = aliasInfo.Definition;
             }
+
             return value;
         }
 
@@ -219,6 +220,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             item = SessionState.Internal.SetAliasValue(name, stringValue, Force, Context.Origin);
                         }
+
                         break;
                     }
 
@@ -236,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             newAliasInfo.SetOptions(dynamicParameters.Options, Force);
                         }
+
                         item = SessionState.Internal.SetAliasItem(newAliasInfo, Force, Context.Origin);
                         break;
                     }
@@ -329,12 +332,14 @@ namespace Microsoft.PowerShell.Commands
         public ScopedItemOptions Options
         {
             get { return _options; }
+
             set
             {
                 _optionsSet = true;
                 _options = value;
             }
         }
+
         private ScopedItemOptions _options;
 
         /// <summary>
@@ -345,6 +350,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return _optionsSet; }
         }
+
         private bool _optionsSet = false;
     }
 }

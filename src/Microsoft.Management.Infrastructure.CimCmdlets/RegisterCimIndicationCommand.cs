@@ -37,8 +37,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Namespace
         {
             get { return nameSpace; }
+
             set { nameSpace = value; }
         }
+
         private String nameSpace;
 
         /// <summary>
@@ -55,12 +57,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String ClassName
         {
             get { return className; }
+
             set
             {
                 className = value;
                 this.SetParameter(value, nameClassName);
             }
         }
+
         private String className;
 
         /// <summary>
@@ -78,12 +82,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Query
         {
             get { return query; }
+
             set
             {
                 query = value;
                 this.SetParameter(value, nameQuery);
             }
         }
+
         private String query;
 
         /// <summary>
@@ -98,12 +104,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String QueryDialect
         {
             get { return queryDialect; }
+
             set
             {
                 queryDialect = value;
                 this.SetParameter(value, nameQueryDialect);
             }
         }
+
         private String queryDialect;
 
         /// <summary>
@@ -116,8 +124,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32 OperationTimeoutSec
         {
             get { return operationTimeout; }
+
             set { operationTimeout = value; }
         }
+
         private UInt32 operationTimeout;
 
         /// <summary>
@@ -133,12 +143,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession CimSession
         {
             get { return cimSession; }
+
             set
             {
                 cimSession = value;
                 this.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession cimSession;
 
         /// <summary>
@@ -152,12 +164,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
                 this.SetParameter(value, nameComputerName);
             }
         }
+
         private String computername;
 
         #endregion
@@ -165,7 +179,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Returns the object that generates events to be monitored
         /// </summary>
-        protected override Object GetSourceObject()
+        protected override object GetSourceObject()
         {
             CimIndicationWatcher watcher = null;
             string parameterSetName = null;
@@ -177,6 +191,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.parameterBinder.reset();
             }
+
             string tempQueryExpression = string.Empty;
             switch (parameterSetName)
             {
@@ -191,6 +206,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     tempQueryExpression = String.Format(CultureInfo.CurrentCulture, "Select * from {0}", this.ClassName);
                     break;
             }
+
             switch (parameterSetName)
             {
                 case CimBaseCommand.QueryExpressionSessionSet:
@@ -198,18 +214,22 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         watcher = new CimIndicationWatcher(this.CimSession, this.Namespace, this.QueryDialect, tempQueryExpression, this.OperationTimeoutSec);
                     }
+
                     break;
                 case CimBaseCommand.QueryExpressionComputerSet:
                 case CimBaseCommand.ClassNameComputerSet:
                     {
                         watcher = new CimIndicationWatcher(this.ComputerName, this.Namespace, this.QueryDialect, tempQueryExpression, this.OperationTimeoutSec);
                     }
+
                     break;
             }
+
             if (watcher != null)
             {
                 watcher.SetCmdlet(this);
             }
+
             return watcher;
         }
 
@@ -284,6 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return;
             }
+
             this.parameterBinder.SetParameter(parameterName, true);
         }
 

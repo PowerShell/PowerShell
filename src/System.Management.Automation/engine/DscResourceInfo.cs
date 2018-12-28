@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates properties of the resource
         /// </summary>
-        /// <param name="properties">Updated properties</param>
+        /// <param name="properties">Updated properties.</param>
         public void UpdateProperties(IList<DscResourcePropertyInfo> properties)
         {
             if (properties != null)

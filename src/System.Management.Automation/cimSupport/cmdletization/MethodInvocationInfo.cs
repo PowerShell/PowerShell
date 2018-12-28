@@ -16,9 +16,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Creates a new instance of MethodInvocationInfo
         /// </summary>
-        /// <param name="name">Name of the method to invoke</param>
-        /// <param name="parameters">Method parameters</param>
-        /// <param name="returnValue">Return value of the method (ok to pass <c>null</c> if the method doesn't return anything)</param>
+        /// <param name="name">Name of the method to invoke.</param>
+        /// <param name="parameters">Method parameters.</param>
+        /// <param name="returnValue">Return value of the method (ok to pass <c>null</c> if the method doesn't return anything).</param>
         public MethodInvocationInfo(string name, IEnumerable<MethodParameter> parameters, MethodParameter returnValue)
         {
             if (name == null) throw new ArgumentNullException("name");
@@ -61,12 +61,14 @@ namespace Microsoft.PowerShell.Cmdletization
                 {
                     continue;
                 }
+
                 var objectInstance = methodParameter.Value as T;
                 if (objectInstance != null)
                 {
                     result.Add(objectInstance);
                     continue;
                 }
+
                 var objectInstanceArray = methodParameter.Value as IEnumerable;
                 if (objectInstanceArray != null)
                 {
@@ -78,9 +80,11 @@ namespace Microsoft.PowerShell.Cmdletization
                             result.Add(objectInstance2);
                         }
                     }
+
                     continue;
                 }
             }
+
             return result;
         }
     }

@@ -407,6 +407,7 @@ namespace System.Management.Automation.Provider
                             {
                                 builder.Append(StringLiterals.DefaultPathSeparator);
                             }
+
                             builder.Append(child);
                         }
                     }
@@ -501,6 +502,7 @@ namespace System.Management.Automation.Provider
                         parentPath = String.Empty;
                     }
                 }
+
                 return parentPath;
             }
         }
@@ -603,6 +605,7 @@ namespace System.Management.Automation.Provider
                     path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
                     originalPathHadTrailingSlash = true;
                 }
+
                 basePath = basePath.TrimEnd(StringLiterals.DefaultPathSeparator);
 
                 // See if the base and the path are already the same. We resolve this to
@@ -701,8 +704,8 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Get the common base path of two paths
         /// </summary>
-        /// <param name="path1">One path</param>
-        /// <param name="path2">Another path</param>
+        /// <param name="path1">One path.</param>
+        /// <param name="path2">Another path.</param>
         private string GetCommonBase(string path1, string path2)
         {
             // Always see if the shorter path is a substring of the
@@ -1001,6 +1004,7 @@ namespace System.Management.Automation.Provider
                 {
                     break;
                 }
+
                 previousParent = tempPath;
             }
 
@@ -1072,6 +1076,7 @@ namespace System.Management.Automation.Provider
                         }
                     }
                 }
+
                 providerBaseTracer.WriteLine("normalizedPathStack.Push({0})", childName);
                 normalizedPathStack.Push(childName);
             }
@@ -1109,6 +1114,7 @@ namespace System.Management.Automation.Provider
                     leafElement = MakePath(parentElement, leafElement);
                 }
             }
+
             return leafElement;
         }
 

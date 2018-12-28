@@ -94,7 +94,7 @@ namespace System.Management.Automation
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
             Hashtable mapArgs = new Hashtable();
 
@@ -313,9 +313,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
-            List<String> details = GroupMessages(pipelineExecutionDetail);
+            List<string> details = GroupMessages(pipelineExecutionDetail);
 
             for (int i = 0; i < details.Count; i++)
             {
@@ -325,9 +325,9 @@ namespace System.Management.Automation
 
         private const int MaxLength = 16000;
 
-        private List<String> GroupMessages(List<String> messages)
+        private List<string> GroupMessages(List<string> messages)
         {
-            List<String> result = new List<string>();
+            List<string> result = new List<string>();
 
             if (messages == null || messages.Count == 0)
                 return result;
@@ -359,7 +359,7 @@ namespace System.Management.Automation
         /// <param name="pipelineExecutionDetail"></param>
         /// <param name="detailSequence"></param>
         /// <param name="detailTotal"></param>
-        private void LogPipelineExecutionDetailEvent(LogContext logContext, String pipelineExecutionDetail, int detailSequence, int detailTotal)
+        private void LogPipelineExecutionDetailEvent(LogContext logContext, string pipelineExecutionDetail, int detailSequence, int detailTotal)
         {
             int eventId = _pipelineExecutionDetailEventId;
 
@@ -549,8 +549,8 @@ namespace System.Management.Automation
         ///
         /// In EventLog Api, arguments are passed in as an array of objects.
         /// </summary>
-        /// <param name="mapArgs">An ArrayList to contain the event arguments</param>
-        /// <param name="logContext">The log context containing the info to fill in</param>
+        /// <param name="mapArgs">An ArrayList to contain the event arguments.</param>
+        /// <param name="logContext">The log context containing the info to fill in.</param>
         private static void FillEventArgs(Hashtable mapArgs, LogContext logContext)
         {
             mapArgs["Severity"] = logContext.Severity;
@@ -574,9 +574,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Fill event arguments with additionalInfo stored in a string dictionary.
         /// </summary>
-        /// <param name="mapArgs">An arraylist to contain the event arguments</param>
-        /// <param name="additionalInfo">A string dictionary to fill in</param>
-        private static void FillEventArgs(Hashtable mapArgs, Dictionary<String, String> additionalInfo)
+        /// <param name="mapArgs">An arraylist to contain the event arguments.</param>
+        /// <param name="additionalInfo">A string dictionary to fill in.</param>
+        private static void FillEventArgs(Hashtable mapArgs, Dictionary<string, string> additionalInfo)
         {
             if (additionalInfo == null)
             {

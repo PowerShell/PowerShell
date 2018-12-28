@@ -39,11 +39,13 @@ namespace Microsoft.WSMan.Management
             {
                 return _proxyaccesstype;
             }
+
             set
             {
                 _proxyaccesstype = value;
             }
         }
+
         private ProxyAccessType _proxyaccesstype;
 
         /// <summary>
@@ -60,11 +62,13 @@ namespace Microsoft.WSMan.Management
         public ProxyAuthentication ProxyAuthentication
         {
             get { return proxyauthentication; }
+
             set
             {
                 proxyauthentication = value;
             }
         }
+
         private ProxyAuthentication proxyauthentication;
 
         /// <summary>
@@ -76,11 +80,13 @@ namespace Microsoft.WSMan.Management
         public PSCredential ProxyCredential
         {
             get { return _proxycredential; }
+
             set
             {
                 _proxycredential = value;
             }
         }
+
         private PSCredential _proxycredential;
 
         /// <summary>
@@ -95,11 +101,13 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter SkipCACheck
         {
             get { return skipcacheck; }
+
             set
             {
                 skipcacheck = value;
             }
         }
+
         private bool skipcacheck;
 
         /// <summary>
@@ -112,11 +120,13 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter SkipCNCheck
         {
             get { return skipcncheck; }
+
             set
             {
                 skipcncheck = value;
             }
         }
+
         private bool skipcncheck;
 
         /// <summary>
@@ -129,11 +139,13 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter SkipRevocationCheck
         {
             get { return skiprevocationcheck; }
+
             set
             {
                 skiprevocationcheck = value;
             }
         }
+
         private bool skiprevocationcheck;
 
         /// <summary>
@@ -148,11 +160,13 @@ namespace Microsoft.WSMan.Management
         public Int32 SPNPort
         {
             get { return spnport; }
+
             set
             {
                 spnport = value;
             }
         }
+
         private Int32 spnport;
 
         /// <summary>
@@ -165,11 +179,13 @@ namespace Microsoft.WSMan.Management
         public Int32 OperationTimeout
         {
             get { return operationtimeout; }
+
             set
             {
                 operationtimeout = value;
             }
         }
+
         private Int32 operationtimeout;
 
         /// <summary>
@@ -182,11 +198,13 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter NoEncryption
         {
             get { return noencryption; }
+
             set
             {
                 noencryption = value;
             }
         }
+
         private bool noencryption;
 
         /// <summary>
@@ -199,11 +217,13 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter UseUTF16
         {
             get { return useutf16; }
+
             set
             {
                 useutf16 = value;
             }
         }
+
         private bool useutf16;
 
         /// <summary>
@@ -249,11 +269,13 @@ namespace Microsoft.WSMan.Management
             {
                 objSessionOption.UseEncryption = false;
             }
+
             if (_proxycredential != null)
             {
                 NetworkCredential nwCredentials = _proxycredential.GetNetworkCredential();
                 objSessionOption.ProxyCredential = nwCredentials;
             }
+
             WriteObject(objSessionOption);
 
         }//End BeginProcessing()

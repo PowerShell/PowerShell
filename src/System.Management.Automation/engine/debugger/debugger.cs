@@ -204,9 +204,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="job">Started job</param>
-        /// <param name="debugger">Debugger</param>
-        /// <param name="isAsync">Job started asynchronously</param>
+        /// <param name="job">Started job.</param>
+        /// <param name="debugger">Debugger.</param>
+        /// <param name="isAsync">Job started asynchronously.</param>
         public PSJobStartEventArgs(Job job, Debugger debugger, bool isAsync)
         {
             this.Job = job;
@@ -435,6 +435,7 @@ namespace System.Management.Automation
         internal virtual UnhandledBreakpointProcessingMode UnhandledBreakpointMode
         {
             get { throw new PSNotImplementedException(); }
+
             set { throw new PSNotImplementedException(); }
         }
 
@@ -475,7 +476,7 @@ namespace System.Management.Automation
         /// <summary>
         /// RaiseDebuggerStopEvent
         /// </summary>
-        /// <param name="args">DebuggerStopEventArgs</param>
+        /// <param name="args">DebuggerStopEventArgs.</param>
         [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
         protected void RaiseDebuggerStopEvent(DebuggerStopEventArgs args)
         {
@@ -493,7 +494,7 @@ namespace System.Management.Automation
         /// <summary>
         /// IsDebuggerStopEventSubscribed
         /// </summary>
-        /// <returns>True if event subscription exists</returns>
+        /// <returns>True if event subscription exists.</returns>
         protected bool IsDebuggerStopEventSubscribed()
         {
             return (DebuggerStop != null);
@@ -502,7 +503,7 @@ namespace System.Management.Automation
         /// <summary>
         /// RaiseBreakpointUpdatedEvent
         /// </summary>
-        /// <param name="args">BreakpointUpdatedEventArgs</param>
+        /// <param name="args">BreakpointUpdatedEventArgs.</param>
         [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
         protected void RaiseBreakpointUpdatedEvent(BreakpointUpdatedEventArgs args)
         {
@@ -512,7 +513,7 @@ namespace System.Management.Automation
         /// <summary>
         /// IsDebuggerBreakpointUpdatedEventSubscribed
         /// </summary>
-        /// <returns>True if event subscription exists</returns>
+        /// <returns>True if event subscription exists.</returns>
         protected bool IsDebuggerBreakpointUpdatedEventSubscribed()
         {
             return (BreakpointUpdated != null);
@@ -524,6 +525,7 @@ namespace System.Management.Automation
         protected void RaiseStartRunspaceDebugProcessingEvent(StartRunspaceDebugProcessingEventArgs args)
         {
             if (args == null) { throw new PSArgumentNullException("args"); }
+
             StartRunspaceDebugProcessing.SafeInvoke<StartRunspaceDebugProcessingEventArgs>(this, args);
         }
 
@@ -531,6 +533,7 @@ namespace System.Management.Automation
         protected void RaiseRunspaceProcessingCompletedEvent(ProcessRunspaceDebugEndEventArgs args)
         {
             if (args == null) { throw new PSArgumentNullException("args"); }
+
             RunspaceDebugProcessingCompleted.SafeInvoke<ProcessRunspaceDebugEndEventArgs>(this, args);
         }
 
@@ -556,15 +559,15 @@ namespace System.Management.Automation
         /// Evaluates provided command either as a debugger specific command
         /// or a PowerShell command.
         /// </summary>
-        /// <param name="command">PowerShell command</param>
-        /// <param name="output">Output</param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <param name="command">PowerShell command.</param>
+        /// <param name="output">Output.</param>
+        /// <returns>DebuggerCommandResults.</returns>
         public abstract DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output);
 
         /// <summary>
         /// Sets the debugger resume action.
         /// </summary>
-        /// <param name="resumeAction">DebuggerResumeAction</param>
+        /// <param name="resumeAction">DebuggerResumeAction.</param>
         public abstract void SetDebuggerAction(DebuggerResumeAction resumeAction);
 
         /// <summary>
@@ -576,17 +579,17 @@ namespace System.Management.Automation
         /// Returns current debugger stop event arguments if debugger is in
         /// debug stop state.  Otherwise returns null.
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public abstract DebuggerStopEventArgs GetDebuggerStopArgs();
 
         /// <summary>
         /// Sets the parent debugger, breakpoints and other debugging context information.
         /// </summary>
-        /// <param name="parent">Parent debugger</param>
-        /// <param name="breakPoints">List of breakpoints</param>
-        /// <param name="startAction">Debugger mode</param>
-        /// <param name="host">host</param>
-        /// <param name="path">Current path</param>
+        /// <param name="parent">Parent debugger.</param>
+        /// <param name="breakPoints">List of breakpoints.</param>
+        /// <param name="startAction">Debugger mode.</param>
+        /// <param name="host">host.</param>
+        /// <param name="path">Current path.</param>
         public virtual void SetParent(
             Debugger parent,
             IEnumerable<Breakpoint> breakPoints,
@@ -635,7 +638,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets debugger stepping mode.
         /// </summary>
-        /// <param name="enabled">True if stepping is to be enabled</param>
+        /// <param name="enabled">True if stepping is to be enabled.</param>
         public virtual void SetDebuggerStepMode(bool enabled)
         {
             throw new PSNotImplementedException();
@@ -649,8 +652,8 @@ namespace System.Management.Automation
         /// Passes the debugger command to the internal script debugger command processor.  This
         /// is used internally to handle debugger commands such as list, help, etc.
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="output">Output collection</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="output">Output collection.</param>
         /// <returns>DebuggerCommand containing information on whether and how the command was processed.</returns>
         internal virtual DebuggerCommand InternalProcessCommand(string command, IList<PSObject> output)
         {
@@ -662,9 +665,9 @@ namespace System.Management.Automation
         /// the current source line highlighted.  This is used internally for nested runspace debugging
         /// where the runspace command is run in context of a parent script.
         /// </summary>
-        /// <param name="lineNum">Current source line</param>
-        /// <param name="output">Output collection</param>
-        /// <returns>True if source listed successfully</returns>
+        /// <param name="lineNum">Current source line.</param>
+        /// <param name="output">Output collection.</param>
+        /// <returns>True if source listed successfully.</returns>
         internal virtual bool InternalProcessListCommand(int lineNum, IList<PSObject> output)
         {
             throw new PSNotImplementedException();
@@ -686,7 +689,7 @@ namespace System.Management.Automation
         /// Removes job from debugger job list and pops the its
         /// debugger from the active debugger stack.
         /// </summary>
-        /// <param name="job">Job</param>
+        /// <param name="job">Job.</param>
         internal virtual void StopDebugJob(Job job)
         {
             throw new PSNotImplementedException();
@@ -695,7 +698,7 @@ namespace System.Management.Automation
         /// <summary>
         /// GetActiveDebuggerCallStack.
         /// </summary>
-        /// <returns>Array of stack frame objects of active debugger</returns>
+        /// <returns>Array of stack frame objects of active debugger.</returns>
         internal virtual CallStackFrame[] GetActiveDebuggerCallStack()
         {
             throw new PSNotImplementedException();
@@ -706,7 +709,7 @@ namespace System.Management.Automation
         /// for monitoring of debugger events.  This is used to implement nested
         /// debugging of runspaces.
         /// </summary>
-        /// <param name="args">PSEntityCreatedRunspaceEventArgs</param>
+        /// <param name="args">PSEntityCreatedRunspaceEventArgs.</param>
         internal virtual void StartMonitoringRunspace(PSMonitorRunspaceInfo args)
         {
             throw new PSNotImplementedException();
@@ -715,7 +718,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Method to end the monitoring of a runspace for debugging events.
         /// </summary>
-        /// <param name="args">PSEntityCreatedRunspaceEventArgs</param>
+        /// <param name="args">PSEntityCreatedRunspaceEventArgs.</param>
         internal virtual void EndMonitoringRunspace(PSMonitorRunspaceInfo args)
         {
             throw new PSNotImplementedException();
@@ -733,7 +736,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug</param>
+        /// <param name="runspace">Runspace to debug.</param>
         internal virtual void DebugRunspace(Runspace runspace)
         {
             throw new PSNotImplementedException();
@@ -742,7 +745,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the provided Runspace from the nested "active" debugger state.
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         internal virtual void StopDebugRunspace(Runspace runspace)
         {
             throw new PSNotImplementedException();
@@ -776,7 +779,7 @@ namespace System.Management.Automation
         /// The queue will then raise the StartRunspaceDebugProcessing events for each runspace to allow
         /// a host script debugger implementation to provide an active debugging session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug</param>
+        /// <param name="runspace">Runspace to debug.</param>
         internal virtual void QueueRunspaceForDebug(Runspace runspace)
         {
             throw new PSNotImplementedException();
@@ -911,6 +914,7 @@ namespace System.Management.Automation
                     _isLocalSession = !(((_context.InternalHost.ExternalHost != null) &&
                                          (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)));
                 }
+
                 return _isLocalSession.Value;
             }
         }
@@ -1163,6 +1167,7 @@ namespace System.Management.Automation
                 breakpoints = new List<VariableBreakpoint>();
                 _variableBreakpoints.Add(breakpoint.Variable, breakpoints);
             }
+
             breakpoints.Add(breakpoint);
             return breakpoint;
         }
@@ -1361,6 +1366,7 @@ namespace System.Management.Automation
             {
                 return tuple.Item1;
             }
+
             return null;
         }
 
@@ -1491,6 +1497,7 @@ namespace System.Management.Automation
             {
                 // Check pending breakpoints to see if any apply to this script.
                 if (string.IsNullOrEmpty(functionContext._file)) { return; }
+
                 bool havePendingBreakpoint = false;
                 foreach (var item in _pendingBreakpoints)
                 {
@@ -1500,6 +1507,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 if (havePendingBreakpoint)
                 {
                     SetPendingBreakpoints(functionContext);
@@ -1649,7 +1657,7 @@ namespace System.Management.Automation
 
         // Process runspace debugger
         private Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>>();
-        private volatile Int32 _processingRunspaceDebugQueue;
+        private volatile int _processingRunspaceDebugQueue;
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
         private static readonly string s_processDebugPromptMatch;
@@ -1844,6 +1852,7 @@ namespace System.Management.Automation
                         // breakpoints in the current frame, but otherwise just go.)
                         goto case DebuggerResumeAction.Continue;
                     }
+
                     break;
 
                 case DebuggerResumeAction.StepOver:
@@ -1890,6 +1899,7 @@ namespace System.Management.Automation
                         Diagnostics.Assert(false, "The _preserveDebugStop event handle should always be in the signaled state at this point.");
                         return false;
                     }
+
                     _preserveDebugStopEvent.Reset();
 
                     // Wait indefinitely for a signal event.
@@ -1927,6 +1937,7 @@ namespace System.Management.Automation
                 breakpoint.BreakpointBitArray = null;
                 _pendingBreakpoints.Add(breakpoint);
             }
+
             boundBreakpoints.Clear();
         }
 
@@ -1953,6 +1964,7 @@ namespace System.Management.Automation
             {
                 Diagnostics.Assert(false, "If the script block is still alive, the entry should not be collected.");
             }
+
             Diagnostics.Assert(tuple.Item1 == functionContext._boundBreakpoints, "What's up?");
 
             foreach (var breakpoint in _pendingBreakpoints)
@@ -2017,7 +2029,7 @@ namespace System.Management.Automation
         /// Sets the internal Execution context debug mode given the
         /// current DebugMode setting.
         /// </summary>
-        /// <param name="mode">Internal debug mode</param>
+        /// <param name="mode">Internal debug mode.</param>
         private void SetInternalDebugMode(InternalDebugMode mode)
         {
             lock (_syncObject)
@@ -2136,7 +2148,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set ScriptDebugger action.
         /// </summary>
-        /// <param name="resumeAction">DebuggerResumeAction</param>
+        /// <param name="resumeAction">DebuggerResumeAction.</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
         {
             throw new PSNotSupportedException(
@@ -2146,7 +2158,7 @@ namespace System.Management.Automation
         /// <summary>
         /// GetDebuggerStopped
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             DebuggerStopEventArgs rtnArgs;
@@ -2161,9 +2173,9 @@ namespace System.Management.Automation
         /// <summary>
         /// ProcessCommand
         /// </summary>
-        /// <param name="command">PowerShell command</param>
-        /// <param name="output">Output</param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <param name="command">PowerShell command.</param>
+        /// <param name="output">Output.</param>
+        /// <returns>DebuggerCommandResults.</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
             if (command == null)
@@ -2217,6 +2229,7 @@ namespace System.Management.Automation
                     {
                         _psDebuggerCommand.SetIsNested(true);
                     }
+
                     _psDebuggerCommand.Runspace = localRunspace;
                     _psDebuggerCommand.Commands = command;
                     foreach (var cmd in _psDebuggerCommand.Commands.Commands)
@@ -2301,7 +2314,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns current call stack.
         /// </summary>
-        /// <returns>IEnumerable of CallStackFrame objects</returns>
+        /// <returns>IEnumerable of CallStackFrame objects.</returns>
         public override IEnumerable<CallStackFrame> GetCallStack()
         {
             CallStackInfo[] callStack = _callStack.ToArray();
@@ -2388,7 +2401,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets debugger stepping mode.
         /// </summary>
-        /// <param name="enabled">True if stepping is to be enabled</param>
+        /// <param name="enabled">True if stepping is to be enabled.</param>
         public override void SetDebuggerStepMode(bool enabled)
         {
             if (enabled)
@@ -2405,8 +2418,8 @@ namespace System.Management.Automation
         /// Passes the debugger command to the internal script debugger command processor.  This
         /// is used internally to handle debugger commands such as list, help, etc.
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <param name="output">output</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="output">output.</param>
         /// <returns>DebuggerCommand containing information on whether and how the command was processed.</returns>
         internal override DebuggerCommand InternalProcessCommand(string command, IList<PSObject> output)
         {
@@ -2429,9 +2442,9 @@ namespace System.Management.Automation
         /// the current source line highlighted.  This is used internally for nested runspace debugging
         /// where the runspace command is run in context of a parent script.
         /// </summary>
-        /// <param name="lineNum">Current source line</param>
-        /// <param name="output">Output collection</param>
-        /// <returns>True if source listed successfully</returns>
+        /// <param name="lineNum">Current source line.</param>
+        /// <param name="output">Output collection.</param>
+        /// <returns>True if source listed successfully.</returns>
         internal override bool InternalProcessListCommand(int lineNum, IList<PSObject> output)
         {
             if (!DebuggerStopped || (_currentInvocationInfo == null)) { return false; }
@@ -2484,7 +2497,7 @@ namespace System.Management.Automation
         /// Array of stack frame objects of active debugger if any,
         /// otherwise null.
         /// </summary>
-        /// <returns>CallStackFrame[]</returns>
+        /// <returns>CallStackFrame[].</returns>
         internal override CallStackFrame[] GetActiveDebuggerCallStack()
         {
             Debugger activeDebugger;
@@ -2509,6 +2522,7 @@ namespace System.Management.Automation
             {
                 return (_preserveUnhandledDebugStopEvent) ? UnhandledBreakpointProcessingMode.Wait : UnhandledBreakpointProcessingMode.Ignore;
             }
+
             set
             {
                 switch (value)
@@ -2606,7 +2620,7 @@ namespace System.Management.Automation
         /// Removes job from debugger job list and pops its
         /// debugger from the active debugger stack.
         /// </summary>
-        /// <param name="job">Job</param>
+        /// <param name="job">Job.</param>
         internal override void StopDebugJob(Job job)
         {
             // Parameter validation.
@@ -2629,8 +2643,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper method to set a IJobDebugger job CanDebug property.
         /// </summary>
-        /// <param name="debuggableJob">IJobDebugger</param>
-        /// <param name="isAsync">Boolean</param>
+        /// <param name="debuggableJob">IJobDebugger.</param>
+        /// <param name="isAsync">Boolean.</param>
         internal static void SetDebugJobAsync(IJobDebugger debuggableJob, bool isAsync)
         {
             if (debuggableJob != null)
@@ -2646,7 +2660,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets up debugger to debug provided Runspace in a nested debug session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug</param>
+        /// <param name="runspace">Runspace to debug.</param>
         internal override void DebugRunspace(Runspace runspace)
         {
             if (runspace == null)
@@ -2691,7 +2705,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the provided Runspace from the nested "active" debugger state.
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         internal override void StopDebugRunspace(Runspace runspace)
         {
             if (runspace == null) { throw new PSArgumentNullException("runspace"); }
@@ -2712,7 +2726,7 @@ namespace System.Management.Automation
         /// The queue will then raise the StartRunspaceDebugProcessing events for each runspace to allow
         /// a host script debugger implementation to provide an active debugging session.
         /// </summary>
-        /// <param name="runspace">Runspace to debug</param>
+        /// <param name="runspace">Runspace to debug.</param>
         internal override void QueueRunspaceForDebug(Runspace runspace)
         {
             runspace.StateChanged += RunspaceStateChangedHandler;
@@ -2855,6 +2869,7 @@ namespace System.Management.Automation
             {
                 runningJobs = _runningJobs.Values.ToArray();
             }
+
             foreach (var item in runningJobs)
             {
                 try
@@ -2872,6 +2887,7 @@ namespace System.Management.Automation
             {
                 runspaceList = _runningRunspaces.Values.ToArray();
             }
+
             foreach (var item in runspaceList)
             {
                 try
@@ -3448,6 +3464,7 @@ namespace System.Management.Automation
                 // Get nested debugger runspace info.
                 NestedRunspaceDebugger nestedDebugger = senderDebugger as NestedRunspaceDebugger;
                 if (nestedDebugger == null) { return; }
+
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
 
                 // If this is a workflow debugger then ensure that there is a current active
@@ -3592,7 +3609,7 @@ namespace System.Management.Automation
 
         private void StartRunspaceForDebugQueueProcessing()
         {
-            Int32 startThread = Interlocked.CompareExchange(ref _processingRunspaceDebugQueue, 1, 0);
+            int startThread = Interlocked.CompareExchange(ref _processingRunspaceDebugQueue, 1, 0);
 
             if (startThread == 0)
             {
@@ -3702,6 +3719,7 @@ namespace System.Management.Automation
             {
                 _runspaceDebugCompleteEvent.Reset();
             }
+
             _runspaceDebugCompleteEvent.Wait();
         }
 
@@ -3720,6 +3738,7 @@ namespace System.Management.Automation
             {
                 runningJobs = _runningJobs.Values.ToArray();
             }
+
             foreach (var item in runningJobs)
             {
                 Job job = item.Job;
@@ -3776,6 +3795,7 @@ namespace System.Management.Automation
                 SetInternalDebugMode(InternalDebugMode.Disabled);
             }
         }
+
         private bool _savedIgnoreScriptDebug = false;
 
         internal void Trace(string messageId, string resourceString, params object[] args)
@@ -3792,6 +3812,7 @@ namespace System.Management.Automation
             {
                 message = StringUtil.Format(resourceString, args);
             }
+
             if (String.IsNullOrEmpty(message))
             {
                 message = "Could not load text for msh script tracing message id '" + messageId + "'";
@@ -3852,6 +3873,7 @@ namespace System.Management.Automation
             {
                 valAsString = valAsString.Substring(0, msgLength) + PSObjectHelper.Ellipsis;
             }
+
             Trace("TraceVariableAssignment", ParserStrings.TraceVariableAssignment, varName, valAsString);
         }
 
@@ -3902,9 +3924,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of NestedRunspaceDebugger.
         /// </summary>
-        /// <param name="runspace">Runspace</param>
-        /// <param name="runspaceType">Runspace type</param>
-        /// <param name="parentDebuggerId">Debugger Id of parent</param>
+        /// <param name="runspace">Runspace.</param>
+        /// <param name="runspaceType">Runspace type.</param>
+        /// <param name="parentDebuggerId">Debugger Id of parent.</param>
         public NestedRunspaceDebugger(
             Runspace runspace,
             PSMonitorRunspaceType runspaceType,
@@ -3933,15 +3955,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Process debugger or PowerShell command/script.
         /// </summary>
-        /// <param name="command">PowerShell command</param>
-        /// <param name="output">Output collection</param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <param name="command">PowerShell command.</param>
+        /// <param name="output">Output collection.</param>
+        /// <returns>DebuggerCommandResults.</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
             if (_isDisposed) { return new DebuggerCommandResults(null, false); }
 
             // Preprocess debugger commands.
-            String cmd = command.Commands[0].CommandText.Trim();
+            string cmd = command.Commands[0].CommandText.Trim();
 
             if (cmd.Equals("prompt", StringComparison.OrdinalIgnoreCase))
             {
@@ -3969,7 +3991,7 @@ namespace System.Management.Automation
         /// <summary>
         /// SetDebuggerAction
         /// </summary>
-        /// <param name="resumeAction">Debugger resume action</param>
+        /// <param name="resumeAction">Debugger resume action.</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
         {
             _wrappedDebugger.SetDebuggerAction(resumeAction);
@@ -3987,7 +4009,7 @@ namespace System.Management.Automation
         /// Returns current debugger stop event arguments if debugger is in
         /// debug stop state.  Otherwise returns null.
         /// </summary>
-        /// <returns>DebuggerStopEventArgs</returns>
+        /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
             return _wrappedDebugger.GetDebuggerStopArgs();
@@ -3996,7 +4018,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the debugger mode.
         /// </summary>
-        /// <param name="mode">Debug mode</param>
+        /// <param name="mode">Debug mode.</param>
         public override void SetDebugMode(DebugModes mode)
         {
             _wrappedDebugger.SetDebugMode(mode);
@@ -4005,7 +4027,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets debugger stepping mode.
         /// </summary>
-        /// <param name="enabled">True if stepping is to be enabled</param>
+        /// <param name="enabled">True if stepping is to be enabled.</param>
         public override void SetDebuggerStepMode(bool enabled)
         {
             _wrappedDebugger.SetDebuggerStepMode(enabled);
@@ -4121,7 +4143,7 @@ namespace System.Management.Automation
         /// such as with Workflow InlineScripts and script Invoke-Command cases.
         /// </summary>
         /// <param name="debugStopInvocationInfo"></param>
-        /// <returns>InvocationInfo</returns>
+        /// <returns>InvocationInfo.</returns>
         internal virtual InvocationInfo FixupInvocationInfo(InvocationInfo debugStopInvocationInfo)
         {
             // Default is no fix up.
@@ -4193,7 +4215,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         public StandaloneRunspaceDebugger(
             Runspace runspace)
             : base(runspace, PSMonitorRunspaceType.Standalone, Guid.Empty)
@@ -4303,11 +4325,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for runspaces executing from script.
         /// </summary>
-        /// <param name="runspace">Runspace to debug</param>
-        /// <param name="command">PowerShell command</param>
-        /// <param name="rootDebugger">Root debugger</param>
-        /// <param name="runspaceType">Runspace to monitor type</param>
-        /// <param name="parentDebuggerId">Parent debugger Id</param>
+        /// <param name="runspace">Runspace to debug.</param>
+        /// <param name="command">PowerShell command.</param>
+        /// <param name="rootDebugger">Root debugger.</param>
+        /// <param name="runspaceType">Runspace to monitor type.</param>
+        /// <param name="parentDebuggerId">Parent debugger Id.</param>
         public EmbeddedRunspaceDebugger(
             Runspace runspace,
             PowerShell command,
@@ -4336,7 +4358,7 @@ namespace System.Management.Automation
                 new Collection<Breakpoint>(e.Breakpoints),
                 e.ResumeAction);
 
-            Object remoteRunningCmd = null;
+            object remoteRunningCmd = null;
             try
             {
                 // For remote debugging drain/block output channel.
@@ -4396,8 +4418,8 @@ namespace System.Management.Automation
         /// cases where the debugged runspace is called inside a parent sccript,
         /// such as with Workflow InlineScripts and script Invoke-Command cases.
         /// </summary>
-        /// <param name="debugStopInvocationInfo">Invocation information from debugger stop</param>
-        /// <returns>InvocationInfo</returns>
+        /// <param name="debugStopInvocationInfo">Invocation information from debugger stop.</param>
+        /// <returns>InvocationInfo.</returns>
         internal override InvocationInfo FixupInvocationInfo(InvocationInfo debugStopInvocationInfo)
         {
             if (debugStopInvocationInfo == null) { return null; }
@@ -4480,6 +4502,7 @@ namespace System.Management.Automation
                 StatementAst callingStatement = _parentScriptBlockAst.Find(
                     ast =>
                     { return ((ast is StatementAst) && (ast.Extent.StartLineNumber == callingLineNumber)); }
+
                     , true) as StatementAst;
 
                 if (callingStatement != null)
@@ -4531,7 +4554,7 @@ namespace System.Management.Automation
             return sb.ToString();
         }
 
-        private Object DrainAndBlockRemoteOutput()
+        private object DrainAndBlockRemoteOutput()
         {
             // We only do this for remote runspaces.
             if (!(_runspace is RemoteRunspace)) { return null; }
@@ -4623,8 +4646,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="resumeAction">Resume action</param>
-        /// <param name="evaluatedByDebugger">True if evaluated by debugger</param>
+        /// <param name="resumeAction">Resume action.</param>
+        /// <param name="evaluatedByDebugger">True if evaluated by debugger.</param>
         public DebuggerCommandResults(
             DebuggerResumeAction? resumeAction,
             bool evaluatedByDebugger)
@@ -4734,14 +4757,15 @@ namespace System.Management.Automation
         {
             DebuggerCommand dbgCommand = DoProcessCommand(host, command, invocationInfo, output);
             if (dbgCommand.ExecutedByDebugger || (dbgCommand.ResumeAction != null)) { _lastCommand = dbgCommand; }
+
             return dbgCommand;
         }
 
         /// <summary>
         /// Process list command with provided line number.
         /// </summary>
-        /// <param name="invocationInfo">Current InvocationInfo</param>
-        /// <param name="output">Output</param>
+        /// <param name="invocationInfo">Current InvocationInfo.</param>
+        /// <param name="output">Output.</param>
         public void ProcessListCommand(InvocationInfo invocationInfo, IList<PSObject> output)
         {
             DoProcessCommand(null, "list", invocationInfo, output);
@@ -4751,7 +4775,7 @@ namespace System.Management.Automation
         /// Looks up string command and if it is a debugger command returns the
         /// corresponding DebuggerCommand object.
         /// </summary>
-        /// <param name="command">String command</param>
+        /// <param name="command">String command.</param>
         /// <returns>DebuggerCommand or null.</returns>
         public DebuggerCommand ProcessBasicCommand(string command)
         {
@@ -4764,6 +4788,7 @@ namespace System.Management.Automation
             if (_commandTable.TryGetValue(command, out debuggerCommand))
             {
                 if (debuggerCommand.ExecutedByDebugger || (debuggerCommand.ResumeAction != null)) { _lastCommand = debuggerCommand; }
+
                 return debuggerCommand;
             }
 
@@ -4784,8 +4809,10 @@ namespace System.Management.Automation
                     {
                         DisplayScript(host, output, invocationInfo, _lastLineDisplayed + 1, DefaultListLineCount);
                     }
+
                     return _listCommand;
                 }
+
                 command = _lastCommand.Command;
             }
 
@@ -4885,6 +4912,7 @@ namespace System.Management.Automation
                     WriteErrorLine(StringUtil.Format(DebuggerStrings.BadStartFormat, _lines.Length), host, output);
                     return;
                 }
+
                 if (start <= 0 || start > _lines.Length)
                 {
                     WriteErrorLine(StringUtil.Format(DebuggerStrings.BadStartFormat, _lines.Length), host, output);
@@ -5044,8 +5072,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="invocationInfo">InvocationInfo</param>
-        /// <param name="breakpoints">Breakpoints</param>
+        /// <param name="invocationInfo">InvocationInfo.</param>
+        /// <param name="breakpoints">Breakpoints.</param>
         public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints)
         {
             if (breakpoints == null)
@@ -5081,7 +5109,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="invocationInfo">Invocation Info</param>
+        /// <param name="invocationInfo">Invocation Info.</param>
         public CallStackFrame(InvocationInfo invocationInfo)
             : this(null, invocationInfo)
         {
@@ -5090,8 +5118,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="functionContext">Function context</param>
-        /// <param name="invocationInfo">Invocation Info</param>
+        /// <param name="functionContext">Function context.</param>
+        /// <param name="invocationInfo">Invocation Info.</param>
         internal CallStackFrame(FunctionContext functionContext, InvocationInfo invocationInfo)
         {
             if (invocationInfo == null)
@@ -5311,8 +5339,8 @@ namespace System.Management.Automation.Internal
         /// Helper method to determine if command should be added to debugger
         /// history.
         /// </summary>
-        /// <param name="command">Command string</param>
-        /// <returns>True if command can be added to history</returns>
+        /// <param name="command">Command string.</param>
+        /// <returns>True if command can be added to history.</returns>
         public static bool ShouldAddCommandToHistory(string command)
         {
             if (command == null)
@@ -5344,8 +5372,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Start monitoring a runspace on the target debugger.
         /// </summary>
-        /// <param name="debugger">Target debugger</param>
-        /// <param name="runspaceInfo">PSMonitorRunspaceInfo</param>
+        /// <param name="debugger">Target debugger.</param>
+        /// <param name="runspaceInfo">PSMonitorRunspaceInfo.</param>
         public static void StartMonitoringRunspace(Debugger debugger, PSMonitorRunspaceInfo runspaceInfo)
         {
             if (debugger == null)
@@ -5364,8 +5392,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// End monitoring a runspace on the target degbugger.
         /// </summary>
-        /// <param name="debugger">Target debugger</param>
-        /// <param name="runspaceInfo">PSMonitorRunspaceInfo</param>
+        /// <param name="debugger">Target debugger.</param>
+        /// <param name="runspaceInfo">PSMonitorRunspaceInfo.</param>
         public static void EndMonitoringRunspace(Debugger debugger, PSMonitorRunspaceInfo runspaceInfo)
         {
             if (debugger == null)
@@ -5438,8 +5466,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="runspace">Runspace</param>
-        /// <param name="runspaceType">Runspace type</param>
+        /// <param name="runspace">Runspace.</param>
+        /// <param name="runspaceType">Runspace type.</param>
         protected PSMonitorRunspaceInfo(
             Runspace runspace,
             PSMonitorRunspaceType runspaceType)
@@ -5467,7 +5495,7 @@ namespace System.Management.Automation.Internal
         /// Creates an instance of a NestedRunspaceDebugger.
         /// </summary>
         /// <param name="rootDebugger">Root debugger or null.</param>
-        /// <returns>NestedRunspaceDebugger</returns>
+        /// <returns>NestedRunspaceDebugger.</returns>
         internal abstract NestedRunspaceDebugger CreateDebugger(Debugger rootDebugger);
 
         #endregion
@@ -5484,7 +5512,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Creates instance of PSStandaloneMonitorRunspaceInfo
         /// </summary>
-        /// <param name="runspace">Runspace to monitor</param>
+        /// <param name="runspace">Runspace to monitor.</param>
         public PSStandaloneMonitorRunspaceInfo(
             Runspace runspace)
             : base(runspace, PSMonitorRunspaceType.Standalone)
@@ -5506,8 +5534,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Creates an instance of a NestedRunspaceDebugger.
         /// </summary>
-        /// <param name="rootDebugger">Root debugger or null</param>
-        /// <returns>NestedRunspaceDebugger wrapper</returns>
+        /// <param name="rootDebugger">Root debugger or null.</param>
+        /// <returns>NestedRunspaceDebugger wrapper.</returns>
         internal override NestedRunspaceDebugger CreateDebugger(Debugger rootDebugger)
         {
             return new StandaloneRunspaceDebugger(Runspace);
@@ -5542,10 +5570,10 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Creates instance of PSEmbeddedMonitorRunspaceInfo
         /// </summary>
-        /// <param name="runspace">Runspace to monitor</param>
-        /// <param name="runspaceType">Type of runspace</param>
-        /// <param name="command">Running command</param>
-        /// <param name="parentDebuggerId">Unique parent debugger id or null</param>
+        /// <param name="runspace">Runspace to monitor.</param>
+        /// <param name="runspaceType">Type of runspace.</param>
+        /// <param name="command">Running command.</param>
+        /// <param name="parentDebuggerId">Unique parent debugger id or null.</param>
         public PSEmbeddedMonitorRunspaceInfo(
             Runspace runspace,
             PSMonitorRunspaceType runspaceType,
@@ -5577,8 +5605,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Creates an instance of a NestedRunspaceDebugger.
         /// </summary>
-        /// <param name="rootDebugger">Root debugger or null</param>
-        /// <returns>NestedRunspaceDebugger wrapper</returns>
+        /// <param name="rootDebugger">Root debugger or null.</param>
+        /// <returns>NestedRunspaceDebugger wrapper.</returns>
         internal override NestedRunspaceDebugger CreateDebugger(Debugger rootDebugger)
         {
             return new EmbeddedRunspaceDebugger(

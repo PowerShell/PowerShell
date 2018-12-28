@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         /// <summary>
         /// Specifies the credentials of the user to impersonate in the
@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         public override PSCredential Credential
         {
             get { return base.Credential; }
+
             set
             {
                 base.Credential = value;
@@ -112,11 +113,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _remoteRunspaceInfos;
             }
+
             set
             {
                 _remoteRunspaceInfos = value;
             }
         }
+
         private PSSession[] _remoteRunspaceInfos;
 
         /// <summary>
@@ -124,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Name { get; set; }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
@@ -156,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
-        public String ConfigurationName { get; set; }
+        public string ConfigurationName { get; set; }
 
         #endregion Parameters
 
@@ -207,18 +210,21 @@ namespace Microsoft.PowerShell.Commands
                     {
                         remoteRunspaces = CreateRunspacesWhenRunspaceParameterSpecified();
                     }
+
                     break;
 
                 case "Uri":
                     {
                         remoteRunspaces = CreateRunspacesWhenUriParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.ComputerNameParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesWhenComputerNameParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.VMIdParameterSet:
@@ -226,24 +232,28 @@ namespace Microsoft.PowerShell.Commands
                     {
                         remoteRunspaces = CreateRunspacesWhenVMParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.ContainerIdParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesWhenContainerParameterSpecified();
                     }
+
                     break;
 
                 case NewPSSessionCommand.SSHHostParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesForSSHHostParameterSet();
                     }
+
                     break;
 
                 case NewPSSessionCommand.SSHHostHashParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesForSSHHostHashParameterSet();
                     }
+
                     break;
 
                 default:
@@ -251,6 +261,7 @@ namespace Microsoft.PowerShell.Commands
                         Dbg.Assert(false, "Missing parameter set in switch statement");
                         remoteRunspaces = new List<RemoteRunspace>(); // added to avoid prefast warning
                     }
+
                     break;
             }
 
@@ -285,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
-        }// ProcessRecord()
+        }
 
         /// <summary>
         /// OpenAsync would have been called from ProcessRecord. This method
@@ -304,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_stream.ObjectReader.EndOfPipeline)
                 {
-                    Object streamObject = _stream.ObjectReader.Read();
+                    object streamObject = _stream.ObjectReader.Read();
                     WriteStreamObject((Action<Cmdlet>)streamObject);
                 }
                 else
@@ -312,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
-        }// EndProcessing()
+        }
 
         /// <summary>
         /// This method is called when the user sends a stop signal to the
@@ -334,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
             // for all the runspaces that have been submitted for opening
             // call StopOperation on each object and quit
             _throttleManager.StopAllOperations();
-        }// StopProcessing()
+        }
 
         #endregion Cmdlet Overrides
 
@@ -384,7 +395,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles state changes for Runspace
         /// </summary>
-        /// <param name="sender">Sender of this event</param>
+        /// <param name="sender">Sender of this event.</param>
         /// <param name="stateEventArgs">Event information object which describes
         /// the event which triggered this method</param>
         private void HandleRunspaceStateChanged(object sender, OperationStateEventArgs stateEventArgs)
@@ -436,6 +447,7 @@ namespace Microsoft.PowerShell.Commands
                             writer.Write(outputWriter);
                         }
                     }
+
                     break;
 
                 case RunspaceState.Broken:
@@ -448,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
                         // having to mine through the error record details
                         PSRemotingTransportException transException =
                             reason as PSRemotingTransportException;
-                        String errorDetails = null;
+                        string errorDetails = null;
                         int transErrorCode = 0;
                         if (transException != null)
                         {
@@ -456,7 +468,7 @@ namespace Microsoft.PowerShell.Commands
                             transErrorCode = transException.ErrorCode;
                             if (senderAsOp != null)
                             {
-                                String host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
+                                string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
                                 if (transException.ErrorCode ==
                                     System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_REDIRECT_REQUESTED)
@@ -497,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (senderAsOp != null)
                             {
-                                String host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
+                                string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
                                 errorDetails = "[" + host + "] " + protoException.Message;
                             }
@@ -516,6 +528,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             errorDetails += System.Environment.NewLine + String.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
                         }
+
                         ErrorRecord errorRecord = new ErrorRecord(reason,
                              remoteRunspace, fullyQualifiedErrorId,
                                    ErrorCategory.OpenError, null, null,
@@ -549,6 +562,7 @@ namespace Microsoft.PowerShell.Commands
 
                         _toDispose.Add(remoteRunspace);
                     }
+
                     break;
 
                 case RunspaceState.Closed:
@@ -558,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
                         // called when there are open runspaces
                         Uri connectionUri = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<Uri>(remoteRunspace.ConnectionInfo,
                             "ConnectionUri", null);
-                        String message =
+                        string message =
                             GetMessage(RemotingErrorIdStrings.RemoteRunspaceClosed,
                                         (connectionUri != null) ?
                                         connectionUri.AbsoluteUri : string.Empty);
@@ -591,8 +605,9 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     break;
-            }// switch
+            }
         }
 
         /// <summary>
@@ -777,7 +792,7 @@ namespace Microsoft.PowerShell.Commands
                 new List<RemoteRunspace>();
 
             // Resolve all the machine names
-            String[] resolvedComputerNames;
+            string[] resolvedComputerNames;
 
             ResolveComputerNames(ComputerName, out resolvedComputerNames);
 
@@ -804,6 +819,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.Credential = Credential;
                     }
+
                     connectionInfo.AuthenticationMechanism = Authentication;
                     UpdateConnectionInfo(connectionInfo);
 
@@ -831,10 +847,10 @@ namespace Microsoft.PowerShell.Commands
                     };
                     writer.Write(errorWriter);
                 }
-            }// end of for
+            }
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenComputerNameParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the VMId or VMName parameter
@@ -978,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
             ResolvedComputerNames = this.VMName;
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenVMParameterSpecified
+        }
 
         /// <summary>
         /// Creates the remote runspace objects when the ContainerId parameter is specified
@@ -1055,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
             ResolvedComputerNames = resolvedNameList.ToArray();
 
             return remoteRunspaces;
-        }// CreateRunspacesWhenContainerParameterSpecified
+        }
 
         /// <summary>
         /// CreateRunspacesForSSHHostParameterSet
@@ -1064,7 +1080,7 @@ namespace Microsoft.PowerShell.Commands
         private List<RemoteRunspace> CreateRunspacesForSSHHostParameterSet()
         {
             // Resolve all the machine names
-            String[] resolvedComputerNames;
+            string[] resolvedComputerNames;
 
             ResolveComputerNames(HostName, out resolvedComputerNames);
 
@@ -1083,11 +1099,11 @@ namespace Microsoft.PowerShell.Commands
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
-                                                                    host : this.Host,
-                                                                    typeTable : typeTable,
-                                                                    applicationArguments : null,
-                                                                    name : rsName) as RemoteRunspace);
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: sshConnectionInfo,
+                                                                   host: this.Host,
+                                                                   typeTable: typeTable,
+                                                                   applicationArguments: null,
+                                                                   name: rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;
@@ -1109,11 +1125,11 @@ namespace Microsoft.PowerShell.Commands
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
-                                                                    host : this.Host,
-                                                                    typeTable : typeTable,
-                                                                    applicationArguments : null,
-                                                                    name : rsName) as RemoteRunspace);
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: sshConnectionInfo,
+                                                                   host: this.Host,
+                                                                   typeTable: typeTable,
+                                                                   applicationArguments: null,
+                                                                   name: rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;
@@ -1183,7 +1199,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the throttling complete event of the throttle manager
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">sender of this event.</param>
         /// <param name="eventArgs"></param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
@@ -1199,7 +1215,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="e">exception which is causing this error record
         /// to be written</param>
-        /// <param name="uri">Uri which caused this exception</param>
+        /// <param name="uri">Uri which caused this exception.</param>
         private void WriteErrorCreateRemoteRunspaceFailed(Exception e, Uri uri)
         {
             Dbg.Assert(e is UriFormatException || e is InvalidOperationException ||
@@ -1244,7 +1260,7 @@ namespace Microsoft.PowerShell.Commands
         private string _defaultFQEID = "PSSessionOpenFailed";
 
         #endregion Private Members
-    }// NewRunspace
+    }
 
     #region Helper Classes
 
@@ -1281,6 +1297,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _startComplete = false;
             }
+
             OperatedRunspace.OpenAsync();
         }
 
@@ -1334,6 +1351,7 @@ namespace Microsoft.PowerShell.Commands
                     _internalCallbacks.Add(value);
                 }
             }
+
             remove
             {
                 lock (_internalCallbacks)
@@ -1360,7 +1378,7 @@ namespace Microsoft.PowerShell.Commands
         ///    an exception since this prevents other event handlers in the chain from
         ///    being called.
         /// </remarks>
-        /// <param name="source">Source of this event</param>
+        /// <param name="source">Source of this event.</param>
         /// <param name="stateEventArgs">object describing state information of the
         /// runspace</param>
         private void HandleRunspaceStateChanged(object source, RunspaceStateEventArgs stateEventArgs)
@@ -1413,6 +1431,7 @@ namespace Microsoft.PowerShell.Commands
                 copyCallbacks = new EventHandler<OperationStateEventArgs>[_internalCallbacks.Count];
                 _internalCallbacks.CopyTo(copyCallbacks);
             }
+
             foreach (var callbackDelegate in copyCallbacks)
             {
                 // Ensure all callbacks get called to prevent ThrottleManager from not responding.
@@ -1440,4 +1459,4 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion Helper Classes
-}//End namespace
+}

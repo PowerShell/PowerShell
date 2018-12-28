@@ -63,9 +63,9 @@ namespace System.Management.Automation.Runspaces
         /// Initializes a new instance of the InvalidRunspaceStateException
         /// with a specified error message and current and expected state.
         /// </summary>
-        /// <param name="message">The message that describes the error. </param>
-        /// <param name="currentState">Current state of runspace</param>
-        /// <param name="expectedState">Expected states of runspace</param>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="currentState">Current state of runspace.</param>
+        /// <param name="expectedState">Expected states of runspace.</param>
         internal InvalidRunspaceStateException
         (
             string message,
@@ -302,7 +302,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Clones current object
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal RunspaceStateInfo Clone()
         {
             return new RunspaceStateInfo(this);
@@ -334,6 +334,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("runspaceStateInfo");
             }
+
             RunspaceStateInfo = runspaceStateInfo;
         }
 
@@ -505,6 +506,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return t_threadSpecificDefaultRunspace;
             }
+
             set
             {
                 if (value == null || !value.RunspaceIsRemote)
@@ -539,6 +541,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private static Runspace s_primaryRunspace;
 
         /// <summary>
@@ -607,6 +610,7 @@ namespace System.Management.Automation.Runspaces
                 this.apartmentState = value;
             }
         }
+
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
 #endif
 
@@ -798,6 +802,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private static SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
         private static object s_syncObject;
 
@@ -883,6 +888,7 @@ namespace System.Management.Automation.Runspaces
 
                             // Otherwise no change.
                     }
+
                     break;
 
                 case RunspaceAvailability.Available:
@@ -896,6 +902,7 @@ namespace System.Management.Automation.Runspaces
                             this.RunspaceAvailability = Runspaces.RunspaceAvailability.None;
                             break;
                     }
+
                     break;
 
                 case RunspaceAvailability.AvailableForNestedCommand:
@@ -913,6 +920,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 case RunspaceAvailability.Busy:
@@ -928,6 +936,7 @@ namespace System.Management.Automation.Runspaces
                             {
                                 this.RunspaceAvailability = RunspaceAvailability.None;
                             }
+
                             break;
 
                         case PipelineState.Stopping:
@@ -1020,6 +1029,7 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 }
                             }
+
                             break;
 
                         case PipelineState.Running: // this can happen if a nested pipeline is created without entering a nested prompt
@@ -1028,6 +1038,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 default:
@@ -1132,11 +1143,13 @@ namespace System.Management.Automation.Runspaces
                                 this.RunspaceAvailability = (remoteCommand == null && GetCurrentlyRunningPipeline() == null) ?
                                     RunspaceAvailability.Available : RunspaceAvailability.Busy;
                             }
+
                             break;
 
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 case RunspaceAvailability.Available:
@@ -1155,6 +1168,7 @@ namespace System.Management.Automation.Runspaces
                         default:
                             break; // no change in the availability
                     }
+
                     break;
 
                 default:
@@ -1340,7 +1354,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public abstract RunspaceCapability GetCapabilities();
 
         #endregion
@@ -1389,13 +1403,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public abstract Pipeline CreatePipeline();
 
         /// <summary>
         /// Creates a pipeline for specified command string
         /// </summary>
-        /// <param name="command">A valid command string</param>
+        /// <param name="command">A valid command string.</param>
         /// <returns>
         /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
@@ -1407,8 +1421,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
@@ -1430,8 +1444,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a nested pipeline.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Command specified in commandString.
         /// </returns>
@@ -1467,7 +1481,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Push a running PowerShell onto the stack.
         /// </summary>
-        /// <param name="ps">PowerShell</param>
+        /// <param name="ps">PowerShell.</param>
         internal void PushRunningPowerShell(PowerShell ps)
         {
             Dbg.Assert(ps != null, "Caller should not pass in null reference.");
@@ -1486,7 +1500,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Pop the currently running PowerShell from stack.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         internal PowerShell PopRunningPowerShell()
         {
             lock (_syncObject)
@@ -1496,6 +1510,7 @@ namespace System.Management.Automation.Runspaces
                 if (count > 0)
                 {
                     if (count == 1) { _baseRunningPowerShell = null; }
+
                     return _runningPowerShells.Pop();
                 }
             }
@@ -1685,6 +1700,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("name");
             }
+
             _runspace.SetVariable(name, value);
         }
 
@@ -1717,6 +1733,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return null;
             }
+
             return _runspace.GetVariable(name);
         }
 
@@ -1780,6 +1797,7 @@ namespace System.Management.Automation.Runspaces
         public virtual PSLanguageMode LanguageMode
         {
             get { return _runspace.LanguageMode; }
+
             set { _runspace.LanguageMode = value; }
         }
 

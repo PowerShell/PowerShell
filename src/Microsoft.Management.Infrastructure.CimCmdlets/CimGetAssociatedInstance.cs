@@ -33,7 +33,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve associated ciminstances
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
         public void GetCimAssociatedInstance(GetCimAssociatedInstanceCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
@@ -44,6 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 // try to use namespace of ciminstance, then fall back to default namespace
                 nameSpace = ConstValue.GetNamespace(cmdlet.CimInstance.CimSystemProperties.Namespace);
             }
+
             List<CimSessionProxy> proxys = new List<CimSessionProxy>();
             switch (cmdlet.ParameterSetName)
             {
@@ -53,6 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         CimSessionProxy proxy = CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet);
                             proxys.Add(proxy);
                     }
+
                     break;
                 case CimBaseCommand.SessionSetName:
                     foreach (CimSession session in cmdlet.CimSession)
@@ -60,10 +62,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         CimSessionProxy proxy = CreateSessionProxy(session, cmdlet);
                         proxys.Add(proxy);
                     }
+
                     break;
                 default:
                     return;
             }
+
             foreach (CimSessionProxy proxy in proxys)
             {
                 proxy.EnumerateAssociatedInstancesAsync(

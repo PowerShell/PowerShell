@@ -92,6 +92,7 @@ namespace Microsoft.PowerShell.Commands
                     Path[0],
                     SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
             }
+
             return InvokeProvider.Property.GetPropertyDynamicParameters(
                 ".",
                 SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
@@ -248,6 +249,7 @@ namespace Microsoft.PowerShell.Commands
                     Path[0],
                     SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
             }
+
             return InvokeProvider.Property.GetPropertyDynamicParameters(
                 ".",
                 SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
@@ -275,6 +277,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 paths = new string[] { "." };
             }
+
             foreach (string path in Path)
             {
                 try

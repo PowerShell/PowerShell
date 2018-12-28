@@ -45,6 +45,7 @@ namespace System.Management.Automation
                 return s_commonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -66,6 +67,7 @@ namespace System.Management.Automation
                 return s_optionalCommonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -117,6 +119,7 @@ namespace System.Management.Automation
         {
             _parameterSetName = parameterSetName;
         }
+
         private string _parameterSetName = string.Empty;
 
         #region Override Internal
@@ -227,9 +230,9 @@ namespace System.Management.Automation
         /// baseName and resourceId from the current assembly.
         /// You should override this if you require a different behavior.
         /// </summary>
-        /// <param name="baseName">the base resource name</param>
-        /// <param name="resourceId">the resource id</param>
-        /// <returns>the resource string corresponding to baseName and resourceId</returns>
+        /// <param name="baseName">the base resource name.</param>
+        /// <param name="resourceId">the resource id.</param>
+        /// <returns>The resource string corresponding to baseName and resourceId.</returns>
         /// <exception cref="System.ArgumentException">
         /// Invalid <paramref name="baseName"/> or <paramref name="resourceId"/>, or
         /// string not found in resources
@@ -265,6 +268,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
                 }
+
                 if (retValue == null)
                 {
                     throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
@@ -291,6 +295,7 @@ namespace System.Management.Automation
                     return commandRuntime;
                 }
             }
+
             set
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
@@ -311,7 +316,7 @@ namespace System.Management.Automation
         /// a <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>
         /// rather than the real exception.
         /// </remarks>
-        /// <param name="errorRecord">error</param>
+        /// <param name="errorRecord">error.</param>
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
         /// </exception>
@@ -414,7 +419,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display verbose information
         /// </summary>
-        /// <param name="text">verbose output</param>
+        /// <param name="text">verbose output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -446,12 +451,12 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteVerbose");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
         /// Display warning information
         /// </summary>
-        /// <param name="text">warning output</param>
+        /// <param name="text">warning output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -483,12 +488,12 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteWarning");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
         /// Write text into pipeline execution log.
         /// </summary>
-        /// <param name="text">text to be written to log</param>
+        /// <param name="text">text to be written to log.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -525,7 +530,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display progress information
         /// </summary>
-        /// <param name="progressRecord">progress information</param>
+        /// <param name="progressRecord">progress information.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -591,12 +596,12 @@ namespace System.Management.Automation
                 commandRuntime.WriteProgress(sourceId, progressRecord);
             else
                 throw new System.NotImplementedException("WriteProgress");
-        }//WriteProgress
+        }
 
         /// <summary>
         /// Display debug information
         /// </summary>
-        /// <param name="text">debug output</param>
+        /// <param name="text">debug output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -634,7 +639,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteDebug");
             }
-        }//WriteDebug
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -696,7 +701,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -741,7 +746,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         #endregion Write
 
@@ -1606,7 +1611,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke this cmdlet object returning a collection of results.
         /// </summary>
-        /// <returns>The results that were produced by this class</returns>
+        /// <returns>The results that were produced by this class.</returns>
         public IEnumerable Invoke()
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -1621,8 +1626,8 @@ namespace System.Management.Automation
         /// Returns a strongly-typed enumerator for the results of this cmdlet.
         /// </summary>
         /// <typeparam name="T">The type returned by the enumerator</typeparam>
-        /// <returns>An instance of the appropriate enumerator</returns>
-        /// <exception cref="InvalidCastException">Thrown when the object returned by the cmdlet cannot be converted to the target type</exception>
+        /// <returns>An instance of the appropriate enumerator.</returns>
+        /// <exception cref="InvalidCastException">Thrown when the object returned by the cmdlet cannot be converted to the target type.</exception>
         public IEnumerable<T> Invoke<T>()
         {
             using (PSTransactionManager.GetEngineProtectionScope())

@@ -58,6 +58,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -93,6 +94,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -128,6 +130,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -163,6 +166,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -198,6 +202,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -233,6 +238,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -268,6 +274,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -350,6 +357,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 ThrowNotInteractive();
             }
+
             KeyInfo result = new KeyInfo();
             try
             {
@@ -364,6 +372,7 @@ namespace System.Management.Automation.Internal.Host
                 {
                     throw;
                 }
+
                 lpl.Stopper.Stop();
             }
 
@@ -440,6 +449,7 @@ namespace System.Management.Automation.Internal.Host
 
                 return result;
             }
+
             set
             {
                 if (_externalRawUI == null)
@@ -568,6 +578,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 ThrowNotInteractive();
             }
+
             return _externalRawUI.LengthInBufferCells(str);
         }
 
@@ -589,6 +600,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 ThrowNotInteractive();
             }
+
             return _externalRawUI.LengthInBufferCells(str, offset);
         }
 
@@ -608,10 +620,11 @@ namespace System.Management.Automation.Internal.Host
             {
                 ThrowNotInteractive();
             }
+
             return _externalRawUI.LengthInBufferCells(character);
         }
 
         private PSHostRawUserInterface _externalRawUI;
         private InternalHost _parentHost;
     }
-}  // namespace
+}

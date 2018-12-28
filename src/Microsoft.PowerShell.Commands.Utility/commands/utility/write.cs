@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("Msg", "Message")]
-        public Object MessageData { get; set; }
+        public object MessageData { get; set; }
 
         /// <summary>
         /// Any tags to be associated with this information.
@@ -317,11 +317,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     e = new WriteErrorException(msg);
                 }
+
                 string errid = ErrorId;
                 if (String.IsNullOrEmpty(errid))
                 {
                     errid = e.GetType().FullName;
                 }
+
                 errorRecord = new ErrorRecord(
                     e,
                     errid,
@@ -342,6 +344,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
                 }
+
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }
 
@@ -433,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException()
             : base(StringUtil.Format(WriteErrorStrings.WriteErrorException))
         {
@@ -442,8 +445,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException(string message)
             : base(message)
         {
@@ -452,9 +455,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <returns>Constructed object.</returns>
         public WriteErrorException(string message,
                                           Exception innerException)
             : base(message, innerException)
@@ -466,9 +469,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serialization constructor for class WriteErrorException.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
+        /// <returns>Constructed object.</returns>
         protected WriteErrorException(SerializationInfo info,
                                       StreamingContext context)
             : base(info, context)

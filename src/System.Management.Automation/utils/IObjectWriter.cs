@@ -84,7 +84,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Write a single object into the underlying stream
         /// </summary>
-        /// <param name="obj">The object to add to the stream</param>
+        /// <param name="obj">The object to add to the stream.</param>
         /// <returns>
         /// One, if the write was successful, otherwise;
         /// zero if the stream was closed before the object could be written,
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Write multiple objects to the underlying stream
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Runspaces
         /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is already closed
         /// </exception>

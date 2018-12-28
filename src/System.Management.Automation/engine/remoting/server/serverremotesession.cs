@@ -79,8 +79,8 @@ namespace System.Management.Automation.Remoting
         private PSSessionConfiguration _sessionConfigProvider;
 
         // used to apply quotas on command and session transportmanagers.
-        private Nullable<int> _maxRecvdObjectSize;
-        private Nullable<int> _maxRecvdDataSizeCommand;
+        private int? _maxRecvdObjectSize;
+        private int? _maxRecvdDataSizeCommand;
 
         private ServerRunspacePoolDriver _runspacePoolDriver;
         private PSRemotingCryptoHelperServer _cryptoHelper;
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Remoting
         /// xml.
         /// </param>
         /// <param name="transportManager"></param>
-        /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions</param>
+        /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// InitialSessionState provider with <paramref name="configurationProviderId"/> does
@@ -203,6 +203,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw PSTraceSource.NewInvalidOperationException("RemotingErrorIdStrings.NonExistentInitialSessionStateProvider", configurationProviderId);
             }
+
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
@@ -328,6 +329,7 @@ namespace System.Management.Automation.Remoting
                                 {
                                     SessionDataStructureHandler.StateMachine.RaiseEvent(messageReceivedArg);
                                 }
+
                                 break;
 
                             case RemotingDataType.CloseSession:
@@ -347,6 +349,7 @@ namespace System.Management.Automation.Remoting
                                 break;
                         }
                     }
+
                     break;
 
                 // TODO: Directly calling an event handler in StateMachine bypassing the StateMachine's
@@ -366,6 +369,7 @@ namespace System.Management.Automation.Remoting
                     {
                         SessionDataStructureHandler.StateMachine.RaiseEvent(messageReceivedArg);
                     }
+
                     break;
             }
         }
@@ -374,7 +378,7 @@ namespace System.Management.Automation.Remoting
         /// Have received a public key from the other side
         /// Import or take other action based on the state
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
+        /// <param name="sender">sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments which contains the
         /// remote public key</param>
         private void HandlePublicKeyReceived(object sender, RemoteDataEventArgs<string> eventArgs)
@@ -729,6 +733,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw PSTraceSource.NewArgumentNullException("createRunspaceEventArg");
             }
+
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
             Dbg.Assert(rcvdData != null, "rcvdData must be non-null");
 
@@ -828,6 +833,7 @@ namespace System.Management.Automation.Remoting
                                     RemoteDataNameStrings.PSv2TabExpansionFunctionText));
                         }
                     }
+
                     if (value.ContainsKey("PSVersion"))
                     {
                         psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
@@ -841,6 +847,7 @@ namespace System.Management.Automation.Remoting
                 _maxRecvdObjectSize = _sessionConfigProvider.GetMaximumReceivedObjectSize(_senderInfo);
                 _maxRecvdDataSizeCommand = _sessionConfigProvider.GetMaximumReceivedDataSizePerCommand(_senderInfo);
             }
+
             SessionDataStructureHandler.TransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
             // MaximumReceivedDataSize is not set for session transport manager...see the constructor
             // for more info.

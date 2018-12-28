@@ -16,13 +16,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an item to the repository
         /// </summary>
-        /// <param name="item">object to add</param>
+        /// <param name="item">object to add.</param>
         public void Add(T item)
         {
             if (item == null)
             {
                 throw new ArgumentNullException(_identifier);
             }
+
             lock (_syncObject)
             {
                 Guid instanceId = GetKey(item);
@@ -41,20 +42,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove the specified item from the repository
         /// </summary>
-        /// <param name="item">object to remove</param>
+        /// <param name="item">object to remove.</param>
         public void Remove(T item)
         {
             if (item == null)
             {
                 throw new ArgumentNullException(_identifier);
             }
+
             lock (_syncObject)
             {
                 Guid instanceId = GetKey(item);
 
                 if (!_repository.Remove(instanceId))
                 {
-                    String message =
+                    string message =
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ItemNotFoundInRepository,
                             "Job repository", instanceId.ToString());
 
@@ -77,8 +79,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a key for the specified item
         /// </summary>
-        /// <param name="item">item for which the key is required</param>
-        /// <returns>returns a key</returns>
+        /// <param name="item">item for which the key is required.</param>
+        /// <returns>Returns a key.</returns>
         protected abstract Guid GetKey(T item);
 
         /// <summary>
@@ -176,8 +178,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the instance id of the job as key
         /// </summary>
-        /// <param name="item">job for which a key is required</param>
-        /// <returns>returns jobs guid</returns>
+        /// <param name="item">job for which a key is required.</param>
+        /// <returns>Returns jobs guid.</returns>
         protected override Guid GetKey(Job item)
         {
             if (item != null)

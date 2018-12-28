@@ -271,6 +271,7 @@ namespace System.Management.Automation
 
                 return GetItemDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
         }
 
@@ -346,6 +347,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -616,6 +618,7 @@ namespace System.Management.Automation
 
                 return SetItemDynamicParameters(providerInstance, providerPaths[0], value, newContext);
             }
+
             return null;
         }
 
@@ -695,6 +698,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -956,6 +960,7 @@ namespace System.Management.Automation
 
                 return ClearItemDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
         }
 
@@ -1031,6 +1036,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1281,6 +1287,7 @@ namespace System.Management.Automation
 
                 return InvokeDefaultActionDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
         }
 
@@ -1356,13 +1363,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion InvokeDefaultAction
 
         #endregion ItemCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

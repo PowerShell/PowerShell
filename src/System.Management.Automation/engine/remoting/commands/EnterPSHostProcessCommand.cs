@@ -143,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
                     Process = GetProcessByHostProcessInfo(HostProcessInfo);
                     break;
             }
+
             VerifyProcess(Process);
 
             // Create named pipe runspace for selected process and open.
@@ -525,8 +526,8 @@ namespace Microsoft.PowerShell.Commands
         /// PowerShell pipe name example:
         ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell
         /// </summary>
-        /// <param name="procIds">Process Ids or null</param>
-        /// <returns>Collection of process AppDomain info</returns>
+        /// <param name="procIds">Process Ids or null.</param>
+        /// <returns>Collection of process AppDomain info.</returns>
         internal static IReadOnlyCollection<PSHostProcessInfo> GetAppDomainNamesFromProcessId(int[] procIds)
         {
             var procAppDomainInfo = new List<PSHostProcessInfo>();
@@ -691,12 +692,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="processName">Name of process</param>
-        /// <param name="processId">Id of process</param>
-        /// <param name="appDomainName">Name of process AppDomain</param>
+        /// <param name="processName">Name of process.</param>
+        /// <param name="processId">Id of process.</param>
+        /// <param name="appDomainName">Name of process AppDomain.</param>
         internal PSHostProcessInfo(string processName, int processId, string appDomainName)
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
+
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
 
 #if !CORECLR

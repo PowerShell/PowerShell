@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             // doesn't actually write pipeline objects.
             if (_outVarResults != null)
             {
-                Object inputObjectBase = PSObject.Base(InputObject);
+                object inputObjectBase = PSObject.Base(InputObject);
 
                 // Ignore errors and formatting records, as those can't be captured
                 if (
@@ -135,6 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.CurrentCommandProcessor.CommandRuntime.OutVarList.Add(item);
                 }
+
                 _outVarResults = null;
             }
 
@@ -196,6 +197,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Paging
         {
             get { return _paging; }
+
             set { _paging = value; }
         }
 

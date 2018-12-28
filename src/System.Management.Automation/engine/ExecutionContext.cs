@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSLocalEventManager Events { get; private set; }
 
-        internal HashSet<String> AutoLoadingModuleInProgress { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        internal HashSet<string> AutoLoadingModuleInProgress { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The debugger for the interpreter
@@ -42,6 +42,7 @@ namespace System.Management.Automation
         {
             get { return _debugger; }
         }
+
         internal ScriptDebugger _debugger;
 
         internal int _debuggingMode;
@@ -60,11 +61,13 @@ namespace System.Management.Automation
             {
                 Events.Dispose();
             }
+
             Events = new PSLocalEventManager(this);
             if (this.transactionManager != null)
             {
                 this.transactionManager.Dispose();
             }
+
             this.transactionManager = new PSTransactionManager();
         }
         /// <summary>
@@ -78,8 +81,10 @@ namespace System.Management.Automation
                 // Pretend that tracing is off if ignoreScriptDebug is true
                 return IgnoreScriptDebug ? 0 : _debugTraceLevel;
             }
+
             set { _debugTraceLevel = value; }
         }
+
         private int _debugTraceLevel;
 
         /// <summary>
@@ -93,8 +98,10 @@ namespace System.Management.Automation
                 // Pretend that tracing is off if ignoreScriptDebug is true
                 return !IgnoreScriptDebug && _debugTraceStep;
             }
+
             set { _debugTraceStep = value; }
         }
+
         private bool _debugTraceStep;
 
         // Helper for generated code to handle running w/ no execution context
@@ -104,6 +111,7 @@ namespace System.Management.Automation
             {
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
+
             return (context != null)
                        ? context.IsStrictVersion(majorVersion)
                        : false;
@@ -131,6 +139,7 @@ namespace System.Management.Automation
                 {
                     break;
                 }
+
                 scope = scope.Parent;
             }
 
@@ -214,6 +223,7 @@ namespace System.Management.Automation
                 AppDomain.Unload(AppDomainForModuleAnalysis);
                 AppDomainForModuleAnalysis = null;
             }
+
             _responsibilityForModuleAnalysisAppDomainOwned = false;
         }
 
@@ -242,9 +252,11 @@ namespace System.Management.Automation
                 {
                     _providerNames = new SingleShellProviderNames();
                 }
+
                 return _providerNames;
             }
         }
+
         private ProviderNames _providerNames;
 
         /// <summary>
@@ -273,9 +285,11 @@ namespace System.Management.Automation
                         _shellId = Utils.DefaultPowerShellShellID;
                     }
                 }
+
                 return _shellId;
             }
         }
+
         private string _shellId;
 
         /// <summary>
@@ -309,6 +323,7 @@ namespace System.Management.Automation
             {
                 return _languageMode;
             }
+
             set
             {
                 // If we're moving to ConstrainedLanguage, invalidate the binding
@@ -356,6 +371,7 @@ namespace System.Management.Automation
                 _languageMode = value;
             }
         }
+
         private PSLanguageMode _languageMode = PSLanguageMode.FullLanguage;
 
         /// <summary>
@@ -364,7 +380,7 @@ namespace System.Management.Automation
         internal bool HasRunspaceEverUsedConstrainedLanguageMode { get; private set; }
 
         /// <summary>
-        /// Indicate if a parameter binding is happening that transitions the execution from ConstrainedLanguage 
+        /// Indicate if a parameter binding is happening that transitions the execution from ConstrainedLanguage
         /// mode to a trusted FullLanguage command.
         /// </summary>
         internal bool LanguageModeTransitionInParameterBinding { get; set; }
@@ -395,6 +411,7 @@ namespace System.Management.Automation
                 object unused;
                 result = UntrustedObjects.TryGetValue(baseValue, out unused);
             }
+
             return result;
         }
 
@@ -499,6 +516,7 @@ namespace System.Management.Automation
                 return _locationGlobber;
             }
         }
+
         private LocationGlobber _locationGlobber;
 
         /// <summary>
@@ -625,6 +643,7 @@ namespace System.Management.Automation
                 defaultUsed = true;
                 return defaultPref;
             }
+
             bool converted = defaultPref;
             defaultUsed = !LanguagePrimitives.TryConvertTo<bool>
                 (val, out converted);
@@ -642,12 +661,13 @@ namespace System.Management.Automation
         {
             get { return _helpSystem ?? (_helpSystem = new HelpSystem(this)); }
         }
+
         private HelpSystem _helpSystem;
 
         #endregion
 
         #region FormatAndOutput
-        internal Object FormatInfo { get; set; }
+        internal object FormatInfo { get; set; }
 
         #endregion
 
@@ -657,9 +677,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Routine to create a command(processor) instance using the factory.
         /// </summary>
-        /// <param name="command">The name of the command to lookup</param>
+        /// <param name="command">The name of the command to lookup.</param>
         /// <param name="dotSource"></param>
-        /// <returns>The command processor object</returns>
+        /// <returns>The command processor object.</returns>
         internal CommandProcessorBase CreateCommand(string command, bool dotSource)
         {
             CommandOrigin commandOrigin = this.EngineSessionState.CurrentScope.ScopeOrigin;
@@ -718,6 +738,7 @@ namespace System.Management.Automation
         {
             get { return _engineIntrinsics ?? (_engineIntrinsics = new EngineIntrinsics(this)); }
         }
+
         private EngineIntrinsics _engineIntrinsics;
 
         /// <summary>
@@ -788,6 +809,7 @@ namespace System.Management.Automation
             ShellFunctionErrorOutputPipe = newPipe;
             return oldPipe;
         }
+
         internal void RestoreErrorPipe(Pipe pipe)
         {
             ShellFunctionErrorOutputPipe = pipe;
@@ -882,6 +904,7 @@ namespace System.Management.Automation
                     maxErrorCount - 1,
                     numToErase);
             }
+
             arraylist.Insert(0, obj);
         }
         #endregion
@@ -919,6 +942,7 @@ namespace System.Management.Automation
         internal Runspace CurrentRunspace
         {
             get { return _currentRunspace; }
+
             set { _currentRunspace = value; }
         }
 
@@ -1009,6 +1033,7 @@ namespace System.Management.Automation
 
                 return resultItem;
             }
+
             set
             {
                 EngineSessionState.SetVariable(
@@ -1026,6 +1051,7 @@ namespace System.Management.Automation
                     InitialSessionState.defaultDebugPreference,
                     out defaultUsed);
             }
+
             set
             {
                 this.EngineSessionState.SetVariable(
@@ -1046,6 +1072,7 @@ namespace System.Management.Automation
                     InitialSessionState.defaultVerbosePreference,
                     out defaultUsed);
             }
+
             set
             {
                 this.EngineSessionState.SetVariable(
@@ -1066,6 +1093,7 @@ namespace System.Management.Automation
                     InitialSessionState.defaultErrorActionPreference,
                     out defaultUsed);
             }
+
             set
             {
                 this.EngineSessionState.SetVariable(
@@ -1086,6 +1114,7 @@ namespace System.Management.Automation
                     InitialSessionState.defaultWarningPreference,
                     out defaultUsed);
             }
+
             set
             {
                 this.EngineSessionState.SetVariable(
@@ -1106,6 +1135,7 @@ namespace System.Management.Automation
                     InitialSessionState.defaultInformationPreference,
                     out defaultUsed);
             }
+
             set
             {
                 this.EngineSessionState.SetVariable(
@@ -1130,6 +1160,7 @@ namespace System.Management.Automation
 
                 return resultItem;
             }
+
             set
             {
                 this.EngineSessionState.SetVariable(
@@ -1150,6 +1181,7 @@ namespace System.Management.Automation
                     InitialSessionState.defaultConfirmPreference,
                     out defaultUsed);
             }
+
             set
             {
                 this.EngineSessionState.SetVariable(
@@ -1168,15 +1200,18 @@ namespace System.Management.Automation
             {
                 _debugger.Dispose();
             }
+
             if (Events != null)
             {
                 Events.Dispose();
             }
+
             Events = null;
             if (this.transactionManager != null)
             {
                 this.transactionManager.Dispose();
             }
+
             this.transactionManager = null;
         }
 
@@ -1192,8 +1227,10 @@ namespace System.Management.Automation
                     _typeTable = new TypeTable();
                     _typeTableWeakReference = new WeakReference<TypeTable>(_typeTable);
                 }
+
                 return _typeTable;
             }
+
             set
             {
                 _typeTable = value;
@@ -1212,6 +1249,7 @@ namespace System.Management.Automation
                 {
                     var unused = TypeTable;
                 }
+
                 return _typeTableWeakReference;
             }
         }
@@ -1239,6 +1277,7 @@ namespace System.Management.Automation
                         _formatDBManager.DisableFormatTableUpdates = this.InitialSessionState.DisableFormatUpdates;
                     }
                 }
+
                 return _formatDBManager;
             }
 
@@ -1247,6 +1286,7 @@ namespace System.Management.Automation
                 _formatDBManager = value;
             }
         }
+
         private TypeInfoDataBaseManager _formatDBManager;
 
         /// <summary>
@@ -1260,6 +1300,7 @@ namespace System.Management.Automation
                 return transactionManager;
             }
         }
+
         internal PSTransactionManager transactionManager;
 
         internal Assembly AddAssembly(string name, string filename, out Exception error)
@@ -1283,6 +1324,7 @@ namespace System.Management.Automation
                 // we should ignore this assembly.
                 return loadedAssembly;
             }
+
             AssemblyCache.Add(loadedAssembly.GetName().Name, loadedAssembly);
             return loadedAssembly;
         }
@@ -1373,14 +1415,15 @@ namespace System.Management.Automation
             {
                 error = null;
             }
+
             return loadedAssembly;
         }
 
         /// <summary>
         /// Report an initialization-time error.
         /// </summary>
-        /// <param name="resourceString">resource string</param>
-        /// <param name="arguments">arguments</param>
+        /// <param name="resourceString">resource string.</param>
+        /// <param name="arguments">arguments.</param>
         internal void ReportEngineStartupError(string resourceString, params object[] arguments)
         {
             try
@@ -1410,7 +1453,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Report an initialization-time error
         /// </summary>
-        /// <param name="error">error to report</param>
+        /// <param name="error">error to report.</param>
         internal void ReportEngineStartupError(string error)
         {
             try
@@ -1597,9 +1640,9 @@ namespace System.Management.Automation
         /// with LoadFrom, which are in a different loaded context than Load, can still be used to
         /// resolve types.
         /// </summary>
-        /// <param name="sender">The event sender</param>
-        /// <param name="args">The event args</param>
-        /// <returns>The resolve assembly or null if not found</returns>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="args">The event args.</param>
+        /// <returns>The resolve assembly or null if not found.</returns>
         private static Assembly PowerShellAssemblyResolveHandler(object sender, ResolveEventArgs args)
         {
             ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
@@ -1612,6 +1655,7 @@ namespace System.Management.Automation
                     return assembly;
                 }
             }
+
             return null;
         }
 #endif

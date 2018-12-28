@@ -116,7 +116,7 @@ namespace System.Management.Automation.Internal
         /// Process the data received from the runspace pool
         /// on the server
         /// </summary>
-        /// <param name="receivedData">data received</param>
+        /// <param name="receivedData">data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             // verify if this data structure handler is the intended recipient
@@ -140,6 +140,7 @@ namespace System.Management.Automation.Internal
                         RemoteHostCall remoteHostCall = RemoteHostCall.Decode(receivedData.Data);
                         RemoteHostCallReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostCall>(remoteHostCall));
                     }
+
                     break;
 
                 case RemotingDataType.RunspacePoolInitData:
@@ -151,6 +152,7 @@ namespace System.Management.Automation.Internal
                         RSPoolInitInfoReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<RunspacePoolInitInfo>(initInfo));
                     }
+
                     break;
 
                 case RemotingDataType.RunspacePoolStateInfo:
@@ -165,6 +167,7 @@ namespace System.Management.Automation.Internal
 
                         NotifyAssociatedPowerShells(stateInfo);
                     }
+
                     break;
 
                 case RemotingDataType.ApplicationPrivateData:
@@ -175,6 +178,7 @@ namespace System.Management.Automation.Internal
                         ApplicationPrivateDataReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<PSPrimitiveDictionary>(applicationPrivateData));
                     }
+
                     break;
 
                 case RemotingDataType.RunspacePoolOperationResponse:
@@ -184,6 +188,7 @@ namespace System.Management.Automation.Internal
 
                         SetMaxMinRunspacesResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
+
                     break;
 
                 case RemotingDataType.PSEventArgs:
@@ -195,6 +200,7 @@ namespace System.Management.Automation.Internal
 
                         PSEventArgsReceived.SafeInvoke(this, new RemoteDataEventArgs<PSEventArgs>(psEventArgs));
                     }
+
                     break;
             }
         }
@@ -203,14 +209,13 @@ namespace System.Management.Automation.Internal
         /// Creates a PowerShell data structure handler instance associated
         /// with this runspace pool data structure handler
         /// </summary>
-        /// <param name="shell">associated powershell</param>
-        /// <returns>PowerShell data structure handler object</returns>
+        /// <param name="shell">associated powershell.</param>
+        /// <returns>PowerShell data structure handler object.</returns>
         internal ClientPowerShellDataStructureHandler CreatePowerShellDataStructureHandler(
             ClientRemotePowerShell shell)
         {
             BaseClientCommandTransportManager clientTransportMgr =
-                RemoteSession.SessionDataStructureHandler.
-                    CreateClientCommandTransportManager(shell, shell.NoInput);
+                RemoteSession.SessionDataStructureHandler.CreateClientCommandTransportManager(shell, shell.NoInput);
 
             return new ClientPowerShellDataStructureHandler(
                 clientTransportMgr, _clientRunspacePoolId, shell.InstanceId);
@@ -220,7 +225,7 @@ namespace System.Management.Automation.Internal
         /// Creates a PowerShell instances on the server, associates it
         /// with this runspace pool and invokes
         /// </summary>
-        /// <param name="shell">the client remote powershell</param>
+        /// <param name="shell">the client remote powershell.</param>
         internal void CreatePowerShellOnServerAndInvoke(ClientRemotePowerShell shell)
         {
             // add to associated powershell list and send request to server
@@ -228,6 +233,7 @@ namespace System.Management.Automation.Internal
             {
                 _associatedPowerShellDSHandlers.Add(shell.InstanceId, shell.DataStructureHandler);
             }
+
             shell.DataStructureHandler.RemoveAssociation +=
                 new EventHandler(HandleRemoveAssociation);
 
@@ -284,7 +290,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// send the host response to the server
         /// </summary>
-        /// <param name="hostResponse">host response object to send</param>
+        /// <param name="hostResponse">host response object to send.</param>
         internal void SendHostResponseToServer(RemoteHostResponse hostResponse)
         {
             SendDataAsync(hostResponse.Encode(), DataPriorityType.PromptResponse);
@@ -293,7 +299,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Send a message to the server instructing it to reset its runspace state.
         /// </summary>
-        /// <param name="callId">Caller Id</param>
+        /// <param name="callId">Caller Id.</param>
         internal void SendResetRunspaceStateToServer(long callId)
         {
             RemoteDataObject message =
@@ -305,7 +311,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// sent a message to modify the max runspaces of the runspace pool
         /// </summary>
-        /// <param name="maxRunspaces">new maxrunspaces to set</param>
+        /// <param name="maxRunspaces">new maxrunspaces to set.</param>
         /// <param name="callId">call id on which the calling method will
         /// be blocked on</param>
         internal void SendSetMaxRunspacesToServer(int maxRunspaces, long callId)
@@ -319,7 +325,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Send a message to modify the min runspaces of the runspace pool
         /// </summary>
-        /// <param name="minRunspaces">new minrunspaces to set</param>
+        /// <param name="minRunspaces">new minrunspaces to set.</param>
         /// <param name="callId">call id on which the calling method will
         /// be blocked on</param>
         internal void SendSetMinRunspacesToServer(int minRunspaces, long callId)
@@ -419,7 +425,7 @@ namespace System.Management.Automation.Internal
         /// Send the data specified as a RemoteDataObject asynchronously
         /// to the runspace pool on the remote session
         /// </summary>
-        /// <param name="data">data to send</param>
+        /// <param name="data">data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should be
         /// the one used within the code</remarks>
         private void SendDataAsync(RemoteDataObject data)
@@ -432,8 +438,8 @@ namespace System.Management.Automation.Internal
         /// session with the specified priority
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="data">data to be sent to server</param>
-        /// <param name="priority">priority with which to send data</param>
+        /// <param name="data">data to be sent to server.</param>
+        /// <param name="priority">priority with which to send data.</param>
         internal void SendDataAsync<T>(RemoteDataObject<T> data, DataPriorityType priority)
         {
             _transportManager.DataToBeSentCollection.Add<T>(data, priority);
@@ -443,8 +449,8 @@ namespace System.Management.Automation.Internal
         /// Send the data asynchronously to runspace pool driver on remote
         /// session with the specified priority
         /// </summary>
-        /// <param name="data">data object to send</param>
-        /// <param name="priority">priority with which to send data</param>
+        /// <param name="data">data object to send.</param>
+        /// <param name="priority">priority with which to send data.</param>
         internal void SendDataAsync(PSObject data, DataPriorityType priority)
         {
             RemoteDataObject<PSObject> dataToBeSent = RemoteDataObject<PSObject>.CreateFrom(RemotingDestination.Server,
@@ -471,8 +477,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Handler for handling all session events
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="e">object describing this event</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="e">object describing this event.</param>
         private void HandleClientRemoteSessionStateChanged(
                         object sender, RemoteSessionStateEventArgs e)
         {
@@ -495,6 +501,7 @@ namespace System.Management.Automation.Internal
                         // occur multiple time in v2 remoting.
                         return;
                     }
+
                     _createRunspaceCalled = true;
                 }
 
@@ -506,6 +513,7 @@ namespace System.Management.Automation.Internal
                     _clientRunspacePoolId, _minRunspaces, _maxRunspaces, RemoteSession.RemoteRunspacePoolInternal, _host,
                     argumentsWithVersionTable));
             }
+
             if (e.SessionStateInfo.State == RemoteSessionState.NegotiationSendingOnConnect)
             {
                 // send connect message to the server.
@@ -528,6 +536,7 @@ namespace System.Management.Automation.Internal
                 {
                     dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
                 }
+
                 foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
                 {
                     dsHandler.CloseConnectionAsync(_closingReason);
@@ -616,6 +625,7 @@ namespace System.Management.Automation.Internal
                 {
                     dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
                 }
+
                 foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
                 {
                     dsHandler.ProcessDisconnect(stateInfo);
@@ -657,8 +667,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets the ClientPowerShellDataStructureHandler instance for the specified id
         /// </summary>
-        /// <param name="clientPowerShellId">id of the client remote powershell</param>
-        /// <returns>ClientPowerShellDataStructureHandler object</returns>
+        /// <param name="clientPowerShellId">id of the client remote powershell.</param>
+        /// <returns>ClientPowerShellDataStructureHandler object.</returns>
         private ClientPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
             (Guid clientPowerShellId)
         {
@@ -680,8 +690,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Remove the association of the powershell from the runspace pool
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="e">unused</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="e">unused.</param>
         private void HandleRemoveAssociation(object sender, EventArgs e)
         {
             Dbg.Assert(sender is ClientPowerShellDataStructureHandler, @"sender of the event
@@ -746,6 +756,7 @@ namespace System.Management.Automation.Internal
                 {
                     dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
                 }
+
                 foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
                 {
                     dsHandler.TransportManager.PrepareForDisconnect();
@@ -764,6 +775,7 @@ namespace System.Management.Automation.Internal
             {
                 dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
             }
+
             foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
             {
                 dsHandler.TransportManager.ReadyForDisconnect -= HandleReadyForDisconnect;
@@ -835,6 +847,7 @@ namespace System.Management.Automation.Internal
             {
                 dsHandlers = new List<ClientPowerShellDataStructureHandler>(_associatedPowerShellDSHandlers.Values);
             }
+
             foreach (ClientPowerShellDataStructureHandler dsHandler in dsHandlers)
             {
                 dsHandler.ProcessRobustConnectionNotification(e);
@@ -844,8 +857,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Forwards the session create completion event.
         /// </summary>
-        /// <param name="sender">transport sender</param>
-        /// <param name="eventArgs">CreateCompleteEventArgs</param>
+        /// <param name="sender">transport sender.</param>
+        /// <param name="eventArgs">CreateCompleteEventArgs.</param>
         private void HandleSessionCreateCompleted(object sender, CreateCompleteEventArgs eventArgs)
         {
             SessionCreateCompleted.SafeInvoke<CreateCompleteEventArgs>(this, eventArgs);
@@ -950,7 +963,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         public void Dispose(bool disposing)
         {
             if (disposing)
@@ -1076,7 +1089,7 @@ namespace System.Management.Automation.Internal
 
         internal void HandleReconnectCompleted(object sender, EventArgs args)
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Connected, (Int32)connectionStates.Reconnecting);
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Connected, (int)connectionStates.Reconnecting);
 
             ReconnectCompleted.SafeInvoke(this, new RemoteDataEventArgs<Exception>(null));
             return;
@@ -1084,7 +1097,7 @@ namespace System.Management.Automation.Internal
 
         internal void HandleConnectCompleted(object sender, EventArgs args)
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Connected, (Int32)connectionStates.Connecting);
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Connected, (int)connectionStates.Connecting);
 
             ConnectCompleted.SafeInvoke(this, new RemoteDataEventArgs<Exception>(null));
             return;
@@ -1135,7 +1148,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Send the host response to the server
         /// </summary>
-        /// <param name="hostResponse">host response to send</param>
+        /// <param name="hostResponse">host response to send.</param>
         internal void SendHostResponseToServer(RemoteHostResponse hostResponse)
         {
             RemoteDataObject<PSObject> dataToBeSent =
@@ -1189,7 +1202,7 @@ namespace System.Management.Automation.Internal
         /// Process the data received from the runspace pool
         /// on the server
         /// </summary>
-        /// <param name="receivedData">data received</param>
+        /// <param name="receivedData">data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             // verify if this data structure handler is the intended recipient
@@ -1215,6 +1228,7 @@ namespace System.Management.Automation.Internal
                         InvocationStateInfoReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<PSInvocationStateInfo>(stateInfo));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellOutput:
@@ -1232,6 +1246,7 @@ namespace System.Management.Automation.Internal
                         OutputReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<object>(outputObject));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellErrorRecord:
@@ -1252,6 +1267,7 @@ namespace System.Management.Automation.Internal
                         ErrorReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<ErrorRecord>(errorRecord));
                     }
+
                     break;
                 case RemotingDataType.PowerShellDebug:
                     {
@@ -1261,6 +1277,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellDebug)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellVerbose:
@@ -1271,6 +1288,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellVerbose)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellWarning:
@@ -1281,6 +1299,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellWarning)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellProgress:
@@ -1291,6 +1310,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellProgress)));
                     }
+
                     break;
 
                 case RemotingDataType.PowerShellInformationStream:
@@ -1301,6 +1321,7 @@ namespace System.Management.Automation.Internal
                             new RemoteDataEventArgs<InformationalMessage>(
                                 new InformationalMessage(record, RemotingDataType.PowerShellInformationStream)));
                     }
+
                     break;
 
                 case RemotingDataType.RemoteHostCallUsingPowerShellHost:
@@ -1308,12 +1329,14 @@ namespace System.Management.Automation.Internal
                         RemoteHostCall remoteHostCall = RemoteHostCall.Decode(receivedData.Data);
                         HostCallReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostCall>(remoteHostCall));
                     }
+
                     break;
 
                 default:
                     {
                         Dbg.Assert(false, "we should not be encountering this");
                     }
+
                     break;
             }
         }
@@ -1401,7 +1424,7 @@ namespace System.Management.Automation.Internal
             InvocationStateInfoReceived.SafeInvoke(this,
                 new RemoteDataEventArgs<PSInvocationStateInfo>(stateInfo));
 
-            Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Disconnected, (Int32)connectionStates.Connected);
+            Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Disconnected, (int)connectionStates.Connected);
         }
 
         /// <summary>
@@ -1412,8 +1435,8 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal void ReconnectAsync()
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Reconnecting, (Int32)connectionStates.Disconnected);
-            if ((currentState != (Int32)connectionStates.Disconnected))
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Reconnecting, (int)connectionStates.Disconnected);
+            if ((currentState != (int)connectionStates.Disconnected))
             {
                 Dbg.Assert(false, "Pipeline DS Handler is in unexpected connection state");
 
@@ -1427,7 +1450,7 @@ namespace System.Management.Automation.Internal
         //Called from session DSHandler. Connects to a remote powershell instance.
         internal void ConnectAsync()
         {
-            Int32 currentState = Interlocked.CompareExchange(ref _connectionState, (Int32)connectionStates.Connecting, (Int32)connectionStates.Disconnected);
+            int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Connecting, (int)connectionStates.Disconnected);
 
             // Connect is called for *reconstruct* connection case and so
             // we need to set up all transport manager callbacks.
@@ -1506,7 +1529,7 @@ namespace System.Management.Automation.Internal
         /// Send the data specified as a RemoteDataObject asynchronously
         /// to the powershell on server
         /// </summary>
-        /// <param name="data">data to send</param>
+        /// <param name="data">data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should be
         /// the one used within the code</remarks>
         private void SendDataAsync(RemoteDataObject data)
@@ -1518,8 +1541,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Handle data added to input
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="e">information describing this event</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="e">information describing this event.</param>
         private void HandleInputDataReady(object sender, EventArgs e)
         {
             // make sure only one thread calls the WriteInput.
@@ -1570,7 +1593,7 @@ namespace System.Management.Automation.Internal
         /// Helper method to add transport manager callbacks and set transport
         /// manager disconnected state.
         /// </summary>
-        /// <param name="inDisconnectMode">Boolean</param>
+        /// <param name="inDisconnectMode">Boolean.</param>
         private void SetupTransportManager(bool inDisconnectMode)
         {
             TransportManager.WSManTransportErrorOccured += HandleTransportError;
@@ -1593,7 +1616,7 @@ namespace System.Management.Automation.Internal
             Connected = 1, Disconnected = 3, Reconnecting = 4, Connecting = 5
         }
 
-        private Int32 _connectionState = (Int32)connectionStates.Connected;
+        private int _connectionState = (int)connectionStates.Connected;
 
         // Contains the associated session closed reason exception if any,
         // otherwise is null.

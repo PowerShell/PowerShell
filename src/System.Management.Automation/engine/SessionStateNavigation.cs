@@ -57,7 +57,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } //GetParentPath
+        }
 
         /// <summary>
         /// Gets the path to the parent object for the given object
@@ -430,6 +430,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -477,7 +478,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } //NormalizeRelativePath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
@@ -636,7 +637,7 @@ namespace System.Management.Automation
         /// Tests the specified character for equality with one of the powershell path separators and
         /// returns true if it matches.
         /// </summary>
-        /// <param name="c">The character to test</param>
+        /// <param name="c">The character to test.</param>
         /// <returns>True if the character is a path separator.</returns>
         private bool IsPathSeparator(char c)
         {
@@ -830,6 +831,7 @@ namespace System.Management.Automation
             {
                 provider = CurrentDrive.Provider;
             }
+
             if (context.Drive == null)
             {
                 bool isProviderQualified = LocationGlobber.IsProviderQualifiedPath(parent);
@@ -845,12 +847,14 @@ namespace System.Management.Automation
                     {
                         drive = provider.HiddenDrive;
                     }
+
                     context.Drive = drive;
                 }
                 else
                 {
                     context.Drive = CurrentDrive;
                 }
+
                 result = MakePath(provider, parent, child, context);
 
                 if (isAbsolute)
@@ -867,6 +871,7 @@ namespace System.Management.Automation
                 provider = context.Drive.Provider;
                 result = MakePath(provider, parent, child, context);
             }
+
             return result;
         }
 
@@ -1279,6 +1284,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1646,6 +1652,7 @@ namespace System.Management.Automation
 
                 return MoveItemDynamicParameters(providerInstance, providerPaths[0], destination, newContext);
             }
+
             return null;
         }
 
@@ -1730,13 +1737,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion MoveItem
 
         #endregion NavigationCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

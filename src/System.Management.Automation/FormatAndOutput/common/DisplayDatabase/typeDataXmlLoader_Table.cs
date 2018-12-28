@@ -47,12 +47,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
+
                         autosizeNodeFound = true;
                         bool tempVal;
                         if (!this.ReadBooleanNode(n, out tempVal))
                         {
                             return null; // fatal error
                         }
+
                         tableBody.autosize = tempVal;
                     }
                     else if (MatchNodeName(n, XmlTags.TableHeadersNode))
@@ -135,6 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                             return null; // fatal error
                         }
+
                         k++;
                     }
                 }
@@ -240,6 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 return chd;
             }
         }
@@ -257,6 +261,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectPositiveInteger, ComputeCurrentXPath(), FilePath));
                 return false;
             }
+
             return true;
         }
 
@@ -287,6 +292,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidAlignmentValue, ComputeCurrentXPath(), FilePath, alignmentString));
                 return false; // fatal error
             }
+
             return true;
         }
 
@@ -333,6 +339,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 if (tableBody.defaultDefinition == null)
                 {
                     //Error at XPath {0} in file {1}: There must be at least one default {2}.
@@ -372,6 +379,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; //fatal
                         }
+
                         LoadColumnEntries(n, trd);
                         if (trd.rowItemDefinitionList == null)
                         {
@@ -385,6 +393,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; //fatal
                         }
+
                         multiLineFound = true;
                         if (!this.ReadBooleanNode(n, out trd.multiLine))
                         {
@@ -396,6 +405,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 return trd;
             }
         }

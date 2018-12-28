@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter CodeSigningCert
         {
             get { return _codeSigningCert; }
+
             set { _codeSigningCert = value; }
         }
 
@@ -113,6 +114,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 match = true;
             }
+
             return match;
         }
 
@@ -213,12 +215,14 @@ namespace Microsoft.PowerShell.Commands
                 fResult = Security.NativeMethods.CertCloseStore(handle, 0);
                 handle = IntPtr.Zero;
             }
+
             return fResult;
         }
 
         public IntPtr Handle
         {
             get { return handle; }
+
             set { handle = value; }
         }
     }
@@ -245,6 +249,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _storeHandle = null;        // release the old handle
             }
+
             if (_storeHandle == null)
             {
                 _valid = false;
@@ -325,6 +330,7 @@ namespace Microsoft.PowerShell.Commands
                 throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.CRYPT_E_NOT_FOUND);
             }
+
             if (Valid)
             {
                 certContext = Security.NativeMethods.CertEnumCertificatesInStore(
@@ -335,6 +341,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 certContext = IntPtr.Zero;
             }
+
             return certContext;
         }
 
@@ -347,6 +354,7 @@ namespace Microsoft.PowerShell.Commands
                 throw Marshal.GetExceptionForHR(
                                     Security.NativeMethods.CRYPT_E_NOT_FOUND);
             }
+
             if (Valid)
             {
                 if (DownLevelHelper.HashLookupSupported())
@@ -375,6 +383,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             break;
                         }
+
                         X509Certificate2 cert = new X509Certificate2(certContext);
                         if (String.Equals(
                                     cert.Thumbprint,
@@ -386,6 +395,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return certContext;
         }
 
@@ -567,6 +577,7 @@ namespace Microsoft.PowerShell.Commands
                         s_certPathRegex = new Regex(certPathPattern, options);
                     }
                 }
+
                 return s_certPathRegex;
             }
         }
@@ -903,6 +914,7 @@ namespace Microsoft.PowerShell.Commands
                 string errorId = "CannotCreateUserStore";
                 ThrowInvalidOperation(errorId, message);
             }
+
             Security.NativeMethods.CertOpenStoreFlags StoreFlags =
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_CREATE_NEW_FLAG |
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
@@ -1019,6 +1031,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
 
@@ -1355,7 +1368,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        static private string EnsureDriveIsRooted(string path)
+        private static string EnsureDriveIsRooted(string path)
         {
             string result = path;
 
@@ -1380,7 +1393,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        static private ErrorRecord CreateErrorRecord(string path,
+        private static ErrorRecord CreateErrorRecord(string path,
                                               CertificateProviderItem itemType)
         {
             Exception e = null;
@@ -1491,7 +1504,7 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(er);
         }
 
-        static private string NormalizePath(string path)
+        private static string NormalizePath(string path)
         {
             if (path.Length > 0)
             {
@@ -1510,7 +1523,7 @@ namespace Microsoft.PowerShell.Commands
             return path;
         }
 
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_pathSeparators);
             string[] result = null;
@@ -1545,8 +1558,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Delete private key
         /// </summary>
-        /// <param name="pProvInfo"> key prov info </param>
-        /// <returns> no return </returns>
+        /// <param name="pProvInfo">key prov info.</param>
+        /// <returns>No return.</returns>
 
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptSetProperty(System.IntPtr,System.String,System.Void*,System.Int32,System.Int32)")]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptFreeObject(System.IntPtr)")]
@@ -1654,6 +1667,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ThrowErrorRemoting(stat);
                     }
+
                     hCNGKey = IntPtr.Zero;
                 }
                 finally
@@ -1671,10 +1685,10 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the cert store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        /// <param name="storeName"> the store name </param>
-        /// <param name="fDeleteKey"> boolean to specify whether or not to delete private key </param>
-        /// <param name = "sourcePath"> source path </param>
-        /// <returns> no return </returns>
+        /// <param name="storeName">the store name.</param>
+        /// <param name="fDeleteKey">boolean to specify whether or not to delete private key.</param>
+        /// <param name = "sourcePath">source path.</param>
+        /// <returns>No return.</returns>
 
         private void RemoveCertStore(string storeName, bool fDeleteKey, string sourcePath)
         {
@@ -1733,11 +1747,11 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the a single cert from the store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        /// <param name="cert"> an X509Certificate2 object </param>
-        /// <param name="fDeleteKey"> boolean to specify whether or not to delete private key </param>
-        /// <param name="fMachine"> machine context or user </param>
-        /// <param name = "sourcePath"> source path </param>
-        /// <returns> no return </returns>
+        /// <param name="cert">an X509Certificate2 object.</param>
+        /// <param name="fDeleteKey">boolean to specify whether or not to delete private key.</param>
+        /// <param name="fMachine">machine context or user.</param>
+        /// <param name = "sourcePath">source path.</param>
+        /// <returns>No return.</returns>
         private void RemoveCertItem(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
         {
             if (cert != null)
@@ -1768,11 +1782,11 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the cert from the store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        /// <param name="cert"> an X509Certificate2 object </param>
-        /// <param name="fDeleteKey"> boolean to specify whether or not to delete private key </param>
-        /// <param name="fMachine"> machine context or user </param>
-        /// <param name = "sourcePath"> source path </param>
-        /// <returns> no return </returns>
+        /// <param name="cert">an X509Certificate2 object.</param>
+        /// <param name="fDeleteKey">boolean to specify whether or not to delete private key.</param>
+        /// <param name="fMachine">machine context or user.</param>
+        /// <param name = "sourcePath">source path.</param>
+        /// <returns>No return.</returns>
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoRemove(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
@@ -1850,8 +1864,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Commit store for UserDS store
         /// </summary>
-        /// <param name="storeHandle"> an IntPtr for store handle </param>
-        /// <returns> no return </returns>
+        /// <param name="storeHandle">an IntPtr for store handle.</param>
+        /// <returns>No return.</returns>
         private void CommitUserDS(IntPtr storeHandle)
         {
             if (!Security.NativeMethods.CertControlStore(
@@ -1867,11 +1881,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Delete the cert from the original store and add to the destination store
         /// </summary>
-        /// <param name="destination"> destination path </param>
-        /// <param name="cert"> an X509Certificate2 </param>
-        /// <param name="store"> an X509NativeStore </param>
-        /// <param name="sourcePath"> source path </param>
-        /// <returns> no return </returns>
+        /// <param name="destination">destination path.</param>
+        /// <param name="cert">an X509Certificate2.</param>
+        /// <param name="store">an X509NativeStore.</param>
+        /// <param name="sourcePath">source path.</param>
+        /// <returns>No return.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoMove(string destination, X509Certificate2 cert, X509NativeStore store, string sourcePath)
         {
@@ -1928,10 +1942,10 @@ namespace Microsoft.PowerShell.Commands
         /// fetches the store-location/store/certificate at the
         /// specified path.
         /// </summary>
-        /// <param name="path"> path to the item </param>
-        /// <param name="test"> True if this is to only for an ItemExists call. Returns True / False.</param>
-        /// <param name="isContainer"> set to true if item exists and is a container </param>
-        /// <returns> item at the path </returns>
+        /// <param name="path">path to the item.</param>
+        /// <param name="test">True if this is to only for an ItemExists call. Returns True / False.</param>
+        /// <param name="isContainer">set to true if item exists and is a container.</param>
+        /// <returns>Item at the path.</returns>
         private object GetItemAtPath(string path, bool test, out bool isContainer)
         {
             Utils.CheckArgForNull(path, "path");
@@ -1993,6 +2007,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             ThrowItemNotFound(path, CertificateProviderItem.StoreLocation);
                         }
+
                         break;
 
                     case 2:
@@ -2051,6 +2066,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             item = new X509Certificate2(certContext);
                         }
+
                         store.FreeCert(certContext);
 
                         break;
@@ -2227,16 +2243,15 @@ namespace Microsoft.PowerShell.Commands
         /// Helper function to get store-location/store/cert at
         /// the specified path.
         /// </summary>
-        /// <param name="path"> path to the item  </param>
-        /// <param name="recurse"> whether we need to recursively find all </param>
+        /// <param name="path">path to the item.</param>
+        /// <param name="recurse">whether we need to recursively find all.</param>
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        /// <param name="returnNames"> whether we only need the names </param>
-        /// <param name="filter"> filter info </param>
-        /// <returns> Does not return a value </returns>
-        /// <remarks>  </remarks>
+        /// <param name="returnNames">whether we only need the names.</param>
+        /// <param name="filter">filter info.</param>
+        /// <returns> Does not return a value.</returns>
         private void GetChildItemsOrNames(
             string path,
             bool recurse,
@@ -2297,6 +2312,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteItemObject(thingToReturn, l.LocationName, true);
                     }
+
                     childPath = l.LocationName;
                     if (recurse)
                     {
@@ -2343,8 +2359,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get the name of the specified certificate
         /// </summary>
-        /// <param name="cert">  </param>
-        /// <returns> cert name  </returns>
+        /// <param name="cert"></param>
+        /// <returns>Cert name .</returns>
         /// <remarks> we use Thumbprint as the name  </remarks>
         private static string GetCertName(X509Certificate2 cert)
         {
@@ -2354,11 +2370,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get cert objects or their name at the specified path
         /// </summary>
-        /// <param name="path"> path to cert </param>
-        /// <param name="pathElements"> path elements </param>
-        /// <param name="returnNames"> whether we should return only the names (instead of objects) </param>
-        /// <param name="filter"> filter info </param>
-        /// <returns> Does not return a value </returns>
+        /// <param name="path">path to cert.</param>
+        /// <param name="pathElements">path elements.</param>
+        /// <param name="returnNames">whether we should return only the names (instead of objects).</param>
+        /// <param name="filter">filter info.</param>
+        /// <returns>Does not return a value.</returns>
         private void GetCertificatesOrNames(string path,
                                              string[] pathElements,
                                              bool returnNames,
@@ -2398,8 +2414,10 @@ namespace Microsoft.PowerShell.Commands
                         PSObject myPsObj = new PSObject(cert);
                         thingToReturn = (object)myPsObj;
                     }
+
                     WriteItemObject(thingToReturn, certPath, false);
                 }
+
                 certContext = store.GetNextCert(certContext);
             }
         }
@@ -2407,8 +2425,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get X509StoreLocation object at path
         /// </summary>
-        /// <param name="path">  </param>
-        /// <returns> X509StoreLocation object </returns>
+        /// <param name="path"></param>
+        /// <returns>X509StoreLocation object.</returns>
         private X509StoreLocation GetStoreLocation(string path)
         {
             //
@@ -2429,10 +2447,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get the X509NativeStore object at path
         /// </summary>
-        /// <param name="path"> path to store  </param>
-        /// <param name="test"> True if this should be a test for path existence. Returns True or False</param>
-        /// <param name="pathElements"> path elements </param>
-        /// <returns> X509NativeStore object </returns>
+        /// <param name="path">path to store.</param>
+        /// <param name="test">True if this should be a test for path existence. Returns True or False.</param>
+        /// <param name="pathElements">path elements.</param>
+        /// <returns>X509NativeStore object.</returns>
         private X509NativeStore GetStore(string path, bool test, string[] pathElements)
         {
             X509StoreLocation location = GetStoreLocation(pathElements[0]);
@@ -2457,10 +2475,10 @@ namespace Microsoft.PowerShell.Commands
         /// gets the X509NativeStore at the specified path.
         /// Adds to cache if not already there.
         /// </summary>
-        /// <param name="storePath"> path to the store </param>
-        /// <param name="storeName"> name of store (path leaf element) </param>
-        /// <param name="storeLocation"> location of store (CurrentUser or LocalMachine) </param>
-        /// <returns> X509NativeStore object </returns>
+        /// <param name="storePath">path to the store.</param>
+        /// <param name="storeName">name of store (path leaf element).</param>
+        /// <param name="storeLocation">location of store (CurrentUser or LocalMachine).</param>
+        /// <returns>X509NativeStore object.</returns>
         private X509NativeStore GetStore(string storePath,
                                    string storeName,
                                    X509StoreLocation storeLocation)
@@ -2469,6 +2487,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowItemNotFound(storePath, CertificateProviderItem.Store);
             }
+
             if (s_storeCache != null)
             {
                 if (s_storeCache.Location != storeLocation ||
@@ -2492,12 +2511,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets X509NativeStore objects or their name at the specified path.
         /// </summary>
-        /// <param name="path"> path to the store </param>
-        /// <param name="recurse"> recursively return all items if true </param>
-        /// <param name="returnNames">  </param>
-        /// <param name="filter"> filter info </param>
-        /// <returns> Does not return a value </returns>
-        /// <remarks>  </remarks>
+        /// <param name="path">path to the store.</param>
+        /// <param name="recurse">recursively return all items if true.</param>
+        /// <param name="returnNames"></param>
+        /// <param name="filter">filter info.</param>
+        /// <returns> Does not return a value.</returns>
         private void GetStoresOrNames(
             string path,
             bool recurse,
@@ -2598,6 +2616,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return filter;
         }
 
@@ -2609,6 +2628,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 includeArchivedCerts = true;
             }
+
             return includeArchivedCerts;
         }
 
@@ -2635,6 +2655,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     break;
 
                 case CertificatePurpose.DocumentEncryption:
@@ -2642,6 +2663,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     break;
 
                 default:
@@ -2825,6 +2847,7 @@ namespace Microsoft.PowerShell.Commands
                 _location = value;
             }
         }
+
         private StoreLocation _location = StoreLocation.CurrentUser;
 
         /// <summary>
@@ -2908,6 +2931,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 match = true;
             }
+
             return match;
         }
 
@@ -3068,7 +3092,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly char[] s_separators = new char[] { '/', '\\' };
-        static private string[] GetPathElements(string path)
+        private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_separators);
             string[] result = null;
@@ -3180,7 +3204,7 @@ namespace Microsoft.PowerShell.Commands
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
             if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) &&
-                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
+                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture) == -1)
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
                 try
@@ -3258,6 +3282,7 @@ namespace Microsoft.PowerShell.Commands
 
                 s_isWin8Set = true;
             }
+
             return s_isWin8;
         }
 

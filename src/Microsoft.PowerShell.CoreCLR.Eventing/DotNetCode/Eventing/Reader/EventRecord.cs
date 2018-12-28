@@ -22,28 +22,40 @@ namespace System.Diagnostics.Eventing.Reader
     public abstract class EventRecord : IDisposable
     {
         public abstract int Id { get; }
+
         public abstract byte? Version { get; }
+
         public abstract byte? Level { get; }
+
         public abstract int? Task { get; }
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "matell: Shipped public in 3.5, breaking change to fix now.")]
         public abstract short? Opcode { get; }
+
         public abstract long? Keywords { get; }
 
         public abstract long? RecordId { get; }
 
         public abstract string ProviderName { get; }
+
         public abstract Guid? ProviderId { get; }
+
         public abstract string LogName { get; }
 
         public abstract int? ProcessId { get; }
+
         public abstract int? ThreadId { get; }
+
         public abstract string MachineName { get; }
+
         public abstract SecurityIdentifier UserId { get; }
+
         public abstract DateTime? TimeCreated { get; }
 
         public abstract Guid? ActivityId { get; }
+
         public abstract Guid? RelatedActivityId { get; }
+
         public abstract int? Qualifiers { get; }
 
         public abstract string FormatDescription();
@@ -53,7 +65,9 @@ namespace System.Diagnostics.Eventing.Reader
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "matell: Shipped public in 3.5, breaking change to fix now.")]
         public abstract string OpcodeDisplayName { get; }
+
         public abstract string TaskDisplayName { get; }
+
         public abstract IEnumerable<string> KeywordsDisplayNames { get; }
 
         public abstract EventBookmark Bookmark { get; }
@@ -67,6 +81,7 @@ namespace System.Diagnostics.Eventing.Reader
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         protected virtual void Dispose(bool disposing) { }
     }
 }

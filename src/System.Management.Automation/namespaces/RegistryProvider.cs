@@ -115,6 +115,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.InvalidArgument,
                     drive.Root));
             }
+
             return drive;
         }
 
@@ -1011,6 +1012,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 return;
                             }
+
                             SetRegistryValue(newKey, String.Empty, newItem, kind, path, false);
                         }
                     }
@@ -1552,6 +1554,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.InvalidArgument,
                     destinationPath));
             }
+
             return result;
         }
 
@@ -1808,9 +1811,11 @@ namespace Microsoft.PowerShell.Commands
 
                     notePropertyName = GetLocalizedDefaultToken();
                 }
+
                 propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
                 valueAdded = true;
             }
+
             key.Close();
 
             if (valueAdded)
@@ -2011,10 +2016,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         propertyNameToAdd = GetLocalizedDefaultToken();
                     }
+
                     result.Properties.Add(new PSNoteProperty(propertyNameToAdd, defaultValue));
                     addedOnce = true;
                 }
             }
+
             key.Close();
 
             if (addedOnce)
@@ -2246,6 +2253,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
                 hadAMatch = true;
                 // Confirm the set item with the user
 
@@ -2411,6 +2419,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("sourcePath");
             }
+
             if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException("destinationPath");
@@ -2510,6 +2519,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("sourcePath");
             }
+
             if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException("destinationPath");
@@ -3053,6 +3063,7 @@ namespace Microsoft.PowerShell.Commands
 
                             valueNameToMatch = GetLocalizedDefaultToken();
                         }
+
                         hadAMatch = true;
                         filteredCollection.Add(valueName);
                     }
@@ -3090,9 +3101,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// IT resets the a registry key value to its default
         /// </summary>
-        /// <param name="key">Key whose value has to be reset</param>
-        /// <param name="valueName">name of the value to reset</param>
-        /// <returns>default value the key was set to</returns>
+        /// <param name="key">Key whose value has to be reset.</param>
+        /// <param name="valueName">name of the value to reset.</param>
+        /// <returns>Default value the key was set to.</returns>
         private object ResetRegistryKeyValue(IRegistryWrapper key, string valueName)
         {
             RegistryValueKind valueKind = key.GetValueKind(valueName);
@@ -3107,27 +3118,32 @@ namespace Microsoft.PowerShell.Commands
                     {
                         defaultValue = new byte[0];
                     }
+
                     break;
                 case RegistryValueKind.DWord:
                     {
                         defaultValue = (int)0;
                     }
+
                     break;
                 case RegistryValueKind.ExpandString:
                 case RegistryValueKind.String:
                     {
                         defaultValue = string.Empty;
                     }
+
                     break;
                 case RegistryValueKind.MultiString:
                     {
                         defaultValue = new string[0];
                     }
+
                     break;
                 case RegistryValueKind.QWord:
                     {
                         defaultValue = (long)0;
                     }
+
                     break;
             }
 
@@ -3156,6 +3172,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, valueName));
             }
+
             return defaultValue;
         }
 
@@ -3182,6 +3199,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = true;
             }
+
             return result;
         }
 
@@ -3189,8 +3207,8 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="path">path to check</param>
-        /// <returns>false if the operation is not allowed</returns>
+        /// <param name="path">path to check.</param>
+        /// <returns>False if the operation is not allowed.</returns>
         private bool CheckOperationNotAllowedOnHiveContainer(string path)
         {
             if (IsHiveContainer(path))
@@ -3201,6 +3219,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, path));
                 return false;
             }
+
             return true;
         }
 
@@ -3208,8 +3227,8 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="sourcePath">source path to check</param>
-        /// <param name="destinationPath">destination path to check</param>
+        /// <param name="sourcePath">source path to check.</param>
+        /// <param name="destinationPath">destination path to check.</param>
         private bool CheckOperationNotAllowedOnHiveContainer(string sourcePath, string destinationPath)
         {
             if (IsHiveContainer(sourcePath))
@@ -3219,6 +3238,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, sourcePath));
                 return false;
             }
+
             if (IsHiveContainer(destinationPath))
             {
                 string message =
@@ -3227,6 +3247,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, destinationPath));
                 return false;
             }
+
             return true;
         }
 
@@ -3269,13 +3290,14 @@ namespace Microsoft.PowerShell.Commands
                         return new RegistryWrapper(s_wellKnownHives[k]);
                 }
             }
+
             return null;
         }
 
         /// <summary>
         /// Creates the parent for the keypath specified by <paramref name="path"/>.
         /// </summary>
-        /// <param name="path">RegistryKey path</param>
+        /// <param name="path">RegistryKey path.</param>
         /// <returns>
         /// True if key is created or already exist,False otherwise.
         /// </returns>
@@ -3449,6 +3471,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(unauthorizedAccessException, unauthorizedAccessException.GetType().FullName, ErrorCategory.PermissionDenied, path));
                 return result;
             }
+
             return result;
         }
 
@@ -3740,9 +3763,9 @@ namespace Microsoft.PowerShell.Commands
         /// helper to wrap property values when sent to the pipeline into an PSObject;
         /// it adds the name of the property as a note.
         /// </summary>
-        /// <param name="value">The property to be written</param>
-        /// <param name="propertyName">Name of the property being written</param>
-        /// <param name="path">The path of the item being written</param>
+        /// <param name="value">The property to be written.</param>
+        /// <param name="propertyName">Name of the property being written.</param>
+        /// <param name="path">The path of the item being written.</param>
         private void WriteWrappedPropertyObject(object value, string propertyName, string path)
         {
             PSObject result = new PSObject();
@@ -3752,6 +3775,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 propertyNameToAdd = GetLocalizedDefaultToken();
             }
+
             result.Properties.Add(new PSNoteProperty(propertyNameToAdd, value));
 
             WritePropertyObject(result, path);
@@ -3850,14 +3874,15 @@ namespace Microsoft.PowerShell.Commands
 
                     // If kind is Unknown then just leave the value as-is.
             }
+
             return value;
         }
 
         /// <summary>
         /// helper to infer the RegistryValueKind from an object
         /// </summary>
-        /// <param name="value">object whose RegistryValueKind has to be determined</param>
-        /// <returns>corresponding RegistryValueKind</returns>
+        /// <param name="value">object whose RegistryValueKind has to be determined.</param>
+        /// <returns>Corresponding RegistryValueKind.</returns>
         private static RegistryValueKind GetValueKindFromObject(object value)
         {
             if (value == null)
@@ -3876,27 +3901,31 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = RegistryValueKind.DWord;
             }
+
             if (valueType == typeof(string))
             {
                 result = RegistryValueKind.String;
             }
+
             if (valueType == typeof(string[]))
             {
                 result = RegistryValueKind.MultiString;
             }
+
             if (valueType == typeof(long))
             {
                 result = RegistryValueKind.QWord;
             }
+
             return result;
         }
 
         /// <summary>
         /// Helper to get RegistryValueKind for a Property
         /// </summary>
-        /// <param name="key">RegistryKey containing property</param>
-        /// <param name="valueName">Property for which RegistryValueKind is requested</param>
-        /// <returns>RegistryValueKind of the property. If the property does not exit,returns RegistryValueKind.Unknown</returns>
+        /// <param name="key">RegistryKey containing property.</param>
+        /// <param name="valueName">Property for which RegistryValueKind is requested.</param>
+        /// <returns>RegistryValueKind of the property. If the property does not exit,returns RegistryValueKind.Unknown.</returns>
         private static RegistryValueKind GetValueKindForProperty(IRegistryWrapper key, string valueName)
         {
             try
@@ -3923,9 +3952,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// helper to read back an existing registry key value
         /// </summary>
-        /// <param name="key">key to read the value from</param>
-        /// <param name="valueName">name of the value to read</param>
-        /// <returns>value of the key, null if it could not retrieve
+        /// <param name="key">key to read the value from.</param>
+        /// <param name="valueName">name of the value to read.</param>
+        /// <returns>Value of the key, null if it could not retrieve
         /// it because known exceptions were thrown, else an exception is percolated up
         /// </returns>
         private static object ReadExistingKeyValue(IRegistryWrapper key, string valueName)
@@ -3947,6 +3976,7 @@ namespace Microsoft.PowerShell.Commands
             catch (System.UnauthorizedAccessException)
             {
             }
+
             return null;
         }
 
@@ -4007,7 +4037,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="type">
         /// The type as specified by the user that should be parsed into a RegistryValueKind enum.
         /// </param>
-        /// <param name="kind"> output for the RegistryValueKind for the string</param>
+        /// <param name="kind">output for the RegistryValueKind for the string.</param>
         /// <returns>
         /// true if the conversion succeeded
         /// </returns>

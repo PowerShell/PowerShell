@@ -88,6 +88,7 @@ namespace System.Management.Automation.Remoting
         internal Fragmentor Fragmentor
         {
             get { return _fragmentor; }
+
             set
             {
                 Dbg.Assert(value != null, "Fragmentor cannot be null.");
@@ -307,7 +308,7 @@ namespace System.Management.Automation.Remoting
         private long _currentObjectId;
         private long _currentFrgId;
         // max deserialized object size in bytes
-        private Nullable<int> _maxReceivedObjectSize;
+        private int? _maxReceivedObjectSize;
         private int _totalReceivedObjectSizeSoFar;
         private bool _isCreateByClientTM;
 
@@ -374,7 +375,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set { _maxReceivedObjectSize = value; }
         }
@@ -659,6 +660,7 @@ namespace System.Management.Automation.Remoting
                     {
                         ReleaseResources();
                     }
+
                     _numberOfThreadsProcessing--;
                 }
             }
@@ -674,6 +676,7 @@ namespace System.Management.Automation.Remoting
             {
                 _dataToProcessStream.Dispose();
             }
+
             _currentObjectId = 0;
             _currentFrgId = 0;
             _totalReceivedObjectSizeSoFar = 0;
@@ -759,6 +762,7 @@ namespace System.Management.Automation.Remoting
             {
                 _recvdData[index] = new ReceiveDataCollection(defragmentor, createdByClientTM);
             }
+
             _isCreateByClientTM = createdByClientTM;
         }
         #endregion
@@ -768,7 +772,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the total data received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedDataSize
+        internal int? MaximumReceivedDataSize
         {
             set
             {
@@ -779,7 +783,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set
             {

@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// Add brokered properties for easy access to important properties
         /// of security descriptor
         /// </summary>
-        static internal void AddBrokeredProperties(
+        internal static void AddBrokeredProperties(
             Collection<PSObject> results,
             bool audit,
             bool allCentralAccessPolicies)
@@ -306,6 +306,7 @@ namespace Microsoft.PowerShell.Commands
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
                 dacl = dos.GetAccessRules(true, true, typeof(NTAccount));
             }
+
             return dacl;
         }
 
@@ -343,6 +344,7 @@ namespace Microsoft.PowerShell.Commands
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
                 sacl = dos.GetAuditRules(true, true, typeof(NTAccount));
             }
+
             return sacl;
         }
 
@@ -379,10 +381,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw new Win32Exception((int)rs);
                 }
+
                 if (pSacl == IntPtr.Zero)
                 {
                     return null;
                 }
+
                 NativeMethods.ACL sacl = new NativeMethods.ACL();
                 sacl = Marshal.PtrToStructure<NativeMethods.ACL>(pSacl);
                 if (sacl.AceCount == 0)
@@ -403,8 +407,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         break;
                     }
+
                     pAce += ace.AceSize;
                 }
+
                 IntPtr pSid = pAce + Marshal.SizeOf(new NativeMethods.SYSTEM_AUDIT_ACE()) -
                     Marshal.SizeOf(new uint());
                 bool ret = NativeMethods.IsValidSid(pSid);
@@ -441,6 +447,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null; // file does not have the scope ace
             }
+
             int capIdSize = capId.BinaryLength;
             byte[] capIdArray = new byte[capIdSize];
             capId.GetBinaryForm(capIdArray, 0);
@@ -463,6 +470,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw new Win32Exception((int)rs);
                 }
+
                 if (capCount == 0 || caps == IntPtr.Zero)
                 {
                     return null;
@@ -512,6 +520,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw new Win32Exception((int)rs);
                 }
+
                 Dbg.Diagnostics.Assert(capCount < 0xFFFF,
                     "Too many central access policies");
                 if (capCount == 0 || caps == IntPtr.Zero)
@@ -543,11 +552,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         throw new Win32Exception(Marshal.GetLastWin32Error());
                     }
+
                     SecurityIdentifier sid = new SecurityIdentifier(pCapId);
                     policies[capIdx] += " (" + sid.ToString() + ")";
 
                     capPtr += Marshal.SizeOf(cap);
                 }
+
                 return policies;
             }
             finally
@@ -686,6 +697,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -705,6 +717,7 @@ namespace Microsoft.PowerShell.Commands
                 _audit = value;
             }
         }
+
         private SwitchParameter _audit;
 
 #if CORECLR
@@ -735,6 +748,7 @@ namespace Microsoft.PowerShell.Commands
                 allCentralAccessPolicies = value;
             }
         }
+
         private SwitchParameter allCentralAccessPolicies;
 #endif
 
@@ -800,7 +814,6 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(er);
                 }
             }
-
             else
             {
                 foreach (string p in Path)
@@ -951,6 +964,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         private object _securityDescriptor;
@@ -1127,6 +1141,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         throw new Win32Exception((int)rs);
                     }
+
                     Dbg.Diagnostics.Assert(capCount < 0xFFFF,
                         "Too many central access policies");
                     if (capCount == 0 || caps == IntPtr.Zero)
@@ -1151,9 +1166,11 @@ namespace Microsoft.PowerShell.Commands
                             pCapId = cap.CAPID;
                             break;
                         }
+
                         capPtr += Marshal.SizeOf(cap);
                     }
                 }
+
                 if (pCapId == IntPtr.Zero)
                 {
                     Exception e = new ArgumentException(UtilsStrings.InvalidCentralAccessPolicyIdentifier);
@@ -1164,11 +1181,13 @@ namespace Microsoft.PowerShell.Commands
                         AclObject));
                     return IntPtr.Zero;
                 }
+
                 ret = NativeMethods.IsValidSid(pCapId);
                 if (!ret)
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
+
                 uint sidSize = NativeMethods.GetLengthSid(pCapId);
 
                 // Calculate the size of the SACL with one CAPID ACE, align to DWORD.
@@ -1215,6 +1234,7 @@ namespace Microsoft.PowerShell.Commands
                     Marshal.FreeHGlobal(pSacl);
                     pSacl = IntPtr.Zero;
                 }
+
                 rs = NativeMethods.LsaFreeMemory(caps);
                 Dbg.Diagnostics.Assert(rs == NativeMethods.STATUS_SUCCESS,
                     "LsaFreeMemory failed: " + rs.ToString(CultureInfo.CurrentCulture));

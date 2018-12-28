@@ -54,6 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.statusDescription = theStatusDescription;
             }
+
             this.percentageCompleted = thePercentageCompleted;
             this.secondsRemaining = theSecondsRemaining;
         }

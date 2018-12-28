@@ -18,6 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class XmlFileLoadInfo
     {
         internal XmlFileLoadInfo() { }
+
         internal XmlFileLoadInfo(string dir, string path, ConcurrentBag<string> errors, string psSnapinName)
         {
             fileDirectory = dir;
@@ -25,6 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.errors = errors;
             this.psSnapinName = psSnapinName;
         }
+
         internal string fileDirectory = null;
         internal string filePath = null;
         internal ConcurrentBag<string> errors;
@@ -168,9 +170,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// entry point for the loader algorithm
         /// </summary>
-        /// <param name="info">information needed to load the file</param>
-        /// <param name="db">database instance to load the file into</param>
-        /// <param name="expressionFactory">expression factory to validate script blocks</param>
+        /// <param name="info">information needed to load the file.</param>
+        /// <param name="db">database instance to load the file into.</param>
+        /// <param name="expressionFactory">expression factory to validate script blocks.</param>
         /// <param name="authorizationManager">
         /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
         /// </param>
@@ -181,7 +183,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// True if the format data has been pre-validated (build time, manual testing, etc) so that validation can be
         /// skipped at runtime.
         /// </param>
-        /// <returns>true if successful</returns>
+        /// <returns>True if successful.</returns>
         internal bool LoadXmlFile(
             XmlFileLoadInfo info,
             TypeInfoDataBase db,
@@ -250,9 +252,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 catch (Exception e) // will rethrow
                 {
                     //Error in file {0}: {1}
+
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, FilePath, e.Message));
                     throw;
                 }
+
                 if (this.HasErrors)
                 {
                     return false;
@@ -270,11 +274,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// entry point for the loader algorithm to load formatting data from ExtendedTypeDefinition
         /// </summary>
-        /// <param name="typeDefinition">the ExtendedTypeDefinition instance to load formatting data from</param>
-        /// <param name="db">database instance to load the formatting data into</param>
-        /// <param name="expressionFactory">expression factory to validate the script block</param>
+        /// <param name="typeDefinition">the ExtendedTypeDefinition instance to load formatting data from.</param>
+        /// <param name="db">database instance to load the formatting data into.</param>
+        /// <param name="expressionFactory">expression factory to validate the script block.</param>
         /// <param name="isBuiltInFormatData">do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
-        /// <param name="isForHelp">true when the view is for help output</param>
+        /// <param name="isForHelp">true when the view is for help output.</param>
         /// <returns></returns>
         internal bool LoadFormattingData(
             ExtendedTypeDefinition typeDefinition,
@@ -309,10 +313,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             catch (Exception e) // will rethrow
             {
                 //Error in formatting data "{0}": {1}
+
                 this.ReportErrorForLoadingFromObjectModel(
                     StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFormattingData, typeDefinition.TypeName, e.Message), typeDefinition.TypeName);
                 throw;
             }
+
             if (this.HasErrors)
             {
                 return false;
@@ -326,8 +332,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// load the content of the XML document into the data instance.
         /// It assumes that the XML document has been successfully loaded
         /// </summary>
-        /// <param name="doc">XML document to load from, cannot be null</param>
-        /// <param name="db"> instance of the databaseto load into</param>
+        /// <param name="doc">XML document to load from, cannot be null.</param>
+        /// <param name="db">instance of the databaseto load into.</param>
         private void LoadData(XmlDocument doc, TypeInfoDataBase db)
         {
             if (doc == null)
@@ -366,6 +372,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 ProcessDuplicateNode(n);
                             }
+
                             typeGroupsFound = true;
                             LoadTypeGroups(db, n);
                         }
@@ -375,6 +382,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 ProcessDuplicateNode(n);
                             }
+
                             viewDefinitionsFound = true;
                             LoadViewDefinitions(db, n);
                         }
@@ -384,6 +392,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 ProcessDuplicateNode(n);
                             }
+
                             controlDefinitionsFound = true;
                             LoadControlDefinitions(n, db.formatControlDefinitionHolder.controlDefinitionList);
                         }
@@ -410,9 +419,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     WideControl
         ///     CustomControl
         /// </summary>
-        /// <param name="typeDefinition">ExtendedTypeDefinition instances to load from, cannot be null</param>
-        /// <param name="db">instance of the database to load into</param>
-        /// <param name="isForHelpOutput">true if the formatter is used for formatting help objects</param>
+        /// <param name="typeDefinition">ExtendedTypeDefinition instances to load from, cannot be null.</param>
+        /// <param name="db">instance of the database to load into.</param>
+        /// <param name="isForHelpOutput">true if the formatter is used for formatting help objects.</param>
         private void LoadData(ExtendedTypeDefinition typeDefinition, TypeInfoDataBase db, bool isForHelpOutput)
         {
             if (typeDefinition == null)
@@ -444,7 +453,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Load the view into a ViewDefinition
         /// </summary>
-        /// <param name="typeNames">the TypeName tag under SelectedBy tag</param>
+        /// <param name="typeNames">the TypeName tag under SelectedBy tag.</param>
         /// <param name="formatView"></param>
         /// <param name="viewIndex"></param>
         /// <returns></returns>
@@ -506,6 +515,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     view.groupBy.startGroup.labelTextToken = new TextToken { text = control.GroupBy.Label };
                 }
+
                 if (control.GroupBy.CustomControl != null)
                 {
                     view.groupBy.startGroup.control = LoadCustomControlFromObjectModel(control.GroupBy.CustomControl, viewIndex, firstTypeName);
@@ -670,6 +680,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         trd.rowItemDefinitionList = null;
                         return;
                     }
+
                     FieldPropertyToken fpt = new FieldPropertyToken();
                     fpt.expression = expression;
                     fpt.fieldFormattingDirective.formatString = column.FormatString;
@@ -780,6 +791,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return null; // fatal error
             }
+
             return listBody;
         }
 
@@ -879,6 +891,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         lved.itemDefinitionList = null;
                         return; // fatal
                     }
+
                     FieldPropertyToken fpt = new FieldPropertyToken();
                     fpt.expression = expression;
                     fpt.fieldFormattingDirective.formatString = listItem.FormatString;
@@ -935,6 +948,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // if we have no default entry definition, it means there was a failure
                 return null;
             }
+
             return wideBody;
         }
 
@@ -979,6 +993,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     wideBody.optionalEntryList.Add(wved);
                 }
             }
+
             if (wideBody.defaultEntryDefinition == null)
             {
                 this.ReportErrorForLoadingFromObjectModel(
@@ -1012,6 +1027,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return null; // fatal
             }
+
             FieldPropertyToken fpt = new FieldPropertyToken();
             fpt.expression = expression;
             fpt.fieldFormattingDirective.formatString = wideItem.FormatString;
@@ -1055,10 +1071,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 cced.appliesTo = LoadAppliesToSectionFromObjectModel(entry.SelectedBy.TypeNames, entry.SelectedBy.SelectionCondition);
             }
+
             foreach (var item in entry.CustomItems)
             {
                 cced.itemDefinition.formatTokenList.Add(LoadFormatTokenFromObjectModel(item, viewIndex, typeName));
             }
+
             return cced;
         }
 
@@ -1114,6 +1132,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 frameToken.itemDefinition.formatTokenList.Add(LoadFormatTokenFromObjectModel(i, viewIndex, typeName));
             }
+
             return frameToken;
         }
 
@@ -1144,6 +1163,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             ProcessDuplicateNode(n);
                         }
+
                         showErrorsAsMessagesFound = true;
                         if (ReadBooleanNode(n, out tempVal))
                             db.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages = tempVal;
@@ -1154,6 +1174,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             ProcessDuplicateNode(n);
                         }
+
                         showErrorsInFormattedOutputFound = true;
                         if (ReadBooleanNode(n, out tempVal))
                             db.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput = tempVal;
@@ -1201,6 +1222,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             ProcessDuplicateNode(n);
                         }
+
                         enumerableExpansionsFound = true;
                         db.defaultSettingsSection.enumerableExpansionDirectiveList =
                             LoadEnumerableExpansionDirectiveList(n);
@@ -1231,6 +1253,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.EnumerableExpansionNode));
                             return null; // fatal error
                         }
+
                         retVal.Add(eed);
                     }
                     else
@@ -1239,6 +1262,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
             }
+
             return retVal;
         }
 
@@ -1278,6 +1302,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             return null; //fatal
                         }
+
                         bool success = EnumerableExpansionConversion.Convert(s, out eed.enumerableExpansion);
                         if (!success)
                         {
@@ -1291,6 +1316,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 return eed;
             }
         }
@@ -1316,7 +1342,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ProcessUnknownNode(n);
                     }
                 }
-            } //using
+            }
         }
 
         private void LoadTypeGroup(TypeInfoDataBase db, XmlNode typeGroupNode, int index)
@@ -1466,6 +1492,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 tr.name = val;
                 return tr;
             }
+
             return null;
         }
 
@@ -1479,6 +1506,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 tgr.name = val;
                 return tgr;
             }
+
             return null;
         }
 
@@ -1505,6 +1533,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.SelectionSetNameNode, XmlTags.TypeNameNode);
                             return null;
                         }
+
                         typeGroupFound = true;
                         TypeGroupReference tgr = LoadTypeGroupReference(n);
                         if (tgr != null)
@@ -1523,6 +1552,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.SelectionSetNameNode, XmlTags.TypeNameNode);
                             return null;
                         }
+
                         typeFound = true;
                         TypeReference tr = LoadTypeReference(n);
                         if (tr != null)
@@ -1541,6 +1571,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
+
                         expressionNodeFound = true;
                         if (!expressionMatch.ProcessNode(n))
                             return null; // fatal error
@@ -1573,6 +1604,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         return null; // fatal error
                     }
+
                     return retVal;
                 }
                 // failure: expression is mandatory
@@ -1610,6 +1642,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
+
                         expressionNodeFound = true;
                         if (!expressionMatch.ProcessNode(n))
                             return null; // fatal error
@@ -1621,6 +1654,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.ComplexControlNode, XmlTags.ComplexControlNameNode);
                             return null;
                         }
+
                         controlFound = true;
                         if (!controlMatch.ProcessNode(n))
                             return null; // fatal error
@@ -1632,6 +1666,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ProcessDuplicateAlternateNode(n, XmlTags.ComplexControlNode, XmlTags.ComplexControlNameNode);
                             return null;
                         }
+
                         labelFound = true;
 
                         labelTextToken = LoadLabel(n);
@@ -1661,6 +1696,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ControlLabelWithoutExpression, ComputeCurrentXPath(), FilePath));
                         return null; // fatal error
                     }
+
                     if (controlFound)
                     {
                         groupBy.startGroup.control = controlMatch.Control;
@@ -1679,6 +1715,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         return null; // fatal error
                     }
+
                     groupBy.startGroup.expression = expression;
                     return groupBy;
                 }
@@ -1706,6 +1743,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return null;
             }
+
             if (tt.resource != null)
             {
                 // inner text is optional
@@ -1783,11 +1821,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ReportMissingAttribute(XmlTags.AssemblyNameAttribute);
                 return null;
             }
+
             if (resource.baseName == null)
             {
                 ReportMissingAttribute(XmlTags.BaseNameAttribute);
                 return null;
             }
+
             if (resource.resourceId == null)
             {
                 ReportMissingAttribute(XmlTags.ResourceIdAttribute);
@@ -1824,17 +1864,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         assemblyDisplayName = resource.assemblyLocation;
                     }
+
                     break;
                 case DisplayResourceManagerCache.AssemblyBindingStatus.FoundInGac:
                     {
                         //"(Global Assembly Cache) {0}"
                         assemblyDisplayName = StringUtil.Format(FormatAndOutXmlLoadingStrings.AssemblyInGAC, resource.assemblyName);
                     }
+
                     break;
                 default:
                     {
                         assemblyDisplayName = resource.assemblyName;
                     }
+
                     break;
             }
 
@@ -1846,12 +1889,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         //Error at XPath {0} in file {1}: Assembly {2} is not found.
                         msg = StringUtil.Format(FormatAndOutXmlLoadingStrings.AssemblyNotFound, ComputeCurrentXPath(), FilePath, assemblyDisplayName);
                     }
+
                     break;
                 case DisplayResourceManagerCache.LoadingResult.ResourceNotFound:
                     {
                         //Error at XPath {0} in file {1}: Resource {2} in assembly {3} is not found.
                         msg = StringUtil.Format(FormatAndOutXmlLoadingStrings.ResourceNotFound, ComputeCurrentXPath(), FilePath, resource.baseName, assemblyDisplayName);
                     }
+
                     break;
                 case DisplayResourceManagerCache.LoadingResult.StringNotFound:
                     {
@@ -1859,8 +1904,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         msg = StringUtil.Format(FormatAndOutXmlLoadingStrings.StringResourceNotFound, ComputeCurrentXPath(), FilePath,
                             resource.resourceId, resource.baseName, assemblyDisplayName);
                     }
+
                     break;
             }
+
             this.ReportError(msg);
         }
 
@@ -1871,8 +1918,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// helper to verify the text of a string block and
         /// log an error if an exception is thrown
         /// </summary>
-        /// <param name="scriptBlockText">script block string to verify</param>
-        /// <returns>true if parsed correctly, false if failed</returns>
+        /// <param name="scriptBlockText">script block string to verify.</param>
+        /// <returns>True if parsed correctly, false if failed.</returns>
         internal bool VerifyScriptBlock(string scriptBlockText)
         {
             try
@@ -1890,6 +1937,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 Diagnostics.Assert(false, "TypeInfoBaseLoader.VerifyScriptBlock unexpected exception " + e.GetType().FullName);
                 throw;
             }
+
             return true;
         }
 
@@ -1902,6 +1950,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _loader = loader;
             }
+
             internal bool MatchNode(XmlNode n)
             {
                 return _loader.MatchNodeName(n, XmlTags.PropertyNameNode) || _loader.MatchNodeName(n, XmlTags.ScriptBlockNode);
@@ -1929,6 +1978,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         _fatalError = true;
                         return false; // fatal error
                     }
+
                     return true;
                 }
                 else if (_loader.MatchNodeName(n, XmlTags.ScriptBlockNode))
@@ -1958,6 +2008,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         _fatalError = true;
                         return false; // fatal error
                     }
+
                     return true;
                 }
                 // this should never happen if the API is used correctly
@@ -1980,6 +2031,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _loader.ReportMissingNodes(new string[] { XmlTags.PropertyNameNode, XmlTags.ScriptBlockNode });
                     return null;
                 }
+
                 return _token;
             }
 
@@ -2021,6 +2073,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             _loader.ProcessDuplicateNode(n);
                             return false; // fatal error
                         }
+
                         expressionNodeFound = true;
                         if (!expressionMatch.ProcessNode(n))
                             return false; // fatal error
@@ -2049,6 +2102,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             _loader.ProcessDuplicateNode(n);
                             return false; // fatal error
                         }
+
                         textNodeFound = true;
                         textToken = _loader.LoadText(n);
                         if (textToken == null)
@@ -2087,6 +2141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         _formatString = formatString;
                     }
+
                     _expression = expression;
                 }
                 else
@@ -2111,7 +2166,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             internal string FormatString { get { return _formatString; } }
+
             internal TextToken TextToken { get { return _textToken; } }
+
             internal ExpressionToken Expression { get { return _expression; } }
 
             private string _formatString;
@@ -2153,6 +2210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         return false;
                     }
+
                     ControlReference controlRef = new ControlReference();
                     controlRef.name = name;
                     controlRef.controlType = typeof(ComplexControlBody);

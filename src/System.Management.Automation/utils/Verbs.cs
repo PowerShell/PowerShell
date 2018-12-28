@@ -189,7 +189,7 @@ namespace System.Management.Automation
         /// Continually inspect a resource for changes
         /// </summary>
         public const string Watch = "Watch";
-    }//VerbsCommon
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates data.
@@ -320,7 +320,7 @@ namespace System.Management.Automation
         /// Update a resource with new elements or refresh from a source of truth
         /// </summary>
         public const string Update = "Update";
-    }//VerbsData
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates the lifecycle of something.
@@ -485,7 +485,7 @@ namespace System.Management.Automation
         /// Trace activities performed by a specified operation
         /// </summary>
         public const string Trace = "Trace";
-    }//VerbsDiagnostic
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to communicate with something.
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         /// TO write - communicate or express. Display data.
         /// </summary>
         public const string Write = "Write";
-    }//VerbsCommunications
+    }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to secure a resource.
@@ -565,7 +565,7 @@ namespace System.Management.Automation
         /// Remove guards from a resource that prevent it from attack or loss
         /// </summary>
         public const string Unprotect = "Unprotect";
-    }//VerbsSecurity
+    }
 
     /// <summary>
     /// Canonical verbs that don't fit into any of the other categories.
@@ -590,7 +590,7 @@ namespace System.Management.Automation
         {
             return VerbDescriptionStrings.ResourceManager.GetString(verb);
         }
-    }//VerbDescriptions
+    }
 
     /// <summary>
     /// Verb Alias prefixes.
@@ -1112,7 +1112,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
         }
-    }//VerbAliasPrefixes
+    }
 
     /// <summary>
     /// Class for Verbs and Groups

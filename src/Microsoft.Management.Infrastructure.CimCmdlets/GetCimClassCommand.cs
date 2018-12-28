@@ -56,8 +56,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String ClassName
         {
             get { return className; }
+
             set { className = value; }
         }
+
         private String className;
 
         /// <summary>
@@ -77,8 +79,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String Namespace
         {
             get { return nameSpace; }
+
             set { nameSpace = value; }
         }
+
         private String nameSpace;
 
         /// <summary>
@@ -91,8 +95,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public UInt32 OperationTimeoutSec
         {
             get { return operationTimeout;}
+
             set { operationTimeout = value; }
         }
+
         private UInt32 operationTimeout;
 
         /// <summary>
@@ -107,12 +113,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSession[] CimSession
         {
             get { return cimSession;}
+
             set
             {
                 cimSession = value;
                 base.SetParameter(value, nameCimSession);
             }
         }
+
         private CimSession[] cimSession;
 
         /// <summary>
@@ -131,12 +139,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String[] ComputerName
         {
             get { return computerName; }
+
             set
             {
                 computerName = value;
                 base.SetParameter(value, nameComputerName);
             }
         }
+
         private String[] computerName;
 
         /// <summary>
@@ -150,8 +160,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String MethodName
         {
             get { return methodName; }
+
             set { methodName = value; }
         }
+
         private String methodName;
 
         /// <summary>
@@ -165,8 +177,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String PropertyName
         {
             get { return propertyName; }
+
             set { propertyName = value; }
         }
+
         private String propertyName;
 
         /// <summary>
@@ -180,8 +194,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public String QualifierName
         {
             get { return qualifierName; }
+
             set { qualifierName = value; }
         }
+
         private String qualifierName;
 
         #endregion
@@ -208,6 +224,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimGetCimClass = CreateOperationAgent();
             }
+
             cimGetCimClass.GetCimClass(this);
             cimGetCimClass.ProcessActions(this.CmdletOperation);
         }//End ProcessRecord()

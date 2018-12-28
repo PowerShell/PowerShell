@@ -57,12 +57,13 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("context");
             }
+
             ExecutionContext = context;
 
             // Create the working directory stack. This
             // is used for the pushd and popd commands
 
-            _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
+            _workingLocationStack = new Dictionary<string, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
 
             // Conservative choice to limit the Set-Location history in order to limit memory impact in case of a regression.
             const uint locationHistoryLimit = 20;
@@ -144,6 +145,7 @@ namespace System.Management.Automation
         {
             get { return _globberPrivate ?? (_globberPrivate = ExecutionContext.LocationGlobber); }
         }
+
         private LocationGlobber _globberPrivate;
 
         /// <summary>
@@ -157,8 +159,10 @@ namespace System.Management.Automation
         internal SessionState PublicSessionState
         {
             get { return _publicSessionState ?? (_publicSessionState = new SessionState(this)); }
+
             set { _publicSessionState = value; }
         }
+
         private SessionState _publicSessionState;
 
         /// <summary>
@@ -168,6 +172,7 @@ namespace System.Management.Automation
         {
             get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); }
         }
+
         private ProviderIntrinsics _invokeProvider;
 
         /// <summary>
@@ -193,6 +198,7 @@ namespace System.Management.Automation
             {
                 return ExecutionContext.LanguageMode;
             }
+
             set
             {
                 ExecutionContext.LanguageMode = value;
@@ -219,8 +225,8 @@ namespace System.Management.Automation
         /// <summary>
         /// See if a script is allowed to be run.
         /// </summary>
-        /// <param name="scriptPath">Path to check</param>
-        /// <returns>true if script is allowed</returns>
+        /// <param name="scriptPath">Path to check.</param>
+        /// <returns>True if script is allowed.</returns>
         internal SessionStateEntryVisibility CheckScriptVisibility(string scriptPath)
         {
             return checkPathVisibility(Scripts, scriptPath);
@@ -246,7 +252,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateCmdletEntry entry)
         {
             AddSessionStateEntry(entry, /*local*/false);
@@ -255,8 +261,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
-        /// <param name="local">If local, add cmdlet to current scope. Else, add to module scope</param>
+        /// <param name="entry">The entry to add.</param>
+        /// <param name="local">If local, add cmdlet to current scope. Else, add to module scope.</param>
         internal void AddSessionStateEntry(SessionStateCmdletEntry entry, bool local)
         {
             ExecutionContext.CommandDiscovery.AddSessionStateCmdletEntryToCache(entry, local);
@@ -265,7 +271,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateApplicationEntry entry)
         {
             this.Applications.Add(entry.Path);
@@ -274,7 +280,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateScriptEntry entry)
         {
             this.Scripts.Add(entry.Path);
@@ -376,7 +382,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Check to see if an application is allowed to be run.
         /// </summary>
-        /// <param name="applicationPath">The path to the application to check</param>
+        /// <param name="applicationPath">The path to the application to check.</param>
         /// <returns>True if application is permitted.</returns>
         internal SessionStateEntryVisibility CheckApplicationVisibility(string applicationPath)
         {
@@ -403,6 +409,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return SessionStateEntryVisibility.Private;
         }
 

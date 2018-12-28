@@ -56,6 +56,7 @@ namespace Microsoft.PowerShell.Commands
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         /// <summary>
@@ -81,6 +82,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
         #endregion Parameters
     }

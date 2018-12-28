@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _stringData;
             }
+
             set
             {
                 _stringData = value;

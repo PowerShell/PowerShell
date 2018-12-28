@@ -108,6 +108,7 @@ namespace System.Management.Automation.Tracing
             {
                 _keywordFilter |= (ulong) PSKeyword.UseAlwaysOperational;
             }
+
             if ((_channelFilter & (ulong) PSChannel.Analytic) != 0)
             {
                 _keywordFilter |= (ulong) PSKeyword.UseAlwaysAnalytic;
@@ -133,6 +134,7 @@ namespace System.Management.Automation.Tracing
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
                     _messageBuilder = new StringBuilder(200);
                 }
+
                 return _messageBuilder;
             }
         }
@@ -156,8 +158,10 @@ namespace System.Management.Automation.Tracing
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
                     _activity = Guid.NewGuid();
                 }
+
                 return _activity.Value;
             }
+
             set
             {
                 _activity = value;
@@ -169,7 +173,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="level">The PSLevel to check.</param>
         /// <param name="keywords">The PSKeyword to check.</param>
-        /// <returns>true if the specified level and keywords are enabled for logging.</returns>
+        /// <returns>True if the specified level and keywords are enabled for logging.</returns>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
             return ( ((ulong) keywords & _keywordFilter) != 0 &&
@@ -200,6 +204,7 @@ namespace System.Management.Automation.Tracing
                 {
                     _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
                 }
+
                 return _resourceManager;
             }
         }
@@ -215,6 +220,7 @@ namespace System.Management.Automation.Tracing
             {
                 return _resourceCulture;
             }
+
             set
             {
                 _resourceCulture = value;
@@ -229,6 +235,7 @@ namespace System.Management.Automation.Tracing
                 value = string.Format(CultureInfo.InvariantCulture, "Unknown resource: {0}", resourceName);
                 Diagnostics.Assert(false, value);
             }
+
             return value;
         }
 

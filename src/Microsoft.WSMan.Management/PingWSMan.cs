@@ -38,6 +38,7 @@ namespace Microsoft.WSMan.Management
         public String ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
@@ -47,6 +48,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
         }
+
         private String computername = null;
 
         /// <summary>
@@ -73,12 +75,14 @@ namespace Microsoft.WSMan.Management
         public override AuthenticationMechanism Authentication
         {
             get { return authentication; }
+
             set
             {
                 authentication = value;
                 ValidateSpecifiedAuthentication();
             }
         }
+
         private AuthenticationMechanism authentication = AuthenticationMechanism.None;
 
         /// <summary>
@@ -91,8 +95,10 @@ namespace Microsoft.WSMan.Management
         public Int32 Port
         {
             get { return port; }
+
             set { port = value; }
         }
+
         private Int32 port = 0;
 
         /// <summary>
@@ -106,8 +112,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter UseSSL
         {
             get { return usessl; }
+
             set { usessl = value; }
         }
+
         private SwitchParameter usessl;
 
         /// <summary>
@@ -119,8 +127,10 @@ namespace Microsoft.WSMan.Management
         public String ApplicationName
         {
             get { return applicationname; }
+
             set { applicationname = value; }
         }
+
         private String applicationname = null;
 
         /// <summary>

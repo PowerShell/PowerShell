@@ -80,7 +80,7 @@ try
 "@
                 $command += @'
                 $null = help NestedFn1 2>$null;
-                $result = Get-Command NestedFn1 2>$null; 
+                $result = Get-Command NestedFn1 2>$null;
                 return ($result -ne $null)
 '@
                 $isCommandAccessible = powershell.exe -noprofile -nologo -c $command
@@ -140,7 +140,7 @@ try
 
                 $mod = Import-Module -Name $moduleFilePath -Force -PassThru
 
-                # Running module function TestRestrictedSession should throw a 'script not allowed' error 
+                # Running module function TestRestrictedSession should throw a 'script not allowed' error
                 # because it runs in a 'no language' session.
                 try
                 {
@@ -667,7 +667,7 @@ try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                $result = @(TabExpansion2 '(1234 -as [IntPtr]).' 20 | % CompletionMatches | ? CompletionText -Match Pointer)
+                $result = @(TabExpansion2 '(1234 -as [IntPtr]).' 20 | ForEach-Object CompletionMatches | Where-Object CompletionText -Match Pointer)
             }
             finally
             {
@@ -977,7 +977,7 @@ try
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
 
-                $results = $sb | Start-ThreadJob -ScriptBlock { $input | foreach { & $_ } } | Wait-Job | Receive-Job
+                $results = $sb | Start-ThreadJob -ScriptBlock { $input | ForEach-Object { & $_ } } | Wait-Job | Receive-Job
             }
             finally
             {

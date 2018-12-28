@@ -52,12 +52,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return Path;
             }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -77,11 +79,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -95,11 +99,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -149,6 +155,7 @@ namespace Microsoft.PowerShell.Commands
                 _serializer.Done();
                 _serializer = null;
             }
+
             CleanUp();
         }
 
@@ -233,6 +240,7 @@ namespace Microsoft.PowerShell.Commands
                     _xw.Dispose();
                     _xw = null;
                 }
+
                 _fs.Dispose();
                 _fs = null;
             }
@@ -258,6 +266,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
@@ -290,12 +299,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return Path;
             }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         #endregion Command Line Parameters
@@ -317,6 +328,7 @@ namespace Microsoft.PowerShell.Commands
                     _helper.Dispose();
                     _helper = null;
                 }
+
                 _disposed = true;
             }
         }
@@ -383,11 +395,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _notypeinformation;
             }
+
             set
             {
                 _notypeinformation = value;
             }
         }
+
         private bool _notypeinformation;
 
         /// <summary>
@@ -598,6 +612,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
@@ -696,6 +711,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
             GC.SuppressFinalize(this);
         }
@@ -790,7 +806,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet
     {
-        # region parameters
+        #region parameters
         /// <summary>
         /// Specifies the path which contains the xml files. The default is the current user directory.
         /// </summary>
@@ -811,12 +827,14 @@ namespace Microsoft.PowerShell.Commands
         public String[] LiteralPath
         {
             get { return Path; }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -858,9 +876,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable Namespace { get; set; }
 
-        # endregion parameters
+        #endregion parameters
 
-        # region private
+        #region private
 
         private void WriteResults(XmlNodeList foundXmlNodes, string filePath)
         {
@@ -891,6 +909,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 xList = xmlNode.SelectNodes(XPath);
             }
+
             this.WriteResults(xList, filePath);
         }
 
@@ -987,7 +1006,7 @@ namespace Microsoft.PowerShell.Commands
             return xmlns;
         }
 
-        # endregion private
+        #endregion private
 
         #region override
 
@@ -1029,9 +1048,11 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(er);
                             continue;
                         }
+
                         fullresolvedPaths.AddRange(resolvedPaths);
                     }
                 }
+
                 foreach (string file in fullresolvedPaths)
                 {
                     ProcessXmlFile(file);
@@ -1090,6 +1111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 if (String.IsNullOrEmpty(value))
@@ -1102,6 +1124,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _path;
 
         /// <summary>
@@ -1148,6 +1171,7 @@ namespace Microsoft.PowerShell.Commands
                     nodeText = Node.InnerXml.Trim();
                 }
             }
+
             return nodeText;
         }
 
@@ -1177,6 +1201,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return relPath;
         }
 

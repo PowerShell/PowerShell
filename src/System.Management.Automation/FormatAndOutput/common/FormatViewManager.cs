@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // check if the type is derived from a System.Enum
             // e.g. in C#
             // enum Foo { Red, Black, Green}
+
             if (PSObjectHelper.PSObjectIsEnum(typeNames))
                 return true;
 
@@ -111,6 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                     }
+
                     if (view != null)
                     {
                         // we got a matching view from the database
@@ -151,6 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, parameters.viewName);
                     }
+
                     if (view != null)
                     {
                         _viewGenerator = SelectViewGeneratorFromViewDefinition(
@@ -162,6 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         s_formatViewBindingTracer.WriteLine(viewFound);
                         return;
                     }
+
                     s_formatViewBindingTracer.WriteLine(viewNotFound);
                     // illegal input, we have to terminate
                     ProcessUnknownViewName(errorContext, parameters.viewName, so, db, shape);
@@ -172,6 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                 }
+
                 if (view != null)
                 {
                     _viewGenerator = SelectViewGeneratorFromViewDefinition(
@@ -185,6 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     return;
                 }
+
                 s_formatViewBindingTracer.WriteLine(viewNotFound);
                 // we just select properties out of the object itself
                 _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
@@ -439,6 +445,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 viewGenerator = new ComplexViewGenerator();
             }
+
             Diagnostics.Assert(viewGenerator != null, "viewGenerator != null");
 
             viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
@@ -465,6 +472,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return true;
             }
+
             if (allProperties.Count == 3)
             {
                 foreach (MshResolvedExpressionParameterAssociation property in allProperties)
@@ -479,6 +487,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 return true;
             }
+
             if (allProperties.Count == 4)
             {
                 foreach (MshResolvedExpressionParameterAssociation property in allProperties)
@@ -494,6 +503,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 return true;
             }
+
             if (allProperties.Count == 5)
             {
                 foreach (MshResolvedExpressionParameterAssociation property in allProperties)
@@ -534,6 +544,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     outOfBandViewGenerator = new ListViewGenerator();
                 }
+
                 outOfBandViewGenerator.Initialize(errorContext, expressionFactory, db, view, null);
             }
             else
@@ -602,8 +613,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// log a failed evaluation of an PSPropertyExpression
         /// </summary>
-        /// <param name="result">PSPropertyExpressionResult containing the failed evaluation data</param>
-        /// <param name="sourceObject">object used to evaluate the PSPropertyExpression</param>
+        /// <param name="result">PSPropertyExpressionResult containing the failed evaluation data.</param>
+        /// <param name="sourceObject">object used to evaluate the PSPropertyExpression.</param>
         internal void LogPSPropertyExpressionFailedResult(PSPropertyExpressionResult result, object sourceObject)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -617,7 +628,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// log a failed formatting operation
         /// </summary>
-        /// <param name="error">string format error object </param>
+        /// <param name="error">string format error object.</param>
         internal void LogStringFormatError(StringFormatError error)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -654,7 +665,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// to be written to the error pipeline and clear the list of pending
         /// errors
         /// </summary>
-        /// <returns>list of ErrorRecord objects</returns>
+        /// <returns>List of ErrorRecord objects.</returns>
         internal List<ErrorRecord> DrainFailedResultList()
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -667,6 +678,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (errorRecord != null)
                     retVal.Add(errorRecord);
             }
+
             _formattingErrorList.Clear();
             return retVal;
         }
@@ -674,8 +686,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Conversion between an error internal representation and ErrorRecord
         /// </summary>
-        /// <param name="error">internal error object</param>
-        /// <returns>corresponding ErrorRecord instance</returns>
+        /// <param name="error">internal error object.</param>
+        /// <returns>Corresponding ErrorRecord instance.</returns>
         private static ErrorRecord GenerateErrorRecord(FormattingError error)
         {
             ErrorRecord errorRecord = null;
@@ -707,6 +719,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formattingError.formatString);
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
+
             return errorRecord;
         }
 

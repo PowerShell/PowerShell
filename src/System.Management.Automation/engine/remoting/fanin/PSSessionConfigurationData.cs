@@ -40,12 +40,13 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// </summary>
-        public String PrivateData
+        public string PrivateData
         {
             get
             {
                 return _privateData;
             }
+
             internal set
             {
                 _privateData = value;
@@ -206,11 +207,13 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "Unknown option specified");
                     }
+
                     break;
             }
         }

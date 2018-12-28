@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="s">expression</param>
+        /// <param name="s">expression.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public PSPropertyExpression(string s)
             : this(s, false)
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// Create a property expression with a wildcard pattern.
         /// </summary>
         /// <param name="s">Property name pattern to match.</param>
-        /// <param name="isResolved"><c>true</c> if no further attempts should be made to resolve wildcards</param>
+        /// <param name="isResolved"><c>true</c> if no further attempts should be made to resolve wildcards.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public PSPropertyExpression(string s, bool isResolved)
         {
@@ -74,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("s");
             }
+
             _stringValue = s;
             _isResolved = isResolved;
         }
@@ -89,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("scriptBlock");
             }
+
             Script = scriptBlock;
         }
 
@@ -180,11 +182,13 @@ namespace Microsoft.PowerShell.Commands
                     // to attempt the binding whether it's in there or not.
                     x = new PSDynamicMember(_stringValue);
                 }
+
                 List<PSMemberInfo> temp = new List<PSMemberInfo>();
                 if (x != null)
                 {
                     temp.Add(x);
                 }
+
                 members = temp;
             }
 
@@ -322,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                                         classScope: (Type) null,
                                         @static: false));
                     }
+
                     result = _getValueDynamicSite.Target.Invoke(_getValueDynamicSite, target);
                 }
 
@@ -339,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        
+
         private PSObject IfHashtableWrapAsPSCustomObject(PSObject target)
         {
             // If the object passed in is a hashtable, then turn it into a PSCustomObject so
@@ -348,6 +353,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 target = (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
             }
+
             return target;
         }
 

@@ -14,14 +14,14 @@ namespace System.Management.Automation.Internal
         // Default option for local file system enumeration:
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
-        private readonly static System.IO.EnumerationOptions s_defaultEnumerationOptions =
+        private static readonly System.IO.EnumerationOptions s_defaultEnumerationOptions =
                                         new System.IO.EnumerationOptions() { AttributesToSkip = 0 };
 
         // Default option for UNC path enumeration. Same as above plus a large buffer size.
         // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
         // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
         //    "A "large" buffer, for example, would be 16K. Typical is 4K."
-        private readonly static System.IO.EnumerationOptions s_uncPathEnumerationOptions =
+        private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
                                         new System.IO.EnumerationOptions() { AttributesToSkip = 0, BufferSize = 16384 };
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace System.Management.Automation.Internal
         internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
-            
+
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
@@ -323,8 +323,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets the list of versions under the specified module base path in descending sorted order
         /// </summary>
-        /// <param name="moduleBase">module base path</param>
-        /// <returns>sorted list of versions</returns>
+        /// <param name="moduleBase">module base path.</param>
+        /// <returns>Sorted list of versions.</returns>
         internal static List<Version> GetModuleVersionSubfolders(string moduleBase)
         {
             var versionFolders = new List<Version>();
@@ -349,6 +349,7 @@ namespace System.Management.Automation.Internal
                     versionFolders.Add(version);
                 }
             }
+
             if (versionFolders.Count > 1)
             {
                 versionFolders.Sort((x, y) => y.CompareTo(x));
@@ -364,6 +365,7 @@ namespace System.Management.Automation.Internal
                 folderName = Path.GetFileName(folderName);
                 return Version.TryParse(folderName, out version);
             }
+
             return false;
         }
 
@@ -382,7 +384,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets a list of matching commands
         /// </summary>
-        /// <param name="pattern">command pattern</param>
+        /// <param name="pattern">command pattern.</param>
         /// <param name="commandOrigin"></param>
         /// <param name="context"></param>
         /// <param name="rediscoverImportedModules"></param>
@@ -524,6 +526,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Cmdlet) == CommandTypes.Cmdlet)
                                 {
                                     yield return new CmdletInfo(commandName, implementingType: null, helpFile: null, PSSnapin: null, context: context)
@@ -531,6 +534,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Function) == CommandTypes.Function)
                                 {
                                     yield return new FunctionInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
@@ -538,6 +542,7 @@ namespace System.Management.Automation.Internal
                                         Module = tempModuleInfo
                                     };
                                 }
+
                                 if ((commandTypes & CommandTypes.Configuration) == CommandTypes.Configuration)
                                 {
                                     yield return new ConfigurationInfo(commandName, ScriptBlock.EmptyScriptBlock, context)

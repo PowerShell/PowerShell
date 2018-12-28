@@ -42,6 +42,7 @@ namespace System.Management.Automation
             {
                 return _currentWorkingDirectory;
             }
+
             set
             {
                 _currentWorkingDirectory = value;
@@ -97,6 +98,7 @@ namespace System.Management.Automation
             {
                 return _root;
             }
+
             internal set
             {
                 _root = value;
@@ -474,13 +476,13 @@ namespace System.Management.Automation
             get
             {
                 return _hidden;
-            } //get
+            }
 
             set
             {
                 _hidden = value;
             }
-        }  // Hidden
+        }
 
         /// <summary>
         /// Determines if the drive should be hidden from the user.
@@ -580,7 +582,7 @@ namespace System.Management.Automation
                     "\tDescription: {0}",
                     Description);
             }
-        }//Trace
+        }
 
         /// <summary>
         /// Compares this instance to the specified drive.
@@ -688,8 +690,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator ==(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if ((drive1Object == null) == (drive2Object == null))
             {
@@ -697,6 +699,7 @@ namespace System.Management.Automation
                 {
                     return drive1.Equals(drive2);
                 }
+
                 return true;
             }
             else
@@ -739,8 +742,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator <(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if (drive1Object == null)
             {
@@ -777,8 +780,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator >(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if ((drive1Object == null))
             {
@@ -805,7 +808,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the hash code for this instance.
         /// </summary>
-        /// <returns>The result of base.GetHashCode()</returns>
+        /// <returns>The result of base.GetHashCode().</returns>
         /// <!-- Override the base GetHashCode because the compiler complains
         /// if you don't when you implement operator== and operator!= -->
         public override int GetHashCode()
@@ -821,8 +824,9 @@ namespace System.Management.Automation
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);
             }
+
             return _noteProperty;
         }
-    }//Class PSDriveInfo
+    }
 }
 

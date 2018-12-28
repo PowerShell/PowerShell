@@ -156,7 +156,7 @@ namespace System.Management.Automation
         /// A copy constructor that creates a deep copy of the <paramref name="other"/> CommandMetadata object.
         /// Instances of Attribute and Type classes are copied by reference.
         /// </summary>
-        /// <param name="other">object to copy</param>
+        /// <param name="other">object to copy.</param>
         public CommandMetadata(CommandMetadata other)
         {
             if (other == null)
@@ -464,6 +464,7 @@ namespace System.Management.Automation
         public string DefaultParameterSetName
         {
             get { return _defaultParameterSetName; }
+
             set
             {
                 if (string.IsNullOrEmpty(value))
@@ -474,6 +475,7 @@ namespace System.Management.Automation
                 _defaultParameterSetName = value;
             }
         }
+
         private string _defaultParameterSetName = ParameterAttribute.AllParameterSets;
 
         /// <summary>
@@ -524,8 +526,10 @@ namespace System.Management.Automation
 
                 return _remotingCapability;
             }
+
             set { _remotingCapability = value; }
         }
+
         private RemotingCapability _remotingCapability = RemotingCapability.PowerShell;
 
         /// <summary>
@@ -571,11 +575,13 @@ namespace System.Management.Automation
 
                 return _parameters;
             }
+
             private set
             {
                 _parameters = value;
             }
         }
+
         private Dictionary<string, ParameterMetadata> _parameters;
         private bool _shouldGenerateCommonParameters;
 
@@ -601,6 +607,7 @@ namespace System.Management.Automation
                 return _staticCommandParameterMetadata;
             }
         }
+
         private readonly MergedCommandParameterMetadata _staticCommandParameterMetadata;
 
         /// <summary>
@@ -611,6 +618,7 @@ namespace System.Management.Automation
         {
             get { return _implementsDynamicParameters; }
         }
+
         private bool _implementsDynamicParameters;
 
         /// <summary>
@@ -619,8 +627,10 @@ namespace System.Management.Automation
         internal uint DefaultParameterSetFlag
         {
             get { return _defaultParameterSetFlag; }
+
             set { _defaultParameterSetFlag = value; }
         }
+
         private uint _defaultParameterSetFlag;
 
         /// <summary>
@@ -973,6 +983,7 @@ end
 
                 return parameters.ToString();
             }
+
             return string.Empty;
         }
 
@@ -1004,8 +1015,10 @@ end
         {{
             $PSBoundParameters['OutBuffer'] = 1
         }}
+
         $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
+
         $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
         $steppablePipeline.Begin($PSCmdlet)
     }} catch {{
@@ -1024,6 +1037,7 @@ end
         $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
         $PSBoundParameters.Add('$args', $args)
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
+
         $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
         $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)
     }} catch {{
@@ -1069,6 +1083,7 @@ end
                     $paramDictionary.Add($param.Name, $dynParam)
                 }}
             }}
+
             return $paramDictionary
         }}
     }} catch {{
@@ -1309,6 +1324,7 @@ end
             {
                 result.Add(restrictedCommand.Name, restrictedCommand);
             }
+
             return result;
         }
 

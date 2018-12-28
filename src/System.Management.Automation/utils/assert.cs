@@ -23,7 +23,7 @@ namespace System.Management.Automation
         /// <summary>
         /// calls the base class with message and sets the stack frame
         /// </summary>
-        /// <param name="message">repassed to the base class</param>
+        /// <param name="message">repassed to the base class.</param>
         internal AssertException(string message) : base(message)
         {
             // 3 will skip the assertion caller, this method and AssertException.StackTrace
@@ -67,6 +67,7 @@ namespace System.Management.Automation
                 StackFrame frame = frames[i];
                 frameString.Append(frame.ToString());
             }
+
             return frameString.ToString();
         }
 
@@ -87,6 +88,7 @@ namespace System.Management.Automation
                     return s_throwInsteadOfAssert;
                 }
             }
+
             set
             {
                 lock (s_throwInsteadOfAssertLock)
@@ -173,6 +175,7 @@ namespace System.Management.Automation
                     tracer.TraceException(e);
                     throw e;
                 }
+
                 StringBuilder builder = new StringBuilder();
                 builder.Append("ASSERT: ");
                 builder.Append(whyThisShouldNeverHappen);
@@ -192,6 +195,7 @@ namespace System.Management.Automation
                 string assertionMessage = "ASSERT: " + whyThisShouldNeverHappen + "  " + detailMessage + " ";
                 throw new AssertException(assertionMessage);
             }
+
             System.Diagnostics.Debug.Fail(whyThisShouldNeverHappen, detailMessage);
 #endif
         }

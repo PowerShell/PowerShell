@@ -90,6 +90,7 @@ namespace System.Management.Automation
                 return _fullName;
             }
         }
+
         private string _fullName;
 
         /// <summary>
@@ -102,6 +103,7 @@ namespace System.Management.Automation
                 return _psSnapinName;
             }
         }
+
         private string _psSnapinName;
 
         /// <summary>
@@ -114,6 +116,7 @@ namespace System.Management.Automation
                 return _shortName;
             }
         }
+
         private string _shortName;
 
         /// <summary>

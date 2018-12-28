@@ -77,12 +77,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Initialize the table specifying the width of each column.
         /// </summary>
-        /// <param name="leftMarginIndent">Left margin indentation</param>
-        /// <param name="screenColumns">Number of character columns on the screen</param>
-        /// <param name="columnWidths">Array of specified column widths</param>
-        /// <param name="alignment">Array of alignment flags</param>
-        /// <param name="suppressHeader">If true, suppress header printing</param>
-        /// <param name="screenRows">Number of rows on the screen</param>
+        /// <param name="leftMarginIndent">Left margin indentation.</param>
+        /// <param name="screenColumns">Number of character columns on the screen.</param>
+        /// <param name="columnWidths">Array of specified column widths.</param>
+        /// <param name="alignment">Array of alignment flags.</param>
+        /// <param name="suppressHeader">If true, suppress header printing.</param>
+        /// <param name="screenRows">Number of rows on the screen.</param>
         internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader, int screenRows = int.MaxValue)
         {
             if (leftMarginIndent < 0)
@@ -376,6 +376,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.Append(scArray[col][row]);
                     }
                 }
+
                 rows[row] = sb.ToString();
             }
 
@@ -386,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
-            if (addPadding || alignment == TextAlignment.Right)
+            if (addPadding || alignment == TextAlignment.Right || alignment == TextAlignment.Center)
             {
                 // if length is shorter, do some padding
                 for (int col = 0; col < sc.Count; col++)
@@ -395,6 +396,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, alignment, dc, addPadding);
                 }
             }
+
             return sc;
         }
 
@@ -439,6 +441,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     sb.Append(ResetConsoleVt100Code);
                 }
             }
+
             return sb.ToString();
         }
 
@@ -461,6 +464,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             s = StringUtil.Padding(padCount) + s;
                         }
+
                         break;
 
                     case TextAlignment.Center:
@@ -475,6 +479,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 s += StringUtil.Padding(padRight);
                             }
                         }
+
                         break;
 
                     default:
@@ -485,6 +490,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 s += StringUtil.Padding(padCount);
                             }
                         }
+
                         break;
                 }
             }
@@ -506,6 +512,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 s = s.Substring(s.Length - tailCount);
                                 s = PSObjectHelper.Ellipsis + s;
                             }
+
                             break;
 
                         case TextAlignment.Center:
@@ -514,6 +521,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
                                 s += PSObjectHelper.Ellipsis;
                             }
+
                             break;
 
                         default:
@@ -523,6 +531,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
                                 s += PSObjectHelper.Ellipsis;
                             }
+
                             break;
                     }
                 }
@@ -539,6 +548,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 int tailCount = dc.GetTailSplitLength(s, len);
                                 s = s.Substring(s.Length - tailCount, tailCount);
                             }
+
                             break;
 
                         case TextAlignment.Center:
@@ -546,6 +556,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // get from "abcdef" to "a"
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, len));
                             }
+
                             break;
 
                         default:
@@ -554,6 +565,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // get from "abcdef" to "a"
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, len));
                             }
+
                             break;
                     }
                 }
@@ -567,12 +579,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return s;
             }
+
             switch (alignment)
             {
                 case TextAlignment.Right:
                     {
                         s = " " + s;
                     }
+
                     break;
 
                 case TextAlignment.Center:
@@ -582,6 +596,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             s += " ";
                         }
                     }
+
                     break;
 
                 default:
@@ -592,6 +607,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             s += " ";
                         }
                     }
+
                     break;
             }
 

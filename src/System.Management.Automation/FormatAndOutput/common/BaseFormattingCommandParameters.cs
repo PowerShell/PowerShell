@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// autosize formatting flag. If true, the output command is instructed
         /// to get the "best fit" for the device screen
         /// </summary>
-        internal Nullable<bool> autosize = null;
+        internal bool? autosize = null;
 
         /// <summary>
         /// If true, the header for a table is repeated after each screen full
@@ -54,17 +54,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// errors are shown as out of band messages
         /// </summary>
-        internal Nullable<bool> showErrorsAsMessages = null;
+        internal bool? showErrorsAsMessages = null;
 
         /// <summary>
         /// errors are shown in the formatted output
         /// </summary>
-        internal Nullable<bool> showErrorsInFormattedOutput = null;
+        internal bool? showErrorsInFormattedOutput = null;
 
         /// <summary>
         /// expand IEnumerable flag.
         /// </summary>
-        internal Nullable<EnumerableExpansion> expansion = null;
+        internal EnumerableExpansion? expansion = null;
 
         /// <summary>
         /// extension mechanism for shape specific parameters
@@ -81,13 +81,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed class TableSpecificParameters : ShapeSpecificParameters
     {
-        internal Nullable<bool> hideHeaders = null;
-        internal Nullable<bool> multiLine = null;
+        internal bool? hideHeaders = null;
+        internal bool? multiLine = null;
     }
 
     internal sealed class WideSpecificParameters : ShapeSpecificParameters
     {
-        internal Nullable<int> columns = null;
+        internal int? columns = null;
     }
 
     internal sealed class ComplexSpecificParameters : ShapeSpecificParameters
@@ -190,14 +190,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ProcessEmptyStringError(originalParameterWasHashTable, invocationContext);
                 }
+
                 PSPropertyExpression ex = new PSPropertyExpression(s);
                 if (_noGlobbing)
                 {
                     if (ex.HasWildCardCharacters)
                         ProcessGlobbingCharactersError(originalParameterWasHashTable, s, invocationContext);
                 }
+
                 return ex;
             }
+
             PSTraceSource.NewArgumentException("val");
             return null;
         }
@@ -404,6 +407,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // this should never happen
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             return LanguagePrimitives.IsTrue(val);
         }
     }

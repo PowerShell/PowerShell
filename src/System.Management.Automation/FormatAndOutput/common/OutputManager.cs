@@ -104,6 +104,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     _lo.StopProcessing();
                 }
+
                 _isStopped = true;
             }
         }
@@ -156,11 +157,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             /// <summary>
             /// </summary>
-            /// <param name="typeName">ETS type name of the object to process</param>
-            /// <returns>true if there is a match</returns>
+            /// <param name="typeName">ETS type name of the object to process.</param>
+            /// <returns>True if there is a match.</returns>
             internal bool AppliesToType(string typeName)
             {
-                foreach (String s in _applicableTypes)
+                foreach (string s in _applicableTypes)
                 {
                     if (string.Equals(s, typeName, StringComparison.OrdinalIgnoreCase))
                         return true;
@@ -190,8 +191,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Initialize the pipeline manager before any object is processed
         /// </summary>
-        /// <param name="lineOutput">LineOutput to pass to the child pipelines</param>
-        /// <param name="context">ExecutionContext to pass to the child pipelines</param>
+        /// <param name="lineOutput">LineOutput to pass to the child pipelines.</param>
+        /// <param name="context">ExecutionContext to pass to the child pipelines.</param>
         internal void Initialize(LineOutput lineOutput, ExecutionContext context)
         {
             _lo = lineOutput;
@@ -201,7 +202,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// hard wired registration helper for specialized types
         /// </summary>
-        /// <param name="context">ExecutionContext to pass to the child pipeline</param>
+        /// <param name="context">ExecutionContext to pass to the child pipeline.</param>
         private void InitializeCommandsHardWired(ExecutionContext context)
         {
             // set the default handler
@@ -237,9 +238,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// register the default output command
         /// </summary>
-        /// <param name="context">ExecutionContext to pass to the child pipeline</param>
-        /// <param name="commandName">name of the command to execute</param>
-        /// <param name="commandType">Type of the command to execute</param>
+        /// <param name="context">ExecutionContext to pass to the child pipeline.</param>
+        /// <param name="commandName">name of the command to execute.</param>
+        /// <param name="commandType">Type of the command to execute.</param>
         private void RegisterCommandDefault(ExecutionContext context, string commandName, Type commandType)
         {
             CommandEntry ce = new CommandEntry();
@@ -252,7 +253,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// process an incoming parent pipeline object
         /// </summary>
-        /// <param name="so">pipeline object to process</param>
+        /// <param name="so">pipeline object to process.</param>
         internal void Process(PSObject so)
         {
             // select which pipeline should handle the object
@@ -301,8 +302,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// it selects the applicable out command (it can be the default one)
         /// to process the current pipeline object
         /// </summary>
-        /// <param name="so">pipeline object to be processed</param>
-        /// <returns>applicable command entry</returns>
+        /// <param name="so">pipeline object to be processed.</param>
+        /// <returns>Applicable command entry.</returns>
         private CommandEntry GetActiveCommandEntry(PSObject so)
         {
             string typeName = PSObjectHelper.PSObjectIsOfExactType(so.InternalTypeNames);

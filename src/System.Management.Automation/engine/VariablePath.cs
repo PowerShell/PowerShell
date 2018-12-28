@@ -133,6 +133,7 @@ namespace System.Management.Automation
                         candidateScopeUpper = "ARIABLE";
                         candidateFlags = VariablePathFlags.Variable;
                     }
+
                     break;
             }
 
@@ -156,6 +157,7 @@ namespace System.Management.Automation
                     {
                         _flags = VariablePathFlags.Variable;
                     }
+
                     _flags |= candidateFlags;
                     lastScannedColon = currentCharIndex;
                     currentCharIndex += 1;

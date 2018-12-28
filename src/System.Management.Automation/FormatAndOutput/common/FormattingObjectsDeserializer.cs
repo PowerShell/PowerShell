@@ -54,6 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return false;
             }
+
             string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
 
             if (classId == null)
@@ -83,8 +84,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// If the object is not one of the well known ones (i.e. derived from FormatInfoData)
         /// it just returns the object unchanged
         /// </summary>
-        /// <param name="so">object to deserialize</param>
-        /// <returns>deserialized object or null</returns>
+        /// <param name="so">object to deserialize.</param>
+        /// <returns>Deserialized object or null.</returns>
         internal object Deserialize(PSObject so)
         {
             var fid = PSObject.Base(so) as FormatInfoData;
@@ -163,9 +164,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// ERS helper to reconstitute a string[] out of IEnumerable property
         /// </summary>
-        /// <param name="rawObject">object to process</param>
-        /// <param name="propertyName">property to look up</param>
-        /// <returns>string[] representation of the property</returns>
+        /// <param name="rawObject">object to process.</param>
+        /// <param name="propertyName">property to look up.</param>
+        /// <returns>String[] representation of the property.</returns>
         private static string[] ReadStringArrayHelper (object rawObject, string propertyName)
         {
             // throw if the property is not there
@@ -224,14 +225,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
                 this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
+
             return DeserializeObject(PSObject.AsPSObject(memberRaw));
         }
+
         internal FormatInfoData DeserializeMandatoryMemberObject(PSObject so, string property)
         {
             FormatInfoData fid = DeserializeMemberObject(so, property);
             VerifyDataNotNull(fid, property);
             return fid;
         }
+
         private object DeserializeMemberVariable(PSObject so, string property, System.Type t, bool cannotBeNull)
         {
             object objRaw = GetProperty(so, property);
@@ -251,15 +255,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
                 this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
+
             return objRaw;
         }
 
         /// <summary>
         /// Deserialization of string without TAB expansion (RAW)
         /// </summary>
-        /// <param name="so">object whose the property belongs to</param>
-        /// <param name="property">name of the string property</param>
-        /// <returns>string out of the MsObject</returns>
+        /// <param name="so">object whose the property belongs to.</param>
+        /// <param name="property">name of the string property.</param>
+        /// <returns>String out of the MsObject.</returns>
         internal string DeserializeStringMemberVariableRaw(PSObject so, string property)
         {
             return (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);
@@ -268,9 +273,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Deserialization of string performing TAB expansion
         /// </summary>
-        /// <param name="so">object whose the property belongs to</param>
-        /// <param name="property">name of the string property</param>
-        /// <returns>string out of the MsObject</returns>
+        /// <param name="so">object whose the property belongs to.</param>
+        /// <param name="property">name of the string property.</param>
+        /// <returns>String out of the MsObject.</returns>
         internal string DeserializeStringMemberVariable(PSObject so, string property)
         {
             string val = (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);
@@ -285,6 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return (int)DeserializeMemberVariable(so, property, typeof(int), true /* cannotBeNull */);
         }
+
         internal bool DeserializeBoolMemberVariable(PSObject so, string property)
         {
             return (bool)DeserializeMemberVariable(so, property, typeof(bool), true /* cannotBeNull */);
@@ -403,6 +409,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
                 deserializer.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
+
             FormatInfoData fid = CreateInstance(classId, deserializer);
             return fid;
         }
@@ -416,6 +423,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 CreateInstanceError(PSTraceSource.NewArgumentException("clsid"), clsid, deserializer);
                 return null;
             }
+
             try
             {
                 FormatInfoData fid = ctor();
@@ -456,6 +464,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         + e.GetType().FullName);
                 throw;
             }
+
             return null;
         }
 
@@ -489,12 +498,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lst.Add(entry);
             }
         }
+
         internal static void ReadList(PSObject so, string property, List<T> lst, FormatObjectDeserializer deserializer)
         {
             if (lst == null)
             {
                 throw PSTraceSource.NewArgumentNullException("lst");
             }
+
             object memberRaw = FormatObjectDeserializer.GetProperty(so, property);
             ReadListHelper(PSObjectHelper.GetEnumerable(memberRaw), lst, deserializer);
         }
@@ -547,6 +558,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.autosizeInfo = (AutosizeInfo)deserializer.DeserializeMemberObject(so, "autosizeInfo");
         }
     }
+
     internal sealed partial class FormatEntryData : PacketInfoData
     {
         internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
@@ -575,7 +587,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             base.Deserialize(so, deserializer);
             this.hideHeader = deserializer.DeserializeBoolMemberVariable(so, "hideHeader");
-            this.hideHeader = deserializer.DeserializeBoolMemberVariable(so, "repeatHeader");
+            this.repeatHeader = deserializer.DeserializeBoolMemberVariable(so, "repeatHeader");
             FormatInfoDataListDeserializer<TableColumnInfo>.ReadList(so, "tableColumnInfoList", this.tableColumnInfoList, deserializer);
         }
     }
@@ -667,6 +679,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.alignment = deserializer.DeserializeIntMemberVariable(so, "alignment");
         }
     }
+
     internal sealed partial class FormatEntry : FormatValue
     {
         internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
@@ -676,6 +689,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.frameInfo = (FrameInfo)deserializer.DeserializeMemberObject(so, "frameInfo");
         }
     }
+
     internal sealed partial class FrameInfo : FormatInfoData
     {
         internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)

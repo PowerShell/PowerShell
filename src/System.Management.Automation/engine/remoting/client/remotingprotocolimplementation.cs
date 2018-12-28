@@ -584,11 +584,13 @@ namespace System.Management.Automation.Remoting
                     {
                         StateMachine.RaiseEvent(msgRcvArg);
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "we should not be encountering this");
                     }
+
                     break;
             }
         }
@@ -649,15 +651,17 @@ namespace System.Management.Automation.Remoting
 
                 case RemotingDataType.EncryptedSessionKey:
                     {
-                        String encryptedSessionKey = RemotingDecoder.GetEncryptedSessionKey(rcvdData.Data);
+                        string encryptedSessionKey = RemotingDecoder.GetEncryptedSessionKey(rcvdData.Data);
                         EncryptedSessionKeyReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(encryptedSessionKey));
                     }
+
                     break;
 
                 case RemotingDataType.PublicKeyRequest:
                     {
                         PublicKeyRequestReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(String.Empty));
                     }
+
                     break;
 
                 default:
@@ -745,7 +749,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -764,7 +768,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Send the specified local public key to the remote end
         /// </summary>
-        /// <param name="localPublicKey">local public key as a string</param>
+        /// <param name="localPublicKey">local public key as a string.</param>
         internal override void SendPublicKeyAsync(string localPublicKey)
         {
             _transportManager.DataToBeSentCollection.Add<object>(
@@ -775,7 +779,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Raise the public key received event
         /// </summary>
-        /// <param name="receivedData">received data</param>
+        /// <param name="receivedData">received data.</param>
         /// <remarks>This method is a hook to be called
         /// from the transport manager</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)

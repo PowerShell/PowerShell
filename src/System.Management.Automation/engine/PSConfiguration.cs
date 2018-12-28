@@ -90,6 +90,7 @@ namespace System.Management.Automation.Configuration
             {
                 throw new FileNotFoundException(value);
             }
+
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
@@ -109,6 +110,7 @@ namespace System.Management.Automation.Configuration
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
             }
+
             return modulePath;
         }
 
@@ -124,7 +126,7 @@ namespace System.Management.Automation.Configuration
         /// TODO: In a single config file, it might be better to nest this. It is unnecessary complexity until a need arises for more nested values.
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
-        /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
+        /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell".</param>
         /// <returns>The execution policy if found. Null otherwise.</returns>
         internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
@@ -137,6 +139,7 @@ namespace System.Management.Automation.Configuration
             {
                 execPolicy = rawExecPolicy;
             }
+
             return execPolicy;
         }
 
@@ -257,6 +260,7 @@ namespace System.Management.Automation.Configuration
             {
                 identity = "powershell";
             }
+
             return identity;
         }
 
@@ -277,6 +281,7 @@ namespace System.Management.Automation.Configuration
             {
                 level = PSLevel.Informational;
             }
+
             return level;
         }
 
@@ -441,7 +446,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
-        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
+        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
         private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
         {
             string fileName = GetConfigFilePath(scope);

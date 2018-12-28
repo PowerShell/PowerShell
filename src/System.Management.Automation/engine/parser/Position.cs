@@ -199,6 +199,7 @@ namespace System.Management.Automation.Language
                         {
                             errorLength = maxLineLength - prefix;
                         }
+
                         needsSuffixDots = true;
                     }
                     else
@@ -216,6 +217,7 @@ namespace System.Management.Automation.Language
                         {
                             suffix += Math.Min(totalSuffix, maxLineLength - candidateLength);
                         }
+
                         needsSuffixDots = (suffix < totalSuffix);
                     }
 
@@ -259,6 +261,7 @@ namespace System.Management.Automation.Language
             {
                 message.Insert(position.ColumnNumber - 1, " >>>> ");
             }
+
             return StringUtil.Format(ParserStrings.TraceScriptLineMessage, position.LineNumber, message.ToString());
         }
 
@@ -268,10 +271,12 @@ namespace System.Management.Automation.Language
             {
                 return start;
             }
+
             if (start == EmptyExtent)
             {
                 return end;
             }
+
             if (end == EmptyExtent)
             {
                 return start;
@@ -341,6 +346,7 @@ namespace System.Management.Automation.Language
                     if (extent.EndLineNumber != extent.StartLineNumber) return true;
                     return (column < extent.EndColumnNumber);
                 }
+
                 return false;
             }
 
@@ -387,6 +393,7 @@ namespace System.Management.Automation.Language
             {
                 line = ~line - 1;
             }
+
             return line + 1;
         }
 
@@ -403,6 +410,7 @@ namespace System.Management.Automation.Language
                 int length = _lineStartMap[line] - start;
                 return ScriptText.Substring(start, length);
             }
+
             return ScriptText.Substring(start);
         }
     }
@@ -418,9 +426,13 @@ namespace System.Management.Automation.Language
         }
 
         public string File { get { return _positionHelper.File; } }
+
         public int LineNumber { get { return _positionHelper.LineFromOffset(Offset); } }
+
         public int ColumnNumber { get { return _positionHelper.ColumnFromOffset(Offset); } }
+
         public string Line { get { return _positionHelper.Text(LineNumber); } }
+
         public int Offset { get; }
 
         internal InternalScriptPosition CloneWithNewOffset(int offset)
@@ -487,6 +499,7 @@ namespace System.Management.Automation.Language
                 {
                     return string.Empty;
                 }
+
                 return PositionHelper.ScriptText.Substring(StartOffset, EndOffset - StartOffset);
             }
         }
@@ -497,7 +510,9 @@ namespace System.Management.Automation.Language
         }
 
         internal PositionHelper PositionHelper { get; }
+
         public int StartOffset { get; }
+
         public int EndOffset { get; }
     }
 
@@ -508,24 +523,38 @@ namespace System.Management.Automation.Language
     internal sealed class EmptyScriptPosition : IScriptPosition
     {
         public string File { get { return null; } }
+
         public int LineNumber { get { return 0; } }
+
         public int ColumnNumber { get { return 0; } }
+
         public int Offset { get { return 0; } }
+
         public string Line { get { return string.Empty; } }
+
         public string GetFullScript() { return null; }
     }
 
     internal sealed class EmptyScriptExtent : IScriptExtent
     {
         public string File { get { return null; } }
+
         public IScriptPosition StartScriptPosition { get { return PositionUtilities.EmptyPosition; } }
+
         public IScriptPosition EndScriptPosition { get { return PositionUtilities.EmptyPosition; } }
+
         public int StartLineNumber { get { return 0; } }
+
         public int StartColumnNumber { get { return 0; } }
+
         public int EndLineNumber { get { return 0; } }
+
         public int EndColumnNumber { get { return 0; } }
+
         public int StartOffset { get { return 0; } }
+
         public int EndOffset { get { return 0; } }
+
         public string Text { get { return string.Empty; } }
 
         public override bool Equals(object obj)
@@ -721,6 +750,7 @@ namespace System.Management.Automation.Language
                         return _startPosition.Line.Substring(_startPosition.ColumnNumber - 1,
                                                              _endPosition.ColumnNumber - _startPosition.ColumnNumber);
                     }
+
                     return string.Format(CultureInfo.InvariantCulture, "{0}...{1}",
                                          _startPosition.Line.Substring(_startPosition.ColumnNumber),
                                          _endPosition.Line.Substring(0, _endPosition.ColumnNumber));

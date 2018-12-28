@@ -24,13 +24,14 @@ namespace System.Management.Automation.Runspaces
                 return _originInfo;
             }
         }
+
         private OriginInfo _originInfo;
 
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="errorRecord">the error record that is wrapped</param>
-        /// <param name="originInfo">origin information</param>
+        /// <param name="errorRecord">the error record that is wrapped.</param>
+        /// <param name="originInfo">origin information.</param>
         public RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo) : this(errorRecord, originInfo, null) { }
 
         /// <summary>
@@ -55,8 +56,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Serializer method for class.
         /// </summary>
-        /// <param name="info">Serializer information</param>
-        /// <param name="context">Streaming context</param>
+        /// <param name="info">Serializer information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -73,8 +74,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Deserializer constructor.
         /// </summary>
-        /// <param name="info">Serializer information</param>
-        /// <param name="context">Streaming context</param>
+        /// <param name="info">Serializer information.</param>
+        /// <param name="context">Streaming context.</param>
         protected RemotingErrorRecord(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -114,14 +115,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="progressRecord">the progress record that is wrapped</param>
-        /// <param name="originInfo">origin information</param>
+        /// <param name="progressRecord">the progress record that is wrapped.</param>
+        /// <param name="originInfo">origin information.</param>
         public RemotingProgressRecord(ProgressRecord progressRecord, OriginInfo originInfo) :
             base(Validate(progressRecord).ActivityId, Validate(progressRecord).Activity, Validate(progressRecord).StatusDescription)
         {
@@ -159,14 +161,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="message">The warning message that is wrapped</param>
-        /// <param name="originInfo">The origin information</param>
+        /// <param name="message">The warning message that is wrapped.</param>
+        /// <param name="originInfo">The origin information.</param>
         public RemotingWarningRecord(string message, OriginInfo originInfo) : base(message)
         {
             _originInfo = originInfo;
@@ -175,8 +178,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor taking WarningRecord to wrap and OriginInfo.
         /// </summary>
-        /// <param name="warningRecord">WarningRecord to wrap</param>
-        /// <param name="originInfo">OriginInfo</param>
+        /// <param name="warningRecord">WarningRecord to wrap.</param>
+        /// <param name="originInfo">OriginInfo.</param>
         internal RemotingWarningRecord(
             WarningRecord warningRecord,
             OriginInfo originInfo)
@@ -199,14 +202,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="message">The debug message that is wrapped</param>
-        /// <param name="originInfo">The origin information</param>
+        /// <param name="message">The debug message that is wrapped.</param>
+        /// <param name="originInfo">The origin information.</param>
         public RemotingDebugRecord(string message, OriginInfo originInfo) : base(message)
         {
             _originInfo = originInfo;
@@ -226,14 +230,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="message">The verbose message that is wrapped</param>
-        /// <param name="originInfo">The origin information</param>
+        /// <param name="message">The verbose message that is wrapped.</param>
+        /// <param name="originInfo">The origin information.</param>
         public RemotingVerboseRecord(string message, OriginInfo originInfo) : base(message)
         {
             _originInfo = originInfo;
@@ -253,14 +258,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _originInfo; }
         }
+
         [DataMemberAttribute()]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="record">The Information message that is wrapped</param>
-        /// <param name="originInfo">The origin information</param>
+        /// <param name="record">The Information message that is wrapped.</param>
+        /// <param name="originInfo">The origin information.</param>
         public RemotingInformationRecord(InformationRecord record, OriginInfo originInfo)
             : base(record)
         {
@@ -288,15 +294,16 @@ namespace System.Management.Automation.Remoting
         /// which this information originated
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "PSIP")]
-        public String PSComputerName
+        public string PSComputerName
         {
             get
             {
                 return _computerName;
             }
         }
+
         [DataMemberAttribute()]
-        private String _computerName;
+        private string _computerName;
 
         /// <summary>
         /// Runspace instance ID
@@ -309,6 +316,7 @@ namespace System.Management.Automation.Remoting
                 return _runspaceID;
             }
         }
+
         [DataMemberAttribute()]
         private Guid _runspaceID;
 
@@ -328,27 +336,28 @@ namespace System.Management.Automation.Remoting
                 _instanceId = value;
             }
         }
+
         [DataMemberAttribute()]
         private Guid _instanceId;
 
         /// <summary>
         /// public constructor
         /// </summary>
-        /// <param name="computerName">machine name</param>
-        /// <param name="runspaceID">instance id of runspace</param>
+        /// <param name="computerName">machine name.</param>
+        /// <param name="runspaceID">instance id of runspace.</param>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
-        public OriginInfo(String computerName, Guid runspaceID)
+        public OriginInfo(string computerName, Guid runspaceID)
             : this(computerName, runspaceID, Guid.Empty)
         { }
 
         /// <summary>
         /// public constructor
         /// </summary>
-        /// <param name="computerName">machine name</param>
-        /// <param name="runspaceID">instance id of runspace</param>
-        /// <param name="instanceID">instance id for the origin object</param>
+        /// <param name="computerName">machine name.</param>
+        /// <param name="runspaceID">instance id of runspace.</param>
+        /// <param name="instanceID">instance id for the origin object.</param>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
-        public OriginInfo(String computerName, Guid runspaceID, Guid instanceID)
+        public OriginInfo(string computerName, Guid runspaceID, Guid instanceID)
         {
             _computerName = computerName;
             _runspaceID = runspaceID;
@@ -358,7 +367,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Overridden ToString() method
         /// </summary>
-        /// <returns>returns the computername</returns>
+        /// <returns>Returns the computername.</returns>
         public override string ToString()
         {
             return PSComputerName;

@@ -38,12 +38,14 @@ namespace Microsoft.WSMan.Management
         public virtual PSCredential Credential
         {
             get { return credential; }
+
             set
             {
                 credential = value;
                 ValidateSpecifiedAuthentication();
             }
         }
+
         private PSCredential credential;
 
         /// <summary>
@@ -67,12 +69,14 @@ namespace Microsoft.WSMan.Management
         public virtual AuthenticationMechanism Authentication
         {
             get { return authentication; }
+
             set
             {
                 authentication = value;
                 ValidateSpecifiedAuthentication();
             }
         }
+
         private AuthenticationMechanism authentication = AuthenticationMechanism.Default;
 
         /// <summary>
@@ -84,12 +88,14 @@ namespace Microsoft.WSMan.Management
         public virtual string CertificateThumbprint
         {
             get { return thumbPrint; }
+
             set
             {
                 thumbPrint = value;
                 ValidateSpecifiedAuthentication();
             }
         }
+
         private string thumbPrint = null;
 
         internal void ValidateSpecifiedAuthentication()
@@ -122,8 +128,10 @@ namespace Microsoft.WSMan.Management
         public String ApplicationName
         {
             get { return applicationname; }
+
             set { applicationname = value; }
         }
+
         private String applicationname = null;
 
         /// <summary>
@@ -137,6 +145,7 @@ namespace Microsoft.WSMan.Management
         public String ComputerName
         {
             get { return computername; }
+
             set
             {
                 computername = value;
@@ -146,6 +155,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
         }
+
         private String computername = null;
 
         /// <summary>
@@ -160,8 +170,10 @@ namespace Microsoft.WSMan.Management
         public Uri ConnectionURI
         {
             get { return connectionuri; }
+
             set { connectionuri = value; }
         }
+
         private Uri connectionuri;
 
         /// <summary>
@@ -176,8 +188,10 @@ namespace Microsoft.WSMan.Management
         public Hashtable OptionSet
         {
             get { return optionset; }
+
             set { optionset = value; }
         }
+
         private Hashtable optionset;
 
         /// <summary>
@@ -191,8 +205,10 @@ namespace Microsoft.WSMan.Management
         public Int32 Port
         {
             get { return port; }
+
             set { port = value; }
         }
+
         private Int32 port = 0;
 
         /// <summary>
@@ -207,8 +223,10 @@ namespace Microsoft.WSMan.Management
         public SessionOption SessionOption
         {
             get { return sessionoption; }
+
             set { sessionoption = value; }
         }
+
         private SessionOption sessionoption;
 
         /// <summary>
@@ -222,8 +240,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter UseSSL
         {
             get { return usessl; }
+
             set { usessl = value; }
         }
+
         private SwitchParameter usessl;
 
         #endregion
@@ -249,22 +269,25 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                 }
             }
+
             string crtComputerName = computername;
             if (crtComputerName == null)
             {
                 crtComputerName = "localhost";
             }
+
             if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(this.SessionState.Drive.Current.Name + ":" + WSManStringLiterals.DefaultPathSeparator + crtComputerName, StringComparison.OrdinalIgnoreCase))
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("ConnectFailure"), false, computername);
             }
+
             helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
         }//End BeginProcessing()
 
     }//end class
     #endregion
 
-    # region Disconnect-WSMAN
+    #region Disconnect-WSMAN
     /// <summary>
     /// The following is the definition of the input parameter "ComputerName".
     /// Executes the management operation on the specified computer(s). The default
@@ -285,6 +308,7 @@ namespace Microsoft.WSMan.Management
         public String ComputerName
         {
             get { return computername; }
+
             set
             {
 
@@ -295,6 +319,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
         }
+
         private String computername = null;
 
         #region IDisposable Members
@@ -333,10 +358,12 @@ namespace Microsoft.WSMan.Management
             {
                 computername = "localhost";
             }
+
             if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(WSManStringLiterals.rootpath + ":" + WSManStringLiterals.DefaultPathSeparator + computername, StringComparison.OrdinalIgnoreCase))
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("DisconnectFailure"), false, computername);
             }
+
             if (computername.Equals("localhost", StringComparison.OrdinalIgnoreCase))
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("LocalHost"), false, computername);

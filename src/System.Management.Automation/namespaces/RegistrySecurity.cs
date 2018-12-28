@@ -71,6 +71,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.PermissionDenied, path));
                     return;
                 }
+
                 WriteSecurityDescriptorObject(sd, path);
             }
         }

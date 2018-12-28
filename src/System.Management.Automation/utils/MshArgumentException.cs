@@ -25,7 +25,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PSArgumentException()
             : base()
         {
@@ -34,8 +34,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// Per MSDN, the parameter is message.
         /// I confirm this experimentally as well.
@@ -48,9 +48,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>
-        /// <param name="paramName">  </param>
-        /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="paramName"></param>
+        /// <param name="message"></param>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// Note the unusual order of the construction parameters.
         /// ArgumentException has this ctor form and we imitate it here.
@@ -67,9 +67,9 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
+        /// <returns>Constructed object.</returns>
         protected PSArgumentException(SerializationInfo info,
                            StreamingContext context)
                 : base(info, context)
@@ -81,8 +81,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -100,9 +100,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <returns>Constructed object.</returns>
         public PSArgumentException(string message,
                                     Exception innerException)
                 : base(message, innerException)
@@ -131,9 +131,11 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidArgument,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "Argument";
 
@@ -149,6 +151,7 @@ namespace System.Management.Automation
         {
             get { return String.IsNullOrEmpty(_message) ? base.Message : _message; }
         }
+
         private string _message;
     }
 }

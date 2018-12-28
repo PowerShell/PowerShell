@@ -22,7 +22,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the InformationRecord class.
         /// </summary>
         /// <param name="messageData">The object to be transmitted to the host.</param>
-        /// <param name="source">The source of the message (i.e.: script path, function name, etc.)</param>
+        /// <param name="source">The source of the message (i.e.: script path, function name, etc.).</param>
         public InformationRecord(Object messageData, string source)
         {
             this.MessageData = messageData;
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// The message data for this informational record
         /// </summary>
         [DataMember]
-        public Object MessageData { get; internal set; }
+        public object MessageData { get; internal set; }
 
         /// <summary>
         /// The source of this informational record (script path, function name, etc.)
@@ -83,8 +83,10 @@ namespace System.Management.Automation
         public List<string> Tags
         {
             get { return _tags ?? (_tags = new List<string>()); }
+
             internal set { _tags = value; }
         }
+
         private List<string> _tags;
 
         /// <summary>
@@ -104,10 +106,13 @@ namespace System.Management.Automation
                     this._user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 #endif
                 }
+
                 return _user;
             }
+
             set { _user = value; }
         }
+
         private string _user;
 
         /// <summary>
@@ -117,8 +122,10 @@ namespace System.Management.Automation
         public string Computer
         {
             get { return this._computerName ?? (this._computerName = PsUtils.GetHostName()); }
+
             set { this._computerName = value; }
         }
+
         private string _computerName;
 
         /// <summary>
@@ -133,10 +140,13 @@ namespace System.Management.Automation
                 {
                     this._processId = (uint) System.Diagnostics.Process.GetCurrentProcess().Id;
                 }
+
                 return this._processId.Value;
             }
+
             set { _processId = value; }
         }
+
         private uint? _processId;
 
         /// <summary>
@@ -194,7 +204,7 @@ namespace System.Management.Automation
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject informationAsPSObject = RemotingEncoder.CreateEmptyPSObject();

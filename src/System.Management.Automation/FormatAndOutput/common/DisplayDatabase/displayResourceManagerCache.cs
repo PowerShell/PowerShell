@@ -12,6 +12,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class DisplayResourceManagerCache
     {
         internal enum LoadingResult { NoError, AssemblyNotFound, ResourceNotFound, StringNotFound }
+
         internal enum AssemblyBindingStatus { NotFound, FoundInGac, FoundInPath };
 
         internal string GetTextTokenString(TextToken tt)
@@ -22,6 +23,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (resString != null)
                     return resString;
             }
+
             return tt.text;
         }
 
@@ -109,6 +111,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 Diagnostics.Assert(false, "ResourceManagerCache.GetResourceString unexpected exception " + e.GetType().FullName);
                 throw;
             }
+
             return null;
         }
 
@@ -128,6 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foundInGac = false; // it always be false, since we return already loaded assemblies
             return _assemblyNameResolver.ResolveAssemblyName(resourceReference.assemblyName);
         }
+
         private sealed class AssemblyLoadResult
         {
             internal Assembly a;
@@ -201,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         continue;
                     }
 
-                    String nameToCompare = fullName ? aName.FullName : aName.Name;
+                    string nameToCompare = fullName ? aName.FullName : aName.Name;
 
                     if (string.Equals(nameToCompare, assemblyName, StringComparison.Ordinal))
                     {

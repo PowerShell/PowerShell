@@ -45,7 +45,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets the system lockdown policy
         /// </summary>
-        /// <returns>An EnforcementMode that describes the system policy</returns>
+        /// <returns>An EnforcementMode that describes the system policy.</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
             if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
@@ -63,13 +63,13 @@ namespace System.Management.Automation.Security
         }
 
         private static object s_systemLockdownPolicyLock = new Object();
-        private static Nullable<SystemEnforcementMode> s_systemLockdownPolicy = null;
+        private static SystemEnforcementMode? s_systemLockdownPolicy = null;
         private static bool s_allowDebugOverridePolicy = false;
 
         /// <summary>
         /// Gets lockdown policy as applied to a file
         /// </summary>
-        /// <returns>An EnforcementMode that describes policy</returns>
+        /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
         {
             // Check the WLDP API
@@ -172,6 +172,7 @@ namespace System.Management.Automation.Security
                 return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
         }
+
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
         private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
@@ -223,7 +224,7 @@ namespace System.Management.Automation.Security
 
                                 // AppLocker fails when you try to check a policy on a file
                                 // with no content. So create a scratch file and test on that.
-                                String dtAppLockerTestFileContents = AppLockerTestFileContents + DateTime.Now;
+                                string dtAppLockerTestFileContents = AppLockerTestFileContents + DateTime.Now;
                                 IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
                                 IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
@@ -277,6 +278,7 @@ namespace System.Management.Automation.Security
                     finally
                     {
                         if (IO.File.Exists(testPathScript)) { IO.File.Delete(testPathScript); }
+
                         if (IO.File.Exists(testPathModule)) { IO.File.Delete(testPathModule); }
                     }
 
@@ -304,6 +306,7 @@ namespace System.Management.Automation.Security
                 return SystemEnforcementMode.None;
             }
         }
+
         private static SaferPolicy? s_cachedSaferSystemPolicy = null;
 
         private static string GetKnownFolderPath(Guid knownFolderId)
@@ -335,6 +338,7 @@ namespace System.Management.Automation.Security
             {
                 result = SecuritySupport.GetSaferPolicy(testPathModule, null);
             }
+
             return result;
         }
 
@@ -385,7 +389,7 @@ namespace System.Management.Automation.Security
 
             // Support fall-back debug hook for system-wide policy on non-WOA platforms
             uint pdwLockdownState = 0;
-            Object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
+            object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
             if (result != null)
             {
                 pdwLockdownState = LanguagePrimitives.ConvertTo<uint>(result);
@@ -395,6 +399,7 @@ namespace System.Management.Automation.Security
             // If the system-wide debug policy had no preference, then there is no enforcement.
             return SystemEnforcementMode.None;
         }
+
         private static bool s_hadMissingWldpAssembly = false;
 
         /// <summary>

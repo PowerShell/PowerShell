@@ -46,6 +46,7 @@ namespace mvc.Controllers
             {
                 linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber - 1, type: type, whitespace: whitespace, rel: "prev"));
             }
+
             linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: maxLinks, type: type, whitespace: whitespace, rel: "last"));
             linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: 1, type: type, whitespace: whitespace, rel: "first"));
             linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber, type: type, whitespace: whitespace, rel: "self"));
@@ -87,6 +88,7 @@ namespace mvc.Controllers
             {
                 linkHeader = String.Join(",", linkList);
             }
+
             Response.Headers.Add("Link", linkHeader);
 
             // Generate /Get/ result and append linknumber, maxlinks, and type

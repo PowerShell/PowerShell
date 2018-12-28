@@ -75,26 +75,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Map a V3 token to a V2 PSTokenType
         /// </summary>
-        /// <param name="token">The V3 token</param>
-        /// <returns>The V2 PSTokenType</returns>
+        /// <param name="token">The V3 token.</param>
+        /// <returns>The V2 PSTokenType.</returns>
         public static PSTokenType GetPSTokenType(Token token)
         {
             if ((token.TokenFlags & TokenFlags.CommandName) != 0)
             {
                 return PSTokenType.Command;
             }
+
             if ((token.TokenFlags & TokenFlags.MemberName) != 0)
             {
                 return PSTokenType.Member;
             }
+
             if ((token.TokenFlags & TokenFlags.AttributeName) != 0)
             {
                 return PSTokenType.Attribute;
             }
+
             if ((token.TokenFlags & TokenFlags.TypeName) != 0)
             {
                 return PSTokenType.Type;
             }
+
             return s_tokenKindMapping[(int)token.Kind];
         }
 

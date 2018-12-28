@@ -100,5 +100,5 @@ namespace System.Management.Automation.Internal
             return result;
         }
     }
-}   // namespace
+}
 

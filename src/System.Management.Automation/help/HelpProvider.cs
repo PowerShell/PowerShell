@@ -139,21 +139,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieve help info that exactly match the target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
-        /// <returns>List of HelpInfo objects retrieved</returns>
+        /// <param name="helpRequest">help request object.</param>
+        /// <returns>List of HelpInfo objects retrieved.</returns>
         internal abstract IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest);
 
         /// <summary>
         /// Search help info that match the target search pattern.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns>a collection of help info objects</returns>
+        /// <returns>A collection of help info objects.</returns>
         internal abstract IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent);
 
         /// <summary>
@@ -168,8 +168,8 @@ namespace System.Management.Automation
         ///        since the helpInfo object passed in is usually stored in cache, which can
         ///        used in later queries.
         /// </summary>
-        /// <param name="helpInfo">helpInfo passed over by another HelpProvider</param>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpInfo">helpInfo passed over by another HelpProvider.</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <returns></returns>
         internal virtual IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// Each Shell ( minishell ) will have its own path specified by the
         /// application base folder, which should be the same as $pshome
         /// </summary>
-        /// <returns>string representing base directory of the executing shell.</returns>
+        /// <returns>String representing base directory of the executing shell.</returns>
         internal string GetDefaultShellSearchPath()
         {
             string shellID = this.HelpSystem.ExecutionContext.ShellID;
@@ -240,10 +240,10 @@ namespace System.Management.Automation
         /// Gets the search paths. If the current shell is single-shell based, then the returned
         /// search path contains all the directories of currently active PSSnapIns
         /// </summary>
-        /// <returns>a collection of string representing locations</returns>
+        /// <returns>A collection of string representing locations.</returns>
         internal Collection<string> GetSearchPaths()
         {
-            Collection<String> searchPaths = this.HelpSystem.GetSearchPaths();
+            Collection<string> searchPaths = this.HelpSystem.GetSearchPaths();
 
             Diagnostics.Assert(searchPaths != null,
                 "HelpSystem returned an null search path");

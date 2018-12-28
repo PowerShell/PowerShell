@@ -371,9 +371,9 @@ namespace System.Management.Automation
         /// "attrib1" will be lost. This seems to be OK with current practice of authoring
         /// monad command help.
         /// </summary>
-        /// <param name="properties">property hashtable</param>
-        /// <param name="name">property name</param>
-        /// <param name="mshObject">property value</param>
+        /// <param name="properties">property hashtable.</param>
+        /// <param name="name">property name.</param>
+        /// <param name="mshObject">property value.</param>
         private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
             ArrayList propertyValues = (ArrayList)properties[name];
@@ -598,7 +598,7 @@ namespace System.Management.Automation
             int paraNodes = GetParaMamlNodeCount(xmlNode.ChildNodes);
             int count = 0;
             // Don't trim the content if this is an "introduction" node.
-            bool trim = ! string.Equals(xmlNode.Name, "maml:introduction", StringComparison.OrdinalIgnoreCase);
+            bool trim = !string.Equals(xmlNode.Name, "maml:introduction", StringComparison.OrdinalIgnoreCase);
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
@@ -658,6 +658,7 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     ++i;
                 }
             }
@@ -768,6 +769,7 @@ namespace System.Management.Automation
                 {
                     innerText = innerText.Trim();
                 }
+
                 sb.Append(innerText);
             }
 
@@ -1140,8 +1142,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Trim empty lines from the either end of an string array.
         /// </summary>
-        /// <param name="lines">lines to trim</param>
-        /// <returns>an string array with empty lines trimed on either end</returns>
+        /// <param name="lines">lines to trim.</param>
+        /// <returns>An string array with empty lines trimed on either end.</returns>
         private static string[] TrimLines(string[] lines)
         {
             if (lines == null || lines.Length == 0)

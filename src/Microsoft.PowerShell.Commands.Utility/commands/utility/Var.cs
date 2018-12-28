@@ -44,9 +44,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = new string[0];
                 }
+
                 _include = value;
             }
         }
+
         private string[] _include = new string[0];
 
         /// <summary>
@@ -65,9 +67,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = new string[0];
                 }
+
                 _exclude = value;
             }
         }
+
         private string[] _exclude = new string[0];
 
         #region helpers
@@ -210,6 +214,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                         }
+
                         result.Add(entry.Value);
                     }
                     else
@@ -225,6 +230,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return result;
         }
         #endregion helpers
@@ -258,9 +264,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = new string[] { "*" };
                 }
+
                 _name = value;
             }
         }
+
         private string[] _name = new string[] { "*" };
 
         /// <summary>
@@ -273,11 +281,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _valueOnly;
             }
+
             set
             {
                 _valueOnly = value;
             }
         }
+
         private bool _valueOnly;
 
         /// <summary>
@@ -413,6 +423,7 @@ namespace Microsoft.PowerShell.Commands
                 _visibility = value;
             }
         }
+
         private SessionStateEntryVisibility? _visibility;
 
         /// <summary>
@@ -431,6 +442,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -443,11 +455,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         #endregion parameters
@@ -624,12 +638,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return (ScopedItemOptions)_options;
             }
+
             set
             {
                 _options = value;
             }
         }
-        private Nullable<ScopedItemOptions> _options;
+
+        private ScopedItemOptions? _options;
 
         /// <summary>
         /// Force the operation to make the best attempt at setting the variable.
@@ -647,6 +663,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -665,6 +682,7 @@ namespace Microsoft.PowerShell.Commands
                 _visibility = value;
             }
         }
+
         private SessionStateEntryVisibility? _visibility;
 
         /// <summary>
@@ -677,11 +695,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         private bool _nameIsFormalParameter;
@@ -728,6 +748,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _valueList = new ArrayList();
                     }
+
                     _valueList.Add(Value);
                 }
             }
@@ -736,6 +757,7 @@ namespace Microsoft.PowerShell.Commands
                 SetVariable(Name, Value);
             }
         }
+
         private ArrayList _valueList;
 
         /// <summary>
@@ -856,6 +878,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             Description = String.Empty;
                         }
+
                         varToSet.Description = Description;
 
                         // If visibility was specified, set it on the variable
@@ -1064,11 +1087,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         #endregion parameters
@@ -1220,6 +1245,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -1232,11 +1258,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         #endregion parameters
@@ -1348,6 +1376,7 @@ namespace Microsoft.PowerShell.Commands
                 SessionState.PSVariable.Set(matchingVariable.Name, null);
                 result = SessionState.PSVariable.Get(matchingVariable.Name);
             }
+
             return result;
         }
     }

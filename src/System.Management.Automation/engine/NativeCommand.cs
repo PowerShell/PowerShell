@@ -14,6 +14,7 @@ namespace System.Management.Automation
         internal NativeCommandProcessor MyCommandProcessor
         {
             get { return _myCommandProcessor; }
+
             set { _myCommandProcessor = value; }
         }
 

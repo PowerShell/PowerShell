@@ -234,8 +234,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Use blocked thread to invoke callback delegate.
         /// </summary>
-        /// <param name="callback">Callback delegate</param>
-        /// <param name="state">Callback state</param>
+        /// <param name="callback">Callback delegate.</param>
+        /// <param name="state">Callback state.</param>
         internal bool InvokeCallbackOnThread(WaitCallback callback, object state)
         {
             if (callback == null)

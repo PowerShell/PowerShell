@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _typeDefinition;
             }
+
             set
             {
                 _typeDefinition = value;
@@ -46,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _filepath;
             }
+
             set
             {
                 _filepath = value;
@@ -63,12 +65,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _filepath;
             }
+
             set
             {
                 _filepath = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         private List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
@@ -85,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
@@ -102,11 +107,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -119,11 +126,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _includescriptblock;
             }
+
             set
             {
                 _includescriptblock = value;
             }
         }
+
         private bool _includescriptblock;
 
         /// <summary>

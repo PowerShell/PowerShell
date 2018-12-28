@@ -25,7 +25,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ExtendedTypeSystemException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public ExtendedTypeSystemException(string message) : base(message)
         {
         }
@@ -33,8 +33,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ExtendedTypeSystemException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public ExtendedTypeSystemException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -42,10 +42,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception, null for none</param>
-        /// <param name="resourceString">Resource string </param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception, null for none.</param>
+        /// <param name="resourceString">Resource string.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal ExtendedTypeSystemException(string errorId, Exception innerException, string resourceString,
             params object[] arguments) :
             base(StringUtil.Format(resourceString, arguments), innerException)
@@ -57,8 +57,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ExtendedTypeSystemException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected ExtendedTypeSystemException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public MethodException(string message) : base(message)
         {
         }
@@ -101,8 +101,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public MethodException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -110,10 +110,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="resourceString">Resource String</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="resourceString">Resource String.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal MethodException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
@@ -124,8 +124,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected MethodException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -158,7 +158,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodInvocationException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public MethodInvocationException(string message) : base(message)
         {
         }
@@ -166,8 +166,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodInvocationException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public MethodInvocationException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -175,10 +175,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="resourceString">Resource String</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="resourceString">Resource String.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal MethodInvocationException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
@@ -189,8 +189,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of MethodInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected MethodInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public GetValueException(string message) : base(message)
         {
         }
@@ -229,8 +229,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public GetValueException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -238,10 +238,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="resourceString">Resource String</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="resourceString">Resource String.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal GetValueException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
@@ -252,8 +252,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected GetValueException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -283,7 +283,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public PropertyNotFoundException(string message)
             : base(message)
         {
@@ -292,8 +292,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public PropertyNotFoundException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -302,10 +302,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="resourceString">Resource String</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="resourceString">Resource String.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal PropertyNotFoundException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
@@ -316,8 +316,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected PropertyNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -348,7 +348,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueInvocationException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public GetValueInvocationException(string message) : base(message)
         {
         }
@@ -356,8 +356,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueInvocationException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public GetValueInvocationException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -365,10 +365,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="resourceString">Resource String</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="resourceString">Resource String.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal GetValueInvocationException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
@@ -379,8 +379,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of GetValueInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected GetValueInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -409,7 +409,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public SetValueException(string message) : base(message)
         {
         }
@@ -417,8 +417,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public SetValueException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -426,10 +426,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="resourceString">Resource String</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="resourceString">Resource String.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal SetValueException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
@@ -440,8 +440,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected SetValueException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -470,7 +470,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueInvocationException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public SetValueInvocationException(string message) : base(message)
         {
         }
@@ -478,8 +478,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueInvocationException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public SetValueInvocationException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -487,10 +487,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="errorId">String that uniquely identifies each thrown Exception</param>
-        /// <param name="innerException">The inner exception</param>
-        /// <param name="resourceString">Resource String</param>
-        /// <param name="arguments">Arguments to the resource string</param>
+        /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
+        /// <param name="innerException">The inner exception.</param>
+        /// <param name="resourceString">Resource String.</param>
+        /// <param name="arguments">Arguments to the resource string.</param>
         internal SetValueInvocationException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
@@ -501,8 +501,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of SetValueInvocationException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected SetValueInvocationException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
         {
@@ -541,8 +541,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected PSInvalidCastException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             _errorId = info.GetString("ErrorId");
@@ -560,15 +560,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public PSInvalidCastException(string message) : base(message)
         {
         }
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public PSInvalidCastException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -599,9 +599,11 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidArgument,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "PSInvalidCastException";
     }

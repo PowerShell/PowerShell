@@ -43,8 +43,8 @@ namespace System.Management.Automation
         /// <summary>
         /// This object describes a PowerShell module...
         /// </summary>
-        /// <param name="path">The absolute path to the module</param>
-        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="path">The absolute path to the module.</param>
+        /// <param name="context">The execution context for this engine instance.</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
         internal PSModuleInfo(string path, ExecutionContext context, SessionState sessionState)
             : this(null, path, context, sessionState)
@@ -54,11 +54,11 @@ namespace System.Management.Automation
         /// <summary>
         /// This object describes a PowerShell module...
         /// </summary>
-        /// <param name="name">The name to use for the module. If null, get it from the path name</param>
-        /// <param name="path">The absolute path to the module</param>
-        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="name">The name to use for the module. If null, get it from the path name.</param>
+        /// <param name="path">The absolute path to the module.</param>
+        /// <param name="context">The execution context for this engine instance.</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
-        /// <param name="languageMode">Language mode for script based modules</param>
+        /// <param name="languageMode">Language mode for script based modules.</param>
         internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState, PSLanguageMode? languageMode)
             : this(name, path, context, sessionState)
         {
@@ -68,9 +68,9 @@ namespace System.Management.Automation
         /// <summary>
         /// This object describes a PowerShell module...
         /// </summary>
-        /// <param name="name">The name to use for the module. If null, get it from the path name</param>
-        /// <param name="path">The absolute path to the module</param>
-        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="name">The name to use for the module. If null, get it from the path name.</param>
+        /// <param name="path">The absolute path to the module.</param>
+        /// <param name="context">The execution context for this engine instance.</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
         internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState)
         {
@@ -204,7 +204,7 @@ namespace System.Management.Automation
         /// <summary>
         /// ToString() implementation which returns the name of the module.
         /// </summary>
-        /// <returns>The name of the module</returns>
+        /// <returns>The name of the module.</returns>
         public override string ToString()
         {
             return this.Name;
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the name property of the PSModuleInfo object
         /// </summary>
-        /// <param name="name">The name to set it to</param>
+        /// <param name="name">The name to set it to.</param>
         internal void SetName(string name)
         {
             Name = name;
@@ -249,6 +249,7 @@ namespace System.Management.Automation
         {
             get { return _definitionExtent == null ? String.Empty : _definitionExtent.Text; }
         }
+
         internal IScriptExtent _definitionExtent;
 
         /// <summary>
@@ -257,8 +258,10 @@ namespace System.Management.Automation
         public string Description
         {
             get { return _description; }
+
             set { _description = value ?? String.Empty; }
         }
+
         private string _description = String.Empty;
 
         /// <summary>
@@ -296,10 +299,12 @@ namespace System.Management.Automation
                        (_moduleBase = !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty);
             }
         }
+
         internal void SetModuleBase(string moduleBase)
         {
             _moduleBase = moduleBase;
         }
+
         private string _moduleBase;
 
         /// <summary>
@@ -320,6 +325,7 @@ namespace System.Management.Automation
                 SetPSDataPropertiesFromPrivateData();
             }
         }
+
         private object _privateData = null;
 
         private void SetPSDataPropertiesFromPrivateData()
@@ -386,7 +392,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Tags of this module.
         /// </summary>
-        public IEnumerable<String> Tags
+        public IEnumerable<string> Tags
         {
             get { return _tags; }
         }
@@ -462,15 +468,18 @@ namespace System.Management.Automation
         public ModuleAccessMode AccessMode
         {
             get { return _accessMode; }
+
             set
             {
                 if (_accessMode == ModuleAccessMode.Constant)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 _accessMode = value;
             }
         }
+
         private ModuleAccessMode _accessMode = ModuleAccessMode.ReadWrite;
 
         /// <summary>
@@ -485,7 +494,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Company Name
         /// </summary>
-        public String CompanyName
+        public string CompanyName
         {
             get;
             internal set;
@@ -494,7 +503,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Copyright
         /// </summary>
-        public String Copyright
+        public string Copyright
         {
             get;
             internal set;
@@ -564,6 +573,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return exports;
             }
         }
@@ -660,7 +670,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Prefix
         /// </summary>
-        public String Prefix
+        public string Prefix
         {
             get;
             internal set;
@@ -669,7 +679,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add function to the fixed exports list
         /// </summary>
-        /// <param name="name">the function to add</param>
+        /// <param name="name">the function to add.</param>
         internal void AddDetectedFunctionExport(string name)
         {
             Dbg.Assert(name != null, "AddDetectedFunctionExport should not be called with a null value");
@@ -808,8 +818,10 @@ namespace System.Management.Automation
                     {
                         _compiledExports.Add(ci);
                     }
+
                     SessionState.Internal.ExportedCmdlets.Clear();
                 }
+
                 return _compiledExports;
             }
         }
@@ -837,7 +849,7 @@ namespace System.Management.Automation
         /// <summary>
         /// FileList
         /// </summary>
-        public IEnumerable<String> FileList
+        public IEnumerable<string> FileList
         {
             get { return _fileList; }
         }
@@ -855,7 +867,7 @@ namespace System.Management.Automation
         /// or the key was not in the manifest, this should be an empty collection. This
         /// property is never null.
         /// </summary>
-        public IEnumerable<String> CompatiblePSEditions
+        public IEnumerable<string> CompatiblePSEditions
         {
             get { return _compatiblePSEditions; }
         }
@@ -910,22 +922,24 @@ namespace System.Management.Automation
                        (_readonlyNestedModules = new ReadOnlyCollection<PSModuleInfo>(_nestedModules));
             }
         }
+
         private ReadOnlyCollection<PSModuleInfo> _readonlyNestedModules;
 
         /// <summary>
         /// Add a module to the list of child modules.
         /// </summary>
-        /// <param name="nestedModule">The module to add</param>
+        /// <param name="nestedModule">The module to add.</param>
         internal void AddNestedModule(PSModuleInfo nestedModule)
         {
             AddModuleToList(nestedModule, _nestedModules);
         }
+
         private readonly List<PSModuleInfo> _nestedModules = new List<PSModuleInfo>();
 
         /// <summary>
         /// PowerShell Host Name
         /// </summary>
-        public String PowerShellHostName
+        public string PowerShellHostName
         {
             get;
             internal set;
@@ -961,12 +975,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Scripts to Process
         /// </summary>
-        public IEnumerable<String> Scripts
+        public IEnumerable<string> Scripts
         {
             get { return _scripts; }
         }
 
-        private List<String> _scripts = new List<string>();
+        private List<string> _scripts = new List<string>();
 
         internal void AddScript(string s)
         {
@@ -976,11 +990,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Required Assemblies
         /// </summary>
-        public IEnumerable<String> RequiredAssemblies
+        public IEnumerable<string> RequiredAssemblies
         {
             get { return _requiredAssemblies; }
         }
-        private Collection<String> _requiredAssemblies = new Collection<string>();
+
+        private Collection<string> _requiredAssemblies = new Collection<string>();
 
         internal void AddRequiredAssembly(string assembly)
         {
@@ -999,16 +1014,18 @@ namespace System.Management.Automation
                        (_readonlyRequiredModules = new ReadOnlyCollection<PSModuleInfo>(_requiredModules));
             }
         }
+
         private ReadOnlyCollection<PSModuleInfo> _readonlyRequiredModules;
 
         /// <summary>
         /// Add a module to the list of required modules.
         /// </summary>
-        /// <param name="requiredModule">The module to add</param>
+        /// <param name="requiredModule">The module to add.</param>
         internal void AddRequiredModule(PSModuleInfo requiredModule)
         {
             AddModuleToList(requiredModule, _requiredModules);
         }
+
         private List<PSModuleInfo> _requiredModules = new List<PSModuleInfo>();
 
         /// <summary>
@@ -1023,22 +1040,24 @@ namespace System.Management.Automation
                        (_readonlyRequiredModulesSpecification = new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification));
             }
         }
+
         private ReadOnlyCollection<ModuleSpecification> _readonlyRequiredModulesSpecification;
 
         /// <summary>
         /// Add a module to the list of required modules specification
         /// </summary>
-        /// <param name="requiredModuleSpecification">The module to add</param>
+        /// <param name="requiredModuleSpecification">The module to add.</param>
         internal void AddRequiredModuleSpecification(ModuleSpecification requiredModuleSpecification)
         {
             _requiredModulesSpecification.Add(requiredModuleSpecification);
         }
+
         private List<ModuleSpecification> _requiredModulesSpecification = new List<ModuleSpecification>();
 
         /// <summary>
         /// Root Module
         /// </summary>
-        public String RootModule
+        public string RootModule
         {
             get;
             internal set;
@@ -1048,7 +1067,7 @@ namespace System.Management.Automation
         /// This member is used to copy over the RootModule in case the module is a manifest module
         /// This is so that only ModuleInfo for modules with type=Manifest have RootModule populated
         /// </summary>
-        internal String RootModuleForManifest
+        internal string RootModuleForManifest
         {
             get;
             set;
@@ -1066,6 +1085,7 @@ namespace System.Management.Automation
                 if (m.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                     return;
             }
+
             moduleList.Add(module);
         }
 
@@ -1174,8 +1194,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Add alias to the detected alias list
         /// </summary>
-        /// <param name="name">the alias to add</param>
-        /// <param name="value">the command it resolves to</param>
+        /// <param name="name">the alias to add.</param>
+        /// <param name="value">the command it resolves to.</param>
         internal void AddDetectedAliasExport(string name, string value)
         {
             Dbg.Assert(name != null, "AddDetectedAliasExport should not be called with a null value");
@@ -1216,8 +1236,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a new scriptblock bound to this module instance.
         /// </summary>
-        /// <param name="scriptBlockToBind">The original scriptblock</param>
-        /// <returns>The new bound scriptblock</returns>
+        /// <param name="scriptBlockToBind">The original scriptblock.</param>
+        /// <returns>The new bound scriptblock.</returns>
         public ScriptBlock NewBoundScriptBlock(ScriptBlock scriptBlockToBind)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -1256,9 +1276,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke a scriptblock in the context of this module...
         /// </summary>
-        /// <param name="sb">The scriptblock to invoke</param>
-        /// <param name="args">Arguments to the scriptblock</param>
-        /// <returns>The result of the invocation</returns>
+        /// <param name="sb">The scriptblock to invoke.</param>
+        /// <param name="args">Arguments to the scriptblock.</param>
+        /// <returns>The result of the invocation.</returns>
         public object Invoke(ScriptBlock sb, params object[] args)
         {
             if (sb == null)
@@ -1278,6 +1298,7 @@ namespace System.Management.Automation
                 // and restore the scriptblocks session state...
                 sb.SessionStateInternal = oldSessionState;
             }
+
             return result;
         }
 
@@ -1310,6 +1331,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (callersSessionState != null)
             {
                 return callersSessionState.Internal.GetVariable(variableName);
@@ -1363,7 +1385,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Build a custom object out of this module...
         /// </summary>
-        /// <returns>A custom object</returns>
+        /// <returns>A custom object.</returns>
         public PSObject AsCustomObject()
         {
             if (SessionState == null)
@@ -1423,7 +1445,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implements deep copy of a PSModuleInfo instance.
-        /// <returns>A new PSModuleInfo instance</returns>
+        /// <returns>A new PSModuleInfo instance.</returns>
         /// </summary>
         public PSModuleInfo Clone()
         {
@@ -1448,6 +1470,7 @@ namespace System.Management.Automation
             {
                 clone.AddRequiredModule(r);
             }
+
             foreach (var r in _requiredModulesSpecification)
             {
                 clone.AddRequiredModuleSpecification(r);
@@ -1487,7 +1510,7 @@ namespace System.Management.Automation
         /// Look up a module in the appdomain wide module path cache.
         /// </summary>
         /// <param name="moduleName">Module name to look up.</param>
-        /// <returns>The path to the matched module</returns>
+        /// <returns>The path to the matched module.</returns>
         internal static string ResolveUsingAppDomainLevelModuleCache(string moduleName)
         {
             string path;
@@ -1523,7 +1546,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If there is an entry for the named module in the appdomain level module path cache, remove it.
         /// </summary>
-        /// <param name="moduleName">The name of the module to remove from the cache</param>
+        /// <param name="moduleName">The name of the module to remove from the cache.</param>
         /// <returns>True if the module was remove.</returns>
         internal static bool RemoveFromAppDomainLevelCache(string moduleName)
         {

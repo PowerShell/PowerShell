@@ -65,6 +65,7 @@ namespace mvc.Controllers
                         {
                             continue;
                         }
+
                         foreach (string entry in GetSingleOrArray<String>(property.Value))
                         {
                             Response.Headers.Append(property.Name,entry);

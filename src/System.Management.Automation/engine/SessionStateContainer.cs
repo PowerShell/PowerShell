@@ -137,6 +137,7 @@ namespace System.Management.Automation
             {
                 result = false;
             }
+
             return result;
         }
 
@@ -209,6 +210,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -276,6 +278,7 @@ namespace System.Management.Automation
 
                 return ItemExistsDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
+
             return null;
         }
 
@@ -351,6 +354,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -520,6 +524,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1102,6 +1107,7 @@ namespace System.Management.Automation
 
                 return RemoveItemDynamicParameters(providerInstance, providerPaths[0], recurse, newContext);
             }
+
             return null;
         }
 
@@ -1181,6 +1187,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1320,7 +1327,7 @@ namespace System.Management.Automation
                     if (recurse)
                     {
                         string childName = GetChildName(path, context);
-                            
+
                         // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
 
                         bool isFileOrDirectoryPresent = false;
@@ -1497,7 +1504,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        context.SuppressWildcardExpansion = true;       
+                        context.SuppressWildcardExpansion = true;
                     }
                 }
                 else if (path != null && this.ItemExists(providerInstance, path, context))
@@ -1639,6 +1646,7 @@ namespace System.Management.Automation
                     throw;
                 }
            }
+
            return itemContainer;
 
         }
@@ -1664,8 +1672,8 @@ namespace System.Management.Automation
         /// <param name="childrenNotMatchingFilterCriteria">
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
-        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
+        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
+        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -1716,8 +1724,8 @@ namespace System.Management.Automation
         /// <param name="childrenNotMatchingFilterCriteria">
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
-        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
+        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
+        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -2152,6 +2160,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -2849,6 +2858,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
@@ -2925,6 +2935,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -3204,6 +3215,7 @@ namespace System.Management.Automation
 
                 return RenameItemDynamicParameters(providerInstance, providerPaths[0], newName, newContext);
             }
+
             return null;
         }
 
@@ -3284,6 +3296,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -3674,6 +3687,7 @@ namespace System.Management.Automation
 
                 return NewItemDynamicParameters(providerInstance, providerPaths[0], type, newItemValue, newContext);
             }
+
             return null;
         }
 
@@ -3757,6 +3771,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -4168,6 +4183,7 @@ namespace System.Management.Automation
                     sourceIsRemote = true;
                     session = dynamicParams.FromSession;
                 }
+
                 if (dynamicParams.ToSession != null)
                 {
                     destinationIsRemote = true;
@@ -4643,7 +4659,6 @@ namespace System.Management.Automation
                 if (providerPaths.Count > 0)
                     providerPath = providerPaths[0];
             }
-
             catch (DriveNotFoundException)
             {
                 // This exception is expected for remote sessions where drives exist in a remote session but not
@@ -4761,6 +4776,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -4910,7 +4926,7 @@ namespace System.Management.Automation
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 
     /// <summary>
     /// Defines the action to be taken for Navigation cmdlets

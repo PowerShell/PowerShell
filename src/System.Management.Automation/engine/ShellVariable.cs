@@ -213,11 +213,13 @@ namespace System.Management.Automation
             {
                 return _description;
             }
+
             set
             {
                 _description = value;
             }
         }
+
         private string _description = String.Empty;
 
         internal void DebuggerCheckVariableRead()
@@ -265,6 +267,7 @@ namespace System.Management.Automation
                 SetValue(value);
             }
         }
+
         private object _value;
 
         /// <summary>
@@ -372,6 +375,7 @@ namespace System.Management.Automation
 
             _options = newOptions;
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
@@ -385,6 +389,7 @@ namespace System.Management.Automation
         {
             get { return _attributes ?? (_attributes = new PSVariableAttributeCollection(this)); }
         }
+
         private PSVariableAttributeCollection _attributes;
 
         /// <summary>
@@ -417,6 +422,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return true;
         }
 
@@ -458,6 +464,7 @@ namespace System.Management.Automation
                     result = false;
                 }
             }
+
             return result;
         }
 
@@ -502,6 +509,7 @@ namespace System.Management.Automation
                     result = transformationAttribute.TransformInternal(engine, result);
                 }
             }
+
             return result;
         }
 
@@ -510,7 +518,7 @@ namespace System.Management.Automation
         /// attributes, so repeating that process is slow and wrong.  This function
         /// applies the attributes without repeating the checks.
         /// </summary>
-        /// <param name="attributes">The list of attributes to add</param>
+        /// <param name="attributes">The list of attributes to add.</param>
         internal void AddParameterAttributesNoChecks(Collection<Attribute> attributes)
         {
             foreach (Attribute attribute in attributes)
@@ -581,6 +589,7 @@ namespace System.Management.Automation
             {
                 return _wasRemoved;
             }
+
             set
             {
                 _wasRemoved = value;
@@ -594,6 +603,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private bool _wasRemoved;
 
         internal SessionStateInternal SessionState { get; set; }
@@ -667,6 +677,7 @@ namespace System.Management.Automation
             {
                 newValue = CopyMutableValues(newValue);
             }
+
             _value = newValue;
         }
 
@@ -748,6 +759,7 @@ namespace System.Management.Automation
         public override ScopedItemOptions Options
         {
             get { return base.Options; }
+
             set
             {
                 // Throw, but only if someone is actually changing the options.
@@ -772,6 +784,7 @@ namespace System.Management.Automation
                 DebuggerCheckVariableRead();
                 return _tuple.GetValue(_tupleSlot);
             }
+
             set
             {
                 _tuple.SetValue(_tupleSlot, value);
@@ -785,6 +798,7 @@ namespace System.Management.Automation
             {
                 newValue = CopyMutableValues(newValue);
             }
+
             this.Value = newValue;
         }
     }
@@ -826,8 +840,10 @@ namespace System.Management.Automation
         public override string Description
         {
             get { return _description ?? (_description = SessionStateStrings.DollarNullDescription); }
+
             set { /* Do nothing */ }
         }
+
         private string _description;
 
         /// <summary>
@@ -836,6 +852,7 @@ namespace System.Management.Automation
         public override ScopedItemOptions Options
         {
             get { return ScopedItemOptions.None; }
+
             set { /* Do nothing */ }
         }
     }

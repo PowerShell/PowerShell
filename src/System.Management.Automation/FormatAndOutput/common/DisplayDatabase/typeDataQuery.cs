@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 expressionResult = res[0];
                 return false;
             }
+
             return LanguagePrimitives.IsTrue(res[0].Result);
         }
     }
@@ -40,6 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Item = obj;
             AppliesTo = a;
         }
+
         internal TypeMatchItem(object obj, AppliesTo a, PSObject currentObject)
         {
             Item = obj;
@@ -48,7 +50,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         internal object Item { get; }
+
         internal AppliesTo AppliesTo { get; }
+
         internal PSObject CurrentObject { get; }
     }
 
@@ -78,6 +82,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             s_activeTracer = t;
         }
+
         internal static void ResetTracer()
         {
             s_activeTracer = s_classTracer;
@@ -112,6 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _bestMatchIndex = match;
                 _bestMatchItem = item;
             }
+
             return _bestMatchIndex == BestMatchIndexPerfect;
         }
 
@@ -158,6 +164,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         currentMatch = ComputeBestMatchInGroup(tgd, currentObject, ex);
                     }
                 }
+
                 if (currentMatch == BestMatchIndexPerfect)
                     return currentMatch;
 
@@ -184,8 +191,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     best = currentMatch;
                 }
+
                 k++;
             }
+
             return best;
         }
 
@@ -201,10 +210,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return k;
                 }
+
                 if (k == 0 && !_useInheritance)
                     break;
                 k++;
             }
+
             return BestMatchIndexUndefined;
         }
 
@@ -219,6 +230,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _failedResultsList.Add(expressionResult);
             }
+
             return retVal;
         }
 
@@ -258,6 +270,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             s_activeTracer = t;
         }
+
         internal static void ResetTracer()
         {
             s_activeTracer = s_classTracer;
@@ -274,6 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return expansionDirective.enumerableExpansion;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return ((EnumerableExpansionDirective)(match.BestMatch)).enumerableExpansion;
@@ -304,6 +318,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return shapeSelOnType.formatShape;
                 }
             }
+
             if (match.BestMatch != null)
             {
                 return ((FormatShapeSelectionOnType)(match.BestMatch)).formatShape;
@@ -360,6 +375,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 Diagnostics.Assert(false, "unknown shape: this should never happen unless a new shape is added");
                 return null;
             }
+
             return GetView(expressionFactory, db, t, typeNames, viewName);
         }
 
@@ -406,6 +422,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), (vd != null ? vd.name : string.Empty));
                     continue;
                 }
+
                 if (IsOutOfBandView(vd))
                 {
                     ActiveTracer.WriteLine(
@@ -413,6 +430,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
+
                 if (vd.appliesTo == null)
                 {
                     ActiveTracer.WriteLine(
@@ -445,6 +463,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     TypeMatch.ResetTracer();
                 }
+
                 TraceHelper(vd, false);
             }
 
@@ -486,6 +505,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.AppendFormat(CultureInfo.InvariantCulture, " {0} NAME: {1}  GROUP: {2}",
                             ControlBase.GetControlShapeName(vd.mainControl), vd.name, tgr.name);
                     }
+
                     ActiveTracer.WriteLine(sb.ToString());
                 }
             }
@@ -498,6 +518,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 TraceHelper(bestMatchedVD, true);
             }
+
             return bestMatchedVD;
         }
 
@@ -517,6 +538,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
+
                 if (vd.appliesTo == null)
                 {
                     ActiveTracer.WriteLine(
@@ -524,6 +546,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
+
                 try
                 {
                     TypeMatch.SetTracer(ActiveTracer);
@@ -537,6 +560,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     TypeMatch.ResetTracer();
                 }
+
                 TraceHelper(vd, false);
             }
             // this is the best match we had
@@ -565,8 +589,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// given an appliesTo list, it finds all the types that are contained (following type
         /// group references)
         /// </summary>
-        /// <param name="db">database to use</param>
-        /// <param name="appliesTo">object to lookup</param>
+        /// <param name="db">database to use.</param>
+        /// <param name="appliesTo">object to lookup.</param>
         /// <returns></returns>
         internal static AppliesTo GetAllApplicableTypes(TypeInfoDataBase db, AppliesTo appliesTo)
         {
@@ -647,6 +671,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (String.Compare(controlReference.name, x.name, StringComparison.OrdinalIgnoreCase) == 0)
                     return x.controlBody;
             }
+
             return null;
         }
     }

@@ -31,8 +31,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Confirm that the operation should proceed
         /// </summary>
-        /// <param name="service">service object to be acted on</param>
-        /// <returns> true if operation should continue, false otherwise </returns>
+        /// <param name="service">service object to be acted on.</param>
+        /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(ServiceController service)
         {
             return ShouldProcessServiceOperation(
@@ -43,9 +43,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Confirm that the operation should proceed
         /// </summary>
-        /// <param name="displayName">display name of service to be acted on</param>
-        /// <param name="serviceName">service name of service to be acted on</param>
-        /// <returns> true if operation should continue, false otherwise </returns>
+        /// <param name="displayName">display name of service to be acted on.</param>
+        /// <param name="serviceName">service name of service to be acted on.</param>
+        /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(
             string displayName, string serviceName)
         {
@@ -168,12 +168,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return displayNames;
             }
+
             set
             {
                 displayNames = value;
                 selectionMode = SelectionMode.DisplayName;
             }
         }
+
         internal string[] displayNames = null;
 
         /// <summary>
@@ -190,11 +192,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return include;
             }
+
             set
             {
                 include = value;
             }
         }
+
         internal string[] include = null;
 
         /// <summary>
@@ -211,11 +215,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return exclude;
             }
+
             set
             {
                 exclude = value;
             }
         }
+
         internal string[] exclude = null;
 
         // 1054295-2004/12/01-JonN This also works around 1054295.
@@ -237,12 +243,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _inputObject;
             }
+
             set
             {
                 _inputObject = value;
                 selectionMode = SelectionMode.InputObject;
             }
         }
+
         private ServiceController[] _inputObject = null;
         #endregion Parameters
 
@@ -265,9 +273,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _allServices = ServiceController.GetServices();
                 }
+
                 return _allServices;
             }
         }
+
         private ServiceController[] _allServices = null;
 
         internal ServiceController GetOneService(string nameOfService)
@@ -345,6 +355,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     IncludeExcludeAdd(matchingServices, service, false);
                 }
+
                 return matchingServices;
             }
 
@@ -385,6 +396,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ObjectNotFound);
                 }
             }
+
             return matchingServices;
         }
 
@@ -404,6 +416,7 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, "null DisplayName");
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             foreach (string pattern in DisplayName)
             {
                 WildcardPattern wildcard =
@@ -416,6 +429,7 @@ namespace Microsoft.PowerShell.Commands
                     found = true;
                     IncludeExcludeAdd(matchingServices, service, true);
                 }
+
                 if (!found && !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
                     WriteNonTerminatingError(
@@ -428,6 +442,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ObjectNotFound);
                 }
             }
+
             return matchingServices;
         }
 
@@ -444,11 +459,13 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             foreach (ServiceController service in InputObject)
             {
                 service.Refresh();
                 IncludeExcludeAdd(matchingServices, service, false);
             }
+
             return matchingServices;
         }
 
@@ -458,9 +475,9 @@ namespace Microsoft.PowerShell.Commands
         /// and (if <paramref name="checkDuplicates"/>) if it is not
         /// already on  <paramref name="list"/>.
         /// </summary>
-        /// <param name="list">list of services</param>
-        /// <param name="service">service to add to list</param>
-        /// <param name="checkDuplicates">check list for duplicates</param>
+        /// <param name="list">list of services.</param>
+        /// <param name="service">service to add to list.</param>
+        /// <param name="checkDuplicates">check list for duplicates.</param>
         private void IncludeExcludeAdd(
             List<ServiceController> list,
             ServiceController service,
@@ -481,6 +498,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             list.Add(service);
         }
 
@@ -504,6 +522,7 @@ namespace Microsoft.PowerShell.Commands
                 if (wildcard.IsMatch(serviceID))
                     return true;
             }
+
             return false;
         }
         #endregion Internal
@@ -537,6 +556,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return serviceNames;
             }
+
             set
             {
                 serviceNames = value;
@@ -581,6 +601,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteObject(dependantserv);
                         }
                     }
+
                     if (RequiredServices.IsPresent)
                     {
                         foreach (ServiceController servicedependedon in service.ServicesDependedOn)
@@ -598,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
         /// Adds UserName, Description, BinaryPathName, DelayedAutoStart and StartupType to a ServiceController object.
         /// </summary>
         /// <param name="service"></param>
-        /// <returns>ServiceController as PSObject with UserName, Description and StartupType added</returns>
+        /// <returns>ServiceController as PSObject with UserName, Description and StartupType added.</returns>
         private PSObject AddProperties(ServiceController service)
         {
             NakedWin32Handle hScManager = IntPtr.Zero;
@@ -623,6 +644,7 @@ namespace Microsoft.PowerShell.Commands
                         ServiceResources.FailToOpenServiceControlManager,
                         ErrorCategory.PermissionDenied);
                 }
+
                 hService = NativeMethods.OpenServiceW(
                     hScManager,
                     service.ServiceName,
@@ -700,6 +722,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return serviceAsPSObj;
         }
     }
@@ -728,6 +751,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return serviceNames;
             }
+
             set
             {
                 serviceNames = value;
@@ -747,6 +771,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.InputObject;
             }
+
             set
             {
                 base.InputObject = value;
@@ -767,8 +792,8 @@ namespace Microsoft.PowerShell.Commands
         /// Waits forever for the service to reach the desired status, but
         /// writes a string to WriteWarning every 2 seconds.
         /// </summary>
-        /// <param name="serviceController">service on which to operate</param>
-        /// <param name="targetStatus">desired status</param>
+        /// <param name="serviceController">service on which to operate.</param>
+        /// <param name="targetStatus">desired status.</param>
         /// <param name="pendingStatus">
         /// This is the expected status while the operation is incomplete.
         /// If the service is in some other state, this means that the
@@ -784,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
         ///  <param name="errorMessage">
         /// errorMessage for a nonterminating error if operation fails
         /// </param>
-        /// <returns>true if action succeeded</returns>
+        /// <returns>True if action succeeded.</returns>
         /// <exception cref="PipelineStoppedException">
         /// WriteWarning will throw this if the pipeline has been stopped.
         /// This means that the delay between hitting CTRL-C and stopping
@@ -824,6 +849,7 @@ namespace Microsoft.PowerShell.Commands
                                                  ErrorCategory.OpenError);
                         return false;
                     }
+
                     string message = StringUtil.Format(resourceIdPending,
                         serviceController.ServiceName,
                         serviceController.DisplayName
@@ -837,8 +863,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will start the service.
         /// </summary>
-        /// <param name="serviceController">service to start</param>
-        /// <returns>true iff the service was started</returns>
+        /// <param name="serviceController">service to start.</param>
+        /// <returns>True iff the service was started.</returns>
         internal bool DoStartService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -860,6 +886,7 @@ namespace Microsoft.PowerShell.Commands
                     exception = e;
                 }
             }
+
             if (exception != null)
             {
                 // This service refused to accept the start command,
@@ -884,16 +911,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return false;
             }
+
             return true;
         }
 
         /// <summary>
         /// This will stop the service.
         /// </summary>
-        /// <param name="serviceController">service to stop</param>
-        /// <param name="force">stop dependent services</param>
+        /// <param name="serviceController">service to stop.</param>
+        /// <param name="force">stop dependent services.</param>
         /// <param name="waitForServiceToStop"></param>
-        /// <returns>true iff the service was stopped</returns>
+        /// <returns>True iff the service was stopped.</returns>
         internal List<ServiceController> DoStopService(ServiceController serviceController, bool force, bool waitForServiceToStop)
         {
             // Ignore ServiceController.CanStop.  CanStop will be set false
@@ -976,6 +1004,7 @@ namespace Microsoft.PowerShell.Commands
                     exception = e;
                 }
             }
+
             if (exception != null)
             {
                 // This service refused to accept the stop command,
@@ -1032,13 +1061,14 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
             }
+
             return true;
         }
 
         /// <summary>
         /// This removes all services that are not stopped from a list of services
         /// </summary>
-        /// <param name="services">a list of services</param>
+        /// <param name="services">a list of services.</param>
         internal void RemoveNotStoppedServices(List<ServiceController> services)
         {
             foreach (ServiceController service in services)
@@ -1054,8 +1084,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will pause the service.
         /// </summary>
-        /// <param name="serviceController">service to pause</param>
-        /// <returns>true iff the service was paused</returns>
+        /// <param name="serviceController">service to pause.</param>
+        /// <returns>True iff the service was paused.</returns>
         internal bool DoPauseService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -1070,6 +1100,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     serviceNotRunning = true;
                 }
+
                 exception = e;
             }
             catch (InvalidOperationException e)
@@ -1080,8 +1111,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     serviceNotRunning = true;
                 }
+
                 exception = e;
             }
+
             if (exception != null)
             {
                 // This service refused to accept the pause command,
@@ -1132,8 +1165,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will resume the service.
         /// </summary>
-        /// <param name="serviceController">service to resume</param>
-        /// <returns>true iff the service was resumed</returns>
+        /// <param name="serviceController">service to resume.</param>
+        /// <returns>True iff the service was resumed.</returns>
         internal bool DoResumeService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -1148,6 +1181,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     serviceNotRunning = true;
                 }
+
                 exception = e;
             }
             catch (InvalidOperationException e)
@@ -1158,8 +1192,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     serviceNotRunning = true;
                 }
+
                 exception = e;
             }
+
             if (exception != null)
             {
                 // This service refused to accept the continue command,
@@ -1353,6 +1389,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
                 if (DoResumeService(serviceController))
                 {
                     if (PassThru)
@@ -1438,11 +1475,13 @@ namespace Microsoft.PowerShell.Commands
         public new String Name
         {
             get { return serviceName; }
+
             set
             {
                 serviceName = value;
             }
         }
+
         internal String serviceName = null;
 
         /// <summary>
@@ -1464,11 +1503,13 @@ namespace Microsoft.PowerShell.Commands
         public new string DisplayName
         {
             get { return displayName; }
+
             set
             {
                 displayName = value;
             }
         }
+
         internal string displayName = null;
 
         /// <summary>
@@ -1491,11 +1532,13 @@ namespace Microsoft.PowerShell.Commands
         public string Description
         {
             get { return description; }
+
             set
             {
                 description = value;
             }
         }
+
         internal string description = null;
 
         /// <summary>
@@ -1511,6 +1554,7 @@ namespace Microsoft.PowerShell.Commands
         public ServiceStartupType StartupType
         {
             get { return startupType; }
+
             set
             {
                 startupType = value;
@@ -1533,11 +1577,13 @@ namespace Microsoft.PowerShell.Commands
         public string Status
         {
             get { return serviceStatus; }
+
             set
             {
                 serviceStatus = value;
             }
         }
+
         internal string serviceStatus = null;
 
         /// <summary>
@@ -1560,11 +1606,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return include;
             }
+
             set
             {
                 include = null;
             }
         }
+
         internal new string[] include = null;
 
         /// <summary>
@@ -1578,11 +1626,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return exclude;
             }
+
             set
             {
                 exclude = null;
             }
         }
+
         internal new string[] exclude = null;
         #endregion Parameters
 
@@ -1609,6 +1659,7 @@ namespace Microsoft.PowerShell.Commands
                     service = new ServiceController(serviceName);
                     objServiceShouldBeDisposed = true;
                 }
+
                 Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if
@@ -1663,6 +1714,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.PermissionDenied);
                         return;
                     }
+
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
@@ -1700,6 +1752,7 @@ namespace Microsoft.PowerShell.Commands
                             username = Credential.UserName;
                             password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
                         }
+
                         bool succeeded = NativeMethods.ChangeServiceConfigW(
                             hService,
                             NativeMethods.SERVICE_NO_CHANGE,
@@ -1816,6 +1869,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     if (PassThru.IsPresent)
                     {
                         // To display the service, refreshing the service would not show the display name after updating
@@ -1829,6 +1883,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Marshal.FreeCoTaskMem(delayedAutoStartInfoBuffer);
                     }
+
                     if (IntPtr.Zero != hService)
                     {
                         bool succeeded = NativeMethods.CloseServiceHandle(hService);
@@ -1868,6 +1923,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Marshal.ZeroFreeCoTaskMemUnicode(password);
                 }
+
                 if (objServiceShouldBeDisposed)
                 {
                     service.Dispose();
@@ -1897,8 +1953,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return serviceName; }
+
             set { serviceName = value; }
         }
+
         internal string serviceName = null;
 
         /// <summary>
@@ -1910,8 +1968,10 @@ namespace Microsoft.PowerShell.Commands
         public string BinaryPathName
         {
             get { return binaryPathName; }
+
             set { binaryPathName = value; }
         }
+
         internal string binaryPathName = null;
 
         /// <summary>
@@ -1923,8 +1983,10 @@ namespace Microsoft.PowerShell.Commands
         public string DisplayName
         {
             get { return displayName; }
+
             set { displayName = value; }
         }
+
         internal string displayName = null;
 
         /// <summary>
@@ -1936,8 +1998,10 @@ namespace Microsoft.PowerShell.Commands
         public string Description
         {
             get { return description; }
+
             set { description = value; }
         }
+
         internal string description = null;
 
         /// <summary>
@@ -1948,8 +2012,10 @@ namespace Microsoft.PowerShell.Commands
         public ServiceStartupType StartupType
         {
             get { return startupType; }
+
             set { startupType = value; }
         }
+
         internal ServiceStartupType startupType = ServiceStartupType.Automatic;
 
         /// <summary>
@@ -1961,8 +2027,10 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential
         {
             get { return credential; }
+
             set { credential = value; }
         }
+
         internal PSCredential credential = null;
 
         /// <summary>
@@ -1973,8 +2041,10 @@ namespace Microsoft.PowerShell.Commands
         public string[] DependsOn
         {
             get { return dependsOn; }
+
             set { dependsOn = value; }
         }
+
         internal string[] dependsOn = null;
         #endregion Parameters
 
@@ -2023,6 +2093,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                     return;
                 }
+
                 if (!NativeMethods.TryGetNativeStartupType(StartupType, out DWORD dwStartType))
                 {
                     WriteNonTerminatingError(StartupType.ToString(), "New-Service", Name,
@@ -2040,6 +2111,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         numchars += dependedOn.Length + 1;
                     }
+
                     char[] doubleNullArray = new char[numchars];
                     int pos = 0;
                     foreach (string dependedOn in DependsOn)
@@ -2052,6 +2124,7 @@ namespace Microsoft.PowerShell.Commands
                         pos += dependedOn.Length;
                         doubleNullArray[pos++] = (char)0; // null terminator
                     }
+
                     doubleNullArray[pos++] = (char)0; // double-null terminator
                     Diagnostics.Assert(pos == numchars, "lpDependencies build error");
                     lpDependencies = Marshal.AllocHGlobal(
@@ -2262,6 +2335,7 @@ namespace Microsoft.PowerShell.Commands
                     service = new ServiceController(Name);
                     objServiceShouldBeDisposed = true;
                 }
+
                 Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if there is no such service.
@@ -2314,6 +2388,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.PermissionDenied);
                         return;
                     }
+
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
@@ -2392,7 +2467,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// unimplemented standard constructor
         /// </summary>
-        /// <returns> doesn't return </returns>
+        /// <returns>Doesn't return.</returns>
         public ServiceCommandException()
             : base()
         {
@@ -2403,7 +2478,7 @@ namespace Microsoft.PowerShell.Commands
         /// standard constructor
         /// </summary>
         /// <param name="message"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ServiceCommandException(string message)
             : base(message)
         {
@@ -2426,7 +2501,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -2440,8 +2515,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serializer
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -2463,8 +2538,10 @@ namespace Microsoft.PowerShell.Commands
         public string ServiceName
         {
             get { return _serviceName; }
+
             set { _serviceName = value; }
         }
+
         private string _serviceName = String.Empty;
         #endregion Properties
     }
@@ -2706,6 +2783,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Marshal.FreeCoTaskMem(lpBuffer);
             }
+
             return status;
         }
 
@@ -2744,6 +2822,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Marshal.FreeCoTaskMem(lpBuffer);
             }
+
             return status;
         }
 
@@ -2782,6 +2861,7 @@ namespace Microsoft.PowerShell.Commands
                     success = false;
                     break;
             }
+
             return success;
         }
 
@@ -2800,6 +2880,7 @@ namespace Microsoft.PowerShell.Commands
                     result = ServiceStartupType.Disabled;
                     break;
             }
+
             return result;
         }
     }

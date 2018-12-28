@@ -38,11 +38,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
@@ -55,16 +57,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         /// <summary>
         /// </summary>
-        public override String[] Command
+        public override string[] Command
         {
             get
             {
@@ -90,36 +94,42 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobsToStop = FindJobsMatchingByName(true, false, true, false);
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobsToStop = FindJobsMatchingByInstanceId(true, false, true, false);
                     }
+
                     break;
 
                 case SessionIdParameterSet:
                     {
                         jobsToStop = FindJobsMatchingBySessionId(true, false, true, false);
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobsToStop = FindJobsMatchingByState(false);
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobsToStop = FindJobsMatchingByFilter(false);
                     }
+
                     break;
 
                 default:
                     {
                         jobsToStop = CopyJobsToList(_jobs, false, false);
                     }
+
                     break;
             }
 
@@ -132,6 +142,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
                 string targetString =
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.RemovePSJobWhatIfTarget,
                                                                    job.Command, job.Id);
@@ -226,6 +237,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _pendingJobs.Remove(job.InstanceId);
                 }
+
                 if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
@@ -272,6 +284,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 pair.Key.StopJobCompleted -= pair.Value;
             }
+
             _waitForJobs.Dispose();
         }
         #endregion Dispose

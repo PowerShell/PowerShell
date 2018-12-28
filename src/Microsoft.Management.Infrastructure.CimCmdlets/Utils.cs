@@ -144,6 +144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static bool GenerateLog
         {
             get { return generateLog; }
+
             set { generateLog = value; }
         }
 
@@ -159,6 +160,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static bool GenerateVerboseMessage
         {
             get { return generateVerboseMessage; }
+
             set { generateVerboseMessage = value; }
         }
 
@@ -222,6 +224,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             //{
             //    return string.Format(CultureInfo.CurrentUICulture, "{0}:", frame.GetMethod());
             //}
+
             return string.Format(CultureInfo.CurrentUICulture, "{0}::{1}        ",
                 frame.GetMethod().DeclaringType.Name,
                 frame.GetMethod().Name);
@@ -340,10 +343,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     indent = 0;
                 }
+
                 if (indent > 5)
                 {
                     indent = 5;
                 }
+
                 string sourceInformation = string.Empty;
                 if (depth != -1)
                 {
@@ -356,6 +361,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         DateTime.Now.Second,
                         GetSourceCodeInformation(true, depth));
                 }
+
                 lock (logLock)
                 {
                     using (FileStream fs = new FileStream(logFile,FileMode.OpenOrCreate))
@@ -409,7 +415,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="parameterName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Throw if the given value is not a valid name (class name or property name)</exception>
+        /// <exception cref="ArgumentException">Throw if the given value is not a valid name (class name or property name).</exception>
         public static string ValidateArgumentIsValidName(string parameterName, string value)
         {
             DebugHelper.WriteLogEx();
@@ -425,6 +431,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return trimed;
                 }
             }
+
             DebugHelper.WriteLogEx("An invalid name: {0}={1}", 0, parameterName, value);
             throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture, Strings.InvalidParameterValue, value, parameterName));
         }
@@ -436,7 +443,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="parameterName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name)</exception>
+        /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name).</exception>
         public static String[] ValidateArgumentIsValidName(string parameterName, String[] value)
         {
             if (value != null)
@@ -448,9 +455,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         continue;
                     }
+
                     ValidationHelper.ValidateArgumentIsValidName(parameterName, propertyName);
                 }
             }
+
             return value;
         }
     }

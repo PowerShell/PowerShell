@@ -308,7 +308,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckKeyArg(byte[] arg, string argName)
         {
             if (arg == null)
@@ -335,7 +335,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNullOrEmpty(string arg, string argName)
         {
             if (arg == null)
@@ -354,7 +354,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNull(object arg, string argName)
         {
             if (arg == null)
@@ -368,7 +368,7 @@ namespace System.Management.Automation
         /// </summary>
         ///<param name="arg"> arg to check </param>
         ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value </returns>
+        ///<returns> Does not return a value.</returns>
         internal static void CheckSecureStringArg(SecureString arg, string argName)
         {
             if (arg == null)
@@ -461,7 +461,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Specifies the per-user configuration settings directory in a platform agnostic manner.
         /// </summary>
-        /// <returns>The current user's configuration settings directory</returns>
+        /// <returns>The current user's configuration settings directory.</returns>
         internal static string GetUserConfigurationDirectory()
         {
 #if UNIX
@@ -568,7 +568,7 @@ namespace System.Management.Automation
         /// returns current major version of monad ( that is running ) in a string
         /// format.
         /// </summary>
-        /// <returns>string</returns>
+        /// <returns>String.</returns>
         /// <remarks>
         /// Cannot return a Version object as minor number is a requirement for
         /// version object.
@@ -585,7 +585,7 @@ namespace System.Management.Automation
         /// Version.TryParse will be used to convert the string to a Version
         /// object.
         /// </summary>
-        /// <param name="versionString">string representing version</param>
+        /// <param name="versionString">string representing version.</param>
         /// <returns>A Version Object.</returns>
         internal static Version StringToVersion(string versionString)
         {
@@ -618,6 +618,7 @@ namespace System.Management.Automation
             {
                 return result;
             }
+
             return null;
         }
 
@@ -625,8 +626,8 @@ namespace System.Management.Automation
         /// Checks whether current monad session supports version specified
         /// by ver.
         /// </summary>
-        /// <param name="ver">Version to check</param>
-        /// <returns>true if supported, false otherwise</returns>
+        /// <param name="ver">Version to check.</param>
+        /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSVersionSupported(string ver)
         {
             // Convert version to supported format ie., x.x
@@ -638,8 +639,8 @@ namespace System.Management.Automation
         /// Checks whether current monad session supports version specified
         /// by checkVersion.
         /// </summary>
-        /// <param name="checkVersion">Version to check</param>
-        /// <returns>true if supported, false otherwise</returns>
+        /// <param name="checkVersion">Version to check.</param>
+        /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSVersionSupported(Version checkVersion)
         {
             if (checkVersion == null)
@@ -660,8 +661,8 @@ namespace System.Management.Automation
         /// Checks whether current PowerShell session supports edition specified
         /// by checkEdition.
         /// </summary>
-        /// <param name="checkEdition">Edition to check</param>
-        /// <returns>true if supported, false otherwise</returns>
+        /// <param name="checkEdition">Edition to check.</param>
+        /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSEditionSupported(string checkEdition)
         {
             return PSVersionInfo.PSEdition.Equals(checkEdition, StringComparison.OrdinalIgnoreCase);
@@ -689,8 +690,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks whether the specified edition value is allowed.
         /// </summary>
-        /// <param name="editionValue">Edition value to check</param>
-        /// <returns>true if allowed, false otherwise</returns>
+        /// <param name="editionValue">Edition value to check.</param>
+        /// <returns>True if allowed, false otherwise.</returns>
         internal static bool IsValidPSEditionValue(string editionValue)
         {
             return AllowedEditionValues.Contains(editionValue, StringComparer.OrdinalIgnoreCase);
@@ -714,10 +715,10 @@ namespace System.Management.Automation
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal readonly static ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
-        internal readonly static ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+        internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -732,7 +733,7 @@ namespace System.Management.Automation
             return policy;
         }
 
-        private readonly static ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
+        private static readonly ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
             new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
 
         /// <summary>
@@ -770,6 +771,7 @@ namespace System.Management.Automation
                         case nameof(ConsoleSessionConfiguration): result = policies.ConsoleSessionConfiguration; break;
                         default: Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added."); break;
                     }
+
                     if (result != null) { return (T) result; }
                 }
             }
@@ -788,7 +790,7 @@ namespace System.Management.Automation
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
             {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
-        private readonly static ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
+        private static readonly ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
             new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
 
         /// <summary>
@@ -852,12 +854,14 @@ namespace System.Management.Automation
                                     if (rawIntValue == 1) { propertyValue = true; }
                                     else if (rawIntValue == 0) { propertyValue = false; }
                                 }
+
                                 break;
                             case var _ when propertyType == typeof(string):
                                 if (rawRegistryValue is string rawStringValue)
                                 {
                                     propertyValue = rawStringValue;
                                 }
+
                                 break;
                             case var _ when propertyType == typeof(string[]):
                                 if (rawRegistryValue is string[] rawStringArrayValue)
@@ -868,6 +872,7 @@ namespace System.Management.Automation
                                 {
                                     propertyValue = new string[] { stringValue };
                                 }
+
                                 break;
                             default:
                                 Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
@@ -1114,8 +1119,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the current impersonating Windows identity, if any
         /// </summary>
-        /// <param name="impersonatedIdentity">Current impersonated Windows identity or null</param>
-        /// <returns>True if current identity is impersonated</returns>
+        /// <param name="impersonatedIdentity">Current impersonated Windows identity or null.</param>
+        /// <returns>True if current identity is impersonated.</returns>
         internal static bool TryGetWindowsImpersonatedIdentity(out WindowsIdentity impersonatedIdentity)
         {
             WindowsIdentity currentIdentity;
@@ -1147,6 +1152,7 @@ namespace System.Management.Automation
                 var principal = new WindowsPrincipal(currentIdentity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
+
             return false;
 #endif
         }
@@ -1310,9 +1316,9 @@ namespace System.Management.Automation
         /// <summary>
         /// If a mutex is abandoned, in our case, it is ok to proceed
         /// </summary>
-        /// <param name="mutex">The mutex to wait on. If it is null, a new one will be created</param>
+        /// <param name="mutex">The mutex to wait on. If it is null, a new one will be created.</param>
         /// <param name="initializer">The initializer to use to recreate the mutex.</param>
-        /// <returns>A working mutex. If the mutex was abandoned, a new one is created to replace it</returns>
+        /// <returns>A working mutex. If the mutex was abandoned, a new one is created to replace it.</returns>
         internal static Mutex SafeWaitMutex(Mutex mutex, MutexInitializer initializer)
         {
             try
@@ -1333,6 +1339,7 @@ namespace System.Management.Automation
 
             return mutex;
         }
+
         internal delegate Mutex MutexInitializer();
 
         internal static bool Succeeded(int hresult)
@@ -1415,7 +1422,7 @@ namespace System.Management.Automation
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<String, Encoding> encodingMap =
+        internal static Dictionary<string, Encoding> encodingMap =
             new Dictionary<string, Encoding>()
             {
                 { "255-254", Encoding.Unicode },
@@ -1467,6 +1474,7 @@ namespace System.Management.Automation
                     () => callback(state));
                 return;
             }
+
             callback(state);
         }
 #endif
@@ -1477,7 +1485,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
-        /// <returns>Command name and as appropriate Module name in out parameter</returns>
+        /// <returns>Command name and as appropriate Module name in out parameter.</returns>
         internal static string ParseCommandName(string commandName, out string moduleName)
         {
             var names = commandName.Split(Separators.Backslash, 2);
@@ -1571,8 +1579,8 @@ namespace System.Management.Automation
         ///     ConstrainedLanguage ->  ConstrainedLanguage
         ///     NoLanguage          ->  NoLanguage
         /// </summary>
-        /// <param name="context">ExecutionContext</param>
-        /// <returns>Previous language mode or null for no language mode change</returns>
+        /// <param name="context">ExecutionContext.</param>
+        /// <returns>Previous language mode or null for no language mode change.</returns>
         internal static PSLanguageMode? EnforceSystemLockDownLanguageMode(ExecutionContext context)
         {
             PSLanguageMode? oldMode = null;
@@ -1824,6 +1832,7 @@ namespace System.Management.Automation
                 {
                     return false;
                 }
+
                 cmdInfoList.Add(cmdInfo);
             }
 
@@ -2053,9 +2062,9 @@ namespace System.Management.Automation.Internal
         /// remote session, i.e., has run the Import-PSSession cmdlet.  This hook will return true if the provided commandPipeline
         /// is successfully batched and run in the remote session, and false if it is rejected for batching.
         /// </summary>
-        /// <param name="commandPipeline">Command pipeline to test</param>
-        /// <param name="runspace">Runspace with imported remote session</param>
-        /// <returns>True if commandPipeline is batched successfully</returns>
+        /// <param name="commandPipeline">Command pipeline to test.</param>
+        /// <param name="runspace">Runspace with imported remote session.</param>
+        /// <returns>True if commandPipeline is batched successfully.</returns>
         public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
         {
             return Utils.TryRunAsImplicitBatch(commandPipeline, runspace);
@@ -2160,6 +2169,7 @@ namespace System.Management.Automation.Internal
             {
                 throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
             }
+
             return item;
         }
     }

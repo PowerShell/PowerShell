@@ -200,6 +200,7 @@ namespace Microsoft.PowerShell
             {
                 result = ReadLineSafe(true, printToken);
             }
+
             SecureString secureResult = result as SecureString;
             System.Management.Automation.Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
 
@@ -290,6 +291,7 @@ namespace Microsoft.PowerShell
                 {
                     isModeChanged = false;
                 }
+
                 _rawui.ClearKeyCache();
 #endif
 
@@ -378,6 +380,7 @@ namespace Microsoft.PowerShell
                             result.Append(key);
 #endif
                         }
+
                         if (!string.IsNullOrEmpty(printTokenString))
                         {
                             WritePrintToken(printTokenString, ref originalCursorPos);
@@ -404,6 +407,7 @@ namespace Microsoft.PowerShell
                 }
 #endif
             }
+
             WriteLineToConsole();
             PostRead(result.ToString());
             if (isSecureString)
@@ -452,6 +456,7 @@ namespace Microsoft.PowerShell
                     originalCursorPosition.Y--;
                 }
             }
+
             WriteToConsole(printToken, false);
         }
 
@@ -498,7 +503,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Blank out at and move rawui.CursorPosition to <paramref name="cursorPosition"/>
         /// </summary>
-        /// <param name="cursorPosition">Position to blank out</param>
+        /// <param name="cursorPosition">Position to blank out.</param>
         private void BlankAtCursor(Coordinates cursorPosition)
         {
             _rawui.CursorPosition = cursorPosition;
@@ -529,6 +534,7 @@ namespace Microsoft.PowerShell
                 m &= ~flagToUnset;
                 return true;
             }
+
             return false;
         }
 #endif
@@ -774,6 +780,7 @@ namespace Microsoft.PowerShell
                         Dbg.Assert(RawUI.LengthInBufferCells(l) <= maxWidthInBufferCells, "line is too long");
                         result.Add(l);
                     }
+
                     break;
                 }
 
@@ -931,6 +938,7 @@ namespace Microsoft.PowerShell
                         AddWord(text, startIndex, wordEnd, maxWidthInBufferCells, inWs, ref result);
                         startIndex = wordEnd;
                     }
+
                     inWs = true;
                 }
                 else
@@ -942,6 +950,7 @@ namespace Microsoft.PowerShell
                         AddWord(text, startIndex, wordEnd, maxWidthInBufferCells, inWs, ref result);
                         startIndex = wordEnd;
                     }
+
                     inWs = false;
                 }
 
@@ -952,6 +961,7 @@ namespace Microsoft.PowerShell
             {
                 AddWord(text, startIndex, text.Length, maxWidthInBufferCells, inWs, ref result);
             }
+
             return result;
         }
 
@@ -1375,6 +1385,7 @@ namespace Microsoft.PowerShell
                         if (!NoPrompt) Console.Out.Write('\n');
                         consoleIn.Read();
                     }
+
                     break;
                 }
 
@@ -1483,6 +1494,7 @@ namespace Microsoft.PowerShell
 
                             throw new PipelineStoppedException();
                         }
+
                         break;
                     }
 
@@ -1572,6 +1584,7 @@ namespace Microsoft.PowerShell
                             Console.Out.Write(s.PadRight(length));
                             Console.CursorLeft = cursorCurrent - 1;
                         }
+
                         continue;
                     }
 
@@ -1587,6 +1600,7 @@ namespace Microsoft.PowerShell
                             Console.Out.Write(s.PadRight(length));
                             Console.CursorLeft = cursorCurrent;
                         }
+
                         continue;
                     }
 
@@ -1598,6 +1612,7 @@ namespace Microsoft.PowerShell
                             Console.CursorLeft--;
                             index--;
                         }
+
                         continue;
                     }
 
@@ -1609,6 +1624,7 @@ namespace Microsoft.PowerShell
                             Console.CursorLeft++;
                             index++;
                         }
+
                         continue;
                     }
 
@@ -1701,7 +1717,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Get the character at the cursor when the user types 'tab' in the middle of line.
         /// </summary>
-        /// <param name="cursorPosition">the cursor position where 'tab' is hit</param>
+        /// <param name="cursorPosition">the cursor position where 'tab' is hit.</param>
         /// <returns></returns>
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
@@ -1730,7 +1746,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Strip nulls from a string...
         /// </summary>
-        /// <param name="input">The string to process</param>
+        /// <param name="input">The string to process.</param>
         /// <returns>The string with any \0 characters removed...</returns>
         private string RemoveNulls(string input)
         {
@@ -1742,6 +1758,7 @@ namespace Microsoft.PowerShell
                 if (c != '\0')
                     sb.Append(c);
             }
+
             return sb.ToString();
         }
 
@@ -1819,6 +1836,7 @@ namespace Microsoft.PowerShell
                         input = input.Remove(input.Length - 1);
                         restOfLine = input.Substring(tabIndex + 1);
                     }
+
                     input = input.Remove(tabIndex);
 
                     if (input != lastCompletion || commandCompletion == null)
@@ -2049,6 +2067,7 @@ namespace Microsoft.PowerShell
                 _throwOnReadAndPrompt = value;
             }
         }
+
         private bool _throwOnReadAndPrompt;
 
         internal void HandleThrowOnReadAndPrompt()

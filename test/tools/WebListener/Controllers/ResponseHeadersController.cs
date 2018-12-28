@@ -40,6 +40,7 @@ namespace mvc.Controllers
                     Response.Headers.TryAdd(key, Request.Query[key]);
                 }
             }
+
             return JsonConvert.SerializeObject(headers);
         }
         

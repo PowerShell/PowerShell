@@ -233,8 +233,10 @@ namespace System.Management.Automation
                 {
                     return _errorRecord.InvocationInfo.MyCommand.Name;
                 }
+
                 return string.Empty;
             }
+
             set
             {
                 _errorRecord._activityOverride = value;
@@ -262,8 +264,10 @@ namespace System.Management.Automation
                     _reasonIsExceptionType = true;
                     return _errorRecord.Exception.GetType().Name;
                 }
+
                 return string.Empty;
             }
+
             set
             {
                 _errorRecord._reasonOverride = value;
@@ -302,8 +306,10 @@ namespace System.Management.Automation
 
                     return ErrorRecord.NotNull(targetInString);
                 }
+
                 return string.Empty;
             }
+
             set
             {
                 _errorRecord._targetNameOverride = value;
@@ -330,8 +336,10 @@ namespace System.Management.Automation
                 {
                     return _errorRecord.TargetObject.GetType().Name;
                 }
+
                 return string.Empty;
             }
+
             set
             {
                 _errorRecord._targetTypeOverride = value;
@@ -345,7 +353,7 @@ namespace System.Management.Automation
         /// concise text description based on
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
-        /// <returns>concise text description</returns>
+        /// <returns>Concise text description.</returns>
         /// <remarks>
         /// GetMessage returns a concise string which categorizes the error,
         /// based on
@@ -375,8 +383,8 @@ namespace System.Management.Automation
         /// concise text description based on
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
         /// </summary>
-        /// <param name="uiCultureInfo">Culture in which to display message</param>
-        /// <returns>concise text description</returns>
+        /// <param name="uiCultureInfo">Culture in which to display message.</param>
+        /// <returns>Concise text description.</returns>
         /// <remarks>
         /// GetMessage returns a concise string which categorizes the error,
         /// based on
@@ -401,6 +409,7 @@ namespace System.Management.Automation
                 // this probably indicates an invalid ErrorCategory value
                 errorCategoryString = ErrorCategory.NotSpecified.ToString();
             }
+
             string templateText = ErrorCategoryStrings.ResourceManager.GetString(errorCategoryString, uiCultureInfo);
 
             if (String.IsNullOrEmpty(templateText))
@@ -408,6 +417,7 @@ namespace System.Management.Automation
                 // this probably indicates an invalid ErrorCategory value
                 templateText = ErrorCategoryStrings.NotSpecified;
             }
+
             Diagnostics.Assert(!String.IsNullOrEmpty(templateText),
                 "ErrorCategoryStrings.resx resource failure");
 
@@ -445,7 +455,7 @@ namespace System.Management.Automation
         /// Same as
         /// <see cref="System.Management.Automation.ErrorCategoryInfo.GetMessage()"/>
         /// </summary>
-        /// <returns>developer-readable identifier</returns>
+        /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
         {
             return GetMessage(CultureInfo.CurrentUICulture);
@@ -464,9 +474,9 @@ namespace System.Management.Automation
         /// strings longer than 40 characters and ellipsize them to
         /// the first and last 19 characters plus "..." in the middle.
         /// </summary>
-        /// <param name="uiCultureInfo">culture to retrieve template if needed</param>
-        /// <param name="original">original string</param>
-        /// <returns>Ellipsized version of string</returns>
+        /// <param name="uiCultureInfo">culture to retrieve template if needed.</param>
+        /// <param name="original">original string.</param>
+        /// <returns>Ellipsized version of string.</returns>
         /// <remarks>
         /// "Please do not make this public as ellipsize is not a word."
         /// </remarks>
@@ -530,7 +540,7 @@ namespace System.Management.Automation
         /// Creates an instance of ErrorDetails specifying a Message.
         /// This variant is used by cmdlets.
         /// </summary>
-        /// <param name="cmdlet">cmdlet containing the template string</param>
+        /// <param name="cmdlet">cmdlet containing the template string.</param>
         /// <param name="baseName">by default, the
         /// <see cref="System.Resources.ResourceManager"/>
         /// name</param>
@@ -681,9 +691,9 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
+        /// <returns>Constructed object.</returns>
         protected ErrorDetails(SerializationInfo info,
                                StreamingContext context)
         {
@@ -695,8 +705,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -734,6 +744,7 @@ namespace System.Management.Automation
         {
             get { return ErrorRecord.NotNull(_message); }
         }
+
         private string _message = string.Empty;
 
         /// <summary>
@@ -749,11 +760,13 @@ namespace System.Management.Automation
         public string RecommendedAction
         {
             get { return ErrorRecord.NotNull(_recommendedAction); }
+
             set
             {
                 _recommendedAction = value;
             }
         }
+
         private string _recommendedAction = string.Empty;
         #endregion Public Properties
 
@@ -761,8 +774,10 @@ namespace System.Management.Automation
         internal Exception TextLookupError
         {
             get { return _textLookupError; }
+
             set { _textLookupError = value; }
         }
+
         private Exception _textLookupError /* = null */;
         #endregion Internal Properties
 
@@ -770,7 +785,7 @@ namespace System.Management.Automation
         /// <summary>
         /// As <see cref="System.Object.ToString()"/>
         /// </summary>
-        /// <returns>developer-readable identifier</returns>
+        /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
         {
             return Message;
@@ -809,8 +824,10 @@ namespace System.Management.Automation
                 _textLookupError = e;
                 return string.Empty; // fallback to Exception.Message
             }
+
             return BuildMessage(template, baseName, resourceId, args);
         }
+
         private string BuildMessage(
             IResourceSupplier resourceSupplier,
             string baseName,
@@ -842,8 +859,10 @@ namespace System.Management.Automation
                 _textLookupError = e;
                 return string.Empty; // fallback to Exception.Message
             }
+
             return BuildMessage(template, baseName, resourceId, args);
         }
+
         private string BuildMessage(
             System.Reflection.Assembly assembly,
             string baseName,
@@ -875,8 +894,10 @@ namespace System.Management.Automation
                 _textLookupError = e;
                 return string.Empty; // fallback to Exception.Message
             }
+
             return BuildMessage(template, baseName, resourceId, args);
         }
+
         private string BuildMessage(
             string template,
             string baseName,
@@ -1004,9 +1025,9 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
+        /// <returns>Constructed object.</returns>
         /// <remarks>
         /// ErrorRecord instances which are serialized using
         /// <see cref="ISerializable"/>
@@ -1022,8 +1043,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -1120,6 +1141,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("exception");
             }
+
             if (fullyQualifiedErrorId == null)
             {
                 throw PSTraceSource.NewArgumentNullException("fullyQualifiedErrorId");
@@ -1144,6 +1166,7 @@ namespace System.Management.Automation
                     _errorDetails.RecommendedAction = errorDetails_RecommendedAction;
                 }
             }
+
             _scriptStackTrace = errorDetails_ScriptStackTrace;
         }
 
@@ -1346,7 +1369,7 @@ namespace System.Management.Automation
         /// exception which already has an ErrorRecord
         /// ErrorCategoryInfo and ErrorDetails are deep-copied, other fields are not.
         /// </summary>
-        /// <param name="errorRecord">wrapped ErrorRecord</param>
+        /// <param name="errorRecord">wrapped ErrorRecord.</param>
         /// <param name="replaceParentContainsErrorRecordException">
         /// If the wrapped exception contains a ParentContainsErrorRecordException, the new
         /// ErrorRecord should have this exception as its Exception instead.
@@ -1368,6 +1391,7 @@ namespace System.Management.Automation
             {
                 _error = errorRecord.Exception;
             }
+
             _target = errorRecord.TargetObject;
             _errorId = errorRecord._errorId;
             _category = errorRecord._category;
@@ -1416,6 +1440,7 @@ namespace System.Management.Automation
                 return _error;
             }
         }
+
         private Exception _error /* = null */;
 
         /// <summary>
@@ -1426,6 +1451,7 @@ namespace System.Management.Automation
         {
             get { return _target; }
         }
+
         private object _target /* = null */;
         internal void SetTargetObject(object target)
         {
@@ -1442,6 +1468,7 @@ namespace System.Management.Automation
         {
             get { return _categoryInfo ?? (_categoryInfo = new ErrorCategoryInfo(this)); }
         }
+
         private ErrorCategoryInfo _categoryInfo;
 
         /// <summary>
@@ -1483,8 +1510,10 @@ namespace System.Management.Automation
         public ErrorDetails ErrorDetails
         {
             get { return _errorDetails; }
+
             set { _errorDetails = value; }
         }
+
         private ErrorDetails _errorDetails;
 
         /// <summary>
@@ -1496,6 +1525,7 @@ namespace System.Management.Automation
         {
             get { return _invocationInfo; }
         }
+
         private InvocationInfo _invocationInfo /* = null */;
 
         internal void SetInvocationInfo(InvocationInfo invocationInfo)
@@ -1543,8 +1573,10 @@ namespace System.Management.Automation
         internal bool PreserveInvocationInfoOnce
         {
             get { return _preserveInvocationInfoOnce; }
+
             set { _preserveInvocationInfoOnce = value; }
         }
+
         private bool _preserveInvocationInfoOnce /* = false */;
 
         /// <summary>
@@ -1554,6 +1586,7 @@ namespace System.Management.Automation
         {
             get { return _scriptStackTrace; }
         }
+
         private string _scriptStackTrace;
 
         internal void LockScriptStackTrace()
@@ -1575,6 +1608,7 @@ namespace System.Management.Automation
                     {
                         sb.Append(Environment.NewLine);
                     }
+
                     first = false;
                     sb.Append(frame.ToString());
                 }
@@ -1593,6 +1627,7 @@ namespace System.Management.Automation
                 return _pipelineIterationInfo;
             }
         }
+
         private ReadOnlyCollection<int> _pipelineIterationInfo = Utils.EmptyReadOnlyCollection<int>();
 
         /// <summary>
@@ -1604,11 +1639,13 @@ namespace System.Management.Automation
             {
                 return _serializeExtendedInfo;
             }
+
             set
             {
                 _serializeExtendedInfo = value;
             }
         }
+
         private bool _serializeExtendedInfo = false;
 
         #endregion Public Properties
@@ -1652,7 +1689,7 @@ namespace System.Management.Automation
         /// <summary>
         /// As <see cref="System.Object.ToString()"/>
         /// </summary>
-        /// <returns>developer-readable identifier</returns>
+        /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
         {
             if (ErrorDetails != null
@@ -1660,14 +1697,17 @@ namespace System.Management.Automation
             {
                 return ErrorDetails.Message;
             }
+
             if (Exception != null)
             {
                 if (!String.IsNullOrEmpty(Exception.Message))
                 {
                     return Exception.Message;
                 }
+
                 return Exception.ToString();
             }
+
             return base.ToString();
         }
         #endregion ToString
@@ -1801,9 +1841,9 @@ namespace System.Management.Automation
         /// to generate the final error message in
         /// <see cref="ErrorDetails.Message"/>.
         /// </remarks>
-        /// <param name="baseName">the base resource name</param>
-        /// <param name="resourceId">the resource id</param>
-        /// <returns>the error message template string corresponding to baseName and resourceId</returns>
+        /// <param name="baseName">the base resource name.</param>
+        /// <param name="resourceId">the resource id.</param>
+        /// <returns>The error message template string corresponding to baseName and resourceId.</returns>
         string GetResourceString(string baseName, string resourceId);
     }
 }

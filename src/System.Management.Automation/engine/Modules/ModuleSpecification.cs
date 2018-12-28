@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException(nameof(moduleName));
             }
+
             this.Name = moduleName;
             // Alias name of miniumVersion
             this.Version = null;
@@ -81,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initialize moduleSpecification from hashtable. Return exception object, if hashtable cannot be converted.
         /// Return null, in the success case.
         /// </summary>
-        /// <param name="moduleSpecification">object to initialize</param>
+        /// <param name="moduleSpecification">object to initialize.</param>
         /// <param name="hashtable">contains info about object to initialize.</param>
         /// <returns></returns>
         internal static Exception ModuleSpecificationInitHelper(ModuleSpecification moduleSpecification, Hashtable hashtable)
@@ -107,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (field.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
                     {
-                        moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<String>(entry.Value);
+                        moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<string>(entry.Value);
                         ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
                     }
                     else if (field.Equals("GUID", StringComparison.OrdinalIgnoreCase))
@@ -120,6 +121,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             badKeys.Append(", ");
                         }
+
                         badKeys.Append("'");
                         badKeys.Append(entry.Key.ToString());
                         badKeys.Append("'");
@@ -163,6 +165,7 @@ namespace Microsoft.PowerShell.Commands
                 message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaximumVersion", "RequiredVersion");
                 return new ArgumentException(message);
             }
+
             return null;
         }
 
@@ -210,6 +213,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append("'");
                 }
+
                 if (MaximumVersion != null)
                 {
                     moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append("'");
@@ -224,8 +228,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Parse the specified string into a ModuleSpecification object
         /// </summary>
-        /// <param name="input">The module specification string</param>
-        /// <param name="result">the ModuleSpecification object</param>
+        /// <param name="input">The module specification string.</param>
+        /// <param name="result">the ModuleSpecification object.</param>
         /// <returns></returns>
         public static bool TryParse(string input, out ModuleSpecification result)
         {
@@ -261,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return this;
             }
-            
+
             return new ModuleSpecification()
             {
                 Guid = Guid,
@@ -290,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The module maxVersion number if specified, otherwise null.
         /// </summary>
-        public String MaximumVersion { get; internal set; }
+        public string MaximumVersion { get; internal set; }
 
         /// <summary>
         /// The exact version of the module if specified, otherwise null.

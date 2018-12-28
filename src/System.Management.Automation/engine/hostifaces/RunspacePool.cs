@@ -58,7 +58,7 @@ namespace System.Management.Automation.Runspaces
         /// Initializes a new instance of the InvalidRunspacePoolStateException
         /// with a specified error message and current and expected state.
         /// </summary>
-        /// <param name="message">The message that describes the error. </param>
+        /// <param name="message">The message that describes the error.</param>
         /// <param name="currentState">Current state of runspace pool.</param>
         /// <param name="expectedState">Expected state of the runspace pool.</param>
         internal InvalidRunspacePoolStateException
@@ -463,6 +463,7 @@ namespace System.Management.Automation.Runspaces
                     return _isActive;
                 }
             }
+
             set
             {
                 lock (SyncObject)
@@ -713,6 +714,7 @@ namespace System.Management.Automation.Runspaces
         public TimeSpan CleanupInterval
         {
             get { return _internalPool.CleanupInterval; }
+
             set { _internalPool.CleanupInterval = value; }
         }
 
@@ -1007,7 +1009,7 @@ namespace System.Management.Automation.Runspaces
         ///<summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
-        /// <returns>RunspacePoolCapability</returns>
+        /// <returns>RunspacePoolCapability.</returns>
         public RunspacePoolCapability GetCapabilities()
         {
             return _internalPool.GetCapabilities();

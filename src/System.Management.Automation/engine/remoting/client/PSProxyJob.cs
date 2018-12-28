@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Internal constructor
         /// </summary>
-        /// <param name="command">the command to execute</param>
+        /// <param name="command">the command to execute.</param>
         internal PSJobProxy(string command)
             : base(command)
         {
@@ -378,8 +378,8 @@ namespace System.Management.Automation
         /// the job, delegates may be indicated to ensure that no events will be missed
         /// after the child job is created if data begins streaming back immediately.
         /// </summary>
-        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs</param>
-        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs</param>
+        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs.</param>
+        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs.</param>
         /// <param name="input">collection of input
         /// objects</param>
         public void StartJob(EventHandler<JobDataAddedEventArgs> dataAdded, EventHandler<JobStateEventArgs> stateChanged, PSDataCollection<object> input)
@@ -408,8 +408,8 @@ namespace System.Management.Automation
         /// the job, delegates may be indicated to ensure that no events will be missed
         /// after the child job is created if data begins streaming back immediately.
         /// </summary>
-        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs</param>
-        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs</param>
+        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs.</param>
+        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs.</param>
         /// <param name="input">collection of input
         /// objects</param>
         public void StartJobAsync(EventHandler<JobDataAddedEventArgs> dataAdded, EventHandler<JobStateEventArgs> stateChanged, PSDataCollection<object> input)
@@ -452,6 +452,7 @@ namespace System.Management.Automation
             {
                 AssertNotDisposed();
             }
+
             try
             {
                 DoRemove(force);
@@ -466,6 +467,7 @@ namespace System.Management.Automation
                         return;
                     }
                 }
+
                 RemoveComplete.WaitOne();
             }
             catch (Exception error)
@@ -575,12 +577,14 @@ namespace System.Management.Automation
             {
                 return _removeRemoteJobOnCompletion;
             }
+
             set
             {
                 AssertChangesCanBeAccepted();
                 _removeRemoteJobOnCompletion = value;
             }
         }
+
         private bool _removeRemoteJobOnCompletion;
 
         /// <summary>
@@ -602,6 +606,7 @@ namespace System.Management.Automation
             {
                 return _runspace;
             }
+
             set
             {
                 if (value == null)
@@ -627,6 +632,7 @@ namespace System.Management.Automation
             {
                 return _runspacePool;
             }
+
             set
             {
                 if (value == null)
@@ -798,6 +804,7 @@ namespace System.Management.Automation
                 {
                     Dbg.Assert(false, "Job object did not contain command when creating proxy.");
                 }
+
                 PSJobProxy job = new PSJobProxy(command);
 
                 job.InitializeExistingJobProxy(deserializedJob, runspace, runspacePool);
@@ -835,8 +842,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Will begin streaming data for a job object created by the "create" method that is in a not started state.
         /// </summary>
-        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs</param>
-        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs</param>
+        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs.</param>
+        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs.</param>
         public void ReceiveJob(EventHandler<JobDataAddedEventArgs> dataAdded, EventHandler<JobStateEventArgs> stateChanged)
         {
             lock (SyncRoot)
@@ -931,8 +938,10 @@ namespace System.Management.Automation
                     {
                         psPrivateMetadata = p.Value;
                     }
+
                     childJobCol.Add(p.Name, p.Value);
                 }
+
                 psParamCollection.Add(childJobCol);
             }
 
@@ -942,6 +951,7 @@ namespace System.Management.Automation
             {
                 newStartParameters.Add(new CommandParameter("PSPrivateMetadata", psPrivateMetadata));
             }
+
             StartParameters.Add(newStartParameters);
         }
 
@@ -1118,6 +1128,7 @@ namespace System.Management.Automation
                             // Transfer exception via event arguments.
                             OnStopJobCompleted(new AsyncCompletedEventArgs(e, false, null));
                         }
+
                         break;
                     case QueueOperation.Suspend:
                         try
@@ -1130,6 +1141,7 @@ namespace System.Management.Automation
                             // Transfer exception via event arguments.
                             OnSuspendJobCompleted(new AsyncCompletedEventArgs(e, false, null));
                         }
+
                         break;
                     case QueueOperation.Resume:
                         try
@@ -1152,8 +1164,8 @@ namespace System.Management.Automation
         /// Checks if there is more data in the specified collection
         /// </summary>
         /// <typeparam name="T">Type of the collection</typeparam>
-        /// <param name="collection">collection to check</param>
-        /// <returns>true if the collection has more data</returns>
+        /// <param name="collection">collection to check.</param>
+        /// <returns>True if the collection has more data.</returns>
         private static bool CollectionHasMoreData<T>(PSDataCollection<T> collection)
         {
             return (collection.IsOpen || collection.Count > 0);
@@ -1214,6 +1226,7 @@ namespace System.Management.Automation
                             // not proceed with the operation. This is an error.
                             throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.JobProxyAsJobMustBeTrue);
                         }
+
                         found = true;
                     }
                 }
@@ -1298,7 +1311,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Worker method to remove the remote job object
         /// </summary>
-        /// <param name="state">state information indicates the "force" parameter</param>
+        /// <param name="state">state information indicates the "force" parameter.</param>
         private void DoRemove(object state)
         {
             AssertNotDisposed();
@@ -1392,6 +1405,7 @@ namespace System.Management.Automation
                 {
                     _remoteJobRemoved = true;
                 }
+
                 if (!IsFinishedState(JobStateInfo.State))
                 {
                     DoSetJobState(JobState.Stopped);
@@ -1519,6 +1533,7 @@ namespace System.Management.Automation
                             OnResumeJobCompleted(new AsyncCompletedEventArgs(null, false, null));
                         }
                     }
+
                     break;
 
                 case JobState.Suspended:
@@ -1532,6 +1547,7 @@ namespace System.Management.Automation
                             OnSuspendJobCompleted(new AsyncCompletedEventArgs(null, false, null));
                         }
                     }
+
                     break;
                 case JobState.Failed:
                 case JobState.Completed:
@@ -1555,6 +1571,7 @@ namespace System.Management.Automation
                             OnStopJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
                         }
                     }
+
                     break;
             }
 
@@ -1565,8 +1582,8 @@ namespace System.Management.Automation
         /// Event handler for InvocationStateChanged on the powershell
         /// object running receive-job
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="e">argument describing this event</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="e">argument describing this event.</param>
         private void ReceivePowerShellInvocationStateChanged(object sender, PSInvocationStateChangedEventArgs e)
         {
             _tracer.WriteMessage(ClassNameTrace, "ReceivePowerShellInvocationStateChanged", _remoteJobInstanceId, this,
@@ -1593,6 +1610,7 @@ namespace System.Management.Automation
                             "Setting job state to {0} old state was {1} and reason is {2}.", newState.ToString(), JobStateInfo.State.ToString(), reason);
                         DoSetJobState(newState, e.InvocationStateInfo.Reason);
                     }
+
                     break;
 
                 case PSInvocationState.Stopped:
@@ -1634,6 +1652,7 @@ namespace System.Management.Automation
                     Dbg.Assert(false, "ChildJobs should be serialized to include InstanceID, cannot interact with them otherwise.");
                     continue;
                 }
+
                 var childProxyJob = new PSChildJobProxy(Command, job); // All have the same workflow name.
                 _childJobsMapping.Add(childJobInstanceId, childProxyJob);
 
@@ -1653,6 +1672,7 @@ namespace System.Management.Automation
                 {
                     PopulateStartParametersOnChild(childJobStartParametersObject, childProxyJob);
                 }
+
                 ChildJobs.Add(childProxyJob);
             }
         }
@@ -1680,9 +1700,11 @@ namespace System.Management.Automation
                                 newComParCol.Add(cp);
                             }
                         }
+
                         listComParCol.Add(newComParCol);
                     }
                 }
+
                 childProxyJob.StartParameters = listComParCol;
             }
         }
@@ -2089,6 +2111,7 @@ namespace System.Management.Automation
                         Diagnostics.Assert(false,
                                            "We should not get an unidentified source job id in non interop scenarios");
                     }
+
                     return;
                 }
 
@@ -2109,6 +2132,7 @@ namespace System.Management.Automation
                                          "Finished updating child job {0} state to {1} ", sourceJobId.ToString(),
                                          jobStateEventArgs.JobStateInfo.State.ToString());
                 }
+
                 return;
             }
 
@@ -2316,6 +2340,7 @@ namespace System.Management.Automation
                     return parts[2];
                 }
             }
+
             return message;
         }
 
@@ -2326,7 +2351,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Dispose all managed resources
         /// </summary>
-        /// <param name="disposing">true when being disposed</param>
+        /// <param name="disposing">true when being disposed.</param>
         protected override void Dispose(bool disposing)
         {
             if (!disposing) return;
@@ -2338,6 +2363,7 @@ namespace System.Management.Automation
 
                 _isDisposed = true;
             }
+
             if (_receivePowerShell != null)
             {
                 _receivePowerShell.Stop();
@@ -2380,6 +2406,7 @@ namespace System.Management.Automation
 
         private enum QueueOperation
         { Stop, Suspend, Resume }
+
         private ConcurrentQueue<QueueOperation> _pendingOperations = new ConcurrentQueue<QueueOperation>();
 
         private ManualResetEvent _removeComplete;
@@ -2451,6 +2478,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return _jobSuspendedOrFinished;
             }
         }
@@ -2460,7 +2488,7 @@ namespace System.Management.Automation
         private RunspacePool _runspacePool;
         private EventHandler<JobDataAddedEventArgs> _dataAddedHandler;
         private EventHandler<JobStateEventArgs> _stateChangedHandler;
-        private const String ResBaseName = "PowerShellStrings";
+        private const string ResBaseName = "PowerShellStrings";
         private Guid _remoteJobInstanceId = Guid.Empty;
         private string _remoteJobStatusMessage = String.Empty;
         private string _remoteJobLocation = String.Empty;
@@ -2561,26 +2589,32 @@ namespace System.Management.Automation
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Output, e.Index));
         }
+
         private void ErrorAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Error, e.Index));
         }
+
         private void WarningAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Warning, e.Index));
         }
+
         private void VerboseAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Verbose, e.Index));
         }
+
         private void ProgressAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Progress, e.Index));
         }
+
         private void DebugAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Debug, e.Index));
         }
+
         private void InformationAdded(object sender, DataAddedEventArgs e)
         {
             OnJobDataAdded(new JobDataAddedEventArgs(this, PowerShellStreamType.Information, e.Index));
@@ -2672,6 +2706,7 @@ namespace System.Management.Automation
                 Debug.DataAdded -= DebugAdded;
                 Information.DataAdded -= InformationAdded;
             }
+
             base.Dispose(disposing);
         }
 

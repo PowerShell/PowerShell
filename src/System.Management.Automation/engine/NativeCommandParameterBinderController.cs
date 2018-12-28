@@ -30,7 +30,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command arguments in string form
         /// </summary>
-        internal String Arguments
+        internal string Arguments
         {
             get
             {

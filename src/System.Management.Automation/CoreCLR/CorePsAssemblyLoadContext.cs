@@ -83,6 +83,7 @@ namespace System.Management.Automation
                         string message = string.Format(CultureInfo.CurrentCulture, BaseFolderDoesNotExist, basePath);
                         throw new ArgumentException(message, "basePaths");
                     }
+
                     _probingPaths[i] = basePath.Trim();
                 }
             }
@@ -100,7 +101,7 @@ namespace System.Management.Automation
 
         #region Fields
 
-        private readonly static object s_syncObj = new object();
+        private static readonly object s_syncObj = new object();
         private readonly string[] _probingPaths;
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary
@@ -417,8 +418,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Check if the loaded assembly matches the request
         /// </summary>
-        /// <param name="requestedAssembly">AssemblyName of the requested assembly</param>
-        /// <param name="loadedAssembly">AssemblyName of the loaded assembly</param>
+        /// <param name="requestedAssembly">AssemblyName of the requested assembly.</param>
+        /// <param name="loadedAssembly">AssemblyName of the loaded assembly.</param>
         /// <returns></returns>
         private bool IsAssemblyMatching(AssemblyName requestedAssembly, AssemblyName loadedAssembly)
         {

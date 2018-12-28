@@ -133,9 +133,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     2. it must be unambiguous (if partial match)
         /// If an error condition occurs, an exception will be thrown
         /// </summary>
-        /// <param name="keyName">key to verify</param>
-        /// <param name="invocationContext">invocation context for error reporting</param>
-        /// <returns>matching hash table entry</returns>
+        /// <param name="keyName">key to verify.</param>
+        /// <param name="invocationContext">invocation context for error reporting.</param>
+        /// <returns>Matching hash table entry.</returns>
         /// <exception cref="ArgumentException"></exception>
         internal HashtableEntryDefinition MatchEntry(string keyName, TerminatingErrorContext invocationContext)
         {
@@ -359,6 +359,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // bad type error
                     ProcessIllegalHashTableKeyValue(invocationContext, currentStringKey, e.Value.GetType(), def.AllowedTypes);
                 }
+
                 retVal.Add(def.KeyName, e.Value);
             }
 
@@ -421,6 +422,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 msg = StringUtil.Format(FormatAndOut_MshParameter.NullParameterTypeError,
                     allowedTypesList);
             }
+
             ParameterProcessor.ThrowParameterBindingException(invocationContext, "DictionaryKeyUnknownType", msg);
         }
 
@@ -497,6 +499,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 strings[k] = arr[k].FullName;
             }
+
             return CatenateStringArray(strings);
         }
 
@@ -510,8 +513,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     sb.Append(", ");
                 }
+
                 sb.Append(arr[k]);
             }
+
             sb.Append("}");
             return sb.ToString();
         }

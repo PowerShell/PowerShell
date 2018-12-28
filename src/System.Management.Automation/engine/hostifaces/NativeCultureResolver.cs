@@ -142,6 +142,7 @@ namespace Microsoft.PowerShell
                                     Array.Resize<string>(ref fallbacksForTheParent, currentIndex);
                                 }
                             }
+
                             _parentCI = new VistaCultureInfo(parentCulture, fallbacksForTheParent);
                         }
                     }
@@ -154,7 +155,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Clones the custom CultureInfo retaining the fallbacks.
         /// </summary>
-        /// <returns>Cloned custom CultureInfo</returns>
+        /// <returns>Cloned custom CultureInfo.</returns>
         public override object Clone()
         {
             return new VistaCultureInfo(base.Name, _fallbacks);
@@ -313,7 +314,7 @@ namespace Microsoft.PowerShell
         /// Constructs CultureInfo object without considering any Vista and later
         /// custom culture fallback logic.
         /// </summary>
-        /// <returns>A CultureInfo object</returns>
+        /// <returns>A CultureInfo object.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("GoldMan", "#pw17903:UseOfLCID", Justification = "This is only called In XP and below where GetUserDefaultLocaleName is not available, or as a fallback when GetThreadPreferredUILanguages fails")]
         private static CultureInfo EmulateDownLevel()
         {

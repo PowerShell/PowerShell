@@ -122,6 +122,7 @@ namespace System.Management.Automation
             {
                 path = LocationGlobber.GetDriveQualifiedPath(drive.CurrentLocation, drive);
             }
+
             return new PathInfo(drive, drive.Provider, path, new SessionState(this));
         }
 
@@ -798,7 +799,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A stack of the most recently pushed locations.
         /// </summary>
-        private Dictionary<String, Stack<PathInfo>> _workingLocationStack;
+        private Dictionary<string, Stack<PathInfo>> _workingLocationStack;
 
         private const string startingDefaultStackName = "default";
         /// <summary>
@@ -916,6 +917,7 @@ namespace System.Management.Automation
                                     SessionStateStrings.StackNameResolvedToMultiple,
                                     stackName);
                         }
+
                         haveMatch = true;
                         stackName = key;
                     }
@@ -937,6 +939,7 @@ namespace System.Management.Automation
                                 SessionStateStrings.StackNotFound,
                                 stackName);
                     }
+
                     return null;
                 }
 
@@ -1063,11 +1066,12 @@ namespace System.Management.Automation
             {
                 return new PathInfoStack(_defaultStackName, locationStack);
             }
+
             return null;
         }
 
         #endregion push-Pop current working directory
-    }           // SessionStateInternal class
+    }
 
     /// <summary>
     /// Event argument for the LocationChangedAction containing

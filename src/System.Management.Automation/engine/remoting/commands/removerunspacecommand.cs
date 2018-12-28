@@ -111,11 +111,13 @@ namespace Microsoft.PowerShell.Commands
 
                         toRemove = matches.Values;
                     }
+
                     break;
                 case RemovePSSessionCommand.SessionParameterSet:
                     {
                         toRemove = Session;
                     }
+
                     break;
                 default:
                     Diagnostics.Assert(false, "Invalid Parameter Set");

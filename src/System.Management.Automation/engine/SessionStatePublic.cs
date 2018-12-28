@@ -120,6 +120,7 @@ namespace System.Management.Automation
         public PSLanguageMode LanguageMode
         {
             get { return _sessionState.LanguageMode; }
+
             set { _sessionState.LanguageMode = value; }
         }
 
@@ -179,7 +180,7 @@ namespace System.Management.Automation
         /// then the check will be made. If the check fails, then an exception will be thrown...
         /// </summary>
         /// <param name="origin">The command origin value to check against...</param>
-        /// <param name="valueToCheck">The object to check</param>
+        /// <param name="valueToCheck">The object to check.</param>
         public static void ThrowIfNotVisible(CommandOrigin origin, object valueToCheck)
         {
             SessionStateException exception;
@@ -198,6 +199,7 @@ namespace System.Management.Automation
 
                     throw exception;
                 }
+
                 CommandInfo cinfo = valueToCheck as CommandInfo;
                 if (cinfo != null)
                 {
@@ -243,9 +245,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="valueToCheck">The object to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="valueToCheck">The object to check.</param>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, object valueToCheck)
         {
             if (origin == CommandOrigin.Internal)
@@ -255,14 +257,15 @@ namespace System.Management.Automation
             {
                 return (obj.Visibility == SessionStateEntryVisibility.Public);
             }
+
             return true;
         }
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="variable">The variable to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="variable">The variable to check.</param>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, PSVariable variable)
         {
             if (origin == CommandOrigin.Internal)
@@ -271,14 +274,15 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("variable");
             }
+
             return (variable.Visibility == SessionStateEntryVisibility.Public);
         }
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
-        /// <param name="origin">The origin to check against</param>
-        /// <param name="commandInfo">The command to check</param>
-        /// <returns>Returns true if the object is visible, false otherwise</returns>
+        /// <param name="origin">The origin to check against.</param>
+        /// <param name="commandInfo">The command to check.</param>
+        /// <returns>Returns true if the object is visible, false otherwise.</returns>
         public static bool IsVisible(CommandOrigin origin, CommandInfo commandInfo)
         {
             if (origin == CommandOrigin.Internal)
@@ -287,6 +291,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
+
             return (commandInfo.Visibility == SessionStateEntryVisibility.Public);
         }
 

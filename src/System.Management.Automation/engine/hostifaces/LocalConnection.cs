@@ -169,6 +169,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
@@ -213,9 +214,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        /// <param name="command">A valid command string. Can be null</param>
-        /// <param name="addToHistory">if true command is added to history</param>
-        /// <param name="isNested">True for nested pipeline</param>
+        /// <param name="command">A valid command string. Can be null.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="isNested">True for nested pipeline.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -293,6 +294,7 @@ namespace System.Management.Automation.Runspaces
                 return _transcriptionData;
             }
         }
+
         private TranscriptionData _transcriptionData = null;
 
         private JobRepository _jobRepository;
@@ -363,8 +365,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// CreateDebugPerfStruct is a helper method to populate DebugPreference
         /// </summary>
-        /// <param name="AppDomainNames">App Domain Names</param>
-        /// <returns>DebugPreference</returns>
+        /// <param name="AppDomainNames">App Domain Names.</param>
+        /// <returns>DebugPreference.</returns>
         private static DebugPreference CreateDebugPreference(string[] AppDomainNames)
         {
             DebugPreference DebugPreference = new DebugPreference();
@@ -375,8 +377,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// SetDebugPreference is a helper method used to enable and disable debug preference.
         /// </summary>
-        /// <param name="processName">Process Name</param>
-        /// <param name="appDomainName">App Domain Name</param>
+        /// <param name="processName">Process Name.</param>
+        /// <param name="appDomainName">App Domain Name.</param>
         /// <param name="enable">Indicates if the debug preference has to be enabled or disabled.</param>
         internal static void SetDebugPreference(string processName, List<string> appDomainName, bool enable)
         {
@@ -523,7 +525,7 @@ namespace System.Management.Automation.Runspaces
         /// GetDebugPreferenceCache is a helper method used to fetch
         /// the debug preference cache contents as a Hashtable.
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         /// <returns>If the Debug preference is persisted then a hashtable containing
         /// the debug preference is returned or else Null is returned.</returns>
         private static Hashtable GetDebugPreferenceCache(Runspace runspace)
@@ -544,6 +546,7 @@ namespace System.Management.Automation.Runspaces
                     debugPreferenceCache = psObjects[0].BaseObject as Hashtable;
                 }
             }
+
             return debugPreferenceCache;
         }
 
@@ -563,6 +566,7 @@ namespace System.Management.Automation.Runspaces
                     processDebugPreference = LanguagePrimitives.ConvertTo<DebugPreference>(debugPreferencePsObject);
                 }
             }
+
             return processDebugPreference;
         }
 
@@ -724,7 +728,7 @@ namespace System.Management.Automation.Runspaces
         internal void LogEngineHealthEvent(Exception exception,
                              Severity severity,
                              int id,
-                             Dictionary<String, String> additionalInfo)
+                             Dictionary<string, string> additionalInfo)
         {
             Dbg.Assert(exception != null, "Caller should validate the parameter");
 
@@ -907,6 +911,7 @@ namespace System.Management.Automation.Runspaces
                     allRunspacesClosed = false;
                     break;
                 }
+
                 var localRunspace = r as LocalRunspace;
                 if (localRunspace != null && localRunspace.Host is IHostProvidesTelemetryData)
                 {
@@ -914,6 +919,7 @@ namespace System.Management.Automation.Runspaces
                     break;
                 }
             }
+
             if (allRunspacesClosed && !hostProvidesExitTelemetry)
             {
                 TelemetryAPI.ReportExitTelemetry(null);
@@ -945,6 +951,7 @@ namespace System.Management.Automation.Runspaces
                     IThrottleOperation operation = new CloseOrDisconnectRunspaceOperationHelper(remoteRunspace);
                     throttleManager.AddOperation(operation);
                 }
+
                 throttleManager.EndSubmitOperations();
 
                 remoteRunspaceCloseCompleted.WaitOne();
@@ -957,6 +964,7 @@ namespace System.Management.Automation.Runspaces
         private void StopOrDisconnectAllJobs()
         {
             if (JobRepository.Jobs.Count == 0) { return; }
+
             List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
 
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
@@ -1096,6 +1104,7 @@ namespace System.Management.Automation.Runspaces
 
                 return _engine.Context.SessionState.LanguageMode;
             }
+
             set
             {
                 if (_disposed)
@@ -1207,6 +1216,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     return;
                 }
+
                 lock (SyncRoot)
                 {
                     if (_disposed)
@@ -1243,7 +1253,6 @@ namespace System.Management.Automation.Runspaces
                         }
                         catch (ObjectDisposedException)
                         {
-                            ;
                         }
                     }
                 }
@@ -1328,7 +1337,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Handles the Job state change event.
         /// </summary>
-        /// <param name="sender">Originator of event, unused</param>
+        /// <param name="sender">Originator of event, unused.</param>
         /// <param name="eventArgs">Event arguments containing Job state.</param>
         private void HandleJobStateChanged(object sender, JobStateEventArgs eventArgs)
         {
@@ -1405,8 +1414,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Handle the runspace state changed event
         /// </summary>
-        /// <param name="sender">sender of this information, unused</param>
-        /// <param name="eventArgs">runspace event args</param>
+        /// <param name="sender">sender of this information, unused.</param>
+        /// <param name="eventArgs">runspace event args.</param>
         private void HandleRunspaceStateChanged(object sender, RunspaceStateEventArgs eventArgs)
         {
             switch (eventArgs.RunspaceStateInfo.State)
@@ -1509,7 +1518,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message
         /// </summary>
-        /// <param name="message">the exception's message</param>
+        /// <param name="message">the exception's message.</param>
         public RunspaceOpenModuleLoadException(string message)
             : base(message)
         {
@@ -1518,8 +1527,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message</param>
-        /// <param name="innerException">the exceptions's inner exception</param>
+        /// <param name="message">the exception's message.</param>
+        /// <param name="innerException">the exceptions's inner exception.</param>
         public RunspaceOpenModuleLoadException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1528,8 +1537,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Recommended constructor for the class
         /// </summary>
-        /// <param name="moduleName">The name of the module that cause the error</param>
-        /// <param name="errors">The collection of errors that occurred during module processing</param>
+        /// <param name="moduleName">The name of the module that cause the error.</param>
+        /// <param name="errors">The collection of errors that occurred during module processing.</param>
         internal RunspaceOpenModuleLoadException(
             string moduleName,
             PSDataCollection<ErrorRecord> errors)
@@ -1550,14 +1559,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _errors; }
         }
+
         private PSDataCollection<ErrorRecord> _errors;
 
         #region Serialization
         /// <summary>
         /// Initializes a new instance of RunspaceOpenModuleLoadException with serialization parameters
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

@@ -29,7 +29,7 @@ namespace System.Management.Automation.Runspaces
         /// Construct an instance of an Runspace using a custom
         /// implementation of PSHost.
         /// </summary>
-        /// <param name="host">The explicit PSHost implementation</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Host is null.
         /// </exception>
@@ -42,6 +42,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             InitialSessionState = InitialSessionState.CreateDefault();
             Host = host;
         }
@@ -50,7 +51,7 @@ namespace System.Management.Automation.Runspaces
         /// Construct an instance of an Runspace using a custom
         /// implementation of PSHost.
         /// </summary>
-        /// <param name="host">The explicit PSHost implementation</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Host is null.
         /// </exception>
@@ -67,6 +68,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("initialSessionState");
@@ -107,6 +109,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
+
             if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException("initialSessionState");
@@ -121,6 +124,7 @@ namespace System.Management.Automation.Runspaces
             {
                 InitialSessionState = initialSessionState.Clone();
             }
+
             this.ThreadOptions = initialSessionState.ThreadOptions;
 
 #if !CORECLR // No ApartmentState In CoreCLR
@@ -170,8 +174,10 @@ namespace System.Management.Automation.Runspaces
         public override RunspaceAvailability RunspaceAvailability
         {
             get { return _runspaceAvailability; }
+
             protected set { _runspaceAvailability = value; }
         }
+
         private RunspaceAvailability _runspaceAvailability = RunspaceAvailability.None;
 
         /// <summary>
@@ -402,6 +408,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     WaitForFinishofPipelines();
                 }
+
                 return;
             }
 
@@ -475,7 +482,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a pipeline object in the Disconnected state.
         /// </summary>
-        /// <returns>Pipeline</returns>
+        /// <returns>Pipeline.</returns>
         public override Pipeline CreateDisconnectedPipeline()
         {
             //
@@ -488,7 +495,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a powershell object in the Disconnected state.
         /// </summary>
-        /// <returns>PowerShell</returns>
+        /// <returns>PowerShell.</returns>
         public override PowerShell CreateDisconnectedPowerShell()
         {
             //
@@ -501,7 +508,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns Runspace capabilities.
         /// </summary>
-        /// <returns>RunspaceCapability</returns>
+        /// <returns>RunspaceCapability.</returns>
         public override RunspaceCapability GetCapabilities()
         {
             return RunspaceCapability.Default;
@@ -514,7 +521,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create an empty pipeline
         /// </summary>
-        /// <returns>An empty pipeline</returns>
+        /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
         {
             return CoreCreatePipeline(null, false, false);
@@ -523,7 +530,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        /// <param name="command">A valid command string</param>
+        /// <param name="command">A valid command string.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -543,8 +550,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -577,8 +584,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a nested pipeline.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -599,8 +606,8 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline from a command string
         /// </summary>
         /// <param name="command">A valid command string or String.Empty.</param>
-        /// <param name="addToHistory">if true command is added to history</param>
-        /// <param name="isNested">True for nested pipeline</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="isNested">True for nested pipeline.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -689,7 +696,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the new runspace state.
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
@@ -728,7 +735,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the current runspace state - no error
         /// </summary>
-        /// <param name="state">the new state</param>
+        /// <param name="state">the new state.</param>
         protected void SetRunspaceState(RunspaceState state)
         {
             this.SetRunspaceState(state, null);
@@ -980,11 +987,13 @@ namespace System.Management.Automation.Runspaces
                     shouldRunAction = true;
                 }
             }
+
             if (shouldRunAction)
             {
                 action();
                 ranit = true;
             }
+
             return ranit;
         }
 
@@ -996,6 +1005,7 @@ namespace System.Management.Automation.Runspaces
         {
             return _currentlyRunningPipeline;
         }
+
         private Pipeline _currentlyRunningPipeline = null;
 
         /// <summary>
@@ -1341,8 +1351,10 @@ namespace System.Management.Automation.Runspaces
                         );
                     throw e;
                 }
+
                 return DoLanguageMode;
             }
+
             set
             {
                 if (RunspaceState != RunspaceState.Opened)
@@ -1356,6 +1368,7 @@ namespace System.Management.Automation.Runspaces
                         );
                     throw e;
                 }
+
                 DoLanguageMode = value;
             }
         }
@@ -1502,8 +1515,8 @@ namespace System.Management.Automation.Runspaces
         /// Protected methods to be implemented by derived class.
         /// This does the actual work of setting variable.
         /// </summary>
-        /// <param name="name">Name of the variable to set</param>
-        /// <param name="value">The value to set it to</param>
+        /// <param name="name">Name of the variable to set.</param>
+        /// <param name="value">The value to set it to.</param>
         protected abstract void DoSetVariable(string name, object value);
 
         /// <summary>

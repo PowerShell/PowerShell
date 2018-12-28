@@ -59,9 +59,9 @@ namespace System.Management.Automation
         /// Returns the different method overloads signatures.
         /// </summary>
         /// <returns></returns>
-        internal Collection<String> MethodDefinitions()
+        internal Collection<string> MethodDefinitions()
         {
-            Collection<String> result = new Collection<string>();
+            Collection<string> result = new Collection<string>();
 
             foreach (int index in _methods)
             {
@@ -82,9 +82,9 @@ namespace System.Management.Automation
         /// <summary>
         ///  Invokes the method on object
         /// </summary>
-        /// <param name="method">represents the instance of the method we want to invoke</param>
-        /// <param name="arguments">parameters to be passed to the method</param>
-        /// <returns>returns the value of method call</returns>
+        /// <param name="method">represents the instance of the method we want to invoke.</param>
+        /// <param name="arguments">parameters to be passed to the method.</param>
+        /// <returns>Returns the value of method call.</returns>
         internal object InvokeMethod(PSMethod method, object[] arguments)
         {
             try
@@ -127,6 +127,7 @@ namespace System.Management.Automation
                         method.Name, arguments.Length, ce.Message);
                 }
             }
+
             return null;
         }
     }
