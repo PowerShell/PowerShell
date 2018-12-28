@@ -614,7 +614,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// log a failed evaluation of an PSPropertyExpression
         /// </summary>
         /// <param name="result">PSPropertyExpressionResult containing the failed evaluation data.</param>
-        /// <param name="sourceObject">object used to evaluate the PSPropertyExpression.</param>
+        /// <param name="sourceObject">Object used to evaluate the PSPropertyExpression.</param>
         internal void LogPSPropertyExpressionFailedResult(PSPropertyExpressionResult result, object sourceObject)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// log a failed formatting operation
         /// </summary>
-        /// <param name="error">string format error object.</param>
+        /// <param name="error">String format error object.</param>
         internal void LogStringFormatError(StringFormatError error)
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
@@ -686,7 +686,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Conversion between an error internal representation and ErrorRecord
         /// </summary>
-        /// <param name="error">internal error object.</param>
+        /// <param name="error">Internal error object.</param>
         /// <returns>Corresponding ErrorRecord instance.</returns>
         private static ErrorRecord GenerateErrorRecord(FormattingError error)
         {

@@ -615,7 +615,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get SigningOption value corresponding to a string name
         /// </summary>
-        /// <param name="optionName">name of option.</param>
+        /// <param name="optionName">Name of option.</param>
         /// <returns>SigningOption.</returns>
         private static SigningOption GetSigningOption(string optionName)
         {

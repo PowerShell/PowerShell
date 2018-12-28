@@ -202,8 +202,8 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// add a session to dictionary
         /// </summary>
-        /// <param name="key">connection string.</param>
-        /// <param name="value">session object.</param>
+        /// <param name="key">Connection string.</param>
+        /// <param name="value">Session object.</param>
         internal void AddtoDictionary(string key, object value)
         {
             key = key.ToLowerInvariant();

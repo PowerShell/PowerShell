@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// register the default output command
         /// </summary>
         /// <param name="context">ExecutionContext to pass to the child pipeline.</param>
-        /// <param name="commandName">name of the command to execute.</param>
+        /// <param name="commandName">Name of the command to execute.</param>
         /// <param name="commandType">Type of the command to execute.</param>
         private void RegisterCommandDefault(ExecutionContext context, string commandName, Type commandType)
         {
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// process an incoming parent pipeline object
         /// </summary>
-        /// <param name="so">pipeline object to process.</param>
+        /// <param name="so">Pipeline object to process.</param>
         internal void Process(PSObject so)
         {
             // select which pipeline should handle the object
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// it selects the applicable out command (it can be the default one)
         /// to process the current pipeline object
         /// </summary>
-        /// <param name="so">pipeline object to be processed.</param>
+        /// <param name="so">Pipeline object to be processed.</param>
         /// <returns>Applicable command entry.</returns>
         private CommandEntry GetActiveCommandEntry(PSObject so)
         {

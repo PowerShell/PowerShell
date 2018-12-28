@@ -1524,7 +1524,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Sets the execution history length property.
         /// </summary>
-        /// <param name="executionHistoryLength">execution history length.</param>
+        /// <param name="executionHistoryLength">Execution history length.</param>
         /// <param name="save">Save to store.</param>
         public void SetExecutionHistoryLength(
             int executionHistoryLength,
