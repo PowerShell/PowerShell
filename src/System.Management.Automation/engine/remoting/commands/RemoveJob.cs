@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         /// Find the jobs in repository which match matching the specified names
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
-        /// in list (an empty list is returned). </param>
+        /// in list (an empty list is returned).</param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found.</param>
         /// <param name="checkIfJobCanBeRemoved">check if this job can be removed.</param>
         /// <param name="recurse">recurse and check in child jobs.</param>
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         /// Find the jobs in repository which match the specified instanceid
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
-        /// in list (an empty list is returned). </param>
+        /// in list (an empty list is returned).</param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found.</param>
         /// <param name="checkIfJobCanBeRemoved">check if this job can be removed.</param>
         /// <param name="recurse">look in all child jobs.</param>
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         /// Find the jobs in repository which match the specified session ids
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
-        /// in list (an empty list is returned). </param>
+        /// in list (an empty list is returned).</param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found.</param>
         /// <param name="checkIfJobCanBeRemoved">check if this job can be removed.</param>
         /// <param name="recurse">look in child jobs as well.</param>
@@ -400,7 +400,7 @@ namespace Microsoft.PowerShell.Commands
         /// Find the jobs in repository which match the specified command
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
-        /// in list (an empty list is returned). </param>
+        /// in list (an empty list is returned).</param>
         /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingByCommand(
             bool writeobject)
@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
         /// Find the jobs in repository which match the specified state
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
-        /// in list (an empty list is returned). </param>
+        /// in list (an empty list is returned).</param>
         /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingByState(
             bool writeobject)
@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="jobs"></param>
         /// <param name="writeobject">if true, method writes the object instead of returning it
-        /// in list (an empty list is returned). </param>
+        /// in list (an empty list is returned).</param>
         /// <param name="checkIfJobCanBeRemoved">if true, only jobs which can be removed will be checked.</param>
         /// <returns></returns>
         internal List<Job> CopyJobsToList(Job[] jobs, bool writeobject, bool checkIfJobCanBeRemoved)

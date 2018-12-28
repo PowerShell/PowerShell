@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// <param name="certificate">signing cert.</param>
         /// <param name="timeStampServerUrl">URL of time stamping server.</param>
         /// <param name="hashAlgorithm"> The name of the hash
-        /// algorithm to use. </param>
+        /// algorithm to use.</param>
         /// <returns>Does not return a value.</returns>
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName or certificate is null.
