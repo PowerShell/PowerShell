@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell
         /// Code to control the display properties of the a window...
         /// </summary>
         /// <param name="hWnd">The window to show...</param>
-        /// <param name="nCmdShow">The command to do</param>
+        /// <param name="nCmdShow">The command to do.</param>
         /// <returns>True it it was successful.</returns>
         [DllImport("user32.dll")]
         internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
@@ -1214,7 +1214,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle"></param>
         /// <param name="codePage"></param>
-        /// <param name="origin">must be within the screen buffer</param>
+        /// <param name="origin">must be within the screen buffer.</param>
         /// <param name="contents"></param>
         /// <param name="contentsRegion"></param>
         /// <param name="bufferInfo"></param>

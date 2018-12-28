@@ -30,8 +30,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// PropertyKey Constructor
         /// </summary>
-        /// <param name="formatId">A unique GUID for the property</param>
-        /// <param name="propertyId">Property identifier (PID)</param>
+        /// <param name="formatId">A unique GUID for the property.</param>
+        /// <param name="propertyId">Property identifier (PID).</param>
         internal PropertyKey(Guid formatId, Int32 propertyId)
         {
             this.FormatId = formatId;
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Implements the != (inequality) operator.
         /// </summary>
-        /// <param name="propKey1">First property key to compare</param>
+        /// <param name="propKey1">First property key to compare.</param>
         /// <param name="propKey2">Second property key to compare.</param>
         /// <returns>True if object a does not equal object b. false otherwise.</returns>
         public static bool operator !=(PropertyKey propKey1, PropertyKey propKey2)

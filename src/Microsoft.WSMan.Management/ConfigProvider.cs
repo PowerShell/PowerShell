@@ -5224,7 +5224,7 @@ namespace Microsoft.WSMan.Management
         /// Appends the plain text value of a SecureString variable to the StringBuilder.
         /// if the propertyValue provided is not SecureString appends empty string.
         /// </summary>
-        /// <param name="propertyValue">Value to append</param>
+        /// <param name="propertyValue">Value to append.</param>
         private string GetStringFromSecureString(object propertyValue)
         {
             SecureString value = propertyValue as SecureString;
