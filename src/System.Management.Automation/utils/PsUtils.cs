@@ -282,7 +282,7 @@ namespace System.Management.Automation
         /// to the remote end that contains the key of each UsingExpressionAst and its value. This method
         /// is used to generate the key.
         /// </summary>
-        /// <param name="usingAst">A using expression</param>
+        /// <param name="usingAst">A using expression.</param>
         /// <returns>Base64 encoded string as the key of the UsingExpressionAst.</returns>
         internal static string GetUsingExpressionKey(Language.UsingExpressionAst usingAst)
         {
@@ -552,7 +552,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts string to base64 encoded string
         /// </summary>
-        /// <param name="input">string to encode</param>
+        /// <param name="input">string to encode.</param>
         /// <returns>Base64 encoded string.</returns>
         internal static string StringToBase64String(string input)
         {
@@ -573,7 +573,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Decodes base64 encoded string
         /// </summary>
-        /// <param name="base64">base64 string to decode</param>
+        /// <param name="base64">base64 string to decode.</param>
         /// <returns>Decoded string.</returns>
         internal static string Base64ToString(string base64)
         {

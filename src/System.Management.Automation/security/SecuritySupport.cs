@@ -374,7 +374,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns true if file has product binary signature
         /// </summary>
-        /// <param name="file">Name of file to check</param>
+        /// <param name="file">Name of file to check.</param>
         /// <returns>True when file has product binary signature.</returns>
         public static bool IsProductBinary(string file)
         {
@@ -484,7 +484,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the pass / fail result of calling the SAFER API
         /// </summary>
-        /// <param name="path">The path to the file in question</param>
+        /// <param name="path">The path to the file in question.</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
         [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
@@ -580,7 +580,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// throw if file does not exist
         /// </summary>
-        /// <param name="filePath">path to file</param>
+        /// <param name="filePath">path to file.</param>
         /// <returns>Does not return a value.</returns>
         internal static void CheckIfFileExists(string filePath)
         {
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Internal
         /// check to see if the specified cert is suitable to be
         /// used as a code signing cert
         /// </summary>
-        /// <param name="c">certificate object</param>
+        /// <param name="c">certificate object.</param>
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
@@ -611,7 +611,7 @@ namespace System.Management.Automation.Internal
         /// used as an encryption cert for PKI encryption. Note
         /// that this cert doesn't require the private key.
         /// </summary>
-        /// <param name="c">certificate object</param>
+        /// <param name="c">certificate object.</param>
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForEncryption(X509Certificate2 c)
         {
@@ -658,7 +658,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// check if the specified cert has a private key in it
         /// </summary>
-        /// <param name="cert">certificate object</param>
+        /// <param name="cert">certificate object.</param>
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertHasPrivatekey(X509Certificate2 cert)
         {
@@ -668,7 +668,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the EKUs of a cert
         /// </summary>
-        /// <param name="cert">certificate object</param>
+        /// <param name="cert">certificate object.</param>
         /// <returns>A collection of cert eku strings.</returns>
         [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert an int to a DWORD
         /// </summary>
-        /// <param name="n">signed int number</param>
+        /// <param name="n">signed int number.</param>
         /// <returns>DWORD.</returns>
         internal static DWORD GetDWORDFromInt(int n)
         {
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert a DWORD to int
         /// </summary>
-        /// <param name="n">number</param>
+        /// <param name="n">number.</param>
         /// <returns>Int.</returns>
         internal static int GetIntFromDWORD(DWORD n)
         {
@@ -1029,7 +1029,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds Ascii armour to a byte stream in Base64 format
         /// </summary>
-        /// <param name="bytes">The bytes to encode</param>
+        /// <param name="bytes">The bytes to encode.</param>
         internal static string GetAsciiArmor(byte[] bytes)
         {
             StringBuilder output = new StringBuilder();
@@ -1045,11 +1045,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes Ascii armour from a byte stream
         /// </summary>
-        /// <param name="actualContent">The Ascii armored content</param>
-        /// <param name="beginMarker">The marker of the start of the Base64 content</param>
-        /// <param name="endMarker">The marker of the end of the Base64 content</param>
-        /// <param name="startIndex">The beginning of where the Ascii armor was detected</param>
-        /// <param name="endIndex">The end of where the Ascii armor was detected</param>
+        /// <param name="actualContent">The Ascii armored content.</param>
+        /// <param name="beginMarker">The marker of the start of the Base64 content.</param>
+        /// <param name="endMarker">The marker of the end of the Base64 content.</param>
+        /// <param name="startIndex">The beginning of where the Ascii armor was detected.</param>
+        /// <param name="endIndex">The end of where the Ascii armor was detected.</param>
         internal static byte[] RemoveAsciiArmor(string actualContent, string beginMarker, string endMarker, out int startIndex, out int endIndex)
         {
             byte[] messageBytes = null;
@@ -1538,8 +1538,8 @@ namespace System.Management.Automation
         /// Caller is responsible for calling AmsiCloseSession when a "session" (script)
         /// is complete, and for calling AmsiUninitialize when the runspace is being torn down.
         /// </summary>
-        /// <param name="content">The string to be scanned</param>
-        /// <param name="sourceMetadata">Information about the source (filename, etc.)</param>
+        /// <param name="content">The string to be scanned.</param>
+        /// <param name="sourceMetadata">Information about the source (filename, etc.).</param>
         /// <returns>AMSI_RESULT_DETECTED if malware was detected in the sample.</returns>
         internal static AmsiNativeMethods.AMSI_RESULT ScanContent(string content, string sourceMetadata)
         {

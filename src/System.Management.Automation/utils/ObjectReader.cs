@@ -21,8 +21,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read</param>
-        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
+        /// <param name="stream">the stream to read.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Handle DataReady events from the underlying stream
         /// </summary>
-        /// <param name="sender">The stream raising the event</param>
+        /// <param name="sender">The stream raising the event.</param>
         /// <param name="args">standard event args.</param>
         private void OnDataReady(object sender, EventArgs args)
         {
@@ -222,7 +222,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected abstract void Dispose(bool disposing);
 
         #endregion IDisposable
@@ -240,8 +240,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read</param>
-        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
+        /// <param name="stream">the stream to read.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public ObjectReader([In, Out] ObjectStream stream)
             : base(stream)
         { }
@@ -250,7 +250,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read at most <paramref name="count"/> objects
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
+        /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -350,8 +350,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read</param>
-        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
+        /// <param name="stream">the stream to read.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public PSObjectReader([In, Out] ObjectStream stream)
             : base(stream)
         { }
@@ -360,7 +360,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Read at most <paramref name="count"/> objects
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
+        /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -498,8 +498,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read</param>
-        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
+        /// <param name="stream">the stream to read.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public PSDataCollectionReader(PSDataCollectionStream<DataStoreType> stream)
             : base(stream)
         {
@@ -513,7 +513,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
+        /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
         public override Collection<ReturnType> Read(int count)
         {
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -657,7 +657,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Construct with an existing ObjectStream
         /// </summary>
-        /// <param name="stream">the stream to read</param>
+        /// <param name="stream">the stream to read.</param>
         /// <param name="computerName"></param>
         /// <param name="runspaceId"></param>
         internal PSDataCollectionPipelineReader(PSDataCollectionStream<DataStoreType> stream,
@@ -688,7 +688,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
+        /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
         public override Collection<ReturnType> Read(int count)
         {
@@ -793,7 +793,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Converts to the return type based on language primitives
         /// </summary>
-        /// <param name="inputObject">input object to convert</param>
+        /// <param name="inputObject">input object to convert.</param>
         /// <returns>Input object converted to the specified return type.</returns>
         private ReturnType ConvertToReturnType(object inputObject)
         {
@@ -815,7 +815,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
