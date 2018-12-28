@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="connectionInfo">connection information which identifies
         /// the remote computer</param>
-        /// <param name="host">host on the client.</param>
+        /// <param name="host">Host on the client.</param>
         /// <param name="applicationArguments">
         /// <param name="name">Friendly name for remote runspace session.</param>
         /// <param name="id">Id for remote runspace.</param>
@@ -614,7 +614,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Dispose this runspace
         /// </summary>
-        /// <param name="disposing">true if called from Dispose.</param>
+        /// <param name="disposing">True if called from Dispose.</param>
         protected override void Dispose(bool disposing)
         {
             try
@@ -1053,7 +1053,7 @@ namespace System.Management.Automation
         /// Create a pipeline from a command string.
         /// </summary>
         /// <param name="command">A valid command string.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation
         /// Creates a nested pipeline.
         /// </summary>
         /// <param name="command">A valid command string.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -1184,7 +1184,7 @@ namespace System.Management.Automation
         /// Check to see, if there is any other pipeline running in this
         /// runspace. If not, then add this to the list of pipelines
         /// </summary>
-        /// <param name="pipeline">pipeline to check and add.</param>
+        /// <param name="pipeline">Pipeline to check and add.</param>
         /// <param name="syncCall">whether this is being called from
         /// a synchronous method call</param>
         internal void DoConcurrentCheckAndAddToRunningPipelines(RemotePipeline pipeline, bool syncCall)
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set the new runspace state.
         /// </summary>
-        /// <param name="state">the new state.</param>
+        /// <param name="state">The new state.</param>
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
@@ -1566,7 +1566,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles any host calls received from the server
         /// </summary>
-        /// <param name="sender">sender of this information, unused.</param>
+        /// <param name="sender">Sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event, contains
         /// a RemoteHostCall object</param>
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
@@ -1665,7 +1665,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="invokeCommand">current invoke-command
         /// instance</param>
-        /// <param name="localPipelineId">local pipeline id.</param>
+        /// <param name="localPipelineId">Local pipeline id.</param>
         /// <returns>True, if another invoke-command is running
         /// before, false otherwise.</returns>
         internal bool IsAnotherInvokeCommandExecuting(InvokeCommandCommand invokeCommand,
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="invokeCommand">reference to invoke command
         /// which is currently being processed</param>
-        /// <param name="localPipelineId">the local pipeline id.</param>
+        /// <param name="localPipelineId">The local pipeline id.</param>
         internal void SetCurrentInvokeCommand(InvokeCommandCommand invokeCommand,
             long localPipelineId)
         {

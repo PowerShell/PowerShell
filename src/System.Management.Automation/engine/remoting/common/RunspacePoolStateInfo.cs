@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for creating the state info
         /// </summary>
-        /// <param name="state">state.</param>
+        /// <param name="state">State.</param>
         /// <param name="reason">exception that resulted in this
         /// state change. Can be null</param>
         public RunspacePoolStateInfo(RunspacePoolState state, Exception reason)

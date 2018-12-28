@@ -1199,7 +1199,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the throttling complete event of the throttle manager
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
+        /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs"></param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
