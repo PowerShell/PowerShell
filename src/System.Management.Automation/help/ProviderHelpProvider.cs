@@ -63,7 +63,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Do exact match help based on the target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             Collection<ProviderInfo> matchingProviders = null;
@@ -257,7 +257,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Search for provider help based on a search target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
@@ -372,8 +372,8 @@ namespace System.Management.Automation
         ///     1. check whether provider-specific commandlet help exists.
         ///     2. merge found provider-specific help with commandlet help provided.
         /// </remarks>
-        /// <param name="helpInfo">helpInfo forwarded in</param>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpInfo">helpInfo forwarded in.</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <returns>The help info object after processing.</returns>
         override internal HelpInfo ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {

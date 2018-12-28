@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a PSCommand from the specified command
         /// </summary>
-        /// <param name="command">Command object to use</param>
+        /// <param name="command">Command object to use.</param>
         internal PSCommand(Command command)
         {
             _currentCommand = command;

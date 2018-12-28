@@ -20,8 +20,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of Command class using specified command parameter.
         /// </summary>
-        /// <param name="command">Name of the command or script contents</param>
-        /// <exception cref="ArgumentNullException">command is null</exception>
+        /// <param name="command">Name of the command or script contents.</param>
+        /// <exception cref="ArgumentNullException">command is null.</exception>
         public Command(string command)
             : this(command, false, null)
         {
@@ -30,9 +30,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of Command class using specified command parameter.
         /// </summary>
-        /// <param name="command">The command name or script contents</param>
+        /// <param name="command">The command name or script contents.</param>
         /// <param name="isScript">True if this command represents a script, otherwise; false.</param>
-        /// <exception cref="ArgumentNullException">command is null</exception>
+        /// <exception cref="ArgumentNullException">command is null.</exception>
         public Command(string command, bool isScript)
             : this(command, isScript, null)
         {
@@ -41,10 +41,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="command">The command name or script contents</param>
+        /// <param name="command">The command name or script contents.</param>
         /// <param name="isScript">True if this command represents a script, otherwise; false.</param>
-        /// <param name="useLocalScope">if true local scope is used to run the script command</param>
-        /// <exception cref="ArgumentNullException">command is null</exception>
+        /// <param name="useLocalScope">if true local scope is used to run the script command.</param>
+        /// <exception cref="ArgumentNullException">command is null.</exception>
         public Command(string command, bool isScript, bool useLocalScope)
         {
             IsEndOfStatement = false;
@@ -567,7 +567,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates a Command object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
-        /// <param name="commandAsPSObject">PSObject to rehydrate</param>
+        /// <param name="commandAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
         /// Command rehydrated from a PSObject property bag
         /// </returns>
@@ -634,7 +634,7 @@ namespace System.Management.Automation.Runspaces
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <param name="psRPVersion">PowerShell remoting protocol version</param>
+        /// <param name="psRPVersion">PowerShell remoting protocol version.</param>
         /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting(Version psRPVersion)
         {
@@ -853,7 +853,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Adds a new script command
         /// </summary>
-        /// <param name="scriptContents">script contents</param>
+        /// <param name="scriptContents">script contents.</param>
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>
@@ -865,8 +865,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Adds a new scrip command for given script
         /// </summary>
-        /// <param name="scriptContents">script contents</param>
-        /// <param name="useLocalScope">if true local scope is used to run the script command</param>
+        /// <param name="scriptContents">script contents.</param>
+        /// <param name="useLocalScope">if true local scope is used to run the script command.</param>
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>

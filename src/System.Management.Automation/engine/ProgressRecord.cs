@@ -354,8 +354,8 @@ namespace System.Management.Automation
         /// The percentage complete will slowly converge toward 100%.
         /// At the <paramref name="expectedDuration"/> the percentage complete will be 90%.
         /// </summary>
-        /// <param name="startTime">When did the operation start</param>
-        /// <param name="expectedDuration">How long does the operation usually take</param>
+        /// <param name="startTime">When did the operation start.</param>
+        /// <param name="expectedDuration">How long does the operation usually take.</param>
         /// <returns>Estimated percentage complete of the operation (always between 0 and 99% - never returns 100%).</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when
@@ -459,7 +459,7 @@ namespace System.Management.Automation
         /// Creates a ProgressRecord object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
-        /// <param name="progressAsPSObject">PSObject to rehydrate</param>
+        /// <param name="progressAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
         /// ProgressRecord rehydrated from a PSObject property bag
         /// </returns>

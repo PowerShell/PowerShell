@@ -482,8 +482,8 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// This routine converts a string into a Type object using the msh rules.
         /// </summary>
-        /// <param name="strTypeName">A string representing the name of the type to convert</param>
-        /// <param name="exception">The exception, if one happened, trying to find the type</param>
+        /// <param name="strTypeName">A string representing the name of the type to convert.</param>
+        /// <param name="exception">The exception, if one happened, trying to find the type.</param>
         /// <returns>A type if the conversion was successful, null otherwise.</returns>
         internal static Type ResolveType(string strTypeName, out Exception exception)
         {

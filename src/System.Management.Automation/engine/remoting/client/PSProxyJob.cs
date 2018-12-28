@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Internal constructor
         /// </summary>
-        /// <param name="command">the command to execute</param>
+        /// <param name="command">the command to execute.</param>
         internal PSJobProxy(string command)
             : base(command)
         {
@@ -378,8 +378,8 @@ namespace System.Management.Automation
         /// the job, delegates may be indicated to ensure that no events will be missed
         /// after the child job is created if data begins streaming back immediately.
         /// </summary>
-        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs</param>
-        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs</param>
+        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs.</param>
+        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs.</param>
         /// <param name="input">collection of input
         /// objects</param>
         public void StartJob(EventHandler<JobDataAddedEventArgs> dataAdded, EventHandler<JobStateEventArgs> stateChanged, PSDataCollection<object> input)
@@ -408,8 +408,8 @@ namespace System.Management.Automation
         /// the job, delegates may be indicated to ensure that no events will be missed
         /// after the child job is created if data begins streaming back immediately.
         /// </summary>
-        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs</param>
-        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs</param>
+        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs.</param>
+        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs.</param>
         /// <param name="input">collection of input
         /// objects</param>
         public void StartJobAsync(EventHandler<JobDataAddedEventArgs> dataAdded, EventHandler<JobStateEventArgs> stateChanged, PSDataCollection<object> input)
@@ -842,8 +842,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Will begin streaming data for a job object created by the "create" method that is in a not started state.
         /// </summary>
-        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs</param>
-        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs</param>
+        /// <param name="dataAdded">delegate used to subscribe to data added events on the child jobs.</param>
+        /// <param name="stateChanged">delegate used to subscribe to state changed events on the child jobs.</param>
         public void ReceiveJob(EventHandler<JobDataAddedEventArgs> dataAdded, EventHandler<JobStateEventArgs> stateChanged)
         {
             lock (SyncRoot)
@@ -1164,7 +1164,7 @@ namespace System.Management.Automation
         /// Checks if there is more data in the specified collection
         /// </summary>
         /// <typeparam name="T">Type of the collection</typeparam>
-        /// <param name="collection">collection to check</param>
+        /// <param name="collection">collection to check.</param>
         /// <returns>True if the collection has more data.</returns>
         private static bool CollectionHasMoreData<T>(PSDataCollection<T> collection)
         {
@@ -1311,7 +1311,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Worker method to remove the remote job object
         /// </summary>
-        /// <param name="state">state information indicates the "force" parameter</param>
+        /// <param name="state">state information indicates the "force" parameter.</param>
         private void DoRemove(object state)
         {
             AssertNotDisposed();
@@ -1582,8 +1582,8 @@ namespace System.Management.Automation
         /// Event handler for InvocationStateChanged on the powershell
         /// object running receive-job
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="e">argument describing this event</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="e">argument describing this event.</param>
         private void ReceivePowerShellInvocationStateChanged(object sender, PSInvocationStateChangedEventArgs e)
         {
             _tracer.WriteMessage(ClassNameTrace, "ReceivePowerShellInvocationStateChanged", _remoteJobInstanceId, this,
@@ -2351,7 +2351,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Dispose all managed resources
         /// </summary>
-        /// <param name="disposing">true when being disposed</param>
+        /// <param name="disposing">true when being disposed.</param>
         protected override void Dispose(bool disposing)
         {
             if (!disposing) return;

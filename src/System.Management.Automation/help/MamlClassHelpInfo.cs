@@ -49,8 +49,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a MamlClassHelpInfo object from an XmlNode.
         /// </summary>
-        /// <param name="xmlNode">xmlNode that contains help info</param>
-        /// <param name="helpCategory">help category this maml object fits into</param>
+        /// <param name="xmlNode">xmlNode that contains help info.</param>
+        /// <param name="helpCategory">help category this maml object fits into.</param>
         /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlClassHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {

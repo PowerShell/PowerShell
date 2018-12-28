@@ -843,8 +843,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for HttpResponseException.
         /// </summary>
-        /// <param name="message">Message for the exception</param>
-        /// <param name="response">Response from the HTTP server</param>
+        /// <param name="message">Message for the exception.</param>
+        /// <param name="response">Response from the HTTP server.</param>
         public HttpResponseException(string message, HttpResponseMessage response) : base(message)
         {
             Response = response;
@@ -891,7 +891,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read the supplied WebResponse object and push the resulting output into the pipeline.
         /// </summary>
-        /// <param name="response">Instance of a WebResponse object to be processed</param>
+        /// <param name="response">Instance of a WebResponse object to be processed.</param>
         internal abstract void ProcessResponse(HttpResponseMessage response);
 
         #endregion Abstract Methods
@@ -1633,7 +1633,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A byte array containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
@@ -1656,7 +1656,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A String object containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
@@ -1742,7 +1742,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="contentStream">A Stream object containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
@@ -1765,7 +1765,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
@@ -1898,8 +1898,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(Object)" /> to convert the objects to strings.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" />.</param>
-        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" />.</param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" /></param>
+        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" /></param>
         private StringContent GetMultipartStringContent(Object fieldName, object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
@@ -1915,8 +1915,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(Object)" /> to convert the fieldname to a string.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
-        /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" />.</param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
+        /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" /></param>
         private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
@@ -1933,8 +1933,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(Object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
-        /// <param name="file">The file to use for the <see cref="StreamContent" />.</param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
+        /// <param name="file">The file to use for the <see cref="StreamContent" /></param>
         private StreamContent GetMultipartFileContent(Object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));

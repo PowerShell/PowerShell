@@ -186,8 +186,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for Fully qualified warning Id.
         /// </summary>
-        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id</param>
-        /// <param name="message">Warning message</param>
+        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id.</param>
+        /// <param name="message">Warning message.</param>
         public WarningRecord(string fullyQualifiedWarningId, string message)
             : base(message)
         {
@@ -197,8 +197,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for Fully qualified warning Id.
         /// </summary>
-        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id</param>
-        /// <param name="record">Warning serialized object</param>
+        /// <param name="fullyQualifiedWarningId">Fully qualified warning Id.</param>
+        /// <param name="record">Warning serialized object.</param>
         public WarningRecord(string fullyQualifiedWarningId, PSObject record)
             : base(record)
         {

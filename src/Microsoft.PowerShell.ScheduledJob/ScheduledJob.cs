@@ -127,9 +127,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="command">Job command string for display</param>
-        /// <param name="name">Name of job</param>
-        /// <param name="jobDefinition">ScheduledJobDefinition defining job to run</param>
+        /// <param name="command">Job command string for display.</param>
+        /// <param name="name">Name of job.</param>
+        /// <param name="jobDefinition">ScheduledJobDefinition defining job to run.</param>
         public ScheduledJob(
             string command,
             string name,
@@ -385,8 +385,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Deserialize constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJob(
             SerializationInfo info,
@@ -405,8 +405,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialize method.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,

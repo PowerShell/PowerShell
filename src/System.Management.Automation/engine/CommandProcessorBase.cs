@@ -180,9 +180,9 @@ namespace System.Management.Automation
         /// Ensures that the provided script block is compatible with the current language mode - to
         /// be used when a script block is being dotted.
         /// </summary>
-        /// <param name="scriptBlock">The script block being dotted</param>
-        /// <param name="languageMode">The current language mode</param>
-        /// <param name="invocationInfo">The invocation info about the command</param>
+        /// <param name="scriptBlock">The script block being dotted.</param>
+        /// <param name="languageMode">The current language mode.</param>
+        /// <param name="invocationInfo">The invocation info about the command.</param>
         protected static void ValidateCompatibleLanguageMode(
             ScriptBlock scriptBlock,
             PSLanguageMode languageMode,
@@ -251,8 +251,8 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request</param>
-        /// <param name="helpCategory">help category to request</param>
+        /// <param name="helpTarget">help target to request.</param>
+        /// <param name="helpCategory">help category to request.</param>
         /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal virtual bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
@@ -266,9 +266,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a command processor for "get-help [helpTarget]".
         /// </summary>
-        /// <param name="context">context for the command processor</param>
-        /// <param name="helpTarget">help target</param>
-        /// <param name="helpCategory">help category</param>
+        /// <param name="context">context for the command processor.</param>
+        /// <param name="helpTarget">help target.</param>
+        /// <param name="helpCategory">help category.</param>
         /// <returns>Command processor for "get-help [helpTarget]".</returns>
         internal static CommandProcessorBase CreateGetHelpCommandProcessor(
             ExecutionContext context,

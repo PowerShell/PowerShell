@@ -80,9 +80,9 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Creates a new instance of EtwEventArgs class.
         /// </summary>
-        /// <param name="descriptor">Event descriptor</param>
-        /// <param name="success">Indicate whether the event is successfully written</param>
-        /// <param name="payload">Event payload</param>
+        /// <param name="descriptor">Event descriptor.</param>
+        /// <param name="success">Indicate whether the event is successfully written.</param>
+        /// <param name="payload">Event payload.</param>
         public EtwEventArgs(EventDescriptor descriptor, bool success, object[] payload)
         {
             this.Descriptor = descriptor;
@@ -357,8 +357,8 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Checks whether a provider matching certain levels and keyword is enabled
         /// </summary>
-        /// <param name="levels">Levels to check</param>
-        /// <param name="keywords">Keywords to check</param>
+        /// <param name="levels">Levels to check.</param>
+        /// <param name="keywords">Keywords to check.</param>
         /// <returns>True, if any ETW listener is enabled else false.</returns>
         public bool IsProviderEnabled(byte levels, long keywords)
         {
@@ -464,8 +464,8 @@ namespace System.Management.Automation.Tracing
         /// This is the main method that write the messages to the trace.
         /// All derived classes must use this method to write to the provider log.
         /// </summary>
-        /// <param name="ed">EventDescriptor</param>
-        /// <param name="payload">payload</param>
+        /// <param name="ed">EventDescriptor.</param>
+        /// <param name="payload">payload.</param>
         protected void WriteEvent(EventDescriptor ed, params object[] payload)
         {
             EventProvider provider = GetProvider();

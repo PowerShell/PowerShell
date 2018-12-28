@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// ToString implementation for PropertyValueCollection
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping a PropertyValueCollection</param>
+        /// <param name="instance">instance of PSObject wrapping a PropertyValueCollection.</param>
         public static string PropertyValueCollection(PSObject instance)
         {
             if (instance == null)
@@ -59,8 +59,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Converts instance of LargeInteger to .net Int64.
         /// </summary>
-        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object</param>
-        /// <param name="largeIntegerInstance">Instance of PSObject wrapping LargeInteger instance</param>
+        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object.</param>
+        /// <param name="largeIntegerInstance">Instance of PSObject wrapping LargeInteger instance.</param>
         /// <returns>Converted Int64.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "integer")]
         public static Int64 ConvertLargeIntegerToInt64(PSObject deInstance, PSObject largeIntegerInstance)
@@ -103,8 +103,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Converts instance of DN-With-Binary to .net String
         /// </summary>
-        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object</param>
-        /// <param name="dnWithBinaryInstance">Instance of PSObject wrapping DN-With-Binary object</param>
+        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object.</param>
+        /// <param name="dnWithBinaryInstance">Instance of PSObject wrapping DN-With-Binary object.</param>
         /// <returns>Converted string.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dn", Justification = "DN represents valid prefix w.r.t Active Directory.")]
         public static string ConvertDNWithBinaryToString(PSObject deInstance, PSObject dnWithBinaryInstance)

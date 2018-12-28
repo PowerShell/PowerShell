@@ -62,10 +62,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Given a string and a number of display cells, it computes how many
         /// characters would fit starting from the beginning or end of the string
         /// </summary>
-        /// <param name="str">string to be displayed</param>
-        /// <param name="offset">offset inside the string</param>
-        /// <param name="displayCells">number of display cells</param>
-        /// <param name="head">if true compute from the head (i.e. k++) else from the tail (i.e. k--)</param>
+        /// <param name="str">string to be displayed.</param>
+        /// <param name="offset">offset inside the string.</param>
+        /// <param name="displayCells">number of display cells.</param>
+        /// <param name="head">if true compute from the head (i.e. k++) else from the tail (i.e. k--).</param>
         /// <returns>Number of characters that would fit.</returns>
         protected int GetSplitLengthInternalHelper(string str, int offset, int displayCells, bool head)
         {
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// delegate definition
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">string to write.</param>
         internal delegate void WriteCallback(string s);
 
         /// <summary>
@@ -258,10 +258,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// NOTE: if the underlying device treats the two cases as the
         /// same, the same delegate can be passed twice
         /// </summary>
-        /// <param name="lineWrap">true if we require line wrapping</param>
-        /// <param name="wlc">delegate for WriteLine(), must ben non null</param>
-        /// <param name="wc">delegate for Write(), if null, use the first parameter</param>
-        /// <param name="displayCells">helper object for manipulating strings</param>
+        /// <param name="lineWrap">true if we require line wrapping.</param>
+        /// <param name="wlc">delegate for WriteLine(), must ben non null.</param>
+        /// <param name="wc">delegate for Write(), if null, use the first parameter.</param>
+        /// <param name="displayCells">helper object for manipulating strings.</param>
         internal WriteLineHelper(bool lineWrap, WriteCallback wlc, WriteCallback wc, DisplayCells displayCells)
         {
             if (wlc == null)
@@ -278,8 +278,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// main entry point to process a line
         /// </summary>
-        /// <param name="s">string to process</param>
-        /// <param name="cols">width of the device</param>
+        /// <param name="s">string to process.</param>
+        /// <param name="cols">width of the device.</param>
         internal void WriteLine(string s, int cols)
         {
             WriteLineInternal(s, cols);
@@ -288,8 +288,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// internal helper, needed because it might make recursive calls to itself
         /// </summary>
-        /// <param name="val">string to process</param>
-        /// <param name="cols">width of the device</param>
+        /// <param name="val">string to process.</param>
+        /// <param name="cols">width of the device.</param>
         private void WriteLineInternal(string val, int cols)
         {
             if (string.IsNullOrEmpty(val))
@@ -409,8 +409,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// initialization of the object. It must be called before
         /// attempting any operation
         /// </summary>
-        /// <param name="writer">TextWriter to write to</param>
-        /// <param name="columns">max columns widths for the text</param>
+        /// <param name="writer">TextWriter to write to.</param>
+        /// <param name="columns">max columns widths for the text.</param>
         internal TextWriterLineOutput(TextWriter writer, int columns)
         {
             _writer = writer;
@@ -421,9 +421,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// initialization of the object. It must be called before
         /// attempting any operation
         /// </summary>
-        /// <param name="writer">TextWriter to write to</param>
-        /// <param name="columns">max columns widths for the text</param>
-        /// <param name="suppressNewline">false to add a newline to the end of the output string, true if not</param>
+        /// <param name="writer">TextWriter to write to.</param>
+        /// <param name="columns">max columns widths for the text.</param>
+        /// <param name="suppressNewline">false to add a newline to the end of the output string, true if not.</param>
         internal TextWriterLineOutput(TextWriter writer, int columns, bool suppressNewline)
             : this(writer, columns)
         {
@@ -451,8 +451,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// create an instance by passing a delegate
         /// </summary>
-        /// <param name="writeCall">delegate to write to</param>
-        /// <param name="culture">culture for this TextWriter</param>
+        /// <param name="writeCall">delegate to write to.</param>
+        /// <param name="culture">culture for this TextWriter.</param>
         internal StreamingTextWriter(WriteLineCallback writeCall, CultureInfo culture)
             : base(culture)
         {
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// delegate definition
         /// </summary>
-        /// <param name="s">string to write</param>
+        /// <param name="s">string to write.</param>
         internal delegate void WriteLineCallback(string s);
 
         /// <summary>

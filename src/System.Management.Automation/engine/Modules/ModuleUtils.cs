@@ -323,7 +323,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets the list of versions under the specified module base path in descending sorted order
         /// </summary>
-        /// <param name="moduleBase">module base path</param>
+        /// <param name="moduleBase">module base path.</param>
         /// <returns>Sorted list of versions.</returns>
         internal static List<Version> GetModuleVersionSubfolders(string moduleBase)
         {
@@ -384,7 +384,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets a list of matching commands
         /// </summary>
-        /// <param name="pattern">command pattern</param>
+        /// <param name="pattern">command pattern.</param>
         /// <param name="commandOrigin"></param>
         /// <param name="context"></param>
         /// <param name="rediscoverImportedModules"></param>

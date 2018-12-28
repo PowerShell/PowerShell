@@ -395,7 +395,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles state changes for Runspace
         /// </summary>
-        /// <param name="sender">Sender of this event</param>
+        /// <param name="sender">Sender of this event.</param>
         /// <param name="stateEventArgs">Event information object which describes
         /// the event which triggered this method</param>
         private void HandleRunspaceStateChanged(object sender, OperationStateEventArgs stateEventArgs)
@@ -1199,7 +1199,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the throttling complete event of the throttle manager
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">sender of this event.</param>
         /// <param name="eventArgs"></param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
@@ -1215,7 +1215,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="e">exception which is causing this error record
         /// to be written</param>
-        /// <param name="uri">Uri which caused this exception</param>
+        /// <param name="uri">Uri which caused this exception.</param>
         private void WriteErrorCreateRemoteRunspaceFailed(Exception e, Uri uri)
         {
             Dbg.Assert(e is UriFormatException || e is InvalidOperationException ||
@@ -1378,7 +1378,7 @@ namespace Microsoft.PowerShell.Commands
         ///    an exception since this prevents other event handlers in the chain from
         ///    being called.
         /// </remarks>
-        /// <param name="source">Source of this event</param>
+        /// <param name="source">Source of this event.</param>
         /// <param name="stateEventArgs">object describing state information of the
         /// runspace</param>
         private void HandleRunspaceStateChanged(object source, RunspaceStateEventArgs stateEventArgs)

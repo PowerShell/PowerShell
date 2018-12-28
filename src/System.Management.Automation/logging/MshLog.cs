@@ -190,12 +190,12 @@ namespace System.Management.Automation
         /// Variant form of this function is defined below, which will make parameters additionalInfo
         /// and newEngineState optional.
         /// </summary>
-        /// <param name="executionContext">Execution context for the engine that is running</param>
-        /// <param name="eventId">EventId for the event to be logged</param>
-        /// <param name="exception">Exception associated with this event</param>
-        /// <param name="severity">Severity of this event</param>
-        /// <param name="additionalInfo">Additional information for this event</param>
-        /// <param name="newEngineState">New engine state</param>
+        /// <param name="executionContext">Execution context for the engine that is running.</param>
+        /// <param name="eventId">EventId for the event to be logged.</param>
+        /// <param name="exception">Exception associated with this event.</param>
+        /// <param name="severity">Severity of this event.</param>
+        /// <param name="additionalInfo">Additional information for this event.</param>
+        /// <param name="newEngineState">New engine state.</param>
         internal static void LogEngineHealthEvent(ExecutionContext executionContext,
                                                 int eventId,
                                                 Exception exception,
@@ -308,10 +308,10 @@ namespace System.Management.Automation
         ///
         /// This API is currently used only by runspace before engine start.
         /// </summary>
-        /// <param name="logContext">logContext to be</param>
-        /// <param name="eventId">EventId for the event to be logged</param>
-        /// <param name="exception">Exception associated with this event</param>
-        /// <param name="additionalInfo">Additional information for this event</param>
+        /// <param name="logContext">logContext to be.</param>
+        /// <param name="eventId">EventId for the event to be logged.</param>
+        /// <param name="exception">Exception associated with this event.</param>
+        /// <param name="additionalInfo">Additional information for this event.</param>
         internal static void LogEngineHealthEvent(LogContext logContext,
                                                 int eventId,
                                                 Exception exception,
@@ -350,9 +350,9 @@ namespace System.Management.Automation
         /// Variant form of this function is defined below, which will make parameter additionalInfo
         /// optional.
         /// </summary>
-        /// <param name="executionContext">execution context for current engine instance</param>
-        /// <param name="engineState">new engine state</param>
-        /// <param name="invocationInfo">invocationInfo for current command that is running</param>
+        /// <param name="executionContext">execution context for current engine instance.</param>
+        /// <param name="engineState">new engine state.</param>
+        /// <param name="invocationInfo">invocationInfo for current command that is running.</param>
         internal static void LogEngineLifecycleEvent(ExecutionContext executionContext,
                                                 EngineState engineState,
                                                 InvocationInfo invocationInfo)
@@ -397,9 +397,9 @@ namespace System.Management.Automation
         /// <summary>
         /// LogProviderHealthEvent: Log a command health event.
         /// </summary>
-        /// <param name="executionContext">Execution context for the engine that is running</param>
-        /// <param name="exception">Exception associated with this event</param>
-        /// <param name="severity">Severity of this event</param>
+        /// <param name="executionContext">Execution context for the engine that is running.</param>
+        /// <param name="exception">Exception associated with this event.</param>
+        /// <param name="severity">Severity of this event.</param>
         internal static void LogCommandHealthEvent(ExecutionContext executionContext,
                                                 Exception exception,
                                                 Severity severity
@@ -439,9 +439,9 @@ namespace System.Management.Automation
         ///
         /// This is the only form of CommandLifecycleEvent logging api.
         /// </summary>
-        /// <param name="executionContext">Execution Context for the current running engine</param>
-        /// <param name="commandState">new command state</param>
-        /// <param name="invocationInfo">invocation data for current command that is running</param>
+        /// <param name="executionContext">Execution Context for the current running engine.</param>
+        /// <param name="commandState">new command state.</param>
+        /// <param name="invocationInfo">invocation data for current command that is running.</param>
         internal static void LogCommandLifecycleEvent(ExecutionContext executionContext,
                                                 CommandState commandState,
                                                 InvocationInfo invocationInfo)
@@ -481,9 +481,9 @@ namespace System.Management.Automation
         /// of invocationInfo. It is likely that invocationInfo is not available if
         /// the command failed security check.
         /// </summary>
-        /// <param name="executionContext">Execution Context for the current running engine</param>
-        /// <param name="commandState">new command state</param>
-        /// <param name="commandName">current command that is running</param>
+        /// <param name="executionContext">Execution Context for the current running engine.</param>
+        /// <param name="commandState">new command state.</param>
+        /// <param name="commandName">current command that is running.</param>
         internal static void LogCommandLifecycleEvent(ExecutionContext executionContext,
                                                 CommandState commandState,
                                                 string commandName)
@@ -521,9 +521,9 @@ namespace System.Management.Automation
         /// <summary>
         /// LogPipelineExecutionDetailEvent: Log a pipeline execution detail event.
         /// </summary>
-        /// <param name="executionContext">Execution Context for the current running engine</param>
-        /// <param name="detail">detail to be logged for this pipeline execution detail</param>
-        /// <param name="invocationInfo">invocation data for current command that is running</param>
+        /// <param name="executionContext">Execution Context for the current running engine.</param>
+        /// <param name="detail">detail to be logged for this pipeline execution detail.</param>
+        /// <param name="invocationInfo">invocation data for current command that is running.</param>
         internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
                                                             List<string> detail,
                                                             InvocationInfo invocationInfo)
@@ -551,10 +551,10 @@ namespace System.Management.Automation
         /// instead of invocationInfo. This will save the need to fill in the commandName for
         /// this event.
         /// </summary>
-        /// <param name="executionContext">Execution Context for the current running engine</param>
-        /// <param name="detail">detail to be logged for this pipeline execution detail</param>
-        /// <param name="scriptName">script that is currently running</param>
-        /// <param name="commandLine">command line that is currently running</param>
+        /// <param name="executionContext">Execution Context for the current running engine.</param>
+        /// <param name="detail">detail to be logged for this pipeline execution detail.</param>
+        /// <param name="scriptName">script that is currently running.</param>
+        /// <param name="commandLine">command line that is currently running.</param>
         internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
                                                             List<string> detail,
                                                             string scriptName,
@@ -586,10 +586,10 @@ namespace System.Management.Automation
         /// <summary>
         /// LogProviderHealthEvent: Log a Provider health event.
         /// </summary>
-        /// <param name="executionContext">Execution context for the engine that is running</param>
-        /// <param name="providerName">Name of the provider</param>
-        /// <param name="exception">Exception associated with this event</param>
-        /// <param name="severity">Severity of this event</param>
+        /// <param name="executionContext">Execution context for the engine that is running.</param>
+        /// <param name="providerName">Name of the provider.</param>
+        /// <param name="exception">Exception associated with this event.</param>
+        /// <param name="severity">Severity of this event.</param>
         internal static void LogProviderHealthEvent(ExecutionContext executionContext,
                                                 string providerName,
                                                 Exception exception,
@@ -630,9 +630,9 @@ namespace System.Management.Automation
         ///
         /// This is the only form of ProviderLifecycleEvent logging api.
         /// </summary>
-        /// <param name="executionContext">Execution Context for current engine that is running</param>
-        /// <param name="providerName">Provider name</param>
-        /// <param name="providerState">New provider state</param>
+        /// <param name="executionContext">Execution Context for current engine that is running.</param>
+        /// <param name="providerName">Provider name.</param>
+        /// <param name="providerState">New provider state.</param>
         internal static void LogProviderLifecycleEvent(ExecutionContext executionContext,
                                                      string providerName,
                                                      ProviderState providerState)
@@ -662,11 +662,11 @@ namespace System.Management.Automation
         /// This is the basic form of LoggingSettingsEvent API. Variation of this function defined
         /// below will make parameter invocationInfo optional.
         /// </summary>
-        /// <param name="executionContext">Execution context for current running engine</param>
-        /// <param name="variableName">Variable name</param>
-        /// <param name="newValue">New value for the variable</param>
-        /// <param name="previousValue">Previous value for the variable</param>
-        /// <param name="invocationInfo">Invocation data for the command that is currently running</param>
+        /// <param name="executionContext">Execution context for current running engine.</param>
+        /// <param name="variableName">Variable name.</param>
+        /// <param name="newValue">New value for the variable.</param>
+        /// <param name="previousValue">Previous value for the variable.</param>
+        /// <param name="invocationInfo">Invocation data for the command that is currently running.</param>
         internal static void LogSettingsEvent(ExecutionContext executionContext,
                                             string variableName,
                                             string newValue,

@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Executes a PowerShell script, writing the output objects to the pipeline.
         /// </summary>
-        /// <param name="script">Script to execute</param>
+        /// <param name="script">Script to execute.</param>
         public void RunScript(string script)
         {
             if (_showCommandProxy == null || string.IsNullOrEmpty(script))
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
         /// Runs the script in a new PowerShell instance and hooks up error stream to potentially display error popup.
         /// This method has the inconvenience of not showing to the console user the script being executed.
         /// </summary>
-        /// <param name="script">script to be run</param>
+        /// <param name="script">script to be run.</param>
         private void RunScriptSilentlyAndWithErrorHookup(string script)
         {
             // errors are not created here, because there is a field for it used in the final pop up
@@ -317,8 +317,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Called from CommandProcessRecord to run the command that will get the CommandInfo and list of modules.
         /// </summary>
-        /// <param name="command">command to be retrieved</param>
-        /// <param name="modules">list of loaded modules</param>
+        /// <param name="command">command to be retrieved.</param>
+        /// <param name="modules">list of loaded modules.</param>
         private void GetCommandInfoAndModules(out CommandInfo command, out Dictionary<string, ShowCommandModuleInfo> modules)
         {
             command = null;
@@ -456,8 +456,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the output of a script being run into the pipeline.
         /// </summary>
-        /// <param name="sender">output collection</param>
-        /// <param name="e">output event</param>
+        /// <param name="sender">output collection.</param>
+        /// <param name="e">output event.</param>
         private void Output_DataAdded(object sender, DataAddedEventArgs e)
         {
             this.WriteObject(((PSDataCollection<object>)sender)[e.Index]);
@@ -466,8 +466,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the errors of a script being run into the pipeline.
         /// </summary>
-        /// <param name="sender">error collection</param>
-        /// <param name="e">error event</param>
+        /// <param name="sender">error collection.</param>
+        /// <param name="e">error event.</param>
         private void Error_DataAdded(object sender, DataAddedEventArgs e)
         {
             this.WriteError(((PSDataCollection<ErrorRecord>)sender)[e.Index]);
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose</param>
+        /// <param name="isDisposing">true if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)
@@ -503,8 +503,8 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Adds a string to the console input buffer.
             /// </summary>
-            /// <param name="str">string to add to console input buffer</param>
-            /// <param name="newLine">true to add Enter after the string</param>
+            /// <param name="str">string to add to console input buffer.</param>
+            /// <param name="newLine">true to add Enter after the string.</param>
             /// <returns>True if it was successful in adding all characters to console input buffer.</returns>
             internal static bool AddToConsoleInputBuffer(string str, bool newLine)
             {
@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets the console handle.
             /// </summary>
-            /// <param name="nStdHandle">which console handle to get</param>
+            /// <param name="nStdHandle">which console handle to get.</param>
             /// <returns>The console handle.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             internal static extern IntPtr GetStdHandle(int nStdHandle);
@@ -563,10 +563,10 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Writes to the console input buffer.
             /// </summary>
-            /// <param name="hConsoleInput">console handle</param>
-            /// <param name="lpBuffer">inputs to be written</param>
-            /// <param name="nLength">number of inputs to be written</param>
-            /// <param name="lpNumberOfEventsWritten">returned number of inputs actually written</param>
+            /// <param name="hConsoleInput">console handle.</param>
+            /// <param name="lpBuffer">inputs to be written.</param>
+            /// <param name="nLength">number of inputs to be written.</param>
+            /// <param name="lpNumberOfEventsWritten">returned number of inputs actually written.</param>
             /// <returns>0 if the function fails.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
@@ -600,8 +600,8 @@ namespace Microsoft.PowerShell.Commands
                 /// <summary>
                 /// Sets the necessary fields of <paramref name="inputRecord"/> for a KeyDown event for the <paramref name="character"/>
                 /// </summary>
-                /// <param name="inputRecord">input record to be set</param>
-                /// <param name="character">character to set the record with</param>
+                /// <param name="inputRecord">input record to be set.</param>
+                /// <param name="character">character to set the record with.</param>
                 internal static void SetInputRecord(ref INPUT_RECORD inputRecord, char character)
                 {
                     inputRecord.EventType = INPUT_RECORD.KEY_EVENT;

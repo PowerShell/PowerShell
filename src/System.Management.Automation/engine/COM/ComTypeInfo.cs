@@ -37,7 +37,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Constructor
         /// </summary>
-        /// <param name="info">ITypeInfo object being wrapped by this object</param>
+        /// <param name="info">ITypeInfo object being wrapped by this object.</param>
         internal ComTypeInfo(COM.ITypeInfo info)
         {
             _typeinfo = info;
@@ -206,7 +206,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Get TypeAttr for the given type information.
         /// </summary>
-        /// <param name="typeinfo">reference to ITypeInfo from which to get TypeAttr</param>
+        /// <param name="typeinfo">reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>
         [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
@@ -265,7 +265,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the IDispatch Typeinfo from CoClass typeinfo.
         /// </summary>
-        /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs</param>
+        /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs.</param>
         /// <returns>ITypeInfo reference to the Dispatch interface.</returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCoClassTypeInfo(COM.ITypeInfo typeinfo)
         {

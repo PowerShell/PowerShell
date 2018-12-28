@@ -581,7 +581,7 @@ namespace System.Management.Automation
         /// <param name="target">
         /// Name of the target resource being acted upon
         /// </param>
-        /// <param name="action">What action was being performed</param>
+        /// <param name="action">What action was being performed.</param>
         /// <remarks>true iff the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy

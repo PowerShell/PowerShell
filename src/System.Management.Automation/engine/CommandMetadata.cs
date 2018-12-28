@@ -156,7 +156,7 @@ namespace System.Management.Automation
         /// A copy constructor that creates a deep copy of the <paramref name="other"/> CommandMetadata object.
         /// Instances of Attribute and Type classes are copied by reference.
         /// </summary>
-        /// <param name="other">object to copy</param>
+        /// <param name="other">object to copy.</param>
         public CommandMetadata(CommandMetadata other)
         {
             if (other == null)

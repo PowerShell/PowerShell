@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Retrieves job triggers from WTS with provided task Id.
         /// </summary>
-        /// <param name="taskId">Task Id</param>
+        /// <param name="taskId">Task Id.</param>
         /// <exception cref="ScheduledJobException">Task not found.</exception>
         /// <returns>ScheduledJobTriggers.</returns>
         public Collection<ScheduledJobTrigger> GetJobTriggers(
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Retrieves options for the provided task Id.
         /// </summary>
-        /// <param name="taskId">Task Id</param>
+        /// <param name="taskId">Task Id.</param>
         /// <exception cref="ScheduledJobException">Task not found.</exception>
         /// <returns>ScheduledJobOptions.</returns>
         public ScheduledJobOptions GetJobOptions(
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a new task in WTS with information from ScheduledJobDefinition.
         /// </summary>
-        /// <param name="definition">ScheduledJobDefinition</param>
+        /// <param name="definition">ScheduledJobDefinition.</param>
         public void CreateTask(
             ScheduledJobDefinition definition)
         {
@@ -204,8 +204,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Throws error if one or more instances of this task are running.
         /// Force parameter will stop all running instances and remove task.
         /// </summary>
-        /// <param name="definition">ScheduledJobDefinition</param>
-        /// <param name="force">Force running instances to stop and remove task</param>
+        /// <param name="definition">ScheduledJobDefinition.</param>
+        /// <param name="force">Force running instances to stop and remove task.</param>
         public void RemoveTask(
             ScheduledJobDefinition definition,
             bool force = false)
@@ -222,9 +222,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Removes a Task Scheduler task from the PowerShell/ScheduledJobs folder
         /// based on a task name.
         /// </summary>
-        /// <param name="taskName">Task Scheduler task name</param>
-        /// <param name="force">Force running instances to stop and remove task</param>
-        /// <param name="firstCheckForTask">First check for existence of task</param>
+        /// <param name="taskName">Task Scheduler task name.</param>
+        /// <param name="force">Force running instances to stop and remove task.</param>
+        /// <param name="firstCheckForTask">First check for existence of task.</param>
         public void RemoveTaskByName(
             string taskName,
             bool force,
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Starts task running from Task Scheduler.
         /// </summary>
-        /// <param name="definition">ScheduledJobDefinition</param>
+        /// <param name="definition">ScheduledJobDefinition.</param>
         /// <exception cref="System.IO.DirectoryNotFoundException"></exception>
         /// <exception cref="System.IO.FileNotFoundException"></exception>
         public void RunTask(
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Updates an existing task in WTS with information from
         /// ScheduledJobDefinition.
         /// </summary>
-        /// <param name="definition">ScheduledJobDefinition</param>
+        /// <param name="definition">ScheduledJobDefinition.</param>
         public void UpdateTask(
             ScheduledJobDefinition definition)
         {
@@ -358,8 +358,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Creates a new WTS trigger based on the provided ScheduledJobTrigger object
         /// and adds it to the provided ITaskDefinition object.
         /// </summary>
-        /// <param name="iTaskDefinition">ITaskDefinition</param>
-        /// <param name="jobTrigger">ScheduledJobTrigger</param>
+        /// <param name="iTaskDefinition">ITaskDefinition.</param>
+        /// <param name="jobTrigger">ScheduledJobTrigger.</param>
         private void AddTaskTrigger(
             ITaskDefinition iTaskDefinition,
             ScheduledJobTrigger jobTrigger)
@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates a ScheduledJobTrigger object based on a provided WTS ITrigger.
         /// </summary>
-        /// <param name="iTrigger">ITrigger</param>
+        /// <param name="iTrigger">ITrigger.</param>
         /// <returns>ScheduledJobTrigger.</returns>
         private ScheduledJobTrigger CreateJobTrigger(
             ITrigger iTrigger)
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Gets and returns the unsecured password for the provided
         /// PSCredential object.
         /// </summary>
-        /// <param name="credential">PSCredential</param>
+        /// <param name="credential">PSCredential.</param>
         /// <returns>Unsecured password string.</returns>
         private string GetCredentialPassword(PSCredential credential)
         {
@@ -648,7 +648,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Finds a task with the provided Task Id and returns it as
         /// a ITaskDefinition object.
         /// </summary>
-        /// <param name="taskId">Task Id</param>
+        /// <param name="taskId">Task Id.</param>
         /// <returns>ITaskDefinition.</returns>
         private ITaskDefinition FindTask(string taskId)
         {
@@ -696,7 +696,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         ///  "nM" - minute value.
         ///  "nS" - second value.
         /// </summary>
-        /// <param name="wtsTime">Formatted time string</param>
+        /// <param name="wtsTime">Formatted time string.</param>
         /// <returns>TimeSpan.</returns>
         private TimeSpan ParseWTSTime(string wtsTime)
         {
@@ -792,7 +792,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Creates WTS formatted time string based on TimeSpan parameter.
         /// </summary>
-        /// <param name="time">TimeSpan</param>
+        /// <param name="time">TimeSpan.</param>
         /// <returns>WTS time string.</returns>
         internal static string ConvertTimeSpanToWTSString(TimeSpan time)
         {
@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Converts DateTime to string for WTS.
         /// </summary>
-        /// <param name="dt">DateTime</param>
+        /// <param name="dt">DateTime.</param>
         /// <returns>DateTime string.</returns>
         internal static string ConvertDateTimeToString(DateTime? dt)
         {
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Returns a bitmask representing days of week as
         /// required by Windows Task Scheduler API.
         /// </summary>
-        /// <param name="daysOfWeek">Array of DayOfWeek</param>
+        /// <param name="daysOfWeek">Array of DayOfWeek.</param>
         /// <returns>WTS days of week mask.</returns>
         internal static short ConvertDaysOfWeekToMask(IEnumerable<DayOfWeek> daysOfWeek)
         {
@@ -871,7 +871,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Converts WTS days of week mask to an array of DayOfWeek type.
         /// </summary>
-        /// <param name="mask">WTS days of week mask</param>
+        /// <param name="mask">WTS days of week mask.</param>
         /// <returns>Days of week as List.</returns>
         private List<DayOfWeek> ConvertMaskToDaysOfWeekArray(short mask)
         {

@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Cim
 
     internal static class CimValueConverter
     {
-        /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw</exception>
+        /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromDotNetToCim(object dotNetObject)
         {
             if (dotNetObject == null)
@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Cim
                 CmdletizationResources.CimConversion_CimIntrinsicValue);
         }
 
-        /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw</exception>
+        /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromCimToDotNet(object cimObject, Type expectedDotNetType)
         {
             if (expectedDotNetType == null) { throw new ArgumentNullException("expectedDotNetType"); }

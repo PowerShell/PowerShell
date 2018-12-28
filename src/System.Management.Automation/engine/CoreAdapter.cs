@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the TypeNameHierarchy out of an object
         /// </summary>
-        /// <param name="obj">object to get the TypeNameHierarchy from</param>
+        /// <param name="obj">object to get the TypeNameHierarchy from.</param>
         protected virtual IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
             return GetDotNetTypeNameHierarchy(obj);
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         /// Returns the cached typename, if it can be cached, otherwise constructs a new typename.
         /// By default, we don't return interned values, adapters can override if they choose.
         /// </summary>
-        /// <param name="obj">object to get the TypeNameHierarchy from</param>
+        /// <param name="obj">object to get the TypeNameHierarchy from.</param>
         protected virtual ConsolidatedString GetInternedTypeNameHierarchy(object obj)
         {
             return new ConsolidatedString(GetTypeNameHierarchy(obj));
@@ -84,8 +84,8 @@ namespace System.Management.Automation
         /// Returns null if memberName is not a member in the adapter or
         /// the corresponding PSMemberInfo
         /// </summary>
-        /// <param name="obj">object to retrieve the PSMemberInfo from</param>
-        /// <param name="memberName">name of the member to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSMemberInfo from.</param>
+        /// <param name="memberName">name of the member to be retrieved.</param>
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected abstract T GetMember<T>(object obj, string memberName) where T : PSMemberInfo;
 
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
-        /// <param name="obj">object to get all the member information from</param>
+        /// <param name="obj">object to get all the member information from.</param>
         /// <returns>All members in obj.</returns>
         protected abstract PSMemberInfoInternalCollection<T> GetMembers<T>(object obj) where T : PSMemberInfo;
 
@@ -110,51 +110,51 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the value from a property coming from a previous call to GetMember
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to GetMember</param>
+        /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
         /// <returns>The value of the property.</returns>
         protected abstract object PropertyGet(PSProperty property);
 
         /// <summary>
         /// Sets the value of a property coming from a previous call to GetMember
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to GetMember</param>
-        /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
+        /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
+        /// <param name="setValue">value to set the property with.</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected abstract void PropertySet(PSProperty property, object setValue, bool convertIfPossible);
 
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         protected abstract bool PropertyIsSettable(PSProperty property);
 
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         protected abstract bool PropertyIsGettable(PSProperty property);
 
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
         /// </summary>
-        /// <param name="property">PSProperty obtained in a previous GetMember</param>
-        /// <param name="forDisplay">True if the result is for display purposes only</param>
+        /// <param name="property">PSProperty obtained in a previous GetMember.</param>
+        /// <param name="forDisplay">True if the result is for display purposes only.</param>
         /// <returns>The name of the type corresponding to the member.</returns>
         protected abstract string PropertyType(PSProperty property, bool forDisplay);
 
         /// <summary>
         /// Returns the string representation of the property in the object
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember</param>
+        /// <param name="property">property obtained in a previous GetMember.</param>
         /// <returns>The string representation of the property in the object.</returns>
         protected abstract string PropertyToString(PSProperty property);
 
         /// <summary>
         /// Returns an array with the property attributes
         /// </summary>
-        /// <param name="property">property we want the attributes from</param>
+        /// <param name="property">property we want the attributes from.</param>
         /// <returns>An array with the property attributes.</returns>
         protected abstract AttributeCollection PropertyAttributes(PSProperty property);
 
@@ -166,9 +166,9 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to try to call
         /// the method with the arguments
         /// </summary>
-        /// <param name="method">the non empty return from GetMethods</param>
-        /// <param name="invocationConstraints">invocation constraints</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="method">the non empty return from GetMethods.</param>
+        /// <param name="invocationConstraints">invocation constraints.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <returns>The return value for the method.</returns>
         protected virtual object MethodInvoke(PSMethod method, PSMethodInvocationConstraints invocationConstraints, object[] arguments)
         {
@@ -179,15 +179,15 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to try to call
         /// the method with the arguments
         /// </summary>
-        /// <param name="method">the non empty return from GetMethods</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="method">the non empty return from GetMethods.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <returns>The return value for the method.</returns>
         protected abstract object MethodInvoke(PSMethod method, object[] arguments);
 
         /// <summary>
         /// Called after a non null return from GetMember to return the overloads
         /// </summary>
-        /// <param name="method">the return of GetMember</param>
+        /// <param name="method">the return of GetMember.</param>
         /// <returns></returns>
         protected abstract Collection<string> MethodDefinitions(PSMethod method);
 
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember</param>
+        /// <param name="property">property obtained in a previous GetMember.</param>
         /// <returns>The name of the type corresponding to the member.</returns>
         /// <remarks>
         /// It is not necessary for derived methods to override this.
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         /// <remarks>
         /// It is not necessary for derived methods to override this.
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         /// <remarks>
         /// It is not necessary for derived methods to override this.
@@ -260,7 +260,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to return the overloads
         /// </summary>
-        /// <param name="property">the return of GetMember</param>
+        /// <param name="property">the return of GetMember.</param>
         /// <remarks>
         /// It is not necessary for derived methods to override this.
         /// This method is called only if ParameterizedProperties are present.
@@ -274,8 +274,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to get the property value
         /// </summary>
-        /// <param name="property">the non empty return from GetMember</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="property">the non empty return from GetMember.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <returns>The return value for the property.</returns>
         /// <remarks>
         /// It is not necessary for derived methods to override this.
@@ -290,9 +290,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to set the property value
         /// </summary>
-        /// <param name="property">the non empty return from GetMember</param>
-        /// <param name="setValue">the value to set property with</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="property">the non empty return from GetMember.</param>
+        /// <param name="setValue">the value to set property with.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <remarks>
         /// It is not necessary for derived methods to override this.
         /// This method is called only if ParameterizedProperties are present.
@@ -306,7 +306,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of the property in the object
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember</param>
+        /// <param name="property">property obtained in a previous GetMember.</param>
         /// <returns>The string representation of the property in the object.</returns>
         /// <remarks>
         /// It is not necessary for derived methods to override this.
@@ -1207,14 +1207,14 @@ namespace System.Management.Automation
         /// Return the best method out of overloaded methods.
         /// The best has the smallest type distance between the method's parameters and the given arguments.
         /// </summary>
-        /// <param name="methods">different overloads for a method</param>
-        /// <param name="invocationConstraints">invocation constraints</param>
-        /// <param name="allowCastingToByRefLikeType">true if we accept implicit/explicit casting conversion to a ByRef-like parameter type for method resolution</param>
-        /// <param name="arguments">arguments to check against the overloads</param>
-        /// <param name="errorId">if no best method, the error id to use in the error message</param>
-        /// <param name="errorMsg">if no best method, the error message (format string) to use in the error message</param>
-        /// <param name="expandParamsOnBest">true if the best method's last parameter is a params method</param>
-        /// <param name="callNonVirtually">true if best method should be called as non-virtual</param>
+        /// <param name="methods">different overloads for a method.</param>
+        /// <param name="invocationConstraints">invocation constraints.</param>
+        /// <param name="allowCastingToByRefLikeType">true if we accept implicit/explicit casting conversion to a ByRef-like parameter type for method resolution.</param>
+        /// <param name="arguments">arguments to check against the overloads.</param>
+        /// <param name="errorId">if no best method, the error id to use in the error message.</param>
+        /// <param name="errorMsg">if no best method, the error message (format string) to use in the error message.</param>
+        /// <param name="expandParamsOnBest">true if the best method's last parameter is a params method.</param>
+        /// <param name="callNonVirtually">true if best method should be called as non-virtual.</param>
         internal static MethodInformation FindBestMethod(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
@@ -1705,11 +1705,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Auxiliary method in MethodInvoke to set newArguments[index] with the propper value
         /// </summary>
-        /// <param name="methodName">used for the MethodException that might be thrown</param>
-        /// <param name="arguments">the complete array of arguments</param>
-        /// <param name="newArguments">the complete array of new arguments</param>
-        /// <param name="parameter">the parameter to use</param>
-        /// <param name="index">the index in newArguments to set</param>
+        /// <param name="methodName">used for the MethodException that might be thrown.</param>
+        /// <param name="arguments">the complete array of arguments.</param>
+        /// <param name="newArguments">the complete array of new arguments.</param>
+        /// <param name="parameter">the parameter to use.</param>
+        /// <param name="index">the index in newArguments to set.</param>
         internal static void SetNewArgument(string methodName, object[] arguments,
             object[] newArguments, ParameterInformation parameter, int index)
         {
@@ -2913,9 +2913,9 @@ namespace System.Management.Automation
         /// Called from GetMethodReflectionTable within a lock to fill the
         /// method cache table
         /// </summary>
-        /// <param name="type">type to get methods from</param>
-        /// <param name="typeMethods">table to be filled</param>
-        /// <param name="bindingFlags">bindingFlags to use</param>
+        /// <param name="type">type to get methods from.</param>
+        /// <param name="typeMethods">table to be filled.</param>
+        /// <param name="bindingFlags">bindingFlags to use.</param>
         private static void PopulateMethodReflectionTable(Type type, CacheTable typeMethods, BindingFlags bindingFlags)
         {
             Type typeToGetMethod = type;
@@ -3010,9 +3010,9 @@ namespace System.Management.Automation
         /// Called from GetEventReflectionTable within a lock to fill the
         /// event cache table
         /// </summary>
-        /// <param name="type">type to get events from</param>
-        /// <param name="typeEvents">table to be filled</param>
-        /// <param name="bindingFlags">bindingFlags to use</param>
+        /// <param name="type">type to get events from.</param>
+        /// <param name="typeEvents">table to be filled.</param>
+        /// <param name="bindingFlags">bindingFlags to use.</param>
         private static void PopulateEventReflectionTable(Type type, Dictionary<string, EventCacheEntry> typeEvents, BindingFlags bindingFlags)
         {
             // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
@@ -3094,9 +3094,9 @@ namespace System.Management.Automation
         /// Called from GetPropertyReflectionTable within a lock to fill the
         /// property cache table
         /// </summary>
-        /// <param name="type">type to get properties from</param>
-        /// <param name="typeProperties">table to be filled</param>
-        /// <param name="bindingFlags">bindingFlags to use</param>
+        /// <param name="type">type to get properties from.</param>
+        /// <param name="typeProperties">table to be filled.</param>
+        /// <param name="bindingFlags">bindingFlags to use.</param>
         private static void PopulatePropertyReflectionTable(Type type, CacheTable typeProperties, BindingFlags bindingFlags)
         {
             var tempTable = new Dictionary<string, List<PropertyInfo>>(StringComparer.OrdinalIgnoreCase);
@@ -3267,7 +3267,7 @@ namespace System.Management.Automation
         /// typeTable with all public properties and fields
         /// of type.
         /// </summary>
-        /// <param name="type">type to load properties for</param>
+        /// <param name="type">type to load properties for.</param>
         private static CacheTable GetStaticPropertyReflectionTable(Type type)
         {
             lock (s_staticPropertyCacheTable)
@@ -3288,7 +3288,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves the table for static methods
         /// </summary>
-        /// <param name="type">type to load methods for</param>
+        /// <param name="type">type to load methods for.</param>
         private static CacheTable GetStaticMethodReflectionTable(Type type)
         {
             lock (s_staticMethodCacheTable)
@@ -3309,7 +3309,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves the table for static events
         /// </summary>
-        /// <param name="type">type containing properties to load in typeTable</param>
+        /// <param name="type">type containing properties to load in typeTable.</param>
         private static Dictionary<string, EventCacheEntry> GetStaticEventReflectionTable(Type type)
         {
             lock (s_staticEventCacheTable)
@@ -3332,7 +3332,7 @@ namespace System.Management.Automation
         /// typeTable with all public properties and fields
         /// of type.
         /// </summary>
-        /// <param name="type">type with properties to load in typeTable</param>
+        /// <param name="type">type with properties to load in typeTable.</param>
         private static CacheTable GetInstancePropertyReflectionTable(Type type)
         {
             lock (s_instancePropertyCacheTable)
@@ -3353,7 +3353,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves the table for instance methods
         /// </summary>
-        /// <param name="type">type with methods to load in typeTable</param>
+        /// <param name="type">type with methods to load in typeTable.</param>
         private static CacheTable GetInstanceMethodReflectionTable(Type type)
         {
             lock (s_instanceMethodCacheTable)
@@ -3399,7 +3399,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves the table for instance events
         /// </summary>
-        /// <param name="type">type containing methods to load in typeTable</param>
+        /// <param name="type">type containing methods to load in typeTable.</param>
         private static Dictionary<string, EventCacheEntry> GetInstanceEventReflectionTable(Type type)
         {
             lock (s_instanceEventCacheTable)
@@ -3420,7 +3420,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if a parameterized property should be in a PSMemberInfoCollection of type t
         /// </summary>
-        /// <param name="t">Type of a PSMemberInfoCollection like the type of T in PSMemberInfoCollection of T</param>
+        /// <param name="t">Type of a PSMemberInfoCollection like the type of T in PSMemberInfoCollection of T.</param>
         /// <returns>True if a parameterized property should be in a collection.</returns>
         /// <remarks>
         /// Usually typeof(T).IsAssignableFrom(typeof(PSParameterizedProperty)) would work like it does
@@ -3663,8 +3663,8 @@ namespace System.Management.Automation
         ///   1. Dynamic members cannot be invoked via reflection;
         ///   2. Access to dynamic members is handled by the DLR for free.
         /// </remark>
-        /// <param name="obj">object to retrieve the PSMemberInfo from</param>
-        /// <param name="memberName">name of the member to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSMemberInfo from.</param>
+        /// <param name="memberName">name of the member to be retrieved.</param>
         /// <returns>
         /// The PSMemberInfo corresponding to memberName from obj,
         /// or null if the given member name is not a member in the adapter.
@@ -3690,7 +3690,7 @@ namespace System.Management.Automation
         /// Dynamic members of an object that implements IDynamicMetaObjectProvider are included because
         /// we want to view the dynamic members via 'Get-Member' and be able to auto-complete those members.
         /// </remark>
-        /// <param name="obj">object to get all the member information from</param>
+        /// <param name="obj">object to get all the member information from.</param>
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
@@ -3710,7 +3710,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an array with the property attributes
         /// </summary>
-        /// <param name="property">property we want the attributes from</param>
+        /// <param name="property">property we want the attributes from.</param>
         /// <returns>An array with the property attributes.</returns>
         protected override AttributeCollection PropertyAttributes(PSProperty property)
         {
@@ -3721,7 +3721,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of the property in the object
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember</param>
+        /// <param name="property">property obtained in a previous GetMember.</param>
         /// <returns>The string representation of the property in the object.</returns>
         protected override string PropertyToString(PSProperty property)
         {
@@ -3752,7 +3752,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the value from a property coming from a previous call to GetMember
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to GetMember</param>
+        /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
@@ -3804,9 +3804,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of a property coming from a previous call to GetMember
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to GetMember</param>
-        /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
+        /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
+        /// <param name="setValue">value to set the property with.</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
@@ -3869,7 +3869,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
@@ -3879,7 +3879,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
@@ -3889,8 +3889,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
         /// </summary>
-        /// <param name="property">PSProperty obtained in a previous GetMember</param>
-        /// <param name="forDisplay">True if the result is for display purposes only</param>
+        /// <param name="property">PSProperty obtained in a previous GetMember.</param>
+        /// <param name="forDisplay">True if the result is for display purposes only.</param>
         /// <returns>The name of the type corresponding to the member.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
@@ -3907,11 +3907,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Calls constructor using the arguments and catching the appropriate exception
         /// </summary>
-        /// <param name="arguments">final arguments to the constructor</param>
+        /// <param name="arguments">final arguments to the constructor.</param>
         /// <returns>The return of the constructor.</returns>
         /// <param name="methodInformation">Information about the method to call. Used for setting references.</param>
         /// <param name="originalArguments">Original arguments in the method call. Used for setting references.</param>
-        /// <exception cref="MethodInvocationException">if the constructor throws an exception</exception>
+        /// <exception cref="MethodInvocationException">if the constructor throws an exception.</exception>
         internal static object AuxiliaryConstructorInvoke(MethodInformation methodInformation, object[] arguments, object[] originalArguments)
         {
             object returnValue;
@@ -3946,12 +3946,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Calls method on target using the arguments and catching the appropriate exception
         /// </summary>
-        /// <param name="target">object we want to call the method on</param>
-        /// <param name="arguments">final arguments to the method</param>
+        /// <param name="target">object we want to call the method on.</param>
+        /// <param name="arguments">final arguments to the method.</param>
         /// <param name="methodInformation">Information about the method to call. Used for setting references.</param>
         /// <param name="originalArguments">Original arguments in the method call. Used for setting references.</param>
         /// <returns>The return of the method.</returns>
-        /// <exception cref="MethodInvocationException">if the method throws an exception</exception>
+        /// <exception cref="MethodInvocationException">if the method throws an exception.</exception>
         internal static object AuxiliaryMethodInvoke(object target, object[] arguments, MethodInformation methodInformation, object[] originalArguments)
         {
             object result;
@@ -4020,7 +4020,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts a MethodBase[] into a MethodInformation[]
         /// </summary>
-        /// <param name="methods">the methods to be converted</param>
+        /// <param name="methods">the methods to be converted.</param>
         /// <returns>The MethodInformation[] corresponding to methods.</returns>
         internal static MethodInformation[] GetMethodInformationArray(MethodBase[] methods)
         {
@@ -4037,14 +4037,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Calls the method best suited to the arguments on target.
         /// </summary>
-        /// <param name="methodName">used for error messages</param>
-        /// <param name="target">object to call the method on</param>
-        /// <param name="methodInformation">method information corresponding to methods</param>
-        /// <param name="invocationConstraints">invocation constraints</param>
-        /// <param name="arguments">arguments of the call</param>
+        /// <param name="methodName">used for error messages.</param>
+        /// <param name="target">object to call the method on.</param>
+        /// <param name="methodInformation">method information corresponding to methods.</param>
+        /// <param name="invocationConstraints">invocation constraints.</param>
+        /// <param name="arguments">arguments of the call.</param>
         /// <returns>The return of the method.</returns>
-        /// <exception cref="MethodInvocationException">if the method throws an exception</exception>
-        /// <exception cref="MethodException">if we could not find a method for the given arguments</exception>
+        /// <exception cref="MethodInvocationException">if the method throws an exception.</exception>
+        /// <exception cref="MethodException">if we could not find a method for the given arguments.</exception>
         internal static object MethodInvokeDotNet(
             string methodName,
             object target,
@@ -4068,12 +4068,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Calls the method best suited to the arguments on target.
         /// </summary>
-        /// <param name="type">the type being constructed, used for diagnostics and caching</param>
-        /// <param name="constructors">all overloads for the constructors</param>
-        /// <param name="arguments">arguments of the call</param>
+        /// <param name="type">the type being constructed, used for diagnostics and caching.</param>
+        /// <param name="constructors">all overloads for the constructors.</param>
+        /// <param name="arguments">arguments of the call.</param>
         /// <returns>The return of the method.</returns>
-        /// <exception cref="MethodInvocationException">if the method throws an exception</exception>
-        /// <exception cref="MethodException">if we could not find a method for the given arguments</exception>
+        /// <exception cref="MethodInvocationException">if the method throws an exception.</exception>
+        /// <exception cref="MethodException">if we could not find a method for the given arguments.</exception>
         internal static object ConstructorInvokeDotNet(Type type, ConstructorInfo[] constructors, object[] arguments)
         {
             var newConstructors = GetMethodInformationArray(constructors);
@@ -4234,8 +4234,8 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to try to call
         /// the method with the arguments
         /// </summary>
-        /// <param name="method">the non empty return from GetMethods</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="method">the non empty return from GetMethods.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
@@ -4246,9 +4246,9 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to try to call
         /// the method with the arguments
         /// </summary>
-        /// <param name="method">the non empty return from GetMethods</param>
-        /// <param name="invocationConstraints">invocation constraints</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="method">the non empty return from GetMethods.</param>
+        /// <param name="invocationConstraints">invocation constraints.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, PSMethodInvocationConstraints invocationConstraints, object[] arguments)
         {
@@ -4264,7 +4264,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to return the overloads
         /// </summary>
-        /// <param name="method">the return of GetMember</param>
+        /// <param name="method">the return of GetMember.</param>
         /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
@@ -4284,7 +4284,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember</param>
+        /// <param name="property">property obtained in a previous GetMember.</param>
         /// <returns>The name of the type corresponding to the member.</returns>
         protected override string ParameterizedPropertyType(PSParameterizedProperty property)
         {
@@ -4295,7 +4295,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         protected override bool ParameterizedPropertyIsSettable(PSParameterizedProperty property)
         {
@@ -4305,7 +4305,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         protected override bool ParameterizedPropertyIsGettable(PSParameterizedProperty property)
         {
@@ -4315,8 +4315,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to get the property value
         /// </summary>
-        /// <param name="property">the non empty return from GetMember</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="property">the non empty return from GetMember.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <returns>The return value for the property.</returns>
         protected override object ParameterizedPropertyGet(PSParameterizedProperty property, object[] arguments)
         {
@@ -4328,9 +4328,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to set the property value
         /// </summary>
-        /// <param name="property">the non empty return from GetMember</param>
-        /// <param name="setValue">the value to set property with</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="property">the non empty return from GetMember.</param>
+        /// <param name="setValue">the value to set property with.</param>
+        /// <param name="arguments">the arguments to use.</param>
         protected override void ParameterizedPropertySet(PSParameterizedProperty property, object setValue, object[] arguments)
         {
             var adapterData = (ParameterizedPropertyCacheEntry)property.adapterData;
@@ -4356,7 +4356,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of the property in the object
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember</param>
+        /// <param name="property">property obtained in a previous GetMember.</param>
         /// <returns>The string representation of the property in the object.</returns>
         protected override string ParameterizedPropertyToString(PSParameterizedProperty property)
         {
@@ -4493,7 +4493,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an array with the property attributes
         /// </summary>
-        /// <param name="property">property we want the attributes from</param>
+        /// <param name="property">property we want the attributes from.</param>
         /// <returns>An array with the property attributes.</returns>
         protected override AttributeCollection PropertyAttributes(PSProperty property)
         {
@@ -4503,7 +4503,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the value from a property coming from a previous call to GetMember
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to GetMember</param>
+        /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
@@ -4514,9 +4514,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of a property coming from a previous call to GetMember
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to GetMember</param>
-        /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
+        /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
+        /// <param name="setValue">value to set the property with.</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             Diagnostics.Assert(false, "redirection adapter is not called for properties");
@@ -4526,7 +4526,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
@@ -4537,7 +4537,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
@@ -4548,8 +4548,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
         /// </summary>
-        /// <param name="property">PSProperty obtained in a previous GetMember</param>
-        /// <param name="forDisplay">True if the result is for display purposes only</param>
+        /// <param name="property">PSProperty obtained in a previous GetMember.</param>
+        /// <param name="forDisplay">True if the result is for display purposes only.</param>
         /// <returns>The name of the type corresponding to the member.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
@@ -4560,7 +4560,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the string representation of the property in the object
         /// </summary>
-        /// <param name="property">property obtained in a previous GetMember</param>
+        /// <param name="property">property obtained in a previous GetMember.</param>
         /// <returns>The string representation of the property in the object.</returns>
         protected override string PropertyToString(PSProperty property)
         {
@@ -4576,8 +4576,8 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to try to call
         /// the method with the arguments
         /// </summary>
-        /// <param name="method">the non empty return from GetMethods</param>
-        /// <param name="arguments">the arguments to use</param>
+        /// <param name="method">the non empty return from GetMethods.</param>
+        /// <param name="arguments">the arguments to use.</param>
         /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
@@ -4588,7 +4588,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called after a non null return from GetMember to return the overloads
         /// </summary>
-        /// <param name="method">the return of GetMember</param>
+        /// <param name="method">the return of GetMember.</param>
         /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
@@ -4610,7 +4610,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the TypeNameHierarchy out of an object
         /// </summary>
-        /// <param name="obj">object to get the TypeNameHierarchy from</param>
+        /// <param name="obj">object to get the TypeNameHierarchy from.</param>
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
             return ((PSObject)obj).InternalTypeNames;
@@ -4620,8 +4620,8 @@ namespace System.Management.Automation
         /// Returns null if memberName is not a member in the adapter or
         /// the corresponding PSMemberInfo
         /// </summary>
-        /// <param name="obj">object to retrieve the PSMemberInfo from</param>
-        /// <param name="memberName">name of the member to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSMemberInfo from.</param>
+        /// <param name="memberName">name of the member to be retrieved.</param>
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
@@ -4638,7 +4638,7 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
-        /// <param name="obj">object to get all the member information from</param>
+        /// <param name="obj">object to get all the member information from.</param>
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
@@ -4679,8 +4679,8 @@ namespace System.Management.Automation
         /// Returns null if memberName is not a member in the adapter or
         /// the corresponding PSMemberInfo
         /// </summary>
-        /// <param name="obj">object to retrieve the PSMemberInfo from</param>
-        /// <param name="memberName">name of the member to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSMemberInfo from.</param>
+        /// <param name="memberName">name of the member to be retrieved.</param>
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
@@ -4697,7 +4697,7 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
-        /// <param name="obj">object to get all the member information from</param>
+        /// <param name="obj">object to get all the member information from.</param>
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
@@ -4751,24 +4751,24 @@ namespace System.Management.Automation
         /// the corresponding PSProperty with its adapterData set to information
         /// to be used when retrieving the property.
         /// </summary>
-        /// <param name="obj">object to retrieve the PSProperty from</param>
-        /// <param name="propertyName">name of the property to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSProperty from.</param>
+        /// <param name="propertyName">name of the property to be retrieved.</param>
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected abstract PSProperty DoGetProperty(object obj, string propertyName);
 
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
-        /// <param name="obj">object to get all the property information from</param>
-        /// <param name="members">collection where the properties will be added</param>
+        /// <param name="obj">object to get all the property information from.</param>
+        /// <param name="members">collection where the properties will be added.</param>
         protected abstract void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members) where T : PSMemberInfo;
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
         /// the corresponding PSMemberInfo
         /// </summary>
-        /// <param name="obj">object to retrieve the PSMemberInfo from</param>
-        /// <param name="memberName">name of the member to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSMemberInfo from.</param>
+        /// <param name="memberName">name of the member to be retrieved.</param>
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
@@ -4814,7 +4814,7 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
-        /// <param name="obj">object to get all the member information from</param>
+        /// <param name="obj">object to get all the member information from.</param>
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
@@ -4855,7 +4855,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the TypeNameHierarchy out of an object
         /// </summary>
-        /// <param name="obj">object to get the TypeNameHierarchy from</param>
+        /// <param name="obj">object to get the TypeNameHierarchy from.</param>
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
             XmlNode node = (XmlNode)obj;
@@ -4891,8 +4891,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
-        /// <param name="obj">object to get all the property information from</param>
-        /// <param name="members">collection where the members will be added</param>
+        /// <param name="obj">object to get all the property information from.</param>
+        /// <param name="members">collection where the members will be added.</param>
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
             XmlNode node = (XmlNode)obj;
@@ -4945,8 +4945,8 @@ namespace System.Management.Automation
         /// the corresponding PSProperty with its adapterData set to information
         /// to be used when retrieving the property.
         /// </summary>
-        /// <param name="obj">object to retrieve the PSProperty from</param>
-        /// <param name="propertyName">name of the property to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSProperty from.</param>
+        /// <param name="propertyName">name of the property to be retrieved.</param>
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected override PSProperty DoGetProperty(object obj, string propertyName)
         {
@@ -4962,7 +4962,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
@@ -5007,7 +5007,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
@@ -5055,7 +5055,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the value from a property coming from a previous call to DoGetProperty
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
+        /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
@@ -5077,9 +5077,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
-        /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
+        /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
+        /// <param name="setValue">value to set the property with.</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             // XML is always a string so implicitly convert to string
@@ -5141,8 +5141,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name of the type corresponding to the property
         /// </summary>
-        /// <param name="property">PSProperty obtained in a previous DoGetProperty</param>
-        /// <param name="forDisplay">True if the result is for display purposes only</param>
+        /// <param name="property">PSProperty obtained in a previous DoGetProperty.</param>
+        /// <param name="forDisplay">True if the result is for display purposes only.</param>
         /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
@@ -5164,9 +5164,9 @@ namespace System.Management.Automation
         /// Auxiliary in GetProperty to perform case sensitive and case insensitive searches
         /// in the child nodes
         /// </summary>
-        /// <param name="obj">XmlNode to extract property from</param>
-        /// <param name="propertyName">property to look for</param>
-        /// <param name="comparisonType">type pf comparison to perform</param>
+        /// <param name="obj">XmlNode to extract property from.</param>
+        /// <param name="propertyName">property to look for.</param>
+        /// <param name="comparisonType">type pf comparison to perform.</param>
         /// <returns>The corresponding XmlNode or null if not present.</returns>
         private static XmlNode[] FindNodes(object obj, string propertyName, StringComparison comparisonType)
         {
@@ -5211,8 +5211,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
-        /// <param name="obj">object to get all the property information from</param>
-        /// <param name="members">collection where the members will be added</param>
+        /// <param name="obj">object to get all the property information from.</param>
+        /// <param name="members">collection where the members will be added.</param>
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
             DataRow dataRow = (DataRow)obj;
@@ -5233,8 +5233,8 @@ namespace System.Management.Automation
         /// the corresponding PSProperty with its adapterData set to information
         /// to be used when retrieving the property.
         /// </summary>
-        /// <param name="obj">object to retrieve the PSProperty from</param>
-        /// <param name="propertyName">name of the property to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSProperty from.</param>
+        /// <param name="propertyName">name of the property to be retrieved.</param>
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected override PSProperty DoGetProperty(object obj, string propertyName)
         {
@@ -5252,8 +5252,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name of the type corresponding to the property
         /// </summary>
-        /// <param name="property">PSProperty obtained in a previous DoGetProperty</param>
-        /// <param name="forDisplay">True if the result is for display purposes only</param>
+        /// <param name="property">PSProperty obtained in a previous DoGetProperty.</param>
+        /// <param name="forDisplay">True if the result is for display purposes only.</param>
         /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
@@ -5266,7 +5266,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
@@ -5278,7 +5278,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
@@ -5288,7 +5288,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the value from a property coming from a previous call to DoGetProperty
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
+        /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
@@ -5298,9 +5298,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
-        /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
+        /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
+        /// <param name="setValue">value to set the property with.</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             DataRow dataRow = (DataRow)property.baseObject;
@@ -5318,8 +5318,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves all the properties available in the object.
         /// </summary>
-        /// <param name="obj">object to get all the property information from</param>
-        /// <param name="members">collection where the members will be added</param>
+        /// <param name="obj">object to get all the property information from.</param>
+        /// <param name="members">collection where the members will be added.</param>
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
             DataRowView dataRowView = (DataRowView)obj;
@@ -5340,8 +5340,8 @@ namespace System.Management.Automation
         /// the corresponding PSProperty with its adapterData set to information
         /// to be used when retrieving the property.
         /// </summary>
-        /// <param name="obj">object to retrieve the PSProperty from</param>
-        /// <param name="propertyName">name of the property to be retrieved</param>
+        /// <param name="obj">object to retrieve the PSProperty from.</param>
+        /// <param name="propertyName">name of the property to be retrieved.</param>
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected override PSProperty DoGetProperty(object obj, string propertyName)
         {
@@ -5359,8 +5359,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the name of the type corresponding to the property
         /// </summary>
-        /// <param name="property">PSProperty obtained in a previous DoGetProperty</param>
-        /// <param name="forDisplay">True if the result is for display purposes only</param>
+        /// <param name="property">PSProperty obtained in a previous DoGetProperty.</param>
+        /// <param name="forDisplay">True if the result is for display purposes only.</param>
         /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
@@ -5373,7 +5373,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
@@ -5385,7 +5385,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
-        /// <param name="property">property to check</param>
+        /// <param name="property">property to check.</param>
         /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
@@ -5395,7 +5395,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the value from a property coming from a previous call to DoGetProperty
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
+        /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
@@ -5405,9 +5405,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty
         /// </summary>
-        /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
-        /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
+        /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
+        /// <param name="setValue">value to set the property with.</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             DataRowView dataRowView = (DataRowView)property.baseObject;

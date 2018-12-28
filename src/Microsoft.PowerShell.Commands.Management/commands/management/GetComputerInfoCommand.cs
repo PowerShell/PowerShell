@@ -5134,7 +5134,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Import WINAPI function PowerDeterminePlatformRoleEx
         /// </summary>
-        /// <param name="version">The version of the POWER_PLATFORM_ROLE enumeration for the platform</param>
+        /// <param name="version">The version of the POWER_PLATFORM_ROLE enumeration for the platform.</param>
         /// <returns>POWER_PLATFORM_ROLE enumeration.</returns>
         [DllImport(PInvokeDllNames.PowerDeterminePlatformRoleExDllName, EntryPoint = "PowerDeterminePlatformRoleEx", CharSet = CharSet.Ansi)]
         public static extern uint PowerDeterminePlatformRoleEx(uint version);
@@ -5163,8 +5163,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Convert a Local Identifier to a Locale name
         /// </summary>
-        /// <param name="localeID">The Locale ID (LCID) to be converted</param>
-        /// <param name="localeName">Destination of the Locale name</param>
+        /// <param name="localeID">The Locale ID (LCID) to be converted.</param>
+        /// <param name="localeName">Destination of the Locale name.</param>
         /// <param name="localeNameSize">Capacity of <paramref name="localeName"/></param>
         /// <param name="flags"></param>
         /// <returns></returns>

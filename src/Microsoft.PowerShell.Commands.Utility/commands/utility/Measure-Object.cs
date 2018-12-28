@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
             /// the key with a new value created via the value type's
             /// default constructor.
             /// </summary>
-            /// <param name="key">The key to look up</param>
+            /// <param name="key">The key to look up.</param>
             /// <returns>
             /// The existing value, or a newly-created value.
             /// </returns>
@@ -650,8 +650,8 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count chars in inStr.
             /// </summary>
-            /// <param name="inStr">string whose chars are counted</param>
-            /// <param name="ignoreWhiteSpace">true to discount white space</param>
+            /// <param name="inStr">string whose chars are counted.</param>
+            /// <param name="ignoreWhiteSpace">true to discount white space.</param>
             /// <returns>Number of chars in inStr.</returns>
             internal static int CountChar(string inStr, bool ignoreWhiteSpace)
             {
@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count words in inStr.
             /// </summary>
-            /// <param name="inStr">string whose words are counted</param>
+            /// <param name="inStr">string whose words are counted.</param>
             /// <returns>Number of words in inStr.</returns>
             internal static int CountWord(string inStr)
             {
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count lines in inStr.
             /// </summary>
-            /// <param name="inStr">string whose lines are counted</param>
+            /// <param name="inStr">string whose lines are counted.</param>
             /// <returns>Number of lines in inStr.</returns>
             internal static int CountLine(string inStr)
             {

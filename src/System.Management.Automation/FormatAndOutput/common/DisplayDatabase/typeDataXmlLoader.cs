@@ -170,9 +170,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// entry point for the loader algorithm
         /// </summary>
-        /// <param name="info">information needed to load the file</param>
-        /// <param name="db">database instance to load the file into</param>
-        /// <param name="expressionFactory">expression factory to validate script blocks</param>
+        /// <param name="info">information needed to load the file.</param>
+        /// <param name="db">database instance to load the file into.</param>
+        /// <param name="expressionFactory">expression factory to validate script blocks.</param>
         /// <param name="authorizationManager">
         /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
         /// </param>
@@ -274,11 +274,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// entry point for the loader algorithm to load formatting data from ExtendedTypeDefinition
         /// </summary>
-        /// <param name="typeDefinition">the ExtendedTypeDefinition instance to load formatting data from</param>
-        /// <param name="db">database instance to load the formatting data into</param>
-        /// <param name="expressionFactory">expression factory to validate the script block</param>
+        /// <param name="typeDefinition">the ExtendedTypeDefinition instance to load formatting data from.</param>
+        /// <param name="db">database instance to load the formatting data into.</param>
+        /// <param name="expressionFactory">expression factory to validate the script block.</param>
         /// <param name="isBuiltInFormatData">do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
-        /// <param name="isForHelp">true when the view is for help output</param>
+        /// <param name="isForHelp">true when the view is for help output.</param>
         /// <returns></returns>
         internal bool LoadFormattingData(
             ExtendedTypeDefinition typeDefinition,
@@ -332,8 +332,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// load the content of the XML document into the data instance.
         /// It assumes that the XML document has been successfully loaded
         /// </summary>
-        /// <param name="doc">XML document to load from, cannot be null</param>
-        /// <param name="db">instance of the databaseto load into</param>
+        /// <param name="doc">XML document to load from, cannot be null.</param>
+        /// <param name="db">instance of the databaseto load into.</param>
         private void LoadData(XmlDocument doc, TypeInfoDataBase db)
         {
             if (doc == null)
@@ -419,9 +419,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     WideControl
         ///     CustomControl
         /// </summary>
-        /// <param name="typeDefinition">ExtendedTypeDefinition instances to load from, cannot be null</param>
-        /// <param name="db">instance of the database to load into</param>
-        /// <param name="isForHelpOutput">true if the formatter is used for formatting help objects</param>
+        /// <param name="typeDefinition">ExtendedTypeDefinition instances to load from, cannot be null.</param>
+        /// <param name="db">instance of the database to load into.</param>
+        /// <param name="isForHelpOutput">true if the formatter is used for formatting help objects.</param>
         private void LoadData(ExtendedTypeDefinition typeDefinition, TypeInfoDataBase db, bool isForHelpOutput)
         {
             if (typeDefinition == null)
@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Load the view into a ViewDefinition
         /// </summary>
-        /// <param name="typeNames">the TypeName tag under SelectedBy tag</param>
+        /// <param name="typeNames">the TypeName tag under SelectedBy tag.</param>
         /// <param name="formatView"></param>
         /// <param name="viewIndex"></param>
         /// <returns></returns>
@@ -1918,7 +1918,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// helper to verify the text of a string block and
         /// log an error if an exception is thrown
         /// </summary>
-        /// <param name="scriptBlockText">script block string to verify</param>
+        /// <param name="scriptBlockText">script block string to verify.</param>
         /// <returns>True if parsed correctly, false if failed.</returns>
         internal bool VerifyScriptBlock(string scriptBlockText)
         {

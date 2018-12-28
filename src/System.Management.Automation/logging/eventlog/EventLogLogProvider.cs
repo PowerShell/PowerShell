@@ -549,8 +549,8 @@ namespace System.Management.Automation
         ///
         /// In EventLog Api, arguments are passed in as an array of objects.
         /// </summary>
-        /// <param name="mapArgs">An ArrayList to contain the event arguments</param>
-        /// <param name="logContext">The log context containing the info to fill in</param>
+        /// <param name="mapArgs">An ArrayList to contain the event arguments.</param>
+        /// <param name="logContext">The log context containing the info to fill in.</param>
         private static void FillEventArgs(Hashtable mapArgs, LogContext logContext)
         {
             mapArgs["Severity"] = logContext.Severity;
@@ -574,8 +574,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Fill event arguments with additionalInfo stored in a string dictionary.
         /// </summary>
-        /// <param name="mapArgs">An arraylist to contain the event arguments</param>
-        /// <param name="additionalInfo">A string dictionary to fill in</param>
+        /// <param name="mapArgs">An arraylist to contain the event arguments.</param>
+        /// <param name="additionalInfo">A string dictionary to fill in.</param>
         private static void FillEventArgs(Hashtable mapArgs, Dictionary<string, string> additionalInfo)
         {
             if (additionalInfo == null)

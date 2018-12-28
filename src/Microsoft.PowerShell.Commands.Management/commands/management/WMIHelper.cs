@@ -54,10 +54,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Internal Constructor
         /// </summary>
-        /// <param name="childJob">Job associated with this operation</param>
-        /// <param name="wmiObject">object associated with this operation</param>
-        /// <param name="computerName">computer on which the operation is invoked</param>
-        /// <param name="results">sink to get wmi objects</param>
+        /// <param name="childJob">Job associated with this operation.</param>
+        /// <param name="wmiObject">object associated with this operation.</param>
+        /// <param name="computerName">computer on which the operation is invoked.</param>
+        /// <param name="results">sink to get wmi objects.</param>
         internal WmiAsyncCmdletHelper(PSWmiChildJob childJob, Cmdlet wmiObject, string computerName, ManagementOperationObserver results)
         {
             _wmiObject = wmiObject;
@@ -71,11 +71,11 @@ namespace Microsoft.PowerShell.Commands
         /// Internal Constructor.  This variant takes a count parameter that determines how many times
         /// the WMI command is executed.
         /// </summary>
-        /// <param name="childJob">Job associated with this operation</param>
-        /// <param name="wmiObject">Object associated with this operation</param>
-        /// <param name="computerName">Computer on which the operation is invoked</param>
-        /// <param name="results">Sink to return wmi objects</param>
-        /// <param name="count">Number of times the WMI command is executed</param>
+        /// <param name="childJob">Job associated with this operation.</param>
+        /// <param name="wmiObject">Object associated with this operation.</param>
+        /// <param name="computerName">Computer on which the operation is invoked.</param>
+        /// <param name="results">Sink to return wmi objects.</param>
+        /// <param name="count">Number of times the WMI command is executed.</param>
         internal WmiAsyncCmdletHelper(PSWmiChildJob childJob, Cmdlet wmiObject, string computerName, ManagementOperationObserver results, int count)
             : this(childJob, wmiObject, computerName, results)
         {
@@ -1735,7 +1735,7 @@ namespace Microsoft.PowerShell.Commands
         /// count of blocked child jobs. When count reaches 0, sets the
         /// state of the parent job to running
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
+        /// <param name="sender">sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments, should be empty in this
         /// case</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
@@ -2050,8 +2050,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handle a throttle complete event
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="eventArgs">not used in this method</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="eventArgs">not used in this method.</param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
             if (_helper.State == WmiState.NotStarted)

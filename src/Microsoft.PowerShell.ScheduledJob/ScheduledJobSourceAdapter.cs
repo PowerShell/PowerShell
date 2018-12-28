@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Create a new Job2 results instance.
         /// </summary>
-        /// <param name="specification">Job specification</param>
+        /// <param name="specification">Job specification.</param>
         /// <returns>Job2.</returns>
         public override Job2 NewJob(JobInvocationInfo specification)
         {
@@ -92,8 +92,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// null then a default location will be used to find the
         /// job definition by name.
         /// </summary>
-        /// <param name="definitionName">ScheduledJob definition name</param>
-        /// <param name="definitionPath">ScheduledJob definition file path</param>
+        /// <param name="definitionName">ScheduledJob definition name.</param>
+        /// <param name="definitionPath">ScheduledJob definition file path.</param>
         /// <returns>Job2 object.</returns>
         public override Job2 NewJob(string definitionName, string definitionPath)
         {
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Get list of jobs that run the specified command
         /// </summary>
-        /// <param name="command">command to match</param>
+        /// <param name="command">command to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Get job that has the specified id
         /// </summary>
-        /// <param name="instanceId">Guid to match</param>
+        /// <param name="instanceId">Guid to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Job with the specified guid.</returns>
         public override Job2 GetJobByInstanceId(Guid instanceId, bool recurse)
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Get job that has specific session id
         /// </summary>
-        /// <param name="id">Id to match</param>
+        /// <param name="id">Id to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Job with the specified id.</returns>
         public override Job2 GetJobBySessionId(int id, bool recurse)
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Get list of jobs that are in the specified state
         /// </summary>
-        /// <param name="state">state to match</param>
+        /// <param name="state">state to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs with the specified
         /// state.</returns>
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Remove a job from the store
         /// </summary>
-        /// <param name="job">job object to remove</param>
+        /// <param name="job">job object to remove.</param>
         public override void RemoveJob(Job2 job)
         {
             if (job == null)
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Saves job to scheduled job run store.
         /// </summary>
-        /// <param name="job">ScheduledJob</param>
+        /// <param name="job">ScheduledJob.</param>
         public override void PersistJob(Job2 job)
         {
             if (job == null)
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serializes a ScheduledJob and saves it to store.
         /// </summary>
-        /// <param name="job">ScheduledJob</param>
+        /// <param name="job">ScheduledJob.</param>
         internal static void SaveJobToStore(ScheduledJob job)
         {
             string outputPath = job.Definition.OutputPath;
@@ -403,8 +403,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Writes the job status information to the provided
         /// file stream.
         /// </summary>
-        /// <param name="job">ScheduledJob job to save</param>
-        /// <param name="fs">FileStream</param>
+        /// <param name="job">ScheduledJob job to save.</param>
+        /// <param name="fs">FileStream.</param>
         private static void SaveStatusToFile(ScheduledJob job, FileStream fs)
         {
             StatusInfo statusInfo = new StatusInfo(
@@ -428,8 +428,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Writes the job (which implements ISerializable) to the provided
         /// file stream.
         /// </summary>
-        /// <param name="job">ScheduledJob job to save</param>
-        /// <param name="fs">FileStream</param>
+        /// <param name="job">ScheduledJob job to save.</param>
+        /// <param name="fs">FileStream.</param>
         private static void SaveResultsToFile(ScheduledJob job, FileStream fs)
         {
             XmlObjectSerializer serializer = new System.Runtime.Serialization.NetDataContractSerializer();
@@ -441,8 +441,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Check the job store results and if maximum number of results exist
         /// remove the oldest results folder to make room for these new results.
         /// </summary>
-        /// <param name="outputPath">Output path</param>
-        /// <param name="executionHistoryLength">Maximum size of stored job results</param>
+        /// <param name="outputPath">Output path.</param>
+        /// <param name="executionHistoryLength">Maximum size of stored job results.</param>
         private static void CheckJobStoreResults(string outputPath, int executionHistoryLength)
         {
             // Get current results for this job definition.
@@ -476,8 +476,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Finds and load the Job associated with this ScheduledJobDefinition object
         /// having the job run date time provided.
         /// </summary>
-        /// <param name="jobRun">DateTime of job run to load</param>
-        /// <param name="definitionName">ScheduledJobDefinition name</param>
+        /// <param name="jobRun">DateTime of job run to load.</param>
+        /// <param name="definitionName">ScheduledJobDefinition name.</param>
         /// <returns>Job2 job loaded from store.</returns>
         internal static Job2 LoadJobFromStore(string definitionName, DateTime jobRun)
         {
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Loads the Job2 object from provided files stream.
         /// </summary>
-        /// <param name="fs">FileStream from which to read job object</param>
+        /// <param name="fs">FileStream from which to read job object.</param>
         /// <returns>Created Job2 from file stream.</returns>
         private static Job2 LoadResultsFromFile(FileStream fs)
         {
@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Adds a Job2 object to the repository.
         /// </summary>
-        /// <param name="job">Job2</param>
+        /// <param name="job">Job2.</param>
         internal static void AddToRepository(Job2 job)
         {
             if (job == null)
@@ -916,7 +916,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             /// <summary>
             /// Add Job2 to repository.
             /// </summary>
-            /// <param name="job">Job2 to add</param>
+            /// <param name="job">Job2 to add.</param>
             public void Add(Job2 job)
             {
                 if (job == null)
@@ -939,7 +939,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             /// <summary>
             /// Add or replace passed in Job2 object to repository.
             /// </summary>
-            /// <param name="job">Job2 to add</param>
+            /// <param name="job">Job2 to add.</param>
             public void AddOrReplace(Job2 job)
             {
                 if (job == null)
@@ -995,7 +995,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             /// <summary>
             /// Gets the latest job run Date/Time for the given definition name.
             /// </summary>
-            /// <param name="definitionName">ScheduledJobDefinition name</param>
+            /// <param name="definitionName">ScheduledJobDefinition name.</param>
             /// <returns>Job Run DateTime.</returns>
             public DateTime GetLatestJobRun(string definitionName)
             {
@@ -1048,8 +1048,8 @@ namespace Microsoft.PowerShell.ScheduledJob
             /// <summary>
             /// Search repository for specific job run.
             /// </summary>
-            /// <param name="definitionName">Definition name</param>
-            /// <param name="jobRun">Job run DateTime</param>
+            /// <param name="definitionName">Definition name.</param>
+            /// <param name="jobRun">Job run DateTime.</param>
             /// <returns>Scheduled job if found.</returns>
             public ScheduledJob GetJob(string definitionName, DateTime jobRun)
             {

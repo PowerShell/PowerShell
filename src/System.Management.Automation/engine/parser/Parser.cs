@@ -716,8 +716,8 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Parses the specified constant hashtable string into a Hashtable object
         /// </summary>
-        /// <param name="input">The Hashtable string</param>
-        /// <param name="result">the Hashtable object</param>
+        /// <param name="input">The Hashtable string.</param>
+        /// <param name="result">the Hashtable object.</param>
         /// <returns></returns>
         internal static bool TryParseAsConstantHashtable(string input, out Hashtable result)
         {
@@ -3258,7 +3258,7 @@ namespace System.Management.Automation.Language
         /// Reads an argument expression for a keyword or keyword parameter.
         /// This can be either a bare word or an expression
         /// </summary>
-        /// <param name="keywordToken">the token of the associated keyword</param>
+        /// <param name="keywordToken">the token of the associated keyword.</param>
         private ExpressionAst GetWordOrExpression(Token keywordToken)
         {
             Token nameToken = NextToken();
@@ -3648,8 +3648,8 @@ namespace System.Management.Automation.Language
         /// This command has one of two signatures:
         ///     keywordImplCommand
         /// </summary>
-        /// <param name="functionName">The name of the function to invoke</param>
-        /// <param name="keywordData">The data for this keyword definition</param>
+        /// <param name="functionName">The name of the function to invoke.</param>
+        /// <param name="keywordData">The data for this keyword definition.</param>
         /// <returns></returns>
         private StatementAst DynamicKeywordStatementRule(Token functionName, DynamicKeyword keywordData)
         {
@@ -7453,8 +7453,8 @@ namespace System.Management.Automation.Language
         /// Debug assertion to ensure that all errors saved by the parser come
         /// from resource (.resx) files.
         /// </summary>
-        /// <param name="errorId">The error ID string (.resx key)</param>
-        /// <param name="errorMsg">The error message, which may be a template string (.resx value)</param>
+        /// <param name="errorId">The error ID string (.resx key).</param>
+        /// <param name="errorMsg">The error message, which may be a template string (.resx value).</param>
         [System.Diagnostics.Conditional("DEBUG")]
         [System.Diagnostics.Conditional("ASSERTIONS_TRACE")]
         private static void AssertErrorIdCorrespondsToMsgString(string errorId, string errorMsg)

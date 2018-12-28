@@ -40,9 +40,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Initialize the command before executing
         /// </summary>
-        /// <param name="execContext">ExecutionContext used to create sub pipeline</param>
-        /// <param name="nameOfCommand">name of the command to run</param>
-        /// <param name="typeOfCommand">Type of the command to run</param>
+        /// <param name="execContext">ExecutionContext used to create sub pipeline.</param>
+        /// <param name="nameOfCommand">name of the command to run.</param>
+        /// <param name="typeOfCommand">Type of the command to run.</param>
         internal void Initialize(ExecutionContext execContext, string nameOfCommand, Type typeOfCommand)
         {
             _context = execContext;
@@ -54,8 +54,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// add a parameter to the command invocation.
         /// It needs to be called before any execution takes place
         /// </summary>
-        /// <param name="parameterName">name of the parameter</param>
-        /// <param name="parameterValue">value of the parameter</param>
+        /// <param name="parameterName">name of the parameter.</param>
+        /// <param name="parameterValue">value of the parameter.</param>
         internal void AddNamedParameter(string parameterName, object parameterValue)
         {
             _commandParameterList.Add(
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// send an object to the pipeline
         /// </summary>
-        /// <param name="o">object to process</param>
+        /// <param name="o">object to process.</param>
         /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array Process(object o)
         {
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// callback for the implementation to write objects
         /// </summary>
-        /// <param name="value">object to be written</param>
+        /// <param name="value">object to be written.</param>
         protected virtual void WriteObjectCall(object value)
         {
             // just call Monad API
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// write an object to the pipeline
         /// </summary>
-        /// <param name="o">object to write to the pipeline</param>
+        /// <param name="o">object to write to the pipeline.</param>
         internal virtual void WriteObject(object o)
         {
             // delegate to the front end object

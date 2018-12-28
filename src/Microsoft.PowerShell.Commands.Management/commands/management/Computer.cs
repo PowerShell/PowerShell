@@ -2066,15 +2066,15 @@ $result
         /// over a CIMSession.  The flags parameter determines the type of shutdown operation
         /// such as shutdown, reboot, force etc.
         /// </summary>
-        /// <param name="cmdlet">Cmdlet host for reporting errors</param>
-        /// <param name="isLocalhost">True if local host computer</param>
-        /// <param name="computerName">Target computer</param>
-        /// <param name="flags">Win32Shutdown flags</param>
-        /// <param name="credential">Optional credential</param>
-        /// <param name="authentication">Optional authentication</param>
-        /// <param name="formatErrorMessage">Error message format string that takes two parameters</param>
-        /// <param name="ErrorFQEID">Fully qualified error Id</param>
-        /// <param name="cancelToken">Cancel token</param>
+        /// <param name="cmdlet">Cmdlet host for reporting errors.</param>
+        /// <param name="isLocalhost">True if local host computer.</param>
+        /// <param name="computerName">Target computer.</param>
+        /// <param name="flags">Win32Shutdown flags.</param>
+        /// <param name="credential">Optional credential.</param>
+        /// <param name="authentication">Optional authentication.</param>
+        /// <param name="formatErrorMessage">Error message format string that takes two parameters.</param>
+        /// <param name="ErrorFQEID">Fully qualified error Id.</param>
+        /// <param name="cancelToken">Cancel token.</param>
         /// <returns>True on success.</returns>
         internal static bool InvokeWin32ShutdownUsingWsman(
             PSCmdlet cmdlet,
@@ -2188,7 +2188,7 @@ $result
         /// <summary>
         /// Returns valid computer name or null on failure.
         /// </summary>
-        /// <param name="nameToCheck">Computer name to validate</param>
+        /// <param name="nameToCheck">Computer name to validate.</param>
         /// <param name="shortLocalMachineName"></param>
         /// <param name="fullLocalMachineName"></param>
         /// <param name="error"></param>

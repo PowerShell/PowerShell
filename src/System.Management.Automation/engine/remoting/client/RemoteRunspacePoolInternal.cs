@@ -48,7 +48,7 @@ namespace System.Management.Automation.Runspaces.Internal
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
-        /// <param name="host">Host associated with this runspacepool</param>
+        /// <param name="host">Host associated with this runspacepool.</param>
         /// <param name="applicationArguments">
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
@@ -492,8 +492,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// The server sent application private data.  Store the data so that user
         /// can get it later.
         /// </summary>
-        /// <param name="eventArgs">argument describing this event</param>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="eventArgs">argument describing this event.</param>
+        /// <param name="sender">sender of this event.</param>
         internal void HandleApplicationPrivateDataReceived(object sender,
             RemoteDataEventArgs<PSPrimitiveDictionary> eventArgs)
         {
@@ -533,8 +533,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// The state of the server RunspacePool has changed. Handle
         /// the same and reflect local states accordingly
         /// </summary>
-        /// <param name="eventArgs">argument describing this event</param>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="eventArgs">argument describing this event.</param>
+        /// <param name="sender">sender of this event.</param>
         internal void HandleStateInfoReceived(object sender,
             RemoteDataEventArgs<RunspacePoolStateInfo> eventArgs)
         {
@@ -604,8 +604,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// A host call has been proxied from the server which needs to
         /// be executed
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         internal void HandleRemoteHostCalls(object sender,
             RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
@@ -779,7 +779,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Push a running PowerShell onto the stack.
         /// </summary>
-        /// <param name="ps">PowerShell</param>
+        /// <param name="ps">PowerShell.</param>
         internal void PushRunningPowerShell(PowerShell ps)
         {
             Dbg.Assert(ps != null, "Caller should not pass in null reference.");
@@ -1560,7 +1560,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="newStateInfo">state information object
         /// describing the state change at the server RunspacePool</param>
-        /// <param name="raiseEvents">raise state changed events if true</param>
+        /// <param name="raiseEvents">raise state changed events if true.</param>
         private void SetRunspacePoolState(RunspacePoolStateInfo newStateInfo, bool raiseEvents)
         {
             stateInfo = newStateInfo;
@@ -1645,8 +1645,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// The session is closing set the state and reason accordingly
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleSessionClosing(object sender, RemoteDataEventArgs<Exception> eventArgs)
         {
             // just capture the reason for closing here..handle the session closed event
@@ -1657,8 +1657,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// The session closed, set the state and reason accordingly
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="eventArgs">arguments describing this event.</param>
         private void HandleSessionClosed(object sender, RemoteDataEventArgs<Exception> eventArgs)
         {
             if (eventArgs.Data != null)
@@ -1759,8 +1759,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// from the server, this method sets the response and thereby unblocks
         /// corresponding call
         /// </summary>
-        /// <param name="sender">sender of this message, unused</param>
-        /// <param name="eventArgs">contains response and call id</param>
+        /// <param name="sender">sender of this message, unused.</param>
+        /// <param name="eventArgs">contains response and call id.</param>
         private void HandleResponseReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
@@ -1926,7 +1926,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">if true, release all managed resources.</param>
         public override void Dispose(bool disposing)
         {
             // dispose the base class before disposing dataStructure handler.
@@ -2101,7 +2101,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Use the WSMan New-WSManSessionOption cmdlet to create a session options
         /// object used for Get-WSManInstance queries.
         /// </summary>
-        /// <param name="wsmanConnectionInfo">WSManConnectionInfo</param>
+        /// <param name="wsmanConnectionInfo">WSManConnectionInfo.</param>
         /// <returns>WSMan session options object.</returns>
         private static object GetSessionOptions(WSManConnectionInfo wsmanConnectionInfo)
         {

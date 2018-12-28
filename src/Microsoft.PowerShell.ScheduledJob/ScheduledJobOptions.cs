@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Copy Constructor.
         /// </summary>
-        /// <param name="copyOptions">Copy from</param>
+        /// <param name="copyOptions">Copy from.</param>
         internal ScheduledJobOptions(
             ScheduledJobOptions copyOptions)
         {
@@ -292,8 +292,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialization constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJobOptions(
             SerializationInfo info,
@@ -325,8 +325,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// GetObjectData for ISerializable implementation.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

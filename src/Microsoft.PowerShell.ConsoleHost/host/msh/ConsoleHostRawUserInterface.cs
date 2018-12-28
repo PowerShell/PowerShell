@@ -568,8 +568,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Used by ReadKey, cache KeyEvent based on if input.RepeatCount > 1
         /// </summary>
-        /// <param name="input">Input key event record</param>
-        /// <param name="cache">Cache key event</param>
+        /// <param name="input">Input key event record.</param>
+        /// <param name="cache">Cache key event.</param>
         private static void CacheKeyEvent(ConsoleControl.KEY_EVENT_RECORD input, ref ConsoleControl.KEY_EVENT_RECORD cache)
         {
             if (input.RepeatCount > 1)

@@ -69,10 +69,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="enabled">Enable debugger option</param>
-        /// <param name="breakAll">BreakAll option</param>
-        /// <param name="runspaceName">Runspace name</param>
-        /// <param name="runspaceId">Runspace local Id</param>
+        /// <param name="enabled">Enable debugger option.</param>
+        /// <param name="breakAll">BreakAll option.</param>
+        /// <param name="runspaceName">Runspace name.</param>
+        /// <param name="runspaceId">Runspace local Id.</param>
         public PSRunspaceDebug(bool enabled, bool breakAll, string runspaceName, int runspaceId)
         {
             if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException("runspaceName"); }
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns Runspace Debugger.
         /// </summary>
-        /// <param name="runspace">Runspace</param>
+        /// <param name="runspace">Runspace.</param>
         /// <returns>Debugger.</returns>
         protected System.Management.Automation.Debugger GetDebuggerFromRunspace(Runspace runspace)
         {
@@ -278,8 +278,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// SetDebugPreferenceHelper is a helper method used to enable/disable debug preference.
         /// </summary>
-        /// <param name="processName">Process Name</param>
-        /// <param name="appDomainName">App Domain Name</param>
+        /// <param name="processName">Process Name.</param>
+        /// <param name="appDomainName">App Domain Name.</param>
         /// <param name="enable">Indicates if debug preference has to be enabled or disabled.</param>
         /// <param name="fullyQualifiedErrorId">FullyQualifiedErrorId to be used on error.</param>
         protected void SetDebugPreferenceHelper(string processName, string[] appDomainName, bool enable, string fullyQualifiedErrorId)

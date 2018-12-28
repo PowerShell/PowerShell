@@ -22,8 +22,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ApplicationFailedException class and defines the serialization information,
         /// and streaming context.
         /// </summary>
-        /// <param name="info">The serialization information to use when initializing this object</param>
-        /// <param name="context">The streaming context to use when initializing this object</param>
+        /// <param name="info">The serialization information to use when initializing this object.</param>
+        /// <param name="context">The streaming context to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
         protected ApplicationFailedException(SerializationInfo info,
                            StreamingContext context)
@@ -45,7 +45,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ApplicationFailedException class and defines the error message.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
+        /// <param name="message">The error message to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
         public ApplicationFailedException(string message) : base(message)
         {
@@ -57,8 +57,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ApplicationFailedException class and defines the error message and
         /// errorID.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="errorId">The errorId to use when initializing this object</param>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="errorId">The errorId to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
         internal ApplicationFailedException(string message, string errorId) : base(message)
         {
@@ -70,9 +70,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ApplicationFailedException class and defines the error message,
         /// error ID and inner exception.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="errorId">The errorId to use when initializing this object</param>
-        /// <param name="innerException">The inner exception to use when initializing this object</param>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="errorId">The errorId to use when initializing this object.</param>
+        /// <param name="innerException">The inner exception to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
         internal ApplicationFailedException(string message, string errorId, Exception innerException)
             : base(message, innerException)
@@ -85,8 +85,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ApplicationFailedException class and defines the error message and
         /// inner exception.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="innerException">The inner exception to use when initializing this object</param>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="innerException">The inner exception to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
         public ApplicationFailedException(string message,
                         Exception innerException)

@@ -295,7 +295,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display progress information
         /// </summary>
-        /// <param name="progressRecord">progress information</param>
+        /// <param name="progressRecord">progress information.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -426,7 +426,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display debug information
         /// </summary>
-        /// <param name="text">debug output</param>
+        /// <param name="text">debug output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -523,7 +523,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display verbose information
         /// </summary>
-        /// <param name="text">verbose output</param>
+        /// <param name="text">verbose output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -614,7 +614,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display warning information
         /// </summary>
-        /// <param name="text">warning output</param>
+        /// <param name="text">warning output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -846,7 +846,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Write text into pipeline execution log.
         /// </summary>
-        /// <param name="text">text to be written to log</param>
+        /// <param name="text">text to be written to log.</param>
         /// <remarks>
         /// Use WriteCommandDetail to write important information about cmdlet execution to
         /// pipeline execution log.
@@ -2332,7 +2332,7 @@ namespace System.Management.Automation
         /// The general pattern is to call
         /// throw ManageException(e);
         /// </summary>
-        /// <param name="e">the exception</param>
+        /// <param name="e">the exception.</param>
         /// <returns>PipelineStoppedException.</returns>
         public Exception ManageException(Exception e)
         {
@@ -2407,7 +2407,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Append an error to the ErrorVariable if specified, and also to $ERROR
         /// </summary>
-        /// <param name="obj">Exception or ErrorRecord</param>
+        /// <param name="obj">Exception or ErrorRecord.</param>
         /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
         /// (An error occurred working with the error variable or $ERROR.
         /// </exception>
@@ -2467,7 +2467,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Append a warning to WarningVariable if specified.
         /// </summary>
-        /// <param name="obj">The warning message</param>
+        /// <param name="obj">The warning message.</param>
         internal void AppendWarningVarList(object obj)
         {
             this.OutputPipe.AppendVariableList(VariableStreamKind.Warning, obj);
@@ -2552,7 +2552,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Append a Information to InformationVariable if specified.
         /// </summary>
-        /// <param name="obj">The Information message</param>
+        /// <param name="obj">The Information message.</param>
         internal void AppendInformationVarList(object obj)
         {
             this.OutputPipe.AppendVariableList(VariableStreamKind.Information, obj);
@@ -2631,7 +2631,7 @@ namespace System.Management.Automation
         /// a <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>
         /// rather than the real exception.
         /// </remarks>
-        /// <param name="errorRecord">error</param>
+        /// <param name="errorRecord">error.</param>
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
         /// </exception>
@@ -3463,8 +3463,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper for continue prompt, handles Inquire
         /// </summary>
-        /// <param name="inquireMessage">may be null</param>
-        /// <param name="inquireCaption">may be null</param>
+        /// <param name="inquireMessage">may be null.</param>
+        /// <param name="inquireCaption">may be null.</param>
         /// <param name="allowYesToAll"></param>
         /// <param name="allowNoToAll"></param>
         /// <param name="replaceNoWithHalt"></param>

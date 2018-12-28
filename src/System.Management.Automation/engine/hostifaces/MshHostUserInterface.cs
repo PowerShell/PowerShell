@@ -909,9 +909,9 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Helper to transcribe an error through formatting and output.
         /// </summary>
-        /// <param name="context">The Execution Context</param>
-        /// <param name="invocation">The invocation info associated with the record</param>
-        /// <param name="errorWrap">The error record</param>
+        /// <param name="context">The Execution Context.</param>
+        /// <param name="invocation">The invocation info associated with the record.</param>
+        /// <param name="errorWrap">The error record.</param>
         internal void TranscribeError(ExecutionContext context, InvocationInfo invocation, PSObject errorWrap)
         {
             context.InternalHost.UI.TranscribeCommandComplete(invocation);

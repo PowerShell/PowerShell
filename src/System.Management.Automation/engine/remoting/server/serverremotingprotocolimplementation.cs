@@ -113,7 +113,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Raise the public key received event
         /// </summary>
-        /// <param name="receivedData">received data</param>
+        /// <param name="receivedData">received data.</param>
         /// <remarks>This method is a hook to be called
         /// from the transport manager</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)

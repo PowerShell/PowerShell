@@ -113,7 +113,7 @@ namespace System.Management.Automation.Language
         /// Visit the Ast using a visitor that can choose how the tree traversal is performed.  This visit method is
         /// for advanced uses of the visitor pattern where an <see cref="AstVisitor"/> is insufficient.
         /// </summary>
-        /// <param name="astVisitor">The visitor</param>
+        /// <param name="astVisitor">The visitor.</param>
         /// <returns>Returns the value returned by the visitor.</returns>
         public object Visit(ICustomAstVisitor astVisitor)
         {
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Visit each node in the Ast, calling the methods in <paramref name="astVisitor"/> for each node in the ast.
         /// </summary>
-        /// <param name="astVisitor">The visitor</param>
+        /// <param name="astVisitor">The visitor.</param>
         public void Visit(AstVisitor astVisitor)
         {
             if (astVisitor == null)
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Traverse the entire Ast, returning the first node in the tree for which <paramref name="predicate"/> returns true.
         /// </summary>
-        /// <param name="predicate">The predicate</param>
+        /// <param name="predicate">The predicate.</param>
         /// <param name="searchNestedScriptBlocks">Search nested functions and script block expressions.</param>
         /// <returns>The first matching node, or null if there is no match.</returns>
         public Ast Find(Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
@@ -214,7 +214,7 @@ namespace System.Management.Automation.Language
         /// Copy a collection of AST elements
         /// </summary>
         /// <typeparam name="T">The actual AST type</typeparam>
-        /// <param name="elements">Collection of ASTs</param>
+        /// <param name="elements">Collection of ASTs.</param>
         /// <returns></returns>
         internal static T[] CopyElements<T>(ReadOnlyCollection<T> elements) where T : Ast
         {
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Language
         /// Copy a single AST element
         /// </summary>
         /// <typeparam name="T">The actual AST type</typeparam>
-        /// <param name="element">An AST instance</param>
+        /// <param name="element">An AST instance.</param>
         /// <returns></returns>
         internal static T CopyElement<T>(T element) where T : Ast
         {
@@ -933,7 +933,7 @@ namespace System.Management.Automation.Language
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
         /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
-        /// <param name="isConfiguration">True if the script block is a configuration</param>
+        /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
         /// </exception>
@@ -954,7 +954,7 @@ namespace System.Management.Automation.Language
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
         /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
-        /// <param name="isConfiguration">True if the script block is a configuration</param>
+        /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
         /// </exception>
@@ -975,7 +975,7 @@ namespace System.Management.Automation.Language
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
         /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
-        /// <param name="isConfiguration">True if the script block is a configuration</param>
+        /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
         /// </exception>
@@ -997,7 +997,7 @@ namespace System.Management.Automation.Language
         /// process block if <paramref name="isFilter"/> is true.
         /// </param>
         /// <param name="isFilter">True if the script block is a filter, false if it is a function or workflow.</param>
-        /// <param name="isConfiguration">True if the script block is a configuration</param>
+        /// <param name="isConfiguration">True if the script block is a configuration.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="statements"/> is null.
         /// </exception>
@@ -2272,7 +2272,7 @@ namespace System.Management.Automation.Language
         /// This method is used when we call Invoke-Command targeting a PSv2 remote machine. In that case, we might need to call this method
         /// to process the script block text, since $using prefix cannot be recognized by PSv2.
         /// </summary>
-        /// <param name="orderedUsingVar">A sorted enumerator of using variable asts, ascendingly sorted based on StartOffSet</param>
+        /// <param name="orderedUsingVar">A sorted enumerator of using variable asts, ascendingly sorted based on StartOffSet.</param>
         /// <returns>
         /// The text of the ParameterAst with $using variable being replaced with a new variable name.
         /// </returns>
@@ -2523,7 +2523,7 @@ namespace System.Management.Automation.Language
         /// Construct a type definition.
         /// </summary>
         /// <param name="extent">The extent of the type definition, from any attributes to the closing curly brace.</param>
-        /// <param name="name">The name of the type</param>
+        /// <param name="name">The name of the type.</param>
         /// <param name="attributes">The attributes, or null if no attributes were specified.</param>
         /// <param name="members">The members, or null if no members were specified.</param>
         /// <param name="typeAttributes">The attributes (like class or interface) of the type.</param>
@@ -2777,7 +2777,7 @@ namespace System.Management.Automation.Language
         /// Construct a simple (one that is not a form of an alias) using module statement with module specification as hashtable.
         /// </summary>
         /// <param name="extent">The extent of the using statement including the using keyword.</param>
-        /// <param name="moduleSpecification">HashtableAst that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/> object</param>
+        /// <param name="moduleSpecification">HashtableAst that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/> object.</param>
         public UsingStatementAst(IScriptExtent extent, HashtableAst moduleSpecification)
             : base(extent)
         {
@@ -5384,7 +5384,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the pipeline.</param>
         /// <param name="pipelineElements">The collection of commands representing the pipeline.</param>
-        /// <param name="background">Indicates that this pipeline should be run in the background</param>
+        /// <param name="background">Indicates that this pipeline should be run in the background.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
@@ -5425,7 +5425,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the pipeline (which should be the extent of the command).</param>
         /// <param name="commandAst">The command for the pipeline.</param>
-        /// <param name="background">Indicates that this pipeline should be run in the background</param>
+        /// <param name="background">Indicates that this pipeline should be run in the background.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="commandAst"/> is null.
         /// </exception>
@@ -5690,7 +5690,7 @@ namespace System.Management.Automation.Language
         /// The extent of the command, starting with either the optional invocation operator '&amp;' or '.' or the command name
         /// and ending with the last command element.
         /// </param>
-        /// <param name="commandElements">The elements of the command (command name, parameters and expressions.)</param>
+        /// <param name="commandElements">The elements of the command (command name, parameters and expressions.).</param>
         /// <param name="invocationOperator">The invocation operator that was used, if any.</param>
         /// <param name="redirections">The redirections for the command, may be null.</param>
         /// <exception cref="PSArgumentNullException">
@@ -6225,9 +6225,9 @@ namespace System.Management.Automation.Language
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
         /// </param>
-        /// <param name="body"><see cref="ScriptBlockExpressionAst"/> of the configuration statement</param>
-        /// <param name="type">The type of the configuration</param>
-        /// <param name="instanceName">The configuration name expression</param>
+        /// <param name="body"><see cref="ScriptBlockExpressionAst"/> of the configuration statement.</param>
+        /// <param name="type">The type of the configuration.</param>
+        /// <param name="instanceName">The configuration name expression.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="body"/>, or <paramref name="instanceName"/> is null.
         /// </exception>
@@ -6494,7 +6494,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// </summary>
         /// <param name="stmt"></param>
-        /// <param name="resourceModulePairsToImport">Item1 - ResourceName, Item2 - ModuleName, Item3 - ModuleVersion</param>
+        /// <param name="resourceModulePairsToImport">Item1 - ResourceName, Item2 - ModuleName, Item3 - ModuleVersion.</param>
         /// <returns></returns>
         private static bool IsImportCommand(StatementAst stmt, List<Tuple<string[], ModuleSpecification[], Version>> resourceModulePairsToImport)
         {
@@ -6710,7 +6710,7 @@ namespace System.Management.Automation.Language
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
         /// </param>
-        /// <param name="commandElements">A collection of <see cref="CommandElementAst"/> used to invoke <see cref="DynamicKeyword"/> specific command</param>
+        /// <param name="commandElements">A collection of <see cref="CommandElementAst"/> used to invoke <see cref="DynamicKeyword"/> specific command.</param>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="commandElements"/> is null or empty.
         /// </exception>
@@ -7226,7 +7226,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Construct a unary expression.
         /// </summary>
-        /// <param name="extent">The extent of the expression, including the operator (which may be prefix or postfix.)</param>
+        /// <param name="extent">The extent of the expression, including the operator (which may be prefix or postfix.).</param>
         /// <param name="tokenKind">The unary operator token kind for the operation.</param>
         /// <param name="child">The expression that the unary operator is applied to.</param>
         /// <exception cref="PSArgumentNullException">
@@ -7386,8 +7386,8 @@ namespace System.Management.Automation.Language
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
         /// </param>
-        /// <param name="attribute">The attribute being applied to <paramref name="child"/>.</param>
-        /// <param name="child">The expression being attributed by <paramref name="attribute"/>.</param>
+        /// <param name="attribute">The attribute being applied to <paramref name="child"/></param>
+        /// <param name="child">The expression being attributed by <paramref name="attribute"/></param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="attribute"/>, or <paramref name="child"/> is null.
         /// </exception>
@@ -8827,7 +8827,7 @@ namespace System.Management.Automation.Language
         /// The name of the variable.  A leading '$' or '@' is not removed, those characters are assumed to be part of
         /// the variable name.
         /// </param>
-        /// <param name="splatted">True if splatting, like <c>@PSBoundParameters</c>, false otherwise, like <c>$false</c>.</param>
+        /// <param name="splatted">True if splatting, like <c>@PSBoundParameters</c>, false otherwise, like <c>$false</c></param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="variableName"/> is null, or if <paramref name="variableName"/>
         /// is an empty string.

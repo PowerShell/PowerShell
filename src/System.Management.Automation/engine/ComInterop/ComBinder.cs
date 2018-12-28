@@ -133,7 +133,7 @@ namespace System.Management.Automation.ComInterop
         /// Tries to perform binding of the dynamic invoke member operation.
         /// </summary>
         /// <param name="binder">An instance of the <see cref="InvokeMemberBinder"/> that represents the details of the dynamic operation.</param>
-        /// <param name="isSetProperty">True if this is for setting a property, false otherwise..</param>
+        /// <param name="isSetProperty">True if this is for setting a property, false otherwise.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>

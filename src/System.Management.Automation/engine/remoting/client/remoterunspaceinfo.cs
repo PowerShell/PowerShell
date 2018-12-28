@@ -221,7 +221,7 @@ namespace System.Management.Automation.Runspaces
         /// new runspace is a reconstructed runspace having the same Guid
         /// as the existing runspace.
         /// </summary>
-        /// <param name="remoteRunspace">Runspace to insert</param>
+        /// <param name="remoteRunspace">Runspace to insert.</param>
         /// <returns>Boolean indicating if runspace was inserted.</returns>
         internal bool InsertRunspace(RemoteRunspace remoteRunspace)
         {
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns shell configuration name with shell prefix removed.
         /// </summary>
-        /// <param name="shell">shell configuration name</param>
+        /// <param name="shell">shell configuration name.</param>
         /// <returns>Display shell name.</returns>
         private string GetDisplayShellName(string shell)
         {
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Generates a unique runspace id.
         /// </summary>
-        /// <param name="rtnId">Returned Id</param>
+        /// <param name="rtnId">Returned Id.</param>
         /// <returns>Returned name.</returns>
         internal static string GenerateRunspaceName(out int rtnId)
         {

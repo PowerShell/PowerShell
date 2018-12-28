@@ -140,8 +140,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sort function to sort by Name first, then Id.
         /// </summary>
-        /// <param name="x">first Process object</param>
-        /// <param name="y">second Process object</param>
+        /// <param name="x">first Process object.</param>
+        /// <param name="y">second Process object.</param>
         /// <returns>
         /// As String.Compare: returns less than zero if x less than y,
         /// greater than 0 if x greater than y, 0 if x == y.
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
         /// We use a Dictionary to optimize the check whether the object
         /// is already in the list.
         /// </summary>
-        /// <param name="process">process to add to list</param>
+        /// <param name="process">process to add to list.</param>
         private void AddIdempotent(
             Process process)
         {
@@ -1387,7 +1387,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Stops the given process throws non terminating error if can't.
-        /// <param name="process" >process to be stopped</param>
+        /// <param name="process" >process to be stopped.</param>
         /// <returns>True if process stopped successfully else false.</returns>
         /// </summary>
         private void StopProcess(Process process)
@@ -2952,8 +2952,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serializer
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         [SecurityPermissionAttribute(
             SecurityAction.Demand,
             SerializationFormatter = true)]

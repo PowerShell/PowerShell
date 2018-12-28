@@ -200,7 +200,7 @@ namespace System.Management.Automation
         /// <param name="parameterText">The text of the parameter, as it did, or would, appear in script.</param>
         /// <param name="argumentAst">The ast of the argument value in the script.</param>
         /// <param name="value">The argument value.</param>
-        /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar</param>
+        /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar.</param>
         internal static CommandParameterInternal CreateParameterWithArgument(
             Ast parameterAst,
             string parameterName,

@@ -422,7 +422,7 @@ namespace System.Management.Automation
         /// Returns true if the PSSnapIn Id is valid. A PSSnapIn is valid iff it contains only
         /// "Alpha Numeric","-","_","." characters.
         /// </summary>
-        /// <param name="psSnapinId">PSSnapIn Id to validate</param>
+        /// <param name="psSnapinId">PSSnapIn Id to validate.</param>
         internal static bool IsPSSnapinIdValid(string psSnapinId)
         {
             if (String.IsNullOrEmpty(psSnapinId))
@@ -437,7 +437,7 @@ namespace System.Management.Automation
         /// Validates the PSSnapIn Id. A PSSnapIn is valid iff it contains only
         /// "Alpha Numeric","-","_","." characters.
         /// </summary>
-        /// <param name="psSnapinId">PSSnapIn Id to validate</param>
+        /// <param name="psSnapinId">PSSnapIn Id to validate.</param>
         /// <exception cref="PSArgumentException">
         /// 1. Specified PSSnapIn is not valid
         /// </exception>
@@ -917,7 +917,7 @@ namespace System.Management.Automation
         /// <summary>
         /// PublicKeyToken is in the form of byte[]. Use this function to convert to a string
         /// </summary>
-        /// <param name="tokens">array of byte's</param>
+        /// <param name="tokens">array of byte's.</param>
         /// <returns></returns>
         internal static string ConvertByteArrayToString(byte[] tokens)
         {

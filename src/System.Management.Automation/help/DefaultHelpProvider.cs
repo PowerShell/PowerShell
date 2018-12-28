@@ -51,7 +51,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {

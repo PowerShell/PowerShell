@@ -152,11 +152,11 @@ namespace System.Management.Automation
         /// and trailing spaces as appropriate. An array gets added as multiple arguments
         /// each of which will be stringized.
         /// </summary>
-        /// <param name="context">Execution context instance</param>
-        /// <param name="obj">The object to append</param>
-        /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null</param>
-        /// <param name="sawVerbatimArgumentMarker">true if the argument occurs after --%</param>
-        /// <param name="usedQuotes">True if the argument was a quoted string (single or double)</param>
+        /// <param name="context">Execution context instance.</param>
+        /// <param name="obj">The object to append.</param>
+        /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
+        /// <param name="sawVerbatimArgumentMarker">true if the argument occurs after --%.</param>
+        /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
         private void appendOneNativeArgument(ExecutionContext context, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
@@ -240,8 +240,8 @@ namespace System.Management.Automation
         /// On Windows, just append <paramref name="arg"/>.
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
-        /// <param name="arg">The argument that possibly needs expansion</param>
-        /// <param name="usedQuotes">True if the argument was a quoted string (single or double)</param>
+        /// <param name="arg">The argument that possibly needs expansion.</param>
+        /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
         private void PossiblyGlobArg(string arg, bool usedQuotes)
         {
             var argExpanded = false;
@@ -332,7 +332,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Check to see if the string contains spaces and therefore must be quoted.
         /// </summary>
-        /// <param name="stringToCheck">The string to check for spaces</param>
+        /// <param name="stringToCheck">The string to check for spaces.</param>
         internal static bool NeedQuotes(string stringToCheck)
         {
             bool needQuotes = false, followingBackslash = false;
