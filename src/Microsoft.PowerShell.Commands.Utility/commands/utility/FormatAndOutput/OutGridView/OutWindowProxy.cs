@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose.</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)
