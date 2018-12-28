@@ -717,8 +717,8 @@ namespace Microsoft.PowerShell.Commands
         /// Resolves a given path to a list of directories
         /// </summary>
         /// <param name="path">path to resolve.</param>
-        /// <param name="recurse">resolve recursively?.</param>
-        /// <param name="isLiteralPath">Treat the path / start path as a literal path?.</param>///
+        /// <param name="recurse">resolve recursively?</param>
+        /// <param name="isLiteralPath">Treat the path / start path as a literal path?</param>///
         /// <returns>A list of directories.</returns>
         internal IEnumerable<string> ResolvePath(string path, bool recurse, bool isLiteralPath)
         {

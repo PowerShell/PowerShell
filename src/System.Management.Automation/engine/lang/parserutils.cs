@@ -1147,7 +1147,7 @@ namespace System.Management.Automation
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="lval">left operand.</param>
         /// <param name="rval">right operand.</param>
-        /// <param name="ignoreCase">ignore case?.</param>
+        /// <param name="ignoreCase">ignore case?</param>
         /// <param name="notMatch">true for -notmatch, false for -match.</param>
         /// <returns>The result of the operator.</returns>
         internal static object MatchOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, bool notMatch, bool ignoreCase)
@@ -1283,7 +1283,7 @@ namespace System.Management.Automation
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="left">left operand.</param>
         /// <param name="right">right operand.</param>
-        /// <param name="ignoreCase">ignore case?.</param>
+        /// <param name="ignoreCase">ignore case?</param>
         /// <param name="contains">true for -contains, false for -notcontains.</param>
         /// <returns>The result of the operator.</returns>
         internal static object ContainsOperator(ExecutionContext context, IScriptExtent errorPosition, object left, object right, bool contains, bool ignoreCase)

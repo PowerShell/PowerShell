@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeDefinition">the ExtendedTypeDefinition instance to load formatting data from.</param>
         /// <param name="db">database instance to load the formatting data into.</param>
         /// <param name="expressionFactory">expression factory to validate the script block.</param>
-        /// <param name="isBuiltInFormatData">do we implicitly trust the script blocks (so they should run in full langauge mode)?.</param>
+        /// <param name="isBuiltInFormatData">do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
         /// <param name="isForHelp">true when the view is for help output.</param>
         /// <returns></returns>
         internal bool LoadFormattingData(

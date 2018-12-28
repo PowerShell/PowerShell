@@ -615,7 +615,7 @@ namespace System.Management.Automation.Help
         /// <param name="ns">schema namespace.</param>
         /// <param name="schema">xml schema.</param>
         /// <param name="handler">validation event handler.</param>
-        /// <param name="helpInfo">HelpInfo or HelpContent?.</param>
+        /// <param name="helpInfo">HelpInfo or HelpContent?</param>
         private XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
             bool helpInfo)
         {

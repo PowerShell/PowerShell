@@ -405,7 +405,7 @@ namespace System.Management.Automation.Help
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">parameter name.</param>
         /// <param name="aliases">parameter aliases.</param>
-        /// <param name="dynamic">is dynamic parameter?.</param>
+        /// <param name="dynamic">is dynamic parameter?</param>
         /// <param name="type">parameter type.</param>
         /// <param name="attributes">parameter attributes.</param>
         /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated.</param>
