@@ -90,7 +90,7 @@ namespace System.Management.Automation
         ///     a. use _commandDiscovery object to retrieve AliasInfo object.
         ///     b. Create AliasHelpInfo object based on AliasInfo object
         /// </remarks>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <returns>Help info found.</returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
@@ -126,7 +126,7 @@ namespace System.Management.Automation
         ///     a. use _sessionState object to get a list of alias that match the target.
         ///     b. for each alias, retrieve help info as in ExactMatchHelp.
         /// </remarks>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.

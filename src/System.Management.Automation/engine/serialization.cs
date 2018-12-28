@@ -87,7 +87,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes an object into PowerShell CliXml
         /// </summary>
-        /// <param name="source">The input object to serialize. Serializes to a default depth of 1</param>
+        /// <param name="source">The input object to serialize. Serializes to a default depth of 1.</param>
         /// <returns>The serialized object, as CliXml.</returns>
         public static string Serialize(Object source)
         {
@@ -97,8 +97,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes an object into PowerShell CliXml
         /// </summary>
-        /// <param name="source">The input object to serialize</param>
-        /// <param name="depth">The depth of the members to serialize</param>
+        /// <param name="source">The input object to serialize.</param>
+        /// <param name="depth">The depth of the members to serialize.</param>
         /// <returns>The serialized object, as CliXml.</returns>
         public static string Serialize(Object source, int depth)
         {
@@ -187,7 +187,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a Serializer using default serialization context
         /// </summary>
-        /// <param name="writer">writer to be used for serialization</param>
+        /// <param name="writer">writer to be used for serialization.</param>
         internal Serializer(XmlWriter writer)
             : this(writer, new SerializationContext())
         {
@@ -196,8 +196,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a Serializer using specified serialization context
         /// </summary>
-        /// <param name="writer">writer to be used for serialization</param>
-        /// <param name="depth">depth of serialization</param>
+        /// <param name="writer">writer to be used for serialization.</param>
+        /// <param name="depth">depth of serialization.</param>
         /// <param name="useDepthFromTypes">
         /// if <c>true</c> then types.ps1xml can override depth
         /// for a particular types (using SerializationDepth property)
@@ -210,8 +210,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a Serializer using specified serialization context
         /// </summary>
-        /// <param name="writer">writer to be used for serialization</param>
-        /// <param name="context">serialization context</param>
+        /// <param name="writer">writer to be used for serialization.</param>
+        /// <param name="context">serialization context.</param>
         internal Serializer(XmlWriter writer, SerializationContext context)
         {
             if (writer == null)
@@ -247,7 +247,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes the object
         /// </summary>
-        /// <param name="source">object to be serialized</param>
+        /// <param name="source">object to be serialized.</param>
         /// <remarks>
         /// Please note that this method shouldn't throw any exceptions.
         /// If it throws - please open a bug.
@@ -461,7 +461,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a Deserializer using default deserialization context
         /// </summary>
-        /// <param name="reader">reader to be used for deserialization</param>
+        /// <param name="reader">reader to be used for deserialization.</param>
         /// <exception cref="XmlException">
         /// Thrown when the xml is in an incorrect format
         /// </exception>
@@ -473,8 +473,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a Deserializer using specified serialization context
         /// </summary>
-        /// <param name="reader">reader to be used for deserialization</param>
-        /// <param name="context">serialization context</param>
+        /// <param name="reader">reader to be used for deserialization.</param>
+        /// <param name="context">serialization context.</param>
         /// <exception cref="XmlException">
         /// Thrown when the xml is in an incorrect format
         /// </exception>
@@ -615,7 +615,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializes next object.
         /// </summary>
-        /// <param name="streamName">stream the object belongs to (i.e. "Error", "Output", etc.)</param>
+        /// <param name="streamName">stream the object belongs to (i.e. "Error", "Output", etc.).</param>
         /// <exception cref="XmlException">
         /// Thrown when the xml is in an incorrect format
         /// </exception>
@@ -1648,7 +1648,7 @@ namespace System.Management.Automation
         /// <param name="property"></param>
         /// <param name="refId"></param>
         /// <param name="writeTypeNames">if true, TypeName information is written, else not.</param>
-        /// <param name="toStringValue">if not null then ToString information is written</param>
+        /// <param name="toStringValue">if not null then ToString information is written.</param>
         private void WriteStartOfPSObject
         (
             PSObject mshObject,
@@ -2100,7 +2100,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes IDictionary
         /// </summary>
-        /// <param name="dictionary">dictionary which is serialized</param>
+        /// <param name="dictionary">dictionary which is serialized.</param>
         /// <param name="tag"></param>
         /// <param name="depth"></param>
         private void WriteDictionary
@@ -2251,7 +2251,7 @@ namespace System.Management.Automation
         /// and returns true if this object should be serialized as
         /// string
         /// </summary>
-        /// <param name="source">PSObject to be serialized</param>
+        /// <param name="source">PSObject to be serialized.</param>
         /// <returns>True if the object needs to be serialized as a string.</returns>
         private bool SerializeAsString(PSObject source)
         {
@@ -2277,8 +2277,8 @@ namespace System.Management.Automation
         /// <summary>
         /// compute the serialization depth for an PSObject instance subtree
         /// </summary>
-        /// <param name="source">PSObject whose serialization depth has to be computed</param>
-        /// <param name="depth">current depth</param>
+        /// <param name="source">PSObject whose serialization depth has to be computed.</param>
+        /// <param name="depth">current depth.</param>
         /// <returns></returns>
         private int GetDepthOfSerialization(object source, int depth)
         {
@@ -2370,9 +2370,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName">name of the stream to write. Do not write if null.</param>
-        /// <param name="property">name of property. Pass null for item</param>
-        /// <param name="raw">string to write</param>
-        /// <param name="entry">serialization information</param>
+        /// <param name="property">name of property. Pass null for item.</param>
+        /// <param name="raw">string to write.</param>
+        /// <param name="entry">serialization information.</param>
         private static void WriteRawString
         (
             InternalSerializer serializer,
@@ -2410,9 +2410,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. Pass null for item</param>
-        /// <param name="source">object to be written</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. Pass null for item.</param>
+        /// <param name="source">object to be written.</param>
+        /// <param name="entry">serialization information about source.</param>
         private static void WriteOnePrimitiveKnownType
         (
             InternalSerializer serializer,
@@ -2445,9 +2445,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">DateTime to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">DateTime to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteDateTime(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2462,9 +2462,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">Version to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">Version to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteVersion(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2480,9 +2480,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">Version to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">Version to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteSemanticVersion(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2498,9 +2498,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">scriptblock to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">scriptblock to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteScriptBlock(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2516,9 +2516,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">URI to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">URI to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteUri(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2534,9 +2534,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">string to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">string to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteEncodedString(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2575,9 +2575,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">Double to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">Double to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteDouble(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2592,9 +2592,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">Char to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">Char to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteChar(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2610,9 +2610,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">Boolean to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">Boolean to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteBoolean(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2627,9 +2627,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">single to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">single to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteSingle(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2644,9 +2644,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">DateTime to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">DateTime to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteTimeSpan(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2661,9 +2661,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
         /// <param name="streamName"></param>
-        /// <param name="property">name of property. pass null for item</param>
-        /// <param name="source">bytearray to write</param>
-        /// <param name="entry">serialization information about source</param>
+        /// <param name="property">name of property. pass null for item.</param>
+        /// <param name="source">bytearray to write.</param>
+        /// <param name="entry">serialization information about source.</param>
         internal static void WriteByteArray(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
             Dbg.Assert(serializer != null, "caller should have validated the information");
@@ -2746,7 +2746,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Writes start element in Monad namespace
         /// </summary>
-        /// <param name="elementTag">tag of element</param>
+        /// <param name="elementTag">tag of element.</param>
         private void WriteStartElement(string elementTag)
         {
             Dbg.Assert(!string.IsNullOrEmpty(elementTag), "Caller should validate the parameter");
@@ -2763,8 +2763,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Writes attribute in monad namespace
         /// </summary>
-        /// <param name="name">name of attribute</param>
-        /// <param name="value">value of attribute</param>
+        /// <param name="name">name of attribute.</param>
+        /// <param name="value">value of attribute.</param>
         private void WriteAttribute(string name, string value)
         {
             Dbg.Assert(!string.IsNullOrEmpty(name), "Caller should validate the parameter");
@@ -2783,7 +2783,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Encodes the string to escape characters which would make XmlWriter.WriteString throw an exception.
         /// </summary>
-        /// <param name="s">string to encode</param>
+        /// <param name="s">string to encode.</param>
         /// <returns>Encoded string.</returns>
         /// <remarks>
         /// Output from this method can be reverted using XmlConvert.DecodeName method
@@ -2830,8 +2830,8 @@ namespace System.Management.Automation
         /// This is the real workhorse that encodes strings.
         /// See <see cref="EncodeString(string)" /> for more information.
         /// </summary>
-        /// <param name="s">string to encode</param>
-        /// <param name="indexOfFirstEncodableCharacter">indexOfFirstEncodableCharacter</param>
+        /// <param name="s">string to encode.</param>
+        /// <param name="indexOfFirstEncodableCharacter">indexOfFirstEncodableCharacter.</param>
         /// <returns>Encoded string.</returns>
         private static string EncodeString(string s, int indexOfFirstEncodableCharacter)
         {
@@ -4748,7 +4748,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Read start element in monad namespace
         /// </summary>
-        /// <param name="element">element tag to read</param>
+        /// <param name="element">element tag to read.</param>
         /// <returns>True if not an empty element else false.</returns>
         internal bool ReadStartElementAndHandleEmpty(string element)
         {
@@ -4957,7 +4957,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Assigns a RefId to the given object
         /// </summary>
-        /// <param name="t">object to assign a RefId to</param>
+        /// <param name="t">object to assign a RefId to.</param>
         /// <returns>RefId assigned to the object.</returns>
         internal string SetRefId(T t)
         {
@@ -5040,11 +5040,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="type">Type for which this entry is created</param>
-        /// <param name="itemTag">ItemTag for the type</param>
-        /// <param name="propertyTag">PropertyTag for the type</param>
-        /// <param name="serializer">TypeSerializerDelegate for serializing the type</param>
-        /// <param name="deserializer">TypeDeserializerDelegate for deserializing the type</param>
+        /// <param name="type">Type for which this entry is created.</param>
+        /// <param name="itemTag">ItemTag for the type.</param>
+        /// <param name="propertyTag">PropertyTag for the type.</param>
+        /// <param name="serializer">TypeSerializerDelegate for serializing the type.</param>
+        /// <param name="deserializer">TypeDeserializerDelegate for deserializing the type.</param>
         internal TypeSerializationInfo(Type type, string itemTag, string propertyTag, TypeSerializerDelegate serializer, TypeDeserializerDelegate deserializer)
         {
             Type = type;
@@ -5110,7 +5110,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the type serialization information about a type
         /// </summary>
-        /// <param name="type">Type for which information is retrieved</param>
+        /// <param name="type">Type for which information is retrieved.</param>
         /// <returns>TypeSerializationInfo for the type, null if it doesn't exist.</returns>
         internal static TypeSerializationInfo GetTypeSerializationInfo(Type type)
         {
@@ -5126,7 +5126,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get TypeSerializationInfo using ItemTag as key
         /// </summary>
-        /// <param name="itemTag">ItemTag for which TypeSerializationInfo is to be fetched</param>
+        /// <param name="itemTag">ItemTag for which TypeSerializationInfo is to be fetched.</param>
         /// <returns>TypeSerializationInfo entry, null if no entry exist for the tag.</returns>
         internal static TypeSerializationInfo GetTypeSerializationInfoFromItemTag(string itemTag)
         {
@@ -5895,7 +5895,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the <see cref="PSPrimitiveDictionary"/> class with contents
         /// copied from the <paramref name="other"/> hashtable.
         /// </summary>
-        /// <param name="other">hashtable to copy into the new instance of <see cref="PSPrimitiveDictionary"/></param>
+        /// <param name="other">hashtable to copy into the new instance of <see cref="PSPrimitiveDictionary"/>.</param>
         /// <exception cref="ArgumentException">
         /// This constructor will throw if the <paramref name="other"/> hashtable contains keys that are not a strings
         /// or values that are not one of primitive types that will work during PowerShell remoting handshake.
@@ -6027,8 +6027,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         /// <exception cref="ArgumentException">
         /// This method will throw if the <paramref name="key"/> is not a string and the <paramref name="value"/>
         /// is not one of primitive types that will work during PowerShell remoting handshake.
@@ -6044,7 +6044,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the value associated with the specified key.
         /// </summary>
-        /// <param name="key">The key whose value to get or set</param>
+        /// <param name="key">The key whose value to get or set.</param>
         /// <returns>The value associated with the specified key.</returns>
         /// <remarks>
         /// If the specified key is not found, attempting to get it returns <c>null</c>
@@ -6073,7 +6073,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the value associated with the specified key.
         /// </summary>
-        /// <param name="key">The key whose value to get or set</param>
+        /// <param name="key">The key whose value to get or set.</param>
         /// <returns>The value associated with the specified key.</returns>
         /// <remarks>
         /// If the specified key is not found, attempting to get it returns <c>null</c>
@@ -6114,8 +6114,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Boolean value)
         {
             this.Add((object)key, (object)value);
@@ -6124,8 +6124,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Boolean[] value)
         {
             this.Add((object)key, (object)value);
@@ -6134,8 +6134,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Byte value)
         {
             this.Add((object)key, (object)value);
@@ -6144,8 +6144,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, byte[] value)
         {
             this.Add((object)key, (object)value);
@@ -6154,8 +6154,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Char value)
         {
             this.Add((object)key, (object)value);
@@ -6164,8 +6164,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Char[] value)
         {
             this.Add((object)key, (object)value);
@@ -6174,8 +6174,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, DateTime value)
         {
             this.Add((object)key, (object)value);
@@ -6184,8 +6184,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, DateTime[] value)
         {
             this.Add((object)key, (object)value);
@@ -6194,8 +6194,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Decimal value)
         {
             this.Add((object)key, (object)value);
@@ -6204,8 +6204,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Decimal[] value)
         {
             this.Add((object)key, (object)value);
@@ -6214,8 +6214,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Double value)
         {
             this.Add((object)key, (object)value);
@@ -6224,8 +6224,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Double[] value)
         {
             this.Add((object)key, (object)value);
@@ -6234,8 +6234,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Guid value)
         {
             this.Add((object)key, (object)value);
@@ -6244,8 +6244,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Guid[] value)
         {
             this.Add((object)key, (object)value);
@@ -6254,8 +6254,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Int32 value)
         {
             this.Add((object)key, (object)value);
@@ -6264,8 +6264,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Int32[] value)
         {
             this.Add((object)key, (object)value);
@@ -6274,8 +6274,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Int64 value)
         {
             this.Add((object)key, (object)value);
@@ -6284,8 +6284,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Int64[] value)
         {
             this.Add((object)key, (object)value);
@@ -6294,8 +6294,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, SByte value)
         {
             this.Add((object)key, (object)value);
@@ -6304,8 +6304,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, SByte[] value)
         {
             this.Add((object)key, (object)value);
@@ -6314,8 +6314,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Single value)
         {
             this.Add((object)key, (object)value);
@@ -6324,8 +6324,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Single[] value)
         {
             this.Add((object)key, (object)value);
@@ -6334,8 +6334,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, String value)
         {
             this.Add((object)key, (object)value);
@@ -6344,8 +6344,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, String[] value)
         {
             this.Add((object)key, (object)value);
@@ -6354,8 +6354,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, TimeSpan value)
         {
             this.Add((object)key, (object)value);
@@ -6364,8 +6364,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, TimeSpan[] value)
         {
             this.Add((object)key, (object)value);
@@ -6374,8 +6374,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, UInt16 value)
         {
             this.Add((object)key, (object)value);
@@ -6384,8 +6384,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, UInt16[] value)
         {
             this.Add((object)key, (object)value);
@@ -6394,8 +6394,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, UInt32 value)
         {
             this.Add((object)key, (object)value);
@@ -6404,8 +6404,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, UInt32[] value)
         {
             this.Add((object)key, (object)value);
@@ -6414,8 +6414,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, UInt64 value)
         {
             this.Add((object)key, (object)value);
@@ -6424,8 +6424,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, UInt64[] value)
         {
             this.Add((object)key, (object)value);
@@ -6434,8 +6434,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Uri value)
         {
             this.Add((object)key, (object)value);
@@ -6444,8 +6444,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Uri[] value)
         {
             this.Add((object)key, (object)value);
@@ -6454,8 +6454,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Version value)
         {
             this.Add((object)key, (object)value);
@@ -6464,8 +6464,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, Version[] value)
         {
             this.Add((object)key, (object)value);
@@ -6474,8 +6474,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, PSPrimitiveDictionary value)
         {
             this.Add((object)key, (object)value);
@@ -6484,8 +6484,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an element with the specified key and value into the Hashtable
         /// </summary>
-        /// <param name="key">The key of the element to add</param>
-        /// <param name="value">The value of the element to add</param>
+        /// <param name="key">The key of the element to add.</param>
+        /// <param name="value">The value of the element to add.</param>
         public void Add(string key, PSPrimitiveDictionary[] value)
         {
             this.Add((object)key, (object)value);
@@ -6535,9 +6535,9 @@ namespace System.Management.Automation
         /// TryPathGet&lt;string&gt;($sessionInfo.ApplicationPrivateData, out myHash, "ImplicitRemoting", "Hash").
         /// </summary>
         /// <typeparam name="T">Expected type of the value</typeparam>
-        /// <param name="data">The root dictionary</param>
+        /// <param name="data">The root dictionary.</param>
         /// <param name="result"></param>
-        /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value</param>
+        /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value.</param>
         /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise.</returns>
         internal static bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
         {
@@ -6663,8 +6663,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Determines if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public override bool CanConvertFrom(PSObject sourceValue, Type destinationType)
         {
@@ -6682,12 +6682,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
-        /// <param name="ignoreCase">true if case should be ignored</param>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
+        /// <param name="ignoreCase">true if case should be ignored.</param>
         /// <returns>The <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible</exception>
+        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
         public override object ConvertFrom(PSObject sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             if (destinationType == null)
@@ -6759,8 +6759,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public override bool CanConvertTo(object sourceValue, Type destinationType)
         {
@@ -6770,12 +6770,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
         /// </summary>
-        /// <param name="sourceValue">The value to convert from</param>
-        /// <param name="destinationType">The type to convert to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
-        /// <param name="ignoreCase">true if case should be ignored</param>
+        /// <param name="sourceValue">The value to convert from.</param>
+        /// <param name="destinationType">The type to convert to.</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
+        /// <param name="ignoreCase">true if case should be ignored.</param>
         /// <returns>SourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible</exception>
+        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
         public override object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             throw PSTraceSource.NewNotSupportedException();
@@ -6833,8 +6833,8 @@ namespace Microsoft.PowerShell
         /// Can throw any exception (which is ok - LanguagePrimitives.ConvertTo will catch that).
         /// </summary>
         /// <typeparam name="T">Expected type of the property</typeparam>
-        /// <param name="pso">Deserialized object</param>
-        /// <param name="propertyName">Property name</param>
+        /// <param name="pso">Deserialized object.</param>
+        /// <param name="propertyName">Property name.</param>
         /// <returns></returns>
         private static T GetPropertyValue<T>(PSObject pso, string propertyName)
         {
@@ -6845,8 +6845,8 @@ namespace Microsoft.PowerShell
         /// Gets value of a property.  Can throw any exception (which is ok - LanguagePrimitives.ConvertTo will catch that).
         /// </summary>
         /// <typeparam name="T">Expected type of the property</typeparam>
-        /// <param name="pso">Deserialized object</param>
-        /// <param name="propertyName">Property name</param>
+        /// <param name="pso">Deserialized object.</param>
+        /// <param name="propertyName">Property name.</param>
         /// <param name="flags"></param>
         /// <returns></returns>
         internal static T GetPropertyValue<T>(PSObject pso, string propertyName, RehydrationFlags flags)

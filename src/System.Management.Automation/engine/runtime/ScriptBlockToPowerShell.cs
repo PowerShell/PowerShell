@@ -462,9 +462,9 @@ namespace System.Management.Automation
         /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow'.
         /// So <paramref name="usingExpr"/> is guaranteed not inside a workflow.
         /// </remarks>
-        /// <param name="usingExpr">The UsingExpression to analyze</param>
-        /// <param name="topLevelParent">The top level Ast, should be either ScriptBlockAst or FunctionDefinitionAst</param>
-        /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions</param>
+        /// <param name="usingExpr">The UsingExpression to analyze.</param>
+        /// <param name="topLevelParent">The top level Ast, should be either ScriptBlockAst or FunctionDefinitionAst.</param>
+        /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions.</param>
         private static bool HasUsingExpressionsInDifferentScopes(UsingExpressionAst usingExpr, Ast topLevelParent, ref ScriptBlockAst sbClosestToPreviousUsingExpr)
         {
             Diagnostics.Assert(topLevelParent is ScriptBlockAst || topLevelParent is FunctionDefinitionAst,

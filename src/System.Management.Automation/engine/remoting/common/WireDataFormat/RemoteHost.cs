@@ -437,7 +437,7 @@ namespace System.Management.Automation.Remoting
         /// Used in ensuring that remote prompt messages are
         /// tagged with "Windows PowerShell Credential Request"
         /// </summary>
-        /// <param name="caption">caption to modify</param>
+        /// <param name="caption">caption to modify.</param>
         /// <returns>New modified caption.</returns>
         private string ModifyCaption(string caption)
         {
@@ -460,7 +460,7 @@ namespace System.Management.Automation.Remoting
         /// contain a warning that they originate from a
         /// different computer
         /// </summary>
-        /// <param name="message">original message to modify</param>
+        /// <param name="message">original message to modify.</param>
         /// <param name="computerName">computername to include in the
         /// message</param>
         /// <returns>Message which contains a warning as well.</returns>
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="computerName">computer name to include
         /// in warning</param>
-        /// <param name="resourceString">resource string to use</param>
+        /// <param name="resourceString">resource string to use.</param>
         /// <returns>A constructed remote host call message
         /// which will display the warning.</returns>
         private RemoteHostCall ConstructWarningMessageForSecureString(string computerName,

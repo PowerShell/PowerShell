@@ -1024,8 +1024,8 @@ namespace Microsoft.PowerShell.Commands
         /// Helper method to append computer name and session GUID
         /// note properties to the PSObject before it is written.
         /// </summary>
-        /// <param name="psObject">PSObject</param>
-        /// <param name="session">PSSession</param>
+        /// <param name="psObject">PSObject.</param>
+        /// <param name="session">PSSession.</param>
         private void WriteRemoteObject(
             PSObject psObject,
             PSSession session)
@@ -1152,7 +1152,7 @@ namespace Microsoft.PowerShell.Commands
         /// Helper method to attempt to retrieve a disconnected runspace object
         /// from the server, based on the provided session object.
         /// </summary>
-        /// <param name="session">PSSession</param>
+        /// <param name="session">PSSession.</param>
         /// <returns>PSSession.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {

@@ -486,9 +486,9 @@ namespace System.Management.Automation.Remoting
         /// Connect to Hyper-V socket server.  This is a blocking call until a
         /// connection occurs or the timeout time has elapsed.
         /// </summary>
-        /// <param name="networkCredential">The credential used for authentication</param>
-        /// <param name="configurationName">The configuration name of the PS session</param>
-        /// <param name="isFirstConnection">Whether this is the first connection</param>
+        /// <param name="networkCredential">The credential used for authentication.</param>
+        /// <param name="configurationName">The configuration name of the PS session.</param>
+        /// <param name="isFirstConnection">Whether this is the first connection.</param>
         public bool Connect(
             NetworkCredential networkCredential,
             string configurationName,

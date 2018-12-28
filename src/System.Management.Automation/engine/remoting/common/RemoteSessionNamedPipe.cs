@@ -46,7 +46,7 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="procId">Process Id</param>
+        /// <param name="procId">Process Id.</param>
         /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             int procId)
@@ -59,7 +59,7 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="proc">Process object</param>
+        /// <param name="proc">Process object.</param>
         /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
             System.Diagnostics.Process proc)
@@ -71,7 +71,7 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process Id and appdomain name information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="procId">Process Id</param>
+        /// <param name="procId">Process Id.</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>
         /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Remoting
         /// Create a pipe name based on process and appdomain name information.
         /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
         /// </summary>
-        /// <param name="proc">Process object</param>
+        /// <param name="proc">Process object.</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>
         /// <returns>Pipe name.</returns>
         internal static string CreateProcessPipeName(
@@ -324,8 +324,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="reason">Listener end reason</param>
-        /// <param name="restartListener">Restart listener</param>
+        /// <param name="reason">Listener end reason.</param>
+        /// <param name="restartListener">Restart listener.</param>
         public ListenerEndedEventArgs(
             Exception reason,
             bool restartListener)
@@ -440,7 +440,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Constructor.  Creates named pipe server with provided pipe name.
         /// </summary>
-        /// <param name="pipeName">Named Pipe name</param>
+        /// <param name="pipeName">Named Pipe name.</param>
         internal RemoteSessionNamedPipeServer(
             string pipeName)
         {
@@ -683,7 +683,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Process listening thread.
         /// </summary>
-        /// <param name="state">client callback delegate</param>
+        /// <param name="state">client callback delegate.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void ProcessListeningThread(object state)
         {
@@ -828,7 +828,7 @@ namespace System.Management.Automation.Remoting
         /// This method supports PowerShell running in "NamedPipeServerMode", which is used for
         /// PowerShell Direct Windows Server Container connection and management.
         /// </summary>
-        /// <param name="configurationName">name of the configuration to use</param>
+        /// <param name="configurationName">name of the configuration to use.</param>
         internal static void RunServerMode(string configurationName)
         {
             IPCNamedPipeServerEnabled = true;
@@ -1017,7 +1017,7 @@ namespace System.Management.Automation.Remoting
         /// Connect to named pipe server.  This is a blocking call until a
         /// connection occurs or the timeout time has elapsed.
         /// </summary>
-        /// <param name="timeout">Connection attempt timeout in milliseconds</param>
+        /// <param name="timeout">Connection attempt timeout in milliseconds.</param>
         public void Connect(
             int timeout)
         {
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation.Remoting
         /// Constructor.  Creates Named Pipe based on process object.
         /// </summary>
         /// <param name="process">Target process object for pipe.</param>
-        /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
+        /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
         public RemoteSessionNamedPipeClient(
             System.Diagnostics.Process process, string appDomainName) :
             this(NamedPipeUtils.CreateProcessPipeName(process, appDomainName))
@@ -1087,7 +1087,7 @@ namespace System.Management.Automation.Remoting
         /// Constructor. Creates Named Pipe based on process Id.
         /// </summary>
         /// <param name="procId">Target process Id for pipe.</param>
-        /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
+        /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
         public RemoteSessionNamedPipeClient(
             int procId, string appDomainName) :
             this(NamedPipeUtils.CreateProcessPipeName(procId, appDomainName))
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Constructor. Creates Named Pipe based on name argument.
         /// </summary>
-        /// <param name="pipeName">Named Pipe name</param>
+        /// <param name="pipeName">Named Pipe name.</param>
         internal RemoteSessionNamedPipeClient(
            string pipeName)
         {
@@ -1199,7 +1199,7 @@ namespace System.Management.Automation.Remoting
         /// Constructor. Creates Named Pipe based on process Id, app domain name and container object root path.
         /// </summary>
         /// <param name="procId">Target process Id for pipe.</param>
-        /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
+        /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
         /// <param name="containerObRoot">Container OB root.</param>
         public ContainerSessionNamedPipeClient(
             int procId,

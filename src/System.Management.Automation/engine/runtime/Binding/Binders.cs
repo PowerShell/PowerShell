@@ -7252,7 +7252,7 @@ namespace System.Management.Automation.Language
             return enumerableTarget;
         }
 
-        /// <param name="target">The target to operate against</param>
+        /// <param name="target">The target to operate against.</param>
         /// <param name="args">
         ///     Arguments to the operator. The first argument must be either a scriptblock
         ///     or a string representing a 'simple where' expression. The second is an enum that controls
