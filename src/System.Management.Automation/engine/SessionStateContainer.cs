@@ -1352,7 +1352,7 @@ namespace System.Management.Automation
                             // Should glob paths and files that match tem*, but then
                             // recurse into all subdirectories and do the same for
                             // those directories.
-                            if (!String.IsNullOrEmpty(path) && !IsItemContainer(path))
+                            if (!string.IsNullOrEmpty(path) && !IsItemContainer(path))
                             {
                                 if (!String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -3440,7 +3440,7 @@ namespace System.Management.Automation
 
                 // Only glob the path if the name is specified
 
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     string providerPath =
                         Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
@@ -3465,7 +3465,7 @@ namespace System.Management.Automation
                     // to pass on to the provider.
 
                     string composedPath = providerPath;
-                    if (!String.IsNullOrEmpty(name))
+                    if (!string.IsNullOrEmpty(name))
                     {
                         composedPath = MakePath(providerInstance, providerPath, name, context);
                     }
@@ -3505,7 +3505,7 @@ namespace System.Management.Automation
 
                         string targetPath = content.ToString();
 
-                        if (String.IsNullOrEmpty(targetPath))
+                        if (string.IsNullOrEmpty(targetPath))
                         {
                             throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, targetPath);
                         }
@@ -3917,7 +3917,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(providerId))
+            if (string.IsNullOrEmpty(providerId))
             {
                 throw PSTraceSource.NewArgumentException("providerId");
             }
@@ -4225,7 +4225,7 @@ namespace System.Management.Automation
             {
                 // Validate remote destination path
                 providerDestinationPath = copyPath;
-                if (String.IsNullOrEmpty(providerDestinationPath))
+                if (string.IsNullOrEmpty(providerDestinationPath))
                 {
                     context.WriteError(new ErrorRecord(
                                             new ArgumentNullException(
@@ -4546,11 +4546,11 @@ namespace System.Management.Automation
                 "The providerInstance should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(sourcePath),
+                !string.IsNullOrEmpty(sourcePath),
                 "The sourcePath should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destinationPath),
+                !string.IsNullOrEmpty(destinationPath),
                 "The destinationPath should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(

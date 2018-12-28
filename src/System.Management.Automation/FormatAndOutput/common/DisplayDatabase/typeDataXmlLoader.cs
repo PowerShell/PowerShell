@@ -596,7 +596,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 //   Label     --- Label     cardinality 0..1
                 //   Width     --- Width     cardinality 0..1
                 //   Alignment --- Alignment cardinality 0..1
-                if (!String.IsNullOrEmpty(header.Label))
+                if (!string.IsNullOrEmpty(header.Label))
                 {
                     TextToken tt = new TextToken();
                     tt.text = header.Label;
@@ -754,7 +754,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (string type in selectedBy)
                 {
-                    if (String.IsNullOrEmpty(type))
+                    if (string.IsNullOrEmpty(type))
                         return null;
                     TypeReference tr = new TypeReference { name = type };
                     appliesTo.referenceList.Add(tr);
@@ -898,7 +898,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     lvid.formatTokenList.Add(fpt);
                 }
 
-                if (!String.IsNullOrEmpty(listItem.Label))
+                if (!string.IsNullOrEmpty(listItem.Label))
                 {
                     TextToken tt = new TextToken();
                     tt.text = listItem.Label;

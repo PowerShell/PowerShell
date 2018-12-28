@@ -719,9 +719,9 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((dashIndex != -1 && String.IsNullOrEmpty(preLabel))   ||
-                (plusIndex != -1 && String.IsNullOrEmpty(buildLabel)) ||
-                String.IsNullOrEmpty(versionSansLabel))
+            if ((dashIndex != -1 && string.IsNullOrEmpty(preLabel))   ||
+                (plusIndex != -1 && string.IsNullOrEmpty(buildLabel)) ||
+                string.IsNullOrEmpty(versionSansLabel))
             {
                 // We have dash and no preReleaseLabel  or
                 // we have plus and no buildLabel or
@@ -943,9 +943,9 @@ namespace System.Management.Automation
             // Numeric identifiers always have lower precedence than non-numeric identifiers.
             // A larger set of pre-release fields has a higher precedence than a smaller set,
             // if all of the preceding identifiers are equal.
-            if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
+            if (string.IsNullOrEmpty(preLabel1)) { return string.IsNullOrEmpty(preLabel2) ? 0 : 1; }
 
-            if (String.IsNullOrEmpty(preLabel2)) { return -1; }
+            if (string.IsNullOrEmpty(preLabel2)) { return -1; }
 
             var units1 = preLabel1.Split('.');
             var units2 = preLabel2.Split('.');

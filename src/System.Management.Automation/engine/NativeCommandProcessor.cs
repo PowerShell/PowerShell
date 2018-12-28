@@ -461,7 +461,7 @@ namespace System.Management.Automation
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = FindExecutable(startInfo.FileName);
                         bool notDone = true;
-                        if (!String.IsNullOrEmpty(executable))
+                        if (!string.IsNullOrEmpty(executable))
                         {
                             if (IsConsoleApplication(executable))
                             {

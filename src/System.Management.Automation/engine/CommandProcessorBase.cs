@@ -408,7 +408,7 @@ namespace System.Management.Automation
         private void HandleObsoleteCommand(ObsoleteAttribute obsoleteAttr)
         {
             string commandName =
-                String.IsNullOrEmpty(CommandInfo.Name)
+                string.IsNullOrEmpty(CommandInfo.Name)
                     ? "script block"
                     : String.Format(System.Globalization.CultureInfo.InvariantCulture,
                                     CommandBaseStrings.ObsoleteCommand, CommandInfo.Name);

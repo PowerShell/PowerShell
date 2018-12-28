@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
                                 resolvedPropertyName = member.Name;
                             }
 
-                            if (!String.IsNullOrEmpty(resolvedPropertyName))
+                            if (!string.IsNullOrEmpty(resolvedPropertyName))
                             {
                                 // should process
                                 string propertyAction = String.Format(CultureInfo.InvariantCulture,
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
                 objInString = null;
             }
 
-            if (String.IsNullOrEmpty(objInString))
+            if (string.IsNullOrEmpty(objInString))
             {
                 var psobj = obj as PSObject;
                 objInString = psobj != null ? psobj.BaseObject.GetType().FullName : obj.GetType().FullName;
@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
                 message = StringUtil.Format(resourceString, args);
             }
 
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
             {
                 Dbg.Assert(false, "Could not load text for error record '" + errorId + "'");
             }
@@ -1797,7 +1797,7 @@ namespace Microsoft.PowerShell.Commands
                 resolvedPropertyName = members[0].Name;
             }
 
-            if (!String.IsNullOrEmpty(resolvedPropertyName))
+            if (!string.IsNullOrEmpty(resolvedPropertyName))
             {
                 try
                 {

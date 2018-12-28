@@ -42,7 +42,7 @@ namespace System.Management.Automation
             ExecutionContext context)
             : base(name, CommandTypes.Cmdlet, context)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -103,7 +103,7 @@ namespace System.Management.Automation
         public CmdletInfo(string name, Type implementingType)
             : base(name, CommandTypes.Cmdlet, null)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentNullException("name");
             }
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         {
             System.Diagnostics.Debug.Assert(cmdletName != null, "cmdletName != null");
             string result = cmdletName;
-            if (!String.IsNullOrEmpty(moduleName))
+            if (!string.IsNullOrEmpty(moduleName))
             {
                 result = moduleName + '\\' + result;
             }

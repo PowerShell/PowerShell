@@ -317,7 +317,7 @@ namespace System.Management.Automation
             if (ast.GetHelpContent() != null)
                 mamlHelpFile = ast.GetHelpContent().MamlHelpFile;
 
-            if (!String.IsNullOrEmpty(mamlHelpFile))
+            if (!string.IsNullOrEmpty(mamlHelpFile))
                 classInfo.HelpFile = mamlHelpFile;
 
             return classInfo;

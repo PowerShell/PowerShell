@@ -21,7 +21,7 @@ namespace System.Management.Automation
             }
             else if (splitName.Length == 2)
             {
-                if (!String.IsNullOrEmpty(splitName[0]))
+                if (!string.IsNullOrEmpty(splitName[0]))
                 {
                     _psSnapinName = splitName[0];
                 }
@@ -38,7 +38,7 @@ namespace System.Management.Automation
 
             // Now set the full name
 
-            if (!String.IsNullOrEmpty(_psSnapinName))
+            if (!string.IsNullOrEmpty(_psSnapinName))
             {
                 _fullName =
                     String.Format(
@@ -72,7 +72,7 @@ namespace System.Management.Automation
                 return null;
             result = new PSSnapinQualifiedName(splitName);
             // If the shortname is empty, then return null...
-            if (String.IsNullOrEmpty(result.ShortName))
+            if (string.IsNullOrEmpty(result.ShortName))
             {
                 return null;
             }

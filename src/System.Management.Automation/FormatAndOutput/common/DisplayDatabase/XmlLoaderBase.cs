@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal string GetMandatoryInnerText(XmlNode n)
         {
-            if (String.IsNullOrEmpty(n.InnerText))
+            if (string.IsNullOrEmpty(n.InnerText))
             {
                 this.ReportEmptyNode(n);
                 return null;
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal string GetMandatoryAttributeValue(XmlAttribute a)
         {
-            if (String.IsNullOrEmpty(a.Value))
+            if (string.IsNullOrEmpty(a.Value))
             {
                 this.ReportEmptyAttribute(a);
                 return null;

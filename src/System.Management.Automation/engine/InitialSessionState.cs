@@ -2491,7 +2491,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Start transcribing
-            if (!String.IsNullOrEmpty(TranscriptDirectory))
+            if (!string.IsNullOrEmpty(TranscriptDirectory))
             {
                 using (PowerShell psToInvoke = PowerShell.Create())
                 {
@@ -2681,7 +2681,7 @@ namespace System.Management.Automation.Runspaces
                     string name = variable["Name"].ToString();
                     ScriptBlock sb = variable["Value"] as ScriptBlock;
 
-                    if (!String.IsNullOrEmpty(name) && (sb != null))
+                    if (!string.IsNullOrEmpty(name) && (sb != null))
                     {
                         sb.SessionStateInternal = initializedRunspace.ExecutionContext.EngineSessionState;
 
@@ -3505,7 +3505,7 @@ namespace System.Management.Automation.Runspaces
                     if (filesProcessed.TryAdd(sste.FileName, null))
                     {
                         string moduleName = string.Empty;
-                        if (sste.PSSnapIn != null && !String.IsNullOrEmpty(sste.PSSnapIn.Name))
+                        if (sste.PSSnapIn != null && !string.IsNullOrEmpty(sste.PSSnapIn.Name))
                         {
                             moduleName = sste.PSSnapIn.Name;
                         }

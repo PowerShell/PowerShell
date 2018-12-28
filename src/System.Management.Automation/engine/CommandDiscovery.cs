@@ -198,7 +198,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CmdletInfo AddCmdletInfoToCache(string name, CmdletInfo newCmdletInfo, bool isGlobal)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -348,7 +348,7 @@ namespace System.Management.Automation
                 // If there were no PSSnapins required but there is a shellID required, then we need
                 // to error
 
-                if (!String.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
+                if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
                 {
                     ScriptRequiresException sre =
                       new ScriptRequiresException(
@@ -771,7 +771,7 @@ namespace System.Management.Automation
             CommandOrigin commandOrigin,
             ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 return null;
             }
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (String.IsNullOrEmpty(moduleName) || String.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
@@ -1482,7 +1482,7 @@ namespace System.Management.Automation
         /// </exception>
         internal IEnumerator<CmdletInfo> GetCmdletInfo(string cmdletName, bool searchAllScopes)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
+            Dbg.Assert(!string.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
 
             PSSnapinQualifiedName commandName = PSSnapinQualifiedName.GetInstance(cmdletName);
 
@@ -1507,7 +1507,7 @@ namespace System.Management.Automation
 
                 foreach (var cmdletInfo in cmdlets)
                 {
-                    if (!String.IsNullOrEmpty(commandName.PSSnapInName))
+                    if (!string.IsNullOrEmpty(commandName.PSSnapInName))
                     {
                         if (String.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
                         {
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation
 
                 // check the environment variable
                 string psEnvironmentVariable = Environment.GetEnvironmentVariable(environmentVariable);
-                if (!String.IsNullOrEmpty(psEnvironmentVariable))
+                if (!string.IsNullOrEmpty(psEnvironmentVariable))
                 {
                     return LanguagePrimitives.ConvertTo<PSModuleAutoLoadingPreference>(psEnvironmentVariable);
                 }
@@ -1693,7 +1693,7 @@ namespace System.Management.Automation
             for (int index = 0; index < this.Count; ++index)
             {
                 string path = this[index];
-                if (!String.IsNullOrEmpty(path) &&
+                if (!string.IsNullOrEmpty(path) &&
                     path.StartsWith(".", StringComparison.Ordinal))
                 {
                     result.Add(index);
@@ -1718,7 +1718,7 @@ namespace System.Management.Automation
         /// </exception>
         public new int IndexOf(string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }

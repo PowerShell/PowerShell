@@ -45,12 +45,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentOutOfRangeException("activityId", activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
             }
 
-            if (String.IsNullOrEmpty(activity))
+            if (string.IsNullOrEmpty(activity))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
             }
 
-            if (String.IsNullOrEmpty(statusDescription))
+            if (string.IsNullOrEmpty(statusDescription))
             {
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
             }
@@ -146,7 +146,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
@@ -170,7 +170,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }

@@ -177,7 +177,7 @@ namespace System.Management.Automation
                 {
                     SessionStateScope scope = _currentScope;
 
-                    if (!String.IsNullOrEmpty(scopeID))
+                    if (!string.IsNullOrEmpty(scopeID))
                     {
                         scope = GetScopeByID(scopeID);
                     }
@@ -234,7 +234,7 @@ namespace System.Management.Automation
 
             do
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     result = false;
                     break;
@@ -536,7 +536,7 @@ namespace System.Management.Automation
             // so do a search through the scopes looking for the
             // drive.
 
-            if (String.IsNullOrEmpty(scopeID))
+            if (string.IsNullOrEmpty(scopeID))
             {
                 SessionStateScopeEnumerator scopeEnumerator =
                     new SessionStateScopeEnumerator(CurrentScope);
@@ -787,7 +787,7 @@ namespace System.Management.Automation
                 moduleName = "Microsoft.WSMan.Management";
             }
 
-            if (!String.IsNullOrEmpty(moduleName))
+            if (!string.IsNullOrEmpty(moduleName))
             {
                 s_tracer.WriteLine("Auto-mounting built-in drive: {0}", name);
                 CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand), null, null, context);
@@ -949,7 +949,7 @@ namespace System.Management.Automation
         /// </returns>
         internal Collection<PSDriveInfo> GetDrivesForProvider(string providerId)
         {
-            if (String.IsNullOrEmpty(providerId))
+            if (string.IsNullOrEmpty(providerId))
             {
                 return Drives(null);
             }
@@ -1157,7 +1157,7 @@ namespace System.Management.Automation
                 // so do a search through the scopes looking for the
                 // drive.
 
-                if (String.IsNullOrEmpty(scopeID))
+                if (string.IsNullOrEmpty(scopeID))
                 {
                     SessionStateScopeEnumerator scopeEnumerator =
                         new SessionStateScopeEnumerator(CurrentScope);
@@ -1329,7 +1329,7 @@ namespace System.Management.Automation
 
             SessionStateScope startingScope = _currentScope;
 
-            if (!String.IsNullOrEmpty(scope))
+            if (!string.IsNullOrEmpty(scope))
             {
                 startingScope = GetScopeByID(scope);
             }

@@ -37,7 +37,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ApplicationInfo(string name, string path, ExecutionContext context) : base(name, CommandTypes.Application)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }

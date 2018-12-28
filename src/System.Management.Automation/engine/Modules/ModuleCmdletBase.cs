@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
             string extension = Path.GetExtension(name);
             string fileBaseName;
             module = null;
-            if (String.IsNullOrEmpty(extension) || !ModuleIntrinsics.IsPowerShellModuleExtension(extension))
+            if (string.IsNullOrEmpty(extension) || !ModuleIntrinsics.IsPowerShellModuleExtension(extension))
             {
                 fileBaseName = name;
                 extension = null;
@@ -638,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
             string extension = Path.GetExtension(moduleSpecification.Name);
             // First check for fully-qualified paths - either absolute or relative
             string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
-            if (String.IsNullOrEmpty(rootedPath))
+            if (string.IsNullOrEmpty(rootedPath))
             {
                 rootedPath = FixupFileName(moduleBase, moduleSpecification.Name, extension);
             }
@@ -4284,7 +4284,7 @@ namespace Microsoft.PowerShell.Commands
 
             CultureInfo culture = System.Globalization.CultureInfo.CurrentUICulture;
             CultureInfo currentCulture = culture;
-            while (currentCulture != null && !String.IsNullOrEmpty(currentCulture.Name))
+            while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 StringBuilder stringBuilder = new StringBuilder(dir);
                 stringBuilder.Append("\\");
@@ -6525,7 +6525,7 @@ namespace Microsoft.PowerShell.Commands
         {
             PSModuleInfo module = null;
 
-            if (String.IsNullOrEmpty(moduleName) && String.IsNullOrEmpty(fileName) && assemblyToLoad == null)
+            if (string.IsNullOrEmpty(moduleName) && string.IsNullOrEmpty(fileName) && assemblyToLoad == null)
                 throw PSTraceSource.NewArgumentNullException("moduleName,fileName,assemblyToLoad");
 
             // Load the dll and process any cmdlets it might contain...
@@ -7019,7 +7019,7 @@ namespace Microsoft.PowerShell.Commands
         internal static bool IsPrefixedCommand(CommandInfo commandInfo)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo is not null");
-            Dbg.Assert(!String.IsNullOrEmpty(commandInfo.Prefix), "Caller should verify that the commandInfo has prefix");
+            Dbg.Assert(!string.IsNullOrEmpty(commandInfo.Prefix), "Caller should verify that the commandInfo has prefix");
 
             string verb, noun;
             bool isPrefixed = CmdletInfo.SplitCmdletName(commandInfo.Name, out verb, out noun)
