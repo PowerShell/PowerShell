@@ -89,6 +89,7 @@ charset
 checkbox
 checksum
 childitem
+cimcmdlets
 cimsession
 cimsupport
 classlib
@@ -368,6 +369,7 @@ mababio
 macos
 maertendmsft
 mahawar
+markdownrender
 markekraus
 mcbobke
 md
@@ -812,6 +814,8 @@ yurko7
 zhenggu
  - docs/debugging/README.md
 corehost
+ - docs/testing-guidelines/CodeCoverageAnalysis.md
+de5f69c
  - docs/testing-guidelines/TestRoadmap.md
 _no_
  - docs/testing-guidelines/WritingPesterTests.md

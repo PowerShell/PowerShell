@@ -8,7 +8,7 @@ The metrics used for selection of these hot spots were: # missing lines and like
 
 ## Coverage Status
 
-The following table shows the status for the above commit, dated 2018-11-28T18:56:00Z
+The following table shows the status for the above commit, dated 2018-11-28
 
 | Assembly | Hit % |
 | -------- |:-----:|
