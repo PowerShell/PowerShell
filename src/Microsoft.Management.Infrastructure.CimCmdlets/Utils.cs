@@ -415,7 +415,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="parameterName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Throw if the given value is not a valid name (class name or property name)</exception>
+        /// <exception cref="ArgumentException">Throw if the given value is not a valid name (class name or property name).</exception>
         public static string ValidateArgumentIsValidName(string parameterName, string value)
         {
             DebugHelper.WriteLogEx();
@@ -443,7 +443,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="parameterName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name)</exception>
+        /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name).</exception>
         public static String[] ValidateArgumentIsValidName(string parameterName, String[] value)
         {
             if (value != null)

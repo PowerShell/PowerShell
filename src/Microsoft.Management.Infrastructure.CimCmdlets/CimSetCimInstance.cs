@@ -102,7 +102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to set ciminstances
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="SetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="SetCimInstanceCommand"/> object.</param>
         public void SetCimInstance(SetCimInstanceCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(

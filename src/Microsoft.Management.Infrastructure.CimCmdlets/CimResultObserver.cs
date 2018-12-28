@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/> object</param>
+        /// <param name="session"><see cref="CimSession"/> object.</param>
         /// <param name="cancellationDisposable"></param>
         public AsyncResultCompleteEventArgs(
             CimSession session,
@@ -220,8 +220,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles new cmdlet action come from
         /// the operations related to the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event</param>
-        /// <param name="actionArgs">Event args</param>
+        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="actionArgs">Event args.</param>
         public delegate void ResultEventHandler(
             object observer,
             AsyncResultEventArgsBase resultArgs);
@@ -234,8 +234,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/> object that issued the operation</param>
-        /// <param name="observable">Operation that can be observed</param>
+        /// <param name="session"><see cref="CimSession"/> object that issued the operation.</param>
+        /// <param name="observable">Operation that can be observed.</param>
         public CimResultObserver(CimSession session, IObservable<object> observable)
         {
             this.session = session;
@@ -245,8 +245,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="session"><see cref="CimSession"/> object that issued the operation</param>
-        /// <param name="observable">Operation that can be observed</param>
+        /// <param name="session"><see cref="CimSession"/> object that issued the operation.</param>
+        /// <param name="observable">Operation that can be observed.</param>
         public CimResultObserver(CimSession session,
             IObservable<object> observable,
             CimResultContext cimResultContext)
@@ -285,7 +285,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Operation completed with an error
         /// </para>
         /// </summary>
-        /// <param name="error">error object</param>
+        /// <param name="error">error object.</param>
         public virtual void OnError(Exception error)
         {
             try
@@ -326,7 +326,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Operation got a new result object
         /// </para>
         /// </summary>
-        /// <param name="value">result object</param>
+        /// <param name="value">result object.</param>
         public virtual void OnNext(T value)
         {
             DebugHelper.WriteLogEx("value = {0}.", 1, value);

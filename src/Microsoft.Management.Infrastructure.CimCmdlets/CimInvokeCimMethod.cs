@@ -88,7 +88,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve ciminstances
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
         public void InvokeCimMethod(InvokeCimMethodCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
@@ -348,8 +348,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimInstance"></param>
         /// <param name="methodName"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">See CimProperty.Create</exception>
-        /// <exception cref="ArgumentException">CimProperty.Create</exception>
+        /// <exception cref="ArgumentNullException">See CimProperty.Create.</exception>
+        /// <exception cref="ArgumentException">CimProperty.Create.</exception>
         private CimMethodParametersCollection CreateParametersCollection(
             IDictionary parameters,
             CimClass cimClass,

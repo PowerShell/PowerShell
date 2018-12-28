@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve <see cref="CimClass"/>
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object.</param>
         public void GetCimClass(GetCimClassCommand cmdlet)
         {
             List<CimSessionProxy> proxys = new List<CimSessionProxy>();

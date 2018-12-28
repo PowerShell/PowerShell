@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Confirm that the operation should proceed
         /// </summary>
-        /// <param name="service">service object to be acted on</param>
+        /// <param name="service">service object to be acted on.</param>
         /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(ServiceController service)
         {
@@ -43,8 +43,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Confirm that the operation should proceed
         /// </summary>
-        /// <param name="displayName">display name of service to be acted on</param>
-        /// <param name="serviceName">service name of service to be acted on</param>
+        /// <param name="displayName">display name of service to be acted on.</param>
+        /// <param name="serviceName">service name of service to be acted on.</param>
         /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(
             string displayName, string serviceName)
@@ -475,9 +475,9 @@ namespace Microsoft.PowerShell.Commands
         /// and (if <paramref name="checkDuplicates"/>) if it is not
         /// already on  <paramref name="list"/>.
         /// </summary>
-        /// <param name="list">list of services</param>
-        /// <param name="service">service to add to list</param>
-        /// <param name="checkDuplicates">check list for duplicates</param>
+        /// <param name="list">list of services.</param>
+        /// <param name="service">service to add to list.</param>
+        /// <param name="checkDuplicates">check list for duplicates.</param>
         private void IncludeExcludeAdd(
             List<ServiceController> list,
             ServiceController service,
@@ -792,8 +792,8 @@ namespace Microsoft.PowerShell.Commands
         /// Waits forever for the service to reach the desired status, but
         /// writes a string to WriteWarning every 2 seconds.
         /// </summary>
-        /// <param name="serviceController">service on which to operate</param>
-        /// <param name="targetStatus">desired status</param>
+        /// <param name="serviceController">service on which to operate.</param>
+        /// <param name="targetStatus">desired status.</param>
         /// <param name="pendingStatus">
         /// This is the expected status while the operation is incomplete.
         /// If the service is in some other state, this means that the
@@ -863,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will start the service.
         /// </summary>
-        /// <param name="serviceController">service to start</param>
+        /// <param name="serviceController">service to start.</param>
         /// <returns>True iff the service was started.</returns>
         internal bool DoStartService(ServiceController serviceController)
         {
@@ -918,8 +918,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will stop the service.
         /// </summary>
-        /// <param name="serviceController">service to stop</param>
-        /// <param name="force">stop dependent services</param>
+        /// <param name="serviceController">service to stop.</param>
+        /// <param name="force">stop dependent services.</param>
         /// <param name="waitForServiceToStop"></param>
         /// <returns>True iff the service was stopped.</returns>
         internal List<ServiceController> DoStopService(ServiceController serviceController, bool force, bool waitForServiceToStop)
@@ -1068,7 +1068,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This removes all services that are not stopped from a list of services
         /// </summary>
-        /// <param name="services">a list of services</param>
+        /// <param name="services">a list of services.</param>
         internal void RemoveNotStoppedServices(List<ServiceController> services)
         {
             foreach (ServiceController service in services)
@@ -1084,7 +1084,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will pause the service.
         /// </summary>
-        /// <param name="serviceController">service to pause</param>
+        /// <param name="serviceController">service to pause.</param>
         /// <returns>True iff the service was paused.</returns>
         internal bool DoPauseService(ServiceController serviceController)
         {
@@ -1165,7 +1165,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will resume the service.
         /// </summary>
-        /// <param name="serviceController">service to resume</param>
+        /// <param name="serviceController">service to resume.</param>
         /// <returns>True iff the service was resumed.</returns>
         internal bool DoResumeService(ServiceController serviceController)
         {
@@ -2515,8 +2515,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serializer
         /// </summary>
-        /// <param name="info">serialization information</param>
-        /// <param name="context">streaming context</param>
+        /// <param name="info">serialization information.</param>
+        /// <param name="context">streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

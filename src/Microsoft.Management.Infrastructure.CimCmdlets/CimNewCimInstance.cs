@@ -59,7 +59,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// either remotely or locally
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
         public void NewCimInstance(NewCimInstanceCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
@@ -261,8 +261,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="properties"></param>
         /// <param name="cmdlet"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">See CimProperty.Create</exception>
-        /// <exception cref="ArgumentException">CimProperty.Create</exception>
+        /// <exception cref="ArgumentNullException">See CimProperty.Create.</exception>
+        /// <exception cref="ArgumentException">CimProperty.Create.</exception>
         private CimInstance CreateCimInstance(
             string className,
             string cimNamespace,
@@ -328,8 +328,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="properties"></param>
         /// <param name="cmdlet"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">See CimProperty.Create</exception>
-        /// <exception cref="ArgumentException">CimProperty.Create</exception>
+        /// <exception cref="ArgumentNullException">See CimProperty.Create.</exception>
+        /// <exception cref="ArgumentException">CimProperty.Create.</exception>
         private CimInstance CreateCimInstance(
             CimClass cimClass,
             IDictionary properties,

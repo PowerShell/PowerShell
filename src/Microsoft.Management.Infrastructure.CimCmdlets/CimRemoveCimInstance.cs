@@ -55,7 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Base on parametersetName to retrieve ciminstances
         /// </para>
         /// </summary>
-        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object</param>
+        /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
         public void RemoveCimInstance(RemoveCimInstanceCommand cmdlet)
         {
             DebugHelper.WriteLogEx();

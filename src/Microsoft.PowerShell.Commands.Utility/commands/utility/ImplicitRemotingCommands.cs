@@ -1102,7 +1102,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that a name or identifier is safe to use in generated code
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
-        /// <param name="name">name to validate</param>
+        /// <param name="name">name to validate.</param>
         /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeNameOrIdentifier(string name)
         {
@@ -1120,7 +1120,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that a parameter name is safe to use in generated code
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
-        /// <param name="parameterName">parameter name to validate</param>
+        /// <param name="parameterName">parameter name to validate.</param>
         /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeParameterName(string parameterName)
         {
@@ -1131,7 +1131,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that a type can be safely used as a type constraint
         /// (i.e. it doesn't introduce any side effects on the client).
         /// </summary>
-        /// <param name="type">type to validate</param>
+        /// <param name="type">type to validate.</param>
         /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeTypeConstraint(Type type)
         {
@@ -1174,7 +1174,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates that command metadata returned from the (potentially malicious) server is safe.
         /// Writes error messages if necessary.  Modifies command metadata to make it safe if necessary.
         /// </summary>
-        /// <param name="commandMetadata">command metadata to verify</param>
+        /// <param name="commandMetadata">command metadata to verify.</param>
         /// <returns><c>true</c> if the command metadata is safe; <c>false</c> otherwise.</returns>
         private bool IsSafeCommandMetadata(CommandMetadata commandMetadata)
         {
@@ -1392,9 +1392,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Converts remote (deserialized) CommandInfo objects into CommandMetadata equivalents.
         /// </summary>
-        /// <param name="name2commandMetadata">Dictionary where rehydrated CommandMetadata are going to be stored</param>
-        /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names</param>
-        /// <param name="remoteCommandInfo">Remote (deserialized) CommandInfo object</param>
+        /// <param name="name2commandMetadata">Dictionary where rehydrated CommandMetadata are going to be stored.</param>
+        /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names.</param>
+        /// <param name="remoteCommandInfo">Remote (deserialized) CommandInfo object.</param>
         /// <returns>CommandMetadata equivalents.</returns>
         private void AddRemoteCommandMetadata(
             Dictionary<string, CommandMetadata> name2commandMetadata,
@@ -1859,13 +1859,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generates a proxy module in the given directory.
         /// </summary>
-        /// <param name="moduleRootDirectory">base directory for the module</param>
-        /// <param name="moduleNamePrefix">fileName prefix for module files</param>
-        /// <param name="encoding">encoding of generated files</param>
-        /// <param name="force">whether to overwrite files</param>
-        /// <param name="listOfCommandMetadata">remote commands to generate proxies for</param>
-        /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names</param>
-        /// <param name="listOfFormatData">remote format data to generate format.ps1xml for</param>
+        /// <param name="moduleRootDirectory">base directory for the module.</param>
+        /// <param name="moduleNamePrefix">fileName prefix for module files.</param>
+        /// <param name="encoding">encoding of generated files.</param>
+        /// <param name="force">whether to overwrite files.</param>
+        /// <param name="listOfCommandMetadata">remote commands to generate proxies for.</param>
+        /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names.</param>
+        /// <param name="listOfFormatData">remote format data to generate format.ps1xml for.</param>
         /// <returns>Paths to generated files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
@@ -3012,14 +3012,14 @@ function Get-PSImplicitRemotingClientSideParameters
         /// <summary>
         /// Generates a proxy module in the given directory.
         /// </summary>
-        /// <param name="moduleRootDirectory">base directory for the module</param>
-        /// <param name="fileNamePrefix">filename prefix for module files</param>
-        /// <param name="encoding">encoding of generated files</param>
-        /// <param name="force">whether to overwrite files</param>
-        /// <param name="listOfCommandMetadata">remote commands to generate proxies for</param>
-        /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names</param>
-        /// <param name="listOfFormatData">remote format data to generate format.ps1xml for</param>
-        /// <param name="certificate">certificate with which to sign the format files</param>
+        /// <param name="moduleRootDirectory">base directory for the module.</param>
+        /// <param name="fileNamePrefix">filename prefix for module files.</param>
+        /// <param name="encoding">encoding of generated files.</param>
+        /// <param name="force">whether to overwrite files.</param>
+        /// <param name="listOfCommandMetadata">remote commands to generate proxies for.</param>
+        /// <param name="alias2resolvedCommandName">dictionary mapping alias names to resolved command names.</param>
+        /// <param name="listOfFormatData">remote format data to generate format.ps1xml for.</param>
+        /// <param name="certificate">certificate with which to sign the format files.</param>
         /// <returns>Path to the created files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
