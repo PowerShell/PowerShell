@@ -361,7 +361,7 @@ namespace System.Management.Automation
         /// Version.TryParse will be used to convert the string to a Version
         /// object.
         /// </summary>
-        /// <param name="versionString">string representing version</param>
+        /// <param name="versionString">string representing version.</param>
         /// <returns>A Version Object.</returns>
         internal static Version StringToVersion(string versionString)
         {
@@ -402,7 +402,7 @@ namespace System.Management.Automation
         /// Checks whether current monad session supports version specified
         /// by ver.
         /// </summary>
-        /// <param name="ver">Version to check</param>
+        /// <param name="ver">Version to check.</param>
         /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSVersionSupported(string ver)
         {
@@ -415,7 +415,7 @@ namespace System.Management.Automation
         /// Checks whether current monad session supports version specified
         /// by checkVersion.
         /// </summary>
-        /// <param name="checkVersion">Version to check</param>
+        /// <param name="checkVersion">Version to check.</param>
         /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSVersionSupported(Version checkVersion)
         {
@@ -437,7 +437,7 @@ namespace System.Management.Automation
         /// Checks whether current PowerShell session supports edition specified
         /// by checkEdition.
         /// </summary>
-        /// <param name="checkEdition">Edition to check</param>
+        /// <param name="checkEdition">Edition to check.</param>
         /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSEditionSupported(string checkEdition)
         {
@@ -466,7 +466,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks whether the specified edition value is allowed.
         /// </summary>
-        /// <param name="editionValue">Edition value to check</param>
+        /// <param name="editionValue">Edition value to check.</param>
         /// <returns>True if allowed, false otherwise.</returns>
         internal static bool IsValidPSEditionValue(string editionValue)
         {
@@ -895,7 +895,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the current impersonating Windows identity, if any
         /// </summary>
-        /// <param name="impersonatedIdentity">Current impersonated Windows identity or null</param>
+        /// <param name="impersonatedIdentity">Current impersonated Windows identity or null.</param>
         /// <returns>True if current identity is impersonated.</returns>
         internal static bool TryGetWindowsImpersonatedIdentity(out WindowsIdentity impersonatedIdentity)
         {
@@ -1092,7 +1092,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If a mutex is abandoned, in our case, it is ok to proceed
         /// </summary>
-        /// <param name="mutex">The mutex to wait on. If it is null, a new one will be created</param>
+        /// <param name="mutex">The mutex to wait on. If it is null, a new one will be created.</param>
         /// <param name="initializer">The initializer to use to recreate the mutex.</param>
         /// <returns>A working mutex. If the mutex was abandoned, a new one is created to replace it.</returns>
         internal static Mutex SafeWaitMutex(Mutex mutex, MutexInitializer initializer)
@@ -1355,7 +1355,7 @@ namespace System.Management.Automation
         ///     ConstrainedLanguage ->  ConstrainedLanguage
         ///     NoLanguage          ->  NoLanguage
         /// </summary>
-        /// <param name="context">ExecutionContext</param>
+        /// <param name="context">ExecutionContext.</param>
         /// <returns>Previous language mode or null for no language mode change.</returns>
         internal static PSLanguageMode? EnforceSystemLockDownLanguageMode(ExecutionContext context)
         {
@@ -1838,8 +1838,8 @@ namespace System.Management.Automation.Internal
         /// remote session, i.e., has run the Import-PSSession cmdlet.  This hook will return true if the provided commandPipeline
         /// is successfully batched and run in the remote session, and false if it is rejected for batching.
         /// </summary>
-        /// <param name="commandPipeline">Command pipeline to test</param>
-        /// <param name="runspace">Runspace with imported remote session</param>
+        /// <param name="commandPipeline">Command pipeline to test.</param>
+        /// <param name="runspace">Runspace with imported remote session.</param>
         /// <returns>True if commandPipeline is batched successfully.</returns>
         public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
         {

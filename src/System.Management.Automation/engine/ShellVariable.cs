@@ -518,7 +518,7 @@ namespace System.Management.Automation
         /// attributes, so repeating that process is slow and wrong.  This function
         /// applies the attributes without repeating the checks.
         /// </summary>
-        /// <param name="attributes">The list of attributes to add</param>
+        /// <param name="attributes">The list of attributes to add.</param>
         internal void AddParameterAttributesNoChecks(Collection<Attribute> attributes)
         {
             foreach (Attribute attribute in attributes)

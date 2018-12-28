@@ -64,8 +64,8 @@ namespace System.Management.Automation.Runspaces
         /// with a specified error message and current and expected state.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        /// <param name="currentState">Current state of runspace</param>
-        /// <param name="expectedState">Expected states of runspace</param>
+        /// <param name="currentState">Current state of runspace.</param>
+        /// <param name="expectedState">Expected states of runspace.</param>
         internal InvalidRunspaceStateException
         (
             string message,
@@ -1409,7 +1409,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a pipeline for specified command string
         /// </summary>
-        /// <param name="command">A valid command string</param>
+        /// <param name="command">A valid command string.</param>
         /// <returns>
         /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
@@ -1421,8 +1421,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
@@ -1444,8 +1444,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a nested pipeline.
         /// </summary>
-        /// <param name="command">A valid command string</param>
-        /// <param name="addToHistory">if true command is added to history</param>
+        /// <param name="command">A valid command string.</param>
+        /// <param name="addToHistory">if true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Command specified in commandString.
         /// </returns>
@@ -1481,7 +1481,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Push a running PowerShell onto the stack.
         /// </summary>
-        /// <param name="ps">PowerShell</param>
+        /// <param name="ps">PowerShell.</param>
         internal void PushRunningPowerShell(PowerShell ps)
         {
             Dbg.Assert(ps != null, "Caller should not pass in null reference.");

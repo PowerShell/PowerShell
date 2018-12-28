@@ -346,7 +346,7 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// Writes the DebugRecord to informational buffers.
         /// </summary>
-        /// <param name="record">DebugRecord</param>
+        /// <param name="record">DebugRecord.</param>
         internal void WriteDebugInfoBuffers(DebugRecord record)
         {
             if (_informationalBuffers != null)
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// Writes the VerboseRecord to informational buffers.
         /// </summary>
-        /// <param name="record">VerboseRecord</param>
+        /// <param name="record">VerboseRecord.</param>
         internal void WriteVerboseInfoBuffers(VerboseRecord record)
         {
             if (_informationalBuffers != null)
@@ -643,7 +643,7 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// Writes the WarningRecord to informational buffers.
         /// </summary>
-        /// <param name="record">WarningRecord</param>
+        /// <param name="record">WarningRecord.</param>
         internal void WriteWarningInfoBuffers(WarningRecord record)
         {
             if (_informationalBuffers != null)
@@ -669,7 +669,7 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// Writes the InformationRecord to informational buffers.
         /// </summary>
-        /// <param name="record">WarningRecord</param>
+        /// <param name="record">WarningRecord.</param>
         internal void WriteInformationInfoBuffers(InformationRecord record)
         {
             if (_informationalBuffers != null)

@@ -225,7 +225,7 @@ namespace System.Management.Automation
         /// <summary>
         /// See if a script is allowed to be run.
         /// </summary>
-        /// <param name="scriptPath">Path to check</param>
+        /// <param name="scriptPath">Path to check.</param>
         /// <returns>True if script is allowed.</returns>
         internal SessionStateEntryVisibility CheckScriptVisibility(string scriptPath)
         {
@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateCmdletEntry entry)
         {
             AddSessionStateEntry(entry, /*local*/false);
@@ -261,8 +261,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
-        /// <param name="local">If local, add cmdlet to current scope. Else, add to module scope</param>
+        /// <param name="entry">The entry to add.</param>
+        /// <param name="local">If local, add cmdlet to current scope. Else, add to module scope.</param>
         internal void AddSessionStateEntry(SessionStateCmdletEntry entry, bool local)
         {
             ExecutionContext.CommandDiscovery.AddSessionStateCmdletEntryToCache(entry, local);
@@ -271,7 +271,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateApplicationEntry entry)
         {
             this.Applications.Add(entry.Path);
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState cmdlet entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateScriptEntry entry)
         {
             this.Scripts.Add(entry.Path);
@@ -382,7 +382,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Check to see if an application is allowed to be run.
         /// </summary>
-        /// <param name="applicationPath">The path to the application to check</param>
+        /// <param name="applicationPath">The path to the application to check.</param>
         /// <returns>True if application is permitted.</returns>
         internal SessionStateEntryVisibility CheckApplicationVisibility(string applicationPath)
         {

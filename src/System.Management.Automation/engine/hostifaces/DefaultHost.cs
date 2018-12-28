@@ -21,8 +21,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Creates an instance based on the current culture and current UI culture
         /// </summary>
-        /// <param name="currentCulture">Current culture for this host</param>
-        /// <param name="currentUICulture">Current UI culture for this host</param>
+        /// <param name="currentCulture">Current culture for this host.</param>
+        /// <param name="currentUICulture">Current UI culture for this host.</param>
         /// <exception/>
 
         internal DefaultHost(CultureInfo currentCulture, CultureInfo currentUICulture)

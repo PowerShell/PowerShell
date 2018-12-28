@@ -19,7 +19,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add an new SessionState function entry to this session state object...
         /// </summary>
-        /// <param name="entry">The entry to add</param>
+        /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateFunctionEntry entry)
         {
             ScriptBlock sb = entry.ScriptBlock.Clone();

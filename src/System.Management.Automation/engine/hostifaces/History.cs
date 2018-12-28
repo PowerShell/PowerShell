@@ -24,10 +24,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="pipelineId">Id of pipeline in which command associated
         /// with this history entry is executed</param>
-        /// <param name="cmdline">command string</param>
-        /// <param name="status">status of pipeline execution</param>
-        /// <param name="startTime">startTime of execution</param>
-        /// <param name="endTime">endTime of execution</param>
+        /// <param name="cmdline">command string.</param>
+        /// <param name="status">status of pipeline execution.</param>
+        /// <param name="startTime">startTime of execution.</param>
+        /// <param name="endTime">endTime of execution.</param>
         internal HistoryInfo(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime)
         {
             Dbg.Assert(cmdline != null, "caller should validate the parameter");
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="status"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
-        /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked</param>
+        /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked.</param>
         /// <returns>Id for the new created entry. Use this id to fetch the
         /// entry. Returns -1 if the entry is not added.</returns>
         /// <remarks>This function is thread safe</remarks>
@@ -222,10 +222,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Update the history entry corresponding to id.
         /// </summary>
-        /// <param name="id">id of history entry to be updated</param>
-        /// <param name="status">status to be updated</param>
-        /// <param name="endTime">endTime to be updated</param>
-        /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked</param>
+        /// <param name="id">id of history entry to be updated.</param>
+        /// <param name="status">status to be updated.</param>
+        /// <param name="endTime">endTime to be updated.</param>
+        /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked.</param>
         /// <returns></returns>
         internal void UpdateEntry(long id, PipelineState status, DateTime endTime, bool skipIfLocked)
         {
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets entry from buffer for given id. This id should be the
         /// id returned by Add method.
         /// </summary>
-        /// <param name="id">Id of the entry to be fetched</param>
+        /// <param name="id">Id of the entry to be fetched.</param>
         /// <returns>Entry corresponding to id if it is present else null
         /// </returns>
         internal HistoryInfo GetEntry(long id)
@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the history entry from buffer for a given id.
         /// </summary>
-        /// <param name="id">Id of the entry to be Cleared</param>
+        /// <param name="id">Id of the entry to be Cleared.</param>
         /// <returns>Nothing.</returns>
         internal void ClearEntry(long id)
         {
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets entry from buffer for given id. This id should be the
         /// id returned by Add method.
         /// </summary>
-        /// <param name="id">Id of the entry to be fetched</param>
+        /// <param name="id">Id of the entry to be fetched.</param>
         /// <returns>Entry corresponding to id if it is present else null
         /// </returns>
         private HistoryInfo CoreGetEntry(long id)
@@ -1893,10 +1893,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Clears the session history based on the input parameter
-        /// <param name="id" >id of the entry to be cleared</param>
-        /// <param name="count" >count of entries to be cleared</param>
-        /// <param name="cmdline" >cmdline string to be cleared</param>
-        /// <param name="newest" >order of the entries</param>
+        /// <param name="id" >id of the entry to be cleared.</param>
+        /// <param name="count" >count of entries to be cleared.</param>
+        /// <param name="cmdline" >cmdline string to be cleared.</param>
+        /// <param name="newest" >order of the entries.</param>
         /// <returns>Nothing.</returns>
         /// </summary>
 
