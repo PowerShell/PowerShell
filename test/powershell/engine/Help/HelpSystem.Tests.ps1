@@ -339,7 +339,10 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
 }
 
 Describe "Get-Help should find pattern alias" -Tags "CI" {
-    # Remove test alias
+    BeforeAll {
+        Set-Alias -Name testAlias1 -Value Where-Object
+    }
+
     AfterAll {
         Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
     }
@@ -355,14 +358,12 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
     }
 
     It "Get-Help should find alias with * pattern" {
-        Set-Alias -Name testAlias1 -Value Where-Object
         $help = Get-Help testAlias1*
         $help.Category | Should -BeExactly "Alias"
         $help.Synopsis | Should -BeExactly "Where-Object"
     }
 
     It "Help alias should be same as Get-Help alias" {
-        Set-Alias -Name testAlias1 -Value Where-Object
         $help1 = Get-Help testAlias*
         $help2 = help testAlias*
         Compare-Object $help1 $help2 | Should -BeNullOrEmpty
