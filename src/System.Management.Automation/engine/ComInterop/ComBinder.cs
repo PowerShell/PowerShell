@@ -47,7 +47,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="binder">An instance of the <see cref="GetMemberBinder"/> that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
-        /// <param name="delayInvocation">true if member evaluation may be delayed.</param>
+        /// <param name="delayInvocation">True if member evaluation may be delayed.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation)
         {

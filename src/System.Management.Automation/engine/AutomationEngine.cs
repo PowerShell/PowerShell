@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// Compile a piece of text into a parse tree for later execution.
         /// </summary>
         /// <param name="script">The text to parse.</param>
-        /// <param name="addToHistory">true iff the scriptblock will be added to history.</param>
+        /// <param name="addToHistory">True iff the scriptblock will be added to history.</param>
         /// <returns>The parse text as a parsetree node.</returns>
         internal ScriptBlock ParseScriptBlock(string script, bool addToHistory)
         {
