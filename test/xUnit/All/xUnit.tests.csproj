@@ -20,6 +20,18 @@
     <ProjectReference Include="../System.Management.Automation/System.Management.Automation.Tests.csproj"/>
   </ItemGroup>
 
+  <UsingTask
+    AssemblyFile="xunit.runner.msbuild.dll"
+    TaskName="Xunit.Runner.MSBuild.xunit" />
+
+  <ItemGroup>
+    <TestAssemblies Include="../**/*tests*.dll" />
+  </ItemGroup>
+
+  <Target Name="Test">
+    <xunit Assemblies="@(TestAssemblies)" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="Xunit.SkippableFact" Version="1.3.12" />
