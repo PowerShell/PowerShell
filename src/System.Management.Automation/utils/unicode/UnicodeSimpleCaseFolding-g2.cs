@@ -46,7 +46,6 @@ namespace System.Management.Automation.Unicode
             //var v = Unsafe.Add(ref refL1, c >> 8);
             //var ch = Unsafe.Add(ref refL3, v + (c & 0xFF));
             //var ch = Unsafe.Add(ref refL3, Unsafe.Add(ref refL1, c >> 8) + (c & 0xFF));
-            //ushort ch = (ushort)v;
 
             return ch == 0 ? c : Unsafe.As<ushort, char>(ref ch);
         }
@@ -70,10 +69,13 @@ namespace System.Management.Automation.Unicode
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string SimpleCaseFold(this string source)
         {
-            return string.Create(source.Length, source, (chars, sourceString) =>
-            {
-                SpanSimpleCaseFold(chars, sourceString);
-            });
+            return string.Create(
+                source.Length,
+                source,
+                (chars, sourceString) =>
+                {
+                    SpanSimpleCaseFold(chars, sourceString);
+                });
         }
 
         /// <summary>
@@ -95,14 +97,17 @@ namespace System.Management.Automation.Unicode
 
             return tmp.ToString();
             */
-            return string.Create(source.Length, source, (chars, sourceString) =>
-            {
-                SpanSimpleCaseFoldBase(chars, sourceString);
-            });
+            return string.Create(
+                source.Length,
+                source,
+                (chars, sourceString) =>
+                {
+                    SpanSimpleCaseFoldBase(chars, sourceString);
+                });
         }
 
         /// <summary>
-        ///  Simple case folding of the Span\<char\>.
+        ///  Simple case folding of the Span&lt;char&gt;.
         /// </summary>
         /// <param name="source">Source string.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -112,7 +117,7 @@ namespace System.Management.Automation.Unicode
         }
 
         /// <summary>
-        ///  Simple case folding of the ReadOnlySpan\<char\>.
+        ///  Simple case folding of the ReadOnlySpan&lt;char&gt;.
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <returns>
@@ -238,6 +243,7 @@ namespace System.Management.Automation.Unicode
                         {
                             // The index is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                             var index = ((ch - HIGH_SURROGATE_START) * 0x400) + (ch2 - LOW_SURROGATE_START);
+
                             // The utf32 is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                             var utf32 = SimpleCaseFold((char)index);
                             Unsafe.Add(ref res, i) = (char)((utf32 / 0x400) + (int)HIGH_SURROGATE_START);
@@ -266,8 +272,6 @@ namespace System.Management.Automation.Unicode
             //Diagnostics.Assert(destination.Length >= source.Length, "Destination span length must be equal or greater then source span length.");
             ref char res = ref MemoryMarshal.GetReference(destination);
             ref char src = ref MemoryMarshal.GetReference(source);
-            //var simpleCaseFoldingTableBMPane1 = s_simpleCaseFoldingTableBMPane1.AsSpan();
-            //var simpleCaseFoldingTableBMPane2 = s_simpleCaseFoldingTableBMPane2.AsSpan();
 
             var length = source.Length;
             int i = 0;
@@ -280,7 +284,7 @@ namespace System.Management.Automation.Unicode
 
                 if (IsAscii(ch))
                 {
-                    if((uint)(ch - 'A') <= (uint)('Z' - 'A'))
+                    if ((uint)(ch - 'A') <= (uint)('Z' - 'A'))
                     {
                         //destination[i] = (char)(ch | 0x20);
                         Unsafe.Add(ref res, i) = (char)(ch | 0x20);
@@ -312,8 +316,8 @@ namespace System.Management.Automation.Unicode
                             // We subtract 0x10000 because we packed Plane01 (from 65536 to 131071)
                             // to an array with size uint (index from 0 to 65535).
                             var index = ((ch - HIGH_SURROGATE_START) * 0x400) + (ch2 - LOW_SURROGATE_START);
-                            // The utf32 is Utf32 - 0x10000 (UNICODE_PLANE01_START)
 
+                            // The utf32 is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                             var utf32 = SimpleCaseFold((char)index);
                             Unsafe.Add(ref res, i) = (char)((utf32 / 0x400) + (int)HIGH_SURROGATE_START);
                             i++;
@@ -371,12 +375,12 @@ namespace System.Management.Automation.Unicode
         }
 
         /// <summary>
-        /// Search the char position in the ReadOnlySpan<char> with simple case folding.
+        /// Search the char position in the ReadOnlySpan&lt;char&gt; with simple case folding.
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="ch">Char to search.</param>
         /// <returns>
-        /// Returns an index the char in the ReadOnlySpan<char> or -1 if not found.
+        /// Returns an index the char in the ReadOnlySpan&lt;char&gt; or -1 if not found.
         /// </returns>
         public static int IndexOfFolded(this ReadOnlySpan<char> source, char ch)
         {
@@ -397,9 +401,9 @@ namespace System.Management.Automation.Unicode
         /// Compare strings using simple case folding.
         /// </summary>
         /// <param name="strA">String to compare.</param>
-        /// <param name="strB">String to compare.</param>
+        /// <param name="strB">String to compare with.</param>
         /// <returns>
-        /// Returns -1 if strA < strB, 0 if if strA == strB, 1 if strA < strB.
+        /// Returns -1 if strA &lt; strB, 0 if if strA == strB, 1 if strA &gt; strB.
         /// </returns>
         internal static int CompareUsingSimpleCaseFolding(this string strA, string strB)
         {
@@ -522,8 +526,8 @@ namespace System.Management.Automation.Unicode
                 }
 
                 // Both char is surrogates
-                ref char  c12 = ref Unsafe.Add(ref refA, 1);
-                ref char  c22 = ref Unsafe.Add(ref refB, 1);
+                ref char c12 = ref Unsafe.Add(ref refA, 1);
+                ref char c22 = ref Unsafe.Add(ref refB, 1);
 
                 // The index is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                 var index1 = ((c1 - HIGH_SURROGATE_START) * 0x400) + (c12 - LOW_SURROGATE_START);
@@ -568,7 +572,7 @@ namespace System.Management.Automation.Unicode
         // Based on CoreFX StringComparer code
 
         /// <summary>
-        /// Constructor implementation.
+        /// Initializes a new instance of the <see cref="StringComparerUsingSimpleCaseFolding"/> class.
         /// </summary>
         public StringComparerUsingSimpleCaseFolding()
         {
@@ -580,7 +584,7 @@ namespace System.Management.Automation.Unicode
         /// <param name="x">Object to compare.</param>
         /// <param name="y">Object to compare.</param>
         /// <returns>
-        /// Returns 0 - if equal, -1 - if x < y, +1 - if x > y.
+        /// Returns 0 - if equal, -1 - if x &lt; y, +1 - if x &gt; y.
         /// </returns>
         public int Compare(object x, object y)
         {
@@ -705,6 +709,7 @@ namespace System.Management.Automation.Unicode
 
             // Size of CRC window (hashing bytes, ssstr, sswstr, numeric)
             const int XcbCrcWindow = 4;
+
             // const int IntShiftVal = (sizeof ulValue) * (8*sizeof(char)) - XcbCrcWindow;
             const int IntShiftVal = (4 * 8) - XcbCrcWindow;
 
@@ -732,12 +737,12 @@ namespace System.Management.Automation.Unicode
         }
 
         /// <summary>
-        /// IComparer\<string\>.GetHashCode() implementation.
+        /// IComparer&lt;string&gt;.GetHashCode() implementation.
         /// </summary>
-        /// <param name="x">Object to compare.</param>
-        /// <param name="y">Object to compare.</param>
+        /// <param name="x">Left object to compare.</param>
+        /// <param name="y">Right object to compare.</param>
         /// <returns>
-        /// Returns 0 - if equal, -1 - if x < y, +1 - if x > y.
+        /// Returns 0 - if equal, -1 - if x &lt; y, +1 - if x &gt; y.
         /// </returns>
         public int Compare(string x, string y)
         {
@@ -760,10 +765,10 @@ namespace System.Management.Automation.Unicode
         }
 
         /// <summary>
-        /// IEqualityComparer<string>.Equals() implementation.
+        /// IEqualityComparer&lt;string&gt;.Equals() implementation.
         /// </summary>
-        /// <param name="x">Object to compare.</param>
-        /// <param name="y">Object to compare.</param>
+        /// <param name="x">Left object to compare.</param>
+        /// <param name="y">Right object to compare.</param>
         /// <returns>
         /// Returns true if equal.
         /// </returns>
@@ -783,7 +788,7 @@ namespace System.Management.Automation.Unicode
         }
 
         /// <summary>
-        /// IEqualityComparer\<string\>.GetHashCode() implementation.
+        /// IEqualityComparer&lt;string&gt;.GetHashCode() implementation.
         /// </summary>
         /// <param name="obj">Object for which to get a hash.</param>
         /// <returns>
