@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace PSTests.Parallel
             }
             else
             {
-                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
+                Assert.Throws<ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
             }
         }
 
@@ -102,9 +103,9 @@ namespace PSTests.Parallel
             }
             else
             {
-                directoryObject = new DirectoryInfo(System.Environment.CurrentDirectory);
-                fileObject = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-                executableObject = new FileInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                directoryObject = new DirectoryInfo(Environment.CurrentDirectory);
+                fileObject = new FileInfo(Assembly.GetEntryAssembly().Location);
+                executableObject = new FileInfo(Process.GetCurrentProcess().MainModule.FileName);
             }
 
             Assert.Equal("d-----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r", "-"));
@@ -187,7 +188,7 @@ namespace PSTests.Parallel
             IContentWriter contentWriter = fileSystemProvider.GetContentWriter(testPath);
             contentWriter.Write(new List<string>(){ "contentWriterTestContent" });
             contentWriter.Close();
-            Assert.Equal(File.ReadAllText(testPath), testContent + @"contentWriterTestContent" + System.Environment.NewLine);
+            Assert.Equal(File.ReadAllText(testPath), testContent + @"contentWriterTestContent" + Environment.NewLine);
         }
 
         [Fact]
