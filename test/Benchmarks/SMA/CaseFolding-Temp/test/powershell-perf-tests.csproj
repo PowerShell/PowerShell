@@ -48,7 +48,7 @@
     <!-- Set-Date fails with optimize enabled in NonWindowsSetDate
          Debugging the issues resolves the problem
      -->
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 </Project>
