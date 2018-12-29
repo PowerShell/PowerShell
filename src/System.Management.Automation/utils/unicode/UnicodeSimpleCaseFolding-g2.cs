@@ -431,9 +431,26 @@ namespace System.Management.Automation.Unicode
                 var c1 = Unsafe.Add(ref refA, i);
                 var c2 = Unsafe.Add(ref refB, i);
 
-                if (c1 == c2)
+                if (IsAscii(c1))
                 {
-                    continue;
+                    if (IsAscii(c2))
+                    {
+                        if (c1 == c2)
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+                else
+                {
+                    if (IsAscii(c2))
+                    {
+                        return 1;
+                    }
                 }
 
                 if (IsNotSurrogate(c1) && IsNotSurrogate(c2))
