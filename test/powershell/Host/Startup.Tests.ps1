@@ -52,6 +52,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Reflection.Extensions.dll'
             'System.Reflection.Primitives.dll'
             'System.Resources.ResourceManager.dll'
+            'System.Runtime.CompilerServices.Unsafe.dll'
             'System.Runtime.dll'
             'System.Runtime.Extensions.dll'
             'System.Runtime.InteropServices.dll'
@@ -93,6 +94,7 @@ Describe "Validate start of console host" -Tag CI {
                 'System.IO.MemoryMappedFiles.dll'
                 'System.Net.Sockets.dll'
                 'System.Reflection.Metadata.dll'
+                'System.Runtime.CompilerServices.Unsafe.dll'
             )
         }
 
