@@ -363,7 +363,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="childJob">Child job to add.</param>
         /// <param name="flags">Flags of the child job.</param>
-        /// <param name="jobEnqueuedAction">action to run after enqueuing the job.</param>
+        /// <param name="jobEnqueuedAction">Action to run after enqueuing the job.</param>
         /// <exception cref="ArgumentException">
         /// Thrown when the child job is not in the <see cref="JobState.NotStarted"/> state.
         /// (because this can lead to race conditions - the child job can finish before the parent job has a chance to register for child job events)

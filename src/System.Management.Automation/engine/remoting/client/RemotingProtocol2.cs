@@ -29,8 +29,8 @@ namespace System.Management.Automation.Internal
         /// Constructor which takes a client runspace pool and creates
         /// an associated ClientRunspacePoolDataStructureHandler
         /// </summary>
-        /// <param name="clientRunspacePool">client runspace pool object.</param>
-        /// <param name="typeTable">typetable to use for serialization/deserialization.</param>
+        /// <param name="clientRunspacePool">Client runspace pool object.</param>
+        /// <param name="typeTable">Typetable to use for serialization/deserialization.</param>
         internal ClientRunspacePoolDataStructureHandler(RemoteRunspacePoolInternal clientRunspacePool,
             TypeTable typeTable)
         {
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Internal
         /// Process the data received from the runspace pool
         /// on the server
         /// </summary>
-        /// <param name="receivedData">data received.</param>
+        /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             // verify if this data structure handler is the intended recipient
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Internal
         /// Creates a PowerShell data structure handler instance associated
         /// with this runspace pool data structure handler
         /// </summary>
-        /// <param name="shell">associated powershell.</param>
+        /// <param name="shell">Associated powershell.</param>
         /// <returns>PowerShell data structure handler object.</returns>
         internal ClientPowerShellDataStructureHandler CreatePowerShellDataStructureHandler(
             ClientRemotePowerShell shell)
@@ -225,7 +225,7 @@ namespace System.Management.Automation.Internal
         /// Creates a PowerShell instances on the server, associates it
         /// with this runspace pool and invokes
         /// </summary>
-        /// <param name="shell">the client remote powershell.</param>
+        /// <param name="shell">The client remote powershell.</param>
         internal void CreatePowerShellOnServerAndInvoke(ClientRemotePowerShell shell)
         {
             // add to associated powershell list and send request to server
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// dispatch the message to the associated powershell data structure handler
         /// </summary>
-        /// <param name="rcvdData">message received.</param>
+        /// <param name="rcvdData">Message received.</param>
         internal void DispatchMessageToPowerShell(RemoteDataObject<PSObject> rcvdData)
         {
             ClientPowerShellDataStructureHandler dsHandler =
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// send the host response to the server
         /// </summary>
-        /// <param name="hostResponse">host response object to send.</param>
+        /// <param name="hostResponse">Host response object to send.</param>
         internal void SendHostResponseToServer(RemoteHostResponse hostResponse)
         {
             SendDataAsync(hostResponse.Encode(), DataPriorityType.PromptResponse);
@@ -311,7 +311,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// sent a message to modify the max runspaces of the runspace pool
         /// </summary>
-        /// <param name="maxRunspaces">new maxrunspaces to set.</param>
+        /// <param name="maxRunspaces">New maxrunspaces to set.</param>
         /// <param name="callId">call id on which the calling method will
         /// be blocked on</param>
         internal void SendSetMaxRunspacesToServer(int maxRunspaces, long callId)
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Send a message to modify the min runspaces of the runspace pool
         /// </summary>
-        /// <param name="minRunspaces">new minrunspaces to set.</param>
+        /// <param name="minRunspaces">New minrunspaces to set.</param>
         /// <param name="callId">call id on which the calling method will
         /// be blocked on</param>
         internal void SendSetMinRunspacesToServer(int minRunspaces, long callId)
@@ -425,7 +425,7 @@ namespace System.Management.Automation.Internal
         /// Send the data specified as a RemoteDataObject asynchronously
         /// to the runspace pool on the remote session
         /// </summary>
-        /// <param name="data">data to send.</param>
+        /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should be
         /// the one used within the code</remarks>
         private void SendDataAsync(RemoteDataObject data)
@@ -438,8 +438,8 @@ namespace System.Management.Automation.Internal
         /// session with the specified priority
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="data">data to be sent to server.</param>
-        /// <param name="priority">priority with which to send data.</param>
+        /// <param name="data">Data to be sent to server.</param>
+        /// <param name="priority">Priority with which to send data.</param>
         internal void SendDataAsync<T>(RemoteDataObject<T> data, DataPriorityType priority)
         {
             _transportManager.DataToBeSentCollection.Add<T>(data, priority);
@@ -449,8 +449,8 @@ namespace System.Management.Automation.Internal
         /// Send the data asynchronously to runspace pool driver on remote
         /// session with the specified priority
         /// </summary>
-        /// <param name="data">data object to send.</param>
-        /// <param name="priority">priority with which to send data.</param>
+        /// <param name="data">Data object to send.</param>
+        /// <param name="priority">Priority with which to send data.</param>
         internal void SendDataAsync(PSObject data, DataPriorityType priority)
         {
             RemoteDataObject<PSObject> dataToBeSent = RemoteDataObject<PSObject>.CreateFrom(RemotingDestination.Server,
@@ -477,8 +477,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Handler for handling all session events
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="e">object describing this event.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="e">Object describing this event.</param>
         private void HandleClientRemoteSessionStateChanged(
                         object sender, RemoteSessionStateEventArgs e)
         {
@@ -667,7 +667,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets the ClientPowerShellDataStructureHandler instance for the specified id
         /// </summary>
-        /// <param name="clientPowerShellId">id of the client remote powershell.</param>
+        /// <param name="clientPowerShellId">Id of the client remote powershell.</param>
         /// <returns>ClientPowerShellDataStructureHandler object.</returns>
         private ClientPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
             (Guid clientPowerShellId)
@@ -690,8 +690,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Remove the association of the powershell from the runspace pool
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="e">unused.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="e">Unused.</param>
         private void HandleRemoveAssociation(object sender, EventArgs e)
         {
             Dbg.Assert(sender is ClientPowerShellDataStructureHandler, @"sender of the event
@@ -857,7 +857,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Forwards the session create completion event.
         /// </summary>
-        /// <param name="sender">transport sender.</param>
+        /// <param name="sender">Transport sender.</param>
         /// <param name="eventArgs">CreateCompleteEventArgs.</param>
         private void HandleSessionCreateCompleted(object sender, CreateCompleteEventArgs eventArgs)
         {
@@ -963,7 +963,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         public void Dispose(bool disposing)
         {
             if (disposing)
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Send the host response to the server
         /// </summary>
-        /// <param name="hostResponse">host response to send.</param>
+        /// <param name="hostResponse">Host response to send.</param>
         internal void SendHostResponseToServer(RemoteHostResponse hostResponse)
         {
             RemoteDataObject<PSObject> dataToBeSent =
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Internal
         /// Process the data received from the runspace pool
         /// on the server
         /// </summary>
-        /// <param name="receivedData">data received.</param>
+        /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             // verify if this data structure handler is the intended recipient
@@ -1529,7 +1529,7 @@ namespace System.Management.Automation.Internal
         /// Send the data specified as a RemoteDataObject asynchronously
         /// to the powershell on server
         /// </summary>
-        /// <param name="data">data to send.</param>
+        /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should be
         /// the one used within the code</remarks>
         private void SendDataAsync(RemoteDataObject data)
@@ -1541,8 +1541,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Handle data added to input
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="e">information describing this event.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="e">Information describing this event.</param>
         private void HandleInputDataReady(object sender, EventArgs e)
         {
             // make sure only one thread calls the WriteInput.

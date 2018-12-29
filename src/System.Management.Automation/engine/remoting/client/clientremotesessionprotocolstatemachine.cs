@@ -168,8 +168,8 @@ namespace System.Management.Automation.Remoting
         /// if the specified event is valid for the current state of
         /// the state machine
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="eventArgs">event args.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Event args.</param>
         private void SetStateHandler(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             switch (eventArgs.StateEvent)
@@ -331,7 +331,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handles the timeout for key exchange
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
+        /// <param name="sender">Sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
         {
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent, "timeout should only happen when waiting for a key");
@@ -354,8 +354,8 @@ namespace System.Management.Automation.Remoting
         /// asserts if the specified event is valid for
         /// the current state of the state machine
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="eventArgs">event args.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Event args.</param>
         private void SetStateToClosedHandler(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             Dbg.Assert(_state == RemoteSessionState.NegotiationReceived &&
@@ -759,8 +759,8 @@ namespace System.Management.Automation.Remoting
         /// which contains the reason for the fatal error as an inner exception.
         /// This way the internal details are not surfaced to the user
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void DoFatal(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             PSRemotingDataStructureException fatalError =
@@ -783,7 +783,7 @@ namespace System.Management.Automation.Remoting
         /// one thread can be manipulating the state at a time
         /// the state is not synchronized
         /// </summary>
-        /// <param name="newState">new state of the state machine.</param>
+        /// <param name="newState">New state of the state machine.</param>
         /// <param name="reason">reason why the state machine is set
         /// to the new state</param>
         private void SetState(RemoteSessionState newState, Exception reason)

@@ -14,9 +14,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Extracts a cabinet file
         /// </summary>
-        /// <param name="cabinetName">cabinet file name.</param>
-        /// <param name="srcPath">cabinet directory name, must be back slash terminated.</param>
-        /// <param name="destPath">destination directory name, must be back slash terminated.</param>
+        /// <param name="cabinetName">Cabinet file name.</param>
+        /// <param name="srcPath">Cabinet directory name, must be back slash terminated.</param>
+        /// <param name="destPath">Destination directory name, must be back slash terminated.</param>
         internal abstract bool Extract(string cabinetName, string srcPath, string destPath);
 
         #region IDisposable Interface
@@ -117,9 +117,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Extracts a cabinet file
         /// </summary>
-        /// <param name="cabinetName">cabinet file name.</param>
-        /// <param name="srcPath">cabinet directory name, must be back slash terminated.</param>
-        /// <param name="destPath">destination directory name, must be back slash terminated.</param>
+        /// <param name="cabinetName">Cabinet file name.</param>
+        /// <param name="srcPath">Cabinet directory name, must be back slash terminated.</param>
+        /// <param name="destPath">Destination directory name, must be back slash terminated.</param>
         internal override bool Extract(string cabinetName, string srcPath, string destPath)
         {
             // its intentional that this method has no definition

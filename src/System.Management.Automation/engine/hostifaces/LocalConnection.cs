@@ -215,7 +215,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline from a command string
         /// </summary>
         /// <param name="command">A valid command string. Can be null.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
@@ -1414,8 +1414,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Handle the runspace state changed event
         /// </summary>
-        /// <param name="sender">sender of this information, unused.</param>
-        /// <param name="eventArgs">runspace event args.</param>
+        /// <param name="sender">Sender of this information, unused.</param>
+        /// <param name="eventArgs">Runspace event args.</param>
         private void HandleRunspaceStateChanged(object sender, RunspaceStateEventArgs eventArgs)
         {
             switch (eventArgs.RunspaceStateInfo.State)
@@ -1518,7 +1518,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message
         /// </summary>
-        /// <param name="message">the exception's message.</param>
+        /// <param name="message">The exception's message.</param>
         public RunspaceOpenModuleLoadException(string message)
             : base(message)
         {
@@ -1527,8 +1527,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException
         /// </summary>
-        /// <param name="message">the exception's message.</param>
-        /// <param name="innerException">the exceptions's inner exception.</param>
+        /// <param name="message">The exception's message.</param>
+        /// <param name="innerException">The exceptions's inner exception.</param>
         public RunspaceOpenModuleLoadException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1566,8 +1566,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of RunspaceOpenModuleLoadException with serialization parameters
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

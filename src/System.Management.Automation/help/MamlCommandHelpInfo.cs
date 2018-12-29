@@ -251,8 +251,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a MamlCommandHelpInfo object from an XmlNode.
         /// </summary>
-        /// <param name="xmlNode">xmlNode that contains help info.</param>
-        /// <param name="helpCategory">help category this maml object fits into.</param>
+        /// <param name="xmlNode">XmlNode that contains help info.</param>
+        /// <param name="helpCategory">Help category this maml object fits into.</param>
         /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlCommandHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
@@ -279,8 +279,8 @@ namespace System.Management.Automation
         /// <remarks>
         /// A new MamlCommandHelpInfo is created to avoid polluting the provider help cache.
         /// </remarks>
-        /// <param name="cmdletHelp">provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object.</param>
-        /// <param name="dynamicParameterHelp">provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object.</param>
+        /// <param name="cmdletHelp">Provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object.</param>
+        /// <param name="dynamicParameterHelp">Provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object.</param>
         /// <returns>Merged command help info object.</returns>
         internal MamlCommandHelpInfo MergeProviderSpecificHelp(PSObject cmdletHelp, PSObject[] dynamicParameterHelp)
         {

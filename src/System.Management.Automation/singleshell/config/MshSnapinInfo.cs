@@ -917,7 +917,7 @@ namespace System.Management.Automation
         /// <summary>
         /// PublicKeyToken is in the form of byte[]. Use this function to convert to a string
         /// </summary>
-        /// <param name="tokens">array of byte's.</param>
+        /// <param name="tokens">Array of byte's.</param>
         /// <returns></returns>
         internal static string ConvertByteArrayToString(byte[] tokens)
         {

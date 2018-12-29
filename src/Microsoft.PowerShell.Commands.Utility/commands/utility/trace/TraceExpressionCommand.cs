@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Write objects to the underlying stream.
         /// </summary>
-        /// <param name="obj">object or enumeration to read from.</param>
+        /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,

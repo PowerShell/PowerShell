@@ -3969,8 +3969,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="prev">the argument that is right before the 'tab' location.</param>
-        /// <param name="position">the number of positional arguments before the 'tab' location.</param>
+        /// <param name="prev">The argument that is right before the 'tab' location.</param>
+        /// <param name="position">The number of positional arguments before the 'tab' location.</param>
         /// <returns></returns>
         private static ArgumentLocation GenerateArgumentLocation(AstParameterArgumentPair prev, int position)
         {

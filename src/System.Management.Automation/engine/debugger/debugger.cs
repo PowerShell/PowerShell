@@ -588,7 +588,7 @@ namespace System.Management.Automation
         /// <param name="parent">Parent debugger.</param>
         /// <param name="breakPoints">List of breakpoints.</param>
         /// <param name="startAction">Debugger mode.</param>
-        /// <param name="host">host.</param>
+        /// <param name="host">Host.</param>
         /// <param name="path">Current path.</param>
         public virtual void SetParent(
             Debugger parent,
@@ -2419,7 +2419,7 @@ namespace System.Management.Automation
         /// is used internally to handle debugger commands such as list, help, etc.
         /// </summary>
         /// <param name="command">Command string.</param>
-        /// <param name="output">output.</param>
+        /// <param name="output">Output.</param>
         /// <returns>DebuggerCommand containing information on whether and how the command was processed.</returns>
         internal override DebuggerCommand InternalProcessCommand(string command, IList<PSObject> output)
         {

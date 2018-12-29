@@ -3461,7 +3461,7 @@ namespace System.Management.Automation.Runspaces
         /// Update the type metadata loaded into this runspace.
         /// </summary>
         /// <param name="context">The execution context for the runspace to update.</param>
-        /// <param name="updateOnly">if true, re-initialize the metadata collection...</param>
+        /// <param name="updateOnly">If true, re-initialize the metadata collection...</param>
         internal void UpdateTypes(ExecutionContext context, bool updateOnly)
         {
             if (Types.Count == 1)

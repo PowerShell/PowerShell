@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Get list of jobs that run the specified command
         /// </summary>
-        /// <param name="command">command to match.</param>
+        /// <param name="command">Command to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Get list of jobs that are in the specified state
         /// </summary>
-        /// <param name="state">state to match.</param>
+        /// <param name="state">State to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs with the specified
         /// state.</returns>
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Remove a job from the store
         /// </summary>
-        /// <param name="job">job object to remove.</param>
+        /// <param name="job">Job object to remove.</param>
         public override void RemoveJob(Job2 job)
         {
             if (job == null)

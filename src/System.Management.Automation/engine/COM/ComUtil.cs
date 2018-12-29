@@ -116,7 +116,7 @@ namespace System.Management.Automation
         ///  Gets the name of the custom type defined in the type library
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type.</param>
-        /// <param name="refptr">reference to the custom type.</param>
+        /// <param name="refptr">Reference to the custom type.</param>
         /// <returns>Name of the custom type.</returns>
         private static string GetStringFromCustomType(COM.ITypeInfo typeinfo, IntPtr refptr)
         {
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// This is used in generating signature for Properties and Methods.
         /// </summary>
         /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs.</param>
-        /// <param name="typedesc">reference to type descriptor which is being converted to string from.</param>
+        /// <param name="typedesc">Reference to type descriptor which is being converted to string from.</param>
         /// <returns>String representation of the type descriptor.</returns>
         private static string GetStringFromTypeDesc(COM.ITypeInfo typeinfo, COM.TYPEDESC typedesc)
         {

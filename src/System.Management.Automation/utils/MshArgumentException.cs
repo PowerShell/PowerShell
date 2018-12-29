@@ -67,8 +67,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
         protected PSArgumentException(SerializationInfo info,
                            StreamingContext context)
@@ -81,8 +81,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

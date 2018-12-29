@@ -465,7 +465,7 @@ namespace System.Management.Automation.Tracing
         /// All derived classes must use this method to write to the provider log.
         /// </summary>
         /// <param name="ed">EventDescriptor.</param>
-        /// <param name="payload">payload.</param>
+        /// <param name="payload">Payload.</param>
         protected void WriteEvent(EventDescriptor ed, params object[] payload)
         {
             EventProvider provider = GetProvider();

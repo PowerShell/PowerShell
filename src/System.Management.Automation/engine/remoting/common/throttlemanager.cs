@@ -227,7 +227,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Submit a list of operations that need to be throttled
         /// </summary>
-        /// <param name="operations">list of operations to be throttled.</param>
+        /// <param name="operations">List of operations to be throttled.</param>
         /// <remarks>Once the operations are added to the queue, the method will
         /// start operations from the queue
         /// </remarks>
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Stop the specified operation
         /// </summary>
-        /// <param name="operation">operation which needs to be stopped.</param>
+        /// <param name="operation">Operation which needs to be stopped.</param>
         internal void StopOperation(IThrottleOperation operation)
         {
             // StopOperation is being called a second time
@@ -454,7 +454,7 @@ namespace System.Management.Automation.Remoting
         /// the <see cref="System.Management.Automation.Remoting.IThrottleOperation"/>
         /// interface
         /// </summary>
-        /// <param name="source">sender of the event.</param>
+        /// <param name="source">Sender of the event.</param>
         /// <param name="stateEventArgs">Event information object which describes the event
         /// which triggered this method</param>
         private void OperationCompleteHandler(object source, OperationStateEventArgs stateEventArgs)

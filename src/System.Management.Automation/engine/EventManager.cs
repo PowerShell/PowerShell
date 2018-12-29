@@ -2179,7 +2179,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="args">event arguments.</param>
+        /// <param name="args">Event arguments.</param>
         public PSEventArgs(T args)
         {
             Args = args;

@@ -310,7 +310,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="parameterName"></param>
-        /// <exception cref="PSArgumentException">throw if conflict parameter was set.</exception>
+        /// <exception cref="PSArgumentException">Throw if conflict parameter was set.</exception>
         internal void SetParameter(string parameterName, bool isBeginProcess)
         {
             DebugHelper.WriteLogEx("ParameterName = {0}, isBeginProcess = {1}", 0, parameterName, isBeginProcess);

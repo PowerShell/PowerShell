@@ -133,8 +133,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     2. it must be unambiguous (if partial match)
         /// If an error condition occurs, an exception will be thrown
         /// </summary>
-        /// <param name="keyName">key to verify.</param>
-        /// <param name="invocationContext">invocation context for error reporting.</param>
+        /// <param name="keyName">Key to verify.</param>
+        /// <param name="invocationContext">Invocation context for error reporting.</param>
         /// <returns>Matching hash table entry.</returns>
         /// <exception cref="ArgumentException"></exception>
         internal HashtableEntryDefinition MatchEntry(string keyName, TerminatingErrorContext invocationContext)

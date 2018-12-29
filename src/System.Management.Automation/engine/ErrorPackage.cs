@@ -474,8 +474,8 @@ namespace System.Management.Automation
         /// strings longer than 40 characters and ellipsize them to
         /// the first and last 19 characters plus "..." in the middle.
         /// </summary>
-        /// <param name="uiCultureInfo">culture to retrieve template if needed.</param>
-        /// <param name="original">original string.</param>
+        /// <param name="uiCultureInfo">Culture to retrieve template if needed.</param>
+        /// <param name="original">Original string.</param>
         /// <returns>Ellipsized version of string.</returns>
         /// <remarks>
         /// "Please do not make this public as ellipsize is not a word."
@@ -540,7 +540,7 @@ namespace System.Management.Automation
         /// Creates an instance of ErrorDetails specifying a Message.
         /// This variant is used by cmdlets.
         /// </summary>
-        /// <param name="cmdlet">cmdlet containing the template string.</param>
+        /// <param name="cmdlet">Cmdlet containing the template string.</param>
         /// <param name="baseName">by default, the
         /// <see cref="System.Resources.ResourceManager"/>
         /// name</param>
@@ -691,8 +691,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
         protected ErrorDetails(SerializationInfo info,
                                StreamingContext context)
@@ -705,8 +705,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -1025,8 +1025,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
         /// <remarks>
         /// ErrorRecord instances which are serialized using
@@ -1043,8 +1043,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -1369,7 +1369,7 @@ namespace System.Management.Automation
         /// exception which already has an ErrorRecord
         /// ErrorCategoryInfo and ErrorDetails are deep-copied, other fields are not.
         /// </summary>
-        /// <param name="errorRecord">wrapped ErrorRecord.</param>
+        /// <param name="errorRecord">Wrapped ErrorRecord.</param>
         /// <param name="replaceParentContainsErrorRecordException">
         /// If the wrapped exception contains a ParentContainsErrorRecordException, the new
         /// ErrorRecord should have this exception as its Exception instead.
@@ -1841,8 +1841,8 @@ namespace System.Management.Automation
         /// to generate the final error message in
         /// <see cref="ErrorDetails.Message"/>.
         /// </remarks>
-        /// <param name="baseName">the base resource name.</param>
-        /// <param name="resourceId">the resource id.</param>
+        /// <param name="baseName">The base resource name.</param>
+        /// <param name="resourceId">The resource id.</param>
         /// <returns>The error message template string corresponding to baseName and resourceId.</returns>
         string GetResourceString(string baseName, string resourceId);
     }

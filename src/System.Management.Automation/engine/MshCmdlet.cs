@@ -159,8 +159,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the == operator for switch parameters objects.
         /// </summary>
-        /// <param name="first">first object to compare.</param>
-        /// <param name="second">second object to compare.</param>
+        /// <param name="first">First object to compare.</param>
+        /// <param name="second">Second object to compare.</param>
         /// <returns>True if they are the same.</returns>
         public static bool operator ==(SwitchParameter first, SwitchParameter second)
         {
@@ -169,8 +169,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the != operator for switch parameters
         /// </summary>
-        /// <param name="first">first object to compare.</param>
-        /// <param name="second">second object to compare.</param>
+        /// <param name="first">First object to compare.</param>
+        /// <param name="second">Second object to compare.</param>
         /// <returns>True if they are different.</returns>
         public static bool operator !=(SwitchParameter first, SwitchParameter second)
         {
@@ -179,8 +179,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the == operator for switch parameters and booleans.
         /// </summary>
-        /// <param name="first">first object to compare.</param>
-        /// <param name="second">second object to compare.</param>
+        /// <param name="first">First object to compare.</param>
+        /// <param name="second">Second object to compare.</param>
         /// <returns>True if they are the same.</returns>
         public static bool operator ==(SwitchParameter first, bool second)
         {
@@ -189,8 +189,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the != operator for switch parameters and booleans.
         /// </summary>
-        /// <param name="first">first object to compare.</param>
-        /// <param name="second">second object to compare.</param>
+        /// <param name="first">First object to compare.</param>
+        /// <param name="second">Second object to compare.</param>
         /// <returns>True if they are different.</returns>
         public static bool operator !=(SwitchParameter first, bool second)
         {
@@ -199,8 +199,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the == operator for bool and switch parameters
         /// </summary>
-        /// <param name="first">first object to compare.</param>
-        /// <param name="second">second object to compare.</param>
+        /// <param name="first">First object to compare.</param>
+        /// <param name="second">Second object to compare.</param>
         /// <returns>True if they are the same.</returns>
         public static bool operator ==(bool first, SwitchParameter second)
         {
@@ -209,8 +209,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Implement the != operator for bool and switch parameters
         /// </summary>
-        /// <param name="first">first object to compare.</param>
-        /// <param name="second">second object to compare.</param>
+        /// <param name="first">First object to compare.</param>
+        /// <param name="second">Second object to compare.</param>
         /// <returns>True if they are different.</returns>
         public static bool operator !=(bool first, SwitchParameter second)
         {
@@ -428,7 +428,7 @@ namespace System.Management.Automation
         /// session state and retrieves the command directly. Note that the help file and snapin/module
         /// info will both be null on returned object.
         /// </summary>
-        /// <param name="cmdletTypeName">the type name of the class implementing this cmdlet.</param>
+        /// <param name="cmdletTypeName">The type name of the class implementing this cmdlet.</param>
         /// <returns>CmdletInfo for the cmdlet if found, null otherwise.</returns>
         public CmdletInfo GetCmdletByTypeName(string cmdletTypeName)
         {

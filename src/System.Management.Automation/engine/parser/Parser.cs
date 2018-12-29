@@ -717,7 +717,7 @@ namespace System.Management.Automation.Language
         /// Parses the specified constant hashtable string into a Hashtable object
         /// </summary>
         /// <param name="input">The Hashtable string.</param>
-        /// <param name="result">the Hashtable object.</param>
+        /// <param name="result">The Hashtable object.</param>
         /// <returns></returns>
         internal static bool TryParseAsConstantHashtable(string input, out Hashtable result)
         {
@@ -3258,7 +3258,7 @@ namespace System.Management.Automation.Language
         /// Reads an argument expression for a keyword or keyword parameter.
         /// This can be either a bare word or an expression
         /// </summary>
-        /// <param name="keywordToken">the token of the associated keyword.</param>
+        /// <param name="keywordToken">The token of the associated keyword.</param>
         private ExpressionAst GetWordOrExpression(Token keywordToken)
         {
             Token nameToken = NextToken();

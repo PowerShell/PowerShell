@@ -987,7 +987,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// get text from SecureString
         /// </summary>
-        /// <param name="value">value of SecureString.</param>
+        /// <param name="value">Value of SecureString.</param>
         /// <returns>Decoded string.</returns>
         public static string GetStringFromSecureString(SecureString value)
         {
@@ -3141,7 +3141,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="resourceName"></param>
         /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
         /// <param name="functionsToDefine"></param>
-        /// <param name="errors">error reported during deserialization.</param>
+        /// <param name="errors">Error reported during deserialization.</param>
         /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
@@ -3278,7 +3278,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list
         /// </summary>
-        /// <param name="badDependsOnReference">the malformed resource.</param>
+        /// <param name="badDependsOnReference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedRequiredResourceIdErrorRecord(string badDependsOnReference, string definingResource)
@@ -3293,7 +3293,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use in the case of a malformed resource reference in the exclusive resources list
         /// </summary>
-        /// <param name="badExclusiveResourcereference">the malformed resource.</param>
+        /// <param name="badExclusiveResourcereference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedExclusiveResourceIdErrorRecord(string badExclusiveResourcereference, string definingResource)
@@ -3337,7 +3337,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         ///  Returns an error record to use in the case of a malformed resource reference in the DependsOn list
         /// </summary>
         /// <param name="duplicateResourceId">The duplicate resource identifier.</param>
-        /// <param name="nodeName">the node being defined.</param>
+        /// <param name="nodeName">The node being defined.</param>
         /// <returns>The error record to use.</returns>
         public static ErrorRecord DuplicateResourceIdInNodeStatementErrorRecord(string duplicateResourceId, string nodeName)
         {
@@ -3461,7 +3461,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value
         /// </summary>
-        /// <param name="resourceId">resourceId of resource.</param>
+        /// <param name="resourceId">ResourceId of resource.</param>
         /// <returns></returns>
         public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
         {

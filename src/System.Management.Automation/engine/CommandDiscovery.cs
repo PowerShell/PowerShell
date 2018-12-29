@@ -516,8 +516,8 @@ namespace System.Management.Automation
         /// used to determine compatibility between the versions in the requires statement and
         /// the installed version. The version can be PSSnapin or msh
         /// </summary>
-        /// <param name="requires">versions in the requires statement.</param>
-        /// <param name="installed">version installed.</param>
+        /// <param name="requires">Versions in the requires statement.</param>
+        /// <param name="installed">Version installed.</param>
         /// <returns>
         /// true if requires and installed's major version match and requires' minor version
         /// is smaller than or equal to installed's

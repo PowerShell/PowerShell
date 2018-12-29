@@ -67,7 +67,7 @@ namespace System.Management.Automation
         /// <param name="workflowsCalled">
         /// The workflows referenced within <paramref name="xamlDefinition"/>.
         /// </param>
-        /// <param name="module">module.</param>
+        /// <param name="module">Module.</param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>

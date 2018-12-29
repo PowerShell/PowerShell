@@ -351,8 +351,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// definition object.
         /// </summary>
         /// <param name="definition">ScheduledJobDefinition.</param>
-        /// <param name="repInterval">rep interval.</param>
-        /// <param name="save">save definition change.</param>
+        /// <param name="repInterval">Rep interval.</param>
+        /// <param name="save">Save definition change.</param>
         internal static void AddRepetitionJobTriggerToDefinition(
             ScheduledJobDefinition definition,
             TimeSpan repInterval,

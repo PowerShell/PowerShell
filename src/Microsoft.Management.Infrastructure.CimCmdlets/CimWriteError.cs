@@ -29,8 +29,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="inner"></param>
-        /// <param name="context">the context starting the operation, which generated the error.</param>
-        /// <param name="cimResultContext">the CimResultContext used to provide ErrorSource, etc. info.</param>
+        /// <param name="context">The context starting the operation, which generated the error.</param>
+        /// <param name="cimResultContext">The CimResultContext used to provide ErrorSource, etc. info.</param>
         /// <returns></returns>
         internal static ErrorRecord ErrorRecordFromAnyException(
             InvocationContext context,
@@ -70,7 +70,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="context"></param>
         /// <param name="cimException"></param>
-        /// <param name="cimResultContext">the CimResultContext used to provide ErrorSource, etc. info.</param>
+        /// <param name="cimResultContext">The CimResultContext used to provide ErrorSource, etc. info.</param>
         /// <returns></returns>
         internal static ErrorRecord CreateFromCimException(
             InvocationContext context,
@@ -89,7 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="exception"></param>
         /// <param name="errorId"></param>
         /// <param name="errorCategory"></param>
-        /// <param name="cimResultContext">the CimResultContext used to provide ErrorSource, etc. info.</param>
+        /// <param name="cimResultContext">The CimResultContext used to provide ErrorSource, etc. info.</param>
         /// <returns></returns>
         internal static ErrorRecord InitializeErrorRecord(
             InvocationContext context,
@@ -111,7 +111,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="context"></param>
         /// <param name="cimException"></param>
-        /// <param name="cimResultContext">the CimResultContext used to provide ErrorSource, etc. info.</param>
+        /// <param name="cimResultContext">The CimResultContext used to provide ErrorSource, etc. info.</param>
         /// <returns></returns>
         internal static ErrorRecord InitializeErrorRecord(
             InvocationContext context,
@@ -140,7 +140,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="exception"></param>
         /// <param name="errorId"></param>
         /// <param name="errorCategory"></param>
-        /// <param name="cimResultContext">the CimResultContext used to provide ErrorSource, etc. info.</param>
+        /// <param name="cimResultContext">The CimResultContext used to provide ErrorSource, etc. info.</param>
         /// <returns></returns>
         internal static ErrorRecord InitializeErrorRecordCore(
             InvocationContext context,

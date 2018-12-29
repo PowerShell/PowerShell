@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// ToString implementation for PropertyValueCollection
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping a PropertyValueCollection.</param>
+        /// <param name="instance">Instance of PSObject wrapping a PropertyValueCollection.</param>
         public static string PropertyValueCollection(PSObject instance)
         {
             if (instance == null)

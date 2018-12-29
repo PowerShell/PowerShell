@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates funcdesc for method information.
         /// </summary>
-        /// <param name="index">index of funcdesc for method in type information.</param>
+        /// <param name="index">Index of funcdesc for method in type information.</param>
         internal void AddFuncDesc(int index)
         {
             _methods.Add(index);
@@ -82,8 +82,8 @@ namespace System.Management.Automation
         /// <summary>
         ///  Invokes the method on object
         /// </summary>
-        /// <param name="method">represents the instance of the method we want to invoke.</param>
-        /// <param name="arguments">parameters to be passed to the method.</param>
+        /// <param name="method">Represents the instance of the method we want to invoke.</param>
+        /// <param name="arguments">Parameters to be passed to the method.</param>
         /// <returns>Returns the value of method call.</returns>
         internal object InvokeMethod(PSMethod method, object[] arguments)
         {

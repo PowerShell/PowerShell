@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// log an entry
         /// </summary>
-        /// <param name="entry">entry to log.</param>
+        /// <param name="entry">Entry to log.</param>
         internal void LogEntry(XmlLoaderLoggerEntry entry)
         {
             if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// to be called when starting a stack frame.
         /// The returned IDisposable should be used in a using(){...} block
         /// </summary>
-        /// <param name="n">node to push on the stack.</param>
+        /// <param name="n">Node to push on the stack.</param>
         /// <returns>Object to dispose when exiting the frame.</returns>
         protected IDisposable StackFrame(XmlNode n)
         {
@@ -276,8 +276,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// to be called when starting a stack frame.
         /// The returned IDisposable should be used in a using(){...} block
         /// </summary>
-        /// <param name="n">node to push on the stack.</param>
-        /// <param name="index">index of the node of the same name in a collection.</param>
+        /// <param name="n">Node to push on the stack.</param>
+        /// <param name="index">Index of the node of the same name in a collection.</param>
         /// <returns>Object to dispose when exiting the frame.</returns>
         protected IDisposable StackFrame(XmlNode n, int index)
         {
@@ -361,8 +361,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// This is because XML tags are case sensitive.
         /// </summary>
         /// <param name="n">XmlNode whose name is to compare.</param>
-        /// <param name="s">string to compare the node name to.</param>
-        /// <param name="allowAttributes">if true, accept the presence of attributes on the node.</param>
+        /// <param name="s">String to compare the node name to.</param>
+        /// <param name="allowAttributes">If true, accept the presence of attributes on the node.</param>
         /// <returns>True if there is a match.</returns>
         private bool MatchNodeNameHelper(XmlNode n, string s, bool allowAttributes)
         {

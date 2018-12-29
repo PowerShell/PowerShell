@@ -99,13 +99,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates the runspace pool driver
         /// </summary>
-        /// <param name="clientRunspacePoolId">client runspace pool id to associate.</param>
+        /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
         /// <param name="transportManager">transport manager associated with this
         /// runspace pool driver</param>
-        /// <param name="maxRunspaces">maximum runspaces to open.</param>
-        /// <param name="minRunspaces">minimum runspaces to open.</param>
-        /// <param name="threadOptions">threading options for the runspaces in the pool.</param>
-        /// <param name="hostInfo">host information about client side host.</param>
+        /// <param name="maxRunspaces">Maximum runspaces to open.</param>
+        /// <param name="minRunspaces">Minimum runspaces to open.</param>
+        /// <param name="threadOptions">Threading options for the runspaces in the pool.</param>
+        /// <param name="hostInfo">Host information about client side host.</param>
         /// <param name="configData">
         /// Contains:
         /// 1. Script to run after a RunspacePool/Runspace is created in this session.
@@ -114,10 +114,10 @@ namespace System.Management.Automation
         /// 2. ThreadOptions for RunspacePool/Runspace
         /// 3. ThreadApartment for RunspacePool/Runspace
         /// </param>
-        /// <param name="initialSessionState">configuration of the runspace.</param>
-        /// <param name="applicationPrivateData">application private data.</param>
+        /// <param name="initialSessionState">Configuration of the runspace.</param>
+        /// <param name="applicationPrivateData">Application private data.</param>
         /// <param name="isAdministrator">True if the driver is being created by an administrator.</param>
-        /// <param name="serverCapability">server capability reported to the client during negotiation (not the actual capability).</param>
+        /// <param name="serverCapability">Server capability reported to the client during negotiation (not the actual capability).</param>
         /// <param name="psClientVersion">Client PowerShell version.</param>
         /// <param name="configurationName">Optional endpoint configuration name to create a pushed configured runspace.</param>
         internal ServerRunspacePoolDriver(
@@ -138,14 +138,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates the runspace pool driver
         /// </summary>
-        /// <param name="clientRunspacePoolId">client runspace pool id to associate.</param>
+        /// <param name="clientRunspacePoolId">Client runspace pool id to associate.</param>
         /// <param name="transportManager">transport manager associated with this
         /// runspace pool driver</param>
-        /// <param name="maxRunspaces">maximum runspaces to open.</param>
-        /// <param name="minRunspaces">minimum runspaces to open.</param>
-        /// <param name="threadOptions">threading options for the runspaces in the pool.</param>
-        /// <param name="apartmentState">apartment state for the runspaces in the pool.</param>
-        /// <param name="hostInfo">host information about client side host.</param>
+        /// <param name="maxRunspaces">Maximum runspaces to open.</param>
+        /// <param name="minRunspaces">Minimum runspaces to open.</param>
+        /// <param name="threadOptions">Threading options for the runspaces in the pool.</param>
+        /// <param name="apartmentState">Apartment state for the runspaces in the pool.</param>
+        /// <param name="hostInfo">Host information about client side host.</param>
         /// <param name="configData">
         /// Contains:
         /// 1. Script to run after a RunspacePool/Runspace is created in this session.
@@ -154,10 +154,10 @@ namespace System.Management.Automation
         /// 2. ThreadOptions for RunspacePool/Runspace
         /// 3. ThreadApartment for RunspacePool/Runspace
         /// </param>
-        /// <param name="initialSessionState">configuration of the runspace.</param>
-        /// <param name="applicationPrivateData">application private data.</param>
+        /// <param name="initialSessionState">Configuration of the runspace.</param>
+        /// <param name="applicationPrivateData">Application private data.</param>
         /// <param name="isAdministrator">True if the driver is being created by an administrator.</param>
-        /// <param name="serverCapability">server capability reported to the client during negotiation (not the actual capability).</param>
+        /// <param name="serverCapability">Server capability reported to the client during negotiation (not the actual capability).</param>
         /// <param name="psClientVersion">Client PowerShell version.</param>
         /// <param name="configurationName">Optional endpoint configuration name to create a pushed configured runspace.</param>
         internal ServerRunspacePoolDriver(
@@ -705,7 +705,7 @@ namespace System.Management.Automation
         /// <summary>
         /// handler to the runspace pool state changed events
         /// </summary>
-        /// <param name="sender">sender of this events.</param>
+        /// <param name="sender">Sender of this events.</param>
         /// <param name="eventArgs">arguments which describe the
         /// RunspacePool's StateChanged event</param>
         private void HandleRunspacePoolStateChanged(object sender,
@@ -749,8 +749,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle the invocation of powershell
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleCreateAndInvokePowerShell(object sender, RemoteDataEventArgs<RemoteDataObject<PSObject>> eventArgs)
         {
             RemoteDataObject<PSObject> data = eventArgs.Data;
@@ -1030,8 +1030,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handle the invocation of command discovery pipeline
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleGetCommandMetadata(object sender, RemoteDataEventArgs<RemoteDataObject<PSObject>> eventArgs)
         {
             RemoteDataObject<PSObject> data = eventArgs.Data;
@@ -1100,8 +1100,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles host responses
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleHostResponseReceived(object sender,
             RemoteDataEventArgs<RemoteHostResponse> eventArgs)
         {
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the maximum runspace of the runspace pool and sends a response back
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">contains information about the new maxRunspaces
         /// and the callId at the client</param>
         private void HandleSetMaxRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the minimum runspace of the runspace pool and sends a response back
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">contains information about the new minRunspaces
         /// and the callId at the client</param>
         private void HandleSetMinRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
@@ -1144,8 +1144,8 @@ namespace System.Management.Automation
         /// Gets the available runspaces from the server and sends it across
         /// to the client
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
-        /// <param name="eventArgs">contains information on the callid.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Contains information on the callid.</param>
         private void HandleGetAvailableRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
