@@ -423,13 +423,58 @@ namespace System.Management.Automation.Unicode
 
             // -1 because char before last can be surrogate in both strings.
             var length = Math.Min(strA.Length, strB.Length) - 1;
+            var range = length;
+            const char MaxChar = (char)0x7f;
+
+            while (length != 0 && refA <= MaxChar && refB <= MaxChar)
+            {
+                // Ordinal equals or lowercase equals if the result ends up in the a-z range
+                if (refA == refB ||
+                    ((refA | 0x20) == (refB | 0x20) &&
+                    (uint)((refA | 0x20) - 'a') <= (uint)('z' - 'a')))
+                {
+                    length--;
+                    refA = ref Unsafe.Add(ref refA, 1);
+                    refB = ref Unsafe.Add(ref refB, 1);
+                }
+                else
+                {
+                    int currentA = refA;
+                    int currentB = refB;
+
+                    // Uppercase both chars if needed
+                    if ((uint)(refA - 'a') <= 'z' - 'a')
+                    {
+                        currentA -= 0x20;
+                    }
+
+                    if ((uint)(refB - 'a') <= 'z' - 'a')
+                    {
+                        currentB -= 0x20;
+                    }
+
+                    // Return the (case-insensitive) difference between them.
+                    return currentA - currentB;
+                }
+            }
+
+            if (length == 0)
+            {
+                return strA.Length - strB.Length;
+            }
+
             int i = 0;
             int c;
+            range -= length;
+            ref char c1 = ref Unsafe.Add(ref refA, -1);
+            ref char c2 = ref Unsafe.Add(ref refB, -1);
 
-            for (; i < length; i++)
+            for (; i < range; i++)
             {
-                var c1 = Unsafe.Add(ref refA, i);
-                var c2 = Unsafe.Add(ref refB, i);
+                //var c1 = Unsafe.Add(ref refA, i);
+                //var c2 = Unsafe.Add(ref refB, i);
+                c1 = ref Unsafe.Add(ref refA, 1);
+                c2 = ref Unsafe.Add(ref refB, 1);
 
                 if (IsAscii(c1))
                 {
@@ -477,8 +522,8 @@ namespace System.Management.Automation.Unicode
                 }
 
                 // Both char is surrogates
-                var c12 = Unsafe.Add(ref refA, i + 1);
-                var c22 = Unsafe.Add(ref refB, i + 1);
+                ref char  c12 = ref Unsafe.Add(ref refA, 1);
+                ref char  c22 = ref Unsafe.Add(ref refB, 1);
 
                 // The index is Utf32 - 0x10000 (UNICODE_PLANE01_START)
                 var index1 = ((c1 - HIGH_SURROGATE_START) * 0x400) + (c12 - LOW_SURROGATE_START);
