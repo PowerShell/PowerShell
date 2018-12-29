@@ -4087,8 +4087,12 @@ $RawUI.SetBufferContents(
             {
                 // Porting note: non-Windows platforms use `clear`
                 return @"
-tput clear # POSIX way to clear the screen
-$host.ui.Write(""`e[3J"") # clear the scrollback buffer
+# POSIX way to clear the screen
+tput clear
+
+# Clear the scrollback buffer
+$host.ui.Write(""`e[3J"")
+
 # .Link
 # https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
