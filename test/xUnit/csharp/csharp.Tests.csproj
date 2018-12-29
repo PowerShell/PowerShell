@@ -25,14 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../../src/System.Management.Automation/System.Management.Automation.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Data\CaseFolding.txt">
-      <Link>CharUnicode\CaseFolding.txt</Link>
-      <LogicalName>CaseFolding.txt</LogicalName>
-    </EmbeddedResource>
+    <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj"/>
+    <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj"/>
+    <ProjectReference Include="../../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj"/>
   </ItemGroup>
 
 </Project>
