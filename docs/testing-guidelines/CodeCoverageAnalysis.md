@@ -46,9 +46,9 @@ The following table shows the status for the above commit, dated 2018-11-28
 
 ### Microsoft.PowerShell.Security
 
-- [ ] Add tests for *-Acl cmdlets. [4157] (https://github.com/PowerShell/PowerShell/issues/4157)
-- [ ] Add tests for *-AuthenticodeSignature cmdlets. [4157] (https://github.com/PowerShell/PowerShell/issues/4157)
-- [ ] Add coverage to various utility methods under src/Microsoft.PowerShell.Security/security/Utils.cs [4157] (https://github.com/PowerShell/PowerShell/issues/4157)
+- [ ] Add tests for *-Acl cmdlets. [#4157](https://github.com/PowerShell/PowerShell/issues/4157)
+- [ ] Add tests for *-AuthenticodeSignature cmdlets. [#4157](https://github.com/PowerShell/PowerShell/issues/4157)
+- [ ] Add coverage to various utility methods under src/Microsoft.PowerShell.Security/security/Utils.cs [#4157](https://github.com/PowerShell/PowerShell/issues/4157)
 
 ### Microsoft.WSMan.Management
 
@@ -60,13 +60,13 @@ The following table shows the status for the above commit, dated 2018-11-28
 
 #### CoreCLR
 
-- [ ] Lots of non-windows code can be ifdef'ed out. Issue #[3565](https://github.com/PowerShell/PowerShell/issues/3565)
+- [ ] Lots of non-windows code can be ifdef'ed out. [#3565](https://github.com/PowerShell/PowerShell/issues/3565)
 
 #### Engine
 
 - [ ] Add tests for Tab Completion of various types of input. [#4160](https://github.com/PowerShell/PowerShell/issues/4160)
-- [ ] Add tests for debugging PS Jobs.[#4153](https://github.com/PowerShell/PowerShell/issues/4153)
-- [ ] Remove Snapin code from CommandDiscovery. Issue #[4118](https://github.com/PowerShell/PowerShell/issues/4118)
+- [ ] Add tests for debugging PS Jobs. [#4153](https://github.com/PowerShell/PowerShell/issues/4153)
+- [ ] Remove Snapin code from CommandDiscovery. [#4118](https://github.com/PowerShell/PowerShell/issues/4118)
 - [ ] Add tests SessionStateItem, SessionStateContainer error cases, dynamic parameters. Coverage possibly added by *-Item, *-ChildItem error case tests. [#4148](https://github.com/PowerShell/PowerShell/issues/4148)
 - [ ] Add more tests using PSCredential [#4165](https://github.com/PowerShell/PowerShell/issues/4165)
 
@@ -81,7 +81,7 @@ The following table shows the status for the above commit, dated 2018-11-28
 
 #### Security
 
-- [ ] Add more tests under various ExecutionPolicy modes. [4168](https://github.com/PowerShell/PowerShell/issues/4168)
+- [ ] Add more tests under various ExecutionPolicy modes. [#4168](https://github.com/PowerShell/PowerShell/issues/4168)
 
 #### Utils
 
