@@ -73,8 +73,8 @@ namespace System.Management.Automation.Unicode.Tests
 
         public IEnumerable<object[]> Data()
         {
-            yield return new object[] { "CaseFolding1", "CaseFolding" };
-            yield return new object[] { "ЯЯЯЯЯЯЯЯЯЯЯ1", "ЯЯЯЯЯЯЯЯЯЯЯ" };
+            yield return new object[] { "CaseFolding1", "cASEfOLDING" };
+            yield return new object[] { "ЯЯЯЯЯЯЯЯЯЯЯ1", "яяяяяяяяяяя" };
         }
     }
 }
