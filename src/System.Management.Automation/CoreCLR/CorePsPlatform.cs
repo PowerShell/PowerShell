@@ -440,7 +440,7 @@ namespace System.Management.Automation
                         catch (UnauthorizedAccessException)
                         {
                             // directory creation may fail if the account doesn't have filesystem permission such as some service accounts
-                            folderPath = String.Empty;
+                            folderPath = string.Empty;
                         }
                     }
 

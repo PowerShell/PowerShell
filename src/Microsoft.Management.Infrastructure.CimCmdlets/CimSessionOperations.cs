@@ -431,12 +431,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="psObject"></param>
         internal string GetRemoveSessionObjectTarget(PSObject psObject)
         {
-            String message = String.Empty;
+            String message = string.Empty;
             if (psObject.BaseObject is CimSession)
             {
                 UInt32 id = 0x0;
                 Guid instanceId = Guid.Empty;
-                String name = String.Empty;
+                String name = string.Empty;
                 String computerName = string.Empty;
                 if (psObject.Properties[idPropName].Value is UInt32)
                 {

@@ -1324,7 +1324,7 @@ namespace System.Management.Automation
             var constantPathAst = stringAst as StringConstantExpressionAst;
             if (constantPathAst != null)
             {
-                string quote = String.Empty;
+                string quote = string.Empty;
                 switch (constantPathAst.StringConstantType)
                 {
                     case StringConstantType.SingleQuoted:
@@ -5974,7 +5974,7 @@ namespace System.Management.Automation
             var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
             foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
             {
-                string toolTipPrefix = String.Empty;
+                string toolTipPrefix = string.Empty;
                 if (typeAst.IsInterface)
                     toolTipPrefix = "Interface ";
                 else if (typeAst.IsClass)
@@ -6004,7 +6004,7 @@ namespace System.Management.Automation
                  && typeNameSpace != null
                  && typeNameSpace.StartsWith(s.Name.Value, StringComparison.OrdinalIgnoreCase));
 
-            string ns = String.Empty;
+            string ns = string.Empty;
             foreach (var nsState in matchingNsStates)
             {
                 if (nsState.Name.Extent.Text.Length > ns.Length)
@@ -6426,7 +6426,7 @@ namespace System.Management.Automation
             }
 
             var formattedString = String.Format(CultureInfo.InvariantCulture, expandableStringAst.FormatExpression, varValues.ToArray());
-            string quote = (constType == StringConstantType.DoubleQuoted) ? "\"" : String.Empty;
+            string quote = (constType == StringConstantType.DoubleQuoted) ? "\"" : string.Empty;
 
             expandedString = quote + formattedString + extraText + quote;
             return true;
@@ -6441,7 +6441,7 @@ namespace System.Management.Automation
                 {
                     // We check the strict mode inside GetVariableValue
                     object value = VariableOps.GetVariableValue(varPath, executionContext, variableAst);
-                    var strValue = (value == null) ? String.Empty : value as string;
+                    var strValue = (value == null) ? string.Empty : value as string;
 
                     if (strValue == null)
                     {

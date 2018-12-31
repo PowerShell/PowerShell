@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (innerException == null) ? String.Empty : innerException.Message);
+                (innerException == null) ? string.Empty : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteNonTerminatingError(
                         pattern,
-                        String.Empty,
+                        string.Empty,
                         pattern,
                         null,
                         "NoServiceFoundForGivenName",
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!found && !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
                     WriteNonTerminatingError(
-                        String.Empty,
+                        string.Empty,
                         pattern,
                         pattern,
                         null,
@@ -1697,7 +1697,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     hScManager = NativeMethods.OpenSCManagerW(
-                        String.Empty,
+                        string.Empty,
                         null,
                         NativeMethods.SC_MANAGER_CONNECT
                         );
@@ -2062,7 +2062,7 @@ namespace Microsoft.PowerShell.Commands
 
             // confirm the operation first
             // this is always false if WhatIf is set
-            if (!ShouldProcessServiceOperation(DisplayName ?? String.Empty, Name))
+            if (!ShouldProcessServiceOperation(DisplayName ?? string.Empty, Name))
             {
                 return;
             }
@@ -2371,7 +2371,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     hScManager = NativeMethods.OpenSCManagerW(
-                        lpMachineName: String.Empty,
+                        lpMachineName: string.Empty,
                         lpDatabaseName: null,
                         dwDesiredAccess: NativeMethods.SC_MANAGER_ALL_ACCESS
                         );
@@ -2542,7 +2542,7 @@ namespace Microsoft.PowerShell.Commands
             set { _serviceName = value; }
         }
 
-        private string _serviceName = String.Empty;
+        private string _serviceName = string.Empty;
         #endregion Properties
     }
     #endregion ServiceCommandException

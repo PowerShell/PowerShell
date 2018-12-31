@@ -1993,7 +1993,7 @@ $result
         internal static void WriteNonTerminatingError(int errorcode, PSCmdlet cmdlet, string computername)
         {
             Win32Exception ex = new Win32Exception(errorcode);
-            string additionalmessage = String.Empty;
+            string additionalmessage = string.Empty;
             if (ex.NativeErrorCode.Equals(0x00000035))
             {
                 additionalmessage = StringUtil.Format(ComputerResources.NetworkPathNotFound, computername);

@@ -645,7 +645,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// A string describing this alias...
         /// </summary>
-        public string Description { get; } = String.Empty;
+        public string Description { get; } = string.Empty;
 
         /// <summary>
         /// Options controling scope visibility and setability for this entry.
@@ -941,7 +941,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The description associated with this variable.
         /// </summary>
-        public string Description { get; } = String.Empty;
+        public string Description { get; } = string.Empty;
 
         /// <summary>
         /// The options associated with this variable (e.g. readonly, allscope, etc.)
@@ -4296,9 +4296,9 @@ end {
             // Bug fix for Win7:2202228 Engine halts if initial command fulls up variable table
             // Anytime a new variable that the engine depends on to run is added, this table
             // must be updated...
-            new SessionStateVariableEntry(SpecialVariables.LastToken, null, String.Empty),
-            new SessionStateVariableEntry(SpecialVariables.FirstToken, null, String.Empty),
-            new SessionStateVariableEntry(SpecialVariables.StackTrace, null, String.Empty),
+            new SessionStateVariableEntry(SpecialVariables.LastToken, null, string.Empty),
+            new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
+            new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
 
             // Variable which controls the encoding for piping data to a NativeCommand
             new SessionStateVariableEntry(
@@ -4392,7 +4392,7 @@ end {
              //variable for PSEmailServer
             new SessionStateVariableEntry(
                 SpecialVariables.PSEmailServer,
-                String.Empty,
+                string.Empty,
                 RunspaceInit.PSEmailServerDescription
                 ),
 
@@ -4418,25 +4418,25 @@ end {
             new SessionStateVariableEntry(
                 SpecialVariables.IsLinux,
                 Platform.IsLinux,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
                 SpecialVariables.IsMacOS,
                 Platform.IsMacOS,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
                 SpecialVariables.IsWindows,
                 Platform.IsWindows,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
                 SpecialVariables.IsCoreCLR,
                 Platform.IsCoreCLR,
-                String.Empty,
+                string.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
             #endregion
         };

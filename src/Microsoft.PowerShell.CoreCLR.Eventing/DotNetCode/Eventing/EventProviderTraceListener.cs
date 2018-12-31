@@ -222,7 +222,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            _provider.WriteMessageEvent(String.Empty,
+            _provider.WriteMessageEvent(string.Empty,
                             (byte)eventType,
                             (long)eventType & s_keyWordMask);
         }

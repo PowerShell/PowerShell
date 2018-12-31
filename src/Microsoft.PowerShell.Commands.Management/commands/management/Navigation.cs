@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The filter used when doing a dir
         /// </summary>
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Determines if output should be passed through for
@@ -872,7 +872,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The filter used when doing a dir
         /// </summary>
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Determines if output should be passed through for
@@ -2109,7 +2109,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Path == null || Path.Length == 0)
             {
-                Path = new string[] { String.Empty };
+                Path = new string[] { string.Empty };
             }
 
             foreach (string path in Path)

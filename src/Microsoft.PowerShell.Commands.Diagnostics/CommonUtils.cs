@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
             Debug.Assert(!string.IsNullOrEmpty(moduleName));
 
             uint formatError = 0;
-            msg = String.Empty;
+            msg = string.Empty;
             IntPtr moduleHandle = IntPtr.Zero;
 
             moduleHandle = LoadLibraryEx(moduleName, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);

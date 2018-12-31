@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, String.Empty, context);
+                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, string.Empty, context);
                     }
 
                     note = new PSNoteProperty("PSParentPath", parentPath);

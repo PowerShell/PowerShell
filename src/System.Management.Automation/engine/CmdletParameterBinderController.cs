@@ -4612,7 +4612,7 @@ namespace System.Management.Automation
         /// <returns>Return true if the key is valid, false if not.</returns>
         internal static bool CheckKeyIsValid(string key, ref string cmdletName, ref string parameterName)
         {
-            if (key == String.Empty)
+            if (key == string.Empty)
             {
                 return false;
             }
@@ -4673,7 +4673,7 @@ namespace System.Management.Automation
                 index++;
             }
 
-            StringBuilder builder = new StringBuilder(String.Empty);
+            StringBuilder builder = new StringBuilder(string.Empty);
             for (; index < key.Length; index++)
             {
                 if (quoteChar != '\0')

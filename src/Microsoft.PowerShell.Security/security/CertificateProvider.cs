@@ -1532,7 +1532,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string e in allElts)
             {
-                if ((e == ".") || (e == String.Empty))
+                if ((e == ".") || (e == string.Empty))
                 {
                     continue;
                 }
@@ -2732,12 +2732,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 if (string.IsNullOrEmpty(verb) || string.IsNullOrEmpty(noun))
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 //
@@ -2767,7 +2767,7 @@ namespace Microsoft.PowerShell.Commands
                 string xpathQuery = String.Format(
                     CultureInfo.InvariantCulture,
                     HelpCommentsParser.ProviderHelpCommandXPath,
-                    String.Empty,
+                    string.Empty,
                     verb,
                     noun);
 
@@ -2780,34 +2780,34 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (XmlException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (PathTooLongException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (IOException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (UnauthorizedAccessException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (NotSupportedException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (SecurityException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (XPathException)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         #endregion
@@ -3101,7 +3101,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string e in allElts)
             {
-                if ((e == ".") || (e == String.Empty))
+                if ((e == ".") || (e == string.Empty))
                 {
                     continue;
                 }

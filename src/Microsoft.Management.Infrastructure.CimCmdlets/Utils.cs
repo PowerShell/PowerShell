@@ -255,7 +255,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="message"></param>
         internal static void WriteLog(string message, int indent, params object[] args)
         {
-            String outMessage = String.Empty;
+            String outMessage = string.Empty;
             FormatLogMessage(ref outMessage, message, args);
             WriteLog(outMessage, indent);
         }
@@ -276,7 +276,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="message"></param>
         internal static void WriteLogEx(string message, int indent, params object[] args)
         {
-            String outMessage = String.Empty;
+            String outMessage = string.Empty;
             WriteLogInternal(string.Empty, 0, -1);
             FormatLogMessage(ref outMessage, message, args);
             WriteLogInternal(outMessage, indent, 3);

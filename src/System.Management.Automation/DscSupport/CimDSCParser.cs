@@ -991,7 +991,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns>Decoded string.</returns>
         public static string GetStringFromSecureString(SecureString value)
         {
-            string passwordValueToAdd = String.Empty;
+            string passwordValueToAdd = string.Empty;
 
             if (value != null)
             {
@@ -2473,7 +2473,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 sb.AppendFormat(CultureInfo.InvariantCulture,
                     "    {0}{1} {2}{3};\n",
@@ -3032,7 +3032,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 string embeddedInstanceType;
                 string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
                     embeddedInstanceTypes);
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)

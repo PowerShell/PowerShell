@@ -149,7 +149,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _verb = String.Empty;
+        private string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the cmdlet.
@@ -162,7 +162,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _noun = String.Empty;
+        private string _noun = string.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
         {
@@ -206,7 +206,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _helpFilePath = String.Empty;
+        private string _helpFilePath = string.Empty;
 
         internal override HelpCategory HelpCategory
         {

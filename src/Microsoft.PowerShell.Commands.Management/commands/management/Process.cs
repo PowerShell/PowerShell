@@ -2361,7 +2361,7 @@ namespace Microsoft.PowerShell.Commands
             SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new SafeNativeMethods.PROCESS_INFORMATION();
             int error = 0;
             GCHandle pinnedEnvironmentBlock = new GCHandle();
-            string message = String.Empty;
+            string message = string.Empty;
 
             // building the cmdline with the file name given and it's arguments
             StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
@@ -2982,7 +2982,7 @@ namespace Microsoft.PowerShell.Commands
             set { _processName = value; }
         }
 
-        private string _processName = String.Empty;
+        private string _processName = string.Empty;
         #endregion Properties
     }
 

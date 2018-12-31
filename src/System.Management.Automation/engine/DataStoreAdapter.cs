@@ -354,7 +354,7 @@ namespace System.Management.Automation
             // Set the current working directory to the empty
             // string since it is relative to the root.
 
-            _currentWorkingDirectory = String.Empty;
+            _currentWorkingDirectory = string.Empty;
 
             Dbg.Diagnostics.Assert(
                 _currentWorkingDirectory != null,

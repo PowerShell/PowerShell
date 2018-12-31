@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _sourceCode = String.Empty;
+                _sourceCode = string.Empty;
 
                 if (value != null)
                 {

@@ -181,7 +181,7 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                XmlNode attr = this.rootDocument.CreateNode(XmlNodeType.Attribute, configurationName, String.Empty);
+                XmlNode attr = this.rootDocument.CreateNode(XmlNodeType.Attribute, configurationName, string.Empty);
                 attr.Value = configurationValue;
 
                 nodeToUpdate.Attributes.SetNamedItem(attr);

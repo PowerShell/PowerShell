@@ -139,7 +139,7 @@ namespace System.Management.Automation
             get { return _path; }
         }
 
-        private readonly string _path = String.Empty;
+        private readonly string _path = string.Empty;
 
         /// <summary>
         /// Gets the path to the script file.

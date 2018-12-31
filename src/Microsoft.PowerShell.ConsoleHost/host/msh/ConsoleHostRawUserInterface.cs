@@ -1503,7 +1503,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Cached Window Title, for systems that needs it
         /// </summary>
-        private string _title = String.Empty;
+        private string _title = string.Empty;
 
         /// <summary>
         /// Gets or sets the title of the displayed window. The example

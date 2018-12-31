@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
-                string encodedValue = String.Empty;
+                string encodedValue = string.Empty;
                 if (value != null)
                 {
                     encodedValue = WebUtility.UrlEncode(value.ToString());
@@ -811,7 +811,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBearerAuthorizationHeader()
         {
-            return String.Format("Bearer {0}", new NetworkCredential(String.Empty, Token).Password);
+            return String.Format("Bearer {0}", new NetworkCredential(string.Empty, Token).Password);
         }
 
         private void ProcessAuthentication()
@@ -1828,7 +1828,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string url = match.Groups["url"].Value;
                             string rel = match.Groups["rel"].Value;
-                            if (url != String.Empty && rel != String.Empty && !_relationLink.ContainsKey(rel))
+                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new Uri(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());

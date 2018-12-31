@@ -876,7 +876,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (Description == null)
                         {
-                            Description = String.Empty;
+                            Description = string.Empty;
                         }
 
                         varToSet.Description = Description;

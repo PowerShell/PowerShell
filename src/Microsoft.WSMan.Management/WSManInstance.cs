@@ -906,7 +906,7 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                string connectionStr = String.Empty;
+                string connectionStr = string.Empty;
                 connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
                 if (connectionuri != null)
                 {
@@ -1204,7 +1204,7 @@ namespace Microsoft.WSMan.Management
             IWSManSession m_session = null;
             try
             {
-                string connectionStr = String.Empty;
+                string connectionStr = string.Empty;
                 connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
                 if (connectionuri != null)
                 {
@@ -1490,7 +1490,7 @@ namespace Microsoft.WSMan.Management
         private WSManHelper helper;
         IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
         IWSManSession m_session = null;
-        string connectionStr = String.Empty;
+        string connectionStr = string.Empty;
 
         /// <summary>
         /// BeginProcessing method.

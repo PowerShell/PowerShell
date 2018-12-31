@@ -124,7 +124,7 @@ namespace System.Management.Automation
                     return PSSnapIn.Name;
                 if (Module != null)
                     return Module.Name;
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -319,7 +319,7 @@ namespace System.Management.Automation
             string name,
             string helpFile,
             PSSnapInInfo psSnapIn)
-            : this(sessionState, implementingType, name, String.Empty, String.Empty, helpFile, psSnapIn)
+            : this(sessionState, implementingType, name, string.Empty, string.Empty, helpFile, psSnapIn)
         {
         }
 

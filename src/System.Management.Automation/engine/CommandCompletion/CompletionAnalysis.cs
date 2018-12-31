@@ -1374,7 +1374,7 @@ namespace System.Management.Automation
 
             if (keywords != null && keywords.Any())
             {
-                string commandName = (completionContext.WordToComplete ?? String.Empty) + "*";
+                string commandName = (completionContext.WordToComplete ?? string.Empty) + "*";
                 var wildcardPattern = WildcardPattern.Get(commandName, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
                 // Filter by name
@@ -1550,7 +1550,7 @@ namespace System.Management.Automation
                         string expandedString = null;
                         var expandableStringAst = new ExpandableStringExpressionAst(strConst.Extent, strConst.Value, StringConstantType.BareWord);
                         if (CompletionCompleters.IsPathSafelyExpandable(expandableStringAst: expandableStringAst,
-                                                                        extraText: String.Empty,
+                                                                        extraText: string.Empty,
                                                                         executionContext: completionContext.ExecutionContext,
                                                                         expandedString: out expandedString))
                         {
@@ -1708,7 +1708,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is FileRedirectionAst || CompleteAgainstSwitchFile(lastAst, completionContext.TokenBeforeCursor))
             {
                 string wordToComplete =
-                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, String.Empty, completionContext);
+                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
                 if (wordToComplete != null)
                 {
                     needFileCompletion = true;
@@ -1749,7 +1749,7 @@ namespace System.Management.Automation
             else
             {
                 string wordToComplete =
-                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, String.Empty, completionContext);
+                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
                 if (wordToComplete != null)
                 {
                     completionContext.WordToComplete = wordToComplete;

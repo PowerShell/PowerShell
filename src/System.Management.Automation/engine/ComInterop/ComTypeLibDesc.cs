@@ -44,7 +44,7 @@ namespace System.Management.Automation.ComInterop
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public string Documentation
         {
-            get { return String.Empty; }
+            get { return string.Empty; }
         }
 
         #region IDynamicMetaObjectProvider Members
