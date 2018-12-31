@@ -48,7 +48,7 @@ namespace System.Management.Automation
         {
             IsDefault = true;
             Name = String.Empty;
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }

@@ -41,7 +41,7 @@ namespace System.Management.Automation
         internal ExternalScriptInfo(string name, string path, ExecutionContext context)
             : base(name, CommandTypes.ExternalScript, context)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ExternalScriptInfo(string name, string path) : base(name, CommandTypes.ExternalScript)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }

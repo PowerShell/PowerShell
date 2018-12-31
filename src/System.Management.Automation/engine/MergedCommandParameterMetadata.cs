@@ -220,7 +220,7 @@ namespace System.Management.Automation
         private int AddParameterSetToMap(string parameterSetName)
         {
             int index = -1;
-            if (!String.IsNullOrEmpty(parameterSetName))
+            if (!string.IsNullOrEmpty(parameterSetName))
             {
                 index = _parameterSetMap.IndexOf(parameterSetName);
 
@@ -275,7 +275,7 @@ namespace System.Management.Automation
 
             uint defaultParameterSetFlag = 0;
 
-            if (!String.IsNullOrEmpty(defaultParameterSetName))
+            if (!string.IsNullOrEmpty(defaultParameterSetName))
             {
                 _defaultParameterSetName = defaultParameterSetName;
 
@@ -345,7 +345,7 @@ namespace System.Management.Automation
         {
             string result = _defaultParameterSetName;
 
-            if (String.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
             {
                 result = ParameterAttribute.AllParameterSets;
             }
@@ -402,7 +402,7 @@ namespace System.Management.Automation
                 CompiledCommandParameter compiledParam = mergedParam.Parameter;
                 if (compiledParam != null)
                 {
-                    if (!String.IsNullOrEmpty(compiledParam.Name))
+                    if (!string.IsNullOrEmpty(compiledParam.Name))
                         return compiledParam.Name;
                 }
             }

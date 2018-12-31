@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureMemberNameHasBeenSpecified()
         {
-            if (String.IsNullOrEmpty(_memberName))
+            if (string.IsNullOrEmpty(_memberName))
             {
                 ThrowTerminatingError(NewError("MemberNameShouldBeSpecified", UpdateDataStrings.ShouldBeSpecified, null, "MemberName", _memberType));
             }
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_value1 is string)
             {
-                if (String.IsNullOrEmpty((string)_value1))
+                if (string.IsNullOrEmpty((string)_value1))
                 {
                     ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldNotBeNull, null, "Value", _memberType));
                 }
@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
                 typeNameToRemove = _typeName;
             }
 
-            Dbg.Assert(!String.IsNullOrEmpty(typeNameToRemove), "TypeNameToRemove should be not null and not empty at this point");
+            Dbg.Assert(!string.IsNullOrEmpty(typeNameToRemove), "TypeNameToRemove should be not null and not empty at this point");
             TypeData type = new TypeData(typeNameToRemove);
             string removeTypeFormattedTarget = string.Format(CultureInfo.InvariantCulture, removeTypeTarget, typeNameToRemove);
 

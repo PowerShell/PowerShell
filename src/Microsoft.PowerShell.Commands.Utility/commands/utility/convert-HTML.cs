@@ -438,7 +438,7 @@ namespace Microsoft.PowerShell.Commands
 
             _propertyMshParameterList = ProcessParameter(_property);
 
-            if (!String.IsNullOrEmpty(_title))
+            if (!string.IsNullOrEmpty(_title))
             {
                 WebUtility.HtmlEncode(_title);
             }

@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
             if (this.Credential != null)
             {
                 System.Net.NetworkCredential cred = this.Credential.GetNetworkCredential();
-                if (String.IsNullOrEmpty(cred.Domain))
+                if (string.IsNullOrEmpty(cred.Domain))
                 {
                     conOptions.Username = cred.UserName;
                 }

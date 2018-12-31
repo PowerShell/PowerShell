@@ -1114,7 +1114,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     _path = inputStream;
                 }

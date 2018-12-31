@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// <returns>The first lines of <paramref name="source"/>.</returns>
         internal static string GetMaxLines(string source, int maxLines)
         {
-            if (String.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(source))
             {
                 return String.Empty;
             }
@@ -390,7 +390,7 @@ namespace System.Management.Automation
                     {
                         string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
 
-                        if (!String.IsNullOrEmpty(suggestionText))
+                        if (!string.IsNullOrEmpty(suggestionText))
                         {
                             string returnString = String.Format(
                                 CultureInfo.CurrentCulture,
@@ -442,7 +442,7 @@ namespace System.Management.Automation
                     {
                         string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
 
-                        if (!String.IsNullOrEmpty(suggestionText))
+                        if (!string.IsNullOrEmpty(suggestionText))
                         {
                             string returnString = String.Format(
                                 CultureInfo.CurrentCulture,
@@ -475,7 +475,7 @@ namespace System.Management.Automation
         internal static string RemoveGuidFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
                 return message;
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:).*";
@@ -493,7 +493,7 @@ namespace System.Management.Automation
         internal static string RemoveIdentifierInfoFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
                 return message;
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:\[.*\]:).*";
@@ -701,7 +701,7 @@ namespace System.Management.Automation
                     passwordBuilder[counter] = (char)0;
                 }
 
-                if (!String.IsNullOrEmpty(credentialUsername))
+                if (!string.IsNullOrEmpty(credentialUsername))
                     cred = new PSCredential(credentialUsername, password);
                 else
                     cred = null;

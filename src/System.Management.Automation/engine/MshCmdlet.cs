@@ -557,7 +557,7 @@ namespace System.Management.Automation
                 if (current.CommandType == CommandTypes.Application)
                 {
                     string cmdExtension = System.IO.Path.GetExtension(current.Name);
-                    if (!String.IsNullOrEmpty(cmdExtension))
+                    if (!string.IsNullOrEmpty(cmdExtension))
                     {
                         // Only add the application in PATHEXT...
                         foreach (string extension in CommandDiscovery.PathExtensions)

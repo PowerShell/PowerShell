@@ -106,7 +106,7 @@ namespace System.Management.Automation.ComInterop
                 typeName = ctd.TypeName;
             }
 
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 typeName = "IDispatch";
             }

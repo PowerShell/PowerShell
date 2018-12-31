@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// </exception>
         public RuntimeDefinedParameter(string name, Type parameterType, Collection<Attribute> attributes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -85,7 +85,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -226,7 +226,7 @@ namespace System.Management.Automation
         {
             get { return _helpFile; }
 
-            set { _helpFile = String.IsNullOrEmpty(value) ? String.Empty : value; }
+            set { _helpFile = string.IsNullOrEmpty(value) ? String.Empty : value; }
         }
 
         private string _helpFile = String.Empty;

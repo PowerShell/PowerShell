@@ -113,17 +113,17 @@ namespace System.Management.Automation.Language {
         }
 
         private int GetLambdaId(LambdaExpression le) {
-            Debug.Assert(String.IsNullOrEmpty(le.Name));
+            Debug.Assert(string.IsNullOrEmpty(le.Name));
             return GetId(le, ref _lambdaIds);
         }
 
         private int GetParamId(ParameterExpression p) {
-            Debug.Assert(String.IsNullOrEmpty(p.Name));
+            Debug.Assert(string.IsNullOrEmpty(p.Name));
             return GetId(p, ref _paramIds);
         }
 
         private int GetLabelTargetId(LabelTarget target) {
-            Debug.Assert(String.IsNullOrEmpty(target.Name));
+            Debug.Assert(string.IsNullOrEmpty(target.Name));
             return GetId(target, ref _labelIds);
         }
 
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Language {
         protected override Expression VisitParameter(ParameterExpression node) {
             // Have '$' for the DebugView of ParameterExpressions
             Out("$");
-            if (String.IsNullOrEmpty(node.Name)) {
+            if (string.IsNullOrEmpty(node.Name)) {
                 // If no name if provided, generate a name as $var1, $var2.
                 // No guarantee for not having name conflicts with user provided variable names.
                 //
@@ -1183,7 +1183,7 @@ namespace System.Management.Automation.Language {
         }
 
         private string GetLambdaName(LambdaExpression lambda) {
-            if (String.IsNullOrEmpty(lambda.Name)) {
+            if (string.IsNullOrEmpty(lambda.Name)) {
                 return "#Lambda" + GetLambdaId(lambda);
             }
 

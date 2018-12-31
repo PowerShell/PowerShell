@@ -106,7 +106,7 @@ namespace System.Management.Automation
             Utils.CheckArgForNull(certificate, "certificate");
 
             // If given, TimeStamp server URLs must begin with http://
-            if (!String.IsNullOrEmpty(timeStampServerUrl))
+            if (!string.IsNullOrEmpty(timeStampServerUrl))
             {
                 if ((timeStampServerUrl.Length <= 7) ||
                     (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0))
@@ -118,7 +118,7 @@ namespace System.Management.Automation
             }
 
             // Validate that the hash algorithm is valid
-            if (!String.IsNullOrEmpty(hashAlgorithm))
+            if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 IntPtr intptrAlgorithm = Marshal.StringToHGlobalUni(hashAlgorithm);
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation
                 // It expects null, only.  Instead, it randomly AVs if you
                 // try.
                 string timeStampServerUrlForCryptUI = null;
-                if (!String.IsNullOrEmpty(timeStampServerUrl))
+                if (!string.IsNullOrEmpty(timeStampServerUrl))
                 {
                     timeStampServerUrlForCryptUI = timeStampServerUrl;
                 }

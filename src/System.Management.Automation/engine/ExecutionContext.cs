@@ -275,7 +275,7 @@ namespace System.Management.Automation
                 {
                     // Use the ShellID from PSAuthorizationManager before everything else because that's what's used
                     // to check execution policy...
-                    if (AuthorizationManager is PSAuthorizationManager && !String.IsNullOrEmpty(AuthorizationManager.ShellId))
+                    if (AuthorizationManager is PSAuthorizationManager && !string.IsNullOrEmpty(AuthorizationManager.ShellId))
                     {
                         _shellId = AuthorizationManager.ShellId;
                     }
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation
             // First we try to load the assembly based on the filename
             Assembly loadedAssembly = null;
             error = null;
-            if (!String.IsNullOrEmpty(filename))
+            if (!string.IsNullOrEmpty(filename))
             {
                 try
                 {
@@ -1376,7 +1376,7 @@ namespace System.Management.Automation
             }
 
             // Then we try to load the assembly based on the given name
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 string fixedName = null;
                 // Remove the '.dll' if it's there...

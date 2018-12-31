@@ -1377,11 +1377,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 tracer.WriteLine("ProviderName: {0}", providerName);
 
-                bool providerNameEmpty = String.IsNullOrEmpty(providerName);
+                bool providerNameEmpty = string.IsNullOrEmpty(providerName);
                 bool providerNameContainsWildcardCharacters =
                     WildcardPattern.ContainsWildcardCharacters(providerName);
 
-                bool driveNameEmpty = String.IsNullOrEmpty(driveName);
+                bool driveNameEmpty = string.IsNullOrEmpty(driveName);
                 bool driveNameContainsWildcardCharacters =
                     WildcardPattern.ContainsWildcardCharacters(driveName);
 
@@ -1400,7 +1400,7 @@ namespace Microsoft.PowerShell.Commands
                 // exist.
                 if (!driveNameEmpty && !driveNameContainsWildcardCharacters)
                 {
-                    if (String.IsNullOrEmpty(scope))
+                    if (string.IsNullOrEmpty(scope))
                     {
                         SessionState.Drive.Get(driveName);
                     }
@@ -2079,7 +2079,7 @@ namespace Microsoft.PowerShell.Commands
             if (Path != null && Path.Length > 0)
             {
                 // Path is only globbed if Name is specified.
-                if (String.IsNullOrEmpty(Name))
+                if (string.IsNullOrEmpty(Name))
                     return InvokeProvider.Item.NewItemDynamicParameters(WildcardPattern.Escape(Path[0]), ItemType, Value, context);
                 else
                     return InvokeProvider.Item.NewItemDynamicParameters(Path[0], ItemType, Value, context);

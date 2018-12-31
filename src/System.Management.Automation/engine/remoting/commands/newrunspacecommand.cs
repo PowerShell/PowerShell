@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             _throttleManager.ThrottleComplete +=
                 new EventHandler<EventArgs>(HandleThrottleComplete);
 
-            if (String.IsNullOrEmpty(ConfigurationName))
+            if (string.IsNullOrEmpty(ConfigurationName))
             {
                 if ((ParameterSetName == NewPSSessionCommand.ComputerNameParameterSet) ||
                     (ParameterSetName == NewPSSessionCommand.UriParameterSet))
@@ -488,11 +488,11 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                 {
                                     errorDetails = "[" + host + "] ";
-                                    if (!String.IsNullOrEmpty(transException.Message))
+                                    if (!string.IsNullOrEmpty(transException.Message))
                                     {
                                         errorDetails += transException.Message;
                                     }
-                                    else if (!String.IsNullOrEmpty(transException.TransportMessage))
+                                    else if (!string.IsNullOrEmpty(transException.TransportMessage))
                                     {
                                         errorDetails += transException.TransportMessage;
                                     }

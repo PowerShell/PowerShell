@@ -267,7 +267,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs errorId");
@@ -282,7 +282,7 @@ namespace System.Management.Automation
             }
 
             string format = resourceStr;
-            if (String.IsNullOrEmpty(format))
+            if (string.IsNullOrEmpty(format))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage bad errorId " + errorId);
@@ -319,7 +319,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get { return (String.IsNullOrEmpty(_message)) ? base.Message : _message; }
+            get { return (string.IsNullOrEmpty(_message)) ? base.Message : _message; }
         }
 
         [NonSerialized]

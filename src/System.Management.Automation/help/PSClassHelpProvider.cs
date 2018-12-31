@@ -135,7 +135,7 @@ namespace System.Management.Automation
                 string moduleName = current.Module.Name;
                 string moduleDir = current.Module.ModuleBase;
 
-                if (!String.IsNullOrEmpty(moduleName) && !String.IsNullOrEmpty(moduleDir))
+                if (!string.IsNullOrEmpty(moduleName) && !string.IsNullOrEmpty(moduleDir))
                 {
                     string helpFileToFind = moduleName + "-Help.xml";
 
@@ -146,7 +146,7 @@ namespace System.Management.Automation
 
                     string externalHelpFile = current.HelpFile;
 
-                    if (!String.IsNullOrEmpty(externalHelpFile))
+                    if (!string.IsNullOrEmpty(externalHelpFile))
                     {
                         FileInfo helpFileInfo = new FileInfo(externalHelpFile);
                         DirectoryInfo dirToSearch = helpFileInfo.Directory;
@@ -183,7 +183,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static bool IsMamlHelp(string helpFile, XmlNode helpItemsNode)
         {
-            Debug.Assert(!String.IsNullOrEmpty(helpFile), "helpFile cannot be null.");
+            Debug.Assert(!string.IsNullOrEmpty(helpFile), "helpFile cannot be null.");
 
             if (helpFile.EndsWith(".maml", StringComparison.OrdinalIgnoreCase))
                 return true;
@@ -215,7 +215,7 @@ namespace System.Management.Automation
             if (!File.Exists(helpFile))
                 return null;
 
-            if (!String.IsNullOrEmpty(helpFile))
+            if (!string.IsNullOrEmpty(helpFile))
             {
                 //Load the help file only once. Then use it from the cache.
                 if (!_helpFiles.Contains(helpFile))
@@ -303,8 +303,8 @@ namespace System.Management.Automation
         /// </remarks>
         private void LoadHelpFile(string helpFile, string helpFileIdentifier)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(helpFile), "HelpFile cannot be null or empty.");
-            Dbg.Assert(!String.IsNullOrEmpty(helpFileIdentifier), "helpFileIdentifier cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(helpFile), "HelpFile cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(helpFileIdentifier), "helpFileIdentifier cannot be null or empty.");
 
             XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
                 new FileInfo(helpFile),

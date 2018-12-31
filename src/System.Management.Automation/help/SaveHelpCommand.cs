@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(path))
                     {
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                         WriteError(e.ErrorRecord);

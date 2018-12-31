@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
         {
             Dbg.Assert(switchKey != null, "need a value");
-            Dbg.Assert(!String.IsNullOrEmpty(match), "need a value");
+            Dbg.Assert(!string.IsNullOrEmpty(match), "need a value");
             Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
@@ -638,7 +638,7 @@ namespace Microsoft.PowerShell
         private void DisplayBanner()
         {
             // If banner text is not supplied do nothing.
-            if (!String.IsNullOrEmpty(_bannerText))
+            if (!string.IsNullOrEmpty(_bannerText))
             {
                 _hostUI.WriteLine(_bannerText);
                 _hostUI.WriteLine();

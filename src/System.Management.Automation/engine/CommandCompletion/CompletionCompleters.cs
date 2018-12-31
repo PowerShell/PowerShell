@@ -273,7 +273,7 @@ namespace System.Management.Automation
                         //    --> command 'Get-PowerShellFoo' in the global session state (prefixed commandInfo)
                         //        command 'Get-Foo' in the module session state (un-prefixed commandInfo)
                         // in that case, we should not add the module name qualification because it doesn't work
-                        if (String.IsNullOrEmpty(commandInfo.Prefix) || !ModuleCmdletBase.IsPrefixedCommand(commandInfo))
+                        if (string.IsNullOrEmpty(commandInfo.Prefix) || !ModuleCmdletBase.IsPrefixedCommand(commandInfo))
                         {
                             name = commandInfo.ModuleName + "\\" + commandInfo.Name;
                         }
@@ -323,9 +323,9 @@ namespace System.Management.Automation
                     if (!includeModulePrefix)
                     {
                         var commandInfo = commandList[0] as CommandInfo;
-                        if (commandInfo != null && !String.IsNullOrEmpty(commandInfo.Prefix))
+                        if (commandInfo != null && !string.IsNullOrEmpty(commandInfo.Prefix))
                         {
-                            Diagnostics.Assert(!String.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
+                            Diagnostics.Assert(!string.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
                             if (!ModuleCmdletBase.IsPrefixedCommand(commandInfo))
                             {
                                 completionName = commandInfo.ModuleName + "\\" + completionName;
@@ -364,9 +364,9 @@ namespace System.Management.Automation
                     if (!includeModulePrefix)
                     {
                         var commandInfo = keyValuePair.Value as CommandInfo;
-                        if (commandInfo != null && !String.IsNullOrEmpty(commandInfo.Prefix))
+                        if (commandInfo != null && !string.IsNullOrEmpty(commandInfo.Prefix))
                         {
-                            Diagnostics.Assert(!String.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
+                            Diagnostics.Assert(!string.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
                             if (!ModuleCmdletBase.IsPrefixedCommand(commandInfo))
                             {
                                 completionName = commandInfo.ModuleName + "\\" + completionName;
@@ -3648,7 +3648,7 @@ namespace System.Management.Automation
             {
                 if (paramName.Equals("ItemType", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!String.IsNullOrEmpty(context.WordToComplete))
+                    if (!string.IsNullOrEmpty(context.WordToComplete))
                     {
                         WildcardPattern patternEvaluator = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.IgnoreCase);
 
@@ -4596,7 +4596,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (String.IsNullOrEmpty(userPath))
+                    if (string.IsNullOrEmpty(userPath))
                     {
                         Diagnostics.Assert(false, "Found a variable source but it was an unknown AST type.");
                     }
@@ -6099,7 +6099,7 @@ namespace System.Management.Automation
             {
                 case TokenKind.Switch:
 
-                    Diagnostics.Assert(!String.IsNullOrEmpty(wordToComplete) && wordToComplete[0].IsDash(), "the word to complete should start with '-'");
+                    Diagnostics.Assert(!string.IsNullOrEmpty(wordToComplete) && wordToComplete[0].IsDash(), "the word to complete should start with '-'");
                     wordToComplete = wordToComplete.Substring(1);
                     bool withColon = wordToComplete.EndsWith(":", StringComparison.Ordinal);
                     wordToComplete = withColon ? wordToComplete.Remove(wordToComplete.Length - 1) : wordToComplete;

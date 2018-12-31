@@ -176,7 +176,7 @@ namespace System.Management.Automation
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
-                if (!String.IsNullOrEmpty(qualifier) && !String.IsNullOrEmpty(result))
+                if (!string.IsNullOrEmpty(qualifier) && !string.IsNullOrEmpty(result))
                 {
                     result = AddQualifier(result, provider, qualifier, isProviderQualified, isDriveQualified);
                 }
@@ -589,7 +589,7 @@ namespace System.Management.Automation
                     // \\HKEY_LOCAL_MACHINE
                     if (
                         (GetProviderInstance(provider) is NavigationCmdletProvider) &&
-                        (!String.IsNullOrEmpty(drive.Root)) &&
+                        (!string.IsNullOrEmpty(drive.Root)) &&
                         (path.StartsWith(drive.Root, StringComparison.OrdinalIgnoreCase)))
                     {
                         //

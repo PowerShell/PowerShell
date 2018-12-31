@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Validate Path
-            if (!String.IsNullOrEmpty(Path))
+            if (!string.IsNullOrEmpty(Path))
             {
                 ProviderInfo provider = null;
                 Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out provider);
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
                 _resolvedPath = resolvedPaths[0];
             }
 
-            if (!String.IsNullOrEmpty(LiteralPath))
+            if (!string.IsNullOrEmpty(LiteralPath))
             {
                 // Validate that the path exists
                 SessionState.InvokeProvider.Item.Get(new string[] { LiteralPath }, false, true);
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Validate OutFile
-            if (!String.IsNullOrEmpty(OutFile))
+            if (!string.IsNullOrEmpty(OutFile))
             {
                 _resolvedOutFile = GetUnresolvedProviderPathFromPSPath(OutFile);
             }
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(terminatingError);
             }
 
-            if (String.IsNullOrEmpty(_resolvedOutFile))
+            if (string.IsNullOrEmpty(_resolvedOutFile))
             {
                 WriteObject(encodedContent);
             }
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Validate Path
-            if (!String.IsNullOrEmpty(Path))
+            if (!string.IsNullOrEmpty(Path))
             {
                 ProviderInfo provider = null;
                 Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out provider);
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
                 _resolvedPath = resolvedPaths[0];
             }
 
-            if (!String.IsNullOrEmpty(LiteralPath))
+            if (!string.IsNullOrEmpty(LiteralPath))
             {
                 // Validate that the path exists
                 SessionState.InvokeProvider.Item.Get(new string[] { LiteralPath }, false, true);
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Validate Path
-            if (!String.IsNullOrEmpty(Path))
+            if (!string.IsNullOrEmpty(Path))
             {
                 ProviderInfo provider = null;
                 Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out provider);
@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
                 _resolvedPath = resolvedPaths[0];
             }
 
-            if (!String.IsNullOrEmpty(LiteralPath))
+            if (!string.IsNullOrEmpty(LiteralPath))
             {
                 // Validate that the path exists
                 SessionState.InvokeProvider.Item.Get(new string[] { LiteralPath }, false, true);

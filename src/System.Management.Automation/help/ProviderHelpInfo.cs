@@ -194,7 +194,7 @@ namespace System.Management.Automation
         /// <returns>An mshObject that contains provider-specific commandlet help.</returns>
         internal PSObject GetCmdletHelp(string cmdletName)
         {
-            if (String.IsNullOrEmpty(cmdletName))
+            if (string.IsNullOrEmpty(cmdletName))
                 return null;
 
             LoadCmdletHelps();
@@ -351,7 +351,7 @@ namespace System.Management.Automation
         {
             ProviderHelpInfo providerHelpInfo = new ProviderHelpInfo(xmlNode);
 
-            if (String.IsNullOrEmpty(providerHelpInfo.Name))
+            if (string.IsNullOrEmpty(providerHelpInfo.Name))
                 return null;
 
             providerHelpInfo.AddCommonHelpProperties();

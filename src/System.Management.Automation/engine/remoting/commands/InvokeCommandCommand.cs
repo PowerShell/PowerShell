@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
                     _name = value;
                     _asjob = true;
@@ -920,7 +920,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (String.IsNullOrEmpty(ConfigurationName))
+            if (string.IsNullOrEmpty(ConfigurationName))
             {
                 if ((ParameterSetName == InvokeCommandCommand.ComputerNameParameterSet) ||
                     (ParameterSetName == InvokeCommandCommand.UriParameterSet) ||

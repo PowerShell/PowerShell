@@ -1206,7 +1206,7 @@ namespace System.Management.Automation.Remoting
             string appDomainName,
             string containerObRoot)
         {
-            if (String.IsNullOrEmpty(containerObRoot))
+            if (string.IsNullOrEmpty(containerObRoot))
             {
                 throw new PSArgumentNullException("containerObRoot");
             }

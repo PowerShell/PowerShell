@@ -2818,7 +2818,7 @@ namespace System.Management.Automation
                 if (currentParameterSetActive == 1)
                 {
                     string parameterSetName = bindableParameters.GetParameterSetName(currentParameterSet);
-                    if (!String.IsNullOrEmpty(parameterSetName))
+                    if (!string.IsNullOrEmpty(parameterSetName))
                     {
                         ParameterBinderBase.bindingTracer.WriteLine("Remaining valid parameter set: {0}", parameterSetName);
                     }

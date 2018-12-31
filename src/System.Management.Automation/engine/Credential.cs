@@ -323,7 +323,7 @@ namespace System.Management.Automation
                                             out string user,
                                             out string domain)
         {
-            if (String.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input))
             {
                 user = domain = null;
                 return false;

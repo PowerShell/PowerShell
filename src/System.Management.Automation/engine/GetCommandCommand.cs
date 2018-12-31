@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.Commands
                     // otherwise just return the object...
                     if (Syntax)
                     {
-                        if (!String.IsNullOrEmpty(result.Syntax))
+                        if (!string.IsNullOrEmpty(result.Syntax))
                         {
                             PSObject syntax = PSObject.AsPSObject(result.Syntax);
 
@@ -732,10 +732,10 @@ namespace Microsoft.PowerShell.Commands
                         // If the command name had no wildcards or was module-qualified,
                         // import the module so that we can return the fully structured data.
                         // This uses the same code path as module auto-loading.
-                        if ((!isPattern) || (!String.IsNullOrEmpty(moduleName)))
+                        if ((!isPattern) || (!string.IsNullOrEmpty(moduleName)))
                         {
                             string tempCommandName = commandName;
-                            if ((!isModuleQualified) && (!String.IsNullOrEmpty(moduleName)))
+                            if ((!isModuleQualified) && (!string.IsNullOrEmpty(moduleName)))
                             {
                                 tempCommandName = moduleName + "\\" + commandName;
                             }

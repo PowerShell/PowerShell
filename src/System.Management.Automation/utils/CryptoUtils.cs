@@ -1228,7 +1228,7 @@ namespace System.Management.Automation.Internal
         /// <returns>True on success.</returns>
         internal bool ImportRemotePublicKey(string publicKeyAsString)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
+            Dbg.Assert(!string.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
 
             // generate the crypto provider to use for encryption
             //_rsaCryptoProvider = GenerateCryptoServiceProvider(false);
@@ -1383,7 +1383,7 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal bool ImportEncryptedSessionKey(string encryptedSessionKey)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");
+            Dbg.Assert(!string.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");
 
             try
             {

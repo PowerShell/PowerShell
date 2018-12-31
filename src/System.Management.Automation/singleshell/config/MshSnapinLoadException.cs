@@ -99,7 +99,7 @@ namespace System.Management.Automation.Runspaces
             // if _PSSnapin or _reason is empty, this exception is created using default
             // constructor. Don't create the error record since there is
             // no useful information anyway.
-            if (!String.IsNullOrEmpty(_PSSnapin) && !String.IsNullOrEmpty(_reason))
+            if (!string.IsNullOrEmpty(_PSSnapin) && !string.IsNullOrEmpty(_reason))
             {
                 Assembly currentAssembly = typeof(PSSnapInException).Assembly;
 

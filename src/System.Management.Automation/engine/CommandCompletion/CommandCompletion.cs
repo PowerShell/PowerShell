@@ -886,7 +886,7 @@ namespace System.Management.Automation
                 // Determine if we need to quote the paths we parse
 
                 lastWord = lastWord ?? string.Empty;
-                bool isLastWordEmpty = String.IsNullOrEmpty(lastWord);
+                bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
                 bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith("*", StringComparison.Ordinal);
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
 
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
 
             private static List<PathItemAndConvertedPath> PSv2FindMatches(PowerShellExecutionHelper helper, string path, bool shouldFullyQualifyPaths)
             {
-                Diagnostics.Assert(!String.IsNullOrEmpty(path), "path should have a value");
+                Diagnostics.Assert(!string.IsNullOrEmpty(path), "path should have a value");
                 var result = new List<PathItemAndConvertedPath>();
 
                 Exception exceptionThrown;

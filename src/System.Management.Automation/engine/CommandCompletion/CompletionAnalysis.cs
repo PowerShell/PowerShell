@@ -954,7 +954,7 @@ namespace System.Management.Automation
         private static string GetFirstLineSubString(string stringToComplete, out bool hasNewLine)
         {
             hasNewLine = false;
-            if (!String.IsNullOrEmpty(stringToComplete))
+            if (!string.IsNullOrEmpty(stringToComplete))
             {
                 var index = stringToComplete.IndexOfAny(Utils.Separators.CrLf);
                 if (index >= 0)
@@ -1146,7 +1146,7 @@ namespace System.Management.Automation
                                                     dynamicKeywordAst != keywordAst &&
                                                     !String.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
                                                 {
-                                                    if (!String.IsNullOrEmpty(dynamicKeywordAst.ElementName))
+                                                    if (!string.IsNullOrEmpty(dynamicKeywordAst.ElementName))
                                                     {
                                                         StringBuilder sb = new StringBuilder("[", 50);
                                                         sb.Append(dynamicKeywordAst.Keyword.Keyword);

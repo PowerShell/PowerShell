@@ -48,7 +48,7 @@ namespace System.Management.Automation
             get
             {
                 string result = this.Name;
-                if (!String.IsNullOrEmpty(this.PSSnapInName))
+                if (!string.IsNullOrEmpty(this.PSSnapInName))
                 {
                     result =
                         String.Format(
@@ -374,7 +374,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("implementingType");
             }
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -429,7 +429,7 @@ namespace System.Management.Automation
                 // If the pssnapin name and provider name are specified, then both must match
                 do // false loop
                 {
-                    if (!String.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
+                    if (!string.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
                     {
                         // After converting core snapins to load as modules, the providers will have Module property populated
                         if (!String.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
@@ -496,7 +496,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
+            if (string.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
                 String.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;

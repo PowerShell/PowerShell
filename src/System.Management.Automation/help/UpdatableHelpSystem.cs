@@ -182,7 +182,7 @@ namespace System.Management.Automation.Help
         /// <param name="percent">Progress percentage.</param>
         internal UpdatableHelpProgressEventArgs(string moduleName, string status, int percent)
         {
-            Debug.Assert(!String.IsNullOrEmpty(status));
+            Debug.Assert(!string.IsNullOrEmpty(status));
 
             CommandType = UpdatableHelpCommandType.UnknownCommand;
             ProgressStatus = status;
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Help
         /// <param name="percent">Progress percentage.</param>
         internal UpdatableHelpProgressEventArgs(string moduleName, UpdatableHelpCommandType type, string status, int percent)
         {
-            Debug.Assert(!String.IsNullOrEmpty(status));
+            Debug.Assert(!string.IsNullOrEmpty(status));
 
             CommandType = type;
             ProgressStatus = status;
@@ -379,7 +379,7 @@ namespace System.Management.Automation.Help
         /// <returns>Resolved URI.</returns>
         private string ResolveUri(string baseUri, bool verbose)
         {
-            Debug.Assert(!String.IsNullOrEmpty(baseUri));
+            Debug.Assert(!string.IsNullOrEmpty(baseUri));
 
             // Directory.Exists checks if baseUri is a network drive or
             // a local directory. If baseUri is local, we don't need to resolve it.
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Help
             string uri = pathOverride;
             string unresolvedUri = document["HelpInfo"]["HelpContentURI"].InnerText;
 
-            if (String.IsNullOrEmpty(pathOverride))
+            if (string.IsNullOrEmpty(pathOverride))
             {
                 if (shouldResolveUri)
                 {
@@ -583,7 +583,7 @@ namespace System.Management.Automation.Help
 
             UpdatableHelpInfo helpInfo = new UpdatableHelpInfo(unresolvedUri, updatableHelpItem);
 
-            if (!String.IsNullOrEmpty(currentCulture))
+            if (!string.IsNullOrEmpty(currentCulture))
             {
                 WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
                 IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { currentCulture }, wildcardOptions);
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Help
                 }
             }
 
-            if (!String.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
+            if (!string.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
             {
                 // throw exception
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation.Help
         {
             var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);
             string defaultSourcePath = updatableHelpSetting?.DefaultSourcePath;
-            return String.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
+            return string.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
         }
 
         /// <summary>

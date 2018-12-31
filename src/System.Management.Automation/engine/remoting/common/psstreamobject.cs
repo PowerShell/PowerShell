@@ -392,7 +392,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             // if we get a base InformationRecord object, check if the computerName is
                             // populated in the Source field
-                            if (!String.IsNullOrEmpty(informationRecord.Source))
+                            if (!string.IsNullOrEmpty(informationRecord.Source))
                             {
                                 string computerName;
                                 Guid jobInstanceId;

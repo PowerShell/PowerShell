@@ -157,7 +157,7 @@ namespace System.Management.Automation
             ScopedItemOptions options,
             Collection<Attribute> attributes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }

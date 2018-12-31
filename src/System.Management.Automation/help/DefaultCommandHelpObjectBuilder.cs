@@ -710,7 +710,7 @@ namespace System.Management.Automation.Help
         /// <param name="helpUri"></param>
         private static void AddRemarksProperties(PSObject obj, string cmdletName, string helpUri)
         {
-            if (String.IsNullOrEmpty(helpUri))
+            if (string.IsNullOrEmpty(helpUri))
             {
                 obj.Properties.Add(new PSNoteProperty("remarks", StringUtil.Format(HelpDisplayStrings.GetLatestHelpContentWithoutHelpUri, cmdletName)));
             }
@@ -727,7 +727,7 @@ namespace System.Management.Automation.Help
         /// <param name="relatedLink"></param>
         internal static void AddRelatedLinksProperties(PSObject obj, string relatedLink)
         {
-            if (!String.IsNullOrEmpty(relatedLink))
+            if (!string.IsNullOrEmpty(relatedLink))
             {
                 PSObject navigationLinkObj = new PSObject();
 
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Help
         private static bool HasHelpInfoUri(PSModuleInfo module, string moduleName)
         {
             // The core module is really a SnapIn, so module will be null
-            if (!String.IsNullOrEmpty(moduleName) && moduleName.Equals(InitialSessionState.CoreModule, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(moduleName) && moduleName.Equals(InitialSessionState.CoreModule, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -909,7 +909,7 @@ namespace System.Management.Automation.Help
                 return false;
             }
 
-            return !String.IsNullOrEmpty(module.HelpInfoUri);
+            return !string.IsNullOrEmpty(module.HelpInfoUri);
         }
     }
 }

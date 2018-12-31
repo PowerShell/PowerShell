@@ -34,7 +34,7 @@ namespace System.Management.Automation.ComInterop
             // yields a runtime exception in the ToString() function.
             DefaultValue = DBNull.Value;
 
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 // This is a parameter, not a return value
                 IsOut = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOUT) != 0;

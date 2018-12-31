@@ -1321,7 +1321,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Verify the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -2726,7 +2726,7 @@ namespace Microsoft.PowerShell.Commands
             string noun = null;
             try
             {
-                if (!String.IsNullOrEmpty(helpItemName))
+                if (!string.IsNullOrEmpty(helpItemName))
                 {
                     CmdletInfo.SplitCmdletName(helpItemName, out verb, out noun);
                 }
@@ -2735,7 +2735,7 @@ namespace Microsoft.PowerShell.Commands
                     return String.Empty;
                 }
 
-                if (String.IsNullOrEmpty(verb) || String.IsNullOrEmpty(noun))
+                if (string.IsNullOrEmpty(verb) || string.IsNullOrEmpty(noun))
                 {
                     return String.Empty;
                 }
@@ -2962,7 +2962,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public override string ToString()
         {
-            return String.IsNullOrEmpty(_friendlyName) ?
+            return string.IsNullOrEmpty(_friendlyName) ?
                         _oid :
                         _friendlyName + " (" + _oid + ")";
         }

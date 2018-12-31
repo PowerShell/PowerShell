@@ -1413,7 +1413,7 @@ namespace System.Management.Automation.Runspaces
     {
         protected override void SetItem(int index, string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
@@ -1430,7 +1430,7 @@ namespace System.Management.Automation.Runspaces
 
         protected override void InsertItem(int index, string item)
         {
-            if (String.IsNullOrEmpty(item))
+            if (string.IsNullOrEmpty(item))
             {
                 throw PSTraceSource.NewArgumentException("item");
             }
@@ -1479,7 +1479,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < this.Count; i++)
             {
                 string str = this[i];
-                if (String.IsNullOrEmpty(str))
+                if (string.IsNullOrEmpty(str))
                 {
                     throw PSTraceSource.NewArgumentException("strings");
                 }
@@ -3037,7 +3037,7 @@ namespace System.Management.Automation.Runspaces
         internal static void ProcessAliasData(ConcurrentBag<string> errors, string typeName, AliasPropertyData aliasData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             // ReferencedMemberName should not be an empty string
-            if (String.IsNullOrEmpty(aliasData.ReferencedMemberName))
+            if (string.IsNullOrEmpty(aliasData.ReferencedMemberName))
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "AliasPropertyData", "ReferencedMemberName");
                 return;
@@ -3137,7 +3137,7 @@ namespace System.Management.Automation.Runspaces
             Collection<string> referencedProperties = new Collection<string>();
             foreach (string name in propertySetData.ReferencedProperties)
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     AddError(errors, typeName, TypesXmlStrings.TypeDataShouldNotBeNullOrEmpty, "PropertySetData", "ReferencedProperties");
                     continue;
@@ -3253,7 +3253,7 @@ namespace System.Management.Automation.Runspaces
         private void ProcessTypeDataToAdd(ConcurrentBag<string> errors, TypeData typeData)
         {
             string typeName = typeData.TypeName;
-            Dbg.Assert(!String.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
+            Dbg.Assert(!string.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
 
             var propertySets = new Collection<PropertySetData>();
             if (typeData.DefaultDisplayPropertySet != null)
@@ -3373,7 +3373,7 @@ namespace System.Management.Automation.Runspaces
         private void ProcessTypeDataToRemove(ConcurrentBag<string> errors, TypeData typeData)
         {
             string typeName = typeData.TypeName;
-            Dbg.Assert(!String.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
+            Dbg.Assert(!string.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
 
             // We always remove the whole type
             bool typeExist = false;
@@ -4314,7 +4314,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="typeName">The name of the type to remove from TypeTable.</param>
         public void RemoveType(string typeName)
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
                 throw PSTraceSource.NewArgumentNullException("typeName");
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");

@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 case propertyValuePathSet:
                 case propertyValueLiteralPathSet:
-                    if (!String.IsNullOrEmpty(Name))
+                    if (!string.IsNullOrEmpty(Name))
                     {
                         mshObject = new PSObject();
                         mshObject.Properties.Add(new PSNoteProperty(Name, Value));

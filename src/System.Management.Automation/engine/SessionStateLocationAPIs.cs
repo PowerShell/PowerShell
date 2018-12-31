@@ -817,7 +817,7 @@ namespace System.Management.Automation
         /// </param>
         internal void PushCurrentLocation(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = _defaultStackName;
             }
@@ -892,7 +892,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfo PopLocation(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = _defaultStackName;
             }
@@ -992,7 +992,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfoStack LocationStack(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = _defaultStackName;
             }
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfoStack SetDefaultLocationStack(string stackName)
         {
-            if (String.IsNullOrEmpty(stackName))
+            if (string.IsNullOrEmpty(stackName))
             {
                 stackName = startingDefaultStackName;
             }

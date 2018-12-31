@@ -4861,7 +4861,7 @@ namespace System.Management.Automation
             XmlNode node = (XmlNode)obj;
             string nodeNamespace = node.NamespaceURI;
             IEnumerable<string> baseTypeNames = GetDotNetTypeNameHierarchy(obj);
-            if (String.IsNullOrEmpty(nodeNamespace))
+            if (string.IsNullOrEmpty(nodeNamespace))
             {
                 foreach (string baseType in baseTypeNames)
                 {

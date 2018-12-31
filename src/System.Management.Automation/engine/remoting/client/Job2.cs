@@ -2045,7 +2045,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < ChildJobs.Count; i++)
             {
-                if (!String.IsNullOrEmpty(ChildJobs[i].StatusMessage))
+                if (!string.IsNullOrEmpty(ChildJobs[i].StatusMessage))
                 {
                     sb.Append(ChildJobs[i].StatusMessage);
                 }

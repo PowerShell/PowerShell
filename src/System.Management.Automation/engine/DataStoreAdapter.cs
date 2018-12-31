@@ -506,7 +506,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void SetName(string newName)
         {
-            if (String.IsNullOrEmpty(newName))
+            if (string.IsNullOrEmpty(newName))
             {
                 throw PSTraceSource.NewArgumentException("newName");
             }

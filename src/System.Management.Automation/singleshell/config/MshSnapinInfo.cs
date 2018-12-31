@@ -229,7 +229,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(ModuleName) || Path.IsPathRooted(ModuleName))
+                if (string.IsNullOrEmpty(ModuleName) || Path.IsPathRooted(ModuleName))
                 {
                     return ModuleName;
                 }
@@ -385,12 +385,12 @@ namespace System.Management.Automation
                 }
             }
 
-            if (String.IsNullOrEmpty(_description))
+            if (string.IsNullOrEmpty(_description))
             {
                 _description = _descriptionFallback;
             }
 
-            if (String.IsNullOrEmpty(_vendor))
+            if (string.IsNullOrEmpty(_vendor))
             {
                 _vendor = _vendorFallback;
             }
@@ -425,7 +425,7 @@ namespace System.Management.Automation
         /// <param name="psSnapinId">PSSnapIn Id to validate.</param>
         internal static bool IsPSSnapinIdValid(string psSnapinId)
         {
-            if (String.IsNullOrEmpty(psSnapinId))
+            if (string.IsNullOrEmpty(psSnapinId))
             {
                 return false;
             }
@@ -723,7 +723,7 @@ namespace System.Management.Automation
 
             bool logPipelineExecutionDetails = false;
             string logPipelineExecutionDetailsStr = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_LogPipelineExecutionDetails, false);
-            if (!String.IsNullOrEmpty(logPipelineExecutionDetailsStr))
+            if (!string.IsNullOrEmpty(logPipelineExecutionDetailsStr))
             {
                 if (String.Compare("1", logPipelineExecutionDetailsStr, StringComparison.OrdinalIgnoreCase) == 0)
                     logPipelineExecutionDetails = true;

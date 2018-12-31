@@ -84,12 +84,12 @@ namespace System.Management.Automation
             params object[] args)
             : base(errorCategory, invocationInfo, errorPosition, errorId, null, null)
         {
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw PSTraceSource.NewArgumentException("resourceString");
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 throw PSTraceSource.NewArgumentException("errorId");
             }
@@ -197,12 +197,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("invocationInfo");
             }
 
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw PSTraceSource.NewArgumentException("resourceString");
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 throw PSTraceSource.NewArgumentException("errorId");
             }
@@ -251,7 +251,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pbex");
             }
 
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
                 throw PSTraceSource.NewArgumentException("resourceString");
             }
@@ -508,7 +508,7 @@ namespace System.Management.Automation
 
             string result = String.Empty;
 
-            if (!String.IsNullOrEmpty(_resourceString))
+            if (!string.IsNullOrEmpty(_resourceString))
             {
                 result = StringUtil.Format(_resourceString, messageArgs);
             }

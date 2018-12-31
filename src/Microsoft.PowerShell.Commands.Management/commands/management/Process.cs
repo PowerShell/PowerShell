@@ -1930,7 +1930,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     NetworkCredential nwcredential = _credential.GetNetworkCredential();
                     startInfo.UserName = nwcredential.UserName;
-                    if (String.IsNullOrEmpty(nwcredential.Domain))
+                    if (string.IsNullOrEmpty(nwcredential.Domain))
                     {
                         startInfo.Domain = ".";
                     }
@@ -2175,7 +2175,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void StdOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!String.IsNullOrEmpty(outLine.Data))
+            if (!string.IsNullOrEmpty(outLine.Data))
             {
                 _outputWriter.WriteLine(outLine.Data);
                 _outputWriter.Flush();
@@ -2184,7 +2184,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void StdErrorHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!String.IsNullOrEmpty(outLine.Data))
+            if (!string.IsNullOrEmpty(outLine.Data))
             {
                 _errorWriter.WriteLine(outLine.Data);
                 _errorWriter.Flush();

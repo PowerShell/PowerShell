@@ -1114,7 +1114,7 @@ namespace System.Management.Automation.Runspaces
         private string ResolveShellUri(string shell)
         {
             string resolvedShellUri = shell;
-            if (String.IsNullOrEmpty(resolvedShellUri))
+            if (string.IsNullOrEmpty(resolvedShellUri))
             {
                 resolvedShellUri = DefaultShellUri;
             }
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             //default host is localhost
-            if (String.IsNullOrEmpty(computerName) || String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(computerName) || String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 _computerName = DefaultComputerName;
             }
@@ -1232,7 +1232,7 @@ namespace System.Management.Automation.Runspaces
 
             // default appname is WSMan
             _appName = appName;
-            if (String.IsNullOrEmpty(_appName))
+            if (string.IsNullOrEmpty(_appName))
             {
                 _appName = s_defaultAppName;
             }
@@ -1968,7 +1968,7 @@ namespace System.Management.Automation.Runspaces
             ValidatePortInRange(port);
 
             this.Port = (port != 0) ? port : DefaultPort;
-            this.Subsystem = (String.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+            this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
         }
 
         #endregion
@@ -3147,7 +3147,7 @@ namespace System.Management.Automation.Runspaces
             this.RunAsAdmin = runAsAdmin;
             this.ConfigurationName = configurationName;
 
-            Dbg.Assert(!String.IsNullOrEmpty(containerId), "containerId input cannot be empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(containerId), "containerId input cannot be empty.");
 
             GetContainerProperties();
         }

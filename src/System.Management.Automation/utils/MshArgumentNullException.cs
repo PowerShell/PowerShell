@@ -147,7 +147,7 @@ namespace System.Management.Automation
         /// <value></value>
         public override string Message
         {
-            get { return String.IsNullOrEmpty(_message) ? base.Message : _message; }
+            get { return string.IsNullOrEmpty(_message) ? base.Message : _message; }
         }
 
         private string _message;

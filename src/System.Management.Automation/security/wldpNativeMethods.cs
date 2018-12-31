@@ -120,7 +120,7 @@ namespace System.Management.Automation.Security
             }
 
             // If path is NULL, see if we have the cached system-wide lockdown policy.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 if ((s_cachedWldpSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Security
                 hostInformation.dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION;
                 hostInformation.dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL;
 
-                if (!String.IsNullOrEmpty(path))
+                if (!string.IsNullOrEmpty(path))
                 {
                     hostInformation.szSource = path;
 
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Security
                     SystemEnforcementMode resultingLockdownPolicy = GetLockdownPolicyForResult(pdwLockdownState);
 
                     // If this is a query for the system-wide lockdown policy, cache it.
-                    if (String.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(path))
                     {
                         s_cachedWldpSystemPolicy = resultingLockdownPolicy;
                     }
@@ -185,7 +185,7 @@ namespace System.Management.Automation.Security
             // Since there is no way to get that from AppLocker, we will test the policy
             // against a random non-existent script and module. If that is allowed, then there is
             // no AppLocker script policy.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 if ((s_cachedSaferSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {

@@ -309,7 +309,7 @@ namespace System.Management.Automation
 
             string name = fileName.Substring(0, fileName.Length - 9 /* ".help.txt".Length */);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             HelpInfo helpInfo = GetCache(path);

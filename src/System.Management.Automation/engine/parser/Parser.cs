@@ -4498,7 +4498,7 @@ namespace System.Management.Automation.Language
                     endExtent = terminatorToken.Extent;
                 }
 
-                if (!String.IsNullOrEmpty(varToken.Name))
+                if (!string.IsNullOrEmpty(varToken.Name))
                 {
                     return new PropertyMemberAst(ExtentOf(startExtent, endExtent), varToken.Name,
                         typeConstraint, attributeList, attributes, initialValueAst);

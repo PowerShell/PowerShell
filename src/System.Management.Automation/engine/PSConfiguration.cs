@@ -135,7 +135,7 @@ namespace System.Management.Automation.Configuration
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
             string rawExecPolicy = ReadValueFromFile<string>(scope, valueName);
 
-            if (!String.IsNullOrEmpty(rawExecPolicy))
+            if (!string.IsNullOrEmpty(rawExecPolicy))
             {
                 execPolicy = rawExecPolicy;
             }

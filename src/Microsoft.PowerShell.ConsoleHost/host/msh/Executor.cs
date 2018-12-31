@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell
         internal void ExecuteCommandAsync(string command, out Exception exceptionThrown, ExecutionOptions options)
         {
             Dbg.Assert(!useNestedPipelines, "can't async invoke a nested pipeline");
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
 
             bool addToHistory = (options & ExecutionOptions.AddToHistory) > 0;
             Pipeline tempPipeline = _parent.RunspaceRef.CreatePipeline(command, addToHistory, false);
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell
 
         internal Pipeline CreatePipeline(string command, bool addToHistory)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
             return _parent.RunspaceRef.CreatePipeline(command, addToHistory, useNestedPipelines);
         }
 
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell
         /// </returns>
         internal Collection<PSObject> ExecuteCommand(string command, out Exception exceptionThrown, ExecutionOptions options)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
 
             // Experimental:
             // Check for implicit remoting commands that can be batched, and execute as batched if able.
@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell
         {
             exceptionThrown = null;
 
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
 
             bool? result = null;
 

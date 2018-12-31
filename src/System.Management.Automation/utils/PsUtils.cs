@@ -222,7 +222,7 @@ namespace System.Management.Automation
                 System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
             string hostname = ipProperties.HostName;
-            if (!String.IsNullOrEmpty(ipProperties.DomainName))
+            if (!string.IsNullOrEmpty(ipProperties.DomainName))
             {
                 hostname = hostname + "." + ipProperties.DomainName;
             }

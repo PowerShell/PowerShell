@@ -27,10 +27,10 @@ namespace System.Management.Automation.Help
         /// <param name="uri">HelpInfo URI.</param>
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
-            Debug.Assert(!String.IsNullOrEmpty(name));
+            Debug.Assert(!string.IsNullOrEmpty(name));
             Debug.Assert(guid != null);
-            Debug.Assert(!String.IsNullOrEmpty(path));
-            Debug.Assert(!String.IsNullOrEmpty(uri));
+            Debug.Assert(!string.IsNullOrEmpty(path));
+            Debug.Assert(!string.IsNullOrEmpty(uri));
 
             ModuleName = name;
             _moduleGuid = guid;

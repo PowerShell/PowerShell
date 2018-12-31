@@ -312,7 +312,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static CommandMetadata Get(string commandName, Type cmdletType, ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 throw PSTraceSource.NewArgumentException("commandName");
             }
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CommandMetadata(string commandName, Type cmdletType, ExecutionContext context)
         {
-            if (String.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandName))
             {
                 throw PSTraceSource.NewArgumentException("commandName");
             }

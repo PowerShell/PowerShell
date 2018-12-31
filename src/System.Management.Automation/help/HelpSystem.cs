@@ -289,7 +289,7 @@ namespace System.Management.Automation
 
             _lastHelpCategory = helpRequest.HelpCategory;
 
-            if (String.IsNullOrEmpty(helpRequest.Target))
+            if (string.IsNullOrEmpty(helpRequest.Target))
             {
                 HelpInfo helpInfo = GetDefaultHelp();
 
@@ -629,7 +629,7 @@ namespace System.Management.Automation
         {
             Assembly providerAssembly = null;
 
-            if (String.IsNullOrEmpty(providerInfo.AssemblyName))
+            if (string.IsNullOrEmpty(providerInfo.AssemblyName))
             {
                 providerAssembly = Assembly.GetExecutingAssembly();
             }

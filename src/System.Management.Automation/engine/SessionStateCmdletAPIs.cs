@@ -42,7 +42,7 @@ namespace System.Management.Automation
         internal CmdletInfo GetCmdlet(string cmdletName, CommandOrigin origin)
         {
             CmdletInfo result = null;
-            if (String.IsNullOrEmpty(cmdletName))
+            if (string.IsNullOrEmpty(cmdletName))
             {
                 return null;
             }
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         internal CmdletInfo GetCmdletAtScope(string cmdletName, string scopeID)
         {
             CmdletInfo result = null;
-            if (String.IsNullOrEmpty(cmdletName))
+            if (string.IsNullOrEmpty(cmdletName))
             {
                 return null;
             }
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveCmdlet(string name, int index, bool force, CommandOrigin origin)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -286,7 +286,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveCmdletEntry(string name, bool force)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }

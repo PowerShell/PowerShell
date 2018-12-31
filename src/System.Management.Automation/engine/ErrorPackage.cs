@@ -223,12 +223,12 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!String.IsNullOrEmpty(_errorRecord._activityOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._activityOverride))
                     return _errorRecord._activityOverride;
 
                 if (_errorRecord.InvocationInfo != null
                     && (_errorRecord.InvocationInfo.MyCommand is CmdletInfo || _errorRecord.InvocationInfo.MyCommand is IScriptCommandInfo)
-                    && !String.IsNullOrEmpty(_errorRecord.InvocationInfo.MyCommand.Name)
+                    && !string.IsNullOrEmpty(_errorRecord.InvocationInfo.MyCommand.Name)
                     )
                 {
                     return _errorRecord.InvocationInfo.MyCommand.Name;
@@ -257,7 +257,7 @@ namespace System.Management.Automation
             get
             {
                 _reasonIsExceptionType = false;
-                if (!String.IsNullOrEmpty(_errorRecord._reasonOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._reasonOverride))
                     return _errorRecord._reasonOverride;
                 if (_errorRecord.Exception != null)
                 {
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!String.IsNullOrEmpty(_errorRecord._targetNameOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._targetNameOverride))
                     return _errorRecord._targetNameOverride;
                 if (_errorRecord.TargetObject != null)
                 {
@@ -330,7 +330,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!String.IsNullOrEmpty(_errorRecord._targetTypeOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._targetTypeOverride))
                     return _errorRecord._targetTypeOverride;
                 if (_errorRecord.TargetObject != null)
                 {
@@ -404,7 +404,7 @@ namespace System.Management.Automation
         {
             // get template text
             string errorCategoryString = Category.ToString();
-            if (String.IsNullOrEmpty(errorCategoryString))
+            if (string.IsNullOrEmpty(errorCategoryString))
             {
                 // this probably indicates an invalid ErrorCategory value
                 errorCategoryString = ErrorCategory.NotSpecified.ToString();
@@ -412,13 +412,13 @@ namespace System.Management.Automation
 
             string templateText = ErrorCategoryStrings.ResourceManager.GetString(errorCategoryString, uiCultureInfo);
 
-            if (String.IsNullOrEmpty(templateText))
+            if (string.IsNullOrEmpty(templateText))
             {
                 // this probably indicates an invalid ErrorCategory value
                 templateText = ErrorCategoryStrings.NotSpecified;
             }
 
-            Diagnostics.Assert(!String.IsNullOrEmpty(templateText),
+            Diagnostics.Assert(!string.IsNullOrEmpty(templateText),
                 "ErrorCategoryStrings.resx resource failure");
 
             string activityInUse = Ellipsize(uiCultureInfo, Activity);
@@ -802,10 +802,10 @@ namespace System.Management.Automation
             if (cmdlet == null)
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
                 throw PSTraceSource.NewArgumentNullException("baseName");
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
             string template = string.Empty;
@@ -837,10 +837,10 @@ namespace System.Management.Automation
             if (resourceSupplier == null)
                 throw PSTraceSource.NewArgumentNullException("resourceSupplier");
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
                 throw PSTraceSource.NewArgumentNullException("baseName");
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
             string template = string.Empty;
@@ -872,10 +872,10 @@ namespace System.Management.Automation
             if (assembly == null)
                 throw PSTraceSource.NewArgumentNullException("assembly");
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
                 throw PSTraceSource.NewArgumentNullException("baseName");
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
             string template = string.Empty;
@@ -1491,8 +1491,8 @@ namespace System.Management.Automation
 
                 string typeName = GetInvocationTypeName();
                 string delimiter =
-                    (String.IsNullOrEmpty(typeName)
-                     || String.IsNullOrEmpty(_errorId))
+                    (string.IsNullOrEmpty(typeName)
+                     || string.IsNullOrEmpty(_errorId))
                         ? string.Empty : ",";
                 return NotNull(_errorId) + delimiter + NotNull(typeName);
             }
@@ -1693,14 +1693,14 @@ namespace System.Management.Automation
         public override string ToString()
         {
             if (ErrorDetails != null
-                && !String.IsNullOrEmpty(ErrorDetails.Message))
+                && !string.IsNullOrEmpty(ErrorDetails.Message))
             {
                 return ErrorDetails.Message;
             }
 
             if (Exception != null)
             {
-                if (!String.IsNullOrEmpty(Exception.Message))
+                if (!string.IsNullOrEmpty(Exception.Message))
                 {
                     return Exception.Message;
                 }

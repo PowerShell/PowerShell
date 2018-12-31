@@ -154,7 +154,7 @@ namespace System.Management.Automation
 
             string helpFile = providerInfo.HelpFile;
 
-            if (String.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
+            if (string.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
             {
                 return;
             }
@@ -191,7 +191,7 @@ namespace System.Management.Automation
             }
 
             string location = MUIFileSearcher.LocateFile(helpFileToLoad, searchPaths);
-            if (String.IsNullOrEmpty(location))
+            if (string.IsNullOrEmpty(location))
                 throw new FileNotFoundException(helpFile);
 
             XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -386,7 +386,7 @@ namespace System.Management.Automation
             }
 
             string providerName = helpRequest.Provider;
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 providerName = this._sessionState.Path.CurrentLocation.Provider.Name;
             }

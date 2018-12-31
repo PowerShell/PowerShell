@@ -20,9 +20,9 @@ namespace System.Management.Automation.Help
         /// <param name="resolvedUri">Resolved URI.</param>
         internal UpdatableHelpUri(string moduleName, Guid moduleGuid, CultureInfo culture, string resolvedUri)
         {
-            Debug.Assert(!String.IsNullOrEmpty(moduleName));
+            Debug.Assert(!string.IsNullOrEmpty(moduleName));
             Debug.Assert(moduleGuid != null);
-            Debug.Assert(!String.IsNullOrEmpty(resolvedUri));
+            Debug.Assert(!string.IsNullOrEmpty(resolvedUri));
 
             ModuleName = moduleName;
             ModuleGuid = moduleGuid;

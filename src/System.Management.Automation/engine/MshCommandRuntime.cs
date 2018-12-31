@@ -907,7 +907,7 @@ namespace System.Management.Automation
 
         internal void SetupOutVariable()
         {
-            if (String.IsNullOrEmpty(this.OutVariable))
+            if (string.IsNullOrEmpty(this.OutVariable))
             {
                 return;
             }
@@ -917,7 +917,7 @@ namespace System.Management.Automation
             // Handle the creation of OutVariable in the case of Out-Default specially,
             // as it needs to handle much of its OutVariable support itself.
             if (
-                (!String.IsNullOrEmpty(this.OutVariable)) &&
+                (!string.IsNullOrEmpty(this.OutVariable)) &&
                 (!(this.OutVariable.StartsWith("+", StringComparison.Ordinal))) &&
                 String.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
@@ -947,7 +947,7 @@ namespace System.Management.Automation
             // This can't use the common SetupVariable implementation, as this needs to persist for an entire
             // pipeline.
 
-            if (String.IsNullOrEmpty(this.PipelineVariable))
+            if (string.IsNullOrEmpty(this.PipelineVariable))
             {
                 return;
             }
@@ -1524,7 +1524,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            if (String.IsNullOrEmpty(verboseWarning))
+            if (string.IsNullOrEmpty(verboseWarning))
                 verboseWarning = StringUtil.Format(CommandBaseStrings.ShouldProcessWarningFallback,
                     verboseDescription);
 
@@ -2048,7 +2048,7 @@ namespace System.Management.Automation
 
             // This code forces the stack trace and source fields to be populated
             if (errorRecord.Exception != null
-                && String.IsNullOrEmpty(errorRecord.Exception.StackTrace))
+                && string.IsNullOrEmpty(errorRecord.Exception.StackTrace))
             {
                 try
                 {
@@ -2494,7 +2494,7 @@ namespace System.Management.Automation
 
         internal void SetupVariable(VariableStreamKind streamKind, string variableName, ref IList varList)
         {
-            if (String.IsNullOrEmpty(variableName))
+            if (string.IsNullOrEmpty(variableName))
             {
                 return;
             }
@@ -3550,12 +3550,12 @@ namespace System.Management.Automation
                 pauseOption = currentOption++;
             }
 
-            if (String.IsNullOrEmpty(inquireMessage))
+            if (string.IsNullOrEmpty(inquireMessage))
             {
                 inquireMessage = CommandBaseStrings.ShouldContinuePromptCaption;
             }
 
-            if (String.IsNullOrEmpty(inquireCaption))
+            if (string.IsNullOrEmpty(inquireCaption))
             {
                 inquireCaption = CommandBaseStrings.InquireCaptionDefault;
             }
