@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static int ProcessComparison(Process x, Process y)
         {
-            int diff = String.Compare(
+            int diff = string.Compare(
                 SafeGetProcessName(x),
                 SafeGetProcessName(y),
                 StringComparison.OrdinalIgnoreCase);

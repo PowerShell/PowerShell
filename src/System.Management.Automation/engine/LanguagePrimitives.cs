@@ -623,7 +623,7 @@ namespace System.Management.Automation
             // If both first and second are null it returns true.
             // If one is null and the other is not it returns false.
             // if (first.Equals(second)) it returns true otherwise it goes ahead with type conversion operations.
-            // If both first and second are strings it returns (String.Compare(firstString, secondString, ignoreCase) == 0).
+            // If both first and second are strings it returns (string.Compare(firstString, secondString, ignoreCase) == 0).
             // If second can be converted to the type of the first, it does so and returns first.Equals(secondConverted)
             // Otherwise false is returned
 
@@ -2207,7 +2207,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (String.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
+                            if (string.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
                                 continue;
                         }
 

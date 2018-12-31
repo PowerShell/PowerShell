@@ -725,7 +725,7 @@ namespace System.Management.Automation
             string logPipelineExecutionDetailsStr = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_LogPipelineExecutionDetails, false);
             if (!string.IsNullOrEmpty(logPipelineExecutionDetailsStr))
             {
-                if (String.Compare("1", logPipelineExecutionDetailsStr, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare("1", logPipelineExecutionDetailsStr, StringComparison.OrdinalIgnoreCase) == 0)
                     logPipelineExecutionDetails = true;
             }
 

@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (DriveInfo drive in _availableDrives)
                 {
-                    if (String.Compare(drive.Name, drivePath, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(drive.Name, drivePath, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         actualDrive = drive;
                         break;

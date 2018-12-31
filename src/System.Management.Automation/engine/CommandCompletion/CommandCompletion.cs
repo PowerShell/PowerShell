@@ -992,7 +992,7 @@ namespace System.Management.Automation
                 result.AddRange(s1);
                 for (int i = 0, j = 0; i < s2.Count; ++i)
                 {
-                    if (j < s1.Count && String.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
+                    if (j < s1.Count && string.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
                     {
                         ++j;
                         continue;

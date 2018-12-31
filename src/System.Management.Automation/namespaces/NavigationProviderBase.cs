@@ -476,7 +476,7 @@ namespace System.Management.Automation.Provider
                 // Check to see if the path is equal to the root
                 // of the virtual drive
 
-                if (String.Compare(
+                if (string.Compare(
                     path,
                     rootPath,
                     StringComparison.OrdinalIgnoreCase) == 0)

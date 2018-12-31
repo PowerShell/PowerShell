@@ -1512,7 +1512,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // See if the paths are equal
 
-                if (String.Compare(
+                if (string.Compare(
                         sourcePath,
                         destinationPath,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -1530,7 +1530,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (String.Compare(
+                if (string.Compare(
                         newDestinationPath,
                         destinationPath,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -3194,8 +3194,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (string.IsNullOrEmpty(path) ||
-                (String.Compare(path, "\\", StringComparison.OrdinalIgnoreCase) == 0) ||
-                (String.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0))
+                (string.Compare(path, "\\", StringComparison.OrdinalIgnoreCase) == 0) ||
+                (string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0))
             {
                 result = true;
             }

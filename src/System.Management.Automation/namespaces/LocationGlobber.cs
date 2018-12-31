@@ -1718,7 +1718,7 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            if (String.Compare(
+            if (string.Compare(
                     driveName,
                     StringLiterals.Global,
                     StringComparison.OrdinalIgnoreCase) == 0)
@@ -1728,7 +1728,7 @@ namespace System.Management.Automation
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
             }
-            else if (String.Compare(
+            else if (string.Compare(
                         driveName,
                         StringLiterals.Local,
                         StringComparison.OrdinalIgnoreCase) == 0)

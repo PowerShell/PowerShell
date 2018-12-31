@@ -6792,7 +6792,7 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(xPath) || string.IsNullOrEmpty(yPath))
                     Diagnostics.Assert(false, "Base object of item PSObject should be either PathInfo or FileSystemInfo");
 
-                return String.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
+                return string.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
             }
         }
 
@@ -6815,7 +6815,7 @@ namespace System.Management.Automation
                 if (xName == null || yName == null)
                     Diagnostics.Assert(false, "Base object of Command PSObject should be either CommandInfo or string");
 
-                return String.Compare(xName, yName, StringComparison.OrdinalIgnoreCase);
+                return string.Compare(xName, yName, StringComparison.OrdinalIgnoreCase);
             }
         }
 

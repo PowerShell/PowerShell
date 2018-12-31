@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (x.controlBody.GetType() != controlReference.controlType)
                     continue;
-                if (String.Compare(controlReference.name, x.name, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(controlReference.name, x.name, StringComparison.OrdinalIgnoreCase) == 0)
                     return x.controlBody;
             }
 

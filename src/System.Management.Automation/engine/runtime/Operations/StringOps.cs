@@ -84,7 +84,7 @@ namespace System.Management.Automation
         /// StringComparison.InvariantCulture is not in CoreCLR, so we need to use
         ///    CultureInfo.InvariantCulture.CompareInfo.Compare(string, string, CompareOptions)
         /// to substitute
-        ///    String.Compare(string, string, StringComparison)
+        ///    string.Compare(string, string, StringComparison)
         /// </summary>
         internal static int Compare(string strA, string strB, CultureInfo culture, CompareOptions option)
         {

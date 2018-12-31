@@ -375,7 +375,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    return String.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
+                    return string.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
                 }
             }
         }

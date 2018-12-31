@@ -1261,7 +1261,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since all root paths are hidden we need to show the directory
                 // anyway
                 bool isRootPath =
-                    String.Compare(
+                    string.Compare(
                         Path.GetPathRoot(path),
                         result.FullName,
                         StringComparison.OrdinalIgnoreCase) == 0;
@@ -1910,7 +1910,7 @@ namespace Microsoft.PowerShell.Commands
 
             //Check to see if the target specified is just filename. We dont allow rename to move the file to a different directory.
             //If a path is specified for the newName then we flag that as an error.
-            if (String.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
+            if (string.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
             {
                 throw PSTraceSource.NewArgumentException("newName", FileSystemProviderStrings.RenameError);
             }
@@ -2604,7 +2604,7 @@ namespace Microsoft.PowerShell.Commands
                     string parentPath = GetParentPath(path, root);
 
                     if (!string.IsNullOrEmpty(parentPath) &&
-                        String.Compare(
+                        string.Compare(
                             parentPath,
                             previousParent,
                             StringComparison.OrdinalIgnoreCase) != 0)
@@ -7755,7 +7755,7 @@ namespace Microsoft.PowerShell.Commands
 
                     //Don't add the target link to the list.
 
-                    if (String.Compare(fInfo.FullName, filePath, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(fInfo.FullName, filePath, StringComparison.OrdinalIgnoreCase) != 0)
                         links.Add(fInfo.FullName);
 
                     continueFind = InternalSymbolicLinkLinkCodeMethods.FindNextFileName(fileHandle, ref linkStringLength, linkName);

@@ -1046,7 +1046,7 @@ namespace System.Management.Automation.Remoting
                     isProtocolVersionDeclared = true;
                 }
 
-                if (0 == String.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal))
+                if (0 == string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal))
                 {
                     if (option.mustComply)
                     {

@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
         // sort by servicename
         private static int ServiceComparison(ServiceController x, ServiceController y)
         {
-            return String.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

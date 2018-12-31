@@ -3934,7 +3934,7 @@ namespace System.Management.Automation.Language
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)
                 {
                     // Resource property value could be set to nested DSC resources except Script resource
-                    bool isScriptResource = String.Compare(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase) == 0;
+                    bool isScriptResource = string.Compare(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase) == 0;
                     try
                     {
                         if (isScriptResource)

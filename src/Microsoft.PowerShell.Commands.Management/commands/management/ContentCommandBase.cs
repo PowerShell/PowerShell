@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
                  (
-                    String.Compare(
+                    string.Compare(
                         pathInfo.Path,
                         _currentContentItem.PathInfo.Path,
                         StringComparison.OrdinalIgnoreCase) == 0)
