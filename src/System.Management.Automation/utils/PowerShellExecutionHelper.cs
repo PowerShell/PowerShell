@@ -236,7 +236,7 @@ namespace System.Management.Automation
         internal static PowerShell AddCommandWithPreferenceSetting(this PowerShell powershell, string command, Type type = null)
         {
             Diagnostics.Assert(powershell != null, "the passed-in powershell cannot be null");
-            Diagnostics.Assert(!String.IsNullOrWhiteSpace(command),
+            Diagnostics.Assert(!string.IsNullOrWhiteSpace(command),
                 "the passed-in command name should not be null or whitespaces");
 
             if (type != null)

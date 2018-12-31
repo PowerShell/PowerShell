@@ -1365,7 +1365,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.InvalidInstanceProperty),
                             ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            String.Join("', '", tableKeys));
+                            string.Join("', '", tableKeys));
                     }
                 }
             }

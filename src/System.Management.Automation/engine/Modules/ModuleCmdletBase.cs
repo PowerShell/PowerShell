@@ -2148,7 +2148,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (writingErrors)
                         {
-                            string invalidNameStr = String.Join(", ", invalidNames);
+                            string invalidNameStr = string.Join(", ", invalidNames);
                             string errorMsg = StringUtil.Format(Modules.InvalidExperimentalFeatureName, invalidNameStr);
                             WriteError(new ErrorRecord(new ArgumentException(errorMsg),
                                                        "Modules_InvalidExperimentalFeatureName",
@@ -2457,7 +2457,7 @@ namespace Microsoft.PowerShell.Commands
                         Modules.PSEditionNotSupported,
                         moduleManifestPath,
                         PSVersionInfo.PSEdition,
-                        String.Join(',', inferredCompatiblePSEditions));
+                        string.Join(',', inferredCompatiblePSEditions));
 
                     InvalidOperationException ioe = new InvalidOperationException(message);
 

@@ -1722,7 +1722,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="typeName"></param>
         public TypeData(string typeName) : this()
         {
-            if (String.IsNullOrWhiteSpace(typeName))
+            if (string.IsNullOrWhiteSpace(typeName))
                 throw PSTraceSource.NewArgumentNullException("typeName");
             this.TypeName = typeName;
         }
@@ -2141,7 +2141,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="name"></param>
         internal TypeMemberData(string name)
         {
-            if (String.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw PSTraceSource.NewArgumentException("name");
 
             Name = name;

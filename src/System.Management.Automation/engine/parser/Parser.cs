@@ -723,7 +723,7 @@ namespace System.Management.Automation.Language
         {
             result = null;
 
-            if (String.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(input))
             {
                 return false;
             }

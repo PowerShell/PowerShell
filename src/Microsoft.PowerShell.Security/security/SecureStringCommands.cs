@@ -293,16 +293,16 @@ namespace Microsoft.PowerShell.Commands
                 byte[] iv = null;
 
                 // If this is a V2 package
-                if (String.IndexOf(SecureStringHelper.SecureStringExportHeader,
+                if (string.IndexOf(SecureStringHelper.SecureStringExportHeader,
                         StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     try
                     {
                         // Trim out the header, and retrieve the
                         // rest of the string
-                        string remainingData = this.String.Substring(
+                        string remainingData = this.string.Substring(
                             SecureStringHelper.SecureStringExportHeader.Length,
-                            String.Length - SecureStringHelper.SecureStringExportHeader.Length);
+                            string.Length - SecureStringHelper.SecureStringExportHeader.Length);
 
                         // Unpack it from Base64, get the string
                         // representation, then parse it into its components.

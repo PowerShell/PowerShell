@@ -976,7 +976,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
             {
-                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, String.Join(",", CompatiblePSEditions));
+                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);
                 var er = new ErrorRecord(ioe, "Modules_DuplicateEntriesInCompatiblePSEditions", ErrorCategory.InvalidArgument, CompatiblePSEditions);
                 ThrowTerminatingError(er);
@@ -1223,7 +1223,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ValidateUriParameterValue(Uri uri, string parameterName)
         {
-            Dbg.Assert(!String.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
+            Dbg.Assert(!string.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
 
             if (uri != null && !Uri.IsWellFormedUriString(uri.AbsoluteUri, UriKind.Absolute))
             {

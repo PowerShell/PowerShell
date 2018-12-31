@@ -1135,7 +1135,7 @@ namespace System.Management.Automation
 
         internal Pipe GetRedirectionPipe(ExecutionContext context, PipelineProcessor parentPipelineProcessor)
         {
-            if (String.IsNullOrWhiteSpace(File))
+            if (string.IsNullOrWhiteSpace(File))
             {
                 return new Pipe { NullPipe = true };
             }

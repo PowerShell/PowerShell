@@ -86,7 +86,7 @@ namespace mvc.Controllers
             }
             else
             {
-                linkHeader = String.Join(",", linkList);
+                linkHeader = string.Join(",", linkList);
             }
 
             Response.Headers.Add("Link", linkHeader);

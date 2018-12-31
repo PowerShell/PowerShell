@@ -303,7 +303,7 @@ namespace Microsoft.WSMan.Management
                     if (operation.Equals("invoke", StringComparison.OrdinalIgnoreCase))
                     {
                         sfx = "_INPUT";
-                        resultStr = String.Concat(actionStr, sfx);
+                        resultStr = string.Concat(actionStr, sfx);
                     }
                     else
                     {
@@ -1096,7 +1096,7 @@ namespace Microsoft.WSMan.Management
 #if CORECLR
                     "0409" /* TODO: don't assume it is always English on CSS? */
 #else
-                    String.Concat("0", string.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
+                    string.Concat("0", string.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
 #endif
                     + "\\" + "winrm.ini";
                 if (File.Exists(filepath))

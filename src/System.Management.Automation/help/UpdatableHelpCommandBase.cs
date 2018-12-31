@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
                     // multiple cultures or multiple modules are involved.
                     e = new UpdatableHelpExceptionContext(new UpdatableHelpSystemException(
                         "HelpCultureNotSupported", StringUtil.Format(HelpDisplayStrings.CannotMatchUICulturePattern,
-                        String.Join(", ", exception.Cultures)),
+                        string.Join(", ", exception.Cultures)),
                         ErrorCategory.InvalidArgument, exception.Cultures, null));
                     e.Modules = exception.Modules;
                     e.Cultures = exception.Cultures;

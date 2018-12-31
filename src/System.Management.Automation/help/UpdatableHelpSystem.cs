@@ -129,8 +129,8 @@ namespace System.Management.Automation.Help
             string message = string.Empty;
             SortedSet<string> sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
             SortedSet<string> sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
-            string modules = String.Join(", ", sortedModules);
-            string cultures = String.Join(", ", sortedCultures);
+            string modules = string.Join(", ", sortedModules);
+            string cultures = string.Join(", ", sortedCultures);
 
             if (commandType == UpdatableHelpCommandType.UpdateHelpCommand)
             {

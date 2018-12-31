@@ -1503,7 +1503,7 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    string fullCertificateContent = String.Join(Environment.NewLine, logSetting.EncryptionCertificate);
+                    string fullCertificateContent = string.Join(Environment.NewLine, logSetting.EncryptionCertificate);
 
                     // If the certificate has changed, drop all of our cached information
                     ResetCertificateCacheIfNeeded(fullCertificateContent);

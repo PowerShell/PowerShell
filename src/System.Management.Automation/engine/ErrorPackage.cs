@@ -372,7 +372,7 @@ namespace System.Management.Automation
         public string GetMessage()
         {
             /* Remoting not in E12
-            if (!String.IsNullOrEmpty (_errorRecord._serializedErrorCategoryMessageOverride))
+            if (!string.IsNullOrEmpty (_errorRecord._serializedErrorCategoryMessageOverride))
                 return _errorRecord._serializedErrorCategoryMessageOverride;
             */
 
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation
             string errorDetails_ScriptStackTrace =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_ScriptStackTrace") as string;
 
-            RemoteException re = new RemoteException((String.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
+            RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
             //Create ErrorRecord
             PopulateProperties(

@@ -970,7 +970,7 @@ namespace System.Management.Automation
 
                     if (isNumber2) { return 1; }
 
-                    int result = String.CompareOrdinal(ac, bc);
+                    int result = string.CompareOrdinal(ac, bc);
                     if (result != 0) { return result; }
                 }
             }

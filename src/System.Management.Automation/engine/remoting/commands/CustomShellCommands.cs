@@ -1528,7 +1528,7 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
+            return string.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
         /// <summary>

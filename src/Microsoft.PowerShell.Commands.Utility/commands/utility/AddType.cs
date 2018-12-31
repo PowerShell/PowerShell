@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (value != null)
                 {
-                    _sourceCode = String.Join("\n", value);
+                    _sourceCode = string.Join("\n", value);
                 }
             }
         }

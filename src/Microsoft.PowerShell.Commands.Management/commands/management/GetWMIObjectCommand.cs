@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         internal string GetQueryString()
         {
             StringBuilder returnValue = new StringBuilder("select ");
-            returnValue.Append(String.Join(", ", _property));
+            returnValue.Append(string.Join(", ", _property));
             returnValue.Append(" from ");
             returnValue.Append(Class);
             if (!string.IsNullOrEmpty(Filter))

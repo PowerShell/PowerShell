@@ -5103,7 +5103,7 @@ namespace Microsoft.WSMan.Management
             sbvalues.Append("<PlugInConfiguration ");
             sbvalues.Append("xmlns=");
             sbvalues.Append(
-                String.Concat(
+                string.Concat(
                     WSManStringLiterals.EnclosingDoubleQuotes,
                     @"http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration",
                     WSManStringLiterals.EnclosingDoubleQuotes));
@@ -5128,7 +5128,7 @@ namespace Microsoft.WSMan.Management
 
                         // ... Name="Value"
                         sbvalues.Append(
-                            String.Concat(
+                            string.Concat(
                                 WSManStringLiterals.EnclosingDoubleQuotes,
                                 prop.Value.ToString(),
                                 WSManStringLiterals.EnclosingDoubleQuotes));

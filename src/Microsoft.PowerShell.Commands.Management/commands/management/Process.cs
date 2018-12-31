@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="x">First Process object.</param>
         /// <param name="y">Second Process object.</param>
         /// <returns>
-        /// As String.Compare: returns less than zero if x less than y,
+        /// As string.Compare: returns less than zero if x less than y,
         /// greater than 0 if x greater than y, 0 if x == y.
         /// </returns>
         private static int ProcessComparison(Process x, Process y)

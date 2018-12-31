@@ -611,7 +611,7 @@ namespace System.Management.Automation
             else
             {
                 IScriptPosition cursor = completionContext.CursorPosition;
-                bool isCursorLineEmpty = String.IsNullOrWhiteSpace(cursor.Line);
+                bool isCursorLineEmpty = string.IsNullOrWhiteSpace(cursor.Line);
                 var tokenBeforeCursor = completionContext.TokenBeforeCursor;
                 bool isLineContinuationBeforeCursor = false;
                 if (tokenBeforeCursor != null)
@@ -874,7 +874,7 @@ namespace System.Management.Automation
                     if (keywordAst != null)
                     {
                         // Handle only empty line
-                        if (String.IsNullOrWhiteSpace(cursor.Line))
+                        if (string.IsNullOrWhiteSpace(cursor.Line))
                         {
                             // Check if the cursor outside of last child of hashtable and within the hashtable
                             if (cursor.Offset > lastChildofHashtableAst.Extent.EndOffset &&

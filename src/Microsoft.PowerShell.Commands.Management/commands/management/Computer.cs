@@ -1900,7 +1900,7 @@ $result
             {
                 if (!drive.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
                 {
-                    driveApp = String.Concat(drive, "\\");
+                    driveApp = string.Concat(drive, "\\");
                 }
                 else
                     driveApp = drive;
