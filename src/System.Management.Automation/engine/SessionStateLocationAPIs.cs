@@ -757,7 +757,7 @@ namespace System.Management.Automation
                             GetParentPath(
                                 drive.Provider,
                                 lockedDirectory,
-                                String.Empty,
+                                string.Empty,
                                 context);
 
                         s_tracer.WriteLine(

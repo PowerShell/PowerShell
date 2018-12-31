@@ -107,7 +107,7 @@ namespace System.Management.Automation.Help
                 bool common = HasCommonParameters(funcInfo.Parameters);
 
                 obj.Properties.Add(new PSNoteProperty("CommonParameters", common));
-                AddDetailsProperties(obj, funcInfo.Name, String.Empty, String.Empty, TypeNameForDefaultHelp);
+                AddDetailsProperties(obj, funcInfo.Name, string.Empty, string.Empty, TypeNameForDefaultHelp);
                 AddSyntaxProperties(obj, funcInfo.Name, funcInfo.ParameterSets, common, TypeNameForDefaultHelp);
                 AddParametersProperties(obj, funcInfo.Parameters, common, TypeNameForDefaultHelp);
                 AddInputTypesProperties(obj, funcInfo.Parameters);
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Help
             obj.Properties.Add(new PSNoteProperty("examples", null));
             obj.Properties.Add(new PSNoteProperty("Synopsis", commandInfo.Syntax));
             obj.Properties.Add(new PSNoteProperty("ModuleName", commandInfo.ModuleName));
-            obj.Properties.Add(new PSNoteProperty("nonTerminatingErrors", String.Empty));
+            obj.Properties.Add(new PSNoteProperty("nonTerminatingErrors", string.Empty));
             obj.Properties.Add(new PSNoteProperty("xmlns:command", "http://schemas.microsoft.com/maml/dev/command/2004/10"));
             obj.Properties.Add(new PSNoteProperty("xmlns:dev", "http://schemas.microsoft.com/maml/dev/2004/10"));
             obj.Properties.Add(new PSNoteProperty("xmlns:maml", "http://schemas.microsoft.com/maml/2004/10"));

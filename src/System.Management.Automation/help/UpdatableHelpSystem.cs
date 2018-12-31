@@ -1675,7 +1675,7 @@ namespace System.Management.Automation.Help
                 }
 
                 mappedDrive = new PSDriveInfo(_driveName, cmdlet.SessionState.Internal.GetSingleProvider("FileSystem"),
-                    path, String.Empty, credential);
+                    path, string.Empty, credential);
 
                 cmdlet.SessionState.Drive.New(mappedDrive, "local");
 

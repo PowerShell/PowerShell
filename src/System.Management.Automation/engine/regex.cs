@@ -218,7 +218,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s = String.Empty;
+                s = string.Empty;
             }
 
             return s;
@@ -350,7 +350,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s = String.Empty;
+                s = string.Empty;
             }
 
             return s;

@@ -956,7 +956,7 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval?.ToString() ?? String.Empty;
+                string lvalString = lval?.ToString() ?? string.Empty;
 
                 return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval == null ? String.Empty : PSObject.ToStringParser(context, lval);
+                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
 
                 return BoolToObject(wcp.IsMatch(lvalString) ^ notLike);
             }
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
             {
                 object val = ParserOps.Current(errorPosition, list);
 
-                string lvalString = val == null ? String.Empty : PSObject.ToStringParser(context, val);
+                string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
 
                 if (wcp.IsMatch(lvalString) ^ notLike)
                 {
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval == null ? String.Empty : PSObject.ToStringParser(context, lval);
+                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
 
                 // Find a match in the string.
                 Match m = r.Match(lvalString);
@@ -1210,7 +1210,7 @@ namespace System.Management.Automation
                     {
                         object val = list.Current;
 
-                        string lvalString = val == null ? String.Empty : PSObject.ToStringParser(context, val);
+                        string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
 
                         // Find a single match in the string.
                         Match m = r.Match(lvalString);
@@ -1443,7 +1443,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             PSObject mshObj = obj as PSObject;

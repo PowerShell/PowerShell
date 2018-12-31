@@ -629,7 +629,7 @@ namespace System.Management.Automation
         public static SemanticVersion Parse(string version)
         {
             if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
-            if (version == String.Empty) throw new FormatException(nameof(version));
+            if (version == string.Empty) throw new FormatException(nameof(version));
 
             var r = new VersionResult();
             r.Init(true);
@@ -999,7 +999,7 @@ namespace System.Management.Automation
 
             internal void SetFailure(ParseFailureKind failure)
             {
-                SetFailure(failure, String.Empty);
+                SetFailure(failure, string.Empty);
             }
 
             internal void SetFailure(ParseFailureKind failure, string argument)

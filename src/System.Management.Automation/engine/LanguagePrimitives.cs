@@ -4115,7 +4115,7 @@ namespace System.Management.Automation
         {
             typeConversion.WriteLine("Converting null to \"\".");
             // if the destination type is string, return an empty string...
-            return String.Empty;
+            return string.Empty;
         }
 
         private static PSReference ConvertNullToPSReference(object valueToConvert,

@@ -36,7 +36,7 @@ namespace System.Management.Automation
 
             if (times == 0 || s.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();

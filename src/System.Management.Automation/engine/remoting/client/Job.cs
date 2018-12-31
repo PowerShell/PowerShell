@@ -546,7 +546,7 @@ namespace System.Management.Automation
         /// </summary>
         private static int s_jobIdSeed = 0;
 
-        private string _jobTypeName = String.Empty;
+        private string _jobTypeName = string.Empty;
 
         #endregion Private Members
 

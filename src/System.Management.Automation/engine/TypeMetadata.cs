@@ -1230,7 +1230,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the type name of the bindable type
         /// </summary>
-        internal string TypeName { get; } = String.Empty;
+        internal string TypeName { get; } = string.Empty;
 
         /// <summary>
         /// Gets a dictionary of the compiled parameter metadata for this Type.

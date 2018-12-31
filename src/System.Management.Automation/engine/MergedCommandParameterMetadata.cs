@@ -362,7 +362,7 @@ namespace System.Management.Automation
                 }
 
                 // Now check to see if there are any remaining sets passed this bit.
-                // If so return String.Empty
+                // If so return string.Empty
 
                 if (((parameterSet >> (index + 1)) & 0x1) == 0)
                 {
@@ -373,12 +373,12 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        result = String.Empty;
+                        result = string.Empty;
                     }
                 }
                 else
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                 }
             }
 
@@ -407,7 +407,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>

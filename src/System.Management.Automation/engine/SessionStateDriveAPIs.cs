@@ -660,7 +660,7 @@ namespace System.Management.Automation
                 {
                     // Create a new drive
                     string systemDriveName = systemDriveInfo.Name.Substring(0, 1);
-                    string volumeLabel = String.Empty;
+                    string volumeLabel = string.Empty;
                     string displayRoot = null;
 
                     try

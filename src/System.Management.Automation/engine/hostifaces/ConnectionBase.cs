@@ -605,7 +605,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        /// <param name="command">A valid command string or String.Empty.</param>
+        /// <param name="command">A valid command string or string.Empty.</param>
         /// <param name="addToHistory">If true command is added to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>
         /// <returns>

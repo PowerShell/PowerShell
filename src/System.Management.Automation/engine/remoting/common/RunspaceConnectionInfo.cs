@@ -3273,7 +3273,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 result = HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString);
                 if (result != 0)
@@ -3381,7 +3381,7 @@ namespace System.Management.Automation.Runspaces
         private void TerminateContainerProcessInternal()
         {
             IntPtr ComputeSystem = IntPtr.Zero;
-            string resultString = String.Empty;
+            string resultString = string.Empty;
             IntPtr process = IntPtr.Zero;
 
             ProcessTerminated = false;
@@ -3406,7 +3406,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
                 {

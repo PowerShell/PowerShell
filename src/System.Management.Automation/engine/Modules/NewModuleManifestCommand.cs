@@ -1041,7 +1041,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Append(streamWriter.NewLine);
 
                     if (_rootModule == null)
-                        _rootModule = String.Empty;
+                        _rootModule = string.Empty;
 
                     BuildModuleManifest(result, "RootModule", Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 

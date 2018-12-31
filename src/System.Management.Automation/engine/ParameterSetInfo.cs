@@ -47,7 +47,7 @@ namespace System.Management.Automation
             MergedCommandParameterMetadata parameterMetadata)
         {
             IsDefault = true;
-            Name = String.Empty;
+            Name = string.Empty;
             if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");

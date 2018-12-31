@@ -258,12 +258,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 if (string.IsNullOrEmpty(verb) || string.IsNullOrEmpty(noun))
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 // Load the help file from the current UI culture subfolder
@@ -301,31 +301,31 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (XmlException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (PathTooLongException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (IOException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (UnauthorizedAccessException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (NotSupportedException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (SecurityException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (XPathException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             finally
             {
@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         #endregion
@@ -880,7 +880,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string newDriveName = newDrive.Name.Substring(0, 1);
 
-                        string description = String.Empty;
+                        string description = string.Empty;
                         string root = newDrive.Name;
                         string displayRoot = null;
 
@@ -1836,11 +1836,11 @@ namespace Microsoft.PowerShell.Commands
         public static string Mode(PSObject instance)
         {
             if (instance == null)
-                return String.Empty;
+                return string.Empty;
 
             FileSystemInfo fileInfo = (FileSystemInfo)instance.BaseObject;
             if (fileInfo == null)
-                return String.Empty;
+                return string.Empty;
 
             char[] mode = new char[6];
             mode[0] = (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? 'd' : '-';
@@ -2594,7 +2594,7 @@ namespace Microsoft.PowerShell.Commands
 
                 do
                 {
-                    string root = String.Empty;
+                    string root = string.Empty;
 
                     if (PSDriveInfo != null)
                     {
@@ -4816,7 +4816,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (basePath == null)
             {
-                basePath = String.Empty;
+                basePath = string.Empty;
             }
 
             s_tracer.WriteLine("basePath = {0}", basePath);
@@ -4876,11 +4876,11 @@ namespace Microsoft.PowerShell.Commands
                             // Now ensure that we have the proper casing by
                             // getting the names of the files and directories that match
 
-                            string directoryPath = GetParentPath(result, String.Empty);
+                            string directoryPath = GetParentPath(result, string.Empty);
 
                             if (string.IsNullOrEmpty(directoryPath))
                             {
-                                return String.Empty;
+                                return string.Empty;
                             }
 
 #if UNIX
@@ -5006,12 +5006,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (path.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             if (basePath == null)
             {
-                basePath = String.Empty;
+                basePath = string.Empty;
             }
 
             s_tracer.WriteLine("basePath = {0}", basePath);
@@ -5019,7 +5019,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             // Remove alternate data stream references
             // See if they've used the inline stream syntax. They have more than one colon.
-            string alternateDataStream = String.Empty;
+            string alternateDataStream = string.Empty;
             int firstColon = path.IndexOf(':');
             int secondColon = path.IndexOf(':', firstColon + 1);
             if (secondColon > 0)
@@ -5066,7 +5066,7 @@ namespace Microsoft.PowerShell.Commands
                     (!string.IsNullOrEmpty(basePath))
                     )
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                     string commonBase = GetCommonBase(path, basePath);
 
                     Stack<string> parentNavigationStack = TokenizePathToStack(basePath, commonBase);
@@ -5125,7 +5125,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            result = String.Empty;
+                            result = string.Empty;
                             break;
                         }
                     }
@@ -5392,7 +5392,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private string CreateNormalizedRelativePathFromStack(Stack<string> normalizedPathStack)
         {
-            string leafElement = String.Empty;
+            string leafElement = string.Empty;
 
             while (normalizedPathStack.Count > 0)
             {

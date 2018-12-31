@@ -234,7 +234,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(source))
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             StringBuilder returnValue = new StringBuilder();
@@ -405,7 +405,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    string matchText = String.Empty;
+                    string matchText = string.Empty;
 
                     // Otherwise, this is a Regex match against the
                     // command or error
@@ -579,7 +579,7 @@ namespace System.Management.Automation
                 catch (Exception)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 return (string)LanguagePrimitives.ConvertTo(result, typeof(string), CultureInfo.CurrentCulture);

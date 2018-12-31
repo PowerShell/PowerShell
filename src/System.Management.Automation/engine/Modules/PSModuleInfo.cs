@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The name of this module.
         /// </summary>
-        public string Name { get; private set; } = String.Empty;
+        public string Name { get; private set; } = string.Empty;
 
         /// <summary>
         /// Sets the name property of the PSModuleInfo object
@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The path to the file that defined this module...
         /// </summary>
-        public string Path { get; internal set; } = String.Empty;
+        public string Path { get; internal set; } = string.Empty;
 
         /// <summary>
         /// If the module is a binary module or a script module that defines
@@ -247,7 +247,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Definition
         {
-            get { return _definitionExtent == null ? String.Empty : _definitionExtent.Text; }
+            get { return _definitionExtent == null ? string.Empty : _definitionExtent.Text; }
         }
 
         internal IScriptExtent _definitionExtent;
@@ -259,10 +259,10 @@ namespace System.Management.Automation
         {
             get { return _description; }
 
-            set { _description = value ?? String.Empty; }
+            set { _description = value ?? string.Empty; }
         }
 
-        private string _description = String.Empty;
+        private string _description = string.Empty;
 
         /// <summary>
         /// The guid for this module if one was defined in the module manifest.

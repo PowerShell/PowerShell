@@ -1031,7 +1031,7 @@ namespace System.Management.Automation
                             "InitializeDefaultDrivesException",
                             SessionStateStrings.InitializeDefaultDrivesException,
                             provider,
-                            String.Empty,
+                            string.Empty,
                             e);
 
                     context.WriteError(

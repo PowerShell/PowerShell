@@ -2780,7 +2780,7 @@ namespace System.Management.Automation.Remoting
                 return table[key].ToString();
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>

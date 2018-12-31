@@ -611,7 +611,7 @@ namespace System.Management.Automation.Language
 
             if (string.IsNullOrEmpty(line))
             {
-                Line = String.Empty;
+                Line = string.Empty;
             }
             else
             {
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }

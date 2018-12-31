@@ -1826,10 +1826,10 @@ namespace System.Management.Automation.Provider
                 }
                 else
                 {
-                    parentPath = navProvider.GetParentPath(path, String.Empty, Context);
+                    parentPath = navProvider.GetParentPath(path, string.Empty, Context);
                 }
 
-                string providerQualifiedParentPath = String.Empty;
+                string providerQualifiedParentPath = string.Empty;
 
                 if (!string.IsNullOrEmpty(parentPath))
                 {

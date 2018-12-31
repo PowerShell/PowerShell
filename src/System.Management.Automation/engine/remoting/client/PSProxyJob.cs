@@ -799,7 +799,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                string command = String.Empty;
+                string command = string.Empty;
                 if (!TryGetJobPropertyValue(deserializedJob, "Command", out command))
                 {
                     Dbg.Assert(false, "Job object did not contain command when creating proxy.");
@@ -1604,7 +1604,7 @@ namespace System.Management.Automation
                     {
                         var newState = JobState.Failed;
                         var reason = e.InvocationStateInfo.Reason == null
-                                         ? String.Empty
+                                         ? string.Empty
                                          : e.InvocationStateInfo.Reason.ToString();
                         _tracer.WriteMessage(ClassNameTrace, "ReceivePowerShellInvocationStateChanged", _remoteJobInstanceId, this,
                             "Setting job state to {0} old state was {1} and reason is {2}.", newState.ToString(), JobStateInfo.State.ToString(), reason);
@@ -2490,8 +2490,8 @@ namespace System.Management.Automation
         private EventHandler<JobStateEventArgs> _stateChangedHandler;
         private const string ResBaseName = "PowerShellStrings";
         private Guid _remoteJobInstanceId = Guid.Empty;
-        private string _remoteJobStatusMessage = String.Empty;
-        private string _remoteJobLocation = String.Empty;
+        private string _remoteJobStatusMessage = string.Empty;
+        private string _remoteJobLocation = string.Empty;
         private readonly Hashtable _childJobsMapping = new Hashtable();
         private readonly PowerShell _receivePowerShell = PowerShell.Create();
         private readonly PSDataCollection<PSObject> _receivePowerShellOutput = new PSDataCollection<PSObject>();

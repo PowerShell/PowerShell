@@ -327,7 +327,7 @@ namespace System.Management.Automation.Provider
                 {
                     // If both are empty, just return the empty string.
 
-                    result = String.Empty;
+                    result = string.Empty;
                 }
                 else if (string.IsNullOrEmpty(parent) &&
                          !string.IsNullOrEmpty(child))
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Provider
 
                 path = NormalizePath(path);
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
-                string rootPath = String.Empty;
+                string rootPath = string.Empty;
 
                 if (root != null)
                 {
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Provider
                     rootPath,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    parentPath = String.Empty;
+                    parentPath = string.Empty;
                 }
                 else
                 {
@@ -499,7 +499,7 @@ namespace System.Management.Automation.Provider
                     }
                     else
                     {
-                        parentPath = String.Empty;
+                        parentPath = string.Empty;
                     }
                 }
 
@@ -557,12 +557,12 @@ namespace System.Management.Automation.Provider
 
             if (path.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             if (basePath == null)
             {
-                basePath = String.Empty;
+                basePath = string.Empty;
             }
 
             providerBaseTracer.WriteLine("basePath = {0}", basePath);
@@ -623,7 +623,7 @@ namespace System.Management.Automation.Provider
                 if (!normalizedPath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
                     (basePath.Length > 0))
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                     string commonBase = GetCommonBase(normalizedPath, normalizedBasePath);
 
                     Stack<string> parentNavigationStack = TokenizePathToStack(normalizedBasePath, commonBase);
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation.Provider
         /// </remarks>
         private string CreateNormalizedRelativePathFromStack(Stack<string> normalizedPathStack)
         {
-            string leafElement = String.Empty;
+            string leafElement = string.Empty;
 
             while (normalizedPathStack.Count > 0)
             {

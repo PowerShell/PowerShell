@@ -291,7 +291,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }

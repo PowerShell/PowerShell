@@ -654,7 +654,7 @@ namespace System.Management.Automation
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (childNode.InnerText.Trim().Equals(String.Empty))
+                    if (childNode.InnerText.Trim().Equals(string.Empty))
                     {
                         continue;
                     }
@@ -758,7 +758,7 @@ namespace System.Management.Automation
 
             StringBuilder sb = new StringBuilder();
 
-            if (newLine && !xmlNode.InnerText.Trim().Equals(String.Empty))
+            if (newLine && !xmlNode.InnerText.Trim().Equals(string.Empty))
             {
                 sb.AppendLine(xmlNode.InnerText.Trim());
             }

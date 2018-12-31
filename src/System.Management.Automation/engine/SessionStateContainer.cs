@@ -2385,7 +2385,7 @@ namespace System.Management.Automation
                         DoGetChildNamesManually(
                             providerInstance,
                             providerPath,
-                            String.Empty,
+                            string.Empty,
                             returnContainers,
                             includeMatcher,
                             excludeMatcher,
@@ -2471,7 +2471,7 @@ namespace System.Management.Automation
                     DoGetChildNamesManually(
                         providerInstance,
                         providerPath,
-                        String.Empty,
+                        string.Empty,
                         returnContainers,
                         includeMatcher,
                         excludeMatcher,
@@ -4097,7 +4097,7 @@ namespace System.Management.Automation
 
             if (copyPath == null)
             {
-                copyPath = String.Empty;
+                copyPath = string.Empty;
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -4163,7 +4163,7 @@ namespace System.Management.Automation
 
             if (copyPath == null)
             {
-                copyPath = String.Empty;
+                copyPath = string.Empty;
             }
 
             // Get the provider specific path for the destination
