@@ -574,7 +574,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // VT_BOOL
-        public Boolean AsBool
+        public bool AsBool
         {
             get
             {
