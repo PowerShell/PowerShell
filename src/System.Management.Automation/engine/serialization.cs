@@ -6166,7 +6166,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Char[] value)
+        public void Add(string key, char[] value)
         {
             this.Add((object)key, (object)value);
         }

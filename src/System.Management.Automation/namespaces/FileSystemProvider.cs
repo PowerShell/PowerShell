@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
 
-                if (Char.ToUpperInvariant(driveChar) >= 'A' && Char.ToUpperInvariant(driveChar) <= 'Z')
+                if (char.ToUpperInvariant(driveChar) >= 'A' && char.ToUpperInvariant(driveChar) <= 'Z')
                 {
                     isSupportedDriveForPersistence = true;
                 }
@@ -7629,7 +7629,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort Data2;
             public ushort Data3;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public Char[] Data4;
+            public char[] Data4;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -7640,7 +7640,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort Reserved;
             public GUID ReparseGuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
-            public Char[] DataBuffer;
+            public char[] DataBuffer;
         }
 
         [DllImport(PinvokeDllNames.DeviceIoControlDllName, CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]

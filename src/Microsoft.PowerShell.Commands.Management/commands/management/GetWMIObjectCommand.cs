@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder newClassName = new StringBuilder();
             for (int i = 0; i < filterClass.Length; i++)
             {
-                if (Char.IsLetterOrDigit(filterClass[i]) ||
+                if (char.IsLetterOrDigit(filterClass[i]) ||
                     filterClass[i].Equals('[') || filterClass[i].Equals(']') ||
                     filterClass[i].Equals('*') || filterClass[i].Equals('?') ||
                     filterClass[i].Equals('-'))

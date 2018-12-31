@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                 //Validate class format
                 for (int i = 0; i < this.Class.Length; i++)
                 {
-                    if (Char.IsLetterOrDigit(this.Class[i]) || this.Class[i].Equals('_'))
+                    if (char.IsLetterOrDigit(this.Class[i]) || this.Class[i].Equals('_'))
                     {
                         continue;
                     }

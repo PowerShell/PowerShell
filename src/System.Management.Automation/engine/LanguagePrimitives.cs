@@ -2123,7 +2123,7 @@ namespace System.Management.Automation
                         sourceValue, ObjectToTypeNameString(sourceValue), destinationType);
                 }
 
-                if (Char.IsDigit(sourceValueString[0]) || sourceValueString[0] == '+' || sourceValueString[0] == '-')
+                if (char.IsDigit(sourceValueString[0]) || sourceValueString[0] == '+' || sourceValueString[0] == '-')
                 {
                     Type underlyingType = Enum.GetUnderlyingType(destinationType);
                     try
