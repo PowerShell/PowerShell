@@ -158,7 +158,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computerName; }
 
@@ -169,7 +169,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computerName;
+        private string[] computerName;
 
         /// <summary>
         /// <para>
@@ -419,7 +419,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("SelectProperties")]
-        public String[] Property
+        public string[] Property
         {
             get { return property; }
 
@@ -432,12 +432,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property for internal usage
         /// </summary>
-        internal String[] SelectProperties
+        internal string[] SelectProperties
         {
             get { return property; }
         }
 
-        private String[] property;
+        private string[] property;
 
         #endregion
 

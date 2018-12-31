@@ -79,7 +79,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = ComputerNameSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computername; }
 
@@ -90,7 +90,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computername;
+        private string[] computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "Id".
@@ -148,7 +148,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = NameSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Name
+        public string[] Name
         {
             get { return name;}
 
@@ -159,7 +159,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] name;
+        private string[] name;
 
         #endregion
 

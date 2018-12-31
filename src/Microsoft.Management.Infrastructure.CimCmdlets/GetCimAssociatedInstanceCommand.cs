@@ -176,7 +176,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ParameterSetName = ComputerSetName)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computerName; }
 
@@ -187,7 +187,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computerName;
+        private string[] computerName;
 
         /// <summary>
         /// The following is the definition of the input parameter "CimSession".

@@ -270,7 +270,7 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecurityCritical]
         public static EventLogHandle EvtCreateRenderContext(
                             Int32 valuePathsCount,
-                            String[] valuePaths,
+                            string[] valuePaths,
                             UnsafeNativeMethods.EvtRenderContextFlags flags)
         {
             EventLogHandle renderContextHandleValues = UnsafeNativeMethods.EvtCreateRenderContext(valuePathsCount, valuePaths, flags);

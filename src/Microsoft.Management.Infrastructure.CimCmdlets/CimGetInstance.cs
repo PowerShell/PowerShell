@@ -200,7 +200,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region bridge methods to read properties from cmdlet
 
-        protected static String[] GetComputerName(CimBaseCommand cmdlet)
+        protected static string[] GetComputerName(CimBaseCommand cmdlet)
         {
             if (cmdlet is GetCimInstanceCommand)
             {

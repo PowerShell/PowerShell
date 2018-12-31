@@ -815,7 +815,7 @@ namespace System.Diagnostics.Eventing
         internal static extern EventLogHandle EvtCreateRenderContext(
                             Int32 valuePathsCount,
                             [MarshalAs(UnmanagedType.LPArray,ArraySubType = UnmanagedType.LPWStr)]
-                                String[] valuePaths,
+                                string[] valuePaths,
                             [MarshalAs(UnmanagedType.I4)]EvtRenderContextFlags flags
                                     );
 

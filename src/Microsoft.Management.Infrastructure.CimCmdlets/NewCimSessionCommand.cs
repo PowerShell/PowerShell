@@ -86,14 +86,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computername;}
 
             set { computername = value; }
         }
 
-        private String[] computername;
+        private string[] computername;
 
         /// <summary>
         /// <para>

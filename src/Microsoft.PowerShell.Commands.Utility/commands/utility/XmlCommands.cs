@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
         /// Mandatory file name to read from.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Mandatory file name to read from.
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get
             {
@@ -815,7 +815,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Specifies the literal path which contains the xml files. The default is the current user directory.
@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get { return Path; }
 

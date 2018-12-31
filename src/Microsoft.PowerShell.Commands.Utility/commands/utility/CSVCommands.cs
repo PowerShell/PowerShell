@@ -528,7 +528,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
-        public String[] Path
+        public string[] Path
         {
             get
             {

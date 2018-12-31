@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = FromMemberParameterSetName)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] MemberDefinition
+        public string[] MemberDefinition
         {
             get
             {
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull()]
         [Alias("Using")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] UsingNamespace { get; set; } = Utils.EmptyArray<string>();
+        public string[] UsingNamespace { get; set; } = Utils.EmptyArray<string>();
 
         /// <summary>
         /// The path to the source code or DLL to load.
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("AN")]
         [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] AssemblyName { get; set; }
+        public string[] AssemblyName { get; set; }
 
         private bool loadAssembly = false;
 
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("RA")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ReferencedAssemblies
+        public string[] ReferencedAssemblies
         {
             get { return referencedAssemblies; }
 

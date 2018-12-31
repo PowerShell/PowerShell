@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = PathParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public String[] Path
+        public string[] Path
         {
             get
             {
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSet, Position = 0, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get
             {
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private String[] _paths;
+        private string[] _paths;
 
         /// <summary>
         /// InputStream parameter.

@@ -444,7 +444,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="value"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name).</exception>
-        public static String[] ValidateArgumentIsValidName(string parameterName, String[] value)
+        public static string[] ValidateArgumentIsValidName(string parameterName, string[] value)
         {
             if (value != null)
             {

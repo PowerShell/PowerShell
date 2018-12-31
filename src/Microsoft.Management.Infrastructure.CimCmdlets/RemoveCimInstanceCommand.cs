@@ -96,7 +96,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computername; }
 
@@ -107,7 +107,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computername;
+        private string[] computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
