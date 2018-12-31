@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (SigningOptionInfo si in s_sigOptionInfo)
             {
-                if (String.Equals(optionName, si.optionName,
+                if (string.Equals(optionName, si.optionName,
                                   StringComparison.OrdinalIgnoreCase))
                 {
                     return si.option;

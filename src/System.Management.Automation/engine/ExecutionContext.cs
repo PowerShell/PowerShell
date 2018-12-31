@@ -1550,14 +1550,14 @@ namespace System.Management.Automation
             if (this.CurrentCommandProcessor != null)
             {
                 CommandInfo cmdletInfo = this.CurrentCommandProcessor.CommandInfo;
-                if ((String.Equals(cmdletInfo.Name, "Import-Module", StringComparison.OrdinalIgnoreCase) ||
-                     String.Equals(cmdletInfo.Name, "Remove-Module", StringComparison.OrdinalIgnoreCase)) &&
+                if ((string.Equals(cmdletInfo.Name, "Import-Module", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(cmdletInfo.Name, "Remove-Module", StringComparison.OrdinalIgnoreCase)) &&
                     cmdletInfo.CommandType.Equals(CommandTypes.Cmdlet) &&
                     InitialSessionState.CoreModule.Equals(cmdletInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
                 {
                     result = true;
                     command = (Cmdlet)this.CurrentCommandProcessor.Command;
-                    errorId = String.Equals(cmdletInfo.Name, "Import-Module", StringComparison.OrdinalIgnoreCase)
+                    errorId = string.Equals(cmdletInfo.Name, "Import-Module", StringComparison.OrdinalIgnoreCase)
                                   ? "Module_ImportModuleError"
                                   : "Module_RemoveModuleError";
                 }

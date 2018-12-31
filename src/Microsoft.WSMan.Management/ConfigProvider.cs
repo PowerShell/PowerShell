@@ -927,7 +927,7 @@ namespace Microsoft.WSMan.Management
                 // If validation is not required, that means Clear-Item cmdlet is called.
                 // Clear-Item is not allowed on RunAsPassword, Admin should call Clear-Item RunAsUser
                 // if he intends to disable RunAs on the Plugin.
-                if(String.Equals(ChildName, WSManStringLiterals.ConfigRunAsPasswordName, StringComparison.OrdinalIgnoreCase))
+                if(string.Equals(ChildName, WSManStringLiterals.ConfigRunAsPasswordName, StringComparison.OrdinalIgnoreCase))
                 {
                     AssertError(helper.GetResourceMsgFromResourcetext("ClearItemOnRunAsPassword"), false);
                     return;
@@ -4884,7 +4884,7 @@ namespace Microsoft.WSMan.Management
 
                     for (int i = 0; i <= attributecol.Count - 1; i++)
                     {
-                        if (String.Equals(attributecol[i].LocalName, WSManStringLiterals.ConfigRunAsPasswordName, StringComparison.OrdinalIgnoreCase)
+                        if (string.Equals(attributecol[i].LocalName, WSManStringLiterals.ConfigRunAsPasswordName, StringComparison.OrdinalIgnoreCase)
                             && runAsUserPresent
                             && setRunasPasswordAsSecureString)
                         {

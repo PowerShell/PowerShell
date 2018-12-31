@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (typeNames.Count < 2 || string.IsNullOrEmpty(typeNames[1]))
                 return false;
-            return String.Equals(typeNames[1], "System.Enum", StringComparison.Ordinal);
+            return string.Equals(typeNames[1], "System.Enum", StringComparison.Ordinal);
         }
 
         /// <summary>

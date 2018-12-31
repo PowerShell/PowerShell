@@ -397,7 +397,7 @@ namespace System.Management.Automation
             if (list.Contains("*")) return SessionStateEntryVisibility.Public;
             foreach (string p in list)
             {
-                if (String.Equals(p, path, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(p, path, StringComparison.OrdinalIgnoreCase))
                     return SessionStateEntryVisibility.Public;
 
                 if (WildcardPattern.ContainsWildcardCharacters(p))

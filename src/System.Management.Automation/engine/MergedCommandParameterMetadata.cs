@@ -297,7 +297,7 @@ namespace System.Management.Automation
                 {
                     var parameterSetName = keyValuePair.Key;
                     var parameterSetData = keyValuePair.Value;
-                    if (String.Equals(parameterSetName, ParameterAttribute.AllParameterSets, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(parameterSetName, ParameterAttribute.AllParameterSets, StringComparison.OrdinalIgnoreCase))
                     {
                         // Don't add the parameter set name but assign the bit field zero and then mark the bool
                         parameterSetData.ParameterSetFlag = 0;
@@ -463,7 +463,7 @@ namespace System.Management.Automation
                     // If it is an exact match then only return the exact match
                     // as the result
 
-                    if (tryExactMatching && String.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
+                    if (tryExactMatching && string.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
                     {
                         return _bindableParameters[parameterName];
                     }
@@ -483,7 +483,7 @@ namespace System.Management.Automation
                     // If it is an exact match then only return the exact match
                     // as the result
 
-                    if (tryExactMatching && String.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
+                    if (tryExactMatching && string.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
                     {
                         return _aliasedParameters[parameterName];
                     }

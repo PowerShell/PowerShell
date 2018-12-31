@@ -432,20 +432,20 @@ namespace System.Management.Automation
                     if (!string.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
                     {
                         // After converting core snapins to load as modules, the providers will have Module property populated
-                        if (!String.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
-                            !String.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
+                        if (!string.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
                         {
                             break;
                         }
                     }
 
-                    result = String.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
+                    result = string.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
                 } while (false);
             }
             else
             {
                 // If only the provider name is specified, then only the name must match
-                result = String.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
+                result = string.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
             }
 
             return result;
@@ -477,7 +477,7 @@ namespace System.Management.Automation
             {
                 if (namePattern == null)
                 {
-                    if (String.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
+                    if (string.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
                         IsPSSnapinNameMatch(psSnapinQualifiedName))
                     {
                         result = true;
@@ -497,7 +497,7 @@ namespace System.Management.Automation
             bool result = false;
 
             if (string.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
-                String.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
+                string.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
             }

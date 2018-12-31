@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
                             isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
                         }
 
-                        if (String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
+                        if (string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
                         {
                             string parentName = path.Substring(0, path.Length - childName.Length);
                             path = parentName;
@@ -1354,7 +1354,7 @@ namespace System.Management.Automation
                             // those directories.
                             if (!string.IsNullOrEmpty(path) && !IsItemContainer(path))
                             {
-                                if (!String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (context.Include != null)
                                     {
@@ -3475,7 +3475,7 @@ namespace System.Management.Automation
                     // function can be abused
                     if (context.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode &&
                         (providerInstance is Microsoft.PowerShell.Commands.FunctionProvider) &&
-                        (String.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
+                        (string.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
                     {
                         throw
                             PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);

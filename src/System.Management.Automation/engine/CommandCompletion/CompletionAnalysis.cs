@@ -1057,14 +1057,14 @@ namespace System.Management.Automation
                             {
                                 List<string> existingValues = null;
                                 WildcardPattern wildcardPattern = null;
-                                bool isDependsOnProperty = String.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
+                                bool isDependsOnProperty = string.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
                                 bool hasNewLine = false;
                                 string stringQuote = (completionContext.TokenAtCursor is StringExpandableToken) ? "\"" : "'";
                                 if ((property.ValueMap != null && property.ValueMap.Count > 0) || isDependsOnProperty)
                                 {
                                     shouldContinue = false;
                                     existingValues = new List<string>();
-                                    if (String.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
                                     {
                                         var arrayAst = Ast.GetAncestorAst<ArrayLiteralAst>(lastAst);
                                         if (arrayAst != null && arrayAst.Elements.Count > 0)
@@ -1144,7 +1144,7 @@ namespace System.Management.Automation
                                                 var dynamicKeywordAst = statementAst as DynamicKeywordStatementAst;
                                                 if (dynamicKeywordAst != null &&
                                                     dynamicKeywordAst != keywordAst &&
-                                                    !String.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
+                                                    !string.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
                                                 {
                                                     if (!string.IsNullOrEmpty(dynamicKeywordAst.ElementName))
                                                     {

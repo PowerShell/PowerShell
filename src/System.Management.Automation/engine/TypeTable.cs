@@ -2837,7 +2837,7 @@ namespace System.Management.Automation.Runspaces
                 string memberName = members[i].Name;
                 for (int j = 0; j < s_standardMembers.Length; j++)
                 {
-                    if (String.Equals(memberName, s_standardMembers[j], StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(memberName, s_standardMembers[j], StringComparison.OrdinalIgnoreCase))
                     {
                         found = true;
                         break;

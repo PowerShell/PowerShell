@@ -776,13 +776,13 @@ namespace System.Management.Automation
             // mount the default drive, since the provider names can be used for provider-qualified paths.
             // The WSMAN drive is the same as the provider name.
             if (
-                String.Equals("Cert", name, StringComparison.OrdinalIgnoreCase) ||
-                String.Equals("Certificate", name, StringComparison.OrdinalIgnoreCase)
+                string.Equals("Cert", name, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals("Certificate", name, StringComparison.OrdinalIgnoreCase)
                 )
             {
                 moduleName = "Microsoft.PowerShell.Security";
             }
-            else if (String.Equals("WSMan", name, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals("WSMan", name, StringComparison.OrdinalIgnoreCase))
             {
                 moduleName = "Microsoft.WSMan.Management";
             }

@@ -988,7 +988,7 @@ namespace Microsoft.PowerShell.Commands
                                 PSModuleInfo module = CreateModuleInfoForGetModule(file, refresh);
                                 if (module != null)
                                 {
-                                    if (String.Equals(moduleName, module.Name, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleName, module.Name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         foundModule = true;
                                         // We need to list all versions of the module.

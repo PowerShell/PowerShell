@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 if (cimPropertyInstance != null &&
                                     cimPropertyInstance.CimClass != null &&
                                     cimPropertyInstance.CimClass.CimSystemProperties != null &&
-                                    String.Equals(
+                                    string.Equals(
                                         cimPropertyInstance.CimClass.CimSystemProperties.ClassName,
                                         "MSFT_Credential", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (runAsBehavior == DSCResourceRunAsCredential.NotSupported)
                 {
-                    if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                     {
                         // skip adding PsDscRunAsCredential to the dynamic word for the dsc resource.
                         continue;
@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // set the property to mandatory is specified for the resource.
                     if (runAsBehavior == DSCResourceRunAsCredential.Mandatory)
                     {
-                        if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                         {
                             keyProp.Mandatory = true;
                         }
@@ -3200,7 +3200,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 foreach (var c in classes)
                                 {
                                     var alias = GetFriendlyName(c);
-                                    if (String.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, DSCResourceRunAsCredential.Default);
                                         return true;

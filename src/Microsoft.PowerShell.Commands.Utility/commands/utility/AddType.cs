@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     activeExtension = currentExtension;
                 }
-                else if (!String.Equals(activeExtension, currentExtension, StringComparison.OrdinalIgnoreCase))
+                else if (!string.Equals(activeExtension, currentExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     // All files must have the same extension otherwise throw.
                     ErrorRecord errorRecord = new ErrorRecord(
@@ -355,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If it resolved to a non-standard provider,
                     // generate an error.
-                    if (!String.Equals("FileSystem", provider.Name, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals("FileSystem", provider.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         ThrowTerminatingError(errorRecord);
                         return;
@@ -1207,9 +1207,9 @@ namespace Microsoft.PowerShell.Commands
                     // and present in diagnostic report with DefaultSeverity equal to Hidden
                     // so we skip them explicitly here too.
                     if (diagnisticRecord.IsSuppressed || diagnisticRecord.DefaultSeverity == DiagnosticSeverity.Hidden ||
-                        String.Equals(diagnisticRecord.Id, "CS2008", StringComparison.InvariantCulture) ||
-                        String.Equals(diagnisticRecord.Id, "CS1562", StringComparison.InvariantCulture) ||
-                        String.Equals(diagnisticRecord.Id, "BC2008", StringComparison.InvariantCulture))
+                        string.Equals(diagnisticRecord.Id, "CS2008", StringComparison.InvariantCulture) ||
+                        string.Equals(diagnisticRecord.Id, "CS1562", StringComparison.InvariantCulture) ||
+                        string.Equals(diagnisticRecord.Id, "BC2008", StringComparison.InvariantCulture))
                     {
                         continue;
                     }

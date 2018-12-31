@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Ensure the path is a single path from the file system provider
                 if ((resolvedPaths.Count > 1) ||
-                    (!String.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
+                    (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
                     ErrorRecord error = new ErrorRecord(
                         new ArgumentException(
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 _inputObjects.Add(Content);
             }
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Ensure the path is a single path from the file system provider
                 if ((resolvedPaths.Count > 1) ||
-                    (!String.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
+                    (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
                     ErrorRecord error = new ErrorRecord(
                         new ArgumentException(
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 if (_contentBuffer.Length > 0)
                 {
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
             string actualContent = null;
 
             // Read in the content
-            if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 actualContent = _contentBuffer.ToString();
             }
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Ensure the path is a single path from the file system provider
                 if ((resolvedPaths.Count > 1) ||
-                    (!String.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
+                    (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
                     ErrorRecord error = new ErrorRecord(
                         new ArgumentException(
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // If we're process by content, collect it.
-            if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 if (_contentBuffer.Length > 0)
                 {
@@ -463,7 +463,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If we're processing event log records, decrypt those inline.
-            if (String.Equals("ByWinEvent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals("ByWinEvent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 string actualContent = EventLogRecord.Properties["Message"].Value.ToString();
                 string decrypted = Decrypt(actualContent);
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (String.Equals("ByWinEvent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals("ByWinEvent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands
             string actualContent = null;
 
             // Read in the content
-            if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 actualContent = _contentBuffer.ToString();
             }

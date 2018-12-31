@@ -350,7 +350,7 @@ namespace System.Management.Automation.Host
             string[] helperCommands = { "TabExpansion2", "prompt", "TabExpansion", "PSConsoleHostReadline" };
             foreach (string helperCommand in helperCommands)
             {
-                if (String.Equals(helperCommand, commandName, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(helperCommand, commandName, StringComparison.OrdinalIgnoreCase))
                 {
                     IgnoreCommand(logElement, invocation);
 
@@ -606,7 +606,7 @@ namespace System.Management.Automation.Host
                     if (TranscriptionData.CommandBeingIgnored != null)
                     {
                         // If we're ignoring a prompt, capture the value
-                        if (String.Equals("prompt", TranscriptionData.CommandBeingIgnored, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals("prompt", TranscriptionData.CommandBeingIgnored, StringComparison.OrdinalIgnoreCase))
                         {
                             TranscriptionData.PromptText = resultText;
                         }
@@ -667,7 +667,7 @@ namespace System.Management.Automation.Host
                 // If we're completing a command that we were ignoring, start transcribing results / etc. again.
                 if ((TranscriptionData.CommandBeingIgnored != null) &&
                     (invocation != null) && (invocation.MyCommand != null) &&
-                    String.Equals(commandNameToCheck, invocation.MyCommand.Name, StringComparison.OrdinalIgnoreCase))
+                    string.Equals(commandNameToCheck, invocation.MyCommand.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     TranscriptionData.CommandBeingIgnored = null;
                     TranscriptionData.IsHelperCommand = false;
@@ -716,7 +716,7 @@ namespace System.Management.Automation.Host
                     // Transcription should begin only if file generation is successful.
                     // If there is an error in file generation, throw the exception.
                     string baseDirectory = Path.GetDirectoryName(transcript.Path);
-                    if (Directory.Exists(transcript.Path) || (String.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal)))
+                    if (Directory.Exists(transcript.Path) || (string.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal)))
                     {
                         string errorMessage = string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,

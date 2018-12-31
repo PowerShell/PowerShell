@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (base.SuppressWildcardExpansion)
                     {
-                        if (String.Equals(drive.Name, driveName, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(drive.Name, driveName, StringComparison.OrdinalIgnoreCase))
                             addDrive = true;
                     }
                     else

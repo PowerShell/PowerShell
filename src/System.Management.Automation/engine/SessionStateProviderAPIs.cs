@@ -887,11 +887,11 @@ namespace System.Management.Automation
 
                 foreach (ProviderInfo provider in matchingProviders)
                 {
-                    if (String.Equals(
+                    if (string.Equals(
                             provider.PSSnapInName,
                             providerName.PSSnapInName,
                            StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals(
+                        string.Equals(
                             provider.ModuleName,
                             providerName.PSSnapInName,
                             StringComparison.OrdinalIgnoreCase))

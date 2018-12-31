@@ -275,14 +275,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             foreach (TypeOrGroupReference currentTypeOrGroupReference in currentViewDefinition.appliesTo.referenceList)
                             {
                                 if (!string.IsNullOrEmpty(currentTypeOrGroupReference.name) &&
-                                    String.Equals(currentObjectTypeName, currentTypeOrGroupReference.name, StringComparison.OrdinalIgnoreCase))
+                                    string.Equals(currentObjectTypeName, currentTypeOrGroupReference.name, StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (currentViewDefinition.mainControl.GetType() == formatType)
                                     {
                                         validViews.Append(currentViewDefinition.name);
                                         validViews.Append(separator);
                                     }
-                                    else if (String.Equals(viewName, currentViewDefinition.name, StringComparison.OrdinalIgnoreCase))
+                                    else if (string.Equals(viewName, currentViewDefinition.name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         string cmdletFormatName = null;
                                         if (currentViewDefinition.mainControl is TableControlBody)

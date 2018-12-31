@@ -870,7 +870,7 @@ namespace System.Management.Automation
 
             if (cmdletInfo != null)
             {
-                if (String.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -919,7 +919,7 @@ namespace System.Management.Automation
             if (
                 (!string.IsNullOrEmpty(this.OutVariable)) &&
                 (!(this.OutVariable.StartsWith("+", StringComparison.Ordinal))) &&
-                String.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
+                string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)
                     _state = new SessionState(Context.EngineSessionState);

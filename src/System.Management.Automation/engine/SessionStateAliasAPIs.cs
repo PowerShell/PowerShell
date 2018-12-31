@@ -455,7 +455,7 @@ namespace System.Management.Automation
             // If the "private" scope was specified, make sure the options contain
             // the Private flag
 
-            if (String.Equals(scopeID, StringLiterals.Private, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(scopeID, StringLiterals.Private, StringComparison.OrdinalIgnoreCase))
             {
                 alias.Options |= ScopedItemOptions.Private;
             }

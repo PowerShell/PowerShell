@@ -1168,7 +1168,7 @@ namespace System.Management.Automation.Runspaces
                     if (element == null)
                         continue;
                     if ((objType == null || element.GetType() == objType) &&
-                        String.Equals(element.Name, name, StringComparison.OrdinalIgnoreCase))
+                        string.Equals(element.Name, name, StringComparison.OrdinalIgnoreCase))
                     {
                         _internalCollection.RemoveAt(i);
                     }

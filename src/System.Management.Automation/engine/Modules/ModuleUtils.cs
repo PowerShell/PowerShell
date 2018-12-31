@@ -507,7 +507,7 @@ namespace System.Management.Automation.Internal
                                         moduleCompareName = commandEntry.PSSnapIn.Name;
                                     }
 
-                                    if (String.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         if (commandEntry.Visibility == SessionStateEntryVisibility.Private)
                                         {
