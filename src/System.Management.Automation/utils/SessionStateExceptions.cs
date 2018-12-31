@@ -294,7 +294,7 @@ namespace System.Management.Automation
             if (path == null)
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -303,7 +303,7 @@ namespace System.Management.Automation
             else
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,

@@ -405,7 +405,7 @@ namespace System.Management.Automation.Language
                                 var typeAst = _symbolTable.GetCurrentTypeDefinitionAst();
                                 Diagnostics.Assert(typeAst != null, "Method scopes can exist only inside type definitions.");
 
-                                string typeString = String.Format(CultureInfo.InvariantCulture, "[{0}]::", typeAst.Name);
+                                string typeString = string.Format(CultureInfo.InvariantCulture, "[{0}]::", typeAst.Name);
                                 _parser.ReportError(variableExpressionAst.Extent,
                                     nameof(ParserStrings.MissingTypeInStaticPropertyAssignment),
                                     ParserStrings.MissingTypeInStaticPropertyAssignment,

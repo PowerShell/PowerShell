@@ -4195,7 +4195,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                            new ArgumentException(
-                               String.Format(System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemFromSessionToSession, "FromSession", "ToSession")),
+                               string.Format(System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemFromSessionToSession, "FromSession", "ToSession")),
                                "InvalidInput",
                                 ErrorCategory.InvalidArgument,
                                 dynamicParams));
@@ -4229,7 +4229,7 @@ namespace System.Management.Automation
                 {
                     context.WriteError(new ErrorRecord(
                                             new ArgumentNullException(
-                                                    String.Format(
+                                                    string.Format(
                                                     System.Globalization.CultureInfo.InvariantCulture,
                                                     SessionStateStrings.CopyItemRemotelyPathIsNullOrEmpty,
                                                     "Destination")),
@@ -4805,7 +4805,7 @@ namespace System.Management.Automation
                     {
                         context.WriteError(new ErrorRecord(
                             new InvalidOperationException(
-                                String.Format(
+                                string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture,
                                     SessionStateStrings.CopyItemSessionProperties,
                                     "LanguageMode",
@@ -4844,7 +4844,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                 new InvalidOperationException(
-                                    String.Format(
+                                    string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemValidateRemotePath, path)),
                                     "FailedToValidateRemotePath",
                                     ErrorCategory.InvalidOperation,
@@ -4860,7 +4860,7 @@ namespace System.Management.Automation
                 {
                     context.WriteError(new ErrorRecord(
                                         new ArgumentException(
-                                            String.Format(
+                                            string.Format(
                                             System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemRemotelyPathIsNotAbsolute, path)),
                                             "RemotePathIsNotAbsolute",
                                             ErrorCategory.InvalidArgument,
@@ -4889,7 +4889,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                             new ArgumentException(
-                                                String.Format(
+                                                string.Format(
                                                 System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, path)),
                                                 "RemotePathNotFound",
                                                 ErrorCategory.InvalidArgument,
@@ -4907,7 +4907,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                     new InvalidOperationException(
-                                        String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                                        string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                             SessionStateStrings.CopyItemSessionProperties,
                                             "Availability", session.Availability)),
                                             "SessionIsNotAvailable",

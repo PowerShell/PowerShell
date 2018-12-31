@@ -914,7 +914,7 @@ namespace Microsoft.PowerShell.Commands
                 insert = " " + insert;
             }
 
-            return String.Format(CultureInfo.InvariantCulture, "#{0}{1}", insert, streamWriter.NewLine);
+            return string.Format(CultureInfo.InvariantCulture, "#{0}{1}", insert, streamWriter.NewLine);
         }
 
         /// <summary>

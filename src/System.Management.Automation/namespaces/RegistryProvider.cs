@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.SetItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.ClearItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path);
@@ -897,7 +897,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.RenameItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -942,7 +942,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.NewItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path);
@@ -1117,7 +1117,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.RemoveKeyResourceTemplate;
 
             string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path);
@@ -1404,7 +1404,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.CopyKeyResourceTemplate;
 
             string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -1650,7 +1650,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.MoveItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -1888,7 +1888,7 @@ namespace Microsoft.PowerShell.Commands
                 object newPropertyValue = property.Value;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -2001,7 +2001,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string valueName in filteredPropertyCollection)
             {
                 string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -2135,7 +2135,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.NewPropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -2262,7 +2262,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = RegistryProviderStrings.RemovePropertyResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -2350,7 +2350,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.RenamePropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -2450,7 +2450,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.CopyPropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     sourcePath,
@@ -2550,7 +2550,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.MovePropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     sourcePath,

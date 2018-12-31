@@ -1190,7 +1190,7 @@ namespace System.Management.Automation
             {
                 error = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(CultureInfo.InvariantCulture,
+                        string.Format(CultureInfo.InvariantCulture,
                             SecuritySupportStrings.NoCertificateFound, _identifier)),
                     "NoCertificateFound", ErrorCategory.ObjectNotFound, _identifier);
             }
@@ -1260,7 +1260,7 @@ namespace System.Management.Automation
                 {
                     error = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(CultureInfo.InvariantCulture,
+                            string.Format(CultureInfo.InvariantCulture,
                                 SecuritySupportStrings.CertificatePathMustBeFileSystemPath, _identifier)),
                         "CertificatePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, pathProvider);
                     return;
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation
                     {
                         error = new ErrorRecord(
                             new ArgumentException(
-                                String.Format(CultureInfo.InvariantCulture,
+                                string.Format(CultureInfo.InvariantCulture,
                                     SecuritySupportStrings.CertificateCannotBeUsedForEncryption, certificate.Thumbprint, CertificateFilterInfo.DocumentEncryptionOid)),
                             "CertificateCannotBeUsedForEncryption", ErrorCategory.InvalidData, certificate);
                         return;
@@ -1459,7 +1459,7 @@ namespace System.Management.Automation
                     {
                         error = new ErrorRecord(
                             new ArgumentException(
-                                String.Format(CultureInfo.InvariantCulture,
+                                string.Format(CultureInfo.InvariantCulture,
                                     SecuritySupportStrings.IdentifierMustReferenceSingleCertificate, _identifier, "To")),
                             "IdentifierMustReferenceSingleCertificate", ErrorCategory.LimitsExceeded, certificatesToProcess);
                         Certificates.Clear();

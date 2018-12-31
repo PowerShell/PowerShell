@@ -473,7 +473,7 @@ namespace System.Management.Automation.Remoting
                     _remoteSession.ExecuteConnect(inputData, out outputData);
 
                     //construct Xml to send back
-                    string responseData = String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    string responseData = string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                     "<{0} xmlns=\"{1}\">{2}</{0}>",
                                     WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
                                     WSManNativeApi.PS_XML_NAMESPACE,

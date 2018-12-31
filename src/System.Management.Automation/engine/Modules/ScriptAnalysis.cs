@@ -27,7 +27,7 @@ namespace System.Management.Automation
                 {
                     ProgressRecord analysisProgress = new ProgressRecord(0,
                         Modules.ScriptAnalysisPreparing,
-                        String.Format(CultureInfo.InvariantCulture, Modules.ScriptAnalysisModule, path));
+                        string.Format(CultureInfo.InvariantCulture, Modules.ScriptAnalysisModule, path));
                     analysisProgress.RecordType = ProgressRecordType.Processing;
 
                     // Write the progress using a static source ID so that all

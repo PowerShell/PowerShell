@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!isValidModuleVersion)
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, Modules.SkippingInvalidModuleVersionFolder,
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, Modules.SkippingInvalidModuleVersionFolder,
                                                 version.ToString(), moduleBase));
                 }
             }

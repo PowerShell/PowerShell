@@ -41,7 +41,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(_psSnapinName))
             {
                 _fullName =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         "{0}\\{1}",
                         _psSnapinName,

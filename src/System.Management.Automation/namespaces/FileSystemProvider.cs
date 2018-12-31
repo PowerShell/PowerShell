@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
                 // Compose XPath query to select the appropriate node based on the cmdlet
-                string xpathQuery = String.Format(
+                string xpathQuery = string.Format(
                     CultureInfo.InvariantCulture,
                     HelpCommentsParser.ProviderHelpCommandXPath,
                     "[@id='FileSystem']",
@@ -2751,7 +2751,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 foundStream = true;
 
-                                string action = String.Format(
+                                string action = string.Format(
                                     CultureInfo.InvariantCulture,
                                     FileSystemProviderStrings.StreamAction,
                                     stream.Stream, fsinfo.FullName);
@@ -3430,7 +3430,7 @@ namespace Microsoft.PowerShell.Commands
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
                     if (op == null)
                     {
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailedToReadFile, path));
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailedToReadFile, path));
                         WriteError(new ErrorRecord(e, "CopyItemRemotelyFailedToReadFile", ErrorCategory.WriteError, path));
                         return;
                     }
@@ -3456,7 +3456,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 if (File.Exists(destinationPath))
                                 {
-                                    Exception e = new IOException(String.Format(
+                                    Exception e = new IOException(string.Format(
                                         CultureInfo.InvariantCulture,
                                         FileSystemProviderStrings.CopyItemRemotelyDestinationIsFile,
                                         path,
@@ -3578,7 +3578,7 @@ namespace Microsoft.PowerShell.Commands
                     // Verify that the destination is not a file on the remote end
                     if (RemoteDestinationPathIsFile(destination, ps))
                     {
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture,
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
                                                                     FileSystemProviderStrings.CopyItemRemoteDestinationIsFile,
                                                                     destination));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, destination));
@@ -3829,7 +3829,7 @@ namespace Microsoft.PowerShell.Commands
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
                     if (op == null)
                     {
-                        Exception e = new IOException(String.Format(
+                        Exception e = new IOException(string.Format(
                                                       CultureInfo.InvariantCulture,
                                                       FileSystemProviderStrings.CopyItemRemotelyFailedToGetDirectoryChildItems,
                                                       sourceDirectoryFullName));
@@ -4073,11 +4073,11 @@ namespace Microsoft.PowerShell.Commands
                                                       long fileSize, bool isAlternateDataStream, string streamName)
         {
             bool success = false;
-            string activity = String.Format(CultureInfo.InvariantCulture,
+            string activity = string.Format(CultureInfo.InvariantCulture,
                                             FileSystemProviderStrings.CopyItemRemotelyProgressActivity,
                                             sourceFileFullName,
                                             destinationFile.FullName);
-            string statusDescription = String.Format(CultureInfo.InvariantCulture,
+            string statusDescription = string.Format(CultureInfo.InvariantCulture,
                                                         FileSystemProviderStrings.CopyItemRemotelyStatusDescription,
                                                         ps.Runspace.ConnectionInfo.ComputerName,
                                                         "localhost");
@@ -4139,7 +4139,7 @@ namespace Microsoft.PowerShell.Commands
                     if (op == null)
                     {
                         errorWhileCopyRemoteFile = true;
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture,
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
                                                                     FileSystemProviderStrings.CopyItemRemotelyFailedToReadFile,
                                                                     sourceFileFullName));
                         WriteError(new ErrorRecord(e, "FailedToCopyFileFromRemoteSession", ErrorCategory.WriteError, sourceFileFullName));
@@ -4347,11 +4347,11 @@ namespace Microsoft.PowerShell.Commands
 
         private bool CopyFileStreamToRemoteSession(FileInfo file, string destinationPath, System.Management.Automation.PowerShell ps, bool isAlternateStream, string streamName)
         {
-            string activity = String.Format(CultureInfo.InvariantCulture,
+            string activity = string.Format(CultureInfo.InvariantCulture,
                                             FileSystemProviderStrings.CopyItemRemotelyProgressActivity,
                                             file.FullName,
                                             destinationPath);
-            string statusDescription = String.Format(CultureInfo.InvariantCulture,
+            string statusDescription = string.Format(CultureInfo.InvariantCulture,
                                                      FileSystemProviderStrings.CopyItemRemotelyStatusDescription,
                                                      "localhost",
                                                      ps.Runspace.ConnectionInfo.ComputerName);
@@ -4452,14 +4452,14 @@ namespace Microsoft.PowerShell.Commands
                     if (op == null || op["BytesWritten"] == null)
                     {
                         //write error to stream
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, file.FullName));
                         return false;
                     }
 
                     if ((int)(op["BytesWritten"]) != toRead)
                     {
-                        Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
+                        Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, file.FullName));
                         return false;
                     }
@@ -4539,7 +4539,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(remoteFilePath))
             {
-                Exception e = new ArgumentException(String.Format(CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, destinationPath));
+                Exception e = new ArgumentException(string.Format(CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, destinationPath));
                 WriteError(new ErrorRecord(e, "RemotePathNotFound", ErrorCategory.WriteError, destinationPath));
                 return false;
             }
@@ -4582,7 +4582,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (op == null || op["IsFileInfo"] == null)
             {
-                Exception e = new IOException(String.Format(
+                Exception e = new IOException(string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     FileSystemProviderStrings.CopyItemRemotelyFailedToValidateIfDestinationIsFile,
                                                     destination));
@@ -4614,7 +4614,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (force && (op["DirectoryPath"] == null))
             {
-                Exception e = new IOException(String.Format(CultureInfo.InvariantCulture,
+                Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
                                                             FileSystemProviderStrings.CopyItemRemotelyFailedToCreateDirectory,
                                                             destination));
                 WriteError(new ErrorRecord(e, "FailedToCreateDirectory", ErrorCategory.WriteError, destination));
@@ -6092,7 +6092,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     string resource =
-                        String.Format(
+                        string.Format(
                             Host.CurrentCulture,
                             resourceTemplate,
                             path,
@@ -6253,7 +6253,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = FileSystemProviderStrings.ClearPropertyResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         fileSystemInfo.FullName,
@@ -6701,7 +6701,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     FileStream fileStream = null;
 
-                    string streamAction = String.Format(
+                    string streamAction = string.Format(
                         CultureInfo.InvariantCulture,
                         FileSystemProviderStrings.StreamAction,
                         streamName, path);

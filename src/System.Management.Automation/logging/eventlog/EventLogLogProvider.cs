@@ -66,7 +66,7 @@ namespace System.Management.Automation
                 return source;
             }
 
-            string message = String.Format(Thread.CurrentThread.CurrentCulture, "Event source '{0}' is not registered", source);
+            string message = string.Format(Thread.CurrentThread.CurrentCulture, "Event source '{0}' is not registered", source);
             throw new InvalidOperationException(message);
         }
 

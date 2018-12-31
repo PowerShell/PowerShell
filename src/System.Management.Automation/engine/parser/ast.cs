@@ -206,7 +206,7 @@ namespace System.Management.Automation.Language
             }
             catch
             {
-                throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, AutomationExceptions.CantConvertWithDynamicExpression, this.Extent.Text));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, AutomationExceptions.CantConvertWithDynamicExpression, this.Extent.Text));
             }
         }
 

@@ -551,7 +551,7 @@ namespace System.Management.Automation
                         (!isDefaultValue) &&
                         spb != null && !usesCmdletBinding)
                     {
-                        string obsoleteWarning = String.Format(
+                        string obsoleteWarning = string.Format(
                             CultureInfo.InvariantCulture,
                             ParameterBinderStrings.UseOfDeprecatedParameterWarning,
                             parameterMetadata.Name,
