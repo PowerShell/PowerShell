@@ -34,7 +34,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Boolean)frame.Pop()) == ((Boolean)frame.Pop()));
+                frame.Push(((bool)frame.Pop()) == ((bool)frame.Pop()));
                 return +1;
             }
         }
