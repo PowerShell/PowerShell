@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "EventLog", DefaultParameterSetName = "LogName",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113314", RemotingCapability = RemotingCapability.SupportedByCommand)]
-    [OutputType(typeof(EventLog), typeof(EventLogEntry), typeof(String))]
+    [OutputType(typeof(EventLog), typeof(EventLogEntry), typeof(string))]
     public sealed class GetEventLogCommand : PSCmdlet
     {
         #region Parameters

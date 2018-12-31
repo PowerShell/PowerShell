@@ -450,12 +450,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (psObject.Properties[namePropName].Value is String)
                 {
-                    name = (String)psObject.Properties[namePropName].Value;
+                    name = (string)psObject.Properties[namePropName].Value;
                 }
 
                 if (psObject.Properties[computernamePropName].Value is String)
                 {
-                    computerName = (String)psObject.Properties[computernamePropName].Value;
+                    computerName = (string)psObject.Properties[computernamePropName].Value;
                 }
 
                 message = string.Format(CultureInfo.CurrentUICulture, SessionObjectPath, id, instanceId, name, computerName);

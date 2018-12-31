@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
 
     [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113415")]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class StopTranscriptCommand : PSCmdlet
     {
         /// <summary>
