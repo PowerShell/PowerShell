@@ -852,7 +852,7 @@ namespace Microsoft.PowerShell.Commands
                         ScopedItemOptions newOptions = ScopedItemOptions.None;
 
                         if (!string.IsNullOrEmpty(Scope) &&
-                            String.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
+                            string.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
                         {
                             newOptions = ScopedItemOptions.Private;
                         }
@@ -876,7 +876,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (Description == null)
                         {
-                            Description = String.Empty;
+                            Description = string.Empty;
                         }
 
                         varToSet.Description = Description;

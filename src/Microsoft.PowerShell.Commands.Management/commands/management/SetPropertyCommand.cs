@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = propertyValueLiteralPathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// The value of the property to set.

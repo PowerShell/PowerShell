@@ -178,7 +178,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the command.
         /// </summary>
-        public string Name { get; private set; } = String.Empty;
+        public string Name { get; private set; } = string.Empty;
 
 // Name
 

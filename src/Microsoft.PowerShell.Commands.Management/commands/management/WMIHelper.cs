@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         {
             GetWmiObjectCommand getObject = (GetWmiObjectCommand)_wmiObject;
             StringBuilder returnValue = new StringBuilder("select ");
-            returnValue.Append(String.Join(", ", getObject.Property));
+            returnValue.Append(string.Join(", ", getObject.Property));
             returnValue.Append(" from ");
             returnValue.Append(getObject.Class);
             if (!string.IsNullOrEmpty(getObject.Filter))
@@ -841,7 +841,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!getObject.ValidateClassFormat())
                 {
                     ArgumentException e = new ArgumentException(
-                        String.Format(
+                        string.Format(
                             Thread.CurrentThread.CurrentCulture,
                             "Class", getObject.Class));
 

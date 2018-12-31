@@ -1528,7 +1528,7 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
+            return string.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
         /// <summary>
@@ -3486,7 +3486,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     //
                     if (UseSharedProcess == false &&
                         psObjectCollection[0] != null &&
-                        String.Compare(psObjectCollection[0].ToString(), "Workflow", StringComparison.OrdinalIgnoreCase) == 0)
+                        string.Compare(psObjectCollection[0].ToString(), "Workflow", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         throw new PSInvalidOperationException(RemotingErrorIdStrings.UseSharedProcessCannotBeFalseForWorkflowSessionType);
                     }

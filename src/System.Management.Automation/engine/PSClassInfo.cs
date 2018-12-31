@@ -48,7 +48,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help file path for the cmdlet.
         /// </summary>
-        public string HelpFile { get; internal set; } = String.Empty;
+        public string HelpFile { get; internal set; } = string.Empty;
     }
 
     /// <summary>

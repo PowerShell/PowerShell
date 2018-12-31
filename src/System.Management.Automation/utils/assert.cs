@@ -129,7 +129,7 @@ namespace System.Management.Automation
             bool condition,
             string whyThisShouldNeverHappen)
         {
-            Diagnostics.Assert(condition, whyThisShouldNeverHappen, String.Empty);
+            Diagnostics.Assert(condition, whyThisShouldNeverHappen, string.Empty);
         }
 
         /// <summary>

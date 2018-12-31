@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _name = String.Empty;
+        private string _name = string.Empty;
 
         /// <summary>
         /// The script block that the user has specified in the
@@ -932,8 +932,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // convert null to String.Empty for VM/Container session
-                    ConfigurationName = String.Empty;
+                    // convert null to string.Empty for VM/Container session
+                    ConfigurationName = string.Empty;
                 }
             }
 

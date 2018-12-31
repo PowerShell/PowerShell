@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(computerName != null, "Null ComputerName");
 
-            if (String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 //tracer.WriteEvent(ref PSEventDescriptors.PS_EVENT_HOSTNAMERESOLVE);
                 //tracer.Dispose();
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
                 Uri uri = new System.Uri("ssh://" + hostname);
                 host = ResolveComputerName(uri.Host);
                 ValidateComputerName(new string[] { host });
-                if (uri.UserInfo != String.Empty)
+                if (uri.UserInfo != string.Empty)
                 {
                     userName = uri.UserInfo;
                 }
@@ -916,7 +916,7 @@ namespace Microsoft.PowerShell.Commands
                         var resolvedComputerName = ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
                         ParseSshHostName(resolvedComputerName, out string host, out string userName, out int port);
                         connectionInfo.ComputerName = host;
-                        if (userName != String.Empty)
+                        if (userName != string.Empty)
                         {
                             connectionInfo.UserName = userName;
                         }

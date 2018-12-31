@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
-        /// <param name="resourceString">Resource String.</param>
+        /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
         internal MethodException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
@@ -177,7 +177,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
-        /// <param name="resourceString">Resource String.</param>
+        /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
         internal MethodInvocationException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
@@ -240,7 +240,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
-        /// <param name="resourceString">Resource String.</param>
+        /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
         internal GetValueException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
@@ -304,7 +304,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
-        /// <param name="resourceString">Resource String.</param>
+        /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
         internal PropertyNotFoundException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
@@ -367,7 +367,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
-        /// <param name="resourceString">Resource String.</param>
+        /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
         internal GetValueInvocationException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
@@ -428,7 +428,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
-        /// <param name="resourceString">Resource String.</param>
+        /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
         internal SetValueException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :
@@ -489,7 +489,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
-        /// <param name="resourceString">Resource String.</param>
+        /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
         internal SetValueInvocationException(string errorId, Exception innerException,
             string resourceString, params object[] arguments) :

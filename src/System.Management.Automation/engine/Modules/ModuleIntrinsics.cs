@@ -276,7 +276,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName == null) { moduleName = String.Empty; }
+            if (moduleName == null) { moduleName = string.Empty; }
 
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }

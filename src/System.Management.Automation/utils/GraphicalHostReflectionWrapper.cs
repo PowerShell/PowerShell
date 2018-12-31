@@ -90,7 +90,7 @@ namespace System.Management.Automation.Internal
             AssemblyName graphicalHostAssemblyName = new AssemblyName();
             graphicalHostAssemblyName.Name = "Microsoft.PowerShell.GraphicalHost";
             graphicalHostAssemblyName.Version = new Version(3, 0, 0, 0);
-            graphicalHostAssemblyName.CultureInfo = new CultureInfo(String.Empty); // Neutral culture
+            graphicalHostAssemblyName.CultureInfo = new CultureInfo(string.Empty); // Neutral culture
             graphicalHostAssemblyName.SetPublicKeyToken(new byte[] { 0x31, 0xbf, 0x38, 0x56, 0xad, 0x36, 0x4e, 0x35 });
 
             try

@@ -104,7 +104,7 @@ namespace System.Management.Automation
         private SignatureStatus _status = SignatureStatus.UnknownError;
         private DWORD _win32Error;
         private X509Certificate2 _signerCert;
-        private string _statusMessage = String.Empty;
+        private string _statusMessage = string.Empty;
         private X509Certificate2 _timeStamperCert;
         //private DateTime signedOn = new DateTime(0);
 

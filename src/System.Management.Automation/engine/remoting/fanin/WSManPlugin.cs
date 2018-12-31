@@ -199,7 +199,7 @@ namespace System.Management.Automation.Remoting
                         RemotingErrorIdStrings.WSManPluginNullInvalidInput,
                         "requestDetails",
                         "WSManPluginShell"),
-                    String.Empty);
+                    string.Empty);
                 return;
             }
 
@@ -607,7 +607,7 @@ namespace System.Management.Automation.Remoting
                         RemotingErrorIdStrings.WSManPluginNullInvalidInput,
                         "requestDetails",
                         inputFunctionName),
-                    String.Empty);
+                    string.Empty);
                 return false;
             }
 
@@ -686,7 +686,7 @@ namespace System.Management.Automation.Remoting
                         RemotingErrorIdStrings.WSManPluginNullInvalidInput,
                         "requestDetails",
                         "StopCommand"),
-                    String.Empty);
+                    string.Empty);
                 return;
             }
 
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation.Remoting
             {
                 WSManNativeApi.WSManOption option = options[i];
 
-                if (String.Equals(option.name, WSManPluginConstants.PowerShellStartupProtocolVersionName, StringComparison.Ordinal))
+                if (string.Equals(option.name, WSManPluginConstants.PowerShellStartupProtocolVersionName, StringComparison.Ordinal))
                 {
                     if (!EnsureProtocolVersionComplies(requestDetails, option.value))
                     {
@@ -1046,7 +1046,7 @@ namespace System.Management.Automation.Remoting
                     isProtocolVersionDeclared = true;
                 }
 
-                if (0 == String.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal))
+                if (0 == string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal))
                 {
                     if (option.mustComply)
                     {
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             string clientVersionString)
         {
-            if (String.Equals(clientVersionString, WSManPluginConstants.PowerShellStartupProtocolVersionValue, StringComparison.Ordinal))
+            if (string.Equals(clientVersionString, WSManPluginConstants.PowerShellStartupProtocolVersionValue, StringComparison.Ordinal))
             {
                 return true;
             }
@@ -1282,7 +1282,7 @@ namespace System.Management.Automation.Remoting
             // Close Command
             if (IntPtr.Zero != commandContext)
             {
-                if (!String.Equals(code, WSManPluginConstants.CtrlCSignal, StringComparison.Ordinal))
+                if (!string.Equals(code, WSManPluginConstants.CtrlCSignal, StringComparison.Ordinal))
                 {
                     // Close operations associated with this command..
                     WSManPluginOperationShutdownContext cmdCtxt = new WSManPluginOperationShutdownContext(pluginContext, shellContext, commandContext, false);
@@ -1404,8 +1404,8 @@ namespace System.Management.Automation.Remoting
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 (requestDetails.unmanagedHandle).ToString(),
                 Convert.ToString(errorCode, CultureInfo.InvariantCulture),
-                String.Empty,
-                String.Empty);
+                string.Empty,
+                string.Empty);
 
             ReportOperationComplete(requestDetails.unmanagedHandle, errorCode);
         }
@@ -1422,8 +1422,8 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
             WSManPluginErrorCodes error = WSManPluginErrorCodes.NoError;
-            string errorMessage = String.Empty;
-            string stackTrace = String.Empty;
+            string errorMessage = string.Empty;
+            string stackTrace = string.Empty;
 
             if (reasonForClose != null)
             {

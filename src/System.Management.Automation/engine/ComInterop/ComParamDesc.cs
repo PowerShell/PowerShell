@@ -81,7 +81,7 @@ namespace System.Management.Automation.ComInterop
         /// TODO: Return values should be represented by a different type
         /// </summary>
         internal ComParamDesc(ref ELEMDESC elemDesc)
-            : this(ref elemDesc, String.Empty)
+            : this(ref elemDesc, string.Empty)
         {
         }
 

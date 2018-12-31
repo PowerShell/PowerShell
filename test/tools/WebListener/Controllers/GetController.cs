@@ -20,13 +20,13 @@ namespace mvc.Controllers
             Hashtable args = new Hashtable();
             foreach (var key in Request.Query.Keys)
             {
-                args.Add(key, String.Join(Constants.HeaderSeparator, Request.Query[key]));
+                args.Add(key, string.Join(Constants.HeaderSeparator, Request.Query[key]));
             }
 
             Hashtable headers = new Hashtable();
             foreach (var key in Request.Headers.Keys)
             {
-                headers.Add(key, String.Join(Constants.HeaderSeparator, Request.Headers[key]));
+                headers.Add(key, string.Join(Constants.HeaderSeparator, Request.Headers[key]));
             }
 
             Hashtable output = new Hashtable
@@ -50,7 +50,7 @@ namespace mvc.Controllers
             }
 
             string data = new StreamReader(Request.Body).ReadToEnd();
-            if (!String.IsNullOrEmpty(data))
+            if (!string.IsNullOrEmpty(data))
             {
                 output["data"] = data;
             }

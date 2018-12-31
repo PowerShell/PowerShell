@@ -50,7 +50,7 @@ namespace System.Management.Automation
                 //This module is not an inbox module, so help goes under <userHelpPath>/<moduleName>
                 newModuleBase = Path.Combine(userHelpPath, moduleName);
             }
-            else if (String.Equals(moduleBaseParent, moduleName, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(moduleBaseParent, moduleName, StringComparison.OrdinalIgnoreCase))
             {
                 //This module has version folder.
                 var moduleVersion = Path.GetFileName(moduleBase);

@@ -1350,7 +1350,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // throw a terminating error as there are duplicate headers in the input.
                                 string memberAlreadyPresentMsg =
-                                    String.Format(CultureInfo.InvariantCulture,
+                                    string.Format(CultureInfo.InvariantCulture,
                                     ExtendedTypeSystem.MemberAlreadyPresent,
                                     currentHeader);
 

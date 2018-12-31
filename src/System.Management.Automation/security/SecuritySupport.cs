@@ -244,7 +244,7 @@ namespace System.Management.Automation.Internal
             {
                 while (currentProcess != null)
                 {
-                    if (String.Equals(gpScriptPath,
+                    if (string.Equals(gpScriptPath,
                             PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
                     {
                         foundGpScriptParent = true;
@@ -327,27 +327,27 @@ namespace System.Management.Automation.Internal
 
         internal static ExecutionPolicy ParseExecutionPolicy(string policy)
         {
-            if (String.Equals(policy, "Bypass",
+            if (string.Equals(policy, "Bypass",
                                    StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.Bypass;
             }
-            else if (String.Equals(policy, "Unrestricted",
+            else if (string.Equals(policy, "Unrestricted",
                                    StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.Unrestricted;
             }
-            else if (String.Equals(policy, "RemoteSigned",
+            else if (string.Equals(policy, "RemoteSigned",
                                    StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.RemoteSigned;
             }
-            else if (String.Equals(policy, "AllSigned",
+            else if (string.Equals(policy, "AllSigned",
                               StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.AllSigned;
             }
-            else if (String.Equals(policy, "Restricted",
+            else if (string.Equals(policy, "Restricted",
                          StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.Restricted;
@@ -980,7 +980,7 @@ namespace System.Management.Automation
 
             if ((contentBytes == null) || (contentBytes.Length == 0))
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             // After review with the crypto board, NIST_AES256_CBC is more appropriate
@@ -1190,7 +1190,7 @@ namespace System.Management.Automation
             {
                 error = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(CultureInfo.InvariantCulture,
+                        string.Format(CultureInfo.InvariantCulture,
                             SecuritySupportStrings.NoCertificateFound, _identifier)),
                     "NoCertificateFound", ErrorCategory.ObjectNotFound, _identifier);
             }
@@ -1256,11 +1256,11 @@ namespace System.Management.Automation
             if ((resolvedPaths != null) && (resolvedPaths.Count != 0))
             {
                 // Ensure the path is from the file system provider
-                if (!String.Equals(pathProvider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(pathProvider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase))
                 {
                     error = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(CultureInfo.InvariantCulture,
+                            string.Format(CultureInfo.InvariantCulture,
                                 SecuritySupportStrings.CertificatePathMustBeFileSystemPath, _identifier)),
                         "CertificatePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, pathProvider);
                     return;
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation
                     {
                         error = new ErrorRecord(
                             new ArgumentException(
-                                String.Format(CultureInfo.InvariantCulture,
+                                string.Format(CultureInfo.InvariantCulture,
                                     SecuritySupportStrings.CertificateCannotBeUsedForEncryption, certificate.Thumbprint, CertificateFilterInfo.DocumentEncryptionOid)),
                             "CertificateCannotBeUsedForEncryption", ErrorCategory.InvalidData, certificate);
                         return;
@@ -1459,7 +1459,7 @@ namespace System.Management.Automation
                     {
                         error = new ErrorRecord(
                             new ArgumentException(
-                                String.Format(CultureInfo.InvariantCulture,
+                                string.Format(CultureInfo.InvariantCulture,
                                     SecuritySupportStrings.IdentifierMustReferenceSingleCertificate, _identifier, "To")),
                             "IdentifierMustReferenceSingleCertificate", ErrorCategory.LimitsExceeded, certificatesToProcess);
                         Certificates.Clear();
@@ -1554,7 +1554,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(sourceMetadata))
             {
-                sourceMetadata = String.Empty;
+                sourceMetadata = string.Empty;
             }
 
             const string EICAR_STRING = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";

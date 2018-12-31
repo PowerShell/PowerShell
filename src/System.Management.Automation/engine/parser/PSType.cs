@@ -607,7 +607,7 @@ namespace System.Management.Automation.Language
                     getSetAttributes |= Reflection.MethodAttributes.Static;
                 }
                 // C# naming convention for backing fields.
-                string backingFieldName = String.Format(CultureInfo.InvariantCulture, "<{0}>k__BackingField", propertyMemberAst.Name);
+                string backingFieldName = string.Format(CultureInfo.InvariantCulture, "<{0}>k__BackingField", propertyMemberAst.Name);
                 var backingField = _typeBuilder.DefineField(backingFieldName, type, backingFieldAttributes);
 
                 bool hasValidateAttributes = false;
@@ -628,7 +628,7 @@ namespace System.Management.Automation.Language
                 PropertyBuilder property = _typeBuilder.DefineProperty(propertyMemberAst.Name, Reflection.PropertyAttributes.None, type, null);
 
                 // Define the "get" accessor method.
-                MethodBuilder getMethod = _typeBuilder.DefineMethod(String.Concat("get_", propertyMemberAst.Name), getSetAttributes, type, Type.EmptyTypes);
+                MethodBuilder getMethod = _typeBuilder.DefineMethod(string.Concat("get_", propertyMemberAst.Name), getSetAttributes, type, Type.EmptyTypes);
                 ILGenerator getIlGen = getMethod.GetILGenerator();
                 if (propertyMemberAst.IsStatic)
                 {
@@ -645,7 +645,7 @@ namespace System.Management.Automation.Language
                 }
 
                 // Define the "set" accessor method.
-                MethodBuilder setMethod = _typeBuilder.DefineMethod(String.Concat("set_", propertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
+                MethodBuilder setMethod = _typeBuilder.DefineMethod(string.Concat("set_", propertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
                 ILGenerator setIlGen = setMethod.GetILGenerator();
 
                 if (hasValidateAttributes)

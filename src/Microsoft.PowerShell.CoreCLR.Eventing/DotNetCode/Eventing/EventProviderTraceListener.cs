@@ -222,7 +222,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            _provider.WriteMessageEvent(String.Empty,
+            _provider.WriteMessageEvent(string.Empty,
                             (byte)eventType,
                             (long)eventType & s_keyWordMask);
         }
@@ -267,7 +267,7 @@ namespace System.Diagnostics.Eventing
             }
             else
             {
-                _provider.WriteMessageEvent(String.Format(CultureInfo.InvariantCulture, format, args),
+                _provider.WriteMessageEvent(string.Format(CultureInfo.InvariantCulture, format, args),
                                 (byte)eventType,
                                 (long)eventType & s_keyWordMask);
             }

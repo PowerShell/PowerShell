@@ -214,9 +214,9 @@ namespace System.Management.Automation
 
                 if (xmlNode.Attributes["type"] != null)
                 {
-                    if (String.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
-                    else if (String.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (string.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");
                 }
 
@@ -654,7 +654,7 @@ namespace System.Management.Automation
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (childNode.InnerText.Trim().Equals(String.Empty))
+                    if (childNode.InnerText.Trim().Equals(string.Empty))
                     {
                         continue;
                     }
@@ -758,7 +758,7 @@ namespace System.Management.Automation
 
             StringBuilder sb = new StringBuilder();
 
-            if (newLine && !xmlNode.InnerText.Trim().Equals(String.Empty))
+            if (newLine && !xmlNode.InnerText.Trim().Equals(string.Empty))
             {
                 sb.AppendLine(xmlNode.InnerText.Trim());
             }

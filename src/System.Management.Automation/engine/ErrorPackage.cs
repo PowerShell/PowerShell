@@ -372,7 +372,7 @@ namespace System.Management.Automation
         public string GetMessage()
         {
             /* Remoting not in E12
-            if (!String.IsNullOrEmpty (_errorRecord._serializedErrorCategoryMessageOverride))
+            if (!string.IsNullOrEmpty (_errorRecord._serializedErrorCategoryMessageOverride))
                 return _errorRecord._serializedErrorCategoryMessageOverride;
             */
 
@@ -431,7 +431,7 @@ namespace System.Management.Automation
             // assemble final string
             try
             {
-                return String.Format(uiCultureInfo, templateText,
+                return string.Format(uiCultureInfo, templateText,
                     activityInUse,
                     targetNameInUse,
                     targetTypeInUse,
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             {
                 templateText = ErrorCategoryStrings.InvalidErrorCategory;
 
-                return String.Format(uiCultureInfo, templateText,
+                return string.Format(uiCultureInfo, templateText,
                     activityInUse,
                     targetNameInUse,
                     targetTypeInUse,
@@ -915,7 +915,7 @@ namespace System.Management.Automation
 
             try
             {
-                return String.Format(
+                return string.Format(
                     CultureInfo.CurrentCulture,
                     template,
                     args);
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation
             string errorDetails_ScriptStackTrace =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_ScriptStackTrace") as string;
 
-            RemoteException re = new RemoteException((String.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
+            RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
             //Create ErrorRecord
             PopulateProperties(

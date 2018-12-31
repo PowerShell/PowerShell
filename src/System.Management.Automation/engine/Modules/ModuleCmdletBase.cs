@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string folder in Directory.EnumerateDirectories(path))
                 {
                     string moduleName = Path.GetFileName(folder);
-                    if (String.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         fileBaseName = moduleName;
 #endif
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!isValidModuleVersion)
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, Modules.SkippingInvalidModuleVersionFolder,
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, Modules.SkippingInvalidModuleVersionFolder,
                                                 version.ToString(), moduleBase));
                 }
             }
@@ -988,7 +988,7 @@ namespace Microsoft.PowerShell.Commands
                                 PSModuleInfo module = CreateModuleInfoForGetModule(file, refresh);
                                 if (module != null)
                                 {
-                                    if (String.Equals(moduleName, module.Name, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleName, module.Name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         foundModule = true;
                                         // We need to list all versions of the module.
@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
                     ImportModuleOptions options = new ImportModuleOptions();
                     bool found = false;
 
-                    moduleInfo = LoadModule(file, moduleBase: null, prefix: String.Empty, ss: null, ref options, flags, out found);
+                    moduleInfo = LoadModule(file, moduleBase: null, prefix: string.Empty, ss: null, ref options, flags, out found);
                 }
 
                 // return fake PSModuleInfo if can't read the file for any reason
@@ -2148,7 +2148,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (writingErrors)
                         {
-                            string invalidNameStr = String.Join(", ", invalidNames);
+                            string invalidNameStr = string.Join(", ", invalidNames);
                             string errorMsg = StringUtil.Format(Modules.InvalidExperimentalFeatureName, invalidNameStr);
                             WriteError(new ErrorRecord(new ArgumentException(errorMsg),
                                                        "Modules_InvalidExperimentalFeatureName",
@@ -2457,7 +2457,7 @@ namespace Microsoft.PowerShell.Commands
                         Modules.PSEditionNotSupported,
                         moduleManifestPath,
                         PSVersionInfo.PSEdition,
-                        String.Join(',', inferredCompatiblePSEditions));
+                        string.Join(',', inferredCompatiblePSEditions));
 
                     InvalidOperationException ioe = new InvalidOperationException(message);
 

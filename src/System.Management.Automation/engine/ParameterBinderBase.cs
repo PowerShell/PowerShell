@@ -551,7 +551,7 @@ namespace System.Management.Automation
                         (!isDefaultValue) &&
                         spb != null && !usesCmdletBinding)
                     {
-                        string obsoleteWarning = String.Format(
+                        string obsoleteWarning = string.Format(
                             CultureInfo.InvariantCulture,
                             ParameterBinderStrings.UseOfDeprecatedParameterWarning,
                             parameterMetadata.Name,
@@ -1057,7 +1057,7 @@ namespace System.Management.Automation
                         // If we have an PSObject with null base and we are trying to
                         // convert to a string, then we need to use null instead of
                         // calling LanguagePrimitives.ConvertTo as that will return
-                        // String.Empty.
+                        // string.Empty.
 
                         if (toType == typeof(string) &&
                             argumentType == typeof(PSObject))

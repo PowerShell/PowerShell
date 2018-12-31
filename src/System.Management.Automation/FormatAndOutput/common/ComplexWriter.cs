@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     result.Word = sb.ToString();
                     sb.Clear();
-                    result.Delim = String.Empty;
+                    result.Delim = string.Empty;
 
                     yield return result;
                 }
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             result.Word = sb.ToString();
-            result.Delim = String.Empty;
+            result.Delim = string.Empty;
 
             yield return result;
         }

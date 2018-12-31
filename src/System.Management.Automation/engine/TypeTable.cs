@@ -1722,7 +1722,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="typeName"></param>
         public TypeData(string typeName) : this()
         {
-            if (String.IsNullOrWhiteSpace(typeName))
+            if (string.IsNullOrWhiteSpace(typeName))
                 throw PSTraceSource.NewArgumentNullException("typeName");
             this.TypeName = typeName;
         }
@@ -2141,7 +2141,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="name"></param>
         internal TypeMemberData(string name)
         {
-            if (String.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw PSTraceSource.NewArgumentException("name");
 
             Name = name;
@@ -2720,7 +2720,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (String.Compare(member.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(member.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     noteAsMemberInfo = member;
                 }
@@ -2750,7 +2750,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     else
                     {
-                        note.noteValue = String.Compare(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase) != 0;
+                        note.noteValue = string.Compare(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase) != 0;
                     }
 
                     return true;
@@ -2775,7 +2775,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (String.Compare(member.Name, memberName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(member.Name, memberName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     AddError(errors, typeName, TypesXmlStrings.MemberShouldNotBePresent, member.Name);
                     return false;
@@ -2791,7 +2791,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo m = members[i];
-                if (String.Compare(m.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(m.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     member = m;
                 }
@@ -2837,7 +2837,7 @@ namespace System.Management.Automation.Runspaces
                 string memberName = members[i].Name;
                 for (int j = 0; j < s_standardMembers.Length; j++)
                 {
-                    if (String.Equals(memberName, s_standardMembers[j], StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(memberName, s_standardMembers[j], StringComparison.OrdinalIgnoreCase))
                     {
                         found = true;
                         break;

@@ -234,7 +234,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(source))
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             StringBuilder returnValue = new StringBuilder();
@@ -392,7 +392,7 @@ namespace System.Management.Automation
 
                         if (!string.IsNullOrEmpty(suggestionText))
                         {
-                            string returnString = String.Format(
+                            string returnString = string.Format(
                                 CultureInfo.CurrentCulture,
                                 "Suggestion [{0},{1}]: {2}",
                                 (int)suggestion["Id"],
@@ -405,7 +405,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    string matchText = String.Empty;
+                    string matchText = string.Empty;
 
                     // Otherwise, this is a Regex match against the
                     // command or error
@@ -444,7 +444,7 @@ namespace System.Management.Automation
 
                         if (!string.IsNullOrEmpty(suggestionText))
                         {
-                            string returnString = String.Format(
+                            string returnString = string.Format(
                                 CultureInfo.CurrentCulture,
                                 "Suggestion [{0},{1}]: {2}",
                                 (int)suggestion["Id"],
@@ -579,7 +579,7 @@ namespace System.Management.Automation
                 catch (Exception)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 return (string)LanguagePrimitives.ConvertTo(result, typeof(string), CultureInfo.CurrentCulture);
@@ -621,17 +621,17 @@ namespace System.Management.Automation
 
             if (caption.Length > CREDUI_MAX_CAPTION_LENGTH)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidCaption, CREDUI_MAX_CAPTION_LENGTH));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidCaption, CREDUI_MAX_CAPTION_LENGTH));
             }
 
             if (message.Length > CREDUI_MAX_MESSAGE_LENGTH)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidMessage, CREDUI_MAX_MESSAGE_LENGTH));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidMessage, CREDUI_MAX_MESSAGE_LENGTH));
             }
 
             if (userName != null && userName.Length > CRED_MAX_USERNAME_LENGTH)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidUserName, CRED_MAX_USERNAME_LENGTH));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidUserName, CRED_MAX_USERNAME_LENGTH));
             }
 
             CREDUI_INFO credUiInfo = new CREDUI_INFO();

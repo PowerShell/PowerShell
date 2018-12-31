@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
             if (Format != ClipboardFormat.Text && _isTextFormatTypeSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-                    String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidTypeCombine)),
+                    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidTypeCombine)),
                     "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
             if (Format != ClipboardFormat.Text && Format != ClipboardFormat.FileDropList && _isRawSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-                    String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidRawCombine)),
+                    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidRawCombine)),
                     "FailedToGetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 

@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.FunctionDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 

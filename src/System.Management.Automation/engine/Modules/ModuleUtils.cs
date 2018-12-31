@@ -145,7 +145,7 @@ namespace System.Management.Automation.Internal
                     {
                         analysisProgress = new ProgressRecord(0,
                             Modules.DeterminingAvailableModules,
-                            String.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
+                            string.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
                         {
                             RecordType = ProgressRecordType.Processing
                         };
@@ -507,7 +507,7 @@ namespace System.Management.Automation.Internal
                                         moduleCompareName = commandEntry.PSSnapIn.Name;
                                     }
 
-                                    if (String.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         if (commandEntry.Visibility == SessionStateEntryVisibility.Private)
                                         {

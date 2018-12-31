@@ -107,7 +107,7 @@ namespace System.Management.Automation.Remoting
 
                         string optionName = reader.Value;
 
-                        if (String.Equals(optionName, PrivateDataToken, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(optionName, PrivateDataToken, StringComparison.OrdinalIgnoreCase))
                         {
                             // this is a PrivateData element which we
                             // need to process

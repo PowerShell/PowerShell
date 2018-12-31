@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
                     // Detect if the event identifier already exists
                     ErrorRecord errorRecord = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(
+                            string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 EventingResources.SubscriberExists, _sourceIdentifier)),
                         "SUBSCRIBER_EXISTS",

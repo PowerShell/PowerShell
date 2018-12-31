@@ -1543,7 +1543,7 @@ namespace System.Management.Automation.Runspaces
             string moduleName,
             PSDataCollection<ErrorRecord> errors)
             : base(StringUtil.Format(RunspaceStrings.ErrorLoadingModulesOnRunspaceOpen, moduleName,
-                (errors != null && errors.Count > 0 && errors[0] != null) ? errors[0].ToString() : String.Empty), null)
+                (errors != null && errors.Count > 0 && errors[0] != null) ? errors[0].ToString() : string.Empty), null)
         {
             _errors = errors;
             this.SetErrorId("ErrorLoadingModulesOnRunspaceOpen");

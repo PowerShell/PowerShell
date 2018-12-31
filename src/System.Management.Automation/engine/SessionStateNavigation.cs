@@ -1488,7 +1488,7 @@ namespace System.Management.Automation
 
                         // Now verify the providers are the same.
 
-                        if (!String.Equals(
+                        if (!string.Equals(
                                 provider.FullName,
                                 destinationProvider.FullName,
                                 StringComparison.OrdinalIgnoreCase))

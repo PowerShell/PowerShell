@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return String.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
+                return string.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
             }
         }
 

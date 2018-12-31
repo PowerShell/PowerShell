@@ -1681,7 +1681,7 @@ namespace System.Management.Automation
             {
                 _context.EngineHostInterface.UI.WriteWarningLine(
                     breakpoints.Count > 0
-                        ? String.Format(CultureInfo.CurrentCulture, DebuggerStrings.WarningBreakpointWillNotBeHit,
+                        ? string.Format(CultureInfo.CurrentCulture, DebuggerStrings.WarningBreakpointWillNotBeHit,
                                         breakpoints[0])
                         : new InvalidOperationException().Message);
                 return;

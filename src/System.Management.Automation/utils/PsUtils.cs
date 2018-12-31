@@ -183,7 +183,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
-            string tempDir = String.Empty;
+            string tempDir = string.Empty;
             string tempPath = Path.GetTempPath();
             do
             {
@@ -197,7 +197,7 @@ namespace System.Management.Automation
             }
             catch (UnauthorizedAccessException)
             {
-                tempDir = String.Empty; // will become current working directory
+                tempDir = string.Empty; // will become current working directory
             }
 
             return tempDir;

@@ -870,7 +870,7 @@ namespace System.Management.Automation
 
             if (cmdletInfo != null)
             {
-                if (String.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -919,7 +919,7 @@ namespace System.Management.Automation
             if (
                 (!string.IsNullOrEmpty(this.OutVariable)) &&
                 (!(this.OutVariable.StartsWith("+", StringComparison.Ordinal))) &&
-                String.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
+                string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)
                     _state = new SessionState(Context.EngineSessionState);
@@ -1252,8 +1252,8 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1368,8 +1368,8 @@ namespace System.Management.Automation
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file",
         ///                         out shouldProcessReason))
         ///                     {
@@ -1681,14 +1681,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {
@@ -1861,14 +1861,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll

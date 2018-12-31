@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 if (cimPropertyInstance != null &&
                                     cimPropertyInstance.CimClass != null &&
                                     cimPropertyInstance.CimClass.CimSystemProperties != null &&
-                                    String.Equals(
+                                    string.Equals(
                                         cimPropertyInstance.CimClass.CimSystemProperties.ClassName,
                                         "MSFT_Credential", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -991,7 +991,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns>Decoded string.</returns>
         public static string GetStringFromSecureString(SecureString value)
         {
-            string passwordValueToAdd = String.Empty;
+            string passwordValueToAdd = string.Empty;
 
             if (value != null)
             {
@@ -1025,7 +1025,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className)
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
+            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
         }
 
         /// <summary>
@@ -1061,7 +1061,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();
-            var moduleQualifiedName = String.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
+            var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
             foreach (var pair in ClassCache)
             {
                 if (pair.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (runAsBehavior == DSCResourceRunAsCredential.NotSupported)
                 {
-                    if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                     {
                         // skip adding PsDscRunAsCredential to the dynamic word for the dsc resource.
                         continue;
@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // set the property to mandatory is specified for the resource.
                     if (runAsBehavior == DSCResourceRunAsCredential.Mandatory)
                     {
-                        if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                         {
                             keyProp.Mandatory = true;
                         }
@@ -2473,7 +2473,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 sb.AppendFormat(CultureInfo.InvariantCulture,
                     "    {0}{1} {2}{3};\n",
@@ -3032,7 +3032,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 string embeddedInstanceType;
                 string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
                     embeddedInstanceTypes);
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)
@@ -3200,7 +3200,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 foreach (var c in classes)
                                 {
                                     var alias = GetFriendlyName(c);
-                                    if (String.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, DSCResourceRunAsCredential.Default);
                                         return true;

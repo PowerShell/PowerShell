@@ -58,12 +58,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the path for the application file.
         /// </summary>
-        public string Path { get; } = String.Empty;
+        public string Path { get; } = string.Empty;
 
         /// <summary>
         /// Gets the extension of the application file.
         /// </summary>
-        public string Extension { get; } = String.Empty;
+        public string Extension { get; } = string.Empty;
 
         /// <summary>
         /// Gets the path of the application file.

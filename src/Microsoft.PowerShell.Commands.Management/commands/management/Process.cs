@@ -143,12 +143,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="x">First Process object.</param>
         /// <param name="y">Second Process object.</param>
         /// <returns>
-        /// As String.Compare: returns less than zero if x less than y,
+        /// As string.Compare: returns less than zero if x less than y,
         /// greater than 0 if x greater than y, 0 if x == y.
         /// </returns>
         private static int ProcessComparison(Process x, Process y)
         {
-            int diff = String.Compare(
+            int diff = string.Compare(
                 SafeGetProcessName(x),
                 SafeGetProcessName(y),
                 StringComparison.OrdinalIgnoreCase);
@@ -2361,7 +2361,7 @@ namespace Microsoft.PowerShell.Commands
             SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new SafeNativeMethods.PROCESS_INFORMATION();
             int error = 0;
             GCHandle pinnedEnvironmentBlock = new GCHandle();
-            string message = String.Empty;
+            string message = string.Empty;
 
             // building the cmdline with the file name given and it's arguments
             StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
@@ -2982,7 +2982,7 @@ namespace Microsoft.PowerShell.Commands
             set { _processName = value; }
         }
 
-        private string _processName = String.Empty;
+        private string _processName = string.Empty;
         #endregion Properties
     }
 

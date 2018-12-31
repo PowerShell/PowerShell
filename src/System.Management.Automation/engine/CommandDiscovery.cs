@@ -353,8 +353,8 @@ namespace System.Management.Automation
                     ScriptRequiresException sre =
                       new ScriptRequiresException(
                           scriptInfo.Name,
-                          String.Empty,
-                          String.Empty,
+                          string.Empty,
+                          string.Empty,
                           "RequiresShellIDInvalidForSingleShell");
 
                     throw sre;
@@ -1349,7 +1349,7 @@ namespace System.Management.Automation
 
             bool isPathCacheValid =
                 path != null &&
-                String.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
                 _cachedPath != null;
 
             if (!isPathCacheValid)
@@ -1509,7 +1509,7 @@ namespace System.Management.Automation
                 {
                     if (!string.IsNullOrEmpty(commandName.PSSnapInName))
                     {
-                        if (String.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(cmdletInfo.ModuleName, commandName.PSSnapInName, StringComparison.OrdinalIgnoreCase))
                         {
                             yield return cmdletInfo;
                             if (!searchAllScopes)
@@ -1523,7 +1523,7 @@ namespace System.Management.Automation
                         // tries to access Microsoft.PowerShell.Core\\Get-Command, it cannot. So, adding an additional check to return the correct cmdletInfo for cmdlets from core modules.
                         else if (InitialSessionState.IsEngineModule(cmdletInfo.ModuleName))
                         {
-                            if (String.Equals(
+                            if (string.Equals(
                                 cmdletInfo.ModuleName,
                                 InitialSessionState.GetNestedModuleDllName(commandName.PSSnapInName),
                                 StringComparison.OrdinalIgnoreCase))
@@ -1670,7 +1670,7 @@ namespace System.Management.Automation
 
             foreach (string name in this)
             {
-                if (String.Equals(item, name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(item, name, StringComparison.OrdinalIgnoreCase))
                 {
                     result = true;
                     break;
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation
 
             for (int index = 0; index < this.Count; ++index)
             {
-                if (String.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(this[index], item, StringComparison.OrdinalIgnoreCase))
                 {
                     result = index;
                     break;

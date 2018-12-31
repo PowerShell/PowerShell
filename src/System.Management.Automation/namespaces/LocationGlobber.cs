@@ -407,7 +407,7 @@ namespace System.Management.Automation
                 else
                 {
                     constructedProviderPath =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}::{1}",
                             providerId,
@@ -1718,7 +1718,7 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            if (String.Compare(
+            if (string.Compare(
                     driveName,
                     StringLiterals.Global,
                     StringComparison.OrdinalIgnoreCase) == 0)
@@ -1728,7 +1728,7 @@ namespace System.Management.Automation
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
             }
-            else if (String.Compare(
+            else if (string.Compare(
                         driveName,
                         StringLiterals.Local,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -1928,7 +1928,7 @@ namespace System.Management.Automation
                 // have access to it.
                 context.Drive = workingDriveForPath;
 
-                string relativePath = String.Empty;
+                string relativePath = string.Empty;
 
                     relativePath =
                         GenerateRelativePath(
@@ -2098,7 +2098,7 @@ namespace System.Management.Automation
                 // is that for file paths a path that is already relative to the drive
                 // root is the same thing as an absolute path (both start with /).
 
-                driveRootRelativeWorkingPath = String.Empty;
+                driveRootRelativeWorkingPath = string.Empty;
 
                 // Remove the \ or / from the drive relative
                 // path
@@ -2200,7 +2200,7 @@ namespace System.Management.Automation
                     if (path.Equals(currentDirSymbol, StringComparison.OrdinalIgnoreCase))
                     {
                         processedSomething = true;
-                        path = String.Empty;
+                        path = string.Empty;
                         break;
                     }
 
@@ -2714,7 +2714,7 @@ namespace System.Management.Automation
 
                                 string newParentPath = navigationProvider.GetParentPath(path, drive.Root, context);
 
-                                if (String.Equals(
+                                if (string.Equals(
                                         newParentPath,
                                         path,
                                         StringComparison.OrdinalIgnoreCase))
@@ -2741,7 +2741,7 @@ namespace System.Management.Automation
                                 // it can have only one segment in its path. So after removing
                                 // the leaf all we have left is the empty string.
 
-                                path = String.Empty;
+                                path = string.Empty;
                             }
 
                             s_tracer.WriteLine("New path: {0}", path);
@@ -2770,7 +2770,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                path = String.Empty;
+                                path = string.Empty;
                             }
 
                             leafElements.Push(leafElement);
@@ -2921,7 +2921,7 @@ namespace System.Management.Automation
                     }
 
                     string resolvedPath =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             formatString,
                             drive.Name,
@@ -3087,7 +3087,7 @@ namespace System.Management.Automation
                     else
                     {
                         string possibleDriveName = path.Substring(0, index);
-                        if (String.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             treatAsRelative = false;
                         }
@@ -3130,7 +3130,7 @@ namespace System.Management.Automation
                 }
 
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         formatString,
                         drive.Name,
@@ -3231,7 +3231,7 @@ namespace System.Management.Automation
             if (!pathResolved)
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.InvariantCulture,
                         "{0}{1}{2}",
                         provider.FullName,
@@ -3399,7 +3399,7 @@ namespace System.Management.Automation
 
                         // Now continue on with the names that were returned
 
-                        string mshQualifiedParentPath = String.Empty;
+                        string mshQualifiedParentPath = string.Empty;
                         Collection<PSObject> childNamesObjectArray =
                             GetChildNamesInDir(
                                 dir,
@@ -3428,7 +3428,7 @@ namespace System.Management.Automation
                                 throw new PipelineStoppedException();
                             }
 
-                            string child = String.Empty;
+                            string child = string.Empty;
 
                             if (IsChildNameAMatch(
                                     childObject,
@@ -3671,7 +3671,7 @@ namespace System.Management.Automation
                             {
                                 // See if we can get the root from the context
 
-                                string root = String.Empty;
+                                string root = string.Empty;
 
                                 if (context != null)
                                 {
@@ -3687,7 +3687,7 @@ namespace System.Management.Automation
 
                                 string newParentPath = navigationProvider.GetParentPath(path, root, context);
 
-                                if (String.Equals(
+                                if (string.Equals(
                                         newParentPath,
                                         path,
                                         StringComparison.OrdinalIgnoreCase))
@@ -3714,7 +3714,7 @@ namespace System.Management.Automation
                                 // it can have only one segment in its path. So after removing
                                 // the leaf all we have left is the empty string.
 
-                                path = String.Empty;
+                                path = string.Empty;
                             }
 
                             s_tracer.WriteLine("New path: {0}", path);
@@ -3742,7 +3742,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                path = String.Empty;
+                                path = string.Empty;
                             }
 
                             leafElements.Push(leafElement);
@@ -4026,7 +4026,7 @@ namespace System.Management.Automation
                                 throw new PipelineStoppedException();
                             }
 
-                            string child = String.Empty;
+                            string child = string.Empty;
                             if (IsChildNameAMatch(childObject, stringMatcher, includeMatcher, excludeMatcher, out child))
                             {
                                 string childPath = child;
@@ -4698,7 +4698,7 @@ namespace System.Management.Automation
             if ((s_pathResolutionTracer.Options & PSTraceSourceOptions.WriteLine) != 0)
             {
                 // Trace the filter
-                s_pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? String.Empty);
+                s_pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? string.Empty);
 
                 if (context.Include != null)
                 {

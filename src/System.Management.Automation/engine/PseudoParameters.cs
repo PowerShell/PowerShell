@@ -94,7 +94,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _name = String.Empty;
+        private string _name = string.Empty;
 
         /// <summary>
         /// Gets or sets the type of the parameter.
@@ -226,10 +226,10 @@ namespace System.Management.Automation
         {
             get { return _helpFile; }
 
-            set { _helpFile = string.IsNullOrEmpty(value) ? String.Empty : value; }
+            set { _helpFile = string.IsNullOrEmpty(value) ? string.Empty : value; }
         }
 
-        private string _helpFile = String.Empty;
+        private string _helpFile = string.Empty;
 
         /// <summary>
         /// Gets or sets private data associated with the runtime-defined parameters.

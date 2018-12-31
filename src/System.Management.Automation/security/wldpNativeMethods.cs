@@ -426,7 +426,7 @@ namespace System.Management.Automation.Security
                         // 0000050b-0000-0010-8000-00aa006d2ea4 = ADODB.Parameter
                         if (s_allowDebugOverridePolicy)
                         {
-                            if (String.Equals(clsid.ToString(), "0000050b-0000-0010-8000-00aa006d2ea4", StringComparison.OrdinalIgnoreCase))
+                            if (string.Equals(clsid.ToString(), "0000050b-0000-0010-8000-00aa006d2ea4", StringComparison.OrdinalIgnoreCase))
                             {
                                 return false;
                             }
@@ -443,7 +443,7 @@ namespace System.Management.Automation.Security
                 // Hook for testability. IsClassInApprovedList is only called when the system is in global lockdown mode,
                 // so this wouldn't be allowed in regular ConstrainedLanguage mode.
                 // f6d90f11-9c73-11d3-b32e-00c04f990bb4 = MSXML2.DOMDocument
-                if (String.Equals(clsid.ToString(), "f6d90f11-9c73-11d3-b32e-00c04f990bb4", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(clsid.ToString(), "f6d90f11-9c73-11d3-b32e-00c04f990bb4", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }

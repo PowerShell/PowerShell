@@ -775,7 +775,7 @@ namespace System.Management.Automation
                 logContext.HostId = (string)executionContext.EngineHostInterface.InstanceId.ToString();
             }
 
-            logContext.HostApplication = String.Join(" ", Environment.GetCommandLineArgs());
+            logContext.HostApplication = string.Join(" ", Environment.GetCommandLineArgs());
 
             if (executionContext.CurrentRunspace != null)
             {

@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             object result = null;
-            string path = String.Empty;
+            string path = string.Empty;
 
             if (_paths != null && _paths.Length > 0)
             {
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_paths == null || _paths.Length == 0)
             {
-                _paths = new string[] { String.Empty };
+                _paths = new string[] { string.Empty };
             }
 
             foreach (string path in _paths)

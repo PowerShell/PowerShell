@@ -131,7 +131,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : String.Empty;
+                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : string.Empty;
                     analysisInputXml = @"<Analyze_INPUT xmlns=""http://schemas.microsoft.com/wbem/wsman/1/config/service""><Transport>" + transport + "</Transport>" + openAllProfiles + "</Analyze_INPUT>";
                     action = "Analyze";
                 }

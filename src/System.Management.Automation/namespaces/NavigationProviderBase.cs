@@ -327,7 +327,7 @@ namespace System.Management.Automation.Provider
                 {
                     // If both are empty, just return the empty string.
 
-                    result = String.Empty;
+                    result = string.Empty;
                 }
                 else if (string.IsNullOrEmpty(parent) &&
                          !string.IsNullOrEmpty(child))
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Provider
 
                 path = NormalizePath(path);
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
-                string rootPath = String.Empty;
+                string rootPath = string.Empty;
 
                 if (root != null)
                 {
@@ -476,12 +476,12 @@ namespace System.Management.Automation.Provider
                 // Check to see if the path is equal to the root
                 // of the virtual drive
 
-                if (String.Compare(
+                if (string.Compare(
                     path,
                     rootPath,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    parentPath = String.Empty;
+                    parentPath = string.Empty;
                 }
                 else
                 {
@@ -499,7 +499,7 @@ namespace System.Management.Automation.Provider
                     }
                     else
                     {
-                        parentPath = String.Empty;
+                        parentPath = string.Empty;
                     }
                 }
 
@@ -557,12 +557,12 @@ namespace System.Management.Automation.Provider
 
             if (path.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             if (basePath == null)
             {
-                basePath = String.Empty;
+                basePath = string.Empty;
             }
 
             providerBaseTracer.WriteLine("basePath = {0}", basePath);
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Provider
             // Active Directory team.
             //
             // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND
-            if (!String.Equals(context.ProviderInstance.ProviderInfo.FullName,
+            if (!string.Equals(context.ProviderInstance.ProviderInfo.FullName,
                 @"Microsoft.ActiveDirectory.Management\ActiveDirectory", StringComparison.OrdinalIgnoreCase))
             {
                 normalizedPath = NormalizePath(path);
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Provider
 
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
-                if (String.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
+                if (string.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
                     (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
@@ -623,7 +623,7 @@ namespace System.Management.Automation.Provider
                 if (!normalizedPath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
                     (basePath.Length > 0))
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                     string commonBase = GetCommonBase(normalizedPath, normalizedBasePath);
 
                     Stack<string> parentNavigationStack = TokenizePathToStack(normalizedBasePath, commonBase);
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Provider
                     // instead of ".." as would usually be returned
                     if (!string.IsNullOrEmpty(commonBase))
                     {
-                        if (String.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
+                        if (string.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
                             (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
@@ -712,7 +712,7 @@ namespace System.Management.Automation.Provider
             // longer path. If it is not, take the child off of the longer
             // path and compare again.
 
-            while (!String.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
+            while (!string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
             {
                 if (path2.Length > path1.Length)
                 {
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation.Provider
         /// </remarks>
         private string CreateNormalizedRelativePathFromStack(Stack<string> normalizedPathStack)
         {
-            string leafElement = String.Empty;
+            string leafElement = string.Empty;
 
             while (normalizedPathStack.Count > 0)
             {

@@ -51,7 +51,7 @@ namespace System.Management.Automation
                 if (!string.IsNullOrEmpty(this.PSSnapInName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.PSSnapInName,
@@ -62,7 +62,7 @@ namespace System.Management.Automation
                 else if (!string.IsNullOrEmpty(this.ModuleName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.ModuleName,
@@ -124,7 +124,7 @@ namespace System.Management.Automation
                     return PSSnapIn.Name;
                 if (Module != null)
                     return Module.Name;
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -319,7 +319,7 @@ namespace System.Management.Automation
             string name,
             string helpFile,
             PSSnapInInfo psSnapIn)
-            : this(sessionState, implementingType, name, String.Empty, String.Empty, helpFile, psSnapIn)
+            : this(sessionState, implementingType, name, string.Empty, string.Empty, helpFile, psSnapIn)
         {
         }
 
@@ -432,20 +432,20 @@ namespace System.Management.Automation
                     if (!string.IsNullOrEmpty(qualifiedProviderName.PSSnapInName))
                     {
                         // After converting core snapins to load as modules, the providers will have Module property populated
-                        if (!String.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
-                            !String.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
+                        if (!string.Equals(qualifiedProviderName.PSSnapInName, this.PSSnapInName, StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(qualifiedProviderName.PSSnapInName, this.ModuleName, StringComparison.OrdinalIgnoreCase))
                         {
                             break;
                         }
                     }
 
-                    result = String.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
+                    result = string.Equals(qualifiedProviderName.ShortName, this.Name, StringComparison.OrdinalIgnoreCase);
                 } while (false);
             }
             else
             {
                 // If only the provider name is specified, then only the name must match
-                result = String.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
+                result = string.Equals(providerName, Name, StringComparison.OrdinalIgnoreCase);
             }
 
             return result;
@@ -477,7 +477,7 @@ namespace System.Management.Automation
             {
                 if (namePattern == null)
                 {
-                    if (String.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
+                    if (string.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
                         IsPSSnapinNameMatch(psSnapinQualifiedName))
                     {
                         result = true;
@@ -497,7 +497,7 @@ namespace System.Management.Automation
             bool result = false;
 
             if (string.IsNullOrEmpty(psSnapinQualifiedName.PSSnapInName) ||
-                String.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
+                string.Equals(psSnapinQualifiedName.PSSnapInName, PSSnapInName, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
             }

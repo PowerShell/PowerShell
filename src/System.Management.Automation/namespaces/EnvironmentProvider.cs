@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.EnvironmentDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 

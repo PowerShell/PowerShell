@@ -1957,7 +1957,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Remote command string.
         /// </summary>
-        public string Command { get; } = String.Empty;
+        public string Command { get; } = string.Empty;
 
         /// <summary>
         /// Constructs a remote command object.

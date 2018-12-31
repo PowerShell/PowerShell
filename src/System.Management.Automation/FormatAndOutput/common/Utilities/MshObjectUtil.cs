@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (typeNames.Count < 2 || string.IsNullOrEmpty(typeNames[1]))
                 return false;
-            return String.Equals(typeNames[1], "System.Enum", StringComparison.Ordinal);
+            return string.Equals(typeNames[1], "System.Enum", StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -411,14 +411,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (directive.formatString.Contains("{0") || directive.formatString.Contains("}"))
                     {
                         // we do have it, just use it
-                        return String.Format(CultureInfo.CurrentCulture, directive.formatString, so);
+                        return string.Format(CultureInfo.CurrentCulture, directive.formatString, so);
                     }
                     // we fall back to the PSObject's IFormattable.ToString()
                     // pass a null IFormatProvider
                     return so.ToString(directive.formatString, null);
                 }
                 catch (Exception e) // 2004/11/17-JonN This covers exceptions thrown in
-                                    // String.Format and PSObject.ToString().
+                                    // string.Format and PSObject.ToString().
                                     // I think we can swallow these.
                 {
                     // NOTE: we catch all the exceptions, since we do not know

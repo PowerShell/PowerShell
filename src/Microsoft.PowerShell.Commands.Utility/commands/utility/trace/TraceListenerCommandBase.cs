@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                 PSTraceSource newTraceSource =
                     PSTraceSource.GetNewTraceSource(
                         notMatchedName,
-                        String.Empty,
+                        string.Empty,
                         true);
 
                 preconfiguredSources.Add(newTraceSource);

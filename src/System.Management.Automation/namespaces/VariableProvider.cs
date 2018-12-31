@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
                 new PSDriveInfo(
                     DriveNames.VariableDrive,
                     ProviderInfo,
-                    String.Empty,
+                    string.Empty,
                     description,
                     null);
 
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // ensure the name matches
 
-                    if (!String.Equals(name, variable.Name, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(name, variable.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         PSVariable newVar = new PSVariable(name, variable.Value, variable.Options, variable.Attributes);
                         newVar.Description = variable.Description;

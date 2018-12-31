@@ -141,7 +141,7 @@ namespace Microsoft.WSMan.Management
 
             WSManHelper helper = new WSManHelper(this);
             IWSManEx wsmanObject = (IWSManEx)new WSManClass();
-            string connectionStr = String.Empty;
+            string connectionStr = string.Empty;
             connectionStr = helper.CreateConnectionString(null, port, computername, applicationname);
             IWSManSession m_SessionObj = null;
             try

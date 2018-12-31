@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
             // file to vary based on locale.
 
             string result =
-                String.Format(
+                string.Format(
                     System.Globalization.CultureInfo.InvariantCulture,
                     formatString,
                     alias.Name,

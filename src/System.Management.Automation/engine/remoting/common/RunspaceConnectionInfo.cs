@@ -1187,7 +1187,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             //default host is localhost
-            if (string.IsNullOrEmpty(computerName) || String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(computerName) || string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 _computerName = DefaultComputerName;
             }
@@ -2556,7 +2556,7 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                var cmdLine = String.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
+                var cmdLine = string.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
 
                 lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
                 lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
@@ -3273,7 +3273,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 result = HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString);
                 if (result != 0)
@@ -3381,7 +3381,7 @@ namespace System.Management.Automation.Runspaces
         private void TerminateContainerProcessInternal()
         {
             IntPtr ComputeSystem = IntPtr.Zero;
-            string resultString = String.Empty;
+            string resultString = string.Empty;
             IntPtr process = IntPtr.Zero;
 
             ProcessTerminated = false;
@@ -3406,7 +3406,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
                 {

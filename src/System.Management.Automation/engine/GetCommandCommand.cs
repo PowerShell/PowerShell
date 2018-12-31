@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
             // Throw out terminating error if this is the case.
             if (_isModuleSpecified && _isFullyQualifiedModuleSpecified)
             {
-                string errMsg = String.Format(CultureInfo.InvariantCulture, SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
+                string errMsg = string.Format(CultureInfo.InvariantCulture, SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    return String.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+                    return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -1354,10 +1354,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (CommandInfo commandInfo in _accumulatedResults)
             {
                 if ((command.CommandType == commandInfo.CommandType &&
-                     (String.Compare(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) == 0 ||
+                     (string.Compare(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) == 0 ||
                       // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
                       // Hence, an additional check is done with the prefix information
-                      String.Compare(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                      string.Compare(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase) == 0)
                     ) && commandInfo.Module != null && commandHasModule &&
                     ( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
                      (commandInfo.IsImported && command.IsImported && commandInfo.Module.Equals(command.Module)) ||

@@ -354,7 +354,7 @@ namespace System.Management.Automation
             // Set the current working directory to the empty
             // string since it is relative to the root.
 
-            _currentWorkingDirectory = String.Empty;
+            _currentWorkingDirectory = string.Empty;
 
             Dbg.Diagnostics.Assert(
                 _currentWorkingDirectory != null,
@@ -605,7 +605,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
 
-            return String.Compare(Name, drive.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(Name, drive.Name, StringComparison.OrdinalIgnoreCase);
 
 #pragma warning restore 56506
         }

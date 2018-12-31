@@ -336,7 +336,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Default constructor
         /// </summary>
-        public PSCryptoException() : this(0, new StringBuilder(String.Empty)) { }
+        public PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
 
         /// <summary>
         /// Constructor that will be used from within CryptoUtils
@@ -1273,7 +1273,7 @@ namespace System.Management.Automation.Internal
             }
             catch (PSCryptoException)
             {
-                encryptedSessionKey = String.Empty;
+                encryptedSessionKey = string.Empty;
                 return false;
             }
 
@@ -1370,7 +1370,7 @@ namespace System.Management.Automation.Internal
             }
             catch (PSCryptoException)
             {
-                publicKeyAsString = String.Empty;
+                publicKeyAsString = string.Empty;
                 return false;
             }
 

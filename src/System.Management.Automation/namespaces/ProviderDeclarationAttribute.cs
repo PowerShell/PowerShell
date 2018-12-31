@@ -57,7 +57,7 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
-        public string ProviderName { get; } = String.Empty;
+        public string ProviderName { get; } = string.Empty;
 
         /// <summary>
         /// Gets the flags that represent the capabilities of the provider.

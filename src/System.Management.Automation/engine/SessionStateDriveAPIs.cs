@@ -169,7 +169,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (String.Compare(result.Name, drive.Name, StringComparison.CurrentCultureIgnoreCase) == 0)
+            if (string.Compare(result.Name, drive.Name, StringComparison.CurrentCultureIgnoreCase) == 0)
             {
                 // Set the drive in the current scope.
 
@@ -660,7 +660,7 @@ namespace System.Management.Automation
                 {
                     // Create a new drive
                     string systemDriveName = systemDriveInfo.Name.Substring(0, 1);
-                    string volumeLabel = String.Empty;
+                    string volumeLabel = string.Empty;
                     string displayRoot = null;
 
                     try
@@ -776,13 +776,13 @@ namespace System.Management.Automation
             // mount the default drive, since the provider names can be used for provider-qualified paths.
             // The WSMAN drive is the same as the provider name.
             if (
-                String.Equals("Cert", name, StringComparison.OrdinalIgnoreCase) ||
-                String.Equals("Certificate", name, StringComparison.OrdinalIgnoreCase)
+                string.Equals("Cert", name, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals("Certificate", name, StringComparison.OrdinalIgnoreCase)
                 )
             {
                 moduleName = "Microsoft.PowerShell.Security";
             }
-            else if (String.Equals("WSMan", name, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals("WSMan", name, StringComparison.OrdinalIgnoreCase))
             {
                 moduleName = "Microsoft.WSMan.Management";
             }
@@ -1294,7 +1294,7 @@ namespace System.Management.Automation
                 // Make sure the provider didn't try to pull a fast one on us
                 // and substitute a different drive.
 
-                if (String.Compare(result.Name, drive.Name, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Compare(result.Name, drive.Name, StringComparison.CurrentCultureIgnoreCase) == 0)
                 {
                     driveRemovable = true;
                 }

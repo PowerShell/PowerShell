@@ -589,7 +589,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (String.Equals(extension, StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(extension, StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     if ((_commandTypes & CommandTypes.ExternalScript) != 0)
                     {

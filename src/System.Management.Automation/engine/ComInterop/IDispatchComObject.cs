@@ -111,7 +111,7 @@ namespace System.Management.Automation.ComInterop
                 typeName = "IDispatch";
             }
 
-            return String.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
+            return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
         }
 
         public ComTypeDesc ComTypeDesc
@@ -254,7 +254,7 @@ namespace System.Management.Automation.ComInterop
             }
             else
             {
-                throw Error.CouldNotGetDispId(name, String.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+                throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
             }
         }
 
@@ -293,7 +293,7 @@ namespace System.Management.Automation.ComInterop
             }
             else
             {
-                throw Error.CouldNotGetDispId(name, String.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+                throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
             }
         }
 

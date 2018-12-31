@@ -407,7 +407,7 @@ namespace System.Management.Automation.Language {
 
                 // prepend # to the operator to represent checked op
                 if (isChecked) {
-                    op = String.Format(
+                    op = string.Format(
                             CultureInfo.CurrentCulture,
                             "#{0}",
                             op
@@ -447,7 +447,7 @@ namespace System.Management.Automation.Language {
 
         protected override Expression VisitLambda<T>(Expression<T> node) {
             Out(
-                String.Format(CultureInfo.CurrentCulture,
+                string.Format(CultureInfo.CurrentCulture,
                     "{0} {1}<{2}>",
                     ".Lambda",
                     GetLambdaName(node),
@@ -506,12 +506,12 @@ namespace System.Management.Automation.Language {
             if (value == null) {
                 Out("null");
             } else if ((value is string) && node.Type == typeof(string)) {
-                Out(String.Format(
+                Out(string.Format(
                     CultureInfo.CurrentCulture,
                     "\"{0}\"",
                     value));
             } else if ((value is char) && node.Type == typeof(char)) {
-                    Out(String.Format(
+                    Out(string.Format(
                         CultureInfo.CurrentCulture,
                         "'{0}'",
                         value));
@@ -524,7 +524,7 @@ namespace System.Management.Automation.Language {
                     Out(value.ToString());
                     Out(suffix);
                 } else {
-                    Out(String.Format(
+                    Out(string.Format(
                         CultureInfo.CurrentCulture,
                         ".Constant<{0}>({1})",
                         node.Type.ToString(),
@@ -985,7 +985,7 @@ namespace System.Management.Automation.Language {
             // Display <type> if the type of the BlockExpression is different from the
             // last expression's type in the block.
             if (node.Type != node.Expressions[node.Expressions.Count - 1].Type) {
-                Out(String.Format(CultureInfo.CurrentCulture, "<{0}>", node.Type.ToString()));
+                Out(string.Format(CultureInfo.CurrentCulture, "<{0}>", node.Type.ToString()));
             }
 
             VisitDeclarations(node.Variables);
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitExtension(Expression node) {
-            Out(String.Format(CultureInfo.CurrentCulture, ".Extension<{0}>", node.GetType().ToString()));
+            Out(string.Format(CultureInfo.CurrentCulture, ".Extension<{0}>", node.GetType().ToString()));
 
             if (node.CanReduce) {
                 Out(Flow.Space, "{", Flow.NewLine);
@@ -1138,7 +1138,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitDebugInfo(DebugInfoExpression node) {
-            Out(String.Format(
+            Out(string.Format(
                 CultureInfo.CurrentCulture,
                 ".DebugInfo({0}: {1}, {2} - {3}, {4})",
                 node.Document.FileName,
@@ -1151,13 +1151,13 @@ namespace System.Management.Automation.Language {
         }
 
         private void DumpLabel(LabelTarget target) {
-            Out(String.Format(CultureInfo.CurrentCulture, ".LabelTarget {0}:", GetLabelTargetName(target)));
+            Out(string.Format(CultureInfo.CurrentCulture, ".LabelTarget {0}:", GetLabelTargetName(target)));
         }
 
         private string GetLabelTargetName(LabelTarget target) {
             if (string.IsNullOrEmpty(target.Name)) {
                 // Create the label target name as #Label1, #Label2, etc.
-                return String.Format(CultureInfo.CurrentCulture, "#Label{0}", GetLabelTargetId(target));
+                return string.Format(CultureInfo.CurrentCulture, "#Label{0}", GetLabelTargetId(target));
             } else {
                 return GetDisplayName(target.Name);
             }
@@ -1165,7 +1165,7 @@ namespace System.Management.Automation.Language {
 
         private void WriteLambda(LambdaExpression lambda) {
             Out(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentCulture,
                     ".Lambda {0}<{1}>",
                     GetLambdaName(lambda),
@@ -1205,7 +1205,7 @@ namespace System.Management.Automation.Language {
         }
 
         private static string QuoteName(string name) {
-            return String.Format(CultureInfo.CurrentCulture, "'{0}'", name);
+            return string.Format(CultureInfo.CurrentCulture, "'{0}'", name);
         }
 
         private static string GetDisplayName(string name) {

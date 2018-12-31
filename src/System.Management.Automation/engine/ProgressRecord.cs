@@ -296,7 +296,7 @@ namespace System.Management.Automation
         ToString()
         {
             return
-                String.Format(
+                string.Format(
                     System.Globalization.CultureInfo.CurrentCulture,
                     "parent = {0} id = {1} act = {2} stat = {3} cur = {4} pct = {5} sec = {6} type = {7}",
                     parentId,

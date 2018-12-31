@@ -129,8 +129,8 @@ namespace System.Management.Automation.Help
             string message = string.Empty;
             SortedSet<string> sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
             SortedSet<string> sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
-            string modules = String.Join(", ", sortedModules);
-            string cultures = String.Join(", ", sortedCultures);
+            string modules = string.Join(", ", sortedModules);
+            string cultures = string.Join(", ", sortedCultures);
 
             if (commandType == UpdatableHelpCommandType.UpdateHelpCommand)
             {
@@ -1231,8 +1231,8 @@ namespace System.Management.Automation.Help
             // We only accept txt files and xml files
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (!String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
-                    && !String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new UpdatableHelpSystemException("HelpContentContainsInvalidFiles",
                         StringUtil.Format(HelpDisplayStrings.HelpContentContainsInvalidFiles), ErrorCategory.InvalidData,
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation.Help
             // xml validation
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
                 {
                     if (xsd == null)
                     {
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Help
                         }
                     }
                 }
-                else if (String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 
@@ -1675,7 +1675,7 @@ namespace System.Management.Automation.Help
                 }
 
                 mappedDrive = new PSDriveInfo(_driveName, cmdlet.SessionState.Internal.GetSingleProvider("FileSystem"),
-                    path, String.Empty, credential);
+                    path, string.Empty, credential);
 
                 cmdlet.SessionState.Drive.New(mappedDrive, "local");
 

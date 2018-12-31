@@ -659,7 +659,7 @@ namespace System.Management.Automation.Remoting
 
                 case RemotingDataType.PublicKeyRequest:
                     {
-                        PublicKeyRequestReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(String.Empty));
+                        PublicKeyRequestReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(string.Empty));
                     }
 
                     break;

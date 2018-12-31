@@ -207,11 +207,11 @@ namespace System.Diagnostics.Eventing.Reader
 
                             if (channelRefDisplayName == null && isImported)
                             {
-                                if (String.Compare(channelName, "Application", StringComparison.OrdinalIgnoreCase) == 0)
+                                if (string.Compare(channelName, "Application", StringComparison.OrdinalIgnoreCase) == 0)
                                     channelRefMessageId = 256;
-                                else if (String.Compare(channelName, "System", StringComparison.OrdinalIgnoreCase) == 0)
+                                else if (string.Compare(channelName, "System", StringComparison.OrdinalIgnoreCase) == 0)
                                     channelRefMessageId = 258;
-                                else if (String.Compare(channelName, "Security", StringComparison.OrdinalIgnoreCase) == 0)
+                                else if (string.Compare(channelName, "Security", StringComparison.OrdinalIgnoreCase) == 0)
                                     channelRefMessageId = 257;
                                 else
                                     channelRefMessageId = -1;

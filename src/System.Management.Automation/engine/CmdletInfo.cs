@@ -149,7 +149,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _verb = String.Empty;
+        private string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the cmdlet.
@@ -162,7 +162,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _noun = String.Empty;
+        private string _noun = string.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
         {
@@ -206,7 +206,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _helpFilePath = String.Empty;
+        private string _helpFilePath = string.Empty;
 
         internal override HelpCategory HelpCategory
         {
@@ -296,7 +296,7 @@ namespace System.Management.Automation
                     {
                         synopsis.AppendLine();
                         synopsis.AppendLine(
-                            String.Format(
+                            string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 "{0}{1}{2} {3}",
                                 _verb,
@@ -309,7 +309,7 @@ namespace System.Management.Automation
                 {
                     // Skip the synopsis documentation if the cmdlet hasn't been loaded yet.
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             "{0}{1}{2}",
                             _verb,

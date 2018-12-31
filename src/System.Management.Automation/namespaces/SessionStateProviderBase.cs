@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.SetItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         name,
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.ClearItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path);
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.RemoveItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path);
@@ -729,7 +729,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.NewItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -805,7 +805,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = SessionStateProviderBaseStrings.CopyItemResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -922,7 +922,7 @@ namespace Microsoft.PowerShell.Commands
                             string resourceTemplate = SessionStateProviderBaseStrings.RenameItemResourceTemplate;
 
                             string resource =
-                                String.Format(
+                                string.Format(
                                     Host.CurrentCulture,
                                     resourceTemplate,
                                     name,
@@ -930,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (ShouldProcess(resource, action))
                             {
-                                if (String.Equals(name, newName, StringComparison.OrdinalIgnoreCase))
+                                if (string.Equals(name, newName, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // This is a no-op. Just get the item for -passthru
                                     GetItem(newName);

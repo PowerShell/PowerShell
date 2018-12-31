@@ -953,8 +953,8 @@ namespace System.Management.Automation
             foreach (string deviceName in reservedDeviceNames)
             {
                 if (
-                    String.Equals(deviceName, compareName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(deviceName, noExtensionCompareName, StringComparison.OrdinalIgnoreCase))
+                    string.Equals(deviceName, compareName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(deviceName, noExtensionCompareName, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -1055,7 +1055,7 @@ namespace System.Management.Automation
 
         internal static bool IsPowerShellAssembly(string assemblyName)
         {
-            if (!String.IsNullOrWhiteSpace(assemblyName))
+            if (!string.IsNullOrWhiteSpace(assemblyName))
             {
                 // Remove the '.dll' if it's there...
                 var fixedName = assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
 
         internal static string GetPowerShellAssemblyStrongName(string assemblyName)
         {
-            if (!String.IsNullOrWhiteSpace(assemblyName))
+            if (!string.IsNullOrWhiteSpace(assemblyName))
             {
                 // Remove the '.dll' if it's there...
                 string fixedName = assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation
 
             if (bytesRead > 3)
             {
-                preamble = String.Join("-", initialBytes[0], initialBytes[1], initialBytes[2], initialBytes[3]);
+                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2], initialBytes[3]);
 
                 if (encodingMap.TryGetValue(preamble, out foundEncoding))
                 {
@@ -1166,7 +1166,7 @@ namespace System.Management.Automation
             // Test for three-byte preambles
             if (bytesRead > 2)
             {
-                preamble = String.Join("-", initialBytes[0], initialBytes[1], initialBytes[2]);
+                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2]);
                 if (encodingMap.TryGetValue(preamble, out foundEncoding))
                 {
                     return foundEncoding;
@@ -1176,7 +1176,7 @@ namespace System.Management.Automation
             // Test for two-byte preambles
             if (bytesRead > 1)
             {
-                preamble = String.Join("-", initialBytes[0], initialBytes[1]);
+                preamble = string.Join("-", initialBytes[0], initialBytes[1]);
                 if (encodingMap.TryGetValue(preamble, out foundEncoding))
                 {
                     return foundEncoding;

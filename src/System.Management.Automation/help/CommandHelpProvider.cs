@@ -696,7 +696,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && String.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         helpItemsNode = node;
                         break;
@@ -719,7 +719,7 @@ namespace System.Management.Automation
                     for (int i = 0; i < helpItemsNode.ChildNodes.Count; i++)
                     {
                         XmlNode node = helpItemsNode.ChildNodes[i];
-                        if (node.NodeType == XmlNodeType.Element && String.Compare(node.LocalName, "command", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "command", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             MamlCommandHelpInfo helpInfo = null;
 
@@ -735,7 +735,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "UserDefinedData", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.Name, "UserDefinedData", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             UserDefinedHelpData userDefinedHelpData = UserDefinedHelpData.Load(node);
 

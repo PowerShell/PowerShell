@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ProcessDynamicType()
         {
-            if (String.IsNullOrWhiteSpace(_typeName))
+            if (string.IsNullOrWhiteSpace(_typeName))
             {
                 ThrowTerminatingError(NewError("TargetTypeNameEmpty", UpdateDataStrings.TargetTypeNameEmpty, _typeName));
             }
@@ -1196,7 +1196,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (String.IsNullOrWhiteSpace(_typeName))
+                if (string.IsNullOrWhiteSpace(_typeName))
                 {
                     ThrowTerminatingError(NewError("TargetTypeNameEmpty", UpdateDataStrings.TargetTypeNameEmpty, _typeName));
                 }
@@ -1292,7 +1292,7 @@ namespace Microsoft.PowerShell.Commands
             var exception = new InvalidOperationException(UpdateDataStrings.TargetTypeNameEmpty);
             foreach (string typeName in TypeName)
             {
-                if (String.IsNullOrWhiteSpace(typeName))
+                if (string.IsNullOrWhiteSpace(typeName))
                 {
                     WriteError(
                         new ErrorRecord(

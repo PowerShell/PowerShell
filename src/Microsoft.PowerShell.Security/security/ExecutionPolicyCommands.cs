@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ExecutionPolicy != ExecutionPolicy.Undefined)
                 {
                     string effectiveExecutionPolicy = SecuritySupport.GetExecutionPolicy(shellId).ToString();
-                    if (!String.Equals(effectiveExecutionPolicy, executionPolicy, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(effectiveExecutionPolicy, executionPolicy, StringComparison.OrdinalIgnoreCase))
                     {
                         string message = StringUtil.Format(ExecutionPolicyCommands.ExecutionPolicyOverridden, effectiveExecutionPolicy);
                         string recommendedAction = ExecutionPolicyCommands.ExecutionPolicyOverriddenRecommendedAction;

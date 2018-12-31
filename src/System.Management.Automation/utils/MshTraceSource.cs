@@ -201,7 +201,7 @@ namespace System.Management.Automation
                             // trailing spaces if this actually does pad the name.
 
                             name =
-                                String.Format(
+                                string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture,
                                     "{0,-16}",
                                     name);

@@ -396,7 +396,7 @@ namespace System.Management.Automation
         /// is specified.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpUri { get; set; } = String.Empty;
+        public string HelpUri { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets and sets the RemotingBehavior value that declares how this cmdlet should interact

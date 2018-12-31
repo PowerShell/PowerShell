@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
             if (Value == null && _isHtmlSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
-    String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
+    string.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
     "FailedToSetClipboard", ErrorCategory.InvalidOperation, "Clipboard"));
             }
 
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((contentList == null || contentList.Count == 0) && !append)
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
                 {
                     Clipboard.Clear();
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!Clipboard.ContainsText())
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
                     append = false;
                 }
                 else
@@ -189,11 +189,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (append)
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendClipboardContent, verboseString);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendClipboardContent, verboseString);
             }
             else
             {
-                setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetClipboardContent, verboseString);
+                setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetClipboardContent, verboseString);
             }
 
             if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!Clipboard.ContainsFileDropList())
                 {
-                    WriteVerbose(String.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
+                    WriteVerbose(string.Format(CultureInfo.InvariantCulture, ClipboardResources.NoAppendableClipboardContent));
                     append = false;
                 }
                 else
@@ -276,22 +276,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (append)
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendSingleFileToClipboard, dropFiles.ElementAt<string>(dropFiles.Count - 1));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendSingleFileToClipboard, dropFiles.ElementAt<string>(dropFiles.Count - 1));
                 }
                 else
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetSingleFileToClipboard, dropFiles.ElementAt<string>(0));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetSingleFileToClipboard, dropFiles.ElementAt<string>(0));
                 }
             }
             else
             {
                 if (append)
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendMultipleFilesToClipboard, (dropFiles.Count - clipBoardContentLength));
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.AppendMultipleFilesToClipboard, (dropFiles.Count - clipBoardContentLength));
                 }
                 else
                 {
-                    setClipboardShouldProcessTarget = String.Format(CultureInfo.InvariantCulture, ClipboardResources.SetMultipleFilesToClipboard, dropFiles.Count);
+                    setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.SetMultipleFilesToClipboard, dropFiles.Count);
                 }
             }
 
