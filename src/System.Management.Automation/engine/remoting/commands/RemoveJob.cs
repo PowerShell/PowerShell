@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 // check if the job is available in any of the
                 // top level jobs
 
-                //if (String.Equals(job.Name, name, StringComparison.OrdinalIgnoreCase))
+                //if (string.Equals(job.Name, name, StringComparison.OrdinalIgnoreCase))
                 if (pattern.IsMatch(job.Name))
                 {
                     jobFound = true;

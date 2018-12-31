@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(computerName != null, "Null ComputerName");
 
-            if (String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 //tracer.WriteEvent(ref PSEventDescriptors.PS_EVENT_HOSTNAMERESOLVE);
                 //tracer.Dispose();

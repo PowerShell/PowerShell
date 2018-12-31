@@ -670,7 +670,7 @@ namespace System.Management.Automation
                     foreach (string fileItem in directoryItems)
                     {
                         // if its the catalog file we are validating we will skip it
-                        if (String.Equals(fileItem, catalogFilePath, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(fileItem, catalogFilePath, StringComparison.OrdinalIgnoreCase))
                             continue;
 
                         ProcessPathFile(new FileInfo(fileItem), new DirectoryInfo(folderPath), hashAlgorithm, excludedPatterns, ref fileHashes);

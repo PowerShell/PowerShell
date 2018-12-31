@@ -587,7 +587,7 @@ namespace System.Management.Automation.Provider
             // Active Directory team.
             //
             // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND
-            if (!String.Equals(context.ProviderInstance.ProviderInfo.FullName,
+            if (!string.Equals(context.ProviderInstance.ProviderInfo.FullName,
                 @"Microsoft.ActiveDirectory.Management\ActiveDirectory", StringComparison.OrdinalIgnoreCase))
             {
                 normalizedPath = NormalizePath(path);
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Provider
 
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
-                if (String.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
+                if (string.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
                     (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Provider
                     // instead of ".." as would usually be returned
                     if (!string.IsNullOrEmpty(commonBase))
                     {
-                        if (String.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
+                        if (string.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
                             (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
@@ -712,7 +712,7 @@ namespace System.Management.Automation.Provider
             // longer path. If it is not, take the child off of the longer
             // path and compare again.
 
-            while (!String.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
+            while (!string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
             {
                 if (path2.Length > path1.Length)
                 {

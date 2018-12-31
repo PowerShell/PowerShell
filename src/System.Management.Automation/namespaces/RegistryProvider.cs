@@ -1714,7 +1714,7 @@ namespace Microsoft.PowerShell.Commands
             // If the destination is the same container as the source container don't do remove
             // the source item because the source and destination are the same.
 
-            if (String.Equals(sourceParent, destination, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(sourceParent, destination, StringComparison.OrdinalIgnoreCase))
             {
                 continueWithRemove = false;
             }
@@ -2249,7 +2249,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (
                     ((!Context.SuppressWildcardExpansion) && (!propertyNamePattern.IsMatch(valueName))) ||
-                    (Context.SuppressWildcardExpansion && (!String.Equals(valueName, propertyName, StringComparison.OrdinalIgnoreCase))))
+                    (Context.SuppressWildcardExpansion && (!string.Equals(valueName, propertyName, StringComparison.OrdinalIgnoreCase))))
                 {
                     continue;
                 }
@@ -2615,7 +2615,7 @@ namespace Microsoft.PowerShell.Commands
             // to find the parent -- since path elements may contain
             // path delimiters. We only need to do this comparison
             // if the base implementation returns something in our namespace.
-            if (!String.Equals(parentPath, root, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(parentPath, root, StringComparison.OrdinalIgnoreCase))
             {
                 bool originalPathExists = ItemExists(path);
                 bool originalPathExistsWithRoot = false;
@@ -3053,7 +3053,7 @@ namespace Microsoft.PowerShell.Commands
                     if (
                         expandAll ||
                         ((Context.SuppressWildcardExpansion == false) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
-                       ((Context.SuppressWildcardExpansion == true) && (String.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
+                       ((Context.SuppressWildcardExpansion == true) && (string.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
                     {
                         if (string.IsNullOrEmpty(valueNameToMatch))
                         {
@@ -3271,8 +3271,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int k = 0; k < s_wellKnownHivesTx.Length; k++)
                 {
-                    if (String.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
                     {
                         using (CurrentPSTransaction)
                         {
@@ -3285,8 +3285,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int k = 0; k < s_wellKnownHives.Length; k++)
                 {
-                    if (String.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
                         return new RegistryWrapper(s_wellKnownHives[k]);
                 }
             }

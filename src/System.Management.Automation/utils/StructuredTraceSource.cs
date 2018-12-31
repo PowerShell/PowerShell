@@ -285,7 +285,7 @@ namespace System.Management.Automation
                 // TODO: move this to startup json file instead of using env var
                 string tracingEnvVar = Environment.GetEnvironmentVariable("MshEnableTrace");
 
-                if (String.Equals(
+                if (string.Equals(
                         tracingEnvVar,
                         "True",
                         StringComparison.OrdinalIgnoreCase))

@@ -930,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (ShouldProcess(resource, action))
                             {
-                                if (String.Equals(name, newName, StringComparison.OrdinalIgnoreCase))
+                                if (string.Equals(name, newName, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // This is a no-op. Just get the item for -passthru
                                     GetItem(newName);

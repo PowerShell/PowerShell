@@ -449,7 +449,7 @@ namespace System.Management.Automation.Language
             typeof(string).GetMethod(nameof(String.Concat), staticPublicFlags, null,
                                      CallingConventions.Standard, new Type[] { typeof(string), typeof(string) }, null);
         internal static readonly MethodInfo String_Equals =
-            typeof(string).GetMethod(nameof(String.Equals), staticPublicFlags, null,
+            typeof(string).GetMethod(nameof(string.Equals), staticPublicFlags, null,
                                      CallingConventions.Standard,
                                      new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
         internal static readonly MethodInfo String_get_Chars =

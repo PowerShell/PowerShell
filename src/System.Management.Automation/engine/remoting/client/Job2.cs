@@ -2076,7 +2076,7 @@ namespace System.Management.Automation
 
             _tracer.WriteMessage("Unregistering StateChanged event for job ", job.InstanceId);
             foreach (PSEventSubscriber subscriber in
-                EventManager.Subscribers.Where(subscriber => String.Equals(subscriber.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase)))
+                EventManager.Subscribers.Where(subscriber => string.Equals(subscriber.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase)))
             {
                 EventManager.UnsubscribeEvent(subscriber);
                 break;

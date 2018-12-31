@@ -1231,8 +1231,8 @@ namespace System.Management.Automation.Help
             // We only accept txt files and xml files
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (!String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
-                    && !String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new UpdatableHelpSystemException("HelpContentContainsInvalidFiles",
                         StringUtil.Format(HelpDisplayStrings.HelpContentContainsInvalidFiles), ErrorCategory.InvalidData,
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation.Help
             // xml validation
             foreach (string file in Directory.GetFiles(sourcePath))
             {
-                if (String.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
                 {
                     if (xsd == null)
                     {
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Help
                         }
                     }
                 }
-                else if (String.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 

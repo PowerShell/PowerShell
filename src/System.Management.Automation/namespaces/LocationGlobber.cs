@@ -2714,7 +2714,7 @@ namespace System.Management.Automation
 
                                 string newParentPath = navigationProvider.GetParentPath(path, drive.Root, context);
 
-                                if (String.Equals(
+                                if (string.Equals(
                                         newParentPath,
                                         path,
                                         StringComparison.OrdinalIgnoreCase))
@@ -3087,7 +3087,7 @@ namespace System.Management.Automation
                     else
                     {
                         string possibleDriveName = path.Substring(0, index);
-                        if (String.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             treatAsRelative = false;
                         }
@@ -3687,7 +3687,7 @@ namespace System.Management.Automation
 
                                 string newParentPath = navigationProvider.GetParentPath(path, root, context);
 
-                                if (String.Equals(
+                                if (string.Equals(
                                         newParentPath,
                                         path,
                                         StringComparison.OrdinalIgnoreCase))

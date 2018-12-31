@@ -312,7 +312,7 @@ namespace System.Management.Automation.Language
 
                 CommandAst commandAst = current as CommandAst;
                 if (commandAst != null &&
-                    String.Equals(TokenKind.InlineScript.Text(), commandAst.GetCommandName(), StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(TokenKind.InlineScript.Text(), commandAst.GetCommandName(), StringComparison.OrdinalIgnoreCase) &&
                     this != commandAst)
                 {
                     return false;

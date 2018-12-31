@@ -1903,7 +1903,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 newName = newName.Remove(0, 2);
             }
-            else if (String.Equals(Path.GetDirectoryName(path), Path.GetDirectoryName(newName), StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(Path.GetDirectoryName(path), Path.GetDirectoryName(newName), StringComparison.OrdinalIgnoreCase))
             {
                 newName = Path.GetFileName(newName);
             }
@@ -3990,19 +3990,19 @@ namespace Microsoft.PowerShell.Commands
                     PSObject obj = (PSObject)metadata["Attributes"];
                     foreach (string value in (ArrayList)obj.BaseObject)
                     {
-                        if (String.Equals(value, "ReadOnly", StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(value, "ReadOnly", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.ReadOnly;
                         }
-                        else if (String.Equals(value, "Hidden", StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals(value, "Hidden", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.Hidden;
                         }
-                        else if (String.Equals(value, "Archive", StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals(value, "Archive", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.Archive;
                         }
-                        else if (String.Equals(value, "System", StringComparison.OrdinalIgnoreCase))
+                        else if (string.Equals(value, "System", StringComparison.OrdinalIgnoreCase))
                         {
                             destinationFile.Attributes = destinationFile.Attributes | FileAttributes.System;
                         }
@@ -4554,7 +4554,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(file.FullName))
                 {
-                    if (!(String.Equals(":$DATA", stream.Stream, StringComparison.OrdinalIgnoreCase)))
+                    if (!(string.Equals(":$DATA", stream.Stream, StringComparison.OrdinalIgnoreCase)))
                     {
                         result = CopyFileStreamToRemoteSession(file, remoteFilePath, ps, true, stream.Stream);
                         if (!result)
@@ -4781,7 +4781,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            bool isDriveRoot = String.Equals(path, Path.GetPathRoot(path), StringComparison.OrdinalIgnoreCase);
+            bool isDriveRoot = string.Equals(path, Path.GetPathRoot(path), StringComparison.OrdinalIgnoreCase);
             bool isUNCRoot = IsUNCRoot(path);
             bool result = isDriveRoot || isUNCRoot;
             s_tracer.WriteLine("result = {0}; isDriveRoot = {1}; isUNCRoot = {2}", result, isDriveRoot, isUNCRoot);
@@ -5046,7 +5046,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
-                if (String.Equals(path, basePath, StringComparison.OrdinalIgnoreCase) &&
+                if (string.Equals(path, basePath, StringComparison.OrdinalIgnoreCase) &&
                     (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
@@ -5093,7 +5093,7 @@ namespace Microsoft.PowerShell.Commands
                     // instead of ".." as would usually be returned
                     if (!string.IsNullOrEmpty(commonBase))
                     {
-                        if (String.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
+                        if (string.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
                             (!path.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
@@ -5200,7 +5200,7 @@ namespace Microsoft.PowerShell.Commands
             // longer path. If it is not, take the child off of the longer
             // path and compare again.
 
-            while (!String.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
+            while (!string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
             {
                 if (path2.Length > path1.Length)
                 {
@@ -6692,7 +6692,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If they're just working on the DATA stream, don't use the Alternate Data Stream
                 // utils to clear the stream - otherwise, the Win32 API will trash the other streams.
-                if (String.Equals(":$DATA", streamName, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(":$DATA", streamName, StringComparison.OrdinalIgnoreCase))
                 {
                     clearStream = false;
                 }
@@ -8253,7 +8253,7 @@ namespace System.Management.Automation.Internal
 
                     // And trailing :$DATA (as long as it's not the default data stream)
                     string dataStream = ":$DATA";
-                    if (!String.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
                     {
                         findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);
                     }

@@ -1008,7 +1008,7 @@ namespace System.Management.Automation.Remoting
 
             foreach (ConfigTypeEntry configEntry in ConfigFileKeys)
             {
-                if (String.Equals(configEntry.Key, de.Key.ToString(), StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(configEntry.Key, de.Key.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     validKey = true;
 
@@ -1173,10 +1173,10 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string aliasKey in hashtable.Keys)
                 {
-                    if (!String.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasValueToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasDescriptionToken, StringComparison.OrdinalIgnoreCase) &&
-                       !String.Equals(aliasKey, AliasOptionsToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasValueToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasDescriptionToken, StringComparison.OrdinalIgnoreCase) &&
+                       !string.Equals(aliasKey, AliasOptionsToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, aliasKey, key, path));
                         return false;
@@ -1226,9 +1226,9 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string functionKey in hashtable.Keys)
                 {
-                    if (!String.Equals(functionKey, FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(functionKey, FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(functionKey, FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(functionKey, FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(functionKey, FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(functionKey, FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, functionKey, key, path));
                         return false;
@@ -1272,8 +1272,8 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string variableKey in hashtable.Keys)
                 {
-                    if (!String.Equals(variableKey, VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                        !String.Equals(variableKey, VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(variableKey, VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(variableKey, VariableValueToken, StringComparison.OrdinalIgnoreCase))
                     {
                         cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey, variableKey, key, path));
                         return false;
@@ -2563,7 +2563,7 @@ namespace System.Management.Automation.Remoting
 
                 foreach (string parameterModification in parameter.Keys)
                 {
-                    if (String.Equals("Name", parameterModification, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals("Name", parameterModification, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }

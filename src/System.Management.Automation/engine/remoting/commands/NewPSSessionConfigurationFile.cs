@@ -976,9 +976,9 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (string functionKey in hashtable.Keys)
                             {
-                                if (!String.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1040,8 +1040,8 @@ namespace Microsoft.PowerShell.Commands
 
                                 foreach (string variableKey in hashtable.Keys)
                                 {
-                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                        !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                                    if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                        !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));
@@ -1723,9 +1723,9 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (string functionKey in hashtable.Keys)
                             {
-                                if (!String.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
-                                    !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(functionKey, ConfigFileConstants.FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
+                                    !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1784,8 +1784,8 @@ namespace Microsoft.PowerShell.Commands
 
                                 foreach (string variableKey in hashtable.Keys)
                                 {
-                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
-                                        !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
+                                    if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
+                                        !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));

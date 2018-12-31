@@ -244,7 +244,7 @@ namespace System.Management.Automation.Internal
             {
                 while (currentProcess != null)
                 {
-                    if (String.Equals(gpScriptPath,
+                    if (string.Equals(gpScriptPath,
                             PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
                     {
                         foundGpScriptParent = true;
@@ -327,27 +327,27 @@ namespace System.Management.Automation.Internal
 
         internal static ExecutionPolicy ParseExecutionPolicy(string policy)
         {
-            if (String.Equals(policy, "Bypass",
+            if (string.Equals(policy, "Bypass",
                                    StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.Bypass;
             }
-            else if (String.Equals(policy, "Unrestricted",
+            else if (string.Equals(policy, "Unrestricted",
                                    StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.Unrestricted;
             }
-            else if (String.Equals(policy, "RemoteSigned",
+            else if (string.Equals(policy, "RemoteSigned",
                                    StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.RemoteSigned;
             }
-            else if (String.Equals(policy, "AllSigned",
+            else if (string.Equals(policy, "AllSigned",
                               StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.AllSigned;
             }
-            else if (String.Equals(policy, "Restricted",
+            else if (string.Equals(policy, "Restricted",
                          StringComparison.OrdinalIgnoreCase))
             {
                 return ExecutionPolicy.Restricted;
@@ -1256,7 +1256,7 @@ namespace System.Management.Automation
             if ((resolvedPaths != null) && (resolvedPaths.Count != 0))
             {
                 // Ensure the path is from the file system provider
-                if (!String.Equals(pathProvider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(pathProvider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase))
                 {
                     error = new ErrorRecord(
                         new ArgumentException(

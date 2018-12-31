@@ -1036,7 +1036,7 @@ namespace System.Management.Automation.Remoting
             {
                 WSManNativeApi.WSManOption option = options[i];
 
-                if (String.Equals(option.name, WSManPluginConstants.PowerShellStartupProtocolVersionName, StringComparison.Ordinal))
+                if (string.Equals(option.name, WSManPluginConstants.PowerShellStartupProtocolVersionName, StringComparison.Ordinal))
                 {
                     if (!EnsureProtocolVersionComplies(requestDetails, option.value))
                     {
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             string clientVersionString)
         {
-            if (String.Equals(clientVersionString, WSManPluginConstants.PowerShellStartupProtocolVersionValue, StringComparison.Ordinal))
+            if (string.Equals(clientVersionString, WSManPluginConstants.PowerShellStartupProtocolVersionValue, StringComparison.Ordinal))
             {
                 return true;
             }
@@ -1282,7 +1282,7 @@ namespace System.Management.Automation.Remoting
             // Close Command
             if (IntPtr.Zero != commandContext)
             {
-                if (!String.Equals(code, WSManPluginConstants.CtrlCSignal, StringComparison.Ordinal))
+                if (!string.Equals(code, WSManPluginConstants.CtrlCSignal, StringComparison.Ordinal))
                 {
                     // Close operations associated with this command..
                     WSManPluginOperationShutdownContext cmdCtxt = new WSManPluginOperationShutdownContext(pluginContext, shellContext, commandContext, false);

@@ -1187,7 +1187,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             //default host is localhost
-            if (string.IsNullOrEmpty(computerName) || String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(computerName) || string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 _computerName = DefaultComputerName;
             }

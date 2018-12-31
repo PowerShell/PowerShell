@@ -1604,7 +1604,7 @@ namespace System.Management.Automation
 
             foreach (Job job in ChildJobs)
             {
-                if (String.Equals(job.Location, location, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(job.Location, location, StringComparison.OrdinalIgnoreCase))
                 {
                     returnJobList.Add(job);
                 }
@@ -1909,7 +1909,7 @@ namespace System.Management.Automation
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
                 if (child == null) continue;
-                if (String.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
+                if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
                     returnJobList.Add(child);

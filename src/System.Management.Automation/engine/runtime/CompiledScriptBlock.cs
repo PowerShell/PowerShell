@@ -1579,7 +1579,7 @@ namespace System.Management.Automation
         // Reset any static caches if the certificate has changed
         private static void ResetCertificateCacheIfNeeded(string certificate)
         {
-            if (!String.Equals(s_lastSeenCertificate, certificate, StringComparison.Ordinal))
+            if (!string.Equals(s_lastSeenCertificate, certificate, StringComparison.Ordinal))
             {
                 s_hasProcessedCertificate = false;
                 s_lastSeenCertificate = certificate;

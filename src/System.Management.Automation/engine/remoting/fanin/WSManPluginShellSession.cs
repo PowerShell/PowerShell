@@ -132,8 +132,8 @@ namespace System.Management.Automation.Remoting
             string stream,
             WSManNativeApi.WSManData_UnToMan inboundData)
         {
-            if ((!String.Equals(stream, WSManPluginConstants.SupportedInputStream, StringComparison.Ordinal)) &&
-                (!String.Equals(stream, WSManPluginConstants.SupportedPromptResponseStream, StringComparison.Ordinal)))
+            if ((!string.Equals(stream, WSManPluginConstants.SupportedInputStream, StringComparison.Ordinal)) &&
+                (!string.Equals(stream, WSManPluginConstants.SupportedPromptResponseStream, StringComparison.Ordinal)))
             {
                 WSManPluginInstance.ReportOperationComplete(
                     requestDetails,
@@ -215,7 +215,7 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            if (!String.Equals(streamSet.streamIDs[0], WSManPluginConstants.SupportedOutputStream, StringComparison.Ordinal))
+            if (!string.Equals(streamSet.streamIDs[0], WSManPluginConstants.SupportedOutputStream, StringComparison.Ordinal))
             {
                 // only "stdout" is the supported output stream.
                 WSManPluginInstance.ReportOperationComplete(
