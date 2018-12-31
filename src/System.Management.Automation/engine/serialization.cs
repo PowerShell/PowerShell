@@ -2601,7 +2601,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            //Char is defined as unsigned short in schema
+            // Char is defined as unsigned short in schema
             WriteRawString(serializer, streamName, property, XmlConvert.ToString((UInt16)(char)source), entry);
         }
 
@@ -6156,7 +6156,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Char value)
+        public void Add(string key, char value)
         {
             this.Add((object)key, (object)value);
         }

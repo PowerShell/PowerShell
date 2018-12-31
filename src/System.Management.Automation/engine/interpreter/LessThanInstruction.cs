@@ -53,7 +53,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                Char right = (char)frame.Pop();
+                char right = (char)frame.Pop();
                 frame.Push(((char)frame.Pop()) < right);
                 return +1;
             }

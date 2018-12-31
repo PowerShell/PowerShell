@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell
 
         public override
         void
-        Write(Char c)
+        Write(char c)
         {
             this.Write(new String(c, 1));
         }
