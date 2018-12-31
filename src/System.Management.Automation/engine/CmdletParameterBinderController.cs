@@ -459,7 +459,7 @@ namespace System.Management.Automation
                     // so we write out a warning and ignore this binding failure
                     if (!_warningSet.Contains(_commandMetadata.Name + Separator + parameterName))
                     {
-                        string message = String.Format(CultureInfo.InvariantCulture,
+                        string message = string.Format(CultureInfo.InvariantCulture,
                             ParameterBinderStrings.FailToBindDefaultParameter,
                             LanguagePrimitives.IsNull(argumentValue) ? "null" : argumentValue.ToString(),
                             parameterName, ex.Message);
@@ -731,7 +731,7 @@ namespace System.Management.Automation
                     if (!_warningSet.Contains(cmdletName + Separator + parameterName))
                     {
                         _commandRuntime.WriteWarning(
-                            String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.MultipleParametersMatched, parameterName));
+                            string.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.MultipleParametersMatched, parameterName));
                         _warningSet.Add(cmdletName + Separator + parameterName);
                     }
 
@@ -751,7 +751,7 @@ namespace System.Management.Automation
                         if (!_warningSet.Contains(cmdletName + Separator + parameterName))
                         {
                             _commandRuntime.WriteWarning(
-                                String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, parameterName));
+                                string.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, parameterName));
                             _warningSet.Add(cmdletName + Separator + parameterName);
                         }
 
@@ -777,7 +777,7 @@ namespace System.Management.Automation
                                             ? ParameterBinderStrings.MultipleKeysInBadFormat
                                             : ParameterBinderStrings.SingleKeyInBadFormat;
                 _commandRuntime.WriteWarning(
-                    String.Format(CultureInfo.InvariantCulture, formatString, keysInError));
+                    string.Format(CultureInfo.InvariantCulture, formatString, keysInError));
             }
 
             foreach (MergedCompiledCommandParameter param in parametersToRemove)
@@ -851,7 +851,7 @@ namespace System.Management.Automation
             if (writeWarning && !_warningSet.Contains(cmdletName + Separator + paramName))
             {
                 _commandRuntime.WriteWarning(
-                    String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, paramName));
+                    string.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, paramName));
                 _warningSet.Add(cmdletName + Separator + paramName);
             }
         }
@@ -1539,7 +1539,7 @@ namespace System.Management.Automation
                     (flags & ParameterBindingFlags.IsDefaultValue) == 0 &&
                     !BoundObsoleteParameterNames.Contains(parameter.Parameter.Name))
                 {
-                    string obsoleteWarning = String.Format(
+                    string obsoleteWarning = string.Format(
                         CultureInfo.InvariantCulture,
                         ParameterBinderStrings.UseOfDeprecatedParameterWarning,
                         parameter.Parameter.Name,

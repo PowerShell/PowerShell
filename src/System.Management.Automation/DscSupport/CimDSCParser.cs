@@ -1025,7 +1025,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className)
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
+            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
         }
 
         /// <summary>
@@ -1061,7 +1061,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();
-            var moduleQualifiedName = String.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
+            var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
             foreach (var pair in ClassCache)
             {
                 if (pair.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))

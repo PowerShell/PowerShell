@@ -1086,14 +1086,14 @@ namespace System.Management.Automation
                 // It's OK to use script, since tab completion is useless when the remote Win7 machine is in nolanguage mode
                 if (!shouldFullyQualifyPaths)
                 {
-                    powershell.AddScript(String.Format(
+                    powershell.AddScript(string.Format(
                         CultureInfo.InvariantCulture,
                         "& {{ trap {{ continue }} ; resolve-path {0} -Relative -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
                 }
                 else
                 {
-                    powershell.AddScript(String.Format(
+                    powershell.AddScript(string.Format(
                         CultureInfo.InvariantCulture,
                         "& {{ trap {{ continue }} ; resolve-path {0} -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));

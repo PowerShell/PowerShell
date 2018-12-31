@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ErrorRecord errorRecord = new ErrorRecord(
                        new ArgumentException(
-                           String.Format(
+                           string.Format(
                                Thread.CurrentThread.CurrentCulture,
                                "Class", this.Class)),
                        "INVALID_QUERY_IDENTIFIER",
@@ -380,19 +380,19 @@ namespace Microsoft.PowerShell.Commands
                         if (e.ErrorCode.Equals(ManagementStatus.InvalidClass))
                         {
                             string className = GetClassNameFromQuery(queryString);
-                            string errorMsg = String.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
+                            string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
                                                         e.Message, className);
                             errorRecord = new ErrorRecord(new ManagementException(errorMsg), "GetWMIManagementException", ErrorCategory.InvalidType, null);
                         }
                         else if (e.ErrorCode.Equals(ManagementStatus.InvalidQuery))
                         {
-                            string errorMsg = String.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
+                            string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
                                                         e.Message, queryString);
                             errorRecord = new ErrorRecord(new ManagementException(errorMsg), "GetWMIManagementException", ErrorCategory.InvalidArgument, null);
                         }
                         else if (e.ErrorCode.Equals(ManagementStatus.InvalidNamespace))
                         {
-                            string errorMsg = String.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
+                            string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
                                                         e.Message, this.Namespace);
                             errorRecord = new ErrorRecord(new ManagementException(errorMsg), "GetWMIManagementException", ErrorCategory.InvalidArgument, null);
                         }

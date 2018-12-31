@@ -136,7 +136,7 @@ namespace System.Management.Automation.ComInterop
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.CurrentCulture, "Variant ({0})", VariantType);
+            return string.Format(CultureInfo.CurrentCulture, "Variant ({0})", VariantType);
         }
 
         /// <summary>

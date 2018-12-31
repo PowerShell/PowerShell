@@ -841,7 +841,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!getObject.ValidateClassFormat())
                 {
                     ArgumentException e = new ArgumentException(
-                        String.Format(
+                        string.Format(
                             Thread.CurrentThread.CurrentCulture,
                             "Class", getObject.Class));
 

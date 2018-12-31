@@ -459,17 +459,17 @@ namespace Microsoft.PowerShell.Commands
 
         private string GenerateTypeSource(string typeNamespace, string typeName, string sourceCodeText, Language language)
         {
-            string usingSource = String.Format(
+            string usingSource = string.Format(
                     CultureInfo.InvariantCulture,
                     GetUsingTemplate(language), GetUsingSet(language));
 
-            string typeSource = String.Format(
+            string typeSource = string.Format(
                     CultureInfo.InvariantCulture,
                     GetMethodTemplate(language), typeName, sourceCodeText);
 
             if (!string.IsNullOrEmpty(typeNamespace))
             {
-                return usingSource + String.Format(
+                return usingSource + string.Format(
                     CultureInfo.InvariantCulture,
                     GetNamespaceTemplate(language), typeNamespace, typeSource);
             }
@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
-                        String.Format(
+                        string.Format(
                             CultureInfo.CurrentCulture,
                             AddTypeStrings.OutputTypeRequiresOutputAssembly)),
                     "OUTPUTTYPE_REQUIRES_ASSEMBLY",
@@ -1060,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
-                        String.Format(AddTypeStrings.TypeAlreadyExists, symbolName)),
+                        string.Format(AddTypeStrings.TypeAlreadyExists, symbolName)),
                     "TYPE_ALREADY_EXISTS",
                     ErrorCategory.InvalidOperation,
                     symbolName);

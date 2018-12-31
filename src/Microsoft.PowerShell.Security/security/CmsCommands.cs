@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(CultureInfo.InvariantCulture,
+                            string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
                         "FilePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, provider);
                     ThrowTerminatingError(error);
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(CultureInfo.InvariantCulture,
+                            string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
                         "FilePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, provider);
                     ThrowTerminatingError(error);
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(CultureInfo.InvariantCulture,
+                            string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
                         "FilePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, provider);
                     ThrowTerminatingError(error);
@@ -517,7 +517,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord error = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(CultureInfo.InvariantCulture,
+                        string.Format(CultureInfo.InvariantCulture,
                             CmsCommands.InputContainedNoEncryptedContentIncludeContext, "-IncludeContext")),
                     "InputContainedNoEncryptedContentIncludeContext", ErrorCategory.ObjectNotFound, null);
                 ThrowTerminatingError(error);

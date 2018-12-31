@@ -313,7 +313,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Conditional("LOGENABLE")]
         private static void FormatLogMessage(ref String outMessage, string message, params object[] args)
         {
-            outMessage = String.Format(CultureInfo.CurrentCulture, message, args);
+            outMessage = string.Format(CultureInfo.CurrentCulture, message, args);
         }
 
         /// <summary>
@@ -433,7 +433,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             DebugHelper.WriteLogEx("An invalid name: {0}={1}", 0, parameterName, value);
-            throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture, Strings.InvalidParameterValue, value, parameterName));
+            throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Strings.InvalidParameterValue, value, parameterName));
         }
 
         /// <summary>

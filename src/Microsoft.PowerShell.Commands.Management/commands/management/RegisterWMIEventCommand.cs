@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
 
                     ErrorRecord errorRecord = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(
+                            string.Format(
                                 Thread.CurrentThread.CurrentCulture,
                                 "Class", this.Class)),
                         "INVALID_QUERY_IDENTIFIER",

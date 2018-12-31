@@ -849,7 +849,7 @@ namespace System.Management.Automation
             string dynamicParamblock = string.Empty;
             if (generateDynamicParameters && this.ImplementsDynamicParameters)
             {
-                dynamicParamblock = String.Format(CultureInfo.InvariantCulture, @"
+                dynamicParamblock = string.Format(CultureInfo.InvariantCulture, @"
 dynamicparam
 {{{0}}}
 

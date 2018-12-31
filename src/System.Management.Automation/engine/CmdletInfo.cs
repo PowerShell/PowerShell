@@ -296,7 +296,7 @@ namespace System.Management.Automation
                     {
                         synopsis.AppendLine();
                         synopsis.AppendLine(
-                            String.Format(
+                            string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 "{0}{1}{2} {3}",
                                 _verb,
@@ -309,7 +309,7 @@ namespace System.Management.Automation
                 {
                     // Skip the synopsis documentation if the cmdlet hasn't been loaded yet.
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             "{0}{1}{2}",
                             _verb,

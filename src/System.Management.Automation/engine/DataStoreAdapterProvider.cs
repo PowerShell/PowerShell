@@ -51,7 +51,7 @@ namespace System.Management.Automation
                 if (!string.IsNullOrEmpty(this.PSSnapInName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.PSSnapInName,
@@ -62,7 +62,7 @@ namespace System.Management.Automation
                 else if (!string.IsNullOrEmpty(this.ModuleName))
                 {
                     result =
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
                             "{0}\\{1}",
                             this.ModuleName,

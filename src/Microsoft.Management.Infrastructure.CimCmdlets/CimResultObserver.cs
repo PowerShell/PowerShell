@@ -474,7 +474,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 resultObject.Properties.Add(new PSNoteProperty(@"PSComputerName", this.CurrentSession.ComputerName));
                 resultObject.TypeNames.Insert(0, resultObjectPSType);
-                resultObject.TypeNames.Insert(0, String.Format(CultureInfo.InvariantCulture, PSTypeCimMethodResultTemplate, resultObjectPSType, ClassName, MethodName));
+                resultObject.TypeNames.Insert(0, string.Format(CultureInfo.InvariantCulture, PSTypeCimMethodResultTemplate, resultObjectPSType, ClassName, MethodName));
                 base.OnNextCore(resultObject);
             }
         }

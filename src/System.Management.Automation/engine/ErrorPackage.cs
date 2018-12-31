@@ -431,7 +431,7 @@ namespace System.Management.Automation
             // assemble final string
             try
             {
-                return String.Format(uiCultureInfo, templateText,
+                return string.Format(uiCultureInfo, templateText,
                     activityInUse,
                     targetNameInUse,
                     targetTypeInUse,
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             {
                 templateText = ErrorCategoryStrings.InvalidErrorCategory;
 
-                return String.Format(uiCultureInfo, templateText,
+                return string.Format(uiCultureInfo, templateText,
                     activityInUse,
                     targetNameInUse,
                     targetTypeInUse,
@@ -915,7 +915,7 @@ namespace System.Management.Automation
 
             try
             {
-                return String.Format(
+                return string.Format(
                     CultureInfo.CurrentCulture,
                     template,
                     args);

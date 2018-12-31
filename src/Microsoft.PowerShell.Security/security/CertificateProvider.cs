@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
                     certstore.Open(true);
 
                     string action = CertificateProviderStrings.Action_Move;
-                    string resource = String.Format(
+                    string resource = string.Format(
                                           CultureInfo.CurrentCulture,
                                           CertificateProviderStrings.MoveItemTemplate,
                                           path,
@@ -1422,7 +1422,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            message = String.Format(
+            message = string.Format(
                 System.Globalization.CultureInfo.CurrentCulture,
                 message, path);
             ErrorDetails ed = new ErrorDetails(message);
@@ -1735,7 +1735,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                string message = String.Format(
+                string message = string.Format(
                                         CultureInfo.CurrentCulture,
                                         CertificateProviderStrings.RemoveStoreTemplate,
                                         storeName);
@@ -1766,7 +1766,7 @@ namespace Microsoft.PowerShell.Commands
                     action = CertificateProviderStrings.Action_Remove;
                 }
 
-                string resource = String.Format(
+                string resource = string.Format(
                                         CultureInfo.CurrentCulture,
                                         CertificateProviderStrings.RemoveItemTemplate,
                                         sourcePath);
@@ -2764,7 +2764,7 @@ namespace Microsoft.PowerShell.Commands
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
                 // Compose XPath query to select the appropriate node based on the cmdlet
-                string xpathQuery = String.Format(
+                string xpathQuery = string.Format(
                     CultureInfo.InvariantCulture,
                     HelpCommentsParser.ProviderHelpCommandXPath,
                     string.Empty,

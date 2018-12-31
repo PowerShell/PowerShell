@@ -453,7 +453,7 @@ namespace System.Management.Automation
                 {
                     synopsis.AppendLine();
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,

@@ -807,7 +807,7 @@ namespace Microsoft.WSMan.Management
                                                         WsManElementObjectTypes.WSManConfigLeafElement);
 
                                                 String pathToAdd =
-                                                    String.Format(
+                                                    string.Format(
                                                         CultureInfo.InvariantCulture,
                                                         "{0}{1}{2}",
                                                         path,
@@ -934,7 +934,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            string whatIfMessage = String.Format(CultureInfo.CurrentUICulture, helper.GetResourceMsgFromResourcetext("SetItemWhatIfAndConfirmText"), path, value);
+            string whatIfMessage = string.Format(CultureInfo.CurrentUICulture, helper.GetResourceMsgFromResourcetext("SetItemWhatIfAndConfirmText"), path, value);
             if (!ShouldProcess(whatIfMessage, string.Empty, string.Empty))
             {
                 return;
@@ -1050,7 +1050,7 @@ namespace Microsoft.WSMan.Management
                             {
                                 if(string.IsNullOrEmpty(
                                     pluginConfiguration.GetOneConfiguration(
-                                        String.Format(
+                                        string.Format(
                                             CultureInfo.InvariantCulture,
                                             "./attribute::{0}",
                                             WSManStringLiterals.ConfigRunAsUserName))))
@@ -1106,7 +1106,7 @@ namespace Microsoft.WSMan.Management
                                     {
                                         if (sResourceDirName.Equals(p.Properties["ResourceDir"].Value.ToString(), StringComparison.OrdinalIgnoreCase))
                                         {
-                                            string xpathToUse = String.Format(
+                                            string xpathToUse = string.Format(
                                                 CultureInfo.InvariantCulture,
                                                 "{0}:{1}/{0}:{2}[attribute::{3}='{4}']",
                                                 CurrentConfigurations.DefaultNameSpacePrefix,
@@ -1155,7 +1155,7 @@ namespace Microsoft.WSMan.Management
                                                 if (!Force)
                                                 {
                                                     string query = helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityQuery");
-                                                    query = String.Format(CultureInfo.CurrentCulture, query, currentpluginname);
+                                                    query = string.Format(CultureInfo.CurrentCulture, query, currentpluginname);
                                                     if (!ShouldContinue(query, helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityCaption")))
                                                     {
                                                         return;
@@ -1163,7 +1163,7 @@ namespace Microsoft.WSMan.Management
                                                 }
 
                                                 //NameSpace:Resources/NameSpace:Resource[@ResourceUri={''}]/NameSpace:Security[@Uri='{2}']
-                                                string xpathToUse = String.Format(
+                                                string xpathToUse = string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     "{0}:{1}/{0}:{2}[@{6}='{7}']/{0}:{3}[@{4}='{5}']",
                                                     CurrentConfigurations.DefaultNameSpacePrefix,
@@ -1188,7 +1188,7 @@ namespace Microsoft.WSMan.Management
                             {
                                 if (p.Properties[ChildName] != null)
                                 {
-                                    string xpathToUse = String.Format(
+                                    string xpathToUse = string.Format(
                                         CultureInfo.InvariantCulture,
                                         "{0}:{1}/{0}:{2}[@{3}='{4}']",
                                         CurrentConfigurations.DefaultNameSpacePrefix,
@@ -1205,7 +1205,7 @@ namespace Microsoft.WSMan.Management
                         }
                         else if (path.EndsWith(strPathChk + WSManStringLiterals.containerQuotasParameters, StringComparison.OrdinalIgnoreCase))
                         {
-                            string xpathToUse = String.Format(
+                            string xpathToUse = string.Format(
                                 CultureInfo.InvariantCulture,
                                 "{0}:{1}",
                                 CurrentConfigurations.DefaultNameSpacePrefix,
@@ -1223,7 +1223,7 @@ namespace Microsoft.WSMan.Management
                                 }
 
                                 string pathForGlobalQuota =
-                                    String.Format(
+                                    string.Format(
                                         CultureInfo.InvariantCulture,
                                         @"{0}:\{1}\{2}\{3}",
                                         WSManStringLiterals.rootpath,
@@ -1231,12 +1231,12 @@ namespace Microsoft.WSMan.Management
                                         WSManStringLiterals.containerShell,
                                         adjustedChileName);
 
-                                warningMessage.Add(String.Format(helper.GetResourceMsgFromResourcetext("SetItemWarnigForPPQ"), pathForGlobalQuota));
+                                warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemWarnigForPPQ"), pathForGlobalQuota));
                             }
                         }
 
                         SessionObjCache.TryGetValue(host, out sessionobj);
-                        string resourceUri = String.Format(
+                        string resourceUri = string.Format(
                             CultureInfo.InvariantCulture,
                             "{0}?Name={1}",
                             uri,
@@ -1255,7 +1255,7 @@ namespace Microsoft.WSMan.Management
                                 }
                                 else
                                 {
-                                    warningMessage.Add(String.Format(helper.GetResourceMsgFromResourcetext("SetItemServiceRestartWarningRemote"), host));
+                                    warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemServiceRestartWarningRemote"), host));
                                 }
                             }
                         }
@@ -1337,7 +1337,7 @@ namespace Microsoft.WSMan.Management
 
                             if (globalWarningUris.Contains(uri) && globalWarningConfigurations.Contains(ChildName.ToLowerInvariant()))
                             {
-                                warningMessage.Add(String.Format(helper.GetResourceMsgFromResourcetext("SetItemWarningForGlobalQuota"), value));
+                                warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemWarningForGlobalQuota"), value));
                             }
                         }
 
@@ -2208,7 +2208,7 @@ namespace Microsoft.WSMan.Management
                         if (!Force)
                         {
                             string query = helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityQuery");
-                            query = String.Format(CultureInfo.CurrentCulture, query, pName);
+                            query = string.Format(CultureInfo.CurrentCulture, query, pName);
                             if (!ShouldContinue(query, helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityCaption")))
                             {
                                 return;
@@ -4343,7 +4343,7 @@ namespace Microsoft.WSMan.Management
                                 foreach (XmlAttribute attrOfQuotas in pluginQuotas.Attributes)
                                 {
                                     String pathToAdd =
-                                        String.Format(
+                                        string.Format(
                                                   CultureInfo.InvariantCulture,
                                                   "{0}{1}{2}",
                                                   path,
@@ -5186,7 +5186,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    string error = String.Format(
+                    string error = string.Format(
                         helper.GetResourceMsgFromResourcetext("InvalidValueType"),
                         WSManStringLiterals.ConfigRunAsPasswordName,
                         typeof(SecureString).FullName);
@@ -5207,7 +5207,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    string error = String.Format(
+                    string error = string.Format(
                         helper.GetResourceMsgFromResourcetext("InvalidValueType"),
                         WSManStringLiterals.ConfigRunAsUserName,
                         typeof(PSCredential).FullName);
