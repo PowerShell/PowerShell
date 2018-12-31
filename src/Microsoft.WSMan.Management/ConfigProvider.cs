@@ -965,7 +965,7 @@ namespace Microsoft.WSMan.Management
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
                 SessionObjCache.TryGetValue(host, out sessionobj);
 
-                List<String> warningMessage = new List<string>();
+                List<string> warningMessage = new List<string>();
 
                 //if endswith '\', removes it.
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))

@@ -130,7 +130,7 @@ namespace System.Management.Automation.Interpreter {
                 case TypeCode.UInt16: return FastCreate<UInt16>(target, pi);
                 case TypeCode.UInt32: return FastCreate<UInt32>(target, pi);
                 case TypeCode.UInt64: return FastCreate<UInt64>(target, pi);
-                case TypeCode.String: return FastCreate<String>(target, pi);
+                case TypeCode.String: return FastCreate<string>(target, pi);
                 case TypeCode.SByte: return FastCreate<SByte>(target, pi);
                 default: return SlowCreate(target, pi);
             }

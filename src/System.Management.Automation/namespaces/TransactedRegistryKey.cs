@@ -1250,7 +1250,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     break;
                 case Win32Native.REG_MULTI_SZ:
                     {
-                        IList<String> strings = new List<String>();
+                        IList<string> strings = new List<string>();
 
                         char[] blob = new char[datasize / 2];
                         ret = Win32Native.RegQueryValueEx(_hkey, name, null, ref type, blob, ref datasize);

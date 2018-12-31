@@ -1051,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
             DoEmitAndLoadAssembly(compilation, emitOptions);
         }
 
-        private void CheckDuplicateTypes(Compilation compilation, out ConcurrentBag<String> newTypes)
+        private void CheckDuplicateTypes(Compilation compilation, out ConcurrentBag<string> newTypes)
         {
             AllNamedTypeSymbolsVisitor visitor = new AllNamedTypeSymbolsVisitor(_syntaxTreesHash);
             visitor.Visit(compilation.Assembly.GlobalNamespace);
@@ -1087,8 +1087,8 @@ namespace Microsoft.PowerShell.Commands
         {
             private int _hash;
 
-            public readonly ConcurrentBag<String> DuplicateSymbols = new ConcurrentBag<String>();
-            public readonly ConcurrentBag<String> UniqueSymbols = new ConcurrentBag<String>();
+            public readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
+            public readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
 
             public AllNamedTypeSymbolsVisitor(int hash)
             {
@@ -1124,7 +1124,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CacheNewTypes(ConcurrentBag<String> newTypes)
+        private void CacheNewTypes(ConcurrentBag<string> newTypes)
         {
             foreach (var typeName in newTypes)
             {
@@ -1141,7 +1141,7 @@ namespace Microsoft.PowerShell.Commands
         {
             EmitResult emitResult;
 
-            CheckDuplicateTypes(compilation, out ConcurrentBag<String> newTypes);
+            CheckDuplicateTypes(compilation, out ConcurrentBag<string> newTypes);
 
             if (InMemory)
             {
