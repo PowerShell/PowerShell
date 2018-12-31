@@ -290,7 +290,7 @@ namespace System.Management.Automation
                         if (!string.IsNullOrEmpty(fileName))
                         {
                             IntPtr memberAttr = IntPtr.Zero;
-                            string fileRelativePath = String.Empty;
+                            string fileRelativePath = string.Empty;
                             do
                             {
                                 memberAttr = NativeMethods.CryptCATCDFEnumAttributesWithCDFTag(resultCDF, memberFile, memberInfo, memberAttr, memberCallBack);
@@ -526,7 +526,7 @@ namespace System.Management.Automation
                             // We validate those along with file hashes so we are skipping duplicate entries
                             if (!((catalogVersion == 2) && (pIndirectData.DigestAlgorithm.pszObjId.Equals(new Oid("SHA1").Value, StringComparison.OrdinalIgnoreCase))))
                             {
-                                string relativePath = String.Empty;
+                                string relativePath = string.Empty;
                                 IntPtr memberAttrInfo = IntPtr.Zero;
                                 do
                                 {

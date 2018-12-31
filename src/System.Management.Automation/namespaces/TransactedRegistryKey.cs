@@ -1278,7 +1278,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                                     // we found an empty string.  But if we're at the end of the data,
                                     // it's just the extra null terminator.
                                     if (nextNull != len - 1)
-                                        strings.Add(String.Empty);
+                                        strings.Add(string.Empty);
                                 }
                             }
                             else

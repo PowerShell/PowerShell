@@ -522,7 +522,7 @@ namespace System.Management.Automation
             get { return _itemName; }
         }
 
-        private string _itemName = String.Empty;
+        private string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.

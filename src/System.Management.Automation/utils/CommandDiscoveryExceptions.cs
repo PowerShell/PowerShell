@@ -148,7 +148,7 @@ namespace System.Management.Automation
             set { _commandName = value; }
         }
 
-        private string _commandName = String.Empty;
+        private string _commandName = string.Empty;
 
         #endregion Properties
 
@@ -416,7 +416,7 @@ namespace System.Management.Automation
             get { return _commandName; }
         }
 
-        private string _commandName = String.Empty;
+        private string _commandName = string.Empty;
 
         /// <summary>
         /// Gets the PSVersion that the script requires

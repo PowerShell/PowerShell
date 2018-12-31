@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-                            SetRegistryValue(newKey, String.Empty, newItem, kind, path, false);
+                            SetRegistryValue(newKey, string.Empty, newItem, kind, path, false);
                         }
                     }
                     catch (Exception exception)

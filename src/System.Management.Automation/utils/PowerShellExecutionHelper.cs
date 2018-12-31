@@ -78,7 +78,7 @@ namespace System.Management.Automation
 
             // we got back one or more objects. Pick off the first result.
             if (streamResults[0] == null)
-                return String.Empty;
+                return string.Empty;
 
             // And convert the base object into a string. We can't use the proxied
             // ToString() on the PSObject because there is no default runspace

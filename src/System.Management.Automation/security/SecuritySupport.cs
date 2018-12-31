@@ -980,7 +980,7 @@ namespace System.Management.Automation
 
             if ((contentBytes == null) || (contentBytes.Length == 0))
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             // After review with the crypto board, NIST_AES256_CBC is more appropriate
@@ -1554,7 +1554,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(sourceMetadata))
             {
-                sourceMetadata = String.Empty;
+                sourceMetadata = string.Empty;
             }
 
             const string EICAR_STRING = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";

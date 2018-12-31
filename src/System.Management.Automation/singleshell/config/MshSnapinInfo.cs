@@ -130,12 +130,12 @@ namespace System.Management.Automation
 
             if (descriptionFallback == null)
             {
-                descriptionFallback = String.Empty;
+                descriptionFallback = string.Empty;
             }
 
             if (vendorFallback == null)
             {
-                vendorFallback = String.Empty;
+                vendorFallback = string.Empty;
             }
 
             Name = name;
@@ -263,7 +263,7 @@ namespace System.Management.Automation
         public Collection<string> Formats { get; }
 
         private string _descriptionIndirect;
-        private string _descriptionFallback = String.Empty;
+        private string _descriptionFallback = string.Empty;
         private string _description;
         /// <summary>
         /// Description of mshsnapin
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         }
 
         private string _vendorIndirect;
-        private string _vendorFallback = String.Empty;
+        private string _vendorFallback = string.Empty;
         private string _vendor;
         /// <summary>
         /// Vendor of mshsnapin

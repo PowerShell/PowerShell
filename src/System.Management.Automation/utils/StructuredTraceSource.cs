@@ -452,7 +452,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, msg);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, msg);
                 }
                 catch { }
             }
@@ -466,7 +466,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1);
                 }
                 catch { }
             }
@@ -480,7 +480,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1, arg2);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1, arg2);
                 }
                 catch { }
             }
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the description for this trace sources
         /// </summary>
-        public string Description { get; set; } = String.Empty;
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Determines if the line and switch headers should be shown
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the full name of the trace source category
         /// </summary>
-        internal string FullName { get; } = String.Empty;
+        internal string FullName { get; } = string.Empty;
 
         private string _name;
 
