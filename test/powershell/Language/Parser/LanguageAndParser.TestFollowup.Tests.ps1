@@ -303,3 +303,9 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
         $hash['h'] | Should -BeExactly 'h'
     }
 }
+
+Describe "Hashtable is case insensitive" -Tag CI {
+    It "When LANG is C.UTF-8" -Skip:(!$IsLinux) {
+        sh -c 'LANG=C.UTF-8 pwsh -c ''$h=@{h=1};$h.H''' | Should -Be 1
+    }
+}
