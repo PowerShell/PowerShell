@@ -57,7 +57,7 @@ namespace System.Management.Automation.Interpreter
                     case TypeCode.Byte: return ConvertInt32((Byte)obj);
                     case TypeCode.SByte: return ConvertInt32((SByte)obj);
                     case TypeCode.Int16: return ConvertInt32((Int16)obj);
-                    case TypeCode.Char: return ConvertInt32((Char)obj);
+                    case TypeCode.Char: return ConvertInt32((char)obj);
                     case TypeCode.Int32: return ConvertInt32((Int32)obj);
                     case TypeCode.Int64: return ConvertInt64((Int64)obj);
                     case TypeCode.UInt16: return ConvertInt32((UInt16)obj);
@@ -78,7 +78,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;
@@ -100,7 +100,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;
@@ -122,7 +122,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;
@@ -144,7 +144,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Interpreter
                     case TypeCode.Byte: return ConvertInt32((Byte)obj);
                     case TypeCode.SByte: return ConvertInt32((SByte)obj);
                     case TypeCode.Int16: return ConvertInt32((Int16)obj);
-                    case TypeCode.Char: return ConvertInt32((Char)obj);
+                    case TypeCode.Char: return ConvertInt32((char)obj);
                     case TypeCode.Int32: return ConvertInt32((Int32)obj);
                     case TypeCode.Int64: return ConvertInt64((Int64)obj);
                     case TypeCode.UInt16: return ConvertInt32((UInt16)obj);
@@ -202,7 +202,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;
@@ -246,7 +246,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;
@@ -268,7 +268,7 @@ namespace System.Management.Automation.Interpreter
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
-                        case TypeCode.Char: return (Char)obj;
+                        case TypeCode.Char: return (char)obj;
                         case TypeCode.Int32: return (Int32)obj;
                         case TypeCode.Int64: return (Int64)obj;
                         case TypeCode.UInt16: return (UInt16)obj;

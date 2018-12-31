@@ -2602,7 +2602,7 @@ namespace System.Management.Automation
             Dbg.Assert(entry != null, "caller should have validated the information");
 
             //Char is defined as unsigned short in schema
-            WriteRawString(serializer, streamName, property, XmlConvert.ToString((UInt16)(Char)source), entry);
+            WriteRawString(serializer, streamName, property, XmlConvert.ToString((UInt16)(char)source), entry);
         }
 
         /// <summary>
@@ -4182,7 +4182,7 @@ namespace System.Management.Automation
             Exception recognizedException = null;
             try
             {
-                return (Char)XmlConvert.ToUInt16(deserializer._reader.ReadElementContentAsString());
+                return (char)XmlConvert.ToUInt16(deserializer._reader.ReadElementContentAsString());
             }
             catch (FormatException e)
             {
