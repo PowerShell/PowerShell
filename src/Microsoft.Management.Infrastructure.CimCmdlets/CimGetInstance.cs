@@ -218,7 +218,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return null;
         }
 
-        protected static String GetNamespace(CimBaseCommand cmdlet)
+        protected static string GetNamespace(CimBaseCommand cmdlet)
         {
             if (cmdlet is GetCimInstanceCommand)
             {
@@ -254,7 +254,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return null;
         }
 
-        protected static String GetClassName(CimBaseCommand cmdlet)
+        protected static string GetClassName(CimBaseCommand cmdlet)
         {
             if (cmdlet is GetCimInstanceCommand)
             {
@@ -264,7 +264,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return null;
         }
 
-        protected static String GetQuery(CimBaseCommand cmdlet)
+        protected static string GetQuery(CimBaseCommand cmdlet)
         {
             if (cmdlet is GetCimInstanceCommand)
             {
@@ -297,7 +297,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return false;
         }
 
-        protected static String CreateQuery(CimBaseCommand cmdlet)
+        protected static string CreateQuery(CimBaseCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
             GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
@@ -329,7 +329,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return null;
         }
 
-        protected static String GetQueryDialect(CimBaseCommand cmdlet)
+        protected static string GetQueryDialect(CimBaseCommand cmdlet)
         {
             if (cmdlet is GetCimInstanceCommand)
             {

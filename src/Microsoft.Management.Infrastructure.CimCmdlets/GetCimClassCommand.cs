@@ -53,14 +53,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             Position = 0,
             ValueFromPipelineByPropertyName = true)]
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
 
             set { className = value; }
         }
 
-        private String className;
+        private string className;
 
         /// <summary>
         /// <para>
@@ -76,14 +76,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             Position = 1,
             ValueFromPipelineByPropertyName = true)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
             set { nameSpace = value; }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
@@ -157,14 +157,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public String MethodName
+        public string MethodName
         {
             get { return methodName; }
 
             set { methodName = value; }
         }
 
-        private String methodName;
+        private string methodName;
 
         /// <summary>
         /// <para>
@@ -174,14 +174,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public String PropertyName
+        public string PropertyName
         {
             get { return propertyName; }
 
             set { propertyName = value; }
         }
 
-        private String propertyName;
+        private string propertyName;
 
         /// <summary>
         /// <para>
@@ -191,14 +191,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public String QualifierName
+        public string QualifierName
         {
             get { return qualifierName; }
 
             set { qualifierName = value; }
         }
 
-        private String qualifierName;
+        private string qualifierName;
 
         #endregion
 

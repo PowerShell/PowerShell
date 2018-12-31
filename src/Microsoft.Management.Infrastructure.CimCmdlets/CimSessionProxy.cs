@@ -417,7 +417,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            String cimsessionComputerName = cimInstance.GetCimSessionComputerName();
+            string cimsessionComputerName = cimInstance.GetCimSessionComputerName();
             CreateSetSession(cimsessionComputerName, null, null, null, false);
             this.isDefaultSession = (cimsessionComputerName  == ConstValue.NullComputerName);
 
@@ -1871,8 +1871,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimResultContext"></param>
         protected void ConsumeCimInvokeMethodResultAsync(
             IObservable<CimMethodResultBase> asyncResult,
-            String className,
-            String methodName,
+            string className,
+            string methodName,
             CimResultContext cimResultContext)
         {
             CimMethodResultObserver observer = new CimMethodResultObserver(this.session, asyncResult, cimResultContext)

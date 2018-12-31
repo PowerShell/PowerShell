@@ -248,7 +248,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = WSManParameterSet)]
-        public String ProxyCertificateThumbprint
+        public string ProxyCertificateThumbprint
         {
             get { return proxycertificatethumbprint; }
 
@@ -259,7 +259,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String proxycertificatethumbprint;
+        private string proxycertificatethumbprint;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyCredential".

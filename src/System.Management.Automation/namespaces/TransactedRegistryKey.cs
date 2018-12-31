@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private SafeRegistryHandle _hkey = null;
         private int _state = 0;
-        private String _keyName;
+        private string _keyName;
         private RegistryKeyPermissionCheck _checkMode;
         private System.Transactions.Transaction _myTransaction;
         private SafeTransactionHandle _myTransactionHandle;
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        private int RegOpenKeyTransactedWrapper(SafeRegistryHandle hKey, String lpSubKey,
+        private int RegOpenKeyTransactedWrapper(SafeRegistryHandle hKey, string lpSubKey,
                     int ulOptions, int samDesired, out SafeRegistryHandle hkResult,
                     SafeTransactionHandle hTransaction, IntPtr pExtendedParameter)
         {
@@ -1355,7 +1355,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <para>Retrieves the name of the key.</para>
         /// <returns>The name of the key.</returns>
         /// </summary>
-        public String Name
+        public string Name
         {
             get
             {
@@ -1428,7 +1428,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     case RegistryValueKind.ExpandString:
                     case RegistryValueKind.String:
                         {
-                            String data = value.ToString();
+                            string data = value.ToString();
                             // divide by 2 to account for unicode.
                             if (MaxValueDataLength / 2 < data.Length)
                             {
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <para>Retrieves a string representation of this key.</para>
         /// <returns>A string representing the key.</returns>
         /// </summary>
-        public override String ToString()
+        public override string ToString()
         {
             EnsureNotDisposed();
             return _keyName;
@@ -1655,7 +1655,7 @@ namespace Microsoft.PowerShell.Commands.Internal
          * error, and depending on the error, insert a string into the message
          * gotten from the ResourceManager.
          */
-        internal void Win32Error(int errorCode, String str)
+        internal void Win32Error(int errorCode, string str)
         {
             switch (errorCode)
             {
@@ -1701,7 +1701,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        internal static void Win32ErrorStatic(int errorCode, String str)
+        internal static void Win32ErrorStatic(int errorCode, string str)
         {
             switch (errorCode)
             {
@@ -1720,7 +1720,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        internal static String FixupName(String name)
+        internal static string FixupName(String name)
         {
             BCLDebug.Assert(name != null, "[FixupName]name!=null");
             if (name.IndexOf('\\') == -1)

@@ -1650,7 +1650,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private String ConstructLocation()
+        private string ConstructLocation()
         {
             StringBuilder location = new StringBuilder();
 

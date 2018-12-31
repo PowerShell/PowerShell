@@ -86,8 +86,8 @@ namespace Microsoft.WSMan.Management
             //If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
-            String query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
-            String caption = helper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
+            string query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
+            string caption = helper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;
@@ -193,7 +193,7 @@ namespace Microsoft.WSMan.Management
                 string resultAction = resultopxml.SelectSingleNode(xpathText, nsmgr).InnerText;
                 if ( source != null && source.Equals("GPO"))
                 {
-                    String Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
+                    string Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
                     Info_Msg += " " + resultAction;
                     ArgumentException e = new ArgumentException(Info_Msg);
                     WriteError(new ErrorRecord(e, "NotSpecified", ErrorCategory.NotSpecified, null));

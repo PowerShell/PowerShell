@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A short description of the Group.
         /// </summary>
-        public String Description { get; set; }
+        public string Description { get; set; }
         #endregion Public Properties
 
         #region Construction

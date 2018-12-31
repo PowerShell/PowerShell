@@ -52,14 +52,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             Position = 1,
             ValueFromPipelineByPropertyName = true)]
-        public String Association
+        public string Association
         {
             get { return association; }
 
             set { association = value; }
         }
 
-        private String association;
+        private string association;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResultClassName".
@@ -67,14 +67,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// the given instance.
         /// </summary>
         [Parameter]
-        public String ResultClassName
+        public string ResultClassName
         {
             get { return resultClassName; }
 
             set { resultClassName = value; }
         }
 
-        private String resultClassName;
+        private string resultClassName;
 
         /// <summary>
         /// <para>
@@ -114,14 +114,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// is registered.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
             set { nameSpace = value; }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".

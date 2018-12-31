@@ -66,14 +66,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CertificateParameterSet)]
-        public String CertificateThumbprint
+        public string CertificateThumbprint
         {
             get { return certificatethumbprint; }
 
             set { certificatethumbprint = value; }
         }
 
-        private String certificatethumbprint;
+        private string certificatethumbprint;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -107,14 +107,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public String Name
+        public string Name
         {
             get { return name;}
 
             set { name = value; }
         }
 
-        private String name;
+        private string name;
 
         /// <summary>
         /// <para>

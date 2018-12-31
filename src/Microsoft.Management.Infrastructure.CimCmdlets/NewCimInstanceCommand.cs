@@ -54,7 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             Position = 0,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
 
@@ -65,7 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String className;
+        private string className;
 
         /// <summary>
         /// <para>
@@ -194,7 +194,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
@@ -205,7 +205,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".

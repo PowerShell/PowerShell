@@ -1465,7 +1465,7 @@ namespace Microsoft.PowerShell.Commands
             if (this.Host.Name.Equals("ServerRemoteHost", StringComparison.OrdinalIgnoreCase))
             {
                 Exception e = new System.ComponentModel.Win32Exception(stat);
-                String error = e.Message;
+                string error = e.Message;
                 string message = CertificateProviderStrings.RemoteErrorMessage;
                 error += message;
 

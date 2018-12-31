@@ -630,7 +630,7 @@ namespace Microsoft.WSMan.Management
         {
             if ((credential != null) && (certificateThumbprint != null))
             {
-                String message = FormatResourceMsgFromResourcetextS(
+                string message = FormatResourceMsgFromResourcetextS(
                     "AmbiguosAuthentication",
                         "CertificateThumbPrint", "credential");
 
@@ -641,7 +641,7 @@ namespace Microsoft.WSMan.Management
                 (authentication != AuthenticationMechanism.ClientCertificate) &&
                 (certificateThumbprint != null))
             {
-                String message = FormatResourceMsgFromResourcetextS(
+                string message = FormatResourceMsgFromResourcetextS(
                     "AmbiguosAuthentication",
                         "CertificateThumbPrint", authentication.ToString());
 

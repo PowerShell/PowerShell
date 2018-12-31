@@ -1175,7 +1175,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("CRF")]
-        public String CategoryResourceFile { get; set; }
+        public string CategoryResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1195,7 +1195,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0)]
         [ValidateNotNullOrEmpty]
         [Alias("LN")]
-        public String LogName { get; set; }
+        public string LogName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "MessageResourceFile".
@@ -1206,7 +1206,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("MRF")]
-        public String MessageResourceFile { get; set; }
+        public string MessageResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "ParameterResourceFile".
@@ -1217,7 +1217,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("PRF")]
-        public String ParameterResourceFile { get; set; }
+        public string ParameterResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Source".

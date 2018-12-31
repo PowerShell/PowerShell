@@ -317,7 +317,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// target computername
         /// </summary>
-        internal String TargetComputerName
+        internal string TargetComputerName
         {
             set;
             get;

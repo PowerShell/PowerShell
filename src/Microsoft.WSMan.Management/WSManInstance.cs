@@ -38,7 +38,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "GetInstance")]
         [Parameter(ParameterSetName = "Enumerate")]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
@@ -48,7 +48,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "BasePropertiesOnly".
@@ -79,7 +79,7 @@ namespace Microsoft.WSMan.Management
         [Parameter(ParameterSetName = "GetInstance")]
         [Parameter(ParameterSetName = "Enumerate")]
         [Alias("CN")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -93,7 +93,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -163,7 +163,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "Enumerate")]
         [ValidateNotNullOrEmpty]
-        public String Filter
+        public string Filter
         {
             get { return filter; }
 
@@ -173,7 +173,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String filter;
+        private string filter;
 
         /// <summary>
         /// The following is the definition of the input parameter "Fragment".
@@ -183,7 +183,7 @@ namespace Microsoft.WSMan.Management
 
         [Parameter(ParameterSetName = "GetInstance")]
         [ValidateNotNullOrEmpty]
-        public String Fragment
+        public string Fragment
         {
             get { return fragment; }
 
@@ -193,7 +193,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String fragment;
+        private string fragment;
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
@@ -295,7 +295,7 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         [ValidateSetAttribute(new string[] { "object", "epr", "objectandepr" })]
         [Alias("RT")]
-        public String ReturnType
+        public string ReturnType
         {
             get { return returntype; }
 
@@ -305,7 +305,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String returntype="object";
+        private string returntype="object";
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
@@ -652,14 +652,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -669,7 +669,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -683,7 +683,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -743,14 +743,14 @@ namespace Microsoft.WSMan.Management
         [Parameter(ParameterSetName = "ComputerName")]
         [Parameter(ParameterSetName = "URI")]
         [ValidateNotNullOrEmpty]
-        public String Fragment
+        public string Fragment
         {
             get { return fragment; }
 
             set { fragment = value; }
         }
 
-        private String fragment;
+        private string fragment;
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
@@ -1028,14 +1028,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1045,7 +1045,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -1059,7 +1059,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -1298,14 +1298,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1315,7 +1315,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -1329,7 +1329,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -1358,14 +1358,14 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("Path")]
-        public String FilePath
+        public string FilePath
         {
             get { return filepath; }
 
             set { filepath = value; }
         }
 
-        private String filepath;
+        private string filepath;
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".

@@ -87,7 +87,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    Position = 0,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
 
@@ -98,7 +98,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String className;
+        private string className;
 
         /// <summary>
         /// <para>
@@ -217,7 +217,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.QueryComputerSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.QuerySessionSet)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
@@ -228,7 +228,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// <para>
@@ -306,7 +306,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.QuerySessionSet)]
-        public String Query
+        public string Query
         {
             get { return query; }
 
@@ -317,7 +317,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String query;
+        private string query;
 
         /// <summary>
         /// <para>
@@ -335,7 +335,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
 
-        public String QueryDialect
+        public string QueryDialect
         {
             get { return queryDialect; }
 
@@ -346,7 +346,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String queryDialect;
+        private string queryDialect;
 
         /// <summary>
         /// <para>
@@ -390,7 +390,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
-        public String Filter
+        public string Filter
         {
             get { return filter; }
 
@@ -401,7 +401,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String filter;
+        private string filter;
 
         /// <summary>
         /// <para>

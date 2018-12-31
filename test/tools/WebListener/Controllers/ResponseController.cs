@@ -20,7 +20,7 @@ namespace mvc.Controllers
 {
     public class ResponseController : Controller
     {
-        public String Index()
+        public string Index()
         {
             string output = string.Empty;
             string contentType = Constants.ApplicationJson;

@@ -482,7 +482,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// methodname
         /// </summary>
-        internal String MethodName
+        internal string MethodName
         {
             get;
             set;
@@ -491,7 +491,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// classname
         /// </summary>
-        internal String ClassName
+        internal string ClassName
         {
             get;
             set;

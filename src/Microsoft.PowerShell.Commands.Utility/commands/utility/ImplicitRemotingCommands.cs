@@ -1869,7 +1869,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Paths to generated files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
-            String moduleNamePrefix,
+            string moduleNamePrefix,
             Encoding encoding,
             bool force,
             List<CommandMetadata> listOfCommandMetadata,
@@ -3023,7 +3023,7 @@ function Get-PSImplicitRemotingClientSideParameters
         /// <returns>Path to the created files.</returns>
         internal List<string> GenerateProxyModule(
             DirectoryInfo moduleRootDirectory,
-            String fileNamePrefix,
+            string fileNamePrefix,
             Encoding encoding,
             bool force,
             List<CommandMetadata> listOfCommandMetadata,
@@ -3091,7 +3091,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 }
                 else
                 {
-                    String currentFile = baseName + ".psm1";
+                    string currentFile = baseName + ".psm1";
                     try
                     {
                         SignatureHelper.SignFile(SigningOption.Default, currentFile, certificate, string.Empty, null);
