@@ -289,12 +289,12 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_wsmanObject.Error))
+                if (!string.IsNullOrEmpty(m_wsmanObject.Error))
                 {
                     helper.AssertError(m_wsmanObject.Error, true, resourceuri);
                 }
 
-                if (!String.IsNullOrEmpty(m_session.Error))
+                if (!string.IsNullOrEmpty(m_session.Error))
                 {
                     helper.AssertError(m_session.Error, true, resourceuri);
                 }

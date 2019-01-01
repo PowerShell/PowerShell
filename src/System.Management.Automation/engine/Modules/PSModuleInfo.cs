@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The name of this module.
         /// </summary>
-        public string Name { get; private set; } = String.Empty;
+        public string Name { get; private set; } = string.Empty;
 
         /// <summary>
         /// Sets the name property of the PSModuleInfo object
@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The path to the file that defined this module...
         /// </summary>
-        public string Path { get; internal set; } = String.Empty;
+        public string Path { get; internal set; } = string.Empty;
 
         /// <summary>
         /// If the module is a binary module or a script module that defines
@@ -247,7 +247,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Definition
         {
-            get { return _definitionExtent == null ? String.Empty : _definitionExtent.Text; }
+            get { return _definitionExtent == null ? string.Empty : _definitionExtent.Text; }
         }
 
         internal IScriptExtent _definitionExtent;
@@ -259,10 +259,10 @@ namespace System.Management.Automation
         {
             get { return _description; }
 
-            set { _description = value ?? String.Empty; }
+            set { _description = value ?? string.Empty; }
         }
 
-        private string _description = String.Empty;
+        private string _description = string.Empty;
 
         /// <summary>
         /// The guid for this module if one was defined in the module manifest.
@@ -437,7 +437,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the module version
         /// </summary>
-        /// <param name="version">the version to set...</param>
+        /// <param name="version">The version to set...</param>
         internal void SetVersion(Version version)
         {
             Version = version;
@@ -679,7 +679,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add function to the fixed exports list
         /// </summary>
-        /// <param name="name">the function to add.</param>
+        /// <param name="name">The function to add.</param>
         internal void AddDetectedFunctionExport(string name)
         {
             Dbg.Assert(name != null, "AddDetectedFunctionExport should not be called with a null value");
@@ -735,7 +735,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add CmdletInfo to the fixed exports list...
         /// </summary>
-        /// <param name="cmdlet">the cmdlet to add...</param>
+        /// <param name="cmdlet">The cmdlet to add...</param>
         internal void AddDetectedCmdletExport(string cmdlet)
         {
             Dbg.Assert(cmdlet != null, "AddDetectedCmdletExport should not be called with a null value");
@@ -791,7 +791,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add CmdletInfo to the fixed exports list...
         /// </summary>
-        /// <param name="cmdlet">the cmdlet to add...</param>
+        /// <param name="cmdlet">The cmdlet to add...</param>
         internal void AddExportedCmdlet(CmdletInfo cmdlet)
         {
             Dbg.Assert(cmdlet != null, "AddExportedCmdlet should not be called with a null value");
@@ -831,7 +831,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add AliasInfo to the fixed exports list...
         /// </summary>
-        /// <param name="aliasInfo">the cmdlet to add...</param>
+        /// <param name="aliasInfo">The cmdlet to add...</param>
         internal void AddExportedAlias(AliasInfo aliasInfo)
         {
             Dbg.Assert(aliasInfo != null, "AddExportedAlias should not be called with a null value");
@@ -1194,8 +1194,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Add alias to the detected alias list
         /// </summary>
-        /// <param name="name">the alias to add.</param>
-        /// <param name="value">the command it resolves to.</param>
+        /// <param name="name">The alias to add.</param>
+        /// <param name="value">The command it resolves to.</param>
         internal void AddDetectedAliasExport(string name, string value)
         {
             Dbg.Assert(name != null, "AddDetectedAliasExport should not be called with a null value");

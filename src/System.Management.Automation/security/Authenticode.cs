@@ -60,9 +60,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sign a file
         /// </summary>
-        /// <param name="option">option that controls what gets embedded in the signature blob.</param>
-        /// <param name="fileName">name of file to sign.</param>
-        /// <param name="certificate">signing cert.</param>
+        /// <param name="option">Option that controls what gets embedded in the signature blob.</param>
+        /// <param name="fileName">Name of file to sign.</param>
+        /// <param name="certificate">Signing cert.</param>
         /// <param name="timeStampServerUrl">URL of time stamping server.</param>
         /// <param name="hashAlgorithm"> The name of the hash
         /// algorithm to use.</param>
@@ -106,7 +106,7 @@ namespace System.Management.Automation
             Utils.CheckArgForNull(certificate, "certificate");
 
             // If given, TimeStamp server URLs must begin with http://
-            if (!String.IsNullOrEmpty(timeStampServerUrl))
+            if (!string.IsNullOrEmpty(timeStampServerUrl))
             {
                 if ((timeStampServerUrl.Length <= 7) ||
                     (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0))
@@ -118,7 +118,7 @@ namespace System.Management.Automation
             }
 
             // Validate that the hash algorithm is valid
-            if (!String.IsNullOrEmpty(hashAlgorithm))
+            if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 IntPtr intptrAlgorithm = Marshal.StringToHGlobalUni(hashAlgorithm);
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation
                 // It expects null, only.  Instead, it randomly AVs if you
                 // try.
                 string timeStampServerUrlForCryptUI = null;
-                if (!String.IsNullOrEmpty(timeStampServerUrl))
+                if (!string.IsNullOrEmpty(timeStampServerUrl))
                 {
                     timeStampServerUrlForCryptUI = timeStampServerUrl;
                 }
@@ -256,8 +256,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get signature on the specified file
         /// </summary>
-        /// <param name="fileName">name of file to check.</param>
-        /// <param name="fileContent">content of file to check.</param>
+        /// <param name="fileName">Name of file to check.</param>
+        /// <param name="fileContent">Content of file to check.</param>
         /// <returns>Signature object.</returns>
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.

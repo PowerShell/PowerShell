@@ -42,7 +42,7 @@ namespace System.Management.Automation
             string source;
 
             // In case shellId == null, use the "Default" source.
-            if (String.IsNullOrEmpty(shellId))
+            if (string.IsNullOrEmpty(shellId))
             {
                 source = "Default";
             }
@@ -57,7 +57,7 @@ namespace System.Management.Automation
 
                 // There may be a situation where ShellId ends with a '.'.
                 // In that case, use the default source.
-                if (String.IsNullOrEmpty(source))
+                if (string.IsNullOrEmpty(source))
                     source = "Default";
             }
 
@@ -66,7 +66,7 @@ namespace System.Management.Automation
                 return source;
             }
 
-            string message = String.Format(Thread.CurrentThread.CurrentCulture, "Event source '{0}' is not registered", source);
+            string message = string.Format(Thread.CurrentThread.CurrentCulture, "Event source '{0}' is not registered", source);
             throw new InvalidOperationException(message);
         }
 
@@ -403,7 +403,7 @@ namespace System.Management.Automation
                 mapArgs["ErrorId"] = icer.ErrorRecord.FullyQualifiedErrorId;
 
                 if (icer.ErrorRecord.ErrorDetails != null
-                    && !String.IsNullOrEmpty(icer.ErrorRecord.ErrorDetails.Message))
+                    && !string.IsNullOrEmpty(icer.ErrorRecord.ErrorDetails.Message))
                 {
                     mapArgs["ErrorMessage"] = icer.ErrorRecord.ErrorDetails.Message;
                 }
@@ -631,7 +631,7 @@ namespace System.Management.Automation
 
             string messageTemplate = _resourceManager.GetString(messageId);
 
-            if (String.IsNullOrEmpty(messageTemplate))
+            if (string.IsNullOrEmpty(messageTemplate))
                 return string.Empty;
 
             return FillMessageTemplate(messageTemplate, mapArgs);

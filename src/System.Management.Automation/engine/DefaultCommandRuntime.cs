@@ -96,14 +96,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Default implementation - just discards it's arguments
         /// </summary>
-        /// <param name="progressRecord">progress record to write.</param>
+        /// <param name="progressRecord">Progress record to write.</param>
         public void WriteProgress(ProgressRecord progressRecord) {; }
 
         /// <summary>
         /// Default implementation - just discards it's arguments
         /// </summary>
         /// <param name="sourceId">Source ID to write for.</param>
-        /// <param name="progressRecord">record to write.</param>
+        /// <param name="progressRecord">Record to write.</param>
         public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) {; }
 
         /// <summary>
@@ -136,63 +136,63 @@ namespace System.Management.Automation
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
-        /// <param name="target">ignored.</param>
+        /// <param name="target">Ignored.</param>
         /// <returns>True.</returns>
         public bool ShouldProcess(string target) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
-        /// <param name="target">ignored.</param>
-        /// <param name="action">ignored.</param>
+        /// <param name="target">Ignored.</param>
+        /// <param name="action">Ignored.</param>
         /// <returns>True.</returns>
         public bool ShouldProcess(string target, string action) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
-        /// <param name="verboseDescription">ignored.</param>
-        /// <param name="verboseWarning">ignored.</param>
-        /// <param name="caption">ignored.</param>
+        /// <param name="verboseDescription">Ignored.</param>
+        /// <param name="verboseWarning">Ignored.</param>
+        /// <param name="caption">Ignored.</param>
         /// <returns>True.</returns>
         public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
-        /// <param name="verboseDescription">ignored.</param>
-        /// <param name="verboseWarning">ignored.</param>
-        /// <param name="caption">ignored.</param>
-        /// <param name="shouldProcessReason">ignored.</param>
+        /// <param name="verboseDescription">Ignored.</param>
+        /// <param name="verboseWarning">Ignored.</param>
+        /// <param name="caption">Ignored.</param>
+        /// <param name="shouldProcessReason">Ignored.</param>
         /// <returns>True.</returns>
         public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption, out ShouldProcessReason shouldProcessReason) { shouldProcessReason = ShouldProcessReason.None; return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
-        /// <param name="query">ignored.</param>
-        /// <param name="caption">ignored.</param>
+        /// <param name="query">Ignored.</param>
+        /// <param name="caption">Ignored.</param>
         /// <returns>True.</returns>
         public bool ShouldContinue(string query, string caption) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
-        /// <param name="query">ignored.</param>
-        /// <param name="caption">ignored.</param>
-        /// <param name="yesToAll">ignored.</param>
-        /// <param name="noToAll">ignored.</param>
+        /// <param name="query">Ignored.</param>
+        /// <param name="caption">Ignored.</param>
+        /// <param name="yesToAll">Ignored.</param>
+        /// <param name="noToAll">Ignored.</param>
         /// <returns>True.</returns>
         public bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
-        /// <param name="query">ignored.</param>
-        /// <param name="caption">ignored.</param>
-        /// <param name="hasSecurityImpact">ignored.</param>
-        /// <param name="yesToAll">ignored.</param>
-        /// <param name="noToAll">ignored.</param>
+        /// <param name="query">Ignored.</param>
+        /// <param name="caption">Ignored.</param>
+        /// <param name="hasSecurityImpact">Ignored.</param>
+        /// <param name="yesToAll">Ignored.</param>
+        /// <param name="noToAll">Ignored.</param>
         /// <returns>True.</returns>
         public bool ShouldContinue(string query, string caption, bool hasSecurityImpact, ref bool yesToAll, ref bool noToAll) { return true; }
 

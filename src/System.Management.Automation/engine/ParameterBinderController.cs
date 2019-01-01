@@ -292,7 +292,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (!String.IsNullOrEmpty(arg))
+            if (!string.IsNullOrEmpty(arg))
             {
                 result = arg[0].IsDash();
             }

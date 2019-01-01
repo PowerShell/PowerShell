@@ -308,7 +308,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles new cmdlet action come from
         /// the operations related to the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="cimSession">CimSession object, which raised the event.</param>
         /// <param name="actionArgs">Event args.</param>
         public delegate void NewCmdletActionHandler(
             object cimSession,
@@ -323,7 +323,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Define delegate that handles operation creation and complete
         /// issued by the current CimSession object.
         /// </summary>
-        /// <param name="cimSession">cimSession object, which raised the event.</param>
+        /// <param name="cimSession">CimSession object, which raised the event.</param>
         /// <param name="actionArgs">Event args.</param>
         public delegate void OperationEventHandler(
             object cimSession,
@@ -982,8 +982,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Handle async event triggered by <see cref="CimResultObserver<T>"/>
         /// </para>
         /// </summary>
-        /// <param name="observer">object triggered the event.</param>
-        /// <param name="resultArgs">async result event argument.</param>
+        /// <param name="observer">Object triggered the event.</param>
+        /// <param name="resultArgs">Async result event argument.</param>
         internal void ResultEventHandler(
             object observer,
             AsyncResultEventArgsBase resultArgs)
@@ -1223,7 +1223,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"className", className);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncMultipleResults<CimInstance> asyncResult = this.session.EnumerateInstancesAsync(namespaceName, className, this.options);
-            string errorSource = String.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
             ConsumeCimInstanceAsync(asyncResult, new CimResultContext(errorSource));
         }
 
@@ -1305,7 +1305,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"className", className);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncMultipleResults<CimClass> asyncResult = this.session.EnumerateClassesAsync(namespaceName, className, this.options);
-            string errorSource = String.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
             ConsumeCimClassAsync(asyncResult, new CimResultContext(errorSource));
         }
 
@@ -1325,7 +1325,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"className", className);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncResult<CimClass> asyncResult = this.session.GetClassAsync(namespaceName, className, this.options);
-            string errorSource = String.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
             ConsumeCimClassAsync(asyncResult, new CimResultContext(errorSource));
         }
 
@@ -1379,7 +1379,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"methodName", methodName);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncMultipleResults<CimMethodResultBase> asyncResult = this.session.InvokeMethodAsync(namespaceName, className, methodName, methodParameters, this.options);
-            string errorSource = String.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
             ConsumeCimInvokeMethodResultAsync(asyncResult, className, methodName, new CimResultContext(errorSource));
         }
 

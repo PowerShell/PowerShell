@@ -267,7 +267,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs errorId");
@@ -282,7 +282,7 @@ namespace System.Management.Automation
             }
 
             string format = resourceStr;
-            if (String.IsNullOrEmpty(format))
+            if (string.IsNullOrEmpty(format))
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage bad errorId " + errorId);
@@ -294,7 +294,7 @@ namespace System.Management.Automation
             if (path == null)
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -303,7 +303,7 @@ namespace System.Management.Automation
             else
             {
                 result =
-                    String.Format(
+                    string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         format,
                         provider.Name,
@@ -319,7 +319,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get { return (String.IsNullOrEmpty(_message)) ? base.Message : _message; }
+            get { return (string.IsNullOrEmpty(_message)) ? base.Message : _message; }
         }
 
         [NonSerialized]
@@ -396,8 +396,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a SessionStateException
         /// </summary>
-        /// <param name="itemName">name of session state object.</param>
-        /// <param name="sessionStateCategory">category of session state object.</param>
+        /// <param name="itemName">Name of session state object.</param>
+        /// <param name="sessionStateCategory">Category of session state object.</param>
         /// <param name="resourceStr">This string is the message template string.</param>
         /// <param name="errorIdAndResourceId">
         /// This string is the ErrorId passed to the ErrorRecord, and is also
@@ -463,8 +463,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a SessionStateException using serialized data.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected SessionStateException(SerializationInfo info,
                                         StreamingContext context)
             : base(info, context)
@@ -475,8 +475,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -522,7 +522,7 @@ namespace System.Management.Automation
             get { return _itemName; }
         }
 
-        private string _itemName = String.Empty;
+        private string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.
@@ -642,8 +642,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a SessionStateUnauthorizedAccessException using serialized data.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected SessionStateUnauthorizedAccessException(
             SerializationInfo info,
             StreamingContext context)
@@ -736,8 +736,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ProviderNotFoundException using serialized data.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ProviderNotFoundException(
             SerializationInfo info,
             StreamingContext context)
@@ -831,8 +831,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ProviderNameAmbiguousException using serialized data.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ProviderNameAmbiguousException(
             SerializationInfo info,
             StreamingContext context)
@@ -931,8 +931,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a DriveNotFoundException using serialized data.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected DriveNotFoundException(
             SerializationInfo info,
             StreamingContext context)
@@ -1015,8 +1015,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ItemNotFoundException using serialized data.
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         protected ItemNotFoundException(
             SerializationInfo info,
             StreamingContext context)

@@ -264,7 +264,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}.{1}", PSVersionInfo.PSVersion.Major, PSVersionInfo.PSVersion.Minor);
+                return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}.{1}", PSVersionInfo.PSVersion.Major, PSVersionInfo.PSVersion.Minor);
             }
         }
 
@@ -375,7 +375,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    return String.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
+                    return string.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -629,7 +629,7 @@ namespace System.Management.Automation
         public static SemanticVersion Parse(string version)
         {
             if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
-            if (version == String.Empty) throw new FormatException(nameof(version));
+            if (version == string.Empty) throw new FormatException(nameof(version));
 
             var r = new VersionResult();
             r.Init(true);
@@ -719,9 +719,9 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((dashIndex != -1 && String.IsNullOrEmpty(preLabel))   ||
-                (plusIndex != -1 && String.IsNullOrEmpty(buildLabel)) ||
-                String.IsNullOrEmpty(versionSansLabel))
+            if ((dashIndex != -1 && string.IsNullOrEmpty(preLabel))   ||
+                (plusIndex != -1 && string.IsNullOrEmpty(buildLabel)) ||
+                string.IsNullOrEmpty(versionSansLabel))
             {
                 // We have dash and no preReleaseLabel  or
                 // we have plus and no buildLabel or
@@ -943,9 +943,9 @@ namespace System.Management.Automation
             // Numeric identifiers always have lower precedence than non-numeric identifiers.
             // A larger set of pre-release fields has a higher precedence than a smaller set,
             // if all of the preceding identifiers are equal.
-            if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
+            if (string.IsNullOrEmpty(preLabel1)) { return string.IsNullOrEmpty(preLabel2) ? 0 : 1; }
 
-            if (String.IsNullOrEmpty(preLabel2)) { return -1; }
+            if (string.IsNullOrEmpty(preLabel2)) { return -1; }
 
             var units1 = preLabel1.Split('.');
             var units2 = preLabel2.Split('.');
@@ -970,7 +970,7 @@ namespace System.Management.Automation
 
                     if (isNumber2) { return 1; }
 
-                    int result = String.CompareOrdinal(ac, bc);
+                    int result = string.CompareOrdinal(ac, bc);
                     if (result != 0) { return result; }
                 }
             }
@@ -999,7 +999,7 @@ namespace System.Management.Automation
 
             internal void SetFailure(ParseFailureKind failure)
             {
-                SetFailure(failure, String.Empty);
+                SetFailure(failure, string.Empty);
             }
 
             internal void SetFailure(ParseFailureKind failure, string argument)

@@ -269,7 +269,7 @@ namespace System.Management.Automation
         /// </param>
         internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
         {
-            if (String.IsNullOrEmpty(fullName))
+            if (string.IsNullOrEmpty(fullName))
             {
                 // 2005/04/13-JonN In theory this should be ArgumentException,
                 // but I don't want to deal with loading the string in this
@@ -285,7 +285,7 @@ namespace System.Management.Automation
                 // TODO: move this to startup json file instead of using env var
                 string tracingEnvVar = Environment.GetEnvironmentVariable("MshEnableTrace");
 
-                if (String.Equals(
+                if (string.Equals(
                         tracingEnvVar,
                         "True",
                         StringComparison.OrdinalIgnoreCase))
@@ -452,7 +452,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, msg);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, msg);
                 }
                 catch { }
             }
@@ -466,7 +466,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1);
                 }
                 catch { }
             }
@@ -480,7 +480,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1, arg2);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1, arg2);
                 }
                 catch { }
             }
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the description for this trace sources
         /// </summary>
-        public string Description { get; set; } = String.Empty;
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Determines if the line and switch headers should be shown
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the full name of the trace source category
         /// </summary>
-        internal string FullName { get; } = String.Empty;
+        internal string FullName { get; } = string.Empty;
 
         private string _name;
 
@@ -1686,7 +1686,7 @@ namespace System.Management.Automation
 
             StringBuilder output = new StringBuilder();
 
-            if (!String.IsNullOrEmpty(scopeOutputFormatter))
+            if (!string.IsNullOrEmpty(scopeOutputFormatter))
             {
                 output.AppendFormat(
                     CultureInfo.CurrentCulture,
@@ -1694,7 +1694,7 @@ namespace System.Management.Automation
                     _scopeName);
             }
 
-            if (!String.IsNullOrEmpty(format))
+            if (!string.IsNullOrEmpty(format))
             {
                 output.AppendFormat(
                     CultureInfo.CurrentCulture,
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
 
             // Trace out the scope name
 
-            if (!String.IsNullOrEmpty(_leavingScopeFormatter))
+            if (!string.IsNullOrEmpty(_leavingScopeFormatter))
             {
                 _tracer.OutputLine(_flag, _leavingScopeFormatter, _scopeName);
             }

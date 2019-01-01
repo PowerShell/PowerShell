@@ -52,28 +52,28 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(scopeID))
             {
-                if (String.Equals(
+                if (string.Equals(
                         scopeID,
                         StringLiterals.Global,
                         StringComparison.OrdinalIgnoreCase))
                 {
                     result = GlobalScope;
                 }
-                else if (String.Equals(
+                else if (string.Equals(
                             scopeID,
                             StringLiterals.Local,
                             StringComparison.OrdinalIgnoreCase))
                 {
                     result = _currentScope;
                 }
-                else if (String.Equals(
+                else if (string.Equals(
                             scopeID,
                             StringLiterals.Private,
                             StringComparison.OrdinalIgnoreCase))
                 {
                     result = _currentScope;
                 }
-                else if (String.Equals(
+                else if (string.Equals(
                             scopeID,
                             StringLiterals.Script,
                             StringComparison.OrdinalIgnoreCase))

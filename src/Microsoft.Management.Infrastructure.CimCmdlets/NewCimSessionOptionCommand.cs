@@ -633,7 +633,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 wsmanoptions.MaxEnvelopeSize = 0;
             }
 
-            if (!String.IsNullOrWhiteSpace(this.ProxyCertificateThumbprint))
+            if (!string.IsNullOrWhiteSpace(this.ProxyCertificateThumbprint))
             {
                 CimCredential credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.ProxyCertificateThumbprint);
                 wsmanoptions.AddProxyCredentials(credentials);

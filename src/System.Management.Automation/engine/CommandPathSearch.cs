@@ -150,7 +150,7 @@ namespace System.Management.Automation
 
                     // Note, if the directory resolves to multiple paths, only the first is used.
 
-                    if (!String.IsNullOrEmpty(resolvedPath))
+                    if (!string.IsNullOrEmpty(resolvedPath))
                     {
                         CommandDiscovery.discoveryTracer.TraceError(
                             "The relative path resolved to: {0}",

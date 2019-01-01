@@ -183,7 +183,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
-            string tempDir = String.Empty;
+            string tempDir = string.Empty;
             string tempPath = Path.GetTempPath();
             do
             {
@@ -197,7 +197,7 @@ namespace System.Management.Automation
             }
             catch (UnauthorizedAccessException)
             {
-                tempDir = String.Empty; // will become current working directory
+                tempDir = string.Empty; // will become current working directory
             }
 
             return tempDir;
@@ -222,7 +222,7 @@ namespace System.Management.Automation
                 System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
             string hostname = ipProperties.HostName;
-            if (!String.IsNullOrEmpty(ipProperties.DomainName))
+            if (!string.IsNullOrEmpty(ipProperties.DomainName))
             {
                 hostname = hostname + "." + ipProperties.DomainName;
             }
@@ -552,7 +552,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts string to base64 encoded string
         /// </summary>
-        /// <param name="input">string to encode.</param>
+        /// <param name="input">String to encode.</param>
         /// <returns>Base64 encoded string.</returns>
         internal static string StringToBase64String(string input)
         {
@@ -573,7 +573,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Decodes base64 encoded string
         /// </summary>
-        /// <param name="base64">base64 string to decode.</param>
+        /// <param name="base64">Base64 string to decode.</param>
         /// <returns>Decoded string.</returns>
         internal static string Base64ToString(string base64)
         {

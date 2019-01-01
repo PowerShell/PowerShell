@@ -314,13 +314,13 @@ namespace System.Management.Automation
             bool assemblyFound = false;
             char dirSeparator = IO.Path.DirectorySeparatorChar;
 
-            if (String.IsNullOrEmpty(_winDir))
+            if (string.IsNullOrEmpty(_winDir))
             {
                 //cache value of '_winDir' folder in member variable.
                 _winDir = Environment.GetEnvironmentVariable("winDir");
             }
 
-            if (String.IsNullOrEmpty(_gacPathMSIL))
+            if (string.IsNullOrEmpty(_gacPathMSIL))
             {
                 //cache value of '_gacPathMSIL' folder in member variable.
                 _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
@@ -334,7 +334,7 @@ namespace System.Management.Automation
 
                 if (Environment.Is64BitProcess)
                 {
-                    if (String.IsNullOrEmpty(_gacPath64))
+                    if (string.IsNullOrEmpty(_gacPath64))
                     {
                         //cache value of '_gacPath64' folder in member variable.
                         _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
@@ -344,7 +344,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    if (String.IsNullOrEmpty(_gacPath32))
+                    if (string.IsNullOrEmpty(_gacPath32))
                     {
                         //cache value of '_gacPath32' folder in member variable.
                         _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
@@ -373,12 +373,12 @@ namespace System.Management.Automation
                 //Enumerate all directories, sort by name and select the last. This selects the latest version.
                 var chosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
 
-                if (!String.IsNullOrEmpty(chosenVersionDirectory))
+                if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {
                     //Select first or default as the directory will contain only one assembly. If nothing then default is null;
                     var foundAssemblyPath = Directory.GetFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
 
-                    if (!String.IsNullOrEmpty(foundAssemblyPath))
+                    if (!string.IsNullOrEmpty(foundAssemblyPath))
                     {
                         AssemblyName asmNameFound = AssemblyLoadContext.GetAssemblyName(foundAssemblyPath);
                         if (IsAssemblyMatching(assemblyName, asmNameFound))

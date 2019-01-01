@@ -304,7 +304,7 @@ namespace System.Management.Automation
             // it's recommended to use TimeZoneInfo.Local whenever possible.
 
             const int maxsizeUtcDmtf = 999;
-            string UtcString = String.Empty;
+            string UtcString = string.Empty;
             // Fill up the UTC field in the DMTF date with the current zones UTC value
             TimeZoneInfo curZone = TimeZoneInfo.Local;
             TimeSpan tickOffset = curZone.GetUtcOffset(date);

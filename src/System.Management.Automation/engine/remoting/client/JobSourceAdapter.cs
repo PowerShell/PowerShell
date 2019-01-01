@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// Save this definition to the specified
         /// file on disk
         /// </summary>
-        /// <param name="stream">stream to save to.</param>
+        /// <param name="stream">Stream to save to.</param>
         public virtual void Save(Stream stream)
         {
             throw new NotImplementedException();
@@ -127,8 +127,8 @@ namespace System.Management.Automation
         /// Public constructor for testing.
         /// </summary>
         /// <param name="jobSourceAdapterType">Type of adapter to use to create a job.</param>
-        /// <param name="command">the command string.</param>
-        /// <param name="name">the job name.</param>
+        /// <param name="command">The command string.</param>
+        /// <param name="name">The job name.</param>
         public JobDefinition(Type jobSourceAdapterType, string command, string name)
         {
             JobSourceAdapterType = jobSourceAdapterType;
@@ -249,7 +249,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Save this specification to a file
         /// </summary>
-        /// <param name="stream">stream to save to.</param>
+        /// <param name="stream">Stream to save to.</param>
         public virtual void Save(Stream stream)
         {
             throw new NotImplementedException();
@@ -258,7 +258,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Load this specification from a file
         /// </summary>
-        /// <param name="stream">stream to load from.</param>
+        /// <param name="stream">Stream to load from.</param>
         public virtual void Load(Stream stream)
         {
             throw new NotImplementedException();
@@ -379,7 +379,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for this store
         /// </summary>
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Get a token that allows for construction of a job with a previously assigned
@@ -441,7 +441,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new job with the specified definition
         /// </summary>
-        /// <param name="definition">job definition to use.</param>
+        /// <param name="definition">Job definition to use.</param>
         /// <returns>Job object.</returns>
         public Job2 NewJob(JobDefinition definition)
         {
@@ -465,7 +465,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new job with the specified JobSpecification
         /// </summary>
-        /// <param name="specification">specification.</param>
+        /// <param name="specification">Specification.</param>
         /// <returns>Job object.</returns>
         public abstract Job2 NewJob(JobInvocationInfo specification);
 
@@ -489,7 +489,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get list of jobs that run the specified command
         /// </summary>
-        /// <param name="command">command to match.</param>
+        /// <param name="command">Command to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
@@ -514,7 +514,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get list of jobs that are in the specified state
         /// </summary>
-        /// <param name="state">state to match.</param>
+        /// <param name="state">State to match.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs with the specified
         /// state.</returns>
@@ -534,7 +534,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove a job from the store
         /// </summary>
-        /// <param name="job">job object to remove.</param>
+        /// <param name="job">Job object to remove.</param>
         public abstract void RemoveJob(Job2 job);
 
         /// <summary>

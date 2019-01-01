@@ -17,7 +17,7 @@ namespace System.Management.Automation
     internal abstract class ScriptCommandProcessorBase : CommandProcessorBase
     {
         protected ScriptCommandProcessorBase(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
-            : base(new ScriptInfo(String.Empty, scriptBlock, context))
+            : base(new ScriptInfo(string.Empty, scriptBlock, context))
         {
             this._dontUseScopeCommandOrigin = false;
             this._fromScriptFile = false;
@@ -127,8 +127,8 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request.</param>
-        /// <param name="helpCategory">help category to request.</param>
+        /// <param name="helpTarget">Help target to request.</param>
+        /// <param name="helpCategory">Help category to request.</param>
         /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {

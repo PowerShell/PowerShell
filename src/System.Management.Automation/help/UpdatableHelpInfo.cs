@@ -17,8 +17,8 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="culture">culture info.</param>
-        /// <param name="version">version info.</param>
+        /// <param name="culture">Culture info.</param>
+        /// <param name="version">Version info.</param>
         internal CultureSpecificUpdatableHelp(CultureInfo culture, Version version)
         {
             Debug.Assert(version != null);
@@ -47,8 +47,8 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="unresolvedUri">unresolved help content URI.</param>
-        /// <param name="cultures">supported UI cultures.</param>
+        /// <param name="unresolvedUri">Unresolved help content URI.</param>
+        /// <param name="cultures">Supported UI cultures.</param>
         internal UpdatableHelpInfo(string unresolvedUri, CultureSpecificUpdatableHelp[] cultures)
         {
             Debug.Assert(cultures != null);
@@ -77,7 +77,7 @@ namespace System.Management.Automation.Help
         /// Checks if the other HelpInfo has a newer version
         /// </summary>
         /// <param name="helpInfo">HelpInfo object to check.</param>
-        /// <param name="culture">culture to check.</param>
+        /// <param name="culture">Culture to check.</param>
         /// <returns>True if the other HelpInfo is newer, false if not.</returns>
         internal bool IsNewerVersion(UpdatableHelpInfo helpInfo, CultureInfo culture)
         {
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Checks if a culture is supported
         /// </summary>
-        /// <param name="culture">culture to check.</param>
+        /// <param name="culture">Culture to check.</param>
         /// <returns>True if supported, false if not.</returns>
         internal bool IsCultureSupported(CultureInfo culture)
         {
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Help
 
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (String.Compare(updatableHelpItem.Culture.Name, culture.Name,
+                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
@@ -146,13 +146,13 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the culture version
         /// </summary>
-        /// <param name="culture">culture info.</param>
+        /// <param name="culture">Culture info.</param>
         /// <returns>Culture version.</returns>
         internal Version GetCultureVersion(CultureInfo culture)
         {
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (String.Compare(updatableHelpItem.Culture.Name, culture.Name,
+                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return updatableHelpItem.Version;

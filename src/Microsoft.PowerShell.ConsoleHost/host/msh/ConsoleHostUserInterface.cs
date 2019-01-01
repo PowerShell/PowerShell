@@ -884,7 +884,7 @@ namespace Microsoft.PowerShell
         {
             List<Word> result = new List<Word>();
 
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return result;
             }
@@ -1717,7 +1717,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Get the character at the cursor when the user types 'tab' in the middle of line.
         /// </summary>
-        /// <param name="cursorPosition">the cursor position where 'tab' is hit.</param>
+        /// <param name="cursorPosition">The cursor position where 'tab' is hit.</param>
         /// <returns></returns>
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {

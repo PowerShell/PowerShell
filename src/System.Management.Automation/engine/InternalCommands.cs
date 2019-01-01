@@ -202,9 +202,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the begin scriptblock at the start of processing
         /// </summary>
-        /// <exception cref="ParseException">could not parse script.</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParseException">Could not parse script.</exception>
+        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
         protected override void BeginProcessing()
         {
             Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
@@ -283,9 +283,9 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the processing script blocks on the current pipeline object
         /// which is passed as it's only parameter.
         /// </summary>
-        /// <exception cref="ParseException">could not parse script.</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParseException">Could not parse script.</exception>
+        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
         protected override void ProcessRecord()
         {
             Dbg.Assert(ParameterSetName == "ScriptBlockSet" || ParameterSetName == "PropertyAndMethodSet", "ParameterSetName is neither 'ScriptBlockSet' nor 'PropertyAndMethodSet'");
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case "PropertyAndMethodSet":
 
-                    _targetString = String.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ForEachObjectTarget, GetStringRepresentation(InputObject));
+                    _targetString = string.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ForEachObjectTarget, GetStringRepresentation(InputObject));
 
                     if (LanguagePrimitives.IsNull(InputObject))
                     {
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             // should process
-                            string propertyAction = String.Format(CultureInfo.InvariantCulture,
+                            string propertyAction = string.Format(CultureInfo.InvariantCulture,
                                 InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
 
                             if (ShouldProcess(_targetString, propertyAction))
@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Commands
                             if (targetParameterizedProperty != null)
                             {
                                 // should process
-                                string propertyAction = String.Format(CultureInfo.InvariantCulture,
+                                string propertyAction = string.Format(CultureInfo.InvariantCulture,
                                     InternalCommandStrings.ForEachObjectPropertyAction, targetParameterizedProperty.Name);
 
                                 // ParameterizedProperty always take parameters, so we output the member.Value directly
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
                             try
                             {
                                 // should process
-                                string methodAction = String.Format(CultureInfo.InvariantCulture,
+                                string methodAction = string.Format(CultureInfo.InvariantCulture,
                                     InternalCommandStrings.ForEachObjectMethodActionWithoutArguments, targetMethod.Name);
 
                                 if (ShouldProcess(_targetString, methodAction))
@@ -492,10 +492,10 @@ namespace Microsoft.PowerShell.Commands
                                 resolvedPropertyName = member.Name;
                             }
 
-                            if (!String.IsNullOrEmpty(resolvedPropertyName))
+                            if (!string.IsNullOrEmpty(resolvedPropertyName))
                             {
                                 // should process
-                                string propertyAction = String.Format(CultureInfo.InvariantCulture,
+                                string propertyAction = string.Format(CultureInfo.InvariantCulture,
                                     InternalCommandStrings.ForEachObjectPropertyAction, resolvedPropertyName);
 
                                 if (ShouldProcess(_targetString, propertyAction))
@@ -568,7 +568,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (errorRecord != null)
                     {
-                        string propertyAction = String.Format(CultureInfo.InvariantCulture,
+                        string propertyAction = string.Format(CultureInfo.InvariantCulture,
                             InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
 
                         if (ShouldProcess(_targetString, propertyAction))
@@ -638,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
                     arglist.AppendFormat(CultureInfo.InvariantCulture, ", {0}", GetStringRepresentation(_arguments[i]));
                 }
 
-                string methodAction = String.Format(CultureInfo.InvariantCulture,
+                string methodAction = string.Format(CultureInfo.InvariantCulture,
                     InternalCommandStrings.ForEachObjectMethodActionWithArguments,
                     targetMethod.Name, arglist);
 
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
                 objInString = null;
             }
 
-            if (String.IsNullOrEmpty(objInString))
+            if (string.IsNullOrEmpty(objInString))
             {
                 var psobj = obj as PSObject;
                 objInString = psobj != null ? psobj.BaseObject.GetType().FullName : obj.GetType().FullName;
@@ -706,7 +706,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (hash != null && hash.Contains(_propertyOrMethodName))
                 {
-                    string keyAction = String.Format(CultureInfo.InvariantCulture,
+                    string keyAction = string.Format(CultureInfo.InvariantCulture,
                             InternalCommandStrings.ForEachObjectKeyAction, _propertyOrMethodName);
                     if (ShouldProcess(_targetString, keyAction))
                     {
@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
                 message = StringUtil.Format(resourceString, args);
             }
 
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
             {
                 Dbg.Assert(false, "Could not load text for error record '" + errorId + "'");
             }
@@ -838,9 +838,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the end scriptblock when the pipeline is complete
         /// </summary>
-        /// <exception cref="ParseException">could not parse script.</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParseException">Could not parse script.</exception>
+        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
         protected override void EndProcessing()
         {
             if (ParameterSetName != "ScriptBlockSet") return;
@@ -1401,7 +1401,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Context.LanguageMode.Equals(PSLanguageMode.RestrictedLanguage))
             {
-                string message = String.Format(CultureInfo.InvariantCulture,
+                string message = string.Format(CultureInfo.InvariantCulture,
                                                InternalCommandStrings.OperationNotAllowedInRestrictedLanguageMode,
                                                _binaryOperator);
                 PSInvalidOperationException exception =
@@ -1617,9 +1617,9 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the script block passing in the current pipeline object as
         /// it's only parameter.
         /// </summary>
-        /// <exception cref="ParseException">could not parse script.</exception>
-        /// <exception cref="RuntimeException">see Pipeline.Invoke.</exception>
-        /// <exception cref="ParameterBindingException">see Pipeline.Invoke.</exception>
+        /// <exception cref="ParseException">Could not parse script.</exception>
+        /// <exception cref="RuntimeException">See Pipeline.Invoke.</exception>
+        /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
         protected override void ProcessRecord()
         {
             if (_inputObject == AutomationNull.Value)
@@ -1797,7 +1797,7 @@ namespace Microsoft.PowerShell.Commands
                 resolvedPropertyName = members[0].Name;
             }
 
-            if (!String.IsNullOrEmpty(resolvedPropertyName))
+            if (!string.IsNullOrEmpty(resolvedPropertyName))
             {
                 try
                 {

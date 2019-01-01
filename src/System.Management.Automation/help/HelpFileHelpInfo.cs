@@ -19,9 +19,9 @@ namespace System.Management.Automation
         /// is through
         ///     GetHelpInfo(string name, string text, string filename)
         /// </remarks>
-        /// <param name="name">help topic name.</param>
-        /// <param name="text">help text.</param>
-        /// <param name="filename">file name that contains the help text.</param>
+        /// <param name="name">Help topic name.</param>
+        /// <param name="text">Help text.</param>
+        /// <param name="filename">File name that contains the help text.</param>
         private HelpFileHelpInfo(string name, string text, string filename)
         {
             FullHelp = PSObject.AsPSObject(text);
@@ -85,18 +85,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Get help info based on name, text and filename
         /// </summary>
-        /// <param name="name">help topic name.</param>
-        /// <param name="text">help text.</param>
-        /// <param name="filename">file name that contains the help text.</param>
+        /// <param name="name">Help topic name.</param>
+        /// <param name="text">Help text.</param>
+        /// <param name="filename">File name that contains the help text.</param>
         /// <returns>HelpFileHelpInfo object created based on information provided.</returns>
         internal static HelpFileHelpInfo GetHelpInfo(string name, string text, string filename)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             HelpFileHelpInfo helpfileHelpInfo = new HelpFileHelpInfo(name, text, filename);
 
-            if (String.IsNullOrEmpty(helpfileHelpInfo.Name))
+            if (string.IsNullOrEmpty(helpfileHelpInfo.Name))
                 return null;
 
             helpfileHelpInfo.AddCommonHelpProperties();
@@ -107,8 +107,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the text corresponding to a line in input text.
         /// </summary>
-        /// <param name="text">text to get the line for.</param>
-        /// <param name="line">line number.</param>
+        /// <param name="text">Text to get the line for.</param>
+        /// <param name="line">Line number.</param>
         /// <returns>The part of string in text that is in specified line.</returns>
         private static string GetLine(string text, int line)
         {

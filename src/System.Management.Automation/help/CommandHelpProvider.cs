@@ -103,7 +103,7 @@ namespace System.Management.Automation
                 moduleName = commandInfo.Module.Name;
                 moduleDir = commandInfo.Module.ModuleBase;
 
-                if (!String.IsNullOrEmpty(commandInfo.Prefix))
+                if (!string.IsNullOrEmpty(commandInfo.Prefix))
                 {
                     testWithoutPrefix = true;
                     cmdNameWithoutPrefix = Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix);
@@ -158,7 +158,7 @@ namespace System.Management.Automation
 
             helpFile = MUIFileSearcher.LocateFile(helpFileToFind, searchPaths);
 
-            if (!String.IsNullOrEmpty(helpFile))
+            if (!string.IsNullOrEmpty(helpFile))
             {
                 if (!_helpFiles.Contains(helpFile))
                 {
@@ -225,7 +225,7 @@ namespace System.Management.Automation
                 {
                     // Try load the help file specified by CmdletInfo.HelpFile property
                     helpFile = FindHelpFile(cmdletInfo);
-                    if (!String.IsNullOrEmpty(helpFile) && !_helpFiles.Contains(helpFile))
+                    if (!string.IsNullOrEmpty(helpFile) && !_helpFiles.Contains(helpFile))
                     {
                         LoadHelpFile(helpFile, cmdletInfo.ModuleName, cmdletInfo.Name, reportErrors);
                     }
@@ -237,7 +237,7 @@ namespace System.Management.Automation
             {
                 // Try load the help file specified by FunctionInfo.HelpFile property
                 helpFile = functionInfo.HelpFile;
-                if (!String.IsNullOrEmpty(helpFile))
+                if (!string.IsNullOrEmpty(helpFile))
                 {
                     if (!_helpFiles.Contains(helpFile))
                     {
@@ -272,7 +272,7 @@ namespace System.Management.Automation
                     result = sb.GetHelpInfo(_context, commandInfo, searchOnlyContent, HelpSystem.ScriptBlockTokenCache,
                         out helpFile, out helpUriFromDotLink);
 
-                    if (!String.IsNullOrEmpty(helpUriFromDotLink))
+                    if (!string.IsNullOrEmpty(helpUriFromDotLink))
                     {
                         try
                         {
@@ -295,7 +295,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (!String.IsNullOrEmpty(helpFile) && !InternalTestHooks.BypassOnlineHelpRetrieval)
+                    if (!string.IsNullOrEmpty(helpFile) && !InternalTestHooks.BypassOnlineHelpRetrieval)
                     {
                         if (!_helpFiles.Contains(helpFile))
                         {
@@ -321,24 +321,24 @@ namespace System.Management.Automation
 
                 Collection<string> searchPaths = new Collection<string>() { userHomeHelpPath };
 
-                if (!String.IsNullOrEmpty(moduleDir))
+                if (!string.IsNullOrEmpty(moduleDir))
                 {
                     searchPaths.Add(moduleDir);
                 }
 
-                if (!String.IsNullOrEmpty(userHomeHelpPath) && !String.IsNullOrEmpty(moduleName))
+                if (!string.IsNullOrEmpty(userHomeHelpPath) && !string.IsNullOrEmpty(moduleName))
                 {
                     searchPaths.Add(Path.Combine(userHomeHelpPath, moduleName));
                 }
 
-                if (!String.IsNullOrEmpty(moduleName) && !String.IsNullOrEmpty(moduleDir))
+                if (!string.IsNullOrEmpty(moduleName) && !string.IsNullOrEmpty(moduleDir))
                 {
                     // Search for <ModuleName>-Help.xml under ModuleBase folder
                     string helpFileToFind = moduleName + "-Help.xml";
                     result = GetHelpInfoFromHelpFile(commandInfo, helpFileToFind, searchPaths, reportErrors, out helpFile);
                 }
 
-                if (result == null && !String.IsNullOrEmpty(nestedModulePath))
+                if (result == null && !string.IsNullOrEmpty(nestedModulePath))
                 {
                     // Search for <NestedModuleName>-Help.xml under both ModuleBase and NestedModule's directory
                     searchPaths.Add(Path.GetDirectoryName(nestedModulePath));
@@ -348,7 +348,7 @@ namespace System.Management.Automation
             }
 
             // Set the HelpFile property to the file that contains the help content
-            if (result != null && !String.IsNullOrEmpty(helpFile))
+            if (result != null && !string.IsNullOrEmpty(helpFile))
             {
                 if (isCmdlet)
                 {
@@ -385,11 +385,11 @@ namespace System.Management.Automation
             {
                 if (isScriptCommand && result.GetUriForOnlineHelp() == null)
                 {
-                    if (!String.IsNullOrEmpty(commandInfo.CommandMetadata.HelpUri))
+                    if (!string.IsNullOrEmpty(commandInfo.CommandMetadata.HelpUri))
                     {
                         DefaultCommandHelpObjectBuilder.AddRelatedLinksProperties(result.FullHelp, commandInfo.CommandMetadata.HelpUri);
                     }
-                    else if (!String.IsNullOrEmpty(helpUri))
+                    else if (!string.IsNullOrEmpty(helpUri))
                     {
                         DefaultCommandHelpObjectBuilder.AddRelatedLinksProperties(result.FullHelp, helpUri);
                     }
@@ -420,7 +420,7 @@ namespace System.Management.Automation
         /// help item. Forcing each ExactMatchHelp to go through command discovery
         /// will make sure helpInfo for invalid command will not be returned.
         /// </remarks>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
@@ -445,7 +445,7 @@ namespace System.Management.Automation
                 HelpInfo helpInfo = GetHelpInfo(current, true, false);
                 string helpName = GetHelpName(current);
 
-                if (helpInfo != null && !String.IsNullOrEmpty(helpName))
+                if (helpInfo != null && !string.IsNullOrEmpty(helpName))
                 {
                     if (helpInfo.ForwardHelpCategory == helpRequest.HelpCategory &&
                         helpInfo.ForwardTarget.Equals(helpRequest.Target, StringComparison.OrdinalIgnoreCase))
@@ -542,7 +542,7 @@ namespace System.Management.Automation
 
             // let caller take care of getting help info in a different way
             // like "get-command -syntax"
-            if (String.IsNullOrEmpty(location))
+            if (string.IsNullOrEmpty(location))
             {
                 s_tracer.WriteLine("Unable to load file {0}", helpFileToLoad);
             }
@@ -572,7 +572,7 @@ namespace System.Management.Automation
             // Get the help file name from the cmdlet metadata
             string helpFile = cmdletInfo.HelpFile;
 
-            if (String.IsNullOrEmpty(helpFile))
+            if (string.IsNullOrEmpty(helpFile))
             {
                 if (cmdletInfo.Module != null)
                 {
@@ -604,13 +604,13 @@ namespace System.Management.Automation
                 // Make sure that the assembly name contains more than '.ni.dll'
                 string assemblyName = helpFile.Replace(".ni.dll-Help.xml", string.Empty);
 
-                if (!String.IsNullOrEmpty(assemblyName))
+                if (!string.IsNullOrEmpty(assemblyName))
                 {
                     // In the first try, we remove '.ni' from the assembly name and we attempt to find the corresponding help file.
                     string helpFileName = cmdletInfo.HelpFile.Replace(".ni.dll-Help.xml", ".dll-Help.xml");
                     location = GetHelpFile(helpFileName, cmdletInfo);
 
-                    if (String.IsNullOrEmpty(location))
+                    if (string.IsNullOrEmpty(location))
                     {
                         // If the help file could not be found, then it is possible that the actual assembly name is something like
                         // <Name>.ni.dll, e.g., MyAssembly.ni.dll, so let's try to find the original help file in the cmdlet metadata.
@@ -696,7 +696,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && String.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         helpItemsNode = node;
                         break;
@@ -719,7 +719,7 @@ namespace System.Management.Automation
                     for (int i = 0; i < helpItemsNode.ChildNodes.Count; i++)
                     {
                         XmlNode node = helpItemsNode.ChildNodes[i];
-                        if (node.NodeType == XmlNodeType.Element && String.Compare(node.LocalName, "command", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "command", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             MamlCommandHelpInfo helpInfo = null;
 
@@ -735,7 +735,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "UserDefinedData", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.Name, "UserDefinedData", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             UserDefinedHelpData userDefinedHelpData = UserDefinedHelpData.Load(node);
 
@@ -757,7 +757,7 @@ namespace System.Management.Automation
             if (userDefinedHelpData == null)
                 return;
 
-            if (String.IsNullOrEmpty(userDefinedHelpData.Name))
+            if (string.IsNullOrEmpty(userDefinedHelpData.Name))
                 return;
 
             HelpInfo helpInfo = GetFromCommandCache(mshSnapInId, userDefinedHelpData.Name, HelpCategory.Cmdlet);
@@ -778,7 +778,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the command.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file).</param>
+        /// <param name="helpFileIdentifier">Help file identifier (either name of PSSnapIn or simply full path to help file).</param>
         /// <param name="commandName">Name of the command.</param>
         /// <param name="helpCategory"></param>
         /// <returns>HelpInfo object.</returns>
@@ -807,7 +807,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the CommandInfo.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (simply full path to help file).</param>
+        /// <param name="helpFileIdentifier">Help file identifier (simply full path to help file).</param>
         /// <param name="commandInfo"></param>
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, CommandInfo commandInfo)
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Search help for a specific target.
         /// </summary>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content of all cmdlets.
         /// Otherwise, searches for pattern in the cmdlet names.
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
                     HelpInfo helpInfo = GetHelpInfo(current, !decoratedSearch, searchOnlyContent);
                     string helpName = GetHelpName(current);
 
-                    if (helpInfo != null && !String.IsNullOrEmpty(helpName))
+                    if (helpInfo != null && !string.IsNullOrEmpty(helpName))
                     {
                         if (!SessionState.IsVisible(helpRequest.CommandOrigin, current))
                         {
@@ -1128,7 +1128,7 @@ namespace System.Management.Automation
                         HelpInfo helpInfo = GetHelpInfo(current, !decoratedSearch, searchOnlyContent);
                         string helpName = GetHelpName(current);
 
-                        if (helpInfo != null && !String.IsNullOrEmpty(helpName))
+                        if (helpInfo != null && !string.IsNullOrEmpty(helpName))
                         {
                             if (hashtable.ContainsKey(helpName))
                                 continue;
@@ -1201,10 +1201,10 @@ namespace System.Management.Automation
 
         private static bool Match(string target, string pattern)
         {
-            if (String.IsNullOrEmpty(pattern))
+            if (string.IsNullOrEmpty(pattern))
                 return true;
 
-            if (String.IsNullOrEmpty(target))
+            if (string.IsNullOrEmpty(target))
                 target = string.Empty;
 
             WildcardPattern matcher = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
@@ -1216,8 +1216,8 @@ namespace System.Management.Automation
         /// Checks whether <paramref name="target"/> matches any of the patterns
         /// present in <paramref name="patterns"/>
         /// </summary>
-        /// <param name="target">content to search in.</param>
-        /// <param name="patterns">string patterns to look for.</param>
+        /// <param name="target">Content to search in.</param>
+        /// <param name="patterns">String patterns to look for.</param>
         /// <returns>
         /// true if <paramref name="target"/> contains any of the patterns
         /// present in <paramref name="patterns"/>
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
 
             userDefinedHelpData._name = name;
 
-            if (String.IsNullOrEmpty(userDefinedHelpData.Name))
+            if (string.IsNullOrEmpty(userDefinedHelpData.Name))
                 return null;
 
             return userDefinedHelpData;

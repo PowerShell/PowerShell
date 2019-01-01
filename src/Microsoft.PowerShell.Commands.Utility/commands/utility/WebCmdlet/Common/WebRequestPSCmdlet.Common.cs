@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
-                string encodedValue = String.Empty;
+                string encodedValue = string.Empty;
                 if (value != null)
                 {
                     encodedValue = WebUtility.UrlEncode(value.ToString());
@@ -804,14 +804,14 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBasicAuthorizationHeader()
         {
-            string unencoded = String.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
+            string unencoded = string.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
-            return String.Format("Basic {0}", Convert.ToBase64String(bytes));
+            return string.Format("Basic {0}", Convert.ToBase64String(bytes));
         }
 
         private string GetBearerAuthorizationHeader()
         {
-            return String.Format("Bearer {0}", new NetworkCredential(String.Empty, Token).Password);
+            return string.Format("Bearer {0}", new NetworkCredential(string.Empty, Token).Password);
         }
 
         private void ProcessAuthentication()
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, String.Format("Unrecognized Authentication value: {0}", Authentication));
+                Diagnostics.Assert(false, string.Format("Unrecognized Authentication value: {0}", Authentication));
             }
         }
 
@@ -1393,7 +1393,7 @@ namespace Microsoft.PowerShell.Commands
                             requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
                         }
 
-                        string reqVerboseMsg = String.Format(
+                        string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
                             requestWithoutRange.Method,
@@ -1488,7 +1488,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (request.Content != null)
                                     requestContentLength = request.Content.Headers.ContentLength.Value;
 
-                                string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                                string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Method,
                                     request.RequestUri,
@@ -1514,14 +1514,14 @@ namespace Microsoft.PowerShell.Commands
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
-                                    WriteVerbose(String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
+                                    WriteVerbose(string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
                                     // Disable writing to the OutFile.
                                     OutFile = null;
                                 }
 
                                 if (!_isSuccess)
                                 {
-                                    string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
+                                    string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
                                     HttpResponseException httpEx = new HttpResponseException(message, response);
                                     ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell.Commands
                                         }
                                     }
 
-                                    if (!String.IsNullOrEmpty(detailMsg))
+                                    if (!string.IsNullOrEmpty(detailMsg))
                                     {
                                         er.ErrorDetails = new ErrorDetails(detailMsg);
                                     }
@@ -1828,7 +1828,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string url = match.Groups["url"].Value;
                             string rel = match.Groups["rel"].Value;
-                            if (url != String.Empty && rel != String.Empty && !_relationLink.ContainsKey(rel))
+                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new Uri(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());

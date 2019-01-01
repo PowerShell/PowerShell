@@ -69,7 +69,7 @@ namespace System.Management.Automation
         /// <returns>
         /// The default value of the specified parameter.
         /// </returns>
-        /// <exception cref="Exception">see SessionStateInternal.GetVariableValue.</exception>
+        /// <exception cref="Exception">See SessionStateInternal.GetVariableValue.</exception>
         internal override object GetDefaultParameterValue(string name)
         {
             RuntimeDefinedParameter runtimeDefinedParameter;

@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_unicodeName != null && dnsName._unicodeName != null)
             {
-                if (String.Equals(
+                if (string.Equals(
                             _unicodeName,
                             dnsName._unicodeName,
                             StringComparison.OrdinalIgnoreCase))
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
             // to differ only by upper/lower case.  If they do, that's really
             // a code bug, and the effect is to just display both strings.
 
-            return String.Equals(_punycodeName, _unicodeName) ?
+            return string.Equals(_punycodeName, _unicodeName) ?
                         _punycodeName :
                         _unicodeName + " (" + _punycodeName + ")";
         }
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
                 _storeHandle.Handle = hCertStore;
 
                 //we only do CertControlStore for stores other than UserDS
-                if (!String.Equals(
+                if (!string.Equals(
                                 _storeName,
                                 "UserDS",
                                 StringComparison.OrdinalIgnoreCase))
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         X509Certificate2 cert = new X509Certificate2(certContext);
-                        if (String.Equals(
+                        if (string.Equals(
                                     cert.Thumbprint,
                                     Name,
                                     StringComparison.OrdinalIgnoreCase))
@@ -650,14 +650,14 @@ namespace Microsoft.PowerShell.Commands
             object outObj = GetItemAtPath(path, false, out isContainer);
             string[] pathElements = GetPathElements(path);
 
-            bool fUserContext = String.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase);
+            bool fUserContext = string.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase);
 
             // isContainer = true means not a valid certificate
 
             // if source store is user root store and UI is not allowed
             // we raise invalid operation
             if (DetectUIHelper.GetOwnerWindow(Host) == IntPtr.Zero && fUserContext &&
-                 String.Equals(pathElements[1], "ROOT", StringComparison.OrdinalIgnoreCase))
+                 string.Equals(pathElements[1], "ROOT", StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.UINotAllowed;
                 string errorId = "UINotAllowed";
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 //if the destination leads to the same thumbprint
                 if (destElements.Length == 3 &&
-                   (String.Equals(pathElements[2], destElements[2], StringComparison.OrdinalIgnoreCase)))
+                   (string.Equals(pathElements[2], destElements[2], StringComparison.OrdinalIgnoreCase)))
                 {
                     //in this case we think of destination path as valid
                     //and strip the thumbprint part
@@ -793,14 +793,14 @@ namespace Microsoft.PowerShell.Commands
             //we do not allow cross context move
             //we do not allow the destination store is the same as source
 
-            if (!String.Equals(pathElements[0], destElements[0], StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(pathElements[0], destElements[0], StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.CannotMoveCrossContext;
                 string errorId = "CannotMoveCrossContext";
                 ThrowInvalidOperation(errorId, message);
             }
 
-            if (String.Equals(pathElements[1], destElements[1], StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(pathElements[1], destElements[1], StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.CannotMoveToSameStore;
                 string errorId = "CannotMoveToSameStore";
@@ -811,10 +811,10 @@ namespace Microsoft.PowerShell.Commands
             // we raise invalid operation
             if (DetectUIHelper.GetOwnerWindow(Host) == IntPtr.Zero)
             {
-                if ((String.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase) &&
-                     String.Equals(pathElements[1], "ROOT", StringComparison.OrdinalIgnoreCase)) ||
-                     (String.Equals(destElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase) &&
-                     String.Equals(destElements[1], "ROOT", StringComparison.OrdinalIgnoreCase)))
+                if ((string.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase) &&
+                     string.Equals(pathElements[1], "ROOT", StringComparison.OrdinalIgnoreCase)) ||
+                     (string.Equals(destElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase) &&
+                     string.Equals(destElements[1], "ROOT", StringComparison.OrdinalIgnoreCase)))
                 {
                     string message = CertificateProviderStrings.UINotAllowed;
                     string errorId = "UINotAllowed";
@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
                     certstore.Open(true);
 
                     string action = CertificateProviderStrings.Action_Move;
-                    string resource = String.Format(
+                    string resource = string.Format(
                                           CultureInfo.CurrentCulture,
                                           CertificateProviderStrings.MoveItemTemplate,
                                           path,
@@ -905,7 +905,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowInvalidOperation(errorId, message);
             }
 
-            bool fUserContext = String.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase);
+            bool fUserContext = string.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase);
 
             //not support user context
             if (fUserContext)
@@ -1321,7 +1321,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Verify the parameters
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -1422,7 +1422,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            message = String.Format(
+            message = string.Format(
                 System.Globalization.CultureInfo.CurrentCulture,
                 message, path);
             ErrorDetails ed = new ErrorDetails(message);
@@ -1517,7 +1517,7 @@ namespace Microsoft.PowerShell.Commands
 
                 string[] elts = GetPathElements(path);
 
-                path = String.Join("\\", elts);
+                path = string.Join("\\", elts);
             }
 
             return path;
@@ -1532,7 +1532,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string e in allElts)
             {
-                if ((e == ".") || (e == String.Empty))
+                if ((e == ".") || (e == string.Empty))
                 {
                     continue;
                 }
@@ -1558,7 +1558,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Delete private key
         /// </summary>
-        /// <param name="pProvInfo">key prov info.</param>
+        /// <param name="pProvInfo">Key prov info.</param>
         /// <returns>No return.</returns>
 
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptSetProperty(System.IntPtr,System.String,System.Void*,System.Int32,System.Int32)")]
@@ -1685,9 +1685,9 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the cert store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        /// <param name="storeName">the store name.</param>
-        /// <param name="fDeleteKey">boolean to specify whether or not to delete private key.</param>
-        /// <param name = "sourcePath">source path.</param>
+        /// <param name="storeName">The store name.</param>
+        /// <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
+        /// <param name = "sourcePath">Source path.</param>
         /// <returns>No return.</returns>
 
         private void RemoveCertStore(string storeName, bool fDeleteKey, string sourcePath)
@@ -1735,7 +1735,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                string message = String.Format(
+                string message = string.Format(
                                         CultureInfo.CurrentCulture,
                                         CertificateProviderStrings.RemoveStoreTemplate,
                                         storeName);
@@ -1747,10 +1747,10 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the a single cert from the store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        /// <param name="cert">an X509Certificate2 object.</param>
-        /// <param name="fDeleteKey">boolean to specify whether or not to delete private key.</param>
-        /// <param name="fMachine">machine context or user.</param>
-        /// <param name = "sourcePath">source path.</param>
+        /// <param name="cert">An X509Certificate2 object.</param>
+        /// <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
+        /// <param name="fMachine">Machine context or user.</param>
+        /// <param name = "sourcePath">Source path.</param>
         /// <returns>No return.</returns>
         private void RemoveCertItem(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
         {
@@ -1766,7 +1766,7 @@ namespace Microsoft.PowerShell.Commands
                     action = CertificateProviderStrings.Action_Remove;
                 }
 
-                string resource = String.Format(
+                string resource = string.Format(
                                         CultureInfo.CurrentCulture,
                                         CertificateProviderStrings.RemoveItemTemplate,
                                         sourcePath);
@@ -1782,10 +1782,10 @@ namespace Microsoft.PowerShell.Commands
         /// Delete the cert from the store; if -DeleteKey is specified, we also delete
         /// the associated private key
         /// </summary>
-        /// <param name="cert">an X509Certificate2 object.</param>
-        /// <param name="fDeleteKey">boolean to specify whether or not to delete private key.</param>
-        /// <param name="fMachine">machine context or user.</param>
-        /// <param name = "sourcePath">source path.</param>
+        /// <param name="cert">An X509Certificate2 object.</param>
+        /// <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
+        /// <param name="fMachine">Machine context or user.</param>
+        /// <param name = "sourcePath">Source path.</param>
         /// <returns>No return.</returns>
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
@@ -1864,7 +1864,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Commit store for UserDS store
         /// </summary>
-        /// <param name="storeHandle">an IntPtr for store handle.</param>
+        /// <param name="storeHandle">An IntPtr for store handle.</param>
         /// <returns>No return.</returns>
         private void CommitUserDS(IntPtr storeHandle)
         {
@@ -1881,10 +1881,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Delete the cert from the original store and add to the destination store
         /// </summary>
-        /// <param name="destination">destination path.</param>
-        /// <param name="cert">an X509Certificate2.</param>
-        /// <param name="store">an X509NativeStore.</param>
-        /// <param name="sourcePath">source path.</param>
+        /// <param name="destination">Destination path.</param>
+        /// <param name="cert">An X509Certificate2.</param>
+        /// <param name="store">An X509NativeStore.</param>
+        /// <param name="sourcePath">Source path.</param>
         /// <returns>No return.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoMove(string destination, X509Certificate2 cert, X509NativeStore store, string sourcePath)
@@ -1942,9 +1942,9 @@ namespace Microsoft.PowerShell.Commands
         /// fetches the store-location/store/certificate at the
         /// specified path.
         /// </summary>
-        /// <param name="path">path to the item.</param>
+        /// <param name="path">Path to the item.</param>
         /// <param name="test">True if this is to only for an ItemExists call. Returns True / False.</param>
-        /// <param name="isContainer">set to true if item exists and is a container.</param>
+        /// <param name="isContainer">Set to true if item exists and is a container.</param>
         /// <returns>Item at the path.</returns>
         private object GetItemAtPath(string path, bool test, out bool isContainer)
         {
@@ -2243,14 +2243,14 @@ namespace Microsoft.PowerShell.Commands
         /// Helper function to get store-location/store/cert at
         /// the specified path.
         /// </summary>
-        /// <param name="path">path to the item.</param>
-        /// <param name="recurse">whether we need to recursively find all.</param>
+        /// <param name="path">Path to the item.</param>
+        /// <param name="recurse">Whether we need to recursively find all.</param>
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        /// <param name="returnNames">whether we only need the names.</param>
-        /// <param name="filter">filter info.</param>
+        /// <param name="returnNames">Whether we only need the names.</param>
+        /// <param name="filter">Filter info.</param>
         /// <returns> Does not return a value.</returns>
         private void GetChildItemsOrNames(
             string path,
@@ -2370,10 +2370,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get cert objects or their name at the specified path
         /// </summary>
-        /// <param name="path">path to cert.</param>
-        /// <param name="pathElements">path elements.</param>
-        /// <param name="returnNames">whether we should return only the names (instead of objects).</param>
-        /// <param name="filter">filter info.</param>
+        /// <param name="path">Path to cert.</param>
+        /// <param name="pathElements">Path elements.</param>
+        /// <param name="returnNames">Whether we should return only the names (instead of objects).</param>
+        /// <param name="filter">Filter info.</param>
         /// <returns>Does not return a value.</returns>
         private void GetCertificatesOrNames(string path,
                                              string[] pathElements,
@@ -2447,9 +2447,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get the X509NativeStore object at path
         /// </summary>
-        /// <param name="path">path to store.</param>
+        /// <param name="path">Path to store.</param>
         /// <param name="test">True if this should be a test for path existence. Returns True or False.</param>
-        /// <param name="pathElements">path elements.</param>
+        /// <param name="pathElements">Path elements.</param>
         /// <returns>X509NativeStore object.</returns>
         private X509NativeStore GetStore(string path, bool test, string[] pathElements)
         {
@@ -2475,9 +2475,9 @@ namespace Microsoft.PowerShell.Commands
         /// gets the X509NativeStore at the specified path.
         /// Adds to cache if not already there.
         /// </summary>
-        /// <param name="storePath">path to the store.</param>
-        /// <param name="storeName">name of store (path leaf element).</param>
-        /// <param name="storeLocation">location of store (CurrentUser or LocalMachine).</param>
+        /// <param name="storePath">Path to the store.</param>
+        /// <param name="storeName">Name of store (path leaf element).</param>
+        /// <param name="storeLocation">Location of store (CurrentUser or LocalMachine).</param>
         /// <returns>X509NativeStore object.</returns>
         private X509NativeStore GetStore(string storePath,
                                    string storeName,
@@ -2491,7 +2491,7 @@ namespace Microsoft.PowerShell.Commands
             if (s_storeCache != null)
             {
                 if (s_storeCache.Location != storeLocation ||
-                    !String.Equals(
+                    !string.Equals(
                                 s_storeCache.StoreName,
                                 storeName,
                                 StringComparison.OrdinalIgnoreCase))
@@ -2511,10 +2511,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets X509NativeStore objects or their name at the specified path.
         /// </summary>
-        /// <param name="path">path to the store.</param>
-        /// <param name="recurse">recursively return all items if true.</param>
+        /// <param name="path">Path to the store.</param>
+        /// <param name="recurse">Recursively return all items if true.</param>
         /// <param name="returnNames"></param>
-        /// <param name="filter">filter info.</param>
+        /// <param name="filter">Filter info.</param>
         /// <returns> Does not return a value.</returns>
         private void GetStoresOrNames(
             string path,
@@ -2726,18 +2726,18 @@ namespace Microsoft.PowerShell.Commands
             string noun = null;
             try
             {
-                if (!String.IsNullOrEmpty(helpItemName))
+                if (!string.IsNullOrEmpty(helpItemName))
                 {
                     CmdletInfo.SplitCmdletName(helpItemName, out verb, out noun);
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
-                if (String.IsNullOrEmpty(verb) || String.IsNullOrEmpty(noun))
+                if (string.IsNullOrEmpty(verb) || string.IsNullOrEmpty(noun))
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 //
@@ -2764,10 +2764,10 @@ namespace Microsoft.PowerShell.Commands
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
                 // Compose XPath query to select the appropriate node based on the cmdlet
-                string xpathQuery = String.Format(
+                string xpathQuery = string.Format(
                     CultureInfo.InvariantCulture,
                     HelpCommentsParser.ProviderHelpCommandXPath,
-                    String.Empty,
+                    string.Empty,
                     verb,
                     noun);
 
@@ -2780,34 +2780,34 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (XmlException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (PathTooLongException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (IOException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (UnauthorizedAccessException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (NotSupportedException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (SecurityException)
             {
-                return String.Empty;
+                return string.Empty;
             }
             catch (XPathException)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         #endregion
@@ -2922,7 +2922,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // OID strings only contain numbers and periods
 
-                if (String.Equals(_oid, keyUsage._oid, StringComparison.Ordinal))
+                if (string.Equals(_oid, keyUsage._oid, StringComparison.Ordinal))
                 {
                     match = true;
                 }
@@ -2962,7 +2962,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public override string ToString()
         {
-            return String.IsNullOrEmpty(_friendlyName) ?
+            return string.IsNullOrEmpty(_friendlyName) ?
                         _oid :
                         _friendlyName + " (" + _oid + ")";
         }
@@ -3041,7 +3041,7 @@ namespace Microsoft.PowerShell.Commands
                         //obtained pathElements[2] is MY
                         //obtained pathElements[3] is HashID
 
-                        bool fUserContext = String.Equals(pathElements[1], "Certificate::CurrentUser", StringComparison.OrdinalIgnoreCase);
+                        bool fUserContext = string.Equals(pathElements[1], "Certificate::CurrentUser", StringComparison.OrdinalIgnoreCase);
 
                         X509StoreLocation storeLocation =
                             new X509StoreLocation(fUserContext ? StoreLocation.CurrentUser : StoreLocation.LocalMachine);
@@ -3101,7 +3101,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string e in allElts)
             {
-                if ((e == ".") || (e == String.Empty))
+                if ((e == ".") || (e == string.Empty))
                 {
                     continue;
                 }

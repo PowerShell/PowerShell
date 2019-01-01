@@ -72,16 +72,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
-        /// <param name="sourceValue">value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">one of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted.</param>
+        /// <param name="sourceValue">Value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">One of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public abstract bool CanConvertFrom(object sourceValue, Type destinationType);
 
         /// <summary>
         /// Determines if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
-        /// <param name="sourceValue">value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">one of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted.</param>
+        /// <param name="sourceValue">Value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">One of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public virtual bool CanConvertFrom(PSObject sourceValue, Type destinationType)
         {
@@ -91,23 +91,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
         /// </summary>
-        /// <param name="sourceValue">value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">one of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to.</param>
+        /// <param name="sourceValue">Value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">One of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to.</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>The <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public abstract object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase);
 
         /// <summary>
         /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
         /// </summary>
-        /// <param name="sourceValue">value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">one of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to.</param>
+        /// <param name="sourceValue">Value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">One of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to.</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>The <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public virtual object ConvertFrom(PSObject sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             return this.ConvertFrom(GetSourceValueAsObject(sourceValue), destinationType, formatProvider, ignoreCase);
@@ -116,16 +116,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter
         /// </summary>
-        /// <param name="sourceValue">value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
+        /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public abstract bool CanConvertTo(object sourceValue, Type destinationType);
 
         /// <summary>
         /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter
         /// </summary>
-        /// <param name="sourceValue">value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
+        /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public virtual bool CanConvertTo(PSObject sourceValue, Type destinationType)
         {
@@ -135,23 +135,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
         /// </summary>
-        /// <param name="sourceValue">value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
+        /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>SourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public abstract object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase);
 
         /// <summary>
         /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
         /// </summary>
-        /// <param name="sourceValue">value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
-        /// <param name="destinationType">type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
+        /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
+        /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>SourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public virtual object ConvertTo(PSObject sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             return this.ConvertTo(GetSourceValueAsObject(sourceValue), destinationType, formatProvider, ignoreCase);
@@ -171,8 +171,8 @@ namespace System.Management.Automation
         /// <summary>
         /// This will return false only if sourceValue is string
         /// </summary>
-        /// <param name="sourceValue">value to convert from.</param>
-        /// <param name="destinationType">ignored.</param>
+        /// <param name="sourceValue">Value to convert from.</param>
+        /// <param name="destinationType">Ignored.</param>
         /// <returns>False only if sourceValue is string.</returns>
         public override bool CanConvertFrom(object sourceValue, Type destinationType)
         {
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         /// <param name="sourceValue">The value to convert from.</param>
         /// <param name="destinationType">The type this converter is associated with.</param>
         /// <param name="formatProvider">The IFormatProvider to use.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>SourceValue converted to destinationType.</returns>
         /// <exception cref="PSInvalidCastException">When no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// <param name="sourceValue">The value to convert from.</param>
         /// <param name="destinationType">The value to convert from.</param>
         /// <param name="formatProvider">The IFormatProvider to use.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>This method does not return a value.</returns>
         /// <exception cref="NotSupportedException">NotSupportedException is always thrown.</exception>
         public override object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
@@ -586,8 +586,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to compare two objects for equality converting the second to the type of the first, if required.
         /// </summary>
-        /// <param name="first">first object.</param>
-        /// <param name="second">object to compare first to.</param>
+        /// <param name="first">First object.</param>
+        /// <param name="second">Object to compare first to.</param>
         /// <returns>True if first is equal to the second.</returns>
         public static new bool Equals(object first, object second)
         {
@@ -597,8 +597,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to compare two objects for equality converting the second to the type of the first, if required.
         /// </summary>
-        /// <param name="first">first object.</param>
-        /// <param name="second">object to compare first to.</param>
+        /// <param name="first">First object.</param>
+        /// <param name="second">Object to compare first to.</param>
         /// <param name="ignoreCase">used only if first and second are strings
         /// to specify the type of string comparison </param>
         /// <returns>True if first is equal to the second.</returns>
@@ -610,8 +610,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to compare two objects for equality converting the second to the type of the first, if required.
         /// </summary>
-        /// <param name="first">first object.</param>
-        /// <param name="second">object to compare first to.</param>
+        /// <param name="first">First object.</param>
+        /// <param name="second">Object to compare first to.</param>
         /// <param name="ignoreCase">used only if first and second are strings
         /// to specify the type of string comparison </param>
         /// <param name="formatProvider">the format/culture to be used. If this parameter is null,
@@ -623,7 +623,7 @@ namespace System.Management.Automation
             // If both first and second are null it returns true.
             // If one is null and the other is not it returns false.
             // if (first.Equals(second)) it returns true otherwise it goes ahead with type conversion operations.
-            // If both first and second are strings it returns (String.Compare(firstString, secondString, ignoreCase) == 0).
+            // If both first and second are strings it returns (string.Compare(firstString, secondString, ignoreCase) == 0).
             // If second can be converted to the type of the first, it does so and returns first.Equals(secondConverted)
             // Otherwise false is returned
 
@@ -704,7 +704,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper method for [Try]Compare to determine object ordering with null.
         /// </summary>
-        /// <param name="value">the numeric value to compare to null.</param>
+        /// <param name="value">The numeric value to compare to null.</param>
         /// <param name="numberIsRightHandSide">True if the number to compare is on the right hand side if the comparison.</param>
         private static int CompareObjectToNull(object value, bool numberIsRightHandSide)
         {
@@ -729,8 +729,8 @@ namespace System.Management.Automation
         /// Compare first and second, converting second to the
         /// type of the first, if necessary.
         /// </summary>
-        /// <param name="first">first comparison value.</param>
-        /// <param name="second">second comparison value.</param>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
         /// <returns>Less than zero if first is smaller than second, more than
         /// zero if it is greater or zero if they are the same.</returns>
         /// <exception cref="System.ArgumentException">
@@ -746,8 +746,8 @@ namespace System.Management.Automation
         /// Compare first and second, converting second to the
         /// type of the first, if necessary.
         /// </summary>
-        /// <param name="first">first comparison value.</param>
-        /// <param name="second">second comparison value.</param>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
         /// <param name="ignoreCase">Used if both values are strings.</param>
         /// <returns>Less than zero if first is smaller than second, more than
         /// zero if it is greater or zero if they are the same.</returns>
@@ -764,8 +764,8 @@ namespace System.Management.Automation
         /// Compare first and second, converting second to the
         /// type of the first, if necessary.
         /// </summary>
-        /// <param name="first">first comparison value.</param>
-        /// <param name="second">second comparison value.</param>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
         /// <param name="ignoreCase">Used if both values are strings.</param>
         /// <param name="formatProvider">Used in type conversions and if both values are strings.</param>
         /// <returns>Less than zero if first is smaller than second, more than
@@ -979,7 +979,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the language considers obj to be true
         /// </summary>
-        /// <param name="obj">obj to verify if it is true.</param>
+        /// <param name="obj">Obj to verify if it is true.</param>
         /// <returns>True if obj is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message for backward compatibility reasons")]
         public static bool IsTrue(object obj)
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is a signed integer
         /// </summary>
-        /// <param name="typeCode">type code to check.</param>
+        /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is a signed integer, false otherwise.</returns>
         internal static bool IsSignedInteger(TypeCode typeCode)
         {
@@ -1273,7 +1273,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is an unsigned integer
         /// </summary>
-        /// <param name="typeCode">type code to check.</param>
+        /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is an unsigned integer, false otherwise.</returns>
         internal static bool IsUnsignedInteger(TypeCode typeCode)
         {
@@ -1283,7 +1283,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is integer
         /// </summary>
-        /// <param name="typeCode">type code to check.</param>
+        /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is integer, false otherwise.</returns>
         internal static bool IsInteger(TypeCode typeCode)
         {
@@ -1293,7 +1293,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is a floating point number
         /// </summary>
-        /// <param name="typeCode">type code to check.</param>
+        /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is floating point, false otherwise.</returns>
         internal static bool IsFloating(TypeCode typeCode)
         {
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is an integer or floating point number
         /// </summary>
-        /// <param name="typeCode">type code to check.</param>
+        /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is integer or floating point, false otherwise.</returns>
         internal static bool IsNumeric(TypeCode typeCode)
         {
@@ -1313,7 +1313,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is a CIM intrinsic type
         /// </summary>
-        /// <param name="typeCode">type code to check.</param>
+        /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is CIM intrinsic type, false otherwise.</returns>
         internal static bool IsCimIntrinsicScalarType(TypeCode typeCode)
         {
@@ -1345,7 +1345,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is one of the boolean types
         /// </summary>
-        /// <param name="type">type to check.</param>
+        /// <param name="type">Type to check.</param>
         /// <returns>True if type is one of boolean types, false otherwise.</returns>
         internal static bool IsBooleanType(Type type)
         {
@@ -1359,7 +1359,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is one of switch parameter types
         /// </summary>
-        /// <param name="type">type to check.</param>
+        /// <param name="type">Type to check.</param>
         /// <returns>True if type is one of switch parameter types, false otherwise.</returns>
         internal static bool IsSwitchParameterType(Type type)
         {
@@ -1372,7 +1372,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies if type is one of boolean or switch parameter types
         /// </summary>
-        /// <param name="type">type to check.</param>
+        /// <param name="type">Type to check.</param>
         /// <returns>True if type if one of boolean or switch parameter types,
         /// false otherwise.</returns>
         internal static bool IsBoolOrSwitchParameterType(Type type)
@@ -1678,11 +1678,11 @@ namespace System.Management.Automation
         ///  If any operation above throws an exception, this exception will be wrapped into a
         ///  PSInvalidCastException and thrown resulting in no further conversion attempt.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned.</param>
-        /// <param name="resultType">type to convert valueToConvert.</param>
+        /// <param name="valueToConvert">Value to be converted and returned.</param>
+        /// <param name="resultType">Type to convert valueToConvert.</param>
         /// <returns>Converted value.</returns>
-        /// <exception cref="ArgumentNullException">if resultType is null.</exception>
-        /// <exception cref="PSInvalidCastException">if the conversion failed.</exception>
+        /// <exception cref="ArgumentNullException">If resultType is null.</exception>
+        /// <exception cref="PSInvalidCastException">If the conversion failed.</exception>
         public static object ConvertTo(object valueToConvert, Type resultType)
         {
             return ConvertTo(valueToConvert, resultType, true, CultureInfo.InvariantCulture, null);
@@ -1733,12 +1733,12 @@ namespace System.Management.Automation
         ///  If any operation above throws an exception, this exception will be wrapped into a
         ///  PSInvalidCastException and thrown resulting in no further conversion attempt.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned.</param>
-        /// <param name="resultType">type to convert valueToConvert.</param>
+        /// <param name="valueToConvert">Value to be converted and returned.</param>
+        /// <param name="resultType">Type to convert valueToConvert.</param>
         /// <param name="formatProvider">To be used in custom type conversions, to call parse and to call Convert.ChangeType.</param>
         /// <returns>Converted value.</returns>
-        /// <exception cref="ArgumentNullException">if resultType is null.</exception>
-        /// <exception cref="PSInvalidCastException">if the conversion failed.</exception>
+        /// <exception cref="ArgumentNullException">If resultType is null.</exception>
+        /// <exception cref="PSInvalidCastException">If the conversion failed.</exception>
         public static object ConvertTo(object valueToConvert, Type resultType, IFormatProvider formatProvider)
         {
             return ConvertTo(valueToConvert, resultType, true, formatProvider, null);
@@ -1747,8 +1747,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts PSObject to resultType.
         /// </summary>
-        /// <param name="valueToConvert">value to be converted and returned.</param>
-        /// <param name="resultType">type to convert psobject.</param>
+        /// <param name="valueToConvert">Value to be converted and returned.</param>
+        /// <param name="resultType">Type to convert psobject.</param>
         /// <param name="recursion">Indicates if inner properties have to be recursively converted.</param>
         /// <param name="formatProvider">To be used in custom type conversions, to call parse and to call Convert.ChangeType.</param>
         /// <param name="ignoreUnknownMembers">Indicates if Unknown members in the psobject have to be ignored if the corresponding members in resultType do not exist.</param>
@@ -1787,8 +1787,8 @@ namespace System.Management.Automation
         /// <remarks>
         /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned.</param>
-        /// <param name="result">result of the conversion. This is valid only if the return is true.</param>
+        /// <param name="valueToConvert">Value to be converted and returned.</param>
+        /// <param name="result">Result of the conversion. This is valid only if the return is true.</param>
         /// <returns>False for conversion failure, true for success.</returns>
         public static bool TryConvertTo<T>(object valueToConvert, out T result)
         {
@@ -1807,9 +1807,9 @@ namespace System.Management.Automation
         /// <remarks>
         /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned.</param>
-        /// <param name="formatProvider">governing conversion of types.</param>
-        /// <param name="result">result of the conversion. This is valid only if the return is true.</param>
+        /// <param name="valueToConvert">Value to be converted and returned.</param>
+        /// <param name="formatProvider">Governing conversion of types.</param>
+        /// <param name="result">Result of the conversion. This is valid only if the return is true.</param>
         /// <returns>False for conversion failure, true for success.</returns>
         public static bool TryConvertTo<T>(object valueToConvert, IFormatProvider formatProvider, out T result)
         {
@@ -1830,9 +1830,9 @@ namespace System.Management.Automation
         /// <remarks>
         /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned.</param>
-        /// <param name="resultType">type to convert valueToConvert.</param>
-        /// <param name="result">result of the conversion. This is valid only if the return is true.</param>
+        /// <param name="valueToConvert">Value to be converted and returned.</param>
+        /// <param name="resultType">Type to convert valueToConvert.</param>
+        /// <param name="result">Result of the conversion. This is valid only if the return is true.</param>
         /// <returns>False for conversion failure, true for success.</returns>
         public static bool TryConvertTo(object valueToConvert, Type resultType, out object result)
         {
@@ -1846,10 +1846,10 @@ namespace System.Management.Automation
         /// <remarks>
         /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned.</param>
-        /// <param name="resultType">type to convert valueToConvert.</param>
-        /// <param name="formatProvider">governing conversion of types.</param>
-        /// <param name="result">result of the conversion. This is valid only if the return is true.</param>
+        /// <param name="valueToConvert">Value to be converted and returned.</param>
+        /// <param name="resultType">Type to convert valueToConvert.</param>
+        /// <param name="formatProvider">Governing conversion of types.</param>
+        /// <param name="result">Result of the conversion. This is valid only if the return is true.</param>
         /// <returns>False for conversion failure, true for success.</returns>
         public static bool TryConvertTo(object valueToConvert, Type resultType, IFormatProvider formatProvider, out object result)
         {
@@ -1984,8 +1984,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Checks if the enumValue is defined or not in enumType.
             /// </summary>
-            /// <param name="enumType">some enumeration.</param>
-            /// <param name="enumValue">supposed to be an integer.</param>
+            /// <param name="enumType">Some enumeration.</param>
+            /// <param name="enumValue">Supposed to be an integer.</param>
             /// <returns>
             /// </returns>
             private static bool IsDefinedEnum(object enumValue, Type enumType)
@@ -2052,9 +2052,9 @@ namespace System.Management.Automation
             /// Throws if the enumType enumeration has no negative values, but the enumValue is not
             /// defined in enumType.
             /// </summary>
-            /// <param name="enumType">some enumeration.</param>
-            /// <param name="enumValue">supposed to be an integer.</param>
-            /// <param name="errorId">the error id to be used when throwing an exception.</param>
+            /// <param name="enumType">Some enumeration.</param>
+            /// <param name="enumValue">Supposed to be an integer.</param>
+            /// <param name="errorId">The error id to be used when throwing an exception.</param>
             internal static void ThrowForUndefinedEnum(string errorId, object enumValue, Type enumType)
             {
                 ThrowForUndefinedEnum(errorId, enumValue, enumValue, enumType);
@@ -2065,9 +2065,9 @@ namespace System.Management.Automation
             /// defined in enumType.
             /// </summary>
             /// <param name="errorId">The error id to be used when throwing an exception.</param>
-            /// <param name="enumValue">value to validate.</param>
-            /// <param name="valueToUseToThrow">value to use while throwing an exception.</param>
-            /// <param name="enumType">the enum type to validate the enumValue with.</param>
+            /// <param name="enumValue">Value to validate.</param>
+            /// <param name="valueToUseToThrow">Value to use while throwing an exception.</param>
+            /// <param name="enumType">The enum type to validate the enumValue with.</param>
             /// <remarks>
             /// <paramref name="valueToUseToThrow"/> is used by those callers who want the exception
             /// to contain a different value than the one that is validated.
@@ -2207,7 +2207,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (String.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
+                            if (string.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
                                 continue;
                         }
 
@@ -2252,7 +2252,7 @@ namespace System.Management.Automation
         /// AmbiguousMatchException. This auxiliary method calls GetMember to find the right method
         /// </summary>
         /// <param name="methodName">Either op_Explicit or op_Implicit, at the moment.</param>
-        /// <param name="targetType">the type to look for an operator.</param>
+        /// <param name="targetType">The type to look for an operator.</param>
         /// <param name="originalType">Type of the only parameter the operator method should have.</param>
         /// <param name="resultType">Return type of the operator method.</param>
         /// <returns>A cast operator method, or null if not found.</returns>
@@ -4115,7 +4115,7 @@ namespace System.Management.Automation
         {
             typeConversion.WriteLine("Converting null to \"\".");
             // if the destination type is string, return an empty string...
-            return String.Empty;
+            return string.Empty;
         }
 
         private static PSReference ConvertNullToPSReference(object valueToConvert,
@@ -4710,18 +4710,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="valueToConvert">the same as in the public version.</param>
-        /// <param name="resultType">the same as in the public version.</param>
-        /// <param name="recursion">true if we should perform any recursive calls to ConvertTo.</param>
-        /// <param name="formatProvider">governing conversion of types.</param>
+        /// <param name="valueToConvert">The same as in the public version.</param>
+        /// <param name="resultType">The same as in the public version.</param>
+        /// <param name="recursion">True if we should perform any recursive calls to ConvertTo.</param>
+        /// <param name="formatProvider">Governing conversion of types.</param>
         /// <param name="backupTypeTable">
         /// Used by Remoting Rehydration Logic. While Deserializing a remote object,
         /// LocalPipeline.ExecutionContextFromTLS() might return null..In which case this
         /// TypeTable will be used to do the conversion.
         /// </param>
         /// <returns>The value converted.</returns>
-        /// <exception cref="ArgumentNullException">if resultType is null.</exception>
-        /// <exception cref="PSInvalidCastException">if the conversion failed.</exception>
+        /// <exception cref="ArgumentNullException">If resultType is null.</exception>
+        /// <exception cref="PSInvalidCastException">If the conversion failed.</exception>
         internal static object ConvertTo(object valueToConvert,
                                          Type resultType,
                                          bool recursion,

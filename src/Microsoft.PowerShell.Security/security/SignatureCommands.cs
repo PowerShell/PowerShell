@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = String.Empty;
+                    value = string.Empty;
                 }
 
                 _timestampServer = value;
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
                 if (SecurityUtils.GetFileSize(filePath) < 4)
                 {
                     // Note that the message param comes first
-                    string message = String.Format(
+                    string message = string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         UtilsStrings.FileSmallerThan4Bytes, filePath);
 
@@ -615,13 +615,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get SigningOption value corresponding to a string name
         /// </summary>
-        /// <param name="optionName">name of option.</param>
+        /// <param name="optionName">Name of option.</param>
         /// <returns>SigningOption.</returns>
         private static SigningOption GetSigningOption(string optionName)
         {
             foreach (SigningOptionInfo si in s_sigOptionInfo)
             {
-                if (String.Equals(optionName, si.optionName,
+                if (string.Equals(optionName, si.optionName,
                                   StringComparison.OrdinalIgnoreCase))
                 {
                     return si.option;

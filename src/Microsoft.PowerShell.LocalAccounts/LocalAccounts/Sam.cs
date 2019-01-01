@@ -369,7 +369,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         private IntPtr localDomainHandle = IntPtr.Zero;
         private IntPtr builtinDomainHandle = IntPtr.Zero;
         private Context context = null;
-        private string machineName = String.Empty;
+        private string machineName = string.Empty;
 #endregion Instance Data
 
 #region Construction

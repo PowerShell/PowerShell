@@ -109,11 +109,11 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _sourceCode = String.Empty;
+                _sourceCode = string.Empty;
 
                 if (value != null)
                 {
-                    _sourceCode = String.Join("\n", value);
+                    _sourceCode = string.Join("\n", value);
                 }
             }
         }
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     activeExtension = currentExtension;
                 }
-                else if (!String.Equals(activeExtension, currentExtension, StringComparison.OrdinalIgnoreCase))
+                else if (!string.Equals(activeExtension, currentExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     // All files must have the same extension otherwise throw.
                     ErrorRecord errorRecord = new ErrorRecord(
@@ -355,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If it resolved to a non-standard provider,
                     // generate an error.
-                    if (!String.Equals("FileSystem", provider.Name, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals("FileSystem", provider.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         ThrowTerminatingError(errorRecord);
                         return;
@@ -459,17 +459,17 @@ namespace Microsoft.PowerShell.Commands
 
         private string GenerateTypeSource(string typeNamespace, string typeName, string sourceCodeText, Language language)
         {
-            string usingSource = String.Format(
+            string usingSource = string.Format(
                     CultureInfo.InvariantCulture,
                     GetUsingTemplate(language), GetUsingSet(language));
 
-            string typeSource = String.Format(
+            string typeSource = string.Format(
                     CultureInfo.InvariantCulture,
                     GetMethodTemplate(language), typeName, sourceCodeText);
 
-            if (!String.IsNullOrEmpty(typeNamespace))
+            if (!string.IsNullOrEmpty(typeNamespace))
             {
-                return usingSource + String.Format(
+                return usingSource + string.Format(
                     CultureInfo.InvariantCulture,
                     GetNamespaceTemplate(language), typeNamespace, typeSource);
             }
@@ -572,11 +572,11 @@ namespace Microsoft.PowerShell.Commands
         {
             // Generate an error if they've specified an output
             // assembly type without an output assembly
-            if (String.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey(nameof(OutputType)))
+            if (string.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey(nameof(OutputType)))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
-                        String.Format(
+                        string.Format(
                             CultureInfo.CurrentCulture,
                             AddTypeStrings.OutputTypeRequiresOutputAssembly)),
                     "OUTPUTTYPE_REQUIRES_ASSEMBLY",
@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
         // These assemblies are used, when ReferencedAssemblies parameter is not specified.
         private static Lazy<IEnumerable<PortableExecutableReference>> s_defaultAssemblies = new Lazy<IEnumerable<PortableExecutableReference>>(InitDefaultRefAssemblies);
 
-        private bool InMemory { get { return String.IsNullOrEmpty(_outputAssembly); } }
+        private bool InMemory { get { return string.IsNullOrEmpty(_outputAssembly); } }
 
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
@@ -1005,7 +1005,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if (!String.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
+            if (!string.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
             {
                 CompileToAssembly(syntaxTrees, compilationOptions, emitOptions);
             }
@@ -1060,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
-                        String.Format(AddTypeStrings.TypeAlreadyExists, symbolName)),
+                        string.Format(AddTypeStrings.TypeAlreadyExists, symbolName)),
                     "TYPE_ALREADY_EXISTS",
                     ErrorCategory.InvalidOperation,
                     symbolName);
@@ -1207,9 +1207,9 @@ namespace Microsoft.PowerShell.Commands
                     // and present in diagnostic report with DefaultSeverity equal to Hidden
                     // so we skip them explicitly here too.
                     if (diagnisticRecord.IsSuppressed || diagnisticRecord.DefaultSeverity == DiagnosticSeverity.Hidden ||
-                        String.Equals(diagnisticRecord.Id, "CS2008", StringComparison.InvariantCulture) ||
-                        String.Equals(diagnisticRecord.Id, "CS1562", StringComparison.InvariantCulture) ||
-                        String.Equals(diagnisticRecord.Id, "BC2008", StringComparison.InvariantCulture))
+                        string.Equals(diagnisticRecord.Id, "CS2008", StringComparison.InvariantCulture) ||
+                        string.Equals(diagnisticRecord.Id, "CS1562", StringComparison.InvariantCulture) ||
+                        string.Equals(diagnisticRecord.Id, "BC2008", StringComparison.InvariantCulture))
                     {
                         continue;
                     }
@@ -1316,7 +1316,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int hash;
 
-            if (String.IsNullOrEmpty(st.FilePath))
+            if (string.IsNullOrEmpty(st.FilePath))
             {
                 // If the file name does not exist, the source text is set by the user using parameters.
                 // In this case, we assume that the source text is of a small size and we can re-allocate by ToString().

@@ -391,8 +391,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Bind the default parameter value pairs
         /// </summary>
-        /// <param name="validParameterSetFlag">validParameterSetFlag.</param>
-        /// <param name="defaultParameterValues">default value pairs.</param>
+        /// <param name="validParameterSetFlag">ValidParameterSetFlag.</param>
+        /// <param name="defaultParameterValues">Default value pairs.</param>
         /// <returns>
         /// true if there is at least one default parameter bound successfully
         /// false if there is no default parameter bound successfully
@@ -459,7 +459,7 @@ namespace System.Management.Automation
                     // so we write out a warning and ignore this binding failure
                     if (!_warningSet.Contains(_commandMetadata.Name + Separator + parameterName))
                     {
-                        string message = String.Format(CultureInfo.InvariantCulture,
+                        string message = string.Format(CultureInfo.InvariantCulture,
                             ParameterBinderStrings.FailToBindDefaultParameter,
                             LanguagePrimitives.IsNull(argumentValue) ? "null" : argumentValue.ToString(),
                             parameterName, ex.Message);
@@ -731,7 +731,7 @@ namespace System.Management.Automation
                     if (!_warningSet.Contains(cmdletName + Separator + parameterName))
                     {
                         _commandRuntime.WriteWarning(
-                            String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.MultipleParametersMatched, parameterName));
+                            string.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.MultipleParametersMatched, parameterName));
                         _warningSet.Add(cmdletName + Separator + parameterName);
                     }
 
@@ -751,7 +751,7 @@ namespace System.Management.Automation
                         if (!_warningSet.Contains(cmdletName + Separator + parameterName))
                         {
                             _commandRuntime.WriteWarning(
-                                String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, parameterName));
+                                string.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, parameterName));
                             _warningSet.Add(cmdletName + Separator + parameterName);
                         }
 
@@ -777,7 +777,7 @@ namespace System.Management.Automation
                                             ? ParameterBinderStrings.MultipleKeysInBadFormat
                                             : ParameterBinderStrings.SingleKeyInBadFormat;
                 _commandRuntime.WriteWarning(
-                    String.Format(CultureInfo.InvariantCulture, formatString, keysInError));
+                    string.Format(CultureInfo.InvariantCulture, formatString, keysInError));
             }
 
             foreach (MergedCompiledCommandParameter param in parametersToRemove)
@@ -851,7 +851,7 @@ namespace System.Management.Automation
             if (writeWarning && !_warningSet.Contains(cmdletName + Separator + paramName))
             {
                 _commandRuntime.WriteWarning(
-                    String.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, paramName));
+                    string.Format(CultureInfo.InvariantCulture, ParameterBinderStrings.DifferentValuesAssignedToSingleParameter, paramName));
                 _warningSet.Add(cmdletName + Separator + paramName);
             }
         }
@@ -1539,7 +1539,7 @@ namespace System.Management.Automation
                     (flags & ParameterBindingFlags.IsDefaultValue) == 0 &&
                     !BoundObsoleteParameterNames.Contains(parameter.Parameter.Name))
                 {
-                    string obsoleteWarning = String.Format(
+                    string obsoleteWarning = string.Format(
                         CultureInfo.InvariantCulture,
                         ParameterBinderStrings.UseOfDeprecatedParameterWarning,
                         parameter.Parameter.Name,
@@ -2527,7 +2527,7 @@ namespace System.Management.Automation
         /// This method is used only when we try to preserve parameter sets during the mandatory parameter checking.
         /// In cases where this method is used, there must be at least one parameter set declared.
         /// </remarks>
-        /// <param name="otherMandatorySetsToBeIgnored">the mandatory parameter sets to be ignored.</param>
+        /// <param name="otherMandatorySetsToBeIgnored">The mandatory parameter sets to be ignored.</param>
         private void IgnoreOtherMandatoryParameterSets(uint otherMandatorySetsToBeIgnored)
         {
             if (otherMandatorySetsToBeIgnored == 0)
@@ -2818,7 +2818,7 @@ namespace System.Management.Automation
                 if (currentParameterSetActive == 1)
                 {
                     string parameterSetName = bindableParameters.GetParameterSetName(currentParameterSet);
-                    if (!String.IsNullOrEmpty(parameterSetName))
+                    if (!string.IsNullOrEmpty(parameterSetName))
                     {
                         ParameterBinderBase.bindingTracer.WriteLine("Remaining valid parameter set: {0}", parameterSetName);
                     }
@@ -4403,7 +4403,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// Check for the keys' formats and make it versionable
         /// </remarks>
-        /// <param name="dictionary">a hashtable instance.</param>
+        /// <param name="dictionary">A hashtable instance.</param>
         public DefaultParameterDictionary(IDictionary dictionary)
             : this()
         {
@@ -4494,8 +4494,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Override the Add to check for key's format and make it versionable
         /// </summary>
-        /// <param name="key">key.</param>
-        /// <param name="value">value.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
         public override void Add(object key, object value)
         {
             AddImpl(key, value, isSelfIndexing: false);
@@ -4573,7 +4573,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Override the Remove to make it versionable
         /// </summary>
-        /// <param name="key">key.</param>
+        /// <param name="key">Key.</param>
         public override void Remove(object key)
         {
             if (key == null)
@@ -4612,7 +4612,7 @@ namespace System.Management.Automation
         /// <returns>Return true if the key is valid, false if not.</returns>
         internal static bool CheckKeyIsValid(string key, ref string cmdletName, ref string parameterName)
         {
-            if (key == String.Empty)
+            if (key == string.Empty)
             {
                 return false;
             }
@@ -4651,8 +4651,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the cmdlet name and the parameter name
         /// </summary>
-        /// <param name="index">point to a non-whitespace character.</param>
-        /// <param name="key">the key to iterate over.</param>
+        /// <param name="index">Point to a non-whitespace character.</param>
+        /// <param name="key">The key to iterate over.</param>
         /// <param name="name"></param>
         /// <param name="getCmdletName">Specify whether to get the cmdlet name or parameter name.</param>
         /// <returns>
@@ -4673,7 +4673,7 @@ namespace System.Management.Automation
                 index++;
             }
 
-            StringBuilder builder = new StringBuilder(String.Empty);
+            StringBuilder builder = new StringBuilder(string.Empty);
             for (; index < key.Length; index++)
             {
                 if (quoteChar != '\0')
@@ -4720,8 +4720,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Skip whitespace characters
         /// </summary>
-        /// <param name="index">start index.</param>
-        /// <param name="key">the string to iterate over.</param>
+        /// <param name="index">Start index.</param>
+        /// <param name="key">The string to iterate over.</param>
         /// <returns>
         /// Return -1 if we reach the end of the key, otherwise return the index of the first
         /// non-whitespace character we encounter.

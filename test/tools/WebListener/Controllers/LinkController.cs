@@ -27,7 +27,7 @@ namespace mvc.Controllers
                 linkNumber = 1;
             }
 
-            string baseUri = Regex.Replace(UriHelper.GetDisplayUrl(Request), "\\?.*", String.Empty);
+            string baseUri = Regex.Replace(UriHelper.GetDisplayUrl(Request), "\\?.*", string.Empty);
 
             string type = Request.Query.TryGetValue("type", out StringValues typeSV) ? typeSV.FirstOrDefault() : "default";
 
@@ -86,7 +86,7 @@ namespace mvc.Controllers
             }
             else
             {
-                linkHeader = String.Join(",", linkList);
+                linkHeader = string.Join(",", linkList);
             }
 
             Response.Headers.Add("Link", linkHeader);

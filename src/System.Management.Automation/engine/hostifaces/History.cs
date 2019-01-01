@@ -24,10 +24,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="pipelineId">Id of pipeline in which command associated
         /// with this history entry is executed</param>
-        /// <param name="cmdline">command string.</param>
-        /// <param name="status">status of pipeline execution.</param>
-        /// <param name="startTime">startTime of execution.</param>
-        /// <param name="endTime">endTime of execution.</param>
+        /// <param name="cmdline">Command string.</param>
+        /// <param name="status">Status of pipeline execution.</param>
+        /// <param name="startTime">StartTime of execution.</param>
+        /// <param name="endTime">EndTime of execution.</param>
         internal HistoryInfo(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime)
         {
             Dbg.Assert(cmdline != null, "caller should validate the parameter");
@@ -222,9 +222,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Update the history entry corresponding to id.
         /// </summary>
-        /// <param name="id">id of history entry to be updated.</param>
-        /// <param name="status">status to be updated.</param>
-        /// <param name="endTime">endTime to be updated.</param>
+        /// <param name="id">Id of history entry to be updated.</param>
+        /// <param name="status">Status to be updated.</param>
+        /// <param name="endTime">EndTime to be updated.</param>
         /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked.</param>
         /// <returns></returns>
         internal void UpdateEntry(long id, PipelineState status, DateTime endTime, bool skipIfLocked)
@@ -1893,10 +1893,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Clears the session history based on the input parameter
-        /// <param name="id" >id of the entry to be cleared.</param>
-        /// <param name="count" >count of entries to be cleared.</param>
-        /// <param name="cmdline" >cmdline string to be cleared.</param>
-        /// <param name="newest" >order of the entries.</param>
+        /// <param name="id" >Id of the entry to be cleared.</param>
+        /// <param name="count" >Count of entries to be cleared.</param>
+        /// <param name="cmdline" >Cmdline string to be cleared.</param>
+        /// <param name="newest" >Order of the entries.</param>
         /// <returns>Nothing.</returns>
         /// </summary>
 

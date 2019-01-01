@@ -276,7 +276,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName == null) { moduleName = String.Empty; }
+            if (moduleName == null) { moduleName = string.Empty; }
 
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
@@ -863,7 +863,7 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (String.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName)) { continue; }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation
         /// <returns>The path of the Windows PowerShell system module directory.</returns>
         internal static string GetWindowsPowerShellPSHomeModulePath()
         {
-            if (!String.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
+            if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
             {
                 return InternalTestHooks.TestWindowsPowerShellPSHomeLocation;
             }

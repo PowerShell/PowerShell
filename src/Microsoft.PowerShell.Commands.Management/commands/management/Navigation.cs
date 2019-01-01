@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Dbg.Diagnostics.Assert(false, String.Format(System.Globalization.CultureInfo.InvariantCulture, "One of the predefined parameter sets should have been specified, instead we got: {0}", ParameterSetName));
+                    Dbg.Diagnostics.Assert(false, string.Format(System.Globalization.CultureInfo.InvariantCulture, "One of the predefined parameter sets should have been specified, instead we got: {0}", ParameterSetName));
                     break;
             }
         }
@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The filter used when doing a dir
         /// </summary>
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Determines if output should be passed through for
@@ -872,7 +872,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The filter used when doing a dir
         /// </summary>
-        private string _path = String.Empty;
+        private string _path = string.Empty;
 
         /// <summary>
         /// Determines if output should be passed through for
@@ -1222,7 +1222,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = NavigationResources.NewDriveConfirmResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                        System.Globalization.CultureInfo.CurrentCulture,
                        resourceTemplate,
                        Name,
@@ -1377,11 +1377,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 tracer.WriteLine("ProviderName: {0}", providerName);
 
-                bool providerNameEmpty = String.IsNullOrEmpty(providerName);
+                bool providerNameEmpty = string.IsNullOrEmpty(providerName);
                 bool providerNameContainsWildcardCharacters =
                     WildcardPattern.ContainsWildcardCharacters(providerName);
 
-                bool driveNameEmpty = String.IsNullOrEmpty(driveName);
+                bool driveNameEmpty = string.IsNullOrEmpty(driveName);
                 bool driveNameContainsWildcardCharacters =
                     WildcardPattern.ContainsWildcardCharacters(driveName);
 
@@ -1400,7 +1400,7 @@ namespace Microsoft.PowerShell.Commands
                 // exist.
                 if (!driveNameEmpty && !driveNameContainsWildcardCharacters)
                 {
-                    if (String.IsNullOrEmpty(scope))
+                    if (string.IsNullOrEmpty(scope))
                     {
                         SessionState.Drive.Get(driveName);
                     }
@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (base.SuppressWildcardExpansion)
                     {
-                        if (String.Equals(drive.Name, driveName, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(drive.Name, driveName, StringComparison.OrdinalIgnoreCase))
                             addDrive = true;
                     }
                     else
@@ -1594,7 +1594,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (PSDriveInfo drive in GetMatchingDrives(driveName, PSProvider, Scope))
                     {
                         string resource =
-                            String.Format(
+                            string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 resourceTemplate,
                                 drive.Name,
@@ -2079,7 +2079,7 @@ namespace Microsoft.PowerShell.Commands
             if (Path != null && Path.Length > 0)
             {
                 // Path is only globbed if Name is specified.
-                if (String.IsNullOrEmpty(Name))
+                if (string.IsNullOrEmpty(Name))
                     return InvokeProvider.Item.NewItemDynamicParameters(WildcardPattern.Escape(Path[0]), ItemType, Value, context);
                 else
                     return InvokeProvider.Item.NewItemDynamicParameters(Path[0], ItemType, Value, context);
@@ -2109,7 +2109,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Path == null || Path.Length == 0)
             {
-                Path = new string[] { String.Empty };
+                Path = new string[] { string.Empty };
             }
 
             foreach (string path in Path)

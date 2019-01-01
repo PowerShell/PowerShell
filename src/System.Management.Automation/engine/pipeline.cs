@@ -217,7 +217,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
-            if ((invocation == null) || String.IsNullOrEmpty(invocation.Line))
+            if ((invocation == null) || string.IsNullOrEmpty(invocation.Line))
             {
                 if (hostInterface != null)
                 {
@@ -225,7 +225,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (!String.IsNullOrEmpty(logElement))
+            if (!string.IsNullOrEmpty(logElement))
             {
                 _eventLogBuffer.Add(logElement);
             }
@@ -296,8 +296,8 @@ namespace System.Management.Automation.Internal
         /// Add a command to the pipeline
         /// </summary>
         /// <param name="commandProcessor"></param>
-        /// <param name="readFromCommand">reference number of command from which to read, 0 for none.</param>
-        /// <param name="readErrorQueue">read from error queue of command readFromCommand.</param>
+        /// <param name="readFromCommand">Reference number of command from which to read, 0 for none.</param>
+        /// <param name="readErrorQueue">Read from error queue of command readFromCommand.</param>
         /// <returns>Reference number of this command for use in readFromCommand.</returns>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="ArgumentException">
@@ -1382,8 +1382,8 @@ namespace System.Management.Automation.Internal
         /// Makes an internal note of the exception, but only if this is
         /// the first error.
         /// </summary>
-        /// <param name="e">error which terminated the pipeline.</param>
-        /// <param name="command">command against which to log SecondFailure.</param>
+        /// <param name="e">Error which terminated the pipeline.</param>
+        /// <param name="command">Command against which to log SecondFailure.</param>
         /// <returns>True iff the pipeline was not already stopped.</returns>
         internal bool RecordFailure(Exception e, InternalCommand command)
         {

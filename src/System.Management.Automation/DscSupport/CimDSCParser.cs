@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 if (cimPropertyInstance != null &&
                                     cimPropertyInstance.CimClass != null &&
                                     cimPropertyInstance.CimClass.CimSystemProperties != null &&
-                                    String.Equals(
+                                    string.Equals(
                                         cimPropertyInstance.CimClass.CimSystemProperties.ClassName,
                                         "MSFT_Credential", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -987,11 +987,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// get text from SecureString
         /// </summary>
-        /// <param name="value">value of SecureString.</param>
+        /// <param name="value">Value of SecureString.</param>
         /// <returns>Decoded string.</returns>
         public static string GetStringFromSecureString(SecureString value)
         {
-            string passwordValueToAdd = String.Empty;
+            string passwordValueToAdd = string.Empty;
 
             if (value != null)
             {
@@ -1025,7 +1025,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className)
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
+            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", moduleName, moduleVersion, className);
         }
 
         /// <summary>
@@ -1061,7 +1061,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();
-            var moduleQualifiedName = String.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
+            var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
             foreach (var pair in ClassCache)
             {
                 if (pair.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (runAsBehavior == DSCResourceRunAsCredential.NotSupported)
                 {
-                    if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                     {
                         // skip adding PsDscRunAsCredential to the dynamic word for the dsc resource.
                         continue;
@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // set the property to mandatory is specified for the resource.
                     if (runAsBehavior == DSCResourceRunAsCredential.Mandatory)
                     {
-                        if (String.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                         {
                             keyProp.Mandatory = true;
                         }
@@ -2473,7 +2473,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 sb.AppendFormat(CultureInfo.InvariantCulture,
                     "    {0}{1} {2}{3};\n",
@@ -3032,7 +3032,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 string embeddedInstanceType;
                 string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
                     embeddedInstanceTypes);
-                string arrayAffix = isArrayType ? "[]" : String.Empty;
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)
@@ -3141,7 +3141,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="resourceName"></param>
         /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
         /// <param name="functionsToDefine"></param>
-        /// <param name="errors">error reported during deserialization.</param>
+        /// <param name="errors">Error reported during deserialization.</param>
         /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
@@ -3200,7 +3200,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 foreach (var c in classes)
                                 {
                                     var alias = GetFriendlyName(c);
-                                    if (String.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, DSCResourceRunAsCredential.Default);
                                         return true;
@@ -3278,7 +3278,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list
         /// </summary>
-        /// <param name="badDependsOnReference">the malformed resource.</param>
+        /// <param name="badDependsOnReference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedRequiredResourceIdErrorRecord(string badDependsOnReference, string definingResource)
@@ -3293,7 +3293,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use in the case of a malformed resource reference in the exclusive resources list
         /// </summary>
-        /// <param name="badExclusiveResourcereference">the malformed resource.</param>
+        /// <param name="badExclusiveResourcereference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
         /// <returns></returns>
         public static ErrorRecord GetBadlyFormedExclusiveResourceIdErrorRecord(string badExclusiveResourcereference, string definingResource)
@@ -3337,7 +3337,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         ///  Returns an error record to use in the case of a malformed resource reference in the DependsOn list
         /// </summary>
         /// <param name="duplicateResourceId">The duplicate resource identifier.</param>
-        /// <param name="nodeName">the node being defined.</param>
+        /// <param name="nodeName">The node being defined.</param>
         /// <returns>The error record to use.</returns>
         public static ErrorRecord DuplicateResourceIdInNodeStatementErrorRecord(string duplicateResourceId, string nodeName)
         {
@@ -3461,7 +3461,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value
         /// </summary>
-        /// <param name="resourceId">resourceId of resource.</param>
+        /// <param name="resourceId">ResourceId of resource.</param>
         /// <returns></returns>
         public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
         {

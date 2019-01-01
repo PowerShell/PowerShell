@@ -609,8 +609,8 @@ namespace Microsoft.PowerShell
         /// gets into a broken or closed state, writes a message and pops out the
         /// runspace
         /// </summary>
-        /// <param name="sender">not sure.</param>
-        /// <param name="eventArgs">arguments describing this event.</param>
+        /// <param name="sender">Not sure.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleRemoteRunspaceStateChanged(object sender, RunspaceStateEventArgs eventArgs)
         {
             RunspaceState state = eventArgs.RunspaceStateInfo.State;
@@ -1362,7 +1362,7 @@ namespace Microsoft.PowerShell
 #if !UNIX
                 // See if we need to change the process-wide execution
                 // policy
-                if (!String.IsNullOrEmpty(cpp.ExecutionPolicy))
+                if (!string.IsNullOrEmpty(cpp.ExecutionPolicy))
                 {
                     ExecutionPolicy executionPolicy = SecuritySupport.ParseExecutionPolicy(cpp.ExecutionPolicy);
                     SecuritySupport.SetExecutionPolicy(ExecutionPolicyScope.Process, executionPolicy, null);
@@ -1463,7 +1463,7 @@ namespace Microsoft.PowerShell
 
         private Exception InitializeRunspaceHelper(string command, Executor exec, Executor.ExecutionOptions options)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
             Dbg.Assert(exec != null, "non-null Executor instance needed");
 
             s_runspaceInitTracer.WriteLine("running command {0}", command);
@@ -1829,7 +1829,7 @@ namespace Microsoft.PowerShell
                     ReportException(e1, exec);
                 }
             }
-            else if (!String.IsNullOrEmpty(initialCommand))
+            else if (!string.IsNullOrEmpty(initialCommand))
             {
                 // Run the command passed on the command line
 
@@ -1884,7 +1884,7 @@ namespace Microsoft.PowerShell
 
         private void RunProfile(string profileFileName, Executor exec)
         {
-            if (!String.IsNullOrEmpty(profileFileName))
+            if (!string.IsNullOrEmpty(profileFileName))
             {
                 s_runspaceInitTracer.WriteLine("checking profile" + profileFileName);
 
@@ -2103,7 +2103,7 @@ namespace Microsoft.PowerShell
 
                     foreach (Breakpoint breakpoint in e.Breakpoints)
                     {
-                        WriteDebuggerMessage(String.Format(CultureInfo.CurrentCulture, format, breakpoint));
+                        WriteDebuggerMessage(string.Format(CultureInfo.CurrentCulture, format, breakpoint));
                     }
 
                     WriteDebuggerMessage(string.Empty);
@@ -2311,8 +2311,8 @@ namespace Microsoft.PowerShell
             /// When a runspace is popped, we need to reevaluate the
             /// prompt
             /// </summary>
-            /// <param name="sender">sender of this event, unused.</param>
-            /// <param name="eventArgs">arguments describing this event, unused.</param>
+            /// <param name="sender">Sender of this event, unused.</param>
+            /// <param name="eventArgs">Arguments describing this event, unused.</param>
             private void HandleRunspacePopped(object sender, EventArgs eventArgs)
             {
                 lock (_syncObject)
@@ -2700,7 +2700,7 @@ namespace Microsoft.PowerShell
                 Exception unused = null;
                 string promptString = _promptExec.ExecuteCommandAndGetResultAsString("prompt", out unused);
 
-                if (String.IsNullOrEmpty(promptString))
+                if (string.IsNullOrEmpty(promptString))
                 {
                     promptString = ConsoleHostStrings.DefaultPrompt;
                 }

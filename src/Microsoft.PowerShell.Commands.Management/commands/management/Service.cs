@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Confirm that the operation should proceed
         /// </summary>
-        /// <param name="service">service object to be acted on.</param>
+        /// <param name="service">Service object to be acted on.</param>
         /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(ServiceController service)
         {
@@ -43,8 +43,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Confirm that the operation should proceed
         /// </summary>
-        /// <param name="displayName">display name of service to be acted on.</param>
-        /// <param name="serviceName">service name of service to be acted on.</param>
+        /// <param name="displayName">Display name of service to be acted on.</param>
+        /// <param name="serviceName">Service name of service to be acted on.</param>
         /// <returns>True if operation should continue, false otherwise.</returns>
         protected bool ShouldProcessServiceOperation(
             string displayName, string serviceName)
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (innerException == null) ? String.Empty : innerException.Message);
+                (innerException == null) ? string.Empty : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
         // sort by servicename
         private static int ServiceComparison(ServiceController x, ServiceController y)
         {
-            return String.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteNonTerminatingError(
                         pattern,
-                        String.Empty,
+                        string.Empty,
                         pattern,
                         null,
                         "NoServiceFoundForGivenName",
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!found && !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
                     WriteNonTerminatingError(
-                        String.Empty,
+                        string.Empty,
                         pattern,
                         pattern,
                         null,
@@ -475,9 +475,9 @@ namespace Microsoft.PowerShell.Commands
         /// and (if <paramref name="checkDuplicates"/>) if it is not
         /// already on  <paramref name="list"/>.
         /// </summary>
-        /// <param name="list">list of services.</param>
-        /// <param name="service">service to add to list.</param>
-        /// <param name="checkDuplicates">check list for duplicates.</param>
+        /// <param name="list">List of services.</param>
+        /// <param name="service">Service to add to list.</param>
+        /// <param name="checkDuplicates">Check list for duplicates.</param>
         private void IncludeExcludeAdd(
             List<ServiceController> list,
             ServiceController service,
@@ -792,8 +792,8 @@ namespace Microsoft.PowerShell.Commands
         /// Waits forever for the service to reach the desired status, but
         /// writes a string to WriteWarning every 2 seconds.
         /// </summary>
-        /// <param name="serviceController">service on which to operate.</param>
-        /// <param name="targetStatus">desired status.</param>
+        /// <param name="serviceController">Service on which to operate.</param>
+        /// <param name="targetStatus">Desired status.</param>
         /// <param name="pendingStatus">
         /// This is the expected status while the operation is incomplete.
         /// If the service is in some other state, this means that the
@@ -863,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will start the service.
         /// </summary>
-        /// <param name="serviceController">service to start.</param>
+        /// <param name="serviceController">Service to start.</param>
         /// <returns>True iff the service was started.</returns>
         internal bool DoStartService(ServiceController serviceController)
         {
@@ -918,8 +918,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will stop the service.
         /// </summary>
-        /// <param name="serviceController">service to stop.</param>
-        /// <param name="force">stop dependent services.</param>
+        /// <param name="serviceController">Service to stop.</param>
+        /// <param name="force">Stop dependent services.</param>
         /// <param name="waitForServiceToStop"></param>
         /// <returns>True iff the service was stopped.</returns>
         internal List<ServiceController> DoStopService(ServiceController serviceController, bool force, bool waitForServiceToStop)
@@ -1068,7 +1068,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This removes all services that are not stopped from a list of services
         /// </summary>
-        /// <param name="services">a list of services.</param>
+        /// <param name="services">A list of services.</param>
         internal void RemoveNotStoppedServices(List<ServiceController> services)
         {
             foreach (ServiceController service in services)
@@ -1084,7 +1084,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will pause the service.
         /// </summary>
-        /// <param name="serviceController">service to pause.</param>
+        /// <param name="serviceController">Service to pause.</param>
         /// <returns>True iff the service was paused.</returns>
         internal bool DoPauseService(ServiceController serviceController)
         {
@@ -1165,7 +1165,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This will resume the service.
         /// </summary>
-        /// <param name="serviceController">service to resume.</param>
+        /// <param name="serviceController">Service to resume.</param>
         /// <returns>True iff the service was resumed.</returns>
         internal bool DoResumeService(ServiceController serviceController)
         {
@@ -1660,7 +1660,7 @@ namespace Microsoft.PowerShell.Commands
                     objServiceShouldBeDisposed = true;
                 }
 
-                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+                Diagnostics.Assert(!string.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if
                 // there is no such service.  This checks whether
@@ -1697,7 +1697,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     hScManager = NativeMethods.OpenSCManagerW(
-                        String.Empty,
+                        string.Empty,
                         null,
                         NativeMethods.SC_MANAGER_CONNECT
                         );
@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
                     // Modify startup type or display name or credential
-                    if (!String.IsNullOrEmpty(DisplayName)
+                    if (!string.IsNullOrEmpty(DisplayName)
                         || ServiceStartupType.InvalidValue != StartupType || Credential != null)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
@@ -2055,14 +2055,14 @@ namespace Microsoft.PowerShell.Commands
         [ArchitectureSensitive]
         protected override void BeginProcessing()
         {
-            Diagnostics.Assert(!String.IsNullOrEmpty(Name),
+            Diagnostics.Assert(!string.IsNullOrEmpty(Name),
                 "null ServiceName");
-            Diagnostics.Assert(!String.IsNullOrEmpty(BinaryPathName),
+            Diagnostics.Assert(!string.IsNullOrEmpty(BinaryPathName),
                 "null BinaryPathName");
 
             // confirm the operation first
             // this is always false if WhatIf is set
-            if (!ShouldProcessServiceOperation(DisplayName ?? String.Empty, Name))
+            if (!ShouldProcessServiceOperation(DisplayName ?? string.Empty, Name))
             {
                 return;
             }
@@ -2336,7 +2336,7 @@ namespace Microsoft.PowerShell.Commands
                     objServiceShouldBeDisposed = true;
                 }
 
-                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+                Diagnostics.Assert(!string.IsNullOrEmpty(Name), "null ServiceName");
 
                 // "new ServiceController" will succeed even if there is no such service.
                 // This checks whether the service actually exists.
@@ -2371,7 +2371,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     hScManager = NativeMethods.OpenSCManagerW(
-                        lpMachineName: String.Empty,
+                        lpMachineName: string.Empty,
                         lpDatabaseName: null,
                         dwDesiredAccess: NativeMethods.SC_MANAGER_ALL_ACCESS
                         );
@@ -2515,8 +2515,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serializer
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -2542,7 +2542,7 @@ namespace Microsoft.PowerShell.Commands
             set { _serviceName = value; }
         }
 
-        private string _serviceName = String.Empty;
+        private string _serviceName = string.Empty;
         #endregion Properties
     }
     #endregion ServiceCommandException

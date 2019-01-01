@@ -55,9 +55,9 @@ namespace Microsoft.PowerShell.Commands
         /// Internal Constructor
         /// </summary>
         /// <param name="childJob">Job associated with this operation.</param>
-        /// <param name="wmiObject">object associated with this operation.</param>
-        /// <param name="computerName">computer on which the operation is invoked.</param>
-        /// <param name="results">sink to get wmi objects.</param>
+        /// <param name="wmiObject">Object associated with this operation.</param>
+        /// <param name="computerName">Computer on which the operation is invoked.</param>
+        /// <param name="results">Sink to get wmi objects.</param>
         internal WmiAsyncCmdletHelper(PSWmiChildJob childJob, Cmdlet wmiObject, string computerName, ManagementOperationObserver results)
         {
             _wmiObject = wmiObject;
@@ -116,10 +116,10 @@ namespace Microsoft.PowerShell.Commands
         {
             GetWmiObjectCommand getObject = (GetWmiObjectCommand)_wmiObject;
             StringBuilder returnValue = new StringBuilder("select ");
-            returnValue.Append(String.Join(", ", getObject.Property));
+            returnValue.Append(string.Join(", ", getObject.Property));
             returnValue.Append(" from ");
             returnValue.Append(getObject.Class);
-            if (!String.IsNullOrEmpty(getObject.Filter))
+            if (!string.IsNullOrEmpty(getObject.Filter))
             {
                 returnValue.Append(" where ");
                 returnValue.Append(getObject.Filter);
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     mPath = new ManagementPath(setObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = setObject.Namespace;
                     }
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
                 if (invokeObject.Path != null)
                 {
                     mPath = new ManagementPath(invokeObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = invokeObject.Namespace;
                     }
@@ -749,7 +749,7 @@ namespace Microsoft.PowerShell.Commands
                 if (removeObject.Path != null)
                 {
                     mPath = new ManagementPath(removeObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = removeObject.Namespace;
                     }
@@ -841,7 +841,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!getObject.ValidateClassFormat())
                 {
                     ArgumentException e = new ArgumentException(
-                        String.Format(
+                        string.Format(
                             Thread.CurrentThread.CurrentCulture,
                             "Class", getObject.Class));
 
@@ -1312,7 +1312,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     mPath = new ManagementPath(wmiInstance.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = wmiInstance.Namespace;
                     }
@@ -1735,7 +1735,7 @@ namespace Microsoft.PowerShell.Commands
         /// count of blocked child jobs. When count reaches 0, sets the
         /// state of the parent job to running
         /// </summary>
-        /// <param name="sender">sender of this event, unused.</param>
+        /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments, should be empty in this
         /// case</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
@@ -2050,8 +2050,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handle a throttle complete event
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
-        /// <param name="eventArgs">not used in this method.</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Not used in this method.</param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
             if (_helper.State == WmiState.NotStarted)

@@ -182,7 +182,7 @@ namespace Microsoft.WSMan.Management
                 throw new ArgumentNullException("resourceManager");
             }
 
-            if (String.IsNullOrEmpty(resourceName))
+            if (string.IsNullOrEmpty(resourceName))
             {
                 throw new ArgumentNullException("resourceName");
             }
@@ -192,7 +192,7 @@ namespace Microsoft.WSMan.Management
             string result = null;
             if (template != null)
             {
-                result = String.Format(CultureInfo.CurrentCulture,
+                result = string.Format(CultureInfo.CurrentCulture,
                     template, args);
             }
 
@@ -202,8 +202,8 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// add a session to dictionary
         /// </summary>
-        /// <param name="key">connection string.</param>
-        /// <param name="value">session object.</param>
+        /// <param name="key">Connection string.</param>
+        /// <param name="value">Session object.</param>
         internal void AddtoDictionary(string key, object value)
         {
             key = key.ToLowerInvariant();
@@ -303,7 +303,7 @@ namespace Microsoft.WSMan.Management
                     if (operation.Equals("invoke", StringComparison.OrdinalIgnoreCase))
                     {
                         sfx = "_INPUT";
-                        resultStr = String.Concat(actionStr, sfx);
+                        resultStr = string.Concat(actionStr, sfx);
                     }
                     else
                     {
@@ -703,7 +703,7 @@ namespace Microsoft.WSMan.Management
                 if (credential.UserName != null)
                 {
                     nwCredential = credential.GetNetworkCredential();
-                    if (String.IsNullOrEmpty(nwCredential.Domain))
+                    if (string.IsNullOrEmpty(nwCredential.Domain))
                     {
                         if ( authentication.Equals(AuthenticationMechanism.Digest) || authentication.Equals(AuthenticationMechanism.Basic) )
                         {
@@ -987,7 +987,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_wsmanObject.Error))
+                if (!string.IsNullOrEmpty(m_wsmanObject.Error))
                 {
                     AssertError(m_wsmanObject.Error, true, computername);
                 }
@@ -1096,7 +1096,7 @@ namespace Microsoft.WSMan.Management
 #if CORECLR
                     "0409" /* TODO: don't assume it is always English on CSS? */
 #else
-                    String.Concat("0", String.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
+                    string.Concat("0", string.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
 #endif
                     + "\\" + "winrm.ini";
                 if (File.Exists(filepath))

@@ -569,10 +569,10 @@ namespace System.Management.Automation.Language
         /// Only call it, when label is present and can be calculated in compile time.
         /// </summary>
         /// <param name="ast">BreakStatementAst or ContinueStatementAst.</param>
-        /// <param name="label">label name. Can be null.</param>
+        /// <param name="label">Label name. Can be null.</param>
         private void CheckLabelExists(StatementAst ast, string label)
         {
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 return;
             }
@@ -1365,7 +1365,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.InvalidInstanceProperty),
                             ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            String.Join("', '", tableKeys));
+                            string.Join("', '", tableKeys));
                     }
                 }
             }
@@ -1544,10 +1544,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type.</param>
-        /// <param name="hasSet">flag to indicate if the class contains Set method.</param>
-        /// <param name="hasGet">flag to indicate if the class contains Get method.</param>
-        /// <param name="hasTest">flag to indicate if the class contains Test method.</param>
-        /// <param name="hasKey">flag to indicate if the class contains Key property.</param>
+        /// <param name="hasSet">Flag to indicate if the class contains Set method.</param>
+        /// <param name="hasGet">Flag to indicate if the class contains Get method.</param>
+        /// <param name="hasTest">Flag to indicate if the class contains Test method.</param>
+        /// <param name="hasKey">Flag to indicate if the class contains Key property.</param>
         private static void LookupRequiredMembers(Parser parser, TypeDefinitionAst typeDefinitionAst, ref bool hasSet, ref bool hasGet, ref bool hasTest, ref bool hasKey)
         {
             if (typeDefinitionAst == null)

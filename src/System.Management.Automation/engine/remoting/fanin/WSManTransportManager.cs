@@ -251,7 +251,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Helper method to convert a transport error code value
         /// to a fully qualified error Id string.
         /// </summary>
-        /// <param name="transportErrorCode">transport error code.</param>
+        /// <param name="transportErrorCode">Transport error code.</param>
         /// <param name="defaultFQEID">Default FQEID.</param>
         /// <returns>Fully qualified error Id string.</returns>
         internal static string GetFQEIDFromTransportError(
@@ -548,8 +548,8 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="connectionInfo">
         /// Connection info to use while connecting to the remote machine.
         /// </param>
-        /// <param name="cryptoHelper">crypto helper.</param>
-        /// <param name="sessionName">session friendly name.</param>
+        /// <param name="cryptoHelper">Crypto helper.</param>
+        /// <param name="sessionName">Session friendly name.</param>
         /// <exception cref="PSInvalidOperationException">
         /// 1. Create Session failed with a non-zero error code.
         /// </exception>
@@ -904,7 +904,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void ConnectAsync()
         {
             Dbg.Assert(!isClosed, "object already disposed");
-            Dbg.Assert(!String.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
 
             ReceivedDataCollection.PrepareForStreamConnect();
             // additional content with connect shell call. Negotiation and connect related messages
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             Dbg.Assert(!isClosed, "object already disposed");
-            Dbg.Assert(!String.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
             Dbg.Assert(WSManAPIData != null, "WSManApiData should always be created before session creation.");
 
             List<WSManNativeApi.WSManOption> shellOptions = new List<WSManNativeApi.WSManOption>(WSManAPIData.CommonOptionSet);
@@ -1240,7 +1240,7 @@ namespace System.Management.Automation.Remoting.Client
         ///   With default configuration remoting from V3 client to V2 server will break as V3 client can send upto 500KB in a single Send packet
         ///   So if server version is known to be V2, we'll downgrade the max env size to 150KB (V2's default) if the current value is 500KB (V3 default)
         /// </summary>
-        /// <param name="serverProtocolVersion">server negotiated protocol version.</param>
+        /// <param name="serverProtocolVersion">Server negotiated protocol version.</param>
         internal void AdjustForProtocolVariations(Version serverProtocolVersion)
         {
             if (serverProtocolVersion <= RemotingConstants.ProtocolVersionWin7RTM)

@@ -551,7 +551,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a pipeline from a command string.
         /// </summary>
         /// <param name="command">A valid command string.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -585,7 +585,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates a nested pipeline.
         /// </summary>
         /// <param name="command">A valid command string.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
@@ -605,8 +605,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        /// <param name="command">A valid command string or String.Empty.</param>
-        /// <param name="addToHistory">if true command is added to history.</param>
+        /// <param name="command">A valid command string or string.Empty.</param>
+        /// <param name="addToHistory">If true command is added to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the new runspace state.
         /// </summary>
-        /// <param name="state">the new state.</param>
+        /// <param name="state">The new state.</param>
         /// <param name="reason">An exception indicating the state change is the
         /// result of an error, otherwise; null.
         /// </param>
@@ -735,7 +735,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set the current runspace state - no error
         /// </summary>
-        /// <param name="state">the new state.</param>
+        /// <param name="state">The new state.</param>
         protected void SetRunspaceState(RunspaceState state)
         {
             this.SetRunspaceState(state, null);

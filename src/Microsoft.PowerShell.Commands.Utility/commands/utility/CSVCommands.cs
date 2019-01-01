@@ -877,7 +877,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="delimiter"></param>
-        /// <exception cref="ArgumentNullException">throw if cmdlet is null.</exception>
+        /// <exception cref="ArgumentNullException">Throw if cmdlet is null.</exception>
         internal
         ExportCsvHelper(PSCmdlet cmdlet, char delimiter)
         {
@@ -1309,7 +1309,7 @@ namespace Microsoft.PowerShell.Commands
                 if (values.Count == 0)
                     break;
 
-                if (values.Count == 1 && String.IsNullOrEmpty(values[0]))
+                if (values.Count == 1 && string.IsNullOrEmpty(values[0]))
                 {
                     // skip the blank lines
                     continue;
@@ -1340,7 +1340,7 @@ namespace Microsoft.PowerShell.Commands
                     HashSet<string> headers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (string currentHeader in names)
                     {
-                        if (!String.IsNullOrEmpty(currentHeader))
+                        if (!string.IsNullOrEmpty(currentHeader))
                         {
                             if (!headers.Contains(currentHeader))
                             {
@@ -1350,7 +1350,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // throw a terminating error as there are duplicate headers in the input.
                                 string memberAlreadyPresentMsg =
-                                    String.Format(CultureInfo.InvariantCulture,
+                                    string.Format(CultureInfo.InvariantCulture,
                                     ExtendedTypeSystem.MemberAlreadyPresent,
                                     currentHeader);
 

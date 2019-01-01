@@ -273,7 +273,7 @@ namespace System.Management.Automation
                         //    --> command 'Get-PowerShellFoo' in the global session state (prefixed commandInfo)
                         //        command 'Get-Foo' in the module session state (un-prefixed commandInfo)
                         // in that case, we should not add the module name qualification because it doesn't work
-                        if (String.IsNullOrEmpty(commandInfo.Prefix) || !ModuleCmdletBase.IsPrefixedCommand(commandInfo))
+                        if (string.IsNullOrEmpty(commandInfo.Prefix) || !ModuleCmdletBase.IsPrefixedCommand(commandInfo))
                         {
                             name = commandInfo.ModuleName + "\\" + commandInfo.Name;
                         }
@@ -323,9 +323,9 @@ namespace System.Management.Automation
                     if (!includeModulePrefix)
                     {
                         var commandInfo = commandList[0] as CommandInfo;
-                        if (commandInfo != null && !String.IsNullOrEmpty(commandInfo.Prefix))
+                        if (commandInfo != null && !string.IsNullOrEmpty(commandInfo.Prefix))
                         {
-                            Diagnostics.Assert(!String.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
+                            Diagnostics.Assert(!string.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
                             if (!ModuleCmdletBase.IsPrefixedCommand(commandInfo))
                             {
                                 completionName = commandInfo.ModuleName + "\\" + completionName;
@@ -364,9 +364,9 @@ namespace System.Management.Automation
                     if (!includeModulePrefix)
                     {
                         var commandInfo = keyValuePair.Value as CommandInfo;
-                        if (commandInfo != null && !String.IsNullOrEmpty(commandInfo.Prefix))
+                        if (commandInfo != null && !string.IsNullOrEmpty(commandInfo.Prefix))
                         {
-                            Diagnostics.Assert(!String.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
+                            Diagnostics.Assert(!string.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
                             if (!ModuleCmdletBase.IsPrefixedCommand(commandInfo))
                             {
                                 completionName = commandInfo.ModuleName + "\\" + completionName;
@@ -486,8 +486,8 @@ namespace System.Management.Automation
 
             // If parent is DynamicKeywordStatementAst - 'Import-DscResource',
             // then customize the auto completion results
-            if (keywordAst != null && String.Equals(keywordAst.Keyword.Keyword, "Import-DscResource", StringComparison.OrdinalIgnoreCase)
-                && !String.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith("-", StringComparison.OrdinalIgnoreCase))
+            if (keywordAst != null && string.Equals(keywordAst.Keyword.Keyword, "Import-DscResource", StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith("-", StringComparison.OrdinalIgnoreCase))
             {
                 var lastAst = context.RelatedAsts.Last();
                 var wordToMatch = context.WordToComplete.Substring(1) + "*";
@@ -1324,7 +1324,7 @@ namespace System.Management.Automation
             var constantPathAst = stringAst as StringConstantExpressionAst;
             if (constantPathAst != null)
             {
-                string quote = String.Empty;
+                string quote = string.Empty;
                 switch (constantPathAst.StringConstantType)
                 {
                     case StringConstantType.SingleQuoted:
@@ -3648,7 +3648,7 @@ namespace System.Management.Automation
             {
                 if (paramName.Equals("ItemType", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!String.IsNullOrEmpty(context.WordToComplete))
+                    if (!string.IsNullOrEmpty(context.WordToComplete))
                     {
                         WildcardPattern patternEvaluator = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.IgnoreCase);
 
@@ -3969,8 +3969,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <param name="prev">the argument that is right before the 'tab' location.</param>
-        /// <param name="position">the number of positional arguments before the 'tab' location.</param>
+        /// <param name="prev">The argument that is right before the 'tab' location.</param>
+        /// <param name="position">The number of positional arguments before the 'tab' location.</param>
         /// <returns></returns>
         private static ArgumentLocation GenerateArgumentLocation(AstParameterArgumentPair prev, int position)
         {
@@ -4596,7 +4596,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (String.IsNullOrEmpty(userPath))
+                    if (string.IsNullOrEmpty(userPath))
                     {
                         Diagnostics.Assert(false, "Found a variable source but it was an unknown AST type.");
                     }
@@ -5974,7 +5974,7 @@ namespace System.Management.Automation
             var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
             foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
             {
-                string toolTipPrefix = String.Empty;
+                string toolTipPrefix = string.Empty;
                 if (typeAst.IsInterface)
                     toolTipPrefix = "Interface ";
                 else if (typeAst.IsClass)
@@ -6004,7 +6004,7 @@ namespace System.Management.Automation
                  && typeNameSpace != null
                  && typeNameSpace.StartsWith(s.Name.Value, StringComparison.OrdinalIgnoreCase));
 
-            string ns = String.Empty;
+            string ns = string.Empty;
             foreach (var nsState in matchingNsStates)
             {
                 if (nsState.Name.Extent.Text.Length > ns.Length)
@@ -6099,7 +6099,7 @@ namespace System.Management.Automation
             {
                 case TokenKind.Switch:
 
-                    Diagnostics.Assert(!String.IsNullOrEmpty(wordToComplete) && wordToComplete[0].IsDash(), "the word to complete should start with '-'");
+                    Diagnostics.Assert(!string.IsNullOrEmpty(wordToComplete) && wordToComplete[0].IsDash(), "the word to complete should start with '-'");
                     wordToComplete = wordToComplete.Substring(1);
                     bool withColon = wordToComplete.EndsWith(":", StringComparison.Ordinal);
                     wordToComplete = withColon ? wordToComplete.Remove(wordToComplete.Length - 1) : wordToComplete;
@@ -6425,8 +6425,8 @@ namespace System.Management.Automation
                 }
             }
 
-            var formattedString = String.Format(CultureInfo.InvariantCulture, expandableStringAst.FormatExpression, varValues.ToArray());
-            string quote = (constType == StringConstantType.DoubleQuoted) ? "\"" : String.Empty;
+            var formattedString = string.Format(CultureInfo.InvariantCulture, expandableStringAst.FormatExpression, varValues.ToArray());
+            string quote = (constType == StringConstantType.DoubleQuoted) ? "\"" : string.Empty;
 
             expandedString = quote + formattedString + extraText + quote;
             return true;
@@ -6441,7 +6441,7 @@ namespace System.Management.Automation
                 {
                     // We check the strict mode inside GetVariableValue
                     object value = VariableOps.GetVariableValue(varPath, executionContext, variableAst);
-                    var strValue = (value == null) ? String.Empty : value as string;
+                    var strValue = (value == null) ? string.Empty : value as string;
 
                     if (strValue == null)
                     {
@@ -6792,7 +6792,7 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(xPath) || string.IsNullOrEmpty(yPath))
                     Diagnostics.Assert(false, "Base object of item PSObject should be either PathInfo or FileSystemInfo");
 
-                return String.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
+                return string.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
             }
         }
 
@@ -6815,7 +6815,7 @@ namespace System.Management.Automation
                 if (xName == null || yName == null)
                     Diagnostics.Assert(false, "Base object of Command PSObject should be either CommandInfo or string");
 
-                return String.Compare(xName, yName, StringComparison.OrdinalIgnoreCase);
+                return string.Compare(xName, yName, StringComparison.OrdinalIgnoreCase);
             }
         }
 

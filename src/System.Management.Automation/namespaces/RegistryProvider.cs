@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
                     root = root.Substring(0, pathSeparator);
                 }
 
-                if (String.IsNullOrEmpty(root))
+                if (string.IsNullOrEmpty(root))
                 {
                     // An empty path means that we are at the root and should
                     // enumerate the hives. So that is a valid path.
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void SetItem(string path, object value)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.SetItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override void ClearItem(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.ClearItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path);
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-                            if (!String.IsNullOrEmpty(subkeyName))
+                            if (!string.IsNullOrEmpty(subkeyName))
                             {
                                 string keypath = path;
 
@@ -580,7 +580,7 @@ namespace Microsoft.PowerShell.Commands
 
                                     keypath = MakePath(path, subkeyName, childIsLeaf: true);
 
-                                    if (!String.IsNullOrEmpty(keypath))
+                                    if (!string.IsNullOrEmpty(keypath))
                                     {
                                         // Call GetItem to retrieve the RegistryKey object
                                         // and write it to the WriteObject method.
@@ -860,12 +860,12 @@ namespace Microsoft.PowerShell.Commands
             string path,
             string newName)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(newName))
+            if (string.IsNullOrEmpty(newName))
             {
                 throw PSTraceSource.NewArgumentException("newName");
             }
@@ -897,7 +897,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.RenameItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -930,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
             string type,
             object newItem)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -942,7 +942,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.NewItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path);
@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-                            SetRegistryValue(newKey, String.Empty, newItem, kind, path, false);
+                            SetRegistryValue(newKey, string.Empty, newItem, kind, path, false);
                         }
                     }
                     catch (Exception exception)
@@ -1089,7 +1089,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -1117,7 +1117,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.RemoveKeyResourceTemplate;
 
             string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path);
@@ -1287,12 +1287,12 @@ namespace Microsoft.PowerShell.Commands
             string destination,
             bool recurse)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(destination))
+            if (string.IsNullOrEmpty(destination))
             {
                 throw PSTraceSource.NewArgumentException("destination");
             }
@@ -1362,11 +1362,11 @@ namespace Microsoft.PowerShell.Commands
                 "The key should have been validated by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(path),
+                !string.IsNullOrEmpty(path),
                 "The path should have been validated by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destination),
+                !string.IsNullOrEmpty(destination),
                 "The destination should have been validated by the caller");
 
             s_tracer.WriteLine("destination = {0}", destination);
@@ -1404,7 +1404,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.CopyKeyResourceTemplate;
 
             string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -1512,7 +1512,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // See if the paths are equal
 
-                if (String.Compare(
+                if (string.Compare(
                         sourcePath,
                         destinationPath,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -1523,14 +1523,14 @@ namespace Microsoft.PowerShell.Commands
 
                 string newDestinationPath = GetParentPath(destinationPath, null);
 
-                if (String.IsNullOrEmpty(newDestinationPath))
+                if (string.IsNullOrEmpty(newDestinationPath))
                 {
                     // We reached the root so the destination must not be a child
                     // of the source
                     break;
                 }
 
-                if (String.Compare(
+                if (string.Compare(
                         newDestinationPath,
                         destinationPath,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -1631,12 +1631,12 @@ namespace Microsoft.PowerShell.Commands
             string path,
             string destination)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (String.IsNullOrEmpty(destination))
+            if (string.IsNullOrEmpty(destination))
             {
                 throw PSTraceSource.NewArgumentException("destination");
             }
@@ -1650,7 +1650,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.MoveItemResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -1714,7 +1714,7 @@ namespace Microsoft.PowerShell.Commands
             // If the destination is the same container as the source container don't do remove
             // the source item because the source and destination are the same.
 
-            if (String.Equals(sourceParent, destination, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(sourceParent, destination, StringComparison.OrdinalIgnoreCase))
             {
                 continueWithRemove = false;
             }
@@ -1803,7 +1803,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string valueName in filteredPropertyCollection)
             {
                 string notePropertyName = valueName;
-                if (String.IsNullOrEmpty(valueName))
+                if (string.IsNullOrEmpty(valueName))
                 {
                     // If the value name is empty then using "(default)"
                     // as the property name when adding the note, as
@@ -1888,7 +1888,7 @@ namespace Microsoft.PowerShell.Commands
                 object newPropertyValue = property.Value;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -2001,7 +2001,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string valueName in filteredPropertyCollection)
             {
                 string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -2012,7 +2012,7 @@ namespace Microsoft.PowerShell.Commands
                     // reset the value of the property to its default value
                     object defaultValue = ResetRegistryKeyValue(key, valueName);
                     string propertyNameToAdd = valueName;
-                    if (String.IsNullOrEmpty(valueName))
+                    if (string.IsNullOrEmpty(valueName))
                     {
                         propertyNameToAdd = GetLocalizedDefaultToken();
                     }
@@ -2135,7 +2135,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.NewPropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -2249,7 +2249,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (
                     ((!Context.SuppressWildcardExpansion) && (!propertyNamePattern.IsMatch(valueName))) ||
-                    (Context.SuppressWildcardExpansion && (!String.Equals(valueName, propertyName, StringComparison.OrdinalIgnoreCase))))
+                    (Context.SuppressWildcardExpansion && (!string.Equals(valueName, propertyName, StringComparison.OrdinalIgnoreCase))))
                 {
                     continue;
                 }
@@ -2262,7 +2262,7 @@ namespace Microsoft.PowerShell.Commands
                 string resourceTemplate = RegistryProviderStrings.RemovePropertyResourceTemplate;
 
                 string resource =
-                    String.Format(
+                    string.Format(
                         Host.CurrentCulture,
                         resourceTemplate,
                         path,
@@ -2350,7 +2350,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.RenamePropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     path,
@@ -2450,7 +2450,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.CopyPropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     sourcePath,
@@ -2550,7 +2550,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.MovePropertyResourceTemplate;
 
             string resource =
-                String.Format(
+                string.Format(
                     Host.CurrentCulture,
                     resourceTemplate,
                     sourcePath,
@@ -2615,7 +2615,7 @@ namespace Microsoft.PowerShell.Commands
             // to find the parent -- since path elements may contain
             // path delimiters. We only need to do this comparison
             // if the base implementation returns something in our namespace.
-            if (!String.Equals(parentPath, root, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(parentPath, root, StringComparison.OrdinalIgnoreCase))
             {
                 bool originalPathExists = ItemExists(path);
                 bool originalPathExistsWithRoot = false;
@@ -2624,7 +2624,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!originalPathExists)
                     originalPathExistsWithRoot = ItemExists(MakePath(root, path));
 
-                if ((!String.IsNullOrEmpty(parentPath)) && (originalPathExists || originalPathExistsWithRoot))
+                if ((!string.IsNullOrEmpty(parentPath)) && (originalPathExists || originalPathExistsWithRoot))
                 {
                     string parentPathToTest = parentPath;
 
@@ -2638,7 +2638,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         parentPath = base.GetParentPath(parentPath, root);
-                    } while (!String.IsNullOrEmpty(parentPath));
+                    } while (!string.IsNullOrEmpty(parentPath));
                 }
             }
 
@@ -2932,7 +2932,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string result = path;
 
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
                 result = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
@@ -2968,7 +2968,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool expandAll = false;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -3039,12 +3039,12 @@ namespace Microsoft.PowerShell.Commands
                     string valueNameToMatch = valueName;
 
                     // Need to convert the default value name to "(default)"
-                    if (String.IsNullOrEmpty(valueName))
+                    if (string.IsNullOrEmpty(valueName))
                     {
                         // Only do the conversion if the caller isn't asking for
                         // "" or null.
 
-                        if (!String.IsNullOrEmpty(requestedValueName))
+                        if (!string.IsNullOrEmpty(requestedValueName))
                         {
                             valueNameToMatch = GetLocalizedDefaultToken();
                         }
@@ -3053,9 +3053,9 @@ namespace Microsoft.PowerShell.Commands
                     if (
                         expandAll ||
                         ((Context.SuppressWildcardExpansion == false) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
-                       ((Context.SuppressWildcardExpansion == true) && (String.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
+                       ((Context.SuppressWildcardExpansion == true) && (string.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
                     {
-                        if (String.IsNullOrEmpty(valueNameToMatch))
+                        if (string.IsNullOrEmpty(valueNameToMatch))
                         {
                             // If the value name is empty then using "(default)"
                             // as the property name when adding the note, as
@@ -3102,7 +3102,7 @@ namespace Microsoft.PowerShell.Commands
         /// IT resets the a registry key value to its default
         /// </summary>
         /// <param name="key">Key whose value has to be reset.</param>
-        /// <param name="valueName">name of the value to reset.</param>
+        /// <param name="valueName">Name of the value to reset.</param>
         /// <returns>Default value the key was set to.</returns>
         private object ResetRegistryKeyValue(IRegistryWrapper key, string valueName)
         {
@@ -3193,9 +3193,9 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            if (String.IsNullOrEmpty(path) ||
-                (String.Compare(path, "\\", StringComparison.OrdinalIgnoreCase) == 0) ||
-                (String.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0))
+            if (string.IsNullOrEmpty(path) ||
+                (string.Compare(path, "\\", StringComparison.OrdinalIgnoreCase) == 0) ||
+                (string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0))
             {
                 result = true;
             }
@@ -3207,7 +3207,7 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="path">path to check.</param>
+        /// <param name="path">Path to check.</param>
         /// <returns>False if the operation is not allowed.</returns>
         private bool CheckOperationNotAllowedOnHiveContainer(string path)
         {
@@ -3227,8 +3227,8 @@ namespace Microsoft.PowerShell.Commands
         /// checks the container. if the container is the hive container (Registry::\)
         /// it throws an exception
         /// </summary>
-        /// <param name="sourcePath">source path to check.</param>
-        /// <param name="destinationPath">destination path to check.</param>
+        /// <param name="sourcePath">Source path to check.</param>
+        /// <param name="destinationPath">Destination path to check.</param>
         private bool CheckOperationNotAllowedOnHiveContainer(string sourcePath, string destinationPath)
         {
             if (IsHiveContainer(sourcePath))
@@ -3262,7 +3262,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private IRegistryWrapper GetHiveRoot(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -3271,8 +3271,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int k = 0; k < s_wellKnownHivesTx.Length; k++)
                 {
-                    if (String.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
                     {
                         using (CurrentPSTransaction)
                         {
@@ -3285,8 +3285,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int k = 0; k < s_wellKnownHives.Length; k++)
                 {
-                    if (String.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
-                        String.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(path, s_hiveNames[k], StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(path, s_hiveShortNames[k], StringComparison.OrdinalIgnoreCase))
                         return new RegistryWrapper(s_wellKnownHives[k]);
                 }
             }
@@ -3310,7 +3310,7 @@ namespace Microsoft.PowerShell.Commands
             bool result = false;
 
             // Check input.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
@@ -3491,7 +3491,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private IRegistryWrapper GetRegkeyForPath(string path, bool writeAccess)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 // The key was not found, write out an error.
 
@@ -3556,7 +3556,7 @@ namespace Microsoft.PowerShell.Commands
                     IRegistryWrapper tempKey = null;
 
                     // While there is still more to process
-                    while (!String.IsNullOrEmpty(remainingPath))
+                    while (!string.IsNullOrEmpty(remainingPath))
                     {
                         bool foundSubkey = false;
 
@@ -3771,7 +3771,7 @@ namespace Microsoft.PowerShell.Commands
             PSObject result = new PSObject();
 
             string propertyNameToAdd = propertyName;
-            if (String.IsNullOrEmpty(propertyName))
+            if (string.IsNullOrEmpty(propertyName))
             {
                 propertyNameToAdd = GetLocalizedDefaultToken();
             }
@@ -3881,7 +3881,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// helper to infer the RegistryValueKind from an object
         /// </summary>
-        /// <param name="value">object whose RegistryValueKind has to be determined.</param>
+        /// <param name="value">Object whose RegistryValueKind has to be determined.</param>
         /// <returns>Corresponding RegistryValueKind.</returns>
         private static RegistryValueKind GetValueKindFromObject(object value)
         {
@@ -3952,8 +3952,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// helper to read back an existing registry key value
         /// </summary>
-        /// <param name="key">key to read the value from.</param>
-        /// <param name="valueName">name of the value to read.</param>
+        /// <param name="key">Key to read the value from.</param>
+        /// <param name="valueName">Name of the value to read.</param>
         /// <returns>Value of the key, null if it could not retrieve
         /// it because known exceptions were thrown, else an exception is percolated up
         /// </returns>
@@ -4016,7 +4016,7 @@ namespace Microsoft.PowerShell.Commands
 
             for (int index = 0; index < valueNames.Length; ++index)
             {
-                if (String.IsNullOrEmpty(valueNames[index]))
+                if (string.IsNullOrEmpty(valueNames[index]))
                 {
                     // The first unnamed value becomes the default value
                     valueNames[index] = GetLocalizedDefaultToken();
@@ -4037,7 +4037,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="type">
         /// The type as specified by the user that should be parsed into a RegistryValueKind enum.
         /// </param>
-        /// <param name="kind">output for the RegistryValueKind for the string.</param>
+        /// <param name="kind">Output for the RegistryValueKind for the string.</param>
         /// <returns>
         /// true if the conversion succeeded
         /// </returns>
@@ -4045,7 +4045,7 @@ namespace Microsoft.PowerShell.Commands
         {
             kind = RegistryValueKind.Unknown;
 
-            if (String.IsNullOrEmpty(type))
+            if (string.IsNullOrEmpty(type))
             {
                 return true;
             }
@@ -4120,7 +4120,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string result = userEnteredPropertyName;
 
-            if (!String.IsNullOrEmpty(userEnteredPropertyName))
+            if (!string.IsNullOrEmpty(userEnteredPropertyName))
             {
                 var stringComparer = Host.CurrentCulture.CompareInfo;
 

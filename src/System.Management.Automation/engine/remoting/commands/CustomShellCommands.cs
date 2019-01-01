@@ -1528,7 +1528,7 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
+            return string.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
         /// <summary>
@@ -2431,7 +2431,7 @@ else
                         // Getting the string value of the object if it is not a ModuleSpecification, this is required for the cases like PSObject is specified as ModulesToImport value.
                         string modulepath = s.ToString();
                         // Add this check after checking if it a path
-                        if (!String.IsNullOrEmpty(modulepath.Trim()))
+                        if (!string.IsNullOrEmpty(modulepath.Trim()))
                         {
                             if ((modulepath.Contains("\\") || modulepath.Contains(":")) &&
                                 !(Directory.Exists(modulepath) || File.Exists(modulepath)))
@@ -3486,7 +3486,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     //
                     if (UseSharedProcess == false &&
                         psObjectCollection[0] != null &&
-                        String.Compare(psObjectCollection[0].ToString(), "Workflow", StringComparison.OrdinalIgnoreCase) == 0)
+                        string.Compare(psObjectCollection[0].ToString(), "Workflow", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         throw new PSInvalidOperationException(RemotingErrorIdStrings.UseSharedProcessCannotBeFalseForWorkflowSessionType);
                     }
@@ -5516,7 +5516,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             // The validator that will be applied to the role lookup
             Func<string, bool> validator = (role) => true;
 
-            if (!String.IsNullOrEmpty(this.Username))
+            if (!string.IsNullOrEmpty(this.Username))
             {
                 if (this.Username.IndexOf("\\", StringComparison.OrdinalIgnoreCase) >= 0)
                 {

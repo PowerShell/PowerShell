@@ -431,12 +431,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="psObject"></param>
         internal string GetRemoveSessionObjectTarget(PSObject psObject)
         {
-            String message = String.Empty;
+            String message = string.Empty;
             if (psObject.BaseObject is CimSession)
             {
                 UInt32 id = 0x0;
                 Guid instanceId = Guid.Empty;
-                String name = String.Empty;
+                String name = string.Empty;
                 String computerName = string.Empty;
                 if (psObject.Properties[idPropName].Value is UInt32)
                 {
@@ -458,7 +458,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     computerName = (String)psObject.Properties[computernamePropName].Value;
                 }
 
-                message = String.Format(CultureInfo.CurrentUICulture, SessionObjectPath, id, instanceId, name, computerName);
+                message = string.Format(CultureInfo.CurrentUICulture, SessionObjectPath, id, instanceId, name, computerName);
             }
 
             return message;
@@ -551,7 +551,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             errRecords.Add(
                 new ErrorRecord(
-                    new CimException(String.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindCimsessionObject, propertyName, propertyValue)),
+                    new CimException(string.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindCimsessionObject, propertyName, propertyValue)),
                     string.Empty,
                     ErrorCategory.ObjectNotFound,
                     null));
@@ -870,7 +870,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     CimSessionState state;
                     if (cimSessions.TryRemove(runspace.InstanceId, out state))
                     {
-                        DebugHelper.WriteLog(String.Format(CultureInfo.CurrentUICulture, DebugHelper.runspaceStateChanged, runspace.InstanceId, e.RunspaceStateInfo.State));
+                        DebugHelper.WriteLog(string.Format(CultureInfo.CurrentUICulture, DebugHelper.runspaceStateChanged, runspace.InstanceId, e.RunspaceStateInfo.State));
                         state.Dispose();
                     }
 
@@ -1001,7 +1001,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimTestCimSessionContext testCimSessionContext = context as CimTestCimSessionContext;
             UInt32 sessionId = this.sessionState.GenerateSessionId();
             string originalSessionName = testCimSessionContext.CimSessionWrapper.Name;
-            string sessionName = (originalSessionName != null) ? originalSessionName : String.Format(CultureInfo.CurrentUICulture, @"{0}{1}", CimSessionState.CimSessionClassName, sessionId);
+            string sessionName = (originalSessionName != null) ? originalSessionName : string.Format(CultureInfo.CurrentUICulture, @"{0}{1}", CimSessionState.CimSessionClassName, sessionId);
 
             // detach CimSession from the proxy object
             CimSession createdCimSession = testCimSessionContext.Proxy.Detach();

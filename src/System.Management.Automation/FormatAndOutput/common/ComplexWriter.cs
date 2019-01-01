@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// initialization method to be called before any other operation
         /// </summary>
         /// <param name="lineOutput">LineOutput interfaces to write to.</param>
-        /// <param name="numberOfTextColumns">number of columns used to write out.</param>
+        /// <param name="numberOfTextColumns">Number of columns used to write out.</param>
         internal void Initialize(LineOutput lineOutput, int numberOfTextColumns)
         {
             _lo = lineOutput;
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// it interprets a list of format value tokens and outputs it
         /// </summary>
-        /// <param name="formatValueList">list of FormatValue tokens to interpret.</param>
+        /// <param name="formatValueList">List of FormatValue tokens to interpret.</param>
         internal void WriteObject(List<FormatValue> formatValueList)
         {
             // we always start with no indentation
@@ -62,8 +62,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// operate on a single entry
         /// </summary>
-        /// <param name="fe">entry to process.</param>
-        /// <param name="currentDepth">current depth of recursion.</param>
+        /// <param name="fe">Entry to process.</param>
+        /// <param name="currentDepth">Current depth of recursion.</param>
         private void GenerateFormatEntryDisplay(FormatEntry fe, int currentDepth)
         {
             foreach (object obj in fe.formatValueList)
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// add a string to the current buffer, waiting for a FlushBuffer()
         /// </summary>
-        /// <param name="s">string to add to buffer.</param>
+        /// <param name="s">String to add to buffer.</param>
         private void AddToBuffer(string s)
         {
             _stringBuffer.Append(s);
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// TODO: we might be able to improve this function in the future
         /// so that we do not break paths etc.
         /// </summary>
-        /// <param name="s">input string.</param>
+        /// <param name="s">Input string.</param>
         /// <returns>A collection of words.</returns>
         private static IEnumerable<GetWordsResult> GetWords(string s)
         {
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     result.Word = sb.ToString();
                     sb.Clear();
-                    result.Delim = String.Empty;
+                    result.Delim = string.Empty;
 
                     yield return result;
                 }
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             result.Word = sb.ToString();
-            result.Delim = String.Empty;
+            result.Delim = string.Empty;
 
             yield return result;
         }
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        if (!String.IsNullOrEmpty(word.Delim))
+                        if (!string.IsNullOrEmpty(word.Delim))
                         {
                             wordToAdd += word.Delim;
                         }
@@ -659,7 +659,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// split a multiline string into an array of strings
         /// by honoring both \n and \r\n
         /// </summary>
-        /// <param name="s">string to split.</param>
+        /// <param name="s">String to split.</param>
         /// <returns>String array with the values.</returns>
         internal static string[] SplitLines(string s)
         {

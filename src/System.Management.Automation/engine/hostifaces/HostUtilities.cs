@@ -105,12 +105,12 @@ namespace System.Management.Automation
         /// Gets the object that serves as a value to $profile and the paths on it
         /// </summary>
         /// <param name="shellId">The id identifying the host or shell used in profile file names.</param>
-        /// <param name="useTestProfile">used from test not to overwrite the profile file names from development boxes.</param>
-        /// <param name="allUsersAllHosts">path for all users and all hosts.</param>
-        /// <param name="currentUserAllHosts">path for current user and all hosts.</param>
-        /// <param name="allUsersCurrentHost">path for all users current host.</param>
-        /// <param name="currentUserCurrentHost">path for current user and current host.</param>
-        /// <param name="dollarProfile">the object that serves as a value to $profile.</param>
+        /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
+        /// <param name="allUsersAllHosts">Path for all users and all hosts.</param>
+        /// <param name="currentUserAllHosts">Path for current user and all hosts.</param>
+        /// <param name="allUsersCurrentHost">Path for all users current host.</param>
+        /// <param name="currentUserCurrentHost">Path for current user and current host.</param>
+        /// <param name="dollarProfile">The object that serves as a value to $profile.</param>
         /// <returns></returns>
         internal static void GetProfileObjectData(string shellId, bool useTestProfile, out string allUsersAllHosts, out string allUsersCurrentHost, out string currentUserAllHosts, out string currentUserCurrentHost, out PSObject dollarProfile)
         {
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         /// Gets an array of commands that can be run sequentially to set $profile and run the profile commands.
         /// </summary>
         /// <param name="shellId">The id identifying the host or shell used in profile file names.</param>
-        /// <param name="useTestProfile">used from test not to overwrite the profile file names from development boxes.</param>
+        /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
         /// <returns></returns>
         internal static PSCommand[] GetProfileCommands(string shellId, bool useTestProfile)
         {
@@ -160,8 +160,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to get all profile file names for the current or all hosts and for the current or all users.
         /// </summary>
-        /// <param name="shellId">null for all hosts, not null for the specified host.</param>
-        /// <param name="forCurrentUser">false for all users, true for the current user.</param>
+        /// <param name="shellId">Null for all hosts, not null for the specified host.</param>
+        /// <param name="forCurrentUser">False for all users, true for the current user.</param>
         /// <returns>The profile file name matching the parameters.</returns>
         internal static string GetFullProfileFileName(string shellId, bool forCurrentUser)
         {
@@ -171,9 +171,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to get all profile file names for the current or all hosts and for the current or all users.
         /// </summary>
-        /// <param name="shellId">null for all hosts, not null for the specified host.</param>
-        /// <param name="forCurrentUser">false for all users, true for the current user.</param>
-        /// <param name="useTestProfile">used from test not to overwrite the profile file names from development boxes.</param>
+        /// <param name="shellId">Null for all hosts, not null for the specified host.</param>
+        /// <param name="forCurrentUser">False for all users, true for the current user.</param>
+        /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
         /// <returns>The profile file name matching the parameters.</returns>
         internal static string GetFullProfileFileName(string shellId, bool forCurrentUser, bool useTestProfile)
         {
@@ -227,14 +227,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the first <paramref name="maxLines"/> lines of <paramref name="source"/>.
         /// </summary>
-        /// <param name="source">string we want to limit the number of lines.</param>
-        /// <param name="maxLines">maximum number of lines to be returned.</param>
+        /// <param name="source">String we want to limit the number of lines.</param>
+        /// <param name="maxLines">Maximum number of lines to be returned.</param>
         /// <returns>The first lines of <paramref name="source"/>.</returns>
         internal static string GetMaxLines(string source, int maxLines)
         {
-            if (String.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(source))
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             StringBuilder returnValue = new StringBuilder();
@@ -390,9 +390,9 @@ namespace System.Management.Automation
                     {
                         string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
 
-                        if (!String.IsNullOrEmpty(suggestionText))
+                        if (!string.IsNullOrEmpty(suggestionText))
                         {
-                            string returnString = String.Format(
+                            string returnString = string.Format(
                                 CultureInfo.CurrentCulture,
                                 "Suggestion [{0},{1}]: {2}",
                                 (int)suggestion["Id"],
@@ -405,7 +405,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    string matchText = String.Empty;
+                    string matchText = string.Empty;
 
                     // Otherwise, this is a Regex match against the
                     // command or error
@@ -442,9 +442,9 @@ namespace System.Management.Automation
                     {
                         string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
 
-                        if (!String.IsNullOrEmpty(suggestionText))
+                        if (!string.IsNullOrEmpty(suggestionText))
                         {
-                            string returnString = String.Format(
+                            string returnString = string.Format(
                                 CultureInfo.CurrentCulture,
                                 "Suggestion [{0},{1}]: {2}",
                                 (int)suggestion["Id"],
@@ -475,7 +475,7 @@ namespace System.Management.Automation
         internal static string RemoveGuidFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
                 return message;
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:).*";
@@ -493,7 +493,7 @@ namespace System.Management.Automation
         internal static string RemoveIdentifierInfoFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (String.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
                 return message;
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:\[.*\]:).*";
@@ -579,7 +579,7 @@ namespace System.Management.Automation
                 catch (Exception)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 return (string)LanguagePrimitives.ConvertTo(result, typeof(string), CultureInfo.CurrentCulture);
@@ -621,17 +621,17 @@ namespace System.Management.Automation
 
             if (caption.Length > CREDUI_MAX_CAPTION_LENGTH)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidCaption, CREDUI_MAX_CAPTION_LENGTH));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidCaption, CREDUI_MAX_CAPTION_LENGTH));
             }
 
             if (message.Length > CREDUI_MAX_MESSAGE_LENGTH)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidMessage, CREDUI_MAX_MESSAGE_LENGTH));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidMessage, CREDUI_MAX_MESSAGE_LENGTH));
             }
 
             if (userName != null && userName.Length > CRED_MAX_USERNAME_LENGTH)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidUserName, CRED_MAX_USERNAME_LENGTH));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, CredUI.PromptForCredential_InvalidUserName, CRED_MAX_USERNAME_LENGTH));
             }
 
             CREDUI_INFO credUiInfo = new CREDUI_INFO();
@@ -701,7 +701,7 @@ namespace System.Management.Automation
                     passwordBuilder[counter] = (char)0;
                 }
 
-                if (!String.IsNullOrEmpty(credentialUsername))
+                if (!string.IsNullOrEmpty(credentialUsername))
                     cred = new PSCredential(credentialUsername, password);
                 else
                     cred = null;

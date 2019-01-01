@@ -918,7 +918,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns all the results from supplied PSDataCollection.
         /// </summary>
-        /// <param name="psDataCollection">data collection to read from.</param>
+        /// <param name="psDataCollection">Data collection to read from.</param>
         /// <returns>Collection with copy of data.</returns>
         private Collection<T> ReadAll<T>(PSDataCollection<T> psDataCollection)
         {
@@ -985,7 +985,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the job objects if required by the cmdlet
         /// </summary>
-        /// <param name="jobsToWrite">collection of jobs to write.</param>
+        /// <param name="jobsToWrite">Collection of jobs to write.</param>
         /// <remarks>this method is intended to be called only from
         /// ProcessRecord. When any changes are made ensure that this
         /// contract is not broken</remarks>

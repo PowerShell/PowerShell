@@ -145,7 +145,7 @@ namespace System.Management.Automation.Internal
                     {
                         analysisProgress = new ProgressRecord(0,
                             Modules.DeterminingAvailableModules,
-                            String.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
+                            string.Format(CultureInfo.InvariantCulture, Modules.SearchingUncShare, directory))
                         {
                             RecordType = ProgressRecordType.Processing
                         };
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets the list of versions under the specified module base path in descending sorted order
         /// </summary>
-        /// <param name="moduleBase">module base path.</param>
+        /// <param name="moduleBase">Module base path.</param>
         /// <returns>Sorted list of versions.</returns>
         internal static List<Version> GetModuleVersionSubfolders(string moduleBase)
         {
@@ -374,7 +374,7 @@ namespace System.Management.Automation.Internal
 #if UNIX
             return false;
 #else
-            Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
 
             string windowsPowerShellPSHomePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
             return path.StartsWith(windowsPowerShellPSHomePath, StringComparison.OrdinalIgnoreCase);
@@ -384,7 +384,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets a list of matching commands
         /// </summary>
-        /// <param name="pattern">command pattern.</param>
+        /// <param name="pattern">Command pattern.</param>
         /// <param name="commandOrigin"></param>
         /// <param name="context"></param>
         /// <param name="rediscoverImportedModules"></param>
@@ -507,7 +507,7 @@ namespace System.Management.Automation.Internal
                                         moduleCompareName = commandEntry.PSSnapIn.Name;
                                     }
 
-                                    if (String.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
+                                    if (string.Equals(moduleShortName, moduleCompareName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         if (commandEntry.Visibility == SessionStateEntryVisibility.Private)
                                         {

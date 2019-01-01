@@ -322,8 +322,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
 
                 return (cmd.Filter == null) ?
-                    String.Format(CultureInfo.CurrentUICulture, queryWithoutWhere, propertyList, cmd.ClassName) :
-                    String.Format(CultureInfo.CurrentUICulture, queryWithWhere, propertyList, cmd.ClassName, cmd.Filter);
+                    string.Format(CultureInfo.CurrentUICulture, queryWithoutWhere, propertyList, cmd.ClassName) :
+                    string.Format(CultureInfo.CurrentUICulture, queryWithWhere, propertyList, cmd.ClassName, cmd.Filter);
             }
 
             return null;

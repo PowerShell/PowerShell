@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // unknown/unsupported platform
                     Diagnostics.Assert(false, "Unable to determine Operating System Platform");
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
         }

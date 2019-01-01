@@ -792,7 +792,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (this.Type == (uint)WSManDataType.WSMAN_DATA_TYPE_TEXT)
                         return _text;
                     else
-                        return String.Empty;
+                        return string.Empty;
                 }
             }
 
@@ -2426,7 +2426,7 @@ namespace System.Management.Automation.Remoting.Client
         /// will be used as the language code to get the error message in.
         /// </summary>
         /// <param name="wsManAPIHandle"></param>
-        /// <param name="option">session option to get.</param>
+        /// <param name="option">Session option to get.</param>
         /// <returns></returns>
         internal static string WSManGetSessionOptionAsString(IntPtr wsManAPIHandle,
             WSManSessionOption option)

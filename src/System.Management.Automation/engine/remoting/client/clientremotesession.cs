@@ -384,7 +384,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handles an encrypted session key received from the other side
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
+        /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">arguments that contain the remote
         /// public key</param>
         private void HandleEncryptedSessionKeyReceived(object sender, RemoteDataEventArgs<string> eventArgs)
@@ -416,8 +416,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handles a request for public key from the server
         /// </summary>
-        /// <param name="sender">send of this event, unused.</param>
-        /// <param name="eventArgs">arguments describing this event, unused.</param>
+        /// <param name="sender">Send of this event, unused.</param>
+        /// <param name="eventArgs">Arguments describing this event, unused.</param>
         private void HandlePublicKeyRequestReceived(object sender, RemoteDataEventArgs<string> eventArgs)
         {
             if (SessionDataStructureHandler.StateMachine.State == RemoteSessionState.Established)
@@ -583,7 +583,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Release all resources
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources.</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         public void Dispose(bool disposing)
         {
             if (disposing)

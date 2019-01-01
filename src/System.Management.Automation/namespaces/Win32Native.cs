@@ -134,9 +134,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <summary>
         /// Retrieves the current process token.
         /// </summary>
-        /// <param name="processHandle">process handle.</param>
-        /// <param name="desiredAccess">token access.</param>
-        /// <param name="tokenHandle">process token.</param>
+        /// <param name="processHandle">Process handle.</param>
+        /// <param name="desiredAccess">Token access.</param>
+        /// <param name="tokenHandle">Process token.</param>
         /// <returns>The current process token.</returns>
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
@@ -845,7 +845,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             else
             {
                 string resourceTemplate = RegistryProviderStrings.UnknownError_Num;
-                return String.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                return string.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
             }
         }
 

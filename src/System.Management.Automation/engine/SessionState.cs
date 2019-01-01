@@ -392,12 +392,12 @@ namespace System.Management.Automation
         private SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
         {
             if (list == null || list.Count == 0) return SessionStateEntryVisibility.Private;
-            if (String.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;
+            if (string.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;
 
             if (list.Contains("*")) return SessionStateEntryVisibility.Public;
             foreach (string p in list)
             {
-                if (String.Equals(p, path, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(p, path, StringComparison.OrdinalIgnoreCase))
                     return SessionStateEntryVisibility.Public;
 
                 if (WildcardPattern.ContainsWildcardCharacters(p))

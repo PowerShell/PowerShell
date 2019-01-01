@@ -223,12 +223,12 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!String.IsNullOrEmpty(_errorRecord._activityOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._activityOverride))
                     return _errorRecord._activityOverride;
 
                 if (_errorRecord.InvocationInfo != null
                     && (_errorRecord.InvocationInfo.MyCommand is CmdletInfo || _errorRecord.InvocationInfo.MyCommand is IScriptCommandInfo)
-                    && !String.IsNullOrEmpty(_errorRecord.InvocationInfo.MyCommand.Name)
+                    && !string.IsNullOrEmpty(_errorRecord.InvocationInfo.MyCommand.Name)
                     )
                 {
                     return _errorRecord.InvocationInfo.MyCommand.Name;
@@ -257,7 +257,7 @@ namespace System.Management.Automation
             get
             {
                 _reasonIsExceptionType = false;
-                if (!String.IsNullOrEmpty(_errorRecord._reasonOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._reasonOverride))
                     return _errorRecord._reasonOverride;
                 if (_errorRecord.Exception != null)
                 {
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!String.IsNullOrEmpty(_errorRecord._targetNameOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._targetNameOverride))
                     return _errorRecord._targetNameOverride;
                 if (_errorRecord.TargetObject != null)
                 {
@@ -330,7 +330,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (!String.IsNullOrEmpty(_errorRecord._targetTypeOverride))
+                if (!string.IsNullOrEmpty(_errorRecord._targetTypeOverride))
                     return _errorRecord._targetTypeOverride;
                 if (_errorRecord.TargetObject != null)
                 {
@@ -372,7 +372,7 @@ namespace System.Management.Automation
         public string GetMessage()
         {
             /* Remoting not in E12
-            if (!String.IsNullOrEmpty (_errorRecord._serializedErrorCategoryMessageOverride))
+            if (!string.IsNullOrEmpty (_errorRecord._serializedErrorCategoryMessageOverride))
                 return _errorRecord._serializedErrorCategoryMessageOverride;
             */
 
@@ -404,7 +404,7 @@ namespace System.Management.Automation
         {
             // get template text
             string errorCategoryString = Category.ToString();
-            if (String.IsNullOrEmpty(errorCategoryString))
+            if (string.IsNullOrEmpty(errorCategoryString))
             {
                 // this probably indicates an invalid ErrorCategory value
                 errorCategoryString = ErrorCategory.NotSpecified.ToString();
@@ -412,13 +412,13 @@ namespace System.Management.Automation
 
             string templateText = ErrorCategoryStrings.ResourceManager.GetString(errorCategoryString, uiCultureInfo);
 
-            if (String.IsNullOrEmpty(templateText))
+            if (string.IsNullOrEmpty(templateText))
             {
                 // this probably indicates an invalid ErrorCategory value
                 templateText = ErrorCategoryStrings.NotSpecified;
             }
 
-            Diagnostics.Assert(!String.IsNullOrEmpty(templateText),
+            Diagnostics.Assert(!string.IsNullOrEmpty(templateText),
                 "ErrorCategoryStrings.resx resource failure");
 
             string activityInUse = Ellipsize(uiCultureInfo, Activity);
@@ -431,7 +431,7 @@ namespace System.Management.Automation
             // assemble final string
             try
             {
-                return String.Format(uiCultureInfo, templateText,
+                return string.Format(uiCultureInfo, templateText,
                     activityInUse,
                     targetNameInUse,
                     targetTypeInUse,
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             {
                 templateText = ErrorCategoryStrings.InvalidErrorCategory;
 
-                return String.Format(uiCultureInfo, templateText,
+                return string.Format(uiCultureInfo, templateText,
                     activityInUse,
                     targetNameInUse,
                     targetTypeInUse,
@@ -474,8 +474,8 @@ namespace System.Management.Automation
         /// strings longer than 40 characters and ellipsize them to
         /// the first and last 19 characters plus "..." in the middle.
         /// </summary>
-        /// <param name="uiCultureInfo">culture to retrieve template if needed.</param>
-        /// <param name="original">original string.</param>
+        /// <param name="uiCultureInfo">Culture to retrieve template if needed.</param>
+        /// <param name="original">Original string.</param>
         /// <returns>Ellipsized version of string.</returns>
         /// <remarks>
         /// "Please do not make this public as ellipsize is not a word."
@@ -540,7 +540,7 @@ namespace System.Management.Automation
         /// Creates an instance of ErrorDetails specifying a Message.
         /// This variant is used by cmdlets.
         /// </summary>
-        /// <param name="cmdlet">cmdlet containing the template string.</param>
+        /// <param name="cmdlet">Cmdlet containing the template string.</param>
         /// <param name="baseName">by default, the
         /// <see cref="System.Resources.ResourceManager"/>
         /// name</param>
@@ -691,8 +691,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
         protected ErrorDetails(SerializationInfo info,
                                StreamingContext context)
@@ -705,8 +705,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -802,10 +802,10 @@ namespace System.Management.Automation
             if (cmdlet == null)
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
                 throw PSTraceSource.NewArgumentNullException("baseName");
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
             string template = string.Empty;
@@ -837,10 +837,10 @@ namespace System.Management.Automation
             if (resourceSupplier == null)
                 throw PSTraceSource.NewArgumentNullException("resourceSupplier");
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
                 throw PSTraceSource.NewArgumentNullException("baseName");
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
             string template = string.Empty;
@@ -872,10 +872,10 @@ namespace System.Management.Automation
             if (assembly == null)
                 throw PSTraceSource.NewArgumentNullException("assembly");
 
-            if (String.IsNullOrEmpty(baseName))
+            if (string.IsNullOrEmpty(baseName))
                 throw PSTraceSource.NewArgumentNullException("baseName");
 
-            if (String.IsNullOrEmpty(resourceId))
+            if (string.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
             string template = string.Empty;
@@ -915,7 +915,7 @@ namespace System.Management.Automation
 
             try
             {
-                return String.Format(
+                return string.Format(
                     CultureInfo.CurrentCulture,
                     template,
                     args);
@@ -1025,8 +1025,8 @@ namespace System.Management.Automation
         /// using data serialized via
         /// <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
         /// <remarks>
         /// ErrorRecord instances which are serialized using
@@ -1043,8 +1043,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializer for <see cref="ISerializable"/>
         /// </summary>
-        /// <param name="info">serialization information.</param>
-        /// <param name="context">streaming context.</param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation
             string errorDetails_ScriptStackTrace =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_ScriptStackTrace") as string;
 
-            RemoteException re = new RemoteException((String.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
+            RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
             //Create ErrorRecord
             PopulateProperties(
@@ -1369,7 +1369,7 @@ namespace System.Management.Automation
         /// exception which already has an ErrorRecord
         /// ErrorCategoryInfo and ErrorDetails are deep-copied, other fields are not.
         /// </summary>
-        /// <param name="errorRecord">wrapped ErrorRecord.</param>
+        /// <param name="errorRecord">Wrapped ErrorRecord.</param>
         /// <param name="replaceParentContainsErrorRecordException">
         /// If the wrapped exception contains a ParentContainsErrorRecordException, the new
         /// ErrorRecord should have this exception as its Exception instead.
@@ -1491,8 +1491,8 @@ namespace System.Management.Automation
 
                 string typeName = GetInvocationTypeName();
                 string delimiter =
-                    (String.IsNullOrEmpty(typeName)
-                     || String.IsNullOrEmpty(_errorId))
+                    (string.IsNullOrEmpty(typeName)
+                     || string.IsNullOrEmpty(_errorId))
                         ? string.Empty : ",";
                 return NotNull(_errorId) + delimiter + NotNull(typeName);
             }
@@ -1693,14 +1693,14 @@ namespace System.Management.Automation
         public override string ToString()
         {
             if (ErrorDetails != null
-                && !String.IsNullOrEmpty(ErrorDetails.Message))
+                && !string.IsNullOrEmpty(ErrorDetails.Message))
             {
                 return ErrorDetails.Message;
             }
 
             if (Exception != null)
             {
-                if (!String.IsNullOrEmpty(Exception.Message))
+                if (!string.IsNullOrEmpty(Exception.Message))
                 {
                     return Exception.Message;
                 }
@@ -1841,8 +1841,8 @@ namespace System.Management.Automation
         /// to generate the final error message in
         /// <see cref="ErrorDetails.Message"/>.
         /// </remarks>
-        /// <param name="baseName">the base resource name.</param>
-        /// <param name="resourceId">the resource id.</param>
+        /// <param name="baseName">The base resource name.</param>
+        /// <param name="resourceId">The resource id.</param>
         /// <returns>The error message template string corresponding to baseName and resourceId.</returns>
         string GetResourceString(string baseName, string resourceId);
     }

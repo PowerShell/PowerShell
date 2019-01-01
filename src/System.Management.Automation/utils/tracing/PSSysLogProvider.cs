@@ -284,11 +284,11 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Writes a single event
         /// </summary>
-        /// <param name="id">event id.</param>
+        /// <param name="id">Event id.</param>
         /// <param name="channel"></param>
         /// <param name="opcode"></param>
         /// <param name="task"></param>
-        /// <param name="logContext">log context.</param>
+        /// <param name="logContext">Log context.</param>
         /// <param name="payLoad"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
@@ -324,7 +324,7 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Sets the activity id for the current thread.
         /// </summary>
-        /// <param name="newActivityId">the GUID identifying the activity.</param>
+        /// <param name="newActivityId">The GUID identifying the activity.</param>
         internal void SetActivityIdForCurrentThread(Guid newActivityId)
         {
             s_provider.SetActivity(newActivityId);

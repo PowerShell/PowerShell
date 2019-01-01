@@ -717,13 +717,13 @@ namespace System.Management.Automation.Language
         /// Parses the specified constant hashtable string into a Hashtable object
         /// </summary>
         /// <param name="input">The Hashtable string.</param>
-        /// <param name="result">the Hashtable object.</param>
+        /// <param name="result">The Hashtable object.</param>
         /// <returns></returns>
         internal static bool TryParseAsConstantHashtable(string input, out Hashtable result)
         {
             result = null;
 
-            if (String.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(input))
             {
                 return false;
             }
@@ -3258,7 +3258,7 @@ namespace System.Management.Automation.Language
         /// Reads an argument expression for a keyword or keyword parameter.
         /// This can be either a bare word or an expression
         /// </summary>
-        /// <param name="keywordToken">the token of the associated keyword.</param>
+        /// <param name="keywordToken">The token of the associated keyword.</param>
         private ExpressionAst GetWordOrExpression(Token keywordToken)
         {
             Token nameToken = NextToken();
@@ -3934,7 +3934,7 @@ namespace System.Management.Automation.Language
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)
                 {
                     // Resource property value could be set to nested DSC resources except Script resource
-                    bool isScriptResource = String.Compare(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase) == 0;
+                    bool isScriptResource = string.Compare(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase) == 0;
                     try
                     {
                         if (isScriptResource)
@@ -4498,7 +4498,7 @@ namespace System.Management.Automation.Language
                     endExtent = terminatorToken.Extent;
                 }
 
-                if (!String.IsNullOrEmpty(varToken.Name))
+                if (!string.IsNullOrEmpty(varToken.Name))
                 {
                     return new PropertyMemberAst(ExtentOf(startExtent, endExtent), varToken.Name,
                         typeConstraint, attributeList, attributes, initialValueAst);
@@ -6039,7 +6039,7 @@ namespace System.Management.Automation.Language
                             exprAst = new StringConstantExpressionAst(genericToken.Extent, genericToken.Value, StringConstantType.BareWord);
 
                             // If this is a verbatim argument, then don't continue peeking
-                            if (String.Equals(genericToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                            if (string.Equals(genericToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                             {
                                 foundVerbatimArgument = true;
                             }
@@ -6291,7 +6291,7 @@ namespace System.Management.Automation.Language
 
                                 // If this is the special verbatim argument syntax, look for the next element
                                 StringToken argumentToken = token as StringToken;
-                                if ((argumentToken != null) && String.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                                if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                                 {
                                     elements.Add(ast);
                                     endExtent = ast.Extent;
@@ -7475,14 +7475,14 @@ namespace System.Management.Automation.Language
             foreach (Type resxType in resxTypes)
             {
                 string resxErrorBody = resxType.GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string;
-                if (String.Equals(errorMsg, resxErrorBody, StringComparison.Ordinal))
+                if (string.Equals(errorMsg, resxErrorBody, StringComparison.Ordinal))
                 {
                     msgCorrespondsToString = true;
                     break;
                 }
             }
 
-            Diagnostics.Assert(msgCorrespondsToString, String.Format("Parser error ID \"{0}\" must correspond to the error message \"{1}\"", errorId, errorMsg));
+            Diagnostics.Assert(msgCorrespondsToString, string.Format("Parser error ID \"{0}\" must correspond to the error message \"{1}\"", errorId, errorMsg));
         }
 
         private static object[] arrayOfOneArg

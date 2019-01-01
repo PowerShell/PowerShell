@@ -804,10 +804,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor used to create a WSManConnectionInfo
         /// </summary>
-        /// <param name="computerName">computer to connect to.</param>
-        /// <param name="scheme">scheme to be used for connection.</param>
-        /// <param name="port">port to connect to.</param>
-        /// <param name="appName">application end point to connect to.</param>
+        /// <param name="computerName">Computer to connect to.</param>
+        /// <param name="scheme">Scheme to be used for connection.</param>
+        /// <param name="port">Port to connect to.</param>
+        /// <param name="appName">Application end point to connect to.</param>
         /// <param name="shellUri">remote shell to launch
         /// on connection</param>
         /// <param name="credential">credential to be used
@@ -831,10 +831,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor used to create a WSManConnectionInfo
         /// </summary>
-        /// <param name="computerName">computer to connect to.</param>
+        /// <param name="computerName">Computer to connect to.</param>
         /// <param name="scheme">Scheme to be used for connection.</param>
-        /// <param name="port">port to connect to.</param>
-        /// <param name="appName">application end point to connect to.</param>
+        /// <param name="port">Port to connect to.</param>
+        /// <param name="appName">Application end point to connect to.</param>
         /// <param name="shellUri">remote shell to launch
         /// on connection</param>
         /// <param name="credential">credential to be used
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Runspaces
         /// and explicit credentials - server life time is
         /// default and open timeout is default
         /// </summary>
-        /// <param name="uri">uri of remote runspace.</param>
+        /// <param name="uri">Uri of remote runspace.</param>
         /// <param name="shellUri"></param>
         /// <param name="credential">credentials to use to
         /// connect to the remote runspace</param>
@@ -948,7 +948,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor used to create a WSManConnectionInfo. This constructor supports a certificate thumbprint to
         /// be used while connecting to a remote machine instead of credential.
         /// </summary>
-        /// <param name="uri">uri of remote runspace.</param>
+        /// <param name="uri">Uri of remote runspace.</param>
         /// <param name="shellUri"></param>
         /// <param name="certificateThumbprint">
         /// A thumb print of the certificate to use while connecting to the remote machine.
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Runspaces
         /// default server life time and default open
         /// timeout
         /// </summary>
-        /// <param name="uri">uri of remote runspace.</param>
+        /// <param name="uri">Uri of remote runspace.</param>
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
         public WSManConnectionInfo(Uri uri)
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation.Runspaces
         private string ResolveShellUri(string shell)
         {
             string resolvedShellUri = shell;
-            if (String.IsNullOrEmpty(resolvedShellUri))
+            if (string.IsNullOrEmpty(resolvedShellUri))
             {
                 resolvedShellUri = DefaultShellUri;
             }
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             //default host is localhost
-            if (String.IsNullOrEmpty(computerName) || String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(computerName) || string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 _computerName = DefaultComputerName;
             }
@@ -1232,7 +1232,7 @@ namespace System.Management.Automation.Runspaces
 
             // default appname is WSMan
             _appName = appName;
-            if (String.IsNullOrEmpty(_appName))
+            if (string.IsNullOrEmpty(_appName))
             {
                 _appName = s_defaultAppName;
             }
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor that constructs the configuration name from its type
         /// </summary>
-        /// <param name="configurationType">type of configuration to construct.</param>
+        /// <param name="configurationType">Type of configuration to construct.</param>
         public WSManConnectionInfo(PSSessionType configurationType) : this()
         {
             ComputerName = string.Empty;
@@ -1968,7 +1968,7 @@ namespace System.Management.Automation.Runspaces
             ValidatePortInRange(port);
 
             this.Port = (port != 0) ? port : DefaultPort;
-            this.Subsystem = (String.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+            this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
         }
 
         #endregion
@@ -2556,7 +2556,7 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                var cmdLine = String.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
+                var cmdLine = string.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
 
                 lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
                 lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
@@ -3147,7 +3147,7 @@ namespace System.Management.Automation.Runspaces
             this.RunAsAdmin = runAsAdmin;
             this.ConfigurationName = configurationName;
 
-            Dbg.Assert(!String.IsNullOrEmpty(containerId), "containerId input cannot be empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(containerId), "containerId input cannot be empty.");
 
             GetContainerProperties();
         }
@@ -3273,7 +3273,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 result = HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString);
                 if (result != 0)
@@ -3381,7 +3381,7 @@ namespace System.Management.Automation.Runspaces
         private void TerminateContainerProcessInternal()
         {
             IntPtr ComputeSystem = IntPtr.Zero;
-            string resultString = String.Empty;
+            string resultString = string.Empty;
             IntPtr process = IntPtr.Zero;
 
             ProcessTerminated = false;
@@ -3406,7 +3406,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
-                string resultString = String.Empty;
+                string resultString = string.Empty;
 
                 if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
                 {

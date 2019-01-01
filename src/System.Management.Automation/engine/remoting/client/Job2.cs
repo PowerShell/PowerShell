@@ -189,7 +189,7 @@ namespace System.Management.Automation
         /// colliding with some implementation which may have
         /// added that method
         /// </summary>
-        /// <param name="state">state of the job.</param>
+        /// <param name="state">State of the job.</param>
         /// <param name="reason">exception associated with the
         /// job entering this state</param>
         protected new void SetJobState(JobState state, Exception reason)
@@ -597,8 +597,8 @@ namespace System.Management.Automation
         /// Create a container parent job with the
         /// specified command string and name
         /// </summary>
-        /// <param name="command">command string.</param>
-        /// <param name="name">friendly name for display.</param>
+        /// <param name="command">Command string.</param>
+        /// <param name="name">Friendly name for display.</param>
         public ContainerParentJob(string command, string name)
             : base(command, name)
         {
@@ -695,7 +695,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add a child job to the parent job
         /// </summary>
-        /// <param name="childJob">child job to add.</param>
+        /// <param name="childJob">Child job to add.</param>
         /// <exception cref="ObjectDisposedException">Thrown if the job is disposed.</exception>
         /// <exception cref="ArgumentNullException">Thrown if child being added is null.</exception>
         public void AddChildJob(Job2 childJob)
@@ -2045,7 +2045,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < ChildJobs.Count; i++)
             {
-                if (!String.IsNullOrEmpty(ChildJobs[i].StatusMessage))
+                if (!string.IsNullOrEmpty(ChildJobs[i].StatusMessage))
                 {
                     sb.Append(ChildJobs[i].StatusMessage);
                 }
@@ -2076,7 +2076,7 @@ namespace System.Management.Automation
 
             _tracer.WriteMessage("Unregistering StateChanged event for job ", job.InstanceId);
             foreach (PSEventSubscriber subscriber in
-                EventManager.Subscribers.Where(subscriber => String.Equals(subscriber.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase)))
+                EventManager.Subscribers.Where(subscriber => string.Equals(subscriber.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase)))
             {
                 EventManager.UnsubscribeEvent(subscriber);
                 break;
@@ -2149,8 +2149,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="serializationInfo">serialization info.</param>
-        /// <param name="streamingContext">streaming context.</param>
+        /// <param name="serializationInfo">Serialization info.</param>
+        /// <param name="streamingContext">Streaming context.</param>
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {

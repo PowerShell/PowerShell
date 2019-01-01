@@ -1268,11 +1268,11 @@ namespace Microsoft.PowerShell.Commands
                         {
                             EventSourceCreationData newEventSource = new EventSourceCreationData(_sourceName, LogName);
                             newEventSource.MachineName = compname;
-                            if (!String.IsNullOrEmpty(MessageResourceFile))
+                            if (!string.IsNullOrEmpty(MessageResourceFile))
                                 newEventSource.MessageResourceFile = MessageResourceFile;
-                            if (!String.IsNullOrEmpty(ParameterResourceFile))
+                            if (!string.IsNullOrEmpty(ParameterResourceFile))
                                 newEventSource.ParameterResourceFile = ParameterResourceFile;
-                            if (!String.IsNullOrEmpty(CategoryResourceFile))
+                            if (!string.IsNullOrEmpty(CategoryResourceFile))
                                 newEventSource.CategoryResourceFile = CategoryResourceFile;
                             EventLog.CreateEventSource(newEventSource);
                         }

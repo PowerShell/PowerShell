@@ -63,7 +63,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Do exact match help based on the target.
         /// </summary>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             Collection<ProviderInfo> matchingProviders = null;
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// This will load providerHelpInfo from help file into help cache.
         /// </remarks>
-        /// <param name="providerInfo">providerInfo for which to locate help.</param>
+        /// <param name="providerInfo">ProviderInfo for which to locate help.</param>
         private void LoadHelpFile(ProviderInfo providerInfo)
         {
             if (providerInfo == null)
@@ -154,7 +154,7 @@ namespace System.Management.Automation
 
             string helpFile = providerInfo.HelpFile;
 
-            if (String.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
+            if (string.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
             {
                 return;
             }
@@ -191,7 +191,7 @@ namespace System.Management.Automation
             }
 
             string location = MUIFileSearcher.LocateFile(helpFileToLoad, searchPaths);
-            if (String.IsNullOrEmpty(location))
+            if (string.IsNullOrEmpty(location))
                 throw new FileNotFoundException(helpFile);
 
             XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -209,7 +209,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.Name, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         helpItemsNode = node;
                         break;
@@ -227,7 +227,7 @@ namespace System.Management.Automation
                     for (int i = 0; i < helpItemsNode.ChildNodes.Count; i++)
                     {
                         XmlNode node = helpItemsNode.ChildNodes[i];
-                        if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "providerHelp", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.Name, "providerHelp", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             HelpInfo helpInfo = ProviderHelpInfo.Load(node);
 
@@ -257,7 +257,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Search for provider help based on a search target.
         /// </summary>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
@@ -372,8 +372,8 @@ namespace System.Management.Automation
         ///     1. check whether provider-specific commandlet help exists.
         ///     2. merge found provider-specific help with commandlet help provided.
         /// </remarks>
-        /// <param name="helpInfo">helpInfo forwarded in.</param>
-        /// <param name="helpRequest">help request object.</param>
+        /// <param name="helpInfo">HelpInfo forwarded in.</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>The help info object after processing.</returns>
         override internal HelpInfo ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
@@ -386,7 +386,7 @@ namespace System.Management.Automation
             }
 
             string providerName = helpRequest.Provider;
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 providerName = this._sessionState.Path.CurrentLocation.Provider.Name;
             }

@@ -157,7 +157,7 @@ namespace System.Management.Automation
             ScopedItemOptions options,
             Collection<Attribute> attributes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the variable.
         /// </summary>
-        public string Name { get; } = String.Empty;
+        public string Name { get; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the description of the variable.
@@ -220,7 +220,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _description = String.Empty;
+        private string _description = string.Empty;
 
         internal void DebuggerCheckVariableRead()
         {

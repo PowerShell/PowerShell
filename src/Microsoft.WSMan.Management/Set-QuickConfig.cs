@@ -131,7 +131,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : String.Empty;
+                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : string.Empty;
                     analysisInputXml = @"<Analyze_INPUT xmlns=""http://schemas.microsoft.com/wbem/wsman/1/config/service""><Transport>" + transport + "</Transport>" + openAllProfiles + "</Analyze_INPUT>";
                     action = "Analyze";
                 }
@@ -253,7 +253,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }

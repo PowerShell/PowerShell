@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             _throttleManager.ThrottleComplete +=
                 new EventHandler<EventArgs>(HandleThrottleComplete);
 
-            if (String.IsNullOrEmpty(ConfigurationName))
+            if (string.IsNullOrEmpty(ConfigurationName))
             {
                 if ((ParameterSetName == NewPSSessionCommand.ComputerNameParameterSet) ||
                     (ParameterSetName == NewPSSessionCommand.UriParameterSet))
@@ -187,8 +187,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // convert null to String.Empty for VM/Container session
-                    ConfigurationName = String.Empty;
+                    // convert null to string.Empty for VM/Container session
+                    ConfigurationName = string.Empty;
                 }
             }
         }
@@ -488,11 +488,11 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                 {
                                     errorDetails = "[" + host + "] ";
-                                    if (!String.IsNullOrEmpty(transException.Message))
+                                    if (!string.IsNullOrEmpty(transException.Message))
                                     {
                                         errorDetails += transException.Message;
                                     }
-                                    else if (!String.IsNullOrEmpty(transException.TransportMessage))
+                                    else if (!string.IsNullOrEmpty(transException.TransportMessage))
                                     {
                                         errorDetails += transException.TransportMessage;
                                     }
@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (WSManNativeApi.ERROR_WSMAN_NO_LOGON_SESSION_EXIST == transErrorCode)
                         {
-                            errorDetails += System.Environment.NewLine + String.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
+                            errorDetails += System.Environment.NewLine + string.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
                         }
 
                         ErrorRecord errorRecord = new ErrorRecord(reason,
@@ -1199,7 +1199,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the throttling complete event of the throttle manager
         /// </summary>
-        /// <param name="sender">sender of this event.</param>
+        /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs"></param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {

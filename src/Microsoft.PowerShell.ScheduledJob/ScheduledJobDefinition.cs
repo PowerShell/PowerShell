@@ -1524,7 +1524,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Sets the execution history length property.
         /// </summary>
-        /// <param name="executionHistoryLength">execution history length.</param>
+        /// <param name="executionHistoryLength">Execution history length.</param>
         /// <param name="save">Save to store.</param>
         public void SetExecutionHistoryLength(
             int executionHistoryLength,
@@ -2310,12 +2310,12 @@ namespace Microsoft.PowerShell.ScheduledJob
     {
         internal static string Format(string formatSpec, object o)
         {
-            return String.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
+            return string.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
         }
 
         internal static string Format(string formatSpec, params object[] o)
         {
-            return String.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
+            return string.Format(System.Threading.Thread.CurrentThread.CurrentCulture, formatSpec, o);
         }
     }
 

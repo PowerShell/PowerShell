@@ -38,8 +38,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Efficiently multiplies collection by integer
         /// </summary>
-        /// <param name="array">collection to multiply.</param>
-        /// <param name="times">number of times the collection is to be multiplied/copied.</param>
+        /// <param name="array">Collection to multiply.</param>
+        /// <param name="times">Number of times the collection is to be multiplied/copied.</param>
         /// <returns>Collection multiplied by integer.</returns>
         internal static T[] Multiply<T>(T[] array, uint times)
         {

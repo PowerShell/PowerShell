@@ -724,9 +724,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="sourceValue">The value to convert from.</param>
         /// <param name="destinationType">The type to convert to.</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>The <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             if (destinationType == null)
@@ -781,9 +781,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="sourceValue">The value to convert from.</param>
         /// <param name="destinationType">The type to convert to.</param>
         /// <param name="formatProvider">The format provider to use like in IFormattable's ToString.</param>
-        /// <param name="ignoreCase">true if case should be ignored.</param>
+        /// <param name="ignoreCase">True if case should be ignored.</param>
         /// <returns>SourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.</returns>
-        /// <exception cref="InvalidCastException">if no conversion was possible.</exception>
+        /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public override object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             throw new NotImplementedException();

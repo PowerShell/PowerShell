@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Write a line to the output device.
         /// </summary>
-        /// <param name="s">line to write.</param>
+        /// <param name="s">Line to write.</param>
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Constructor for the class.
         /// </summary>
-        /// <param name="printerName">name of printer, if null use default printer.</param>
+        /// <param name="printerName">Name of printer, if null use default printer.</param>
         internal PrinterLineOutput(string printerName)
         {
             _printerName = printerName;
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Callback to be called when IConsole.WriteLine() is called by WriteLineHelper.
         /// </summary>
-        /// <param name="s">string to write.</param>
+        /// <param name="s">String to write.</param>
         private void OnWriteLine(string s)
         {
             _lines.Enqueue(s);
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// This is called when the WriteLineHelper needs to write a line whose length
         /// is the same as the width of the screen buffer.
         /// </summary>
-        /// <param name="s">string to write.</param>
+        /// <param name="s">String to write.</param>
         private void OnWrite(string s)
         {
             _lines.Enqueue(s);
@@ -206,8 +206,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Event fired for each page to print.
         /// </summary>
-        /// <param name="sender">sender, not used.</param>
-        /// <param name="ev">print page event.</param>
+        /// <param name="sender">Sender, not used.</param>
+        /// <param name="ev">Print page event.</param>
         private void pd_PrintPage(object sender, PrintPageEventArgs ev)
         {
             float yPos = 0; // GDI+ coordinate down the page

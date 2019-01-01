@@ -244,11 +244,11 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Writes a single event
         /// </summary>
-        /// <param name="id">event id.</param>
+        /// <param name="id">Event id.</param>
         /// <param name="channel"></param>
         /// <param name="opcode"></param>
         /// <param name="task"></param>
-        /// <param name="logContext">log context.</param>
+        /// <param name="logContext">Log context.</param>
         /// <param name="payLoad"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {

@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="s">expression.</param>
+        /// <param name="s">Expression.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public PSPropertyExpression(string s)
             : this(s, false)

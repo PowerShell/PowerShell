@@ -30,8 +30,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="errorRecord">the error record that is wrapped.</param>
-        /// <param name="originInfo">origin information.</param>
+        /// <param name="errorRecord">The error record that is wrapped.</param>
+        /// <param name="originInfo">Origin information.</param>
         public RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo) : this(errorRecord, originInfo, null) { }
 
         /// <summary>
@@ -122,8 +122,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="progressRecord">the progress record that is wrapped.</param>
-        /// <param name="originInfo">origin information.</param>
+        /// <param name="progressRecord">The progress record that is wrapped.</param>
+        /// <param name="originInfo">Origin information.</param>
         public RemotingProgressRecord(ProgressRecord progressRecord, OriginInfo originInfo) :
             base(Validate(progressRecord).ActivityId, Validate(progressRecord).Activity, Validate(progressRecord).StatusDescription)
         {
@@ -343,8 +343,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// public constructor
         /// </summary>
-        /// <param name="computerName">machine name.</param>
-        /// <param name="runspaceID">instance id of runspace.</param>
+        /// <param name="computerName">Machine name.</param>
+        /// <param name="runspaceID">Instance id of runspace.</param>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
         public OriginInfo(string computerName, Guid runspaceID)
             : this(computerName, runspaceID, Guid.Empty)
@@ -353,9 +353,9 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// public constructor
         /// </summary>
-        /// <param name="computerName">machine name.</param>
-        /// <param name="runspaceID">instance id of runspace.</param>
-        /// <param name="instanceID">instance id for the origin object.</param>
+        /// <param name="computerName">Machine name.</param>
+        /// <param name="runspaceID">Instance id of runspace.</param>
+        /// <param name="instanceID">Instance id for the origin object.</param>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
         public OriginInfo(string computerName, Guid runspaceID, Guid instanceID)
         {

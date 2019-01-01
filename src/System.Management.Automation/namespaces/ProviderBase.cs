@@ -112,7 +112,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         internal virtual bool IsFilterSet()
         {
-            bool filterSet = !String.IsNullOrEmpty(Filter);
+            bool filterSet = !string.IsNullOrEmpty(Filter);
             return filterSet;
         }
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Provider
                 }
 
                 // Check that the provider supports the use of filters
-                if ((!String.IsNullOrEmpty(value.Filter)) &&
+                if ((!string.IsNullOrEmpty(value.Filter)) &&
                     (!CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Filter, _providerInformation)))
                 {
                     throw PSTraceSource.NewNotSupportedException(
@@ -1407,12 +1407,12 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (String.IsNullOrEmpty(baseName))
+                if (string.IsNullOrEmpty(baseName))
                 {
                     throw PSTraceSource.NewArgumentException("baseName");
                 }
 
-                if (String.IsNullOrEmpty(resourceId))
+                if (string.IsNullOrEmpty(resourceId))
                 {
                     throw PSTraceSource.NewArgumentException("resourceId");
                 }
@@ -1826,12 +1826,12 @@ namespace System.Management.Automation.Provider
                 }
                 else
                 {
-                    parentPath = navProvider.GetParentPath(path, String.Empty, Context);
+                    parentPath = navProvider.GetParentPath(path, string.Empty, Context);
                 }
 
-                string providerQualifiedParentPath = String.Empty;
+                string providerQualifiedParentPath = string.Empty;
 
-                if (!String.IsNullOrEmpty(parentPath))
+                if (!string.IsNullOrEmpty(parentPath))
                 {
                     providerQualifiedParentPath =
                         LocationGlobber.GetProviderQualifiedPath(parentPath, ProviderInfo);

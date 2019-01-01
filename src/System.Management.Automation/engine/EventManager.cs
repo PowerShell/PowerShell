@@ -754,7 +754,7 @@ namespace System.Management.Automation
                 if (PSEngineEvent.EngineEvents.Contains(sourceIdentifier))
                 {
                     engineEventSourceIdentifier = sourceIdentifier;
-                    isOnIdleEvent = String.Equals(engineEventSourceIdentifier, PSEngineEvent.OnIdle, StringComparison.OrdinalIgnoreCase);
+                    isOnIdleEvent = string.Equals(engineEventSourceIdentifier, PSEngineEvent.OnIdle, StringComparison.OrdinalIgnoreCase);
                 }
             }
 
@@ -1319,7 +1319,7 @@ namespace System.Management.Automation
                 foreach (PSEventSubscriber currentSubscriber in _eventSubscribers.Keys)
                 {
                     bool takeActionForEvent = false;
-                    if (String.Equals(currentSubscriber.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(currentSubscriber.SourceIdentifier, sourceIdentifier, StringComparison.OrdinalIgnoreCase))
                     {
                         if (forNewEventProcessing)
                         {
@@ -2057,7 +2057,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            return (String.Equals(SubscriptionId, other.SubscriptionId));
+            return (string.Equals(SubscriptionId, other.SubscriptionId));
         }
 
         /// <summary>
@@ -2179,7 +2179,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="args">event arguments.</param>
+        /// <param name="args">Event arguments.</param>
         public PSEventArgs(T args)
         {
             Args = args;

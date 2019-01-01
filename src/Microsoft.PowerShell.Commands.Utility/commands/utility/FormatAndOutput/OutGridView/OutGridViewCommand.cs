@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute formatting on a single object.
         /// </summary>
-        /// <param name="input">object to process.</param>
+        /// <param name="input">Object to process.</param>
         private void ProcessObject(PSObject input)
         {
             // Make sure the OGV window is not closed.
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose.</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)

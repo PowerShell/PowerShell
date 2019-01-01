@@ -58,8 +58,8 @@ namespace Microsoft.PowerShell.Commands
         /// Resolve all the machine names provided. Basically, if a machine
         /// name is '.' assume localhost
         /// </summary>
-        /// <param name="computerNames">array of computer names to resolve.</param>
-        /// <param name="resolvedComputerNames">resolved array of machine names.</param>
+        /// <param name="computerNames">Array of computer names to resolve.</param>
+        /// <param name="resolvedComputerNames">Resolved array of machine names.</param>
         protected void ResolveComputerNames(string[] computerNames, out string[] resolvedComputerNames)
         {
             if (computerNames == null)
@@ -87,13 +87,13 @@ namespace Microsoft.PowerShell.Commands
         /// Resolves a computer name. If its null or empty
         /// its assumed to be localhost
         /// </summary>
-        /// <param name="computerName">computer name to resolve.</param>
+        /// <param name="computerName">Computer name to resolve.</param>
         /// <returns>Resolved computer name.</returns>
         protected string ResolveComputerName(string computerName)
         {
             Diagnostics.Assert(computerName != null, "Null ComputerName");
 
-            if (String.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 //tracer.WriteEvent(ref PSEventDescriptors.PS_EVENT_HOSTNAMERESOLVE);
                 //tracer.Dispose();
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string resolvedShell;
 
-            if (!String.IsNullOrEmpty(shell))
+            if (!string.IsNullOrEmpty(shell))
             {
                 resolvedShell = shell;
             }
@@ -246,13 +246,13 @@ namespace Microsoft.PowerShell.Commands
         ///     2. DEFAULTREMOTEAPPNAME variable set
         ///     3. WSMan
         /// </summary>
-        /// <param name="appName">application name to resolve.</param>
+        /// <param name="appName">Application name to resolve.</param>
         /// <returns>Resolved appname.</returns>
         protected string ResolveAppName(string appName)
         {
             string resolvedAppName;
 
-            if (!String.IsNullOrEmpty(appName))
+            if (!string.IsNullOrEmpty(appName))
             {
                 resolvedAppName = appName;
             }
@@ -850,10 +850,10 @@ namespace Microsoft.PowerShell.Commands
         /// Parse a hostname used with SSH Transport to get embedded
         /// username and/or port.
         /// </summary>
-        /// <param name="hostname">host name to parse.</param>
-        /// <param name="host">resolved target host.</param>
-        /// <param name="userName">resolved target user name.</param>
-        /// <param name="port">resolved target port.</param>
+        /// <param name="hostname">Host name to parse.</param>
+        /// <param name="host">Resolved target host.</param>
+        /// <param name="userName">Resolved target user name.</param>
+        /// <param name="port">Resolved target port.</param>
         protected void ParseSshHostName(string hostname, out string host, out string userName, out int port)
         {
             host = hostname;
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
                 Uri uri = new System.Uri("ssh://" + hostname);
                 host = ResolveComputerName(uri.Host);
                 ValidateComputerName(new string[] { host });
-                if (uri.UserInfo != String.Empty)
+                if (uri.UserInfo != string.Empty)
                 {
                     userName = uri.UserInfo;
                 }
@@ -916,7 +916,7 @@ namespace Microsoft.PowerShell.Commands
                         var resolvedComputerName = ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
                         ParseSshHostName(resolvedComputerName, out string host, out string userName, out int port);
                         connectionInfo.ComputerName = host;
-                        if (userName != String.Empty)
+                        if (userName != string.Empty)
                         {
                             connectionInfo.UserName = userName;
                         }
@@ -1111,7 +1111,7 @@ namespace Microsoft.PowerShell.Commands
                     idleTimeout / 1000, BaseTransportManager.MinimumIdleTimeout / 1000));
             }
 
-            if (String.IsNullOrEmpty(_appName))
+            if (string.IsNullOrEmpty(_appName))
             {
                 _appName = ResolveAppName(null);
             }
@@ -1825,7 +1825,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a pipeline from the powershell
         /// </summary>
-        /// <param name="remoteRunspace">runspace on which to create the pipeline.</param>
+        /// <param name="remoteRunspace">Runspace on which to create the pipeline.</param>
         /// <returns>A pipeline.</returns>
         internal Pipeline CreatePipeline(RemoteRunspace remoteRunspace)
         {
@@ -2927,10 +2927,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm name or container id with optional session name
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline.</param>
+        /// <param name="writeobject">If true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <param name="isContainer">if true the target is a container instead of virtual machine.</param>
+        /// <param name="isContainer">If true the target is a container instead of virtual machine.</param>
         /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerId(bool writeobject,
             SessionFilterState filterState,
@@ -2942,7 +2942,7 @@ namespace Microsoft.PowerShell.Commands
             bool supportWildChar;
             string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
-                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
+                string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2974,7 +2974,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string sessionName in sessionNames)
                 {
                     WildcardPattern sessionNamePattern =
-                        String.IsNullOrEmpty(sessionName) ? null : WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
+                        string.IsNullOrEmpty(sessionName) ? null : WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(session.VMName)
@@ -2995,10 +2995,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm name or container id with session instanceid
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline.</param>
+        /// <param name="writeobject">If true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
-        /// <param name="isContainer">if true the target is a container instead of virtual machine.</param>
+        /// <param name="isContainer">If true the target is a container instead of virtual machine.</param>
         /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
@@ -3009,7 +3009,7 @@ namespace Microsoft.PowerShell.Commands
             TargetMachineType computerType;
             bool supportWildChar;
             WildcardPattern configurationNamePattern =
-                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
+                string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -3053,7 +3053,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm guid and optional session name
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline.</param>
+        /// <param name="writeobject">If true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>List of matching runspaces.</returns>
@@ -3063,7 +3063,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
-                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
+                string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -3078,7 +3078,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string sessionName in sessionNames)
                 {
                     WildcardPattern sessionNamePattern =
-                        String.IsNullOrEmpty(sessionName) ? null : WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
+                        string.IsNullOrEmpty(sessionName) ? null : WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
@@ -3098,7 +3098,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the matching runspaces by vm guid and session instanceid
         /// </summary>
-        /// <param name="writeobject">if true write the object down the pipeline.</param>
+        /// <param name="writeobject">If true write the object down the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>List of matching runspaces.</returns>
@@ -3107,7 +3107,7 @@ namespace Microsoft.PowerShell.Commands
             string configurationName)
         {
             WildcardPattern configurationNamePattern =
-                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
+                string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -3134,7 +3134,7 @@ namespace Microsoft.PowerShell.Commands
         /// Write the matching runspace objects down the pipeline, or add to the list.
         /// </summary>
         /// <param name="matchingRunspaceInfos">The matching runspaces.</param>
-        /// <param name="writeobject">if true write the object down the pipeline. Otherwise, add to the list.</param>
+        /// <param name="writeobject">If true write the object down the pipeline. Otherwise, add to the list.</param>
         /// <param name="matches">The list we add the matching runspaces to.</param>
         private void WriteOrAddMatches(List<PSSession> matchingRunspaceInfos,
             bool writeobject,
@@ -3300,7 +3300,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Internal constructor
         /// </summary>
-        /// <param name="pipeline">pipeline object associated with this operation.</param>
+        /// <param name="pipeline">Pipeline object associated with this operation.</param>
         internal ExecutionCmdletHelperRunspace(Pipeline pipeline)
         {
             this.pipeline = pipeline;
@@ -3373,7 +3373,7 @@ namespace Microsoft.PowerShell.Commands
         /// StartOperation and StopOperation. Here nothing more is done excepting raising
         /// the OperationComplete event appropriately which will be handled by the cmdlet
         /// </summary>
-        /// <param name="sender">source of this event.</param>
+        /// <param name="sender">Source of this event.</param>
         /// <param name="stateEventArgs">object describing state information about the
         /// pipeline</param>
         private void HandlePipelineStateChanged(object sender, PipelineStateEventArgs stateEventArgs)
@@ -3463,7 +3463,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="remoteRunspace">RemoteRunspace that is associated
         /// with this operation</param>
-        /// <param name="pipeline">pipeline created from the remote runspace.</param>
+        /// <param name="pipeline">Pipeline created from the remote runspace.</param>
         /// <param name="invokeAndDisconnect">Indicates if pipeline should be disconnected after invoking command.</param>
         internal ExecutionCmdletHelperComputerName(RemoteRunspace remoteRunspace, Pipeline pipeline, bool invokeAndDisconnect = false)
         {
@@ -3536,8 +3536,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the state changed event for runspace operations
         /// </summary>
-        /// <param name="sender">sender of this information.</param>
-        /// <param name="stateEventArgs">object describing this event.</param>
+        /// <param name="sender">Sender of this information.</param>
+        /// <param name="stateEventArgs">Object describing this event.</param>
         private void HandleRunspaceStateChanged(object sender,
                 RunspaceStateEventArgs stateEventArgs)
         {
@@ -3607,8 +3607,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the state changed event for the pipeline.
         /// </summary>
-        /// <param name="sender">sender of this information.</param>
-        /// <param name="stateEventArgs">object describing this event.</param>
+        /// <param name="sender">Sender of this information.</param>
+        /// <param name="stateEventArgs">Object describing this event.</param>
         private void HandlePipelineStateChanged(object sender,
                         PipelineStateEventArgs stateEventArgs)
         {
@@ -3689,7 +3689,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="cmdlet">reference to calling cmdlet. This will be used for
         /// for writing errors</param>
         /// <param name="allowNonexistingPaths"></param>
-        /// <param name="resourceString">resource string for error when path is not from filesystem provider.</param>
+        /// <param name="resourceString">Resource string for error when path is not from filesystem provider.</param>
         /// <returns>A fully qualified string representing filename.</returns>
         internal static string ResolveProviderAndPath(string path, bool isLiteralPath, PSCmdlet cmdlet, bool allowNonexistingPaths, string resourceString)
         {

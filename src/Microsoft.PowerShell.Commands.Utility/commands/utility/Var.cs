@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
 
             List<PSVariable> result = new List<PSVariable>();
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 name = "*";
             }
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
             // view.
 
             IDictionary<string, PSVariable> variableTable = null;
-            if (String.IsNullOrEmpty(lookupScope))
+            if (string.IsNullOrEmpty(lookupScope))
             {
                 variableTable = SessionState.Internal.GetVariableTable();
             }
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Force)
             {
                 PSVariable varFound = null;
-                if (String.IsNullOrEmpty(Scope))
+                if (string.IsNullOrEmpty(Scope))
                 {
                     varFound =
                         SessionState.PSVariable.GetAtScope(Name, "local");
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(Scope))
+                    if (string.IsNullOrEmpty(Scope))
                     {
                         SessionState.Internal.NewVariable(newVariable, Force);
                     }
@@ -818,7 +818,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool wasFiltered = false;
 
-                if (!String.IsNullOrEmpty(Scope))
+                if (!string.IsNullOrEmpty(Scope))
                 {
                     // We really only need to find matches if the scope was specified.
                     // If the scope wasn't specified then we need to create the
@@ -851,8 +851,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ScopedItemOptions newOptions = ScopedItemOptions.None;
 
-                        if (!String.IsNullOrEmpty(Scope) &&
-                            String.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
+                        if (!string.IsNullOrEmpty(Scope) &&
+                            string.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
                         {
                             newOptions = ScopedItemOptions.Private;
                         }
@@ -876,7 +876,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (Description == null)
                         {
-                            Description = String.Empty;
+                            Description = string.Empty;
                         }
 
                         varToSet.Description = Description;
@@ -895,7 +895,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             object result = null;
 
-                            if (String.IsNullOrEmpty(Scope))
+                            if (string.IsNullOrEmpty(Scope))
                             {
                                 result =
                                     SessionState.Internal.SetVariable(varToSet, Force, origin);
@@ -1151,7 +1151,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            if (String.IsNullOrEmpty(Scope))
+                            if (string.IsNullOrEmpty(Scope))
                             {
                                 SessionState.Internal.RemoveVariable(matchingVariable, _force);
                             }

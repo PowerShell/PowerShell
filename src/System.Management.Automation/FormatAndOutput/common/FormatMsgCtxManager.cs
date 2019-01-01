@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             /// <summary>
             /// </summary>
-            /// <param name="parentContextInStack">parent context in the stack, it can be null.</param>
+            /// <param name="parentContextInStack">Parent context in the stack, it can be null.</param>
             internal OutputContext(OutputContext parentContextInStack)
             {
                 ParentContext = parentContextInStack;
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// process an object from an input stream. It manages the context stack and
         /// calls back on the specified event delegates
         /// </summary>
-        /// <param name="o">object to process.</param>
+        /// <param name="o">Object to process.</param>
         internal void Process(object o)
         {
             PacketInfoData formatData = o as PacketInfoData;

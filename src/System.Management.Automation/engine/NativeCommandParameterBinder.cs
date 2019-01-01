@@ -155,7 +155,7 @@ namespace System.Management.Automation
         /// <param name="context">Execution context instance.</param>
         /// <param name="obj">The object to append.</param>
         /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
-        /// <param name="sawVerbatimArgumentMarker">true if the argument occurs after --%.</param>
+        /// <param name="sawVerbatimArgumentMarker">True if the argument occurs after --%.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
         private void appendOneNativeArgument(ExecutionContext context, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes)
         {
@@ -190,7 +190,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!String.IsNullOrEmpty(arg))
+                if (!string.IsNullOrEmpty(arg))
                 {
                     _arguments.Append(separator);
 

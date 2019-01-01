@@ -886,7 +886,7 @@ namespace System.Management.Automation
                 // Determine if we need to quote the paths we parse
 
                 lastWord = lastWord ?? string.Empty;
-                bool isLastWordEmpty = String.IsNullOrEmpty(lastWord);
+                bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
                 bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith("*", StringComparison.Ordinal);
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
 
@@ -992,7 +992,7 @@ namespace System.Management.Automation
                 result.AddRange(s1);
                 for (int i = 0, j = 0; i < s2.Count; ++i)
                 {
-                    if (j < s1.Count && String.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
+                    if (j < s1.Count && string.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
                     {
                         ++j;
                         continue;
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
 
             private static List<PathItemAndConvertedPath> PSv2FindMatches(PowerShellExecutionHelper helper, string path, bool shouldFullyQualifyPaths)
             {
-                Diagnostics.Assert(!String.IsNullOrEmpty(path), "path should have a value");
+                Diagnostics.Assert(!string.IsNullOrEmpty(path), "path should have a value");
                 var result = new List<PathItemAndConvertedPath>();
 
                 Exception exceptionThrown;
@@ -1086,14 +1086,14 @@ namespace System.Management.Automation
                 // It's OK to use script, since tab completion is useless when the remote Win7 machine is in nolanguage mode
                 if (!shouldFullyQualifyPaths)
                 {
-                    powershell.AddScript(String.Format(
+                    powershell.AddScript(string.Format(
                         CultureInfo.InvariantCulture,
                         "& {{ trap {{ continue }} ; resolve-path {0} -Relative -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
                 }
                 else
                 {
-                    powershell.AddScript(String.Format(
+                    powershell.AddScript(string.Format(
                         CultureInfo.InvariantCulture,
                         "& {{ trap {{ continue }} ; resolve-path {0} -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));

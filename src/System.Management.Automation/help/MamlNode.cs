@@ -214,9 +214,9 @@ namespace System.Management.Automation
 
                 if (xmlNode.Attributes["type"] != null)
                 {
-                    if (String.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
-                    else if (String.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (string.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");
                 }
 
@@ -371,9 +371,9 @@ namespace System.Management.Automation
         /// "attrib1" will be lost. This seems to be OK with current practice of authoring
         /// monad command help.
         /// </summary>
-        /// <param name="properties">property hashtable.</param>
-        /// <param name="name">property name.</param>
-        /// <param name="mshObject">property value.</param>
+        /// <param name="properties">Property hashtable.</param>
+        /// <param name="name">Property name.</param>
+        /// <param name="mshObject">Property value.</param>
         private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
             ArrayList propertyValues = (ArrayList)properties[name];
@@ -654,7 +654,7 @@ namespace System.Management.Automation
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (childNode.InnerText.Trim().Equals(String.Empty))
+                    if (childNode.InnerText.Trim().Equals(string.Empty))
                     {
                         continue;
                     }
@@ -758,7 +758,7 @@ namespace System.Management.Automation
 
             StringBuilder sb = new StringBuilder();
 
-            if (newLine && !xmlNode.InnerText.Trim().Equals(String.Empty))
+            if (newLine && !xmlNode.InnerText.Trim().Equals(string.Empty))
             {
                 sb.AppendLine(xmlNode.InnerText.Trim());
             }
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeError(xmlNode, childNode);
             }
 
-            if (String.IsNullOrEmpty(term))
+            if (string.IsNullOrEmpty(term))
                 return null;
 
             PSObject mshObject = new PSObject();
@@ -1142,7 +1142,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Trim empty lines from the either end of an string array.
         /// </summary>
-        /// <param name="lines">lines to trim.</param>
+        /// <param name="lines">Lines to trim.</param>
         /// <returns>An string array with empty lines trimed on either end.</returns>
         private static string[] TrimLines(string[] lines)
         {
@@ -1226,11 +1226,11 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool IsEmptyLine(string line)
         {
-            if (String.IsNullOrEmpty(line))
+            if (string.IsNullOrEmpty(line))
                 return true;
 
             string trimedLine = line.Trim();
-            if (String.IsNullOrEmpty(trimedLine))
+            if (string.IsNullOrEmpty(trimedLine))
                 return true;
 
             return false;

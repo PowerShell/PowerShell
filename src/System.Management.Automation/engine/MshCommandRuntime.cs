@@ -295,7 +295,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display progress information
         /// </summary>
-        /// <param name="progressRecord">progress information.</param>
+        /// <param name="progressRecord">Progress information.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -426,7 +426,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display debug information
         /// </summary>
-        /// <param name="text">debug output.</param>
+        /// <param name="text">Debug output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -523,7 +523,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display verbose information
         /// </summary>
-        /// <param name="text">verbose output.</param>
+        /// <param name="text">Verbose output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -614,7 +614,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Display warning information
         /// </summary>
-        /// <param name="text">warning output.</param>
+        /// <param name="text">Warning output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -846,7 +846,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Write text into pipeline execution log.
         /// </summary>
-        /// <param name="text">text to be written to log.</param>
+        /// <param name="text">Text to be written to log.</param>
         /// <remarks>
         /// Use WriteCommandDetail to write important information about cmdlet execution to
         /// pipeline execution log.
@@ -870,7 +870,7 @@ namespace System.Management.Automation
 
             if (cmdletInfo != null)
             {
-                if (String.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -907,7 +907,7 @@ namespace System.Management.Automation
 
         internal void SetupOutVariable()
         {
-            if (String.IsNullOrEmpty(this.OutVariable))
+            if (string.IsNullOrEmpty(this.OutVariable))
             {
                 return;
             }
@@ -917,9 +917,9 @@ namespace System.Management.Automation
             // Handle the creation of OutVariable in the case of Out-Default specially,
             // as it needs to handle much of its OutVariable support itself.
             if (
-                (!String.IsNullOrEmpty(this.OutVariable)) &&
+                (!string.IsNullOrEmpty(this.OutVariable)) &&
                 (!(this.OutVariable.StartsWith("+", StringComparison.Ordinal))) &&
-                String.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
+                string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)
                     _state = new SessionState(Context.EngineSessionState);
@@ -947,7 +947,7 @@ namespace System.Management.Automation
             // This can't use the common SetupVariable implementation, as this needs to persist for an entire
             // pipeline.
 
-            if (String.IsNullOrEmpty(this.PipelineVariable))
+            if (string.IsNullOrEmpty(this.PipelineVariable))
             {
                 return;
             }
@@ -1252,8 +1252,8 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1368,8 +1368,8 @@ namespace System.Management.Automation
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file",
         ///                         out shouldProcessReason))
         ///                     {
@@ -1524,7 +1524,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            if (String.IsNullOrEmpty(verboseWarning))
+            if (string.IsNullOrEmpty(verboseWarning))
                 verboseWarning = StringUtil.Format(CommandBaseStrings.ShouldProcessWarningFallback,
                     verboseDescription);
 
@@ -1681,14 +1681,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {
@@ -1861,14 +1861,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -2048,7 +2048,7 @@ namespace System.Management.Automation
 
             // This code forces the stack trace and source fields to be populated
             if (errorRecord.Exception != null
-                && String.IsNullOrEmpty(errorRecord.Exception.StackTrace))
+                && string.IsNullOrEmpty(errorRecord.Exception.StackTrace))
             {
                 try
                 {
@@ -2332,7 +2332,7 @@ namespace System.Management.Automation
         /// The general pattern is to call
         /// throw ManageException(e);
         /// </summary>
-        /// <param name="e">the exception.</param>
+        /// <param name="e">The exception.</param>
         /// <returns>PipelineStoppedException.</returns>
         public Exception ManageException(Exception e)
         {
@@ -2494,7 +2494,7 @@ namespace System.Management.Automation
 
         internal void SetupVariable(VariableStreamKind streamKind, string variableName, ref IList varList)
         {
-            if (String.IsNullOrEmpty(variableName))
+            if (string.IsNullOrEmpty(variableName))
             {
                 return;
             }
@@ -2631,7 +2631,7 @@ namespace System.Management.Automation
         /// a <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>
         /// rather than the real exception.
         /// </remarks>
-        /// <param name="errorRecord">error.</param>
+        /// <param name="errorRecord">Error.</param>
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
         /// </exception>
@@ -3463,8 +3463,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper for continue prompt, handles Inquire
         /// </summary>
-        /// <param name="inquireMessage">may be null.</param>
-        /// <param name="inquireCaption">may be null.</param>
+        /// <param name="inquireMessage">May be null.</param>
+        /// <param name="inquireCaption">May be null.</param>
         /// <param name="allowYesToAll"></param>
         /// <param name="allowNoToAll"></param>
         /// <param name="replaceNoWithHalt"></param>
@@ -3550,12 +3550,12 @@ namespace System.Management.Automation
                 pauseOption = currentOption++;
             }
 
-            if (String.IsNullOrEmpty(inquireMessage))
+            if (string.IsNullOrEmpty(inquireMessage))
             {
                 inquireMessage = CommandBaseStrings.ShouldContinuePromptCaption;
             }
 
-            if (String.IsNullOrEmpty(inquireCaption))
+            if (string.IsNullOrEmpty(inquireCaption))
             {
                 inquireCaption = CommandBaseStrings.InquireCaptionDefault;
             }

@@ -117,7 +117,7 @@ namespace System.Management.Automation
         private static IEnumerable<LogProvider> GetLogProvider(LogContext logContext)
         {
             System.Diagnostics.Debug.Assert(logContext != null);
-            System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(logContext.ShellId));
+            System.Diagnostics.Debug.Assert(!string.IsNullOrEmpty(logContext.ShellId));
 
             return GetLogProvider(logContext.ShellId);
         }
@@ -308,7 +308,7 @@ namespace System.Management.Automation
         ///
         /// This API is currently used only by runspace before engine start.
         /// </summary>
-        /// <param name="logContext">logContext to be.</param>
+        /// <param name="logContext">LogContext to be.</param>
         /// <param name="eventId">EventId for the event to be logged.</param>
         /// <param name="exception">Exception associated with this event.</param>
         /// <param name="additionalInfo">Additional information for this event.</param>
@@ -350,9 +350,9 @@ namespace System.Management.Automation
         /// Variant form of this function is defined below, which will make parameter additionalInfo
         /// optional.
         /// </summary>
-        /// <param name="executionContext">execution context for current engine instance.</param>
-        /// <param name="engineState">new engine state.</param>
-        /// <param name="invocationInfo">invocationInfo for current command that is running.</param>
+        /// <param name="executionContext">Execution context for current engine instance.</param>
+        /// <param name="engineState">New engine state.</param>
+        /// <param name="invocationInfo">InvocationInfo for current command that is running.</param>
         internal static void LogEngineLifecycleEvent(ExecutionContext executionContext,
                                                 EngineState engineState,
                                                 InvocationInfo invocationInfo)
@@ -440,8 +440,8 @@ namespace System.Management.Automation
         /// This is the only form of CommandLifecycleEvent logging api.
         /// </summary>
         /// <param name="executionContext">Execution Context for the current running engine.</param>
-        /// <param name="commandState">new command state.</param>
-        /// <param name="invocationInfo">invocation data for current command that is running.</param>
+        /// <param name="commandState">New command state.</param>
+        /// <param name="invocationInfo">Invocation data for current command that is running.</param>
         internal static void LogCommandLifecycleEvent(ExecutionContext executionContext,
                                                 CommandState commandState,
                                                 InvocationInfo invocationInfo)
@@ -482,8 +482,8 @@ namespace System.Management.Automation
         /// the command failed security check.
         /// </summary>
         /// <param name="executionContext">Execution Context for the current running engine.</param>
-        /// <param name="commandState">new command state.</param>
-        /// <param name="commandName">current command that is running.</param>
+        /// <param name="commandState">New command state.</param>
+        /// <param name="commandName">Current command that is running.</param>
         internal static void LogCommandLifecycleEvent(ExecutionContext executionContext,
                                                 CommandState commandState,
                                                 string commandName)
@@ -522,8 +522,8 @@ namespace System.Management.Automation
         /// LogPipelineExecutionDetailEvent: Log a pipeline execution detail event.
         /// </summary>
         /// <param name="executionContext">Execution Context for the current running engine.</param>
-        /// <param name="detail">detail to be logged for this pipeline execution detail.</param>
-        /// <param name="invocationInfo">invocation data for current command that is running.</param>
+        /// <param name="detail">Detail to be logged for this pipeline execution detail.</param>
+        /// <param name="invocationInfo">Invocation data for current command that is running.</param>
         internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
                                                             List<string> detail,
                                                             InvocationInfo invocationInfo)
@@ -552,9 +552,9 @@ namespace System.Management.Automation
         /// this event.
         /// </summary>
         /// <param name="executionContext">Execution Context for the current running engine.</param>
-        /// <param name="detail">detail to be logged for this pipeline execution detail.</param>
-        /// <param name="scriptName">script that is currently running.</param>
-        /// <param name="commandLine">command line that is currently running.</param>
+        /// <param name="detail">Detail to be logged for this pipeline execution detail.</param>
+        /// <param name="scriptName">Script that is currently running.</param>
+        /// <param name="commandLine">Command line that is currently running.</param>
         internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
                                                             List<string> detail,
                                                             string scriptName,
@@ -775,7 +775,7 @@ namespace System.Management.Automation
                 logContext.HostId = (string)executionContext.EngineHostInterface.InstanceId.ToString();
             }
 
-            logContext.HostApplication = String.Join(" ", Environment.GetCommandLineArgs());
+            logContext.HostApplication = string.Join(" ", Environment.GetCommandLineArgs());
 
             if (executionContext.CurrentRunspace != null)
             {

@@ -1137,10 +1137,10 @@ namespace System.Management.Automation.Tracing
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
                                         parameters == null ? message : StringUtil.Format(message, parameters),
-                                        String.Empty, // Job
-                                        String.Empty, // Activity name
-                                        String.Empty, // Activity GUID
-                                        String.Empty);
+                                        string.Empty, // Job
+                                        string.Empty, // Activity name
+                                        string.Empty, // Activity GUID
+                                        string.Empty);
         }
 
         /// <summary>
@@ -1189,9 +1189,9 @@ namespace System.Management.Automation.Tracing
                                         className, methodName, workflowId.ToString(),
                                         parameters == null ? message : StringUtil.Format(message, parameters),
                                         sb.ToString(),// Job
-                                        String.Empty, // Activity name
-                                        String.Empty, // Activity GUID
-                                        String.Empty);
+                                        string.Empty, // Activity name
+                                        string.Empty, // Activity GUID
+                                        string.Empty);
         }
 
         /// <summary>
@@ -1458,10 +1458,10 @@ namespace System.Management.Automation.Tracing
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
                                         parameters == null ? message : StringUtil.Format(message, parameters),
-                                        String.Empty, // Job
+                                        string.Empty, // Job
                                         activityName,
                                         activityId.ToString(),
-                                        String.Empty);
+                                        string.Empty);
         }
 
         /// <summary>

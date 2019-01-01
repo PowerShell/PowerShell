@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
                             isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
                         }
 
-                        if (String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
+                        if (string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
                         {
                             string parentName = path.Substring(0, path.Length - childName.Length);
                             path = parentName;
@@ -1352,9 +1352,9 @@ namespace System.Management.Automation
                             // Should glob paths and files that match tem*, but then
                             // recurse into all subdirectories and do the same for
                             // those directories.
-                            if (!String.IsNullOrEmpty(path) && !IsItemContainer(path))
+                            if (!string.IsNullOrEmpty(path) && !IsItemContainer(path))
                             {
-                                if (!String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
+                                if (!string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (context.Include != null)
                                     {
@@ -1673,7 +1673,7 @@ namespace System.Management.Automation
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
         /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks.</param>
+        /// <param name="skipIsItemContainerCheck">A hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation
         /// The count of items that do not match any include/exclude criteria.
         /// </param>
         /// <param name="processMode">Indicates if this is a Enumerate/Remove operation.</param>
-        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks.</param>
+        /// <param name="skipIsItemContainerCheck">A hint used to skip IsItemContainer checks.</param>
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -2385,7 +2385,7 @@ namespace System.Management.Automation
                         DoGetChildNamesManually(
                             providerInstance,
                             providerPath,
-                            String.Empty,
+                            string.Empty,
                             returnContainers,
                             includeMatcher,
                             excludeMatcher,
@@ -2471,7 +2471,7 @@ namespace System.Management.Automation
                     DoGetChildNamesManually(
                         providerInstance,
                         providerPath,
-                        String.Empty,
+                        string.Empty,
                         returnContainers,
                         includeMatcher,
                         excludeMatcher,
@@ -3440,7 +3440,7 @@ namespace System.Management.Automation
 
                 // Only glob the path if the name is specified
 
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     string providerPath =
                         Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
@@ -3465,7 +3465,7 @@ namespace System.Management.Automation
                     // to pass on to the provider.
 
                     string composedPath = providerPath;
-                    if (!String.IsNullOrEmpty(name))
+                    if (!string.IsNullOrEmpty(name))
                     {
                         composedPath = MakePath(providerInstance, providerPath, name, context);
                     }
@@ -3475,7 +3475,7 @@ namespace System.Management.Automation
                     // function can be abused
                     if (context.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode &&
                         (providerInstance is Microsoft.PowerShell.Commands.FunctionProvider) &&
-                        (String.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
+                        (string.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
                     {
                         throw
                             PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -3505,7 +3505,7 @@ namespace System.Management.Automation
 
                         string targetPath = content.ToString();
 
-                        if (String.IsNullOrEmpty(targetPath))
+                        if (string.IsNullOrEmpty(targetPath))
                         {
                             throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, targetPath);
                         }
@@ -3520,7 +3520,7 @@ namespace System.Management.Automation
                             out targetProvider,
                             out targetProviderInstance);
 
-                        if (String.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
+                        if (string.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
                         }
@@ -3917,7 +3917,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (String.IsNullOrEmpty(providerId))
+            if (string.IsNullOrEmpty(providerId))
             {
                 throw PSTraceSource.NewArgumentException("providerId");
             }
@@ -4097,7 +4097,7 @@ namespace System.Management.Automation
 
             if (copyPath == null)
             {
-                copyPath = String.Empty;
+                copyPath = string.Empty;
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -4163,7 +4163,7 @@ namespace System.Management.Automation
 
             if (copyPath == null)
             {
-                copyPath = String.Empty;
+                copyPath = string.Empty;
             }
 
             // Get the provider specific path for the destination
@@ -4195,7 +4195,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                            new ArgumentException(
-                               String.Format(System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemFromSessionToSession, "FromSession", "ToSession")),
+                               string.Format(System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemFromSessionToSession, "FromSession", "ToSession")),
                                "InvalidInput",
                                 ErrorCategory.InvalidArgument,
                                 dynamicParams));
@@ -4225,11 +4225,11 @@ namespace System.Management.Automation
             {
                 // Validate remote destination path
                 providerDestinationPath = copyPath;
-                if (String.IsNullOrEmpty(providerDestinationPath))
+                if (string.IsNullOrEmpty(providerDestinationPath))
                 {
                     context.WriteError(new ErrorRecord(
                                             new ArgumentNullException(
-                                                    String.Format(
+                                                    string.Format(
                                                     System.Globalization.CultureInfo.InvariantCulture,
                                                     SessionStateStrings.CopyItemRemotelyPathIsNullOrEmpty,
                                                     "Destination")),
@@ -4546,11 +4546,11 @@ namespace System.Management.Automation
                 "The providerInstance should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(sourcePath),
+                !string.IsNullOrEmpty(sourcePath),
                 "The sourcePath should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                !String.IsNullOrEmpty(destinationPath),
+                !string.IsNullOrEmpty(destinationPath),
                 "The destinationPath should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
@@ -4805,7 +4805,7 @@ namespace System.Management.Automation
                     {
                         context.WriteError(new ErrorRecord(
                             new InvalidOperationException(
-                                String.Format(
+                                string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture,
                                     SessionStateStrings.CopyItemSessionProperties,
                                     "LanguageMode",
@@ -4844,7 +4844,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                 new InvalidOperationException(
-                                    String.Format(
+                                    string.Format(
                                     System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemValidateRemotePath, path)),
                                     "FailedToValidateRemotePath",
                                     ErrorCategory.InvalidOperation,
@@ -4860,7 +4860,7 @@ namespace System.Management.Automation
                 {
                     context.WriteError(new ErrorRecord(
                                         new ArgumentException(
-                                            String.Format(
+                                            string.Format(
                                             System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.CopyItemRemotelyPathIsNotAbsolute, path)),
                                             "RemotePathIsNotAbsolute",
                                             ErrorCategory.InvalidArgument,
@@ -4889,7 +4889,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                             new ArgumentException(
-                                                String.Format(
+                                                string.Format(
                                                 System.Globalization.CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, path)),
                                                 "RemotePathNotFound",
                                                 ErrorCategory.InvalidArgument,
@@ -4907,7 +4907,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                     new InvalidOperationException(
-                                        String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                                        string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                             SessionStateStrings.CopyItemSessionProperties,
                                             "Availability", session.Availability)),
                                             "SessionIsNotAvailable",

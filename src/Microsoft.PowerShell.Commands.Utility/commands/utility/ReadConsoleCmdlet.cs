@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
 
                         string element = (string)LanguagePrimitives.ConvertTo(e.Current, typeof(string), CultureInfo.InvariantCulture);
 
-                        if (!String.IsNullOrEmpty(element))
+                        if (!string.IsNullOrEmpty(element))
                         {
                             // Prepend a space if the stringbuilder isn't empty...
                             // We could consider using $OFS here but that's probably more

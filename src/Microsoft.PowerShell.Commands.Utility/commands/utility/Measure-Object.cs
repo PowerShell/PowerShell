@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return String.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
+                return string.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
             }
         }
 
@@ -650,12 +650,12 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count chars in inStr.
             /// </summary>
-            /// <param name="inStr">string whose chars are counted.</param>
-            /// <param name="ignoreWhiteSpace">true to discount white space.</param>
+            /// <param name="inStr">String whose chars are counted.</param>
+            /// <param name="ignoreWhiteSpace">True to discount white space.</param>
             /// <returns>Number of chars in inStr.</returns>
             internal static int CountChar(string inStr, bool ignoreWhiteSpace)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
@@ -680,11 +680,11 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count words in inStr.
             /// </summary>
-            /// <param name="inStr">string whose words are counted.</param>
+            /// <param name="inStr">String whose words are counted.</param>
             /// <returns>Number of words in inStr.</returns>
             internal static int CountWord(string inStr)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }
@@ -714,11 +714,11 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Count lines in inStr.
             /// </summary>
-            /// <param name="inStr">string whose lines are counted.</param>
+            /// <param name="inStr">String whose lines are counted.</param>
             /// <returns>Number of lines in inStr.</returns>
             internal static int CountLine(string inStr)
             {
-                if (String.IsNullOrEmpty(inStr))
+                if (string.IsNullOrEmpty(inStr))
                 {
                     return 0;
                 }

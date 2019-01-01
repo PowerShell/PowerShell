@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// the old database is unchanged.
         /// The reference returned should NOT be modified by any means by the caller
         /// </summary>
-        /// <param name="mshsnapins">files to be loaded and errors to be updated.</param>
+        /// <param name="mshsnapins">Files to be loaded and errors to be updated.</param>
         /// <param name="authorizationManager">
         /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
         /// </param>
@@ -301,8 +301,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// NOTE: need to be protected by lock since not thread safe per se
         /// </summary>
         /// <param name="files">*.formal.xml files to be loaded.</param>
-        /// <param name="expressionFactory">expression factory to validate script blocks.</param>
-        /// <param name="acceptLoadingErrors">if true, load the database even if there are loading errors.</param>
+        /// <param name="expressionFactory">Expression factory to validate script blocks.</param>
+        /// <param name="acceptLoadingErrors">If true, load the database even if there are loading errors.</param>
         /// <param name="authorizationManager">
         /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
         /// </param>
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// it loads a database from file(s).
         /// </summary>
         /// <param name="files">*.formal.xml files to be loaded.</param>
-        /// <param name="expressionFactory">expression factory to validate script blocks.</param>
+        /// <param name="expressionFactory">Expression factory to validate script blocks.</param>
         /// <param name="authorizationManager">
         /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
         /// </param>
@@ -374,8 +374,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// True if the format data has been pre-validated (build time, manual testing, etc) so that validation can be
         /// skipped at runtime.
         /// </param>
-        /// <param name="logEntries">list of logger entries (errors, etc.) to return to the caller.</param>
-        /// <param name="success">true if no error occurred.</param>
+        /// <param name="logEntries">List of logger entries (errors, etc.) to return to the caller.</param>
+        /// <param name="success">True if no error occurred.</param>
         /// <returns>A database instance loaded from file(s).</returns>
         private static TypeInfoDataBase LoadFromFileHelper(
             Collection<PSSnapInTypeAndFormatErrors> files,
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// helper to to add any pre-load intrinsics to the db
         /// </summary>
-        /// <param name="db">db being initialized.</param>
+        /// <param name="db">Db being initialized.</param>
         private static void AddPreLoadIntrinsics(TypeInfoDataBase db)
         {
             // NOTE: nothing to add for the time being. Add here if needed.
@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// helper to to add any post-load intrinsics to the db
         /// </summary>
-        /// <param name="db">db being initialized.</param>
+        /// <param name="db">Db being initialized.</param>
         private static void AddPostLoadIntrinsics(TypeInfoDataBase db)
         {
             // add entry for the output of update-formatdata

@@ -1114,7 +1114,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     _path = inputStream;
                 }
@@ -1159,7 +1159,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string GetNodeText()
         {
-            string nodeText = String.Empty;
+            string nodeText = string.Empty;
             if (Node != null)
             {
                 if (Node.Value != null)

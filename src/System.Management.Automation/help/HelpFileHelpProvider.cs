@@ -291,7 +291,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Load help file based on the file path.
         /// </summary>
-        /// <param name="path">file path to load help from.</param>
+        /// <param name="path">File path to load help from.</param>
         /// <returns>Help info object loaded from the file.</returns>
         private HelpInfo LoadHelpFile(string path)
         {
@@ -309,7 +309,7 @@ namespace System.Management.Automation
 
             string name = fileName.Substring(0, fileName.Length - 9 /* ".help.txt".Length */);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             HelpInfo helpInfo = GetCache(path);

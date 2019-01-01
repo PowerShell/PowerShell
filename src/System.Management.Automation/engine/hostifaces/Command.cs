@@ -21,7 +21,7 @@ namespace System.Management.Automation.Runspaces
         /// Initializes a new instance of Command class using specified command parameter.
         /// </summary>
         /// <param name="command">Name of the command or script contents.</param>
-        /// <exception cref="ArgumentNullException">command is null.</exception>
+        /// <exception cref="ArgumentNullException">Command is null.</exception>
         public Command(string command)
             : this(command, false, null)
         {
@@ -32,7 +32,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="command">The command name or script contents.</param>
         /// <param name="isScript">True if this command represents a script, otherwise; false.</param>
-        /// <exception cref="ArgumentNullException">command is null.</exception>
+        /// <exception cref="ArgumentNullException">Command is null.</exception>
         public Command(string command, bool isScript)
             : this(command, isScript, null)
         {
@@ -43,8 +43,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="command">The command name or script contents.</param>
         /// <param name="isScript">True if this command represents a script, otherwise; false.</param>
-        /// <param name="useLocalScope">if true local scope is used to run the script command.</param>
-        /// <exception cref="ArgumentNullException">command is null.</exception>
+        /// <param name="useLocalScope">If true local scope is used to run the script command.</param>
+        /// <exception cref="ArgumentNullException">Command is null.</exception>
         public Command(string command, bool isScript, bool useLocalScope)
         {
             IsEndOfStatement = false;
@@ -835,7 +835,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public void Add(string command)
         {
-            if (String.Equals(command, "out-default", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(command, "out-default", StringComparison.OrdinalIgnoreCase))
             {
                 this.Add(command, true);
             }
@@ -853,7 +853,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Adds a new script command
         /// </summary>
-        /// <param name="scriptContents">script contents.</param>
+        /// <param name="scriptContents">Script contents.</param>
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>
@@ -865,8 +865,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Adds a new scrip command for given script
         /// </summary>
-        /// <param name="scriptContents">script contents.</param>
-        /// <param name="useLocalScope">if true local scope is used to run the script command.</param>
+        /// <param name="scriptContents">Script contents.</param>
+        /// <param name="useLocalScope">If true local scope is used to run the script command.</param>
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>

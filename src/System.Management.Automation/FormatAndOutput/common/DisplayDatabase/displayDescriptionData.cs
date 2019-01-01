@@ -634,7 +634,7 @@ namespace System.Management.Automation
         /// <param name="viewDefinitions"></param>
         public ExtendedTypeDefinition(string typeName, IEnumerable<FormatViewDefinition> viewDefinitions) : this()
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
                 throw PSTraceSource.NewArgumentNullException("typeName");
             if (viewDefinitions == null)
                 throw PSTraceSource.NewArgumentNullException("viewDefinitions");
@@ -652,7 +652,7 @@ namespace System.Management.Automation
         /// <param name="typeName"></param>
         public ExtendedTypeDefinition(string typeName) : this()
         {
-            if (String.IsNullOrEmpty(typeName))
+            if (string.IsNullOrEmpty(typeName))
                 throw PSTraceSource.NewArgumentNullException("typeName");
 
             TypeNames.Add(typeName);
@@ -690,7 +690,7 @@ namespace System.Management.Automation
         /// <summary/>
         public FormatViewDefinition(string name, PSControl control)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 throw PSTraceSource.NewArgumentNullException("name");
             if (control == null)
                 throw PSTraceSource.NewArgumentNullException("control");
@@ -797,7 +797,7 @@ namespace System.Management.Automation
         /// <summary>Public constructor for DisplayEntry</summary>
         public DisplayEntry(string value, DisplayEntryValueType type)
         {
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
                 if (value == null || type == DisplayEntryValueType.Property)
                     throw PSTraceSource.NewArgumentNullException("value");
 
@@ -816,7 +816,7 @@ namespace System.Management.Automation
             Value = expression.expressionValue;
             ValueType = expression.isScriptBlock ? DisplayEntryValueType.ScriptBlock : DisplayEntryValueType.Property;
 
-            if (String.IsNullOrEmpty(Value))
+            if (string.IsNullOrEmpty(Value))
                 if (Value == null || ValueType == DisplayEntryValueType.Property)
                     throw PSTraceSource.NewArgumentNullException("value");
         }

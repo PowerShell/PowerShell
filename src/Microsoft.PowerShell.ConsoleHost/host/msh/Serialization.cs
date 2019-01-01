@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell
 
             textReader = input;
             _firstLine = textReader.ReadLine();
-            if (String.Compare(_firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Compare(_firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // format should be XML
 

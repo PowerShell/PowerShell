@@ -14,15 +14,15 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Class constructor
         /// </summary>
-        /// <param name="moduleName">module name.</param>
-        /// <param name="moduleGuid">module guid.</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="moduleGuid">Module guid.</param>
         /// <param name="culture">UI culture.</param>
-        /// <param name="resolvedUri">resolved URI.</param>
+        /// <param name="resolvedUri">Resolved URI.</param>
         internal UpdatableHelpUri(string moduleName, Guid moduleGuid, CultureInfo culture, string resolvedUri)
         {
-            Debug.Assert(!String.IsNullOrEmpty(moduleName));
+            Debug.Assert(!string.IsNullOrEmpty(moduleName));
             Debug.Assert(moduleGuid != null);
-            Debug.Assert(!String.IsNullOrEmpty(resolvedUri));
+            Debug.Assert(!string.IsNullOrEmpty(resolvedUri));
 
             ModuleName = moduleName;
             ModuleGuid = moduleGuid;
