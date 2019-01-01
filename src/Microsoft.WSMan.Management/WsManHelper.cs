@@ -496,9 +496,11 @@ namespace Microsoft.WSMan.Management
 
                         }
                     }
+
                     resultString = xmlfile.OuterXml;
                     break;
             }
+
             return resultString;
         }
 
