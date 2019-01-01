@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSet_AvailableInCimSession = "CimSession";
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_Loaded, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_AvailableLocally, ValueFromPipeline = true, Position = 0)]
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { get; set; }
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_Loaded, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = ParameterSet_AvailableLocally, ValueFromPipelineByPropertyName = true)]
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// If specified, then Get-Module refreshes the internal cmdlet analysis cache
+        /// If specified, then Get-Module refreshes the internal cmdlet analysis cache.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_AvailableLocally)]
         [Parameter(ParameterSetName = ParameterSet_AvailableInPsrpSession)]
@@ -106,28 +106,28 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Refresh { get; set; }
 
         /// <summary>
-        /// If specified, then Get-Module will attempt to discover PowerShell modules on a remote computer using the specified session
+        /// If specified, then Get-Module will attempt to discover PowerShell modules on a remote computer using the specified session.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_AvailableInPsrpSession, Mandatory = true)]
         [ValidateNotNull]
         public PSSession PSSession { get; set; }
 
         /// <summary>
-        /// If specified, then Get-Module will attempt to discover PS-CIM modules on a remote computer using the specified session
+        /// If specified, then Get-Module will attempt to discover PS-CIM modules on a remote computer using the specified session.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_AvailableInCimSession, Mandatory = true)]
         [ValidateNotNull]
         public CimSession CimSession { get; set; }
 
         /// <summary>
-        /// For interoperability with 3rd party CIM servers, user can specify custom resource URI
+        /// For interoperability with 3rd party CIM servers, user can specify custom resource URI.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_AvailableInCimSession, Mandatory = false)]
         [ValidateNotNull]
         public Uri CimResourceUri { get; set; }
 
         /// <summary>
-        /// For interoperability with 3rd party CIM servers, user can specify custom namespace
+        /// For interoperability with 3rd party CIM servers, user can specify custom namespace.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_AvailableInCimSession, Mandatory = false)]
         [ValidateNotNullOrEmpty]
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Members
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         public void Dispose()
         {
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         private void Dispose(bool disposing)
         {
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
     public class PSEditionArgumentCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// CompleteArgument
+        /// CompleteArgument.
         /// </summary>
         public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
         {

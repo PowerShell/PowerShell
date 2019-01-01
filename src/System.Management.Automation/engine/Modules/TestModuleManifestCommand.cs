@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         private string _path;
 
         /// <summary>
-        /// Implements the record processing for this cmdlet
+        /// Implements the record processing for this cmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {

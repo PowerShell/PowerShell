@@ -15,7 +15,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs the parameter info using the specified aliases, attributes, and
-        /// parameter set metadata
+        /// parameter set metadata.
         /// </summary>
         /// <param name="parameter">
         /// The parameter metadata to retrieve the parameter information from.

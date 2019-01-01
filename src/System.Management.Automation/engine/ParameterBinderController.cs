@@ -91,14 +91,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set true if the default parameter binding is in use
+        /// Set true if the default parameter binding is in use.
         /// </summary>
         protected bool DefaultParameterBindingInUse { get; set; } = false;
 
         // Set true if the default parameter values are applied
 
         /// <summary>
-        /// A collection of bound default parameters
+        /// A collection of bound default parameters.
         /// </summary>
         protected Collection<string> BoundDefaultParameters { get; } = new Collection<string>();
 
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// A collection of the arguments that have been bound
+        /// A collection of the arguments that have been bound.
         /// </summary>
         protected Dictionary<string, CommandParameterInternal> BoundArguments { get; } = new Dictionary<string, CommandParameterInternal>(StringComparer.OrdinalIgnoreCase);
 
@@ -374,7 +374,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Bind the argument to the specified parameter
+        /// Bind the argument to the specified parameter.
         /// </summary>
         /// <param name="argument">
         /// The argument to be bound.
@@ -450,7 +450,7 @@ namespace System.Management.Automation
         internal abstract Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters);
 
         /// <summary>
-        /// Bind the argument to the specified parameter
+        /// Bind the argument to the specified parameter.
         /// </summary>
         /// <param name="parameterSets">
         /// The parameter set used to bind the arguments.
@@ -515,7 +515,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the unbound arguments to positional parameters
+        /// Binds the unbound arguments to positional parameters.
         /// </summary>
         /// <param name="unboundArguments">
         /// The unbound arguments to attempt to bind as positional arguments.
@@ -865,7 +865,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generate elaborated binding exception so that the user will know the default binding might cause the failure
+        /// Generate elaborated binding exception so that the user will know the default binding might cause the failure.
         /// </summary>
         /// <param name="pbex"></param>
         protected void ThrowElaboratedBindingException(ParameterBindingException pbex)

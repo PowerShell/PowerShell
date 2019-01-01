@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
     public class ModuleCmdletBase : PSCmdlet
     {
         /// <summary>
-        /// Flags defining how a module manifest should be processed
+        /// Flags defining how a module manifest should be processed.
         /// </summary>
         [Flags]
         internal enum ManifestProcessingFlags
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
             LoadElements = 0x4,
 
             /// <summary>
-            /// Write warnings
+            /// Write warnings.
             /// </summary>
             WriteWarnings = 0x8,
 
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Options set during module import
+        /// Options set during module import.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
         protected internal struct ImportModuleOptions
@@ -99,12 +99,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter specified a prefix used to modify names of imported commands
+        /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
         internal string BasePrefix { set; get; } = string.Empty;
 
         /// <summary>
-        /// Flags -force operations
+        /// Flags -force operations.
         /// </summary>
         internal bool BaseForce { get; set; }
 
@@ -134,35 +134,35 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Flags -passthru operations
+        /// Flags -passthru operations.
         /// </summary>
         internal bool BasePassThru { get; set; }
 
         /// <summary>
-        /// Flags -passthru operations
+        /// Flags -passthru operations.
         /// </summary>
         internal bool BaseAsCustomObject { get; set; }
 
         /// <summary>
-        /// Wildcard patterns for the function to import
+        /// Wildcard patterns for the function to import.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
         internal List<WildcardPattern> BaseFunctionPatterns { get; set; }
 
         /// <summary>
-        /// Wildcard patterns for the cmdlets to import
+        /// Wildcard patterns for the cmdlets to import.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
         internal List<WildcardPattern> BaseCmdletPatterns { get; set; }
 
         /// <summary>
-        /// Wildcard patterns for the variables to import
+        /// Wildcard patterns for the variables to import.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
         internal List<WildcardPattern> BaseVariablePatterns { get; set; }
 
         /// <summary>
-        /// Wildcard patterns for the aliases to import
+        /// Wildcard patterns for the aliases to import.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
         internal List<WildcardPattern> BaseAliasPatterns { get; set; }
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         internal Guid? BaseGuid { get; set; }
 
         /// <summary>
-        /// The arguments to pass to the scriptblock used to create the module
+        /// The arguments to pass to the scriptblock used to create the module.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         protected object[] BaseArgumentList { get; set; }
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
         protected bool BaseDisableNameChecking { get; set; } = true;
 
         /// <summary>
-        /// Add module path to app domain level module path cache if name is not rooted
+        /// Add module path to app domain level module path cache if name is not rooted.
         /// </summary>
         protected bool AddToAppDomainLevelCache { get; set; } = false;
 
@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Loads the latest valid version if moduleBase is a multi-versioned module directory
+        /// Loads the latest valid version if moduleBase is a multi-versioned module directory.
         /// </summary>
         /// <param name="moduleBase">Module directory path.</param>
         /// <param name="manifestProcessingFlags">The flag that indicate manifest processing option.</param>
@@ -1142,7 +1142,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Helper function for building a module info for Get-Module -List
+        /// Helper function for building a module info for Get-Module -List.
         /// </summary>
         /// <param name="file">The module file.</param>
         /// <param name="refresh">True if we should update any cached module info for this module.</param>
@@ -7570,7 +7570,7 @@ namespace Microsoft.PowerShell.Commands
         /// export its functions to become useful, at which point this check is no longer in effect and there is no issue.
         ///   $mSub = import-module SubModule  # Explictly exports functions, useful
         ///   $mParent = import-module ParentModule  # This internally imports SubModule
-        ///   $mParent.DoSomething  # This works because SubModule functions are exported and accessible
+        ///   $mParent.DoSomething  # This works because SubModule functions are exported and accessible.
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="moduleInfo">PSModuleInfo.</param>
