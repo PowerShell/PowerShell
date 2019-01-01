@@ -96,6 +96,8 @@ The following labels are used on PRs:
   Microsoft to continue to sign and release packages from the project as official Microsoft packages.
   The time frame in which it needs to be fixed should be identified in the issue.
 * `Documentation Needed` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
+* `First-Time-Issue` : An issue that is identified as being easy and a good candidate for first time contributors
+* `Hackathon` or `Hacktoberfest` : An issue that would be a good candidate for hackathons such as Hacktoberfest or Hackillinois
 * `Porting` : An issue that affects a feature not yet ported to other platforms.
 * `Up-for-Grabs` : We've acknowledged the issue but have no immediate plans to address it.
   If you're looking for a way to contribute, these issues can be a good place to start.

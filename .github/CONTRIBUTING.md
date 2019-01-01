@@ -31,6 +31,9 @@ Please read the rest of this document to ensure a smooth contribution process.
   making sure to follow the directions as best you can.
 * If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
   the PowerShell Maintainers are looking for help with the issue.
+* Issues marked as [`First-Time-Issue`][first-time-issue],
+  are identified as being easy and a great way to learn about this project and making
+  contributions.
 
 ## Contributing to Documentation
 
@@ -355,3 +358,4 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
 [area-expert]: ../docs/community/governance.md#area-experts
 [ci-system]: ../docs/testing-guidelines/testing-guidelines.md#ci-system
+[first-time-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AFirst-Time-Issue
