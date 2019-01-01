@@ -144,7 +144,7 @@ namespace System.Management.Automation
 
                         RemoteHostResponse remoteHostResponse = RemoteHostResponse.Decode(receivedData.Data);
 
-                        //part of host message robustness algo. Now the host response is back, report to transport that
+                        // part of host message robustness algo. Now the host response is back, report to transport that
                         // execution status is back to running
                         _transportManager.ReportExecutionStatusAsRunning();
 
@@ -658,7 +658,7 @@ namespace System.Management.Automation
 
                         RemoteHostResponse remoteHostResponse = RemoteHostResponse.Decode(receivedData.Data);
 
-                        //part of host message robustness algo. Now the host response is back, report to transport that
+                        // part of host message robustness algo. Now the host response is back, report to transport that
                         // execution status is back to running
                         _transportManager.ReportExecutionStatusAsRunning();
 

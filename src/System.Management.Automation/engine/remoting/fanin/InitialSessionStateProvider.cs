@@ -692,7 +692,7 @@ namespace System.Management.Automation.Remoting
                     }
                     else
                     {
-                        //Rooted path of dll is provided.
+                        // Rooted path of dll is provided.
                         assemblyPath = assemblyName;
                     }
 

@@ -107,7 +107,7 @@ namespace System.Management.Automation
 
             if (filesMatched.Count > 1)
             {
-                //Dictionary<<ModuleName,fileName>, <Version, helpFileFullName>>
+                // Dictionary<<ModuleName,fileName>, <Version, helpFileFullName>>
                 Dictionary<Tuple<string, string>, Tuple<string, Version>> modulesAndVersion = new Dictionary<Tuple<string, string>, Tuple<string, Version>>();
                 HashSet<string> filesProcessed = new HashSet<string>();
 
@@ -125,33 +125,33 @@ namespace System.Management.Automation
                         string moduleName = null;
                         GetModuleNameAndVersion(psModulePath, fileFullName, out moduleName, out moduleVersionFromPath);
 
-                        //Skip modules whose root we cannot determine or which do not have versions.
+                        // Skip modules whose root we cannot determine or which do not have versions.
                         if (moduleVersionFromPath != null && moduleName != null)
                         {
                             Tuple<string, Version> moduleVersion = null;
                             Tuple<string, string> key = new Tuple<string, string>(moduleName, fileName);
                             if (modulesAndVersion.TryGetValue(key, out moduleVersion))
                             {
-                                //Consider for further processing only if the help file name is same.
+                                // Consider for further processing only if the help file name is same.
                                 if (filesProcessed.Contains(fileName))
                                 {
                                     if (moduleVersionFromPath > moduleVersion.Item2)
                                     {
                                         modulesAndVersion[key] = new Tuple<string, Version>(fileFullName, moduleVersionFromPath);
 
-                                        //Remove the old file since we found a newer version.
+                                        // Remove the old file since we found a newer version.
                                         matchedFilesToRemove.Add(moduleVersion.Item1);
                                     }
                                     else
                                     {
-                                        //Remove the new file as higher version item is already in dictionary.
+                                        // Remove the new file as higher version item is already in dictionary.
                                         matchedFilesToRemove.Add(fileFullName);
                                     }
                                 }
                             }
                             else
                             {
-                                //Add the module to the dictionary as it was not processes earlier.
+                                // Add the module to the dictionary as it was not processes earlier.
                                 modulesAndVersion.Add(new Tuple<string, string>(moduleName, fileName),
                                                       new Tuple<string, Version>(fileFullName, moduleVersionFromPath));
                             }
@@ -297,11 +297,11 @@ namespace System.Management.Automation
         {
             string fileName = Path.GetFileName(path);
 
-            //Bug906435: Get-help for special devices throws an exception
-            //There might be situations where path does not end with .help.txt extension
-            //The assumption that path ends with .help.txt is broken under special
-            //conditions when user uses "get-help" with device names like "prn","com1" etc.
-            //First check whether path ends with .help.txt.
+            // Bug906435: Get-help for special devices throws an exception
+            // There might be situations where path does not end with .help.txt extension
+            // The assumption that path ends with .help.txt is broken under special
+            // conditions when user uses "get-help" with device names like "prn","com1" etc.
+            // First check whether path ends with .help.txt.
 
             // If path does not end with ".help.txt" return.
             if (!path.EndsWith(".help.txt", StringComparison.OrdinalIgnoreCase))

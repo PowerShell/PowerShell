@@ -520,7 +520,7 @@ namespace System.Management.Automation
                             // be disposed as raising the events is
                             // not done towards the end. Need to fix
                             // powershell in order to get this enabled
-                            //localPowerShell.Dispose();
+                            // localPowerShell.Dispose();
                         }
                     }
 
@@ -742,7 +742,7 @@ namespace System.Management.Automation
 
                 _localPowerShellOutput.Clear();
 
-                //foreach (ErrorRecord errorRecord in localPowerShell.Error)
+                // foreach (ErrorRecord errorRecord in localPowerShell.Error)
                 for (int i = 0; i < LocalPowerShell.Streams.Error.Count; i++)
                 {
                     ErrorRecord errorRecord = LocalPowerShell.Streams.Error[i];
@@ -845,11 +845,11 @@ namespace System.Management.Automation
 
         private void HandleSessionConnected(object sender, EventArgs eventArgs)
         {
-            //Close input if its active. no need to synchronize as input stream would have already been processed
+            // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
             if (InputCollection != null)
             {
-                //TODO: Post an ETW event
+                // TODO: Post an ETW event
                 InputCollection.Complete();
             }
         }

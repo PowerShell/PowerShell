@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// </summary>
         internal const string MshSnapinKey = "PowerShellSnapIns";
 
-        //Name of various values for each mshsnapin
+        // Name of various values for each mshsnapin
         internal const string MshSnapin_ApplicationBase = "ApplicationBase";
         internal const string MshSnapin_AssemblyName = "AssemblyName";
         internal const string MshSnapin_ModuleName = "ModuleName";
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         internal const string MshSnapin_VendorResource = "VendorIndirect";
         internal const string MshSnapin_LogPipelineExecutionDetails = "LogPipelineExecutionDetails";
 
-        //Name of default mshsnapins
+        // Name of default mshsnapins
         internal const string CoreMshSnapinName = "Microsoft.PowerShell.Core";
         internal const string HostMshSnapinName = "Microsoft.PowerShell.Host";
         internal const string ManagementMshSnapinName = "Microsoft.PowerShell.Management";
@@ -508,7 +508,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
-                //found a key which is not version
+                // found a key which is not version
                 if (!MeetsVersionFormat(version))
                 {
                     continue;
@@ -519,8 +519,8 @@ namespace System.Management.Automation
                 {
                     oneVersionMshSnapins = ReadAll(monadRootKey, version);
                 }
-                //If we cannot get information for one version, continue with other
-                //versions
+                // If we cannot get information for one version, continue with other
+                // versions
                 catch (SecurityException)
                 {
                 }
@@ -606,7 +606,7 @@ namespace System.Management.Automation
             RegistryKey versionRoot = GetVersionRootKey(monadRootKey, psVersion);
             RegistryKey mshsnapinRoot = GetMshSnapinRootKey(versionRoot, psVersion);
 
-            //get name of all mshsnapin for this version
+            // get name of all mshsnapin for this version
             string[] mshsnapinIds = mshsnapinRoot.GetSubKeyNames();
 
             foreach (string id in mshsnapinIds)
@@ -620,7 +620,7 @@ namespace System.Management.Automation
                 {
                     mshsnapins.Add(ReadOne(mshsnapinRoot, id));
                 }
-                //If we cannot read some mshsnapins, we should continue
+                // If we cannot read some mshsnapins, we should continue
                 catch (SecurityException)
                 {
                 }
@@ -772,7 +772,7 @@ namespace System.Management.Automation
 
             if (msv == null)
             {
-                //Check if the value is in string format
+                // Check if the value is in string format
                 string singleValue = value as string;
                 if (singleValue != null)
                 {
@@ -1125,9 +1125,9 @@ namespace System.Management.Automation
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey(RegistryStrings.MonadRootKeyPath);
             if (rootKey == null)
             {
-                //This should never occur because this code is running
-                //because monad is installed. { well this can occur if someone
-                //deletes the registry key after starting monad
+                // This should never occur because this code is running
+                // because monad is installed. { well this can occur if someone
+                // deletes the registry key after starting monad
                 Dbg.Assert(false, "Root Key of Monad installation is not present");
                 throw PSTraceSource.NewArgumentException("monad", MshSnapinInfo.MonadRootRegistryAccessFailed);
             }

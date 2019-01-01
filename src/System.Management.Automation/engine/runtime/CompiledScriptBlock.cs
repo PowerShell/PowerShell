@@ -1881,7 +1881,7 @@ namespace System.Management.Automation
             }
 
 #if false
-            //This code can be used when adding a new pattern.
+            // This code can be used when adding a new pattern.
             internal static uint HashNewPattern(string pattern)
             {
                 char ToLower(char c)
@@ -2325,9 +2325,9 @@ namespace System.Management.Automation
             commandRuntime = null;
             currentObjectInPipeline = null;
             _input.Clear();
-            //_scriptBlock = null;
-            //_localsTuple = null;
-            //_functionContext = null;
+            // _scriptBlock = null;
+            // _localsTuple = null;
+            // _functionContext = null;
 
             base.InternalDispose(true);
             _disposed = true;

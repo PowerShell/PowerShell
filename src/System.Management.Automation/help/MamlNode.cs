@@ -1105,8 +1105,8 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static string GetPreformattedText(string text)
         {
-            //we are assuming tabsize=4 here.
-            //It is discouraged to use tab in preformatted text.
+            // we are assuming tabsize=4 here.
+            // It is discouraged to use tab in preformatted text.
 
             string noTabText = text.Replace("\t", "    ");
             string[] lines = noTabText.Split(Utils.Separators.Newline);

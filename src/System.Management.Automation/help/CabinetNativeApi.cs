@@ -577,7 +577,7 @@ namespace System.Management.Automation.Internal
         {
             internal int cb; // LONG
             internal string psz1; // char FAR *
-            internal string psz2; //char FAR *
+            internal string psz2; // char FAR *
             internal string psz3; // char FAR *
             internal IntPtr pv; // void FAR * // In this case, it is the destination path
             internal IntPtr hf; // INT_PTR

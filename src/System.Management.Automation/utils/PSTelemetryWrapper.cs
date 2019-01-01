@@ -121,7 +121,7 @@ namespace System.Management.Automation.Internal
         //    "data": {
         //        "PSVersion": "5.0"
         //    }
-        //}
+        // }
 
         public static void TraceMessage<T>(string message, T arguments)
         {

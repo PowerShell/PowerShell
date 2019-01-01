@@ -87,7 +87,7 @@ namespace System.Management.Automation
 
         internal RemoteDataEventArgs(object data)
         {
-            //Dbg.Assert(data != null, "data passed should not be null");
+            // Dbg.Assert(data != null, "data passed should not be null");
 
             Data = (T)data;
         }

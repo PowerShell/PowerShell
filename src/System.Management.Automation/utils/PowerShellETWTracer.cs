@@ -10,7 +10,7 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Tracing
 {
-    //pragma warning disable 16001,16003
+    // pragma warning disable 16001,16003
 #region Constants
 
     /// <summary>
@@ -385,7 +385,7 @@ namespace System.Management.Automation.Tracing
     /// <summary>
     /// Defines enumerations for channels
     /// </summary>
-    //pragma warning disable 16001
+    // pragma warning disable 16001
     public enum PowerShellTraceChannel
     {
         /// <summary>
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         Debug = 0x12,
     }
-    //pragma warning restore 16001
+    // pragma warning restore 16001
 
     /// <summary>
     /// Define enumerations for levels
@@ -1533,7 +1533,7 @@ namespace System.Management.Automation.Tracing
             return new PowerShellTraceSource(task, keywords);
         }
     }
-    //pragma warning restore 16001,16003
+    // pragma warning restore 16001,16003
 }
 
 #endif

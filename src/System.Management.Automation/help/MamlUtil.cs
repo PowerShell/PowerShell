@@ -33,7 +33,7 @@ namespace System.Management.Automation
             {
                 if (typename.StartsWith(DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, StringComparison.OrdinalIgnoreCase))
                 {
-                    //Win8: 638494 if the original help is auto-generated, let the Provider help decide the format.
+                    // Win8: 638494 if the original help is auto-generated, let the Provider help decide the format.
                     return;
                 }
             }

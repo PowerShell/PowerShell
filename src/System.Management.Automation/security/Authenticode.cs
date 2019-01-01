@@ -151,7 +151,7 @@ namespace System.Management.Automation
             }
 
             SecuritySupport.CheckIfFileExists(fileName);
-            //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+            // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
 
             try
             {
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             {
                 Utils.CheckArgForNullOrEmpty(fileName, "fileName");
                 SecuritySupport.CheckIfFileExists(fileName);
-                //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+                // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
             }
 
             try

@@ -579,15 +579,15 @@ namespace System.Management.Automation.Security
         internal enum SignInfoSubjectChoice
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_FILE = 0x01
-            //CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_BLOB = 0x02 NotUsed
+            // CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_BLOB = 0x02 NotUsed
         };
 
         [Flags]
         internal enum SignInfoCertChoice
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_CERT = 0x01
-            //CRYPTUI_WIZ_DIGITAL_SIGN_STORE = 0x02, NotUsed
-            //CRYPTUI_WIZ_DIGITAL_SIGN_PVK = 0x03, NotUsed
+            // CRYPTUI_WIZ_DIGITAL_SIGN_STORE = 0x02, NotUsed
+            // CRYPTUI_WIZ_DIGITAL_SIGN_PVK = 0x03, NotUsed
         };
 
         [Flags]
@@ -891,10 +891,10 @@ namespace System.Management.Automation.Security
         internal enum WintrustUnionChoice
         {
             WTD_CHOICE_FILE = 1,
-            //WTD_CHOICE_CATALOG = 2,
+            // WTD_CHOICE_CATALOG = 2,
             WTD_CHOICE_BLOB = 3,
-            //WTD_CHOICE_SIGNER = 4,
-            //WTD_CHOICE_CERT = 5,
+            // WTD_CHOICE_SIGNER = 4,
+            // WTD_CHOICE_CERT = 5,
         };
 
         [Flags]
@@ -1221,8 +1221,8 @@ namespace System.Management.Automation.Security
         internal struct CERT_ENHKEY_USAGE
         {
             internal DWORD cUsageIdentifier;
-            //[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeParamIndex=0)]
-            //internal string[] rgpszUsageIdentifier; // LPSTR*
+            // [MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeParamIndex=0)]
+            // internal string[] rgpszUsageIdentifier; // LPSTR*
             internal IntPtr rgpszUsageIdentifier;
         };
 

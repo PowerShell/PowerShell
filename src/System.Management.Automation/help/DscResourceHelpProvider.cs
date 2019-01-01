@@ -212,7 +212,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(helpFile))
             {
-                //Load the help file only once. Then use it from the cache.
+                // Load the help file only once. Then use it from the cache.
                 if (!_helpFiles.Contains(helpFile))
                 {
                     LoadHelpFile(helpFile, helpFile, resourceInfo.Name, reportErrors);

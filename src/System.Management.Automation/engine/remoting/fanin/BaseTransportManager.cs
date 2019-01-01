@@ -428,7 +428,7 @@ namespace System.Management.Automation.Remoting.Client
 
         // this is used log crimson messages.
 
-        //keeps track of whether a receive request has been placed on transport
+        // keeps track of whether a receive request has been placed on transport
         protected bool receiveDataInitiated;
 
         #endregion
