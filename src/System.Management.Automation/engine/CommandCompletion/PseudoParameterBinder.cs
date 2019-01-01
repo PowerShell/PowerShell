@@ -1415,7 +1415,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(argument.ParameterSpecified && !argument.ArgumentSpecified,
                     "At this point, the parameters should have no arguments");
 
-                //Now check the parameter name with the bindable parameters
+                // Now check the parameter name with the bindable parameters
                 string parameterName = argument.ParameterName;
                 MergedCompiledCommandParameter matchingParameter = null;
 

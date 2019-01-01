@@ -338,9 +338,9 @@ namespace System.Management.Automation
         {
             ArrayList list = ConvertArgsValueToArrayList(value);
 
-            //Serialize the list
+            // Serialize the list
             StringWriter stringWriter = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
-            //When (if) switching to XmlTextWriter.Create remember the OmitXmlDeclaration difference
+            // When (if) switching to XmlTextWriter.Create remember the OmitXmlDeclaration difference
             XmlWriter xmlWriter = XmlWriter.Create(stringWriter);
             Serializer serializer = new Serializer(xmlWriter);
             serializer.Serialize(list);
@@ -348,7 +348,7 @@ namespace System.Management.Automation
             xmlWriter.Flush();
             string result = stringWriter.ToString();
 
-            //convert result to encoded string
+            // convert result to encoded string
             return StringToBase64Converter.StringToBase64String(result);
         }
 

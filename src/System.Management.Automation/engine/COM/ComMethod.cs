@@ -104,7 +104,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException te)
             {
-                //First check if this is a severe exception.
+                // First check if this is a severe exception.
                 var innerCom = te.InnerException as COMException;
                 if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {

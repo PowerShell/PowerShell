@@ -38,7 +38,7 @@ namespace System.Management.Automation.ComInterop
                     break;
 
                 case ComHresults.DISP_E_BADVARTYPE:
-                    //One of the arguments in rgvarg is not a valid variant type.
+                    // One of the arguments in rgvarg is not a valid variant type.
                     break;
 
                 case ComHresults.DISP_E_EXCEPTION:
@@ -642,7 +642,7 @@ namespace System.Management.Automation.ComInterop
                     {
                         var attributes = new[] {
                             new CustomAttributeBuilder(typeof(UnverifiableCodeAttribute).GetConstructor(Type.EmptyTypes), Utils.EmptyArray<object>()),
-                            //PermissionSet(SecurityAction.Demand, Unrestricted = true)
+                            // PermissionSet(SecurityAction.Demand, Unrestricted = true)
                             new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[] { typeof(SecurityAction) }),
                                 new object[] { SecurityAction.Demand },
                                 new PropertyInfo[] { typeof(PermissionSetAttribute).GetProperty("Unrestricted") },

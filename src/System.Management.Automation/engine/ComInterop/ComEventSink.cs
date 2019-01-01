@@ -184,7 +184,7 @@ namespace System.Management.Automation.ComInterop
 
                 // We can Unadvise from the ConnectionPoint if no more sink entries
                 // are registered for this interface
-                //(calling Dispose will call IConnectionPoint.Unadvise).
+                // (calling Dispose will call IConnectionPoint.Unadvise).
                 if (_comEventSinkMethods.Count == 0)
                 {
                     // notice that we do not remove

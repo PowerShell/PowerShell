@@ -947,7 +947,7 @@ namespace Microsoft.PowerShell.Commands
                     containsWildCards = true;
                 }
 
-                //Now we resolve the possible paths in case it is relative path/path contains wildcards
+                // Now we resolve the possible paths in case it is relative path/path contains wildcards
                 var modulePathCollection = GetResolvedPathCollection(modulePath, this.Context);
 
                 if (modulePathCollection != null)
@@ -4512,10 +4512,10 @@ namespace Microsoft.PowerShell.Commands
         {
             // TODO, insivara : What happens when Enabled but none of the other options (DefaultSystemModules, NonDefaultSystemModule, NonSystemModule, SpecificModules) are set?
             // After input from GP team for this behavior, need to revisit the commented out part
-            //if ((status & ModuleLoggingGroupPolicyStatus.Enabled) != 0)
-            //{
+            // if ((status & ModuleLoggingGroupPolicyStatus.Enabled) != 0)
+            // {
 
-            //}
+            // }
 
             if (((status & ModuleLoggingGroupPolicyStatus.Enabled) != 0) && moduleNames != null)
             {
@@ -6610,7 +6610,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (PSArgumentException)
                     {
-                        //BUGBUG - brucepay - probably want to have a verbose message here...
+                        // BUGBUG - brucepay - probably want to have a verbose message here...
                     }
 #endif
 

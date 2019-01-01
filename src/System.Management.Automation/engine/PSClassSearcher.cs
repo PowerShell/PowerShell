@@ -166,7 +166,7 @@ namespace System.Management.Automation
 
                 if (cachedClasses != null)
                 {
-                    //Exact match
+                    // Exact match
                     if (!_useWildCards)
                     {
                         if (cachedClasses.ContainsKey(_className))

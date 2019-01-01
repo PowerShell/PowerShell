@@ -685,7 +685,7 @@ namespace System.Management.Automation
             CommandOrigin commandOrigin = this.EngineSessionState.CurrentScope.ScopeOrigin;
             CommandProcessorBase commandProcessor =
                 CommandDiscovery.LookupCommandProcessor(command, commandOrigin, !dotSource);
-            // Reset the command origin for script commands... //BUGBUG - dotting can get around command origin checks???
+            // Reset the command origin for script commands... // BUGBUG - dotting can get around command origin checks???
             if (commandProcessor != null && commandProcessor is ScriptCommandProcessorBase)
             {
                 commandProcessor.Command.CommandOriginInternal = CommandOrigin.Internal;
@@ -935,7 +935,7 @@ namespace System.Management.Automation
         /// The current connection object
         /// </summary>
         private Runspace _currentRunspace;
-        //This should be internal, but it need to be friend of remoting dll.
+        // This should be internal, but it need to be friend of remoting dll.
         /// <summary>
         /// The current connection object
         /// </summary>

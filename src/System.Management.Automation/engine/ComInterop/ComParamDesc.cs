@@ -40,7 +40,7 @@ namespace System.Management.Automation.ComInterop
                 IsOut = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOUT) != 0;
                 IsOptional = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOPT) != 0;
                 // TODO: The PARAMDESCEX struct has a memory issue that needs to be resolved.  For now, we ignore it.
-                //_defaultValue = PARAMDESCEX.GetDefaultValue(ref elemDesc.desc.paramdesc);
+                // _defaultValue = PARAMDESCEX.GetDefaultValue(ref elemDesc.desc.paramdesc);
             }
 
             _name = name;

@@ -829,7 +829,7 @@ namespace System.Management.Automation
                     if (expressionAst is ErrorExpressionAst && expressionAst.Extent.Text.EndsWith(",", StringComparison.Ordinal))
                     {
                         context.WordToComplete = string.Empty;
-                        //BUGBUG context.CursorPosition = expressionAst.Extent.StartScriptPosition;
+                        // BUGBUG context.CursorPosition = expressionAst.Extent.StartScriptPosition;
                     }
                     else if (commandAst.CommandElements.Count == 1 || context.WordToComplete == string.Empty)
                     {
@@ -875,7 +875,7 @@ namespace System.Management.Automation
                                 context.ReplacementIndex = ((InternalScriptPosition)secondToLastAst.Extent.StartScriptPosition).Offset;
                                 context.ReplacementLength += ((InternalScriptPosition)secondToLastAst.Extent.EndScriptPosition).Offset - context.ReplacementIndex;
                                 context.WordToComplete = fullPath;
-                                //context.CursorPosition = secondToLastAst.Extent.StartScriptPosition;
+                                // context.CursorPosition = secondToLastAst.Extent.StartScriptPosition;
                             }
                             else if (secondToLastArrayAst != null)
                             {
@@ -962,7 +962,7 @@ namespace System.Management.Automation
                     {
                         // dir -Path: a.txt,<tab>
                         context.WordToComplete = string.Empty;
-                        //context.CursorPosition = expressionAst.Extent.StartScriptPosition;
+                        // context.CursorPosition = expressionAst.Extent.StartScriptPosition;
                     }
                     else if (context.WordToComplete == string.Empty)
                     {
@@ -3643,7 +3643,7 @@ namespace System.Management.Automation
             var isFileSystem = provider != null &&
                                provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase);
 
-            //AutoComplete only if filesystem provider.
+            // AutoComplete only if filesystem provider.
             if (isFileSystem)
             {
                 if (paramName.Equals("ItemType", StringComparison.OrdinalIgnoreCase))
@@ -5969,7 +5969,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
+            // this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
             var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
             var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
             foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
@@ -6386,7 +6386,7 @@ namespace System.Management.Automation
         private static List<CompletionResult> GetSpecialHashTableKeyMembers(params string[] keys)
         {
             // Resources were removed because they missed the deadline for loc.
-            //return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
+            // return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
             //    ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
             //                                           "TabCompletionStrings", key + "HashKeyDescription"))).ToList();
             return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property, key)).ToList();

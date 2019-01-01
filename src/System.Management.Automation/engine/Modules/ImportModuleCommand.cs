@@ -1493,7 +1493,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     moduleInfo = LoadModuleManifest(
                         temporaryModuleManifestPath,
-                        null, //scriptInfo
+                        null, // scriptInfo
                         data,
                         localizedData,
                         ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.NullOnFirstError,

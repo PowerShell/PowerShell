@@ -39,12 +39,12 @@ namespace System.Management.Automation
 
             if (!isPropertyPut)
             {
-                //First get the string for return type.
+                // First get the string for return type.
                 string retstring = GetStringFromTypeDesc(typeinfo, funcdesc.elemdescFunc.tdesc);
                 builder.Append(retstring + " ");
             }
 
-            //Append the function name
+            // Append the function name
             builder.Append(name);
             builder.Append(" (");
 
@@ -60,8 +60,8 @@ namespace System.Management.Automation
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
 
-                //Disable PRefast warning for converting to int32 and converting back into intptr.
-                //Code below takes into account 32 bit vs 64 bit conversions
+                // Disable PRefast warning for converting to int32 and converting back into intptr.
+                // Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
                 if (IntPtr.Size == 4)
                 {
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// <returns>Name of the method or property.</returns>
         internal static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
-            //Get the method or property name.
+            // Get the method or property name.
             string strName, strDoc, strHelp;
             int id;
             typeinfo.GetDocumentation(funcdesc.memid, out strName, out strDoc, out id, out strHelp);
@@ -302,8 +302,8 @@ namespace System.Management.Automation
 
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-                //Disable PRefast warning for converting to int32 and converting back into intptr.
-                //Code below takes into account 32 bit vs 64 bit conversions
+                // Disable PRefast warning for converting to int32 and converting back into intptr.
+                // Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
 
                 if (IntPtr.Size == 4)
@@ -319,11 +319,11 @@ namespace System.Management.Automation
 
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
-                //get the type of parameter
+                // get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
                 object defaultvalue = null;
 
-                //check is this parameter is optional.
+                // check is this parameter is optional.
                 if ((ElementDescription.desc.paramdesc.wParamFlags & COM.PARAMFLAG.PARAMFLAG_FOPT) != 0)
                 {
                     fOptional = true;

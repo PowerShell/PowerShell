@@ -775,8 +775,8 @@ namespace Microsoft.PowerShell.Commands
         ///// <param name="streamWriter">Streamwriter to get end of line character from</param>
         ///// <param name="item">The item of the manifest file for which names are being resolved.</param>
         ///// <returns>The quoted list.</returns>
-        //private string QuoteFilesWithWildcard(string basePath, IEnumerable names, string allowedExtension, StreamWriter streamWriter, string item)
-        //{
+        // private string QuoteFilesWithWildcard(string basePath, IEnumerable names, string allowedExtension, StreamWriter streamWriter, string item)
+        // {
         //    if (names != null)
         //    {
         //        foreach (string name in names)
@@ -837,7 +837,7 @@ namespace Microsoft.PowerShell.Commands
         //    }
 
         //    return QuoteNames(names, streamWriter);
-        //}
+        // }
 
         /// <summary>
         /// Glob a set of files then resolve them to relative paths.

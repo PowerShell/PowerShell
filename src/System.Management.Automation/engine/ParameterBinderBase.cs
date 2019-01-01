@@ -1151,7 +1151,7 @@ namespace System.Management.Automation
                                 // Invalid types which cannot be associated with a bool
                                 // Since there is a catch block which appropriately
                                 // handles this situation we just throw an exception here
-                                //throw new PSInvalidCastException();
+                                // throw new PSInvalidCastException();
                                 ParameterBindingException pbe =
                                     new ParameterBindingException(
                                         ErrorCategory.InvalidArgument,
@@ -1915,7 +1915,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 
@@ -1925,7 +1925,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 

@@ -1493,8 +1493,8 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public override string ToString()
         {
-            //If ToString value from deserialization is available,
-            //simply return it.
+            // If ToString value from deserialization is available,
+            // simply return it.
             if (_toStringFromDeserialization != null)
             {
                 return _toStringFromDeserialization;
@@ -1514,8 +1514,8 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            //If ToString value from deserialization is available,
-            //simply return it.
+            // If ToString value from deserialization is available,
+            // simply return it.
             if (_toStringFromDeserialization != null)
             {
                 return _toStringFromDeserialization;
@@ -2044,7 +2044,7 @@ namespace System.Management.Automation
             }
         }
 
-        //This is toString value set on deserialization
+        // This is toString value set on deserialization
         private string _toStringFromDeserialization = null;
 
         internal bool preserveToString = false;

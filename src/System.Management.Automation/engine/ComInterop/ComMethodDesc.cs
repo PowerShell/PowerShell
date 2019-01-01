@@ -80,13 +80,13 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                //must be regular get
+                // must be regular get
                 if (!IsPropertyGet || DispId == ComDispIds.DISPID_NEWENUM)
                 {
                     return false;
                 }
 
-                //must have no parameters
+                // must have no parameters
                 return ParamCount == 0;
             }
         }

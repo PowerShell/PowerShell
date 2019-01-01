@@ -1016,10 +1016,10 @@ namespace System.Management.Automation
                 public FILETIME ftCreationTime;
                 public FILETIME ftLastAccessTime;
                 public FILETIME ftLastWriteTime;
-                public uint nFileSizeHigh; //changed all to uint, otherwise you run into unexpected overflow
-                public uint nFileSizeLow;  //|
-                public uint dwReserved0;   //|
-                public uint dwReserved1;   //v
+                public uint nFileSizeHigh; // changed all to uint, otherwise you run into unexpected overflow
+                public uint nFileSizeLow;  // |
+                public uint dwReserved0;   // |
+                public uint dwReserved1;   // v
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
                 public string cFileName;
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_ALTERNATE)]
