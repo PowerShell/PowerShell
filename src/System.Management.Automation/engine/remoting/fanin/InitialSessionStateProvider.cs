@@ -78,7 +78,7 @@ namespace System.Management.Automation.Remoting
         internal string ConfigFilePath;
 
         /// <summary>
-        /// Using optionName and optionValue updates the current object
+        /// Using optionName and optionValue updates the current object.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="optionValue"></param>
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Checks if the originalValue is empty. If not throws an exception
+        /// Checks if the originalValue is empty. If not throws an exception.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="originalValue"></param>
@@ -345,7 +345,7 @@ namespace System.Management.Automation.Remoting
     {
         #region tracer
         /// <summary>
-        /// Tracer for Server Remote session
+        /// Tracer for Server Remote session.
         /// </summary>
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
@@ -355,7 +355,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Derived classes must override this to supply an InitialSessionState
-        /// to be used to construct a Runspace for the user
+        /// to be used to construct a Runspace for the user.
         /// </summary>
         /// <param name="senderInfo">
         /// User Identity for which this information is requested
@@ -871,23 +871,23 @@ namespace System.Management.Automation.Remoting
     public enum SessionType
     {
         /// <summary>
-        /// Empty session state
+        /// Empty session state.
         /// </summary>
         Empty,
 
         /// <summary>
-        /// Restricted remote server
+        /// Restricted remote server.
         /// </summary>
         RestrictedRemoteServer,
 
         /// <summary>
-        /// Default session state
+        /// Default session state.
         /// </summary>
         Default
     }
 
     /// <summary>
-    /// Configuration type entry
+    /// Configuration type entry.
     /// </summary>
     internal class ConfigTypeEntry
     {
@@ -908,7 +908,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// Configuration file constants
+    /// Configuration file constants.
     /// </summary>
     internal static class ConfigFileConstants
     {
@@ -996,7 +996,7 @@ namespace System.Management.Automation.Remoting
         };
 
         /// <summary>
-        /// Checks if the given key is a valid key
+        /// Checks if the given key is a valid key.
         /// </summary>
         /// <param name="de"></param>
         /// <param name="cmdlet"></param>
@@ -1285,7 +1285,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies a string type
+        /// Verifies a string type.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
@@ -1304,7 +1304,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies a string array type
+        /// Verifies a string array type.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
@@ -1345,7 +1345,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies that an array contains only string or hashtable elements
+        /// Verifies that an array contains only string or hashtable elements.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
@@ -1367,7 +1367,7 @@ namespace System.Management.Automation.Remoting
     #region DISC Utilities
 
     /// <summary>
-    /// DISC utilities
+    /// DISC utilities.
     /// </summary>
     internal static class DISCUtils
     {
@@ -1431,7 +1431,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Loads the configuration file into a hashtable
+        /// Loads the configuration file into a hashtable.
         /// </summary>
         /// <param name="context">Execution context.</param>
         /// <param name="scriptInfo">The ExternalScriptInfo object.</param>
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Verifies the configuration hashtable
+        /// Verifies the configuration hashtable.
         /// </summary>
         /// <param name="table">Configuration hashtable.</param>
         /// <param name="cmdlet"></param>
@@ -1582,7 +1582,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Checks if all paths are absolute paths
+        /// Checks if all paths are absolute paths.
         /// </summary>
         /// <param name="state"></param>
         /// <param name="table"></param>
@@ -1606,7 +1606,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Checks if a path is an absolute path
+        /// Checks if a path is an absolute path.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="state"></param>
@@ -1691,7 +1691,7 @@ namespace System.Management.Automation.Remoting
     #endregion
 
     /// <summary>
-    /// Creates an initial session state based on the configuration language for PSSC files
+    /// Creates an initial session state based on the configuration language for PSSC files.
     /// </summary>
     internal sealed class DISCPowerShellConfiguration : PSSessionConfiguration
     {
@@ -1699,7 +1699,7 @@ namespace System.Management.Automation.Remoting
         private Hashtable _configHash;
 
         /// <summary>
-        /// Gets the configuration hashtable that results from parsing the specified configuration file
+        /// Gets the configuration hashtable that results from parsing the specified configuration file.
         /// </summary>
         internal Hashtable ConfigHash
         {
@@ -1707,7 +1707,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates a new instance of a Declarative Initial Session State Configuration
+        /// Creates a new instance of a Declarative Initial Session State Configuration.
         /// </summary>
         /// <param name="configFile">The path to the .pssc file representing the initial session state.</param>
         /// <param name="roleVerifier">
@@ -2626,7 +2626,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates an alias entry
+        /// Creates an alias entry.
         /// </summary>
         private SessionStateAliasEntry CreateSessionStateAliasEntry(Hashtable alias, bool isAliasVisibilityDefined)
         {
@@ -2665,7 +2665,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates a function entry
+        /// Creates a function entry.
         /// </summary>
         /// <returns></returns>
         private SessionStateFunctionEntry CreateSessionStateFunctionEntry(Hashtable function, bool isFunctionVisibilityDefined)
@@ -2706,7 +2706,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates a variable entry
+        /// Creates a variable entry.
         /// </summary>
         private SessionStateVariableEntry CreateSessionStateVariableEntry(Hashtable variable, PSLanguageMode languageMode)
         {
@@ -2768,7 +2768,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attempts to get a value from a hashtable
+        /// Attempts to get a value from a hashtable.
         /// </summary>
         /// <param name="table"></param>
         /// <param name="key"></param>
@@ -2784,7 +2784,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attempts to get a hashtable array from an object
+        /// Attempts to get a hashtable array from an object.
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>
@@ -2828,7 +2828,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attempts to get a string array from a hashtable
+        /// Attempts to get a string array from a hashtable.
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>

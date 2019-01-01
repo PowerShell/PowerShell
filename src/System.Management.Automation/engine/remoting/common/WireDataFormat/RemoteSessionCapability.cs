@@ -138,7 +138,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Gets the TimeZone of the destination machine. This may be null
+        /// Gets the TimeZone of the destination machine. This may be null.
         /// </summary>
         internal TimeZoneInfo TimeZone
         {

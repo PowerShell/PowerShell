@@ -31,7 +31,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting.Client
 {
     /// <summary>
-    /// WSMan TransportManager related utils
+    /// WSMan TransportManager related utils.
     /// </summary>
     internal static class WSManTransportManagerUtils
     {
@@ -84,7 +84,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Helper Methods
 
         /// <summary>
-        /// Constructs a WSManTransportErrorOccuredEventArgs instance from the supplied data
+        /// Constructs a WSManTransportErrorOccuredEventArgs instance from the supplied data.
         /// </summary>
         /// <param name="wsmanAPIHandle">
         /// WSMan API handle to use to get error messages from WSMan error id(s)
@@ -288,7 +288,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal const string MAX_URI_REDIRECTION_COUNT_VARIABLE = "WSManMaxRedirectionCount";
         /// <summary>
-        /// Default max uri redirection count - wsman
+        /// Default max uri redirection count - wsman.
         /// </summary>
         internal const int MAX_URI_REDIRECTION_COUNT = 5;
 
@@ -649,7 +649,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Sets timeout for Close operation in milliseconds
+        /// Sets timeout for Close operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
@@ -677,7 +677,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Sets timeout for SendShellInput operation in milliseconds
+        /// Sets timeout for SendShellInput operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
@@ -705,7 +705,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Sets timeout for Receive operation in milliseconds
+        /// Sets timeout for Receive operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Sets timeout for Signal operation in milliseconds
+        /// Sets timeout for Signal operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
@@ -896,7 +896,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Starts connecting to an existing remote session. This will result in a WSManConnectShellEx WSMan
         /// async call. Piggy backs available data in input stream as openXml in connect SOAP.
-        /// DSHandler will push negotiation related messages through the open content
+        /// DSHandler will push negotiation related messages through the open content.
         /// </summary>
         /// <exception cref="PSRemotingTransportException">
         /// WSManConnectShellEx failed.
@@ -1608,7 +1608,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Handle transport error - calls EnqueueAndStartProcessingThread to process transport exception
         /// in a different thread
-        /// Logic in transport callbacks should always use this to process a transport error
+        /// Logic in transport callbacks should always use this to process a transport error.
         /// </summary>
         internal void ProcessWSManTransportError(TransportErrorOccuredEventArgs eventArgs)
         {
@@ -1737,7 +1737,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Robust connection maximum retry time in milliseconds
+        /// Robust connection maximum retry time in milliseconds.
         /// </summary>
         internal int MaxRetryConnectionTime
         {
@@ -2598,7 +2598,7 @@ namespace System.Management.Automation.Remoting.Client
 #endif
 
             /// <summary>
-            /// Initializes handle by calling WSManInitialize API
+            /// Initializes handle by calling WSManInitialize API.
             /// </summary>
             internal WSManAPIDataCommon()
             {
@@ -2658,7 +2658,7 @@ namespace System.Management.Automation.Remoting.Client
             internal IntPtr WSManAPIHandle { get { return _handle; } }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             // Suppress this message. The result is actually used, but only in checked builds....
             [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
@@ -3022,7 +3022,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Restores connection on a disconnected command
+        /// Restores connection on a disconnected command.
         /// </summary>
         internal override void ReconnectAsync()
         {
@@ -3038,7 +3038,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
         /// <summary>
-        /// Used by powershell/pipeline to send a stop message to the server command
+        /// Used by powershell/pipeline to send a stop message to the server command.
         /// </summary>
         internal override void SendStopSignal()
         {
@@ -3126,7 +3126,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Handle transport error - calls EnqueueAndStartProcessingThread to process transport exception
         /// in a different thread
-        /// Logic in transport callbacks should always use this to process a transport error
+        /// Logic in transport callbacks should always use this to process a transport error.
         /// </summary>
         internal void ProcessWSManTransportError(TransportErrorOccuredEventArgs eventArgs)
         {

@@ -20,7 +20,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    /// Abstract class that defines common functionality for WinRM Plugin API Server Sessions
+    /// Abstract class that defines common functionality for WinRM Plugin API Server Sessions.
     /// </summary>
     internal abstract class WSManPluginServerSession : IDisposable
     {
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Main Routine for Connect on a Shell.
         /// Calls in server remotesessions ExecuteConnect to run the Connect algorithm
-        /// This call is synchronous. i.e WSManOperationComplete will be called before the routine completes
+        /// This call is synchronous. i.e WSManOperationComplete will be called before the routine completes.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="flags"></param>
@@ -830,7 +830,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Main routine for connect on a command/pipeline.. Currently NO-OP
         /// will be enhanced later to support intelligent connect... like ending input streams on pipelines
-        /// that are still waiting for input data
+        /// that are still waiting for input data.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="flags"></param>

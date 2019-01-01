@@ -584,7 +584,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Helper function to validate incoming values
+        /// Helper function to validate incoming values.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="shellContext"></param>
@@ -738,7 +738,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Connect
+        /// Connect.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="flags"></param>
@@ -1022,7 +1022,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Was private. Made protected internal for easier testing
+        /// Was private. Made protected internal for easier testing.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <returns></returns>
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// extract message from exception (if any) and report operation complete with it to WSMan
+        /// extract message from exception (if any) and report operation complete with it to WSMan.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="reasonForClose"></param>

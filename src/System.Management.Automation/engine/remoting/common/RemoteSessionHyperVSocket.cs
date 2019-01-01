@@ -288,7 +288,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {

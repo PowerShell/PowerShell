@@ -7,14 +7,14 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Repository of remote runspaces available in a local runspace
+    /// Repository of remote runspaces available in a local runspace.
     /// </summary>
     public class RunspaceRepository : Repository<PSSession>
     {
         #region Public Methods
 
         /// <summary>
-        /// Collection of runspaces available
+        /// Collection of runspaces available.
         /// </summary>
         public List<PSSession> Runspaces
         {
@@ -29,14 +29,14 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// Internal constructor
+        /// Internal constructor.
         /// </summary>
         internal RunspaceRepository() : base("runspace")
         {
         }
 
         /// <summary>
-        /// Gets a key for the specified item
+        /// Gets a key for the specified item.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>

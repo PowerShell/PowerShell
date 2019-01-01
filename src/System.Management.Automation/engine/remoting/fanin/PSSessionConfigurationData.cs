@@ -153,7 +153,7 @@ namespace System.Management.Automation.Remoting
         private string _privateData;
 
         /// <summary>
-        /// Checks if the originalValue is empty. If not throws an exception
+        /// Checks if the originalValue is empty. If not throws an exception.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="originalValue"></param>
@@ -170,7 +170,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Using optionName and optionValue updates the current object
+        /// Using optionName and optionValue updates the current object.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="optionValue"></param>

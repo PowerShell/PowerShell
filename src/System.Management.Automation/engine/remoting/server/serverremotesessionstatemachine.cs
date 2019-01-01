@@ -49,7 +49,7 @@ namespace System.Management.Automation.Remoting
         private RemoteSessionState _state;
 
         /// <summary>
-        /// timer used for key exchange
+        /// timer used for key exchange.
         /// </summary>
         private Timer _keyExchangeTimer;
 
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Remoting
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
-        /// of processing the events
+        /// of processing the events.
         /// </summary>
         private void ProcessEvents()
         {
@@ -644,7 +644,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Handle connect event - this is raised when a new client tries to connect to an existing session
-        /// No changes to state. Calls into the session to handle any post connect operations
+        /// No changes to state. Calls into the session to handle any post connect operations.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="fsmEventArg"></param>
@@ -893,7 +893,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This method contains all the logic for handling the state machine
-        /// for key exchange. All the different scenarios are covered in this
+        /// for key exchange. All the different scenarios are covered in this.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Event args.</param>
@@ -977,7 +977,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Handles the timeout for key exchange
+        /// Handles the timeout for key exchange.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
