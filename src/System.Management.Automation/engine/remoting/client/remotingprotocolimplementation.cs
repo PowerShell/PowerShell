@@ -10,7 +10,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    /// Implements ServerRemoteSessionDataStructureHandler
+    /// Implements ServerRemoteSessionDataStructureHandler.
     /// </summary>
     internal class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
     {
@@ -54,7 +54,7 @@ namespace System.Management.Automation.Remoting
         #region constructors
 
         /// <summary>
-        /// Creates an instance of ClientRemoteSessionDSHandlerImpl
+        /// Creates an instance of ClientRemoteSessionDSHandlerImpl.
         /// </summary>
         internal ClientRemoteSessionDSHandlerImpl(ClientRemoteSession session,
             PSRemotingCryptoHelper cryptoHelper,
@@ -119,7 +119,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This callback is called on complete of async connect call
+        /// This callback is called on complete of async connect call.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
@@ -234,7 +234,7 @@ namespace System.Management.Automation.Remoting
         #region negotiation
 
         /// <summary>
-        /// Sends the negotiation package asynchronously
+        /// Sends the negotiation package asynchronously.
         /// </summary>
         internal override void SendNegotiationAsync(RemoteSessionState sessionState)
         {
@@ -361,7 +361,7 @@ namespace System.Management.Automation.Remoting
         /// 1. Close the current transport manager to clean resources
         /// 2. Raise a warning that URI is getting redirected.
         /// 3. Using the new URI, ask the same transport manager to redirect
-        /// Step 1 is performed here. Step2-3 is performed in another method
+        /// Step 1 is performed here. Step2-3 is performed in another method.
         /// </summary>
         /// <param name="newURIString"></param>
         /// <exception cref="ArgumentNullException">
@@ -529,7 +529,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Dispatches data when it arrives from the input queue
+        /// Dispatches data when it arrives from the input queue.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="dataArg">
@@ -600,7 +600,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This processes the object received from transport which are
-        /// targeted for session
+        /// targeted for session.
         /// </summary>
         /// <param name="arg">
         /// argument contains the data object
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This processes the object received from transport which are
-        /// not targeted for session
+        /// not targeted for session.
         /// </summary>
         /// <param name="rcvdData">
         /// received data.
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// public method for dispose
+        /// public method for dispose.
         /// </summary>
         public void Dispose()
         {
@@ -747,7 +747,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// release all resources
+        /// release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected void Dispose(bool disposing)
@@ -766,7 +766,7 @@ namespace System.Management.Automation.Remoting
 
         internal override event EventHandler<RemoteDataEventArgs<string>> PublicKeyRequestReceived;
         /// <summary>
-        /// Send the specified local public key to the remote end
+        /// Send the specified local public key to the remote end.
         /// </summary>
         /// <param name="localPublicKey">Local public key as a string.</param>
         internal override void SendPublicKeyAsync(string localPublicKey)
@@ -777,7 +777,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Raise the public key received event
+        /// Raise the public key received event.
         /// </summary>
         /// <param name="receivedData">Received data.</param>
         /// <remarks>This method is a hook to be called

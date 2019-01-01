@@ -24,29 +24,29 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Enumeration for job status values. Indicates the status
-    /// of the result object
+    /// of the result object.
     /// </summary>
     public enum JobState
     {
         /// <summary>
-        /// Execution of command in job not started
+        /// Execution of command in job not started.
         /// </summary>
         NotStarted = 0,
 
         /// <summary>
-        /// execution of command in progress
+        /// execution of command in progress.
         /// </summary>
         Running = 1,
 
         /// <summary>
         /// execution of command completed in all
-        /// computernames/runspaces
+        /// computernames/runspaces.
         /// </summary>
         Completed = 2,
 
         /// <summary>
         /// An error was encountered when trying to executed
-        /// command in one or more computernames/runspaces
+        /// command in one or more computernames/runspaces.
         /// </summary>
         Failed = 3,
 
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         Blocked = 5,
 
         /// <summary>
-        /// The job has been suspended
+        /// The job has been suspended.
         /// </summary>
         Suspended = 6,
 
@@ -72,12 +72,12 @@ namespace System.Management.Automation
         Disconnected = 7,
 
         /// <summary>
-        /// Suspend is in progress
+        /// Suspend is in progress.
         /// </summary>
         Suspending = 8,
 
         /// <summary>
-        /// Stop is in progress
+        /// Stop is in progress.
         /// </summary>
         Stopping = 9,
 
@@ -198,7 +198,7 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// Gets CurrentState of the Job
+        /// Gets CurrentState of the Job.
         /// </summary>
         public JobState CurrentState
         {
@@ -217,7 +217,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Type which has information about JobState and Exception
-    /// ,if any, associated with JobState
+    /// ,if any, associated with JobState.
     /// </summary>
     public sealed class JobStateInfo
     {
@@ -246,7 +246,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copy constructor to support cloning
+        /// Copy constructor to support cloning.
         /// </summary>
         /// <param name="jobStateInfo">Source information.</param>
         /// <throws>
@@ -292,7 +292,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clones this object
+        /// Clones this object.
         /// </summary>
         /// <returns>Cloned object.</returns>
         internal JobStateInfo Clone()
@@ -314,7 +314,7 @@ namespace System.Management.Automation
         #region constructors
 
         /// <summary>
-        /// Constructor of JobStateEventArgs
+        /// Constructor of JobStateEventArgs.
         /// </summary>
         /// <param name="jobStateInfo">The current state of the job.</param>
         public JobStateEventArgs(JobStateInfo jobStateInfo)
@@ -323,7 +323,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor of JobStateEventArgs
+        /// Constructor of JobStateEventArgs.
         /// </summary>
         /// <param name="jobStateInfo">The current state of the job.</param>
         /// <param name="previousJobStateInfo">The previous state of the job.</param>
@@ -380,7 +380,7 @@ namespace System.Management.Automation
     public interface IJobDebugger
     {
         /// <summary>
-        /// Job Debugger
+        /// Job Debugger.
         /// </summary>
         Debugger Debugger
         {
@@ -406,7 +406,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         protected Job()
         {
@@ -414,7 +414,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of this class
+        /// Creates an instance of this class.
         /// </summary>
         /// <param name="command">Command invoked by this job object.</param>
         protected Job(string command)
@@ -425,7 +425,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of this class
+        /// Creates an instance of this class.
         /// </summary>
         /// <param name="command">Command invoked by this job object.</param>
         /// <param name="name">Friendly name for the job object.</param>
@@ -439,7 +439,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of this class
+        /// Creates an instance of this class.
         /// </summary>
         /// <param name="command">Command invoked by this job object.</param>
         /// <param name="name">Friendly name for the job object.</param>
@@ -451,7 +451,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of this class
+        /// Creates an instance of this class.
         /// </summary>
         /// <param name="command">Command invoked by this job object.</param>
         /// <param name="name">Friendly name for the job object.</param>
@@ -483,7 +483,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of this class
+        /// Creates an instance of this class.
         /// </summary>
         /// <param name="command">Command invoked by this job object.</param>
         /// <param name="name">Friendly name for the job object.</param>
@@ -542,7 +542,7 @@ namespace System.Management.Automation
         private bool _outputOwner = true;
 
         /// <summary>
-        /// Static variable which is incremented to generate id
+        /// Static variable which is incremented to generate id.
         /// </summary>
         private static int s_jobIdSeed = 0;
 
@@ -553,7 +553,7 @@ namespace System.Management.Automation
         #region Job Properties
 
         /// <summary>
-        /// Command Invoked by this Job
+        /// Command Invoked by this Job.
         /// </summary>
         public string Command { get; }
 
@@ -591,18 +591,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// unique identifier for this job
+        /// unique identifier for this job.
         /// </summary>
         public Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
         /// Short identifier for this result which will be
-        /// recycled and used within a process
+        /// recycled and used within a process.
         /// </summary>
         public int Id { get; }
 
         /// <summary>
-        /// Name for identifying this job object
+        /// Name for identifying this job object.
         /// </summary>
         public string Name
         {
@@ -619,7 +619,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// List of child jobs contained within this job
+        /// List of child jobs contained within this job.
         /// </summary>
         public IList<Job> ChildJobs
         {
@@ -679,7 +679,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Result objects from this job. If this object is not a
         /// leaf node (with no children), then this will
-        /// aggregate the results from all child jobs
+        /// aggregate the results from all child jobs.
         /// </summary>
         internal PSDataCollection<PSStreamObject> Results
         {
@@ -706,7 +706,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicates if a particular Job type uses the
-        /// internal results collection
+        /// internal results collection.
         /// </summary>
         internal bool UsesResultsCollection { get; set; }
 
@@ -729,7 +729,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Allows propagating of terminating exceptions from remote "throw" statement
-        /// (normally / by default all remote errors are transformed into non-terminating errors
+        /// (normally / by default all remote errors are transformed into non-terminating errors.
         /// </summary>
         internal bool PropagateThrows { get; set; }
 
@@ -997,14 +997,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unloads job streams information. Enables jobs to
-        /// clear stream information from memory
+        /// clear stream information from memory.
         /// </summary>
         protected virtual void DoUnloadJobStreams()
         {
         }
 
         /// <summary>
-        /// Load the required job streams
+        /// Load the required job streams.
         /// </summary>
         public void LoadJobStreams()
         {
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
         private bool _jobStreamsLoaded;
 
         /// <summary>
-        /// Unload the required job streams
+        /// Unload the required job streams.
         /// </summary>
         public void UnloadJobStreams()
         {
@@ -1242,7 +1242,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the warning buffer. Warnings of job are written to
-        /// this buffer
+        /// this buffer.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
@@ -1278,7 +1278,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the information buffer. Information records of job are written to
-        /// this buffer
+        /// this buffer.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
@@ -1313,7 +1313,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Indicates a location where this job is running
+        /// Indicates a location where this job is running.
         /// </summary>
         public abstract string Location { get; }
 
@@ -1348,7 +1348,7 @@ namespace System.Management.Automation
         #region Job State and State Change Event
 
         /// <summary>
-        /// Event raised when state of the job changes
+        /// Event raised when state of the job changes.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
         public event EventHandler<JobStateEventArgs> StateChanged;
@@ -1472,7 +1472,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the items in results collection
         /// after clearing up all the internal
-        /// structures
+        /// structures.
         /// </summary>
         /// <returns>Collection of stream objects.</returns>
         internal Collection<PSStreamObject> ReadAll()
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Helper function to check if job is finished
+        /// Helper function to check if job is finished.
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
@@ -1534,7 +1534,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Automatically generate a job name if the user
-        /// does not supply one
+        /// does not supply one.
         /// </summary>
         /// <returns>Auto generated job name.</returns>
         /// <remarks>Since the user can script/program against the
@@ -1594,7 +1594,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the job for the specified location
+        /// Gets the job for the specified location.
         /// </summary>
         /// <param name="location">Location to filter on.</param>
         /// <returns>Collection of jobs.</returns>
@@ -1679,7 +1679,7 @@ namespace System.Management.Automation
         private bool _processingOutput;
 
         /// <summary>
-        /// MonitorOutputProcessing
+        /// MonitorOutputProcessing.
         /// </summary>
         internal bool MonitorOutputProcessing
         {
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Internal constructor for initializing PSRemotingJob using
-        /// computer names
+        /// computer names.
         /// </summary>
         /// <param name="computerNames">names of computers for
         /// which the job object is being created</param>
@@ -1745,7 +1745,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Internal constructor for initializing job using
-        /// PSSession objects
+        /// PSSession objects.
         /// </summary>
         /// <param name="remoteRunspaceInfos">array of runspace info
         /// objects on which the remote command is executed</param>
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Internal constructor for initializing PSRemotingJob using
-        /// computer names
+        /// computer names.
         /// </summary>
         /// <param name="computerNames">names of computers for
         /// which the result object is being created</param>
@@ -1797,7 +1797,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Internal constructor for initializing job using
-        /// PSSession objects
+        /// PSSession objects.
         /// </summary>
         /// <param name="remoteRunspaceInfos">array of runspace info
         /// objects on which the remote command is executed</param>
@@ -1870,12 +1870,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         protected PSRemotingJob() { }
 
         /// <summary>
-        /// Initialization common to both constructors
+        /// Initialization common to both constructors.
         /// </summary>
         private void CommonInit(int throttleLimit, List<IThrottleOperation> helpers)
         {
@@ -1896,7 +1896,7 @@ namespace System.Management.Automation
         #region internal methods
 
         /// <summary>
-        /// Get entity result for the specified computer
+        /// Get entity result for the specified computer.
         /// </summary>
         /// <param name="computerName">computername for which entity
         /// result is required</param>
@@ -1920,7 +1920,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get entity result for the specified runspace
+        /// Get entity result for the specified runspace.
         /// </summary>
         /// <param name="runspace">runspace for which entity
         /// result is required</param>
@@ -1943,7 +1943,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get entity result for the specified helper object
+        /// Get entity result for the specified helper object.
         /// </summary>
         /// <param name="operation">helper for which entity
         /// result is required</param>
@@ -2193,7 +2193,7 @@ namespace System.Management.Automation
 
         private bool _moreData = true;
         /// <summary>
-        /// indicates if more data is available
+        /// indicates if more data is available.
         /// </summary>
         /// <remarks>
         /// This has more data if any of the child jobs have more data.
@@ -2228,7 +2228,7 @@ namespace System.Management.Automation
 
         private bool _stopIsCalled = false;
         /// <summary>
-        /// Stop Job
+        /// Stop Job.
         /// </summary>
         public override void StopJob()
         {
@@ -2273,7 +2273,7 @@ namespace System.Management.Automation
 
         private string _statusMessage;
         /// <summary>
-        /// Message indicating status of the job
+        /// Message indicating status of the job.
         /// </summary>
         public override string StatusMessage
         {
@@ -2311,7 +2311,7 @@ namespace System.Management.Automation
 
         //ISSUE: Implement StatusMessage
         /// <summary>
-        /// Checks the status of remote command execution
+        /// Checks the status of remote command execution.
         /// </summary>
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -2376,7 +2376,7 @@ namespace System.Management.Automation
         private int _debugChildJobsCount = 0;
 
         /// <summary>
-        /// Handles the StateChanged event from each of the child job objects
+        /// Handles the StateChanged event from each of the child job objects.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -2593,7 +2593,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Computers on which this job is running
+        /// Computers on which this job is running.
         /// </summary>
         public override string Location
         {
@@ -2637,7 +2637,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles JobUnblocked event from a child job and decrements
         /// count of blocked child jobs. When count reaches 0, sets the
-        /// state of the parent job to running
+        /// state of the parent job to running.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments, should be empty in this
@@ -2755,7 +2755,7 @@ namespace System.Management.Automation
         #region Internal Constructor
 
         /// <summary>
-        /// Creates an instance of PSRemotingChildJob
+        /// Creates an instance of PSRemotingChildJob.
         /// </summary>
         /// <param name="remoteCommand">Command invoked by this job object.</param>
         /// <param name="helper"></param>
@@ -2825,7 +2825,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         protected PSRemotingChildJob()
         {
@@ -2854,7 +2854,7 @@ namespace System.Management.Automation
 
         //bool isStopCalled = false;
         /// <summary>
-        /// Stops the job
+        /// Stops the job.
         /// </summary>
         public override void StopJob()
         {
@@ -2888,7 +2888,7 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// Status Message associated with the Job
+        /// Status Message associated with the Job.
         /// </summary>
         public override string StatusMessage
         {
@@ -2901,7 +2901,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicates if there is more data available in
-        /// this Job
+        /// this Job.
         /// </summary>
         public override bool HasMoreData
         {
@@ -2913,7 +2913,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns the computer on which this command is
-        /// running
+        /// running.
         /// </summary>
         public override string Location
         {
@@ -2928,7 +2928,7 @@ namespace System.Management.Automation
         public Runspace Runspace { get; }
 
         /// <summary>
-        /// helper associated with this entity
+        /// helper associated with this entity.
         /// </summary>
         internal ExecutionCmdletHelper Helper { get; } = null;
 
@@ -2983,7 +2983,7 @@ namespace System.Management.Automation
         #region IJobDebugger
 
         /// <summary>
-        /// Job Debugger
+        /// Job Debugger.
         /// </summary>
         public Debugger Debugger
         {
@@ -3022,7 +3022,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Handler which will handle output ready events of the
         /// pipeline. The output objects are queued on to the
-        /// internal stream
+        /// internal stream.
         /// </summary>
         /// <param name="sender">the pipeline reader which raised
         /// this event</param>
@@ -3073,7 +3073,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Handler which will handle error ready events of the
         /// pipeline. The error records are queued on to the
-        /// internal stream
+        /// internal stream.
         /// </summary>
         /// <param name="sender">the pipeline reader which raised
         /// this event</param>
@@ -3147,7 +3147,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle changes in pipeline states
+        /// Handle changes in pipeline states.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -3190,7 +3190,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle a throttle complete event
+        /// Handle a throttle complete event.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">Not used in this method.</param>
@@ -3211,7 +3211,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle the operation complete event
+        /// Handle the operation complete event.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="stateEventArgs">Operation complete event args.</param>
@@ -3272,7 +3272,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process the exceptions to decide reason for job failure
+        /// Process the exceptions to decide reason for job failure.
         /// </summary>
         /// <param name="helper"></param>
         /// <param name="failureException"></param>
@@ -3457,7 +3457,7 @@ namespace System.Management.Automation
         private bool _cleanupDone = false;
 
         /// <summary>
-        /// Cleanup after state changes to finished
+        /// Cleanup after state changes to finished.
         /// </summary>
         protected virtual void DoCleanupOnFinished()
         {
@@ -3486,7 +3486,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Aggregates results from the pipeline associated
-        /// with the specified helper
+        /// with the specified helper.
         /// </summary>
         /// <param name="helper">helper whose pipeline results
         /// need to be aggregated</param>
@@ -3541,7 +3541,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When a debug message is raised in the underlying PowerShell
-        /// add it to the jobs debug stream
+        /// add it to the jobs debug stream.
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -3558,7 +3558,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When a verbose message is raised in the underlying PowerShell
-        /// add it to the jobs verbose stream
+        /// add it to the jobs verbose stream.
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -3575,7 +3575,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When a warning message is raised in the underlying PowerShell
-        /// add it to the jobs warning stream
+        /// add it to the jobs warning stream.
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -3594,7 +3594,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When a progress message is raised in the underlying PowerShell
-        /// add it to the jobs progress tream
+        /// add it to the jobs progress tream.
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -3611,7 +3611,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When a Information message is raised in the underlying PowerShell
-        /// add it to the jobs Information stream
+        /// add it to the jobs Information stream.
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -3639,7 +3639,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Stops collecting results from the pipeline associated with
-        /// the specified helper
+        /// the specified helper.
         /// </summary>
         /// <param name="helper">helper class whose pipeline results
         /// aggregation has to be stopped</param>
@@ -3690,7 +3690,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// register for throttle complete from the specified
-        /// throttlemanager
+        /// throttlemanager.
         /// </summary>
         /// <param name="throttleManager"></param>
         protected void RegisterThrottleComplete(ThrottleManager throttleManager)
@@ -3700,7 +3700,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// unregister for throttle complete from the specified
-        /// throttle manager
+        /// throttle manager.
         /// </summary>
         /// <param name="throttleManager"></param>
         protected void UnregisterThrottleComplete(ThrottleManager throttleManager)
@@ -3710,7 +3710,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Determine the current state of the job based on the underlying
-        /// pipeline state and set the state accordingly
+        /// pipeline state and set the state accordingly.
         /// </summary>
         /// <param name="helper"></param>
         protected void DeterminedAndSetJobState(ExecutionCmdletHelper helper)
@@ -3747,7 +3747,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set the state of the current job from blocked to
         /// running and raise an event indicating to this
-        /// parent job that this job is unblocked
+        /// parent job that this job is unblocked.
         /// </summary>
         internal void UnblockJob()
         {
@@ -3761,7 +3761,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the PowerShell for the specified instance id
+        /// Returns the PowerShell for the specified instance id.
         /// </summary>
         /// <param name="instanceId">Instance id of powershell.</param>
         /// <returns>Powershell instance.</returns>
@@ -3811,7 +3811,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Event raised by this job to indicate to its parent that
-        /// its now unblocked by the user
+        /// its now unblocked by the user.
         /// </summary>
         internal event EventHandler JobUnblocked;
 
@@ -3856,7 +3856,7 @@ namespace System.Management.Automation
         private RemotingJobDebugger() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="debugger">Debugger to wrap.</param>
         /// <param name="runspace">Remote runspace.</param>
@@ -3982,7 +3982,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// CheckStateAndRaiseStopEvent
+        /// CheckStateAndRaiseStopEvent.
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
         {
@@ -4068,7 +4068,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// This job is used for running as a job the results from multiple
-    /// pipelines. This is used in synchronous Invoke-Expression execution
+    /// pipelines. This is used in synchronous Invoke-Expression execution.
     /// </summary>
     /// <remarks>
     /// TODO: I am not sure whether to change this internal to just InvokeExpressionSyncJob.
@@ -4092,7 +4092,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Construct an invoke-expression sync job
+        /// Construct an invoke-expression sync job.
         /// </summary>
         /// <param name="operations">List of operations to use.</param>
         /// <param name="throttleManager">throttle manager to use for
@@ -4136,7 +4136,7 @@ namespace System.Management.Automation
         private bool _cleanupDone = false;
 
         /// <summary>
-        /// Clean up once job is finished
+        /// Clean up once job is finished.
         /// </summary>
         protected override void DoCleanupOnFinished()
         {
@@ -4175,7 +4175,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// release all resources
+        /// release all resources.
         /// </summary>
         /// <param name="disposing">True if called by Dispose().</param>
         protected override void Dispose(bool disposing)
@@ -4185,7 +4185,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Handles operation complete from the operations. Adds an error record
-        /// to results whenever an error is encountered
+        /// to results whenever an error is encountered.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="stateEventArgs">Arguments describing this event, unused.</param>
@@ -4207,7 +4207,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle changes in pipeline states
+        /// Handle changes in pipeline states.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -4270,7 +4270,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Used to stop all operations
+        /// Used to stop all operations.
         /// </summary>
         public override void StopJob()
         {
@@ -4310,7 +4310,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the PowerShell instance for the specified id
+        /// Returns the PowerShell instance for the specified id.
         /// </summary>
         /// <param name="instanceId">Instance id of PowerShell.</param>
         /// <returns>PowerShell instance.</returns>
@@ -4366,7 +4366,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines if the job is in a terminal state
+        /// Determines if the job is in a terminal state.
         /// </summary>
         /// <returns>True, if job in terminal state
         /// false otherwise.</returns>

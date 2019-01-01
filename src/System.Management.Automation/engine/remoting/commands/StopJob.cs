@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// removed
+        /// removed.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Wait for all the stop jobs to be completed
+        /// Wait for all the stop jobs to be completed.
         /// </summary>
         protected override void EndProcessing()
         {

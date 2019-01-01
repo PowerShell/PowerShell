@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// This class implements New-PSSessionOption cmdlet.
-    /// Spec: TBD
+    /// Spec: TBD.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144305", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(PSSessionOption))]
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The MaximumRedirection parameter enables the implicit redirection functionality
         /// -1 = no limit
-        ///  0 = no redirection
+        ///  0 = no redirection.
         /// </summary>
         [Parameter]
         public int MaximumRedirection
@@ -56,14 +56,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoMachineProfile { get; set; }
 
         /// <summary>
-        /// Culture that the remote session should use
+        /// Culture that the remote session should use.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
         public CultureInfo Culture { get; set; }
 
         /// <summary>
-        /// UI culture that the remote session should use
+        /// UI culture that the remote session should use.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         /// - Negotiate: Use the default authentication (as defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Basic:  Use basic authentication for establishing a remote connection
-        /// - Digest: Use Digest authentication for establishing a remote connection
+        /// - Digest: Use Digest authentication for establishing a remote connection.
         /// </summary>
         [Parameter]
         public AuthenticationMechanism ProxyAuthentication { get; set; } = AuthenticationMechanism.Negotiate;
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
         /// certificate is signed by a trusted certificate authority (CA). Use only when
         /// the remote computer is trusted by other means, for example, if the remote
         /// computer is part of a network that is physically secure and isolated or the
-        /// remote computer is listed as a trusted host in WinRM configuration
+        /// remote computer is listed as a trusted host in WinRM configuration.
         /// </summary>
         [Parameter]
         public SwitchParameter SkipCACheck
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter "SkipCNCheck".
         /// Indicates that certificate common name (CN) of the server need not match the
         /// hostname of the server. Used only in remote operations using https. This
-        /// option should only be used for trusted machines
+        /// option should only be used for trusted machines.
         /// </summary>
         [Parameter]
         public SwitchParameter SkipCNCheck
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter "SkipRevocation".
         /// Indicates that certificate common name (CN) of the server need not match the
         /// hostname of the server. Used only in remote operations using https. This
-        /// option should only be used for trusted machines
+        /// option should only be used for trusted machines.
         /// </summary>
         [Parameter]
         public SwitchParameter SkipRevocationCheck
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Timeout".
-        /// Defines the timeout in milliseconds for the wsman operation
+        /// Defines the timeout in milliseconds for the wsman operation.
         /// </summary>
         [Parameter]
         [Alias("OperationTimeoutMSec")]
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter "UnEncrypted".
         /// Specifies that no encryption will be used when doing remote operations over
         /// http. Unencrypted traffic is not allowed by default and must be enabled in
-        /// the local configuration
+        /// the local configuration.
         /// </summary>
         [Parameter]
         public SwitchParameter NoEncryption

@@ -14,7 +14,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This is the base class for job cmdlet and contains some helper functions
+    /// This is the base class for job cmdlet and contains some helper functions.
     /// </summary>
     public class JobCmdletBase : PSRemotingCmdlet
     {
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         #region Job Matches
 
         /// <summary>
-        /// Find the jobs in repository which match matching the specified names
+        /// Find the jobs in repository which match matching the specified names.
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned).</param>
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the jobs in repository which match the specified instanceid
+        /// Find the jobs in repository which match the specified instanceid.
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned).</param>
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the jobs in repository which match the specified session ids
+        /// Find the jobs in repository which match the specified session ids.
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned).</param>
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the jobs in repository which match the specified command
+        /// Find the jobs in repository which match the specified command.
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned).</param>
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the jobs in repository which match the specified state
+        /// Find the jobs in repository which match the specified state.
         /// </summary>
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned).</param>
@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Name of the jobs to retrieve
+        /// Name of the jobs to retrieve.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0,
                   Mandatory = true,
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// InstanceIds for which job
-        /// need to be obtained
+        /// need to be obtained.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0,
                    Mandatory = true,
@@ -651,7 +651,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// SessionId for which job
-        /// need to be obtained
+        /// need to be obtained.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0,
                   Mandatory = true,
@@ -722,7 +722,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _commands;
 
         /// <summary>
-        /// All the job objects matching the values in filter
+        /// All the job objects matching the values in filter.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0, ValueFromPipelineByPropertyName = true,
@@ -748,7 +748,7 @@ namespace Microsoft.PowerShell.Commands
         /// enabled. This is because jobs are based out of APIs
         /// and there can be other job implementations like
         /// eventing or WMI which are not based on PowerShell
-        /// remoting
+        /// remoting.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// removed
+        /// removed.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -929,7 +929,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Wait for all the stop jobs to be completed
+        /// Wait for all the stop jobs to be completed.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -946,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// release waiting for jobs
+        /// release waiting for jobs.
         /// </summary>
         protected override void StopProcessing()
         {

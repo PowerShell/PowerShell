@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// suspended
+        /// suspended.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,

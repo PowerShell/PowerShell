@@ -105,7 +105,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs a remote pipeline for the specified runspace and
-        /// specified command
+        /// specified command.
         /// </summary>
         /// <param name="runspace">Runspace in which to create the pipeline.</param>
         /// <param name="command">Command as a string, to be used in pipeline creation.</param>
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a cloned pipeline from the specified one
+        /// Creates a cloned pipeline from the specified one.
         /// </summary>
         /// <param name="pipeline">Pipeline to clone from.</param>
         /// <remarks>This constructor is private because this will
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// override for creating a copy of pipeline
+        /// override for creating a copy of pipeline.
         /// </summary>
         /// <returns>
         /// Pipeline object which is copy of this pipeline
@@ -240,7 +240,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Is this pipeline nested
+        /// Is this pipeline nested.
         /// </summary>
         public override bool IsNested
         {
@@ -252,7 +252,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// internal method to set the value of IsNested. This is called
-        /// by serializer
+        /// by serializer.
         /// </summary>
         internal void SetIsNested(bool isNested)
         {
@@ -262,7 +262,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// internal method to set the value of IsSteppable. This is called
-        /// during DoConcurrentCheck
+        /// during DoConcurrentCheck.
         /// </summary>
         internal void SetIsSteppable(bool isSteppable)
         {
@@ -326,7 +326,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// String which is added in the history
+        /// String which is added in the history.
         /// </summary>
         /// <remarks>This needs to be internal so that it can be replaced
         /// by invoke-cmd to place correct string in history.</remarks>
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Whether the pipeline needs to be added to history of the runspace
+        /// Whether the pipeline needs to be added to history of the runspace.
         /// </summary>
         public bool AddToHistory
         {
@@ -386,7 +386,7 @@ namespace System.Management.Automation
         #region Invoke
 
         /// <summary>
-        /// Invoke the pipeline asynchronously
+        /// Invoke the pipeline asynchronously.
         /// </summary>
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
@@ -526,7 +526,7 @@ namespace System.Management.Automation
         #region Stop
 
         /// <summary>
-        /// Stop the pipeline synchronously
+        /// Stop the pipeline synchronously.
         /// </summary>
         public override void Stop()
         {
@@ -577,7 +577,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if the pipeline is in a state where it can be stopped
+        /// Verifies if the pipeline is in a state where it can be stopped.
         /// </summary>
         private bool CanStopPipeline(out bool isAlreadyStopping)
         {
@@ -635,7 +635,7 @@ namespace System.Management.Automation
         #region Dispose
 
         /// <summary>
-        /// Disposes the pipeline
+        /// Disposes the pipeline.
         /// </summary>
         /// <param name="disposing">True, when called on Dispose().</param>
         protected override void Dispose(bool disposing)
@@ -936,7 +936,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle host call received
+        /// Handle host call received.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing the host call to invoke.</param>
@@ -954,7 +954,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Does the cleanup necessary on pipeline completion
+        /// Does the cleanup necessary on pipeline completion.
         /// </summary>
         private void Cleanup()
         {
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The underlying powershell object on which this remote pipeline
-        /// is created
+        /// is created.
         /// </summary>
         internal PowerShell PowerShell
         {
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the history string to the specified string
+        /// Sets the history string to the specified string.
         /// </summary>
         /// <param name="historyString">New history string to set to.</param>
         internal override void SetHistoryString(string historyString)
