@@ -82,7 +82,7 @@ namespace System.Management.Automation
     ///
     ///     Help providers may need to provide functionality in following two area,
     ///         a. caching and indexing to boost performance
-    ///         b. localization
+    ///         b. localization.
     /// </summary>
     internal class HelpSystem
     {
@@ -453,7 +453,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get help that exactly match the target
+        /// Get help that exactly match the target.
         /// </summary>
         /// <param name="helpRequest">Help request object.</param>
         /// <returns>An IEnumerable of HelpInfo object.</returns>
@@ -543,7 +543,7 @@ namespace System.Management.Automation
         private ArrayList _helpProviders = new ArrayList();
 
         /// <summary>
-        /// return the list of help providers initialized
+        /// return the list of help providers initialized.
         /// </summary>
         /// <value>a list of help providers</value>
         internal ArrayList HelpProviders
@@ -677,7 +677,7 @@ namespace System.Management.Automation
         private HelpErrorTracer _helpErrorTracer;
 
         /// <summary>
-        /// The error tracer for this help system
+        /// The error tracer for this help system.
         /// </summary>
         /// <value></value>
         internal HelpErrorTracer HelpErrorTracer
@@ -689,7 +689,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Start a trace frame for a help file
+        /// Start a trace frame for a help file.
         /// </summary>
         /// <param name="helpFile"></param>
         /// <returns></returns>
@@ -800,7 +800,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Help progress info
+    /// Help progress info.
     /// </summary>
     internal class HelpProgressInfo
     {
@@ -819,7 +819,7 @@ namespace System.Management.Automation
         internal HelpCategory HelpCategory = HelpCategory.None;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="assemblyName">Assembly that contains this help provider.</param>
         /// <param name="className">The class that implements this help provider.</param>
@@ -833,63 +833,63 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Help categories
+    /// Help categories.
     /// </summary>
     [Flags]
     internal enum HelpCategory
     {
         /// <summary>
-        /// Undefined help category
+        /// Undefined help category.
         /// </summary>
         None = 0x00,
 
         /// <summary>
-        /// Alias help
+        /// Alias help.
         /// </summary>
         Alias = 0x01,
 
         /// <summary>
-        /// Cmdlet help
+        /// Cmdlet help.
         /// </summary>
         Cmdlet = 0x02,
 
         /// <summary>
-        /// Provider help
+        /// Provider help.
         /// </summary>
         Provider = 0x04,
 
         /// <summary>
-        /// General keyword help
+        /// General keyword help.
         /// </summary>
         General = 0x10,
 
         /// <summary>
-        /// FAQ's
+        /// FAQ's.
         /// </summary>
         FAQ = 0x20,
 
         /// <summary>
-        /// Glossary and term definitions
+        /// Glossary and term definitions.
         /// </summary>
         Glossary = 0x40,
 
         /// <summary>
-        /// Help that is contained in help file
+        /// Help that is contained in help file.
         /// </summary>
         HelpFile = 0x80,
 
         /// <summary>
-        /// Help from a script block
+        /// Help from a script block.
         /// </summary>
         ScriptCommand = 0x100,
 
         /// <summary>
-        /// Help for a function
+        /// Help for a function.
         /// </summary>
         Function = 0x200,
 
         /// <summary>
-        /// Help for a filter
+        /// Help for a filter.
         /// </summary>
         Filter = 0x400,
 
@@ -904,27 +904,27 @@ namespace System.Management.Automation
         All = 0xFFFFF,
 
         ///<summary>
-        /// Default Help
+        /// Default Help.
         /// </summary>
         DefaultHelp = 0x1000,
 
         ///<summary>
-        /// Help for a Workflow
+        /// Help for a Workflow.
         /// </summary>
         Workflow = 0x2000,
 
         ///<summary>
-        /// Help for a Configuration
+        /// Help for a Configuration.
         /// </summary>
         Configuration = 0x4000,
 
         /// <summary>
-        /// Help for DSC Resource
+        /// Help for DSC Resource.
         /// </summary>
         DscResource = 0x8000,
 
         /// <summary>
-        /// Help for PS Classes
+        /// Help for PS Classes.
         /// </summary>
         Class = 0x10000
     }

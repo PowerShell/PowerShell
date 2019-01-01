@@ -67,7 +67,7 @@ namespace System.Management.Automation
     internal class MamlNode
     {
         /// <summary>
-        /// Constructor for HelpInfo
+        /// Constructor for HelpInfo.
         /// </summary>
         internal MamlNode(XmlNode xmlNode)
         {
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         private XmlNode _xmlNode;
 
         /// <summary>
-        /// Underline xmlNode for this MamlNode object
+        /// Underline xmlNode for this MamlNode object.
         /// </summary>
         /// <value></value>
         internal XmlNode XmlNode
@@ -509,7 +509,7 @@ namespace System.Management.Automation
         /// Check whether a node is for maml formatting. This include following nodes,
         ///     a. para
         ///     b. list
-        ///     c. definitionList
+        ///     c. definitionList.
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -642,7 +642,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the number of para nodes
+        /// Gets the number of para nodes.
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
@@ -1179,7 +1179,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get minimum indentation of a paragraph
+        /// Get minimum indentation of a paragraph.
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>

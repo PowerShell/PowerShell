@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Specifies the languages to update
+        /// Specifies the languages to update.
         /// </summary>
         [Parameter(Position = 2)]
         [ValidateNotNull]
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         internal string[] _language;
 
         /// <summary>
-        /// Gets or sets the credential parameter
+        /// Gets or sets the credential parameter.
         /// </summary>
         [Parameter()]
         [Credential()]
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         internal PSCredential _credential;
 
         /// <summary>
-        /// Directs System.Net.WebClient whether or not to use default credentials
+        /// Directs System.Net.WebClient whether or not to use default credentials.
         /// </summary>
         [Parameter]
         public SwitchParameter UseDefaultCredentials
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool _useDefaultCredentials = false;
 
         /// <summary>
-        /// Forces the operation to complete
+        /// Forces the operation to complete.
         /// </summary>
         [Parameter]
         public SwitchParameter Force
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         #region Events
 
         /// <summary>
-        /// Handles help system progress events
+        /// Handles help system progress events.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="commandType">Command type.</param>
         internal UpdatableHelpCommandBase(UpdatableHelpCommandType commandType)
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a list of modules from the given pattern
+        /// Gets a list of modules from the given pattern.
         /// </summary>
         /// <param name="context">Execution context.</param>
         /// <param name="pattern">Pattern to search.</param>
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Handles Ctrl+C
+        /// Handles Ctrl+C.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// End processing
+        /// End processing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Main cmdlet logic for processing module names or fully qualified module names
+        /// Main cmdlet logic for processing module names or fully qualified module names.
         /// </summary>
         /// <param name="moduleNames">Module names given by the user.</param>
         /// <param name="fullyQualifiedNames">FullyQualifiedNames.</param>
@@ -438,7 +438,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Processing module objects for Save-Help
+        /// Processing module objects for Save-Help.
         /// </summary>
         /// <param name="modules">Module objects given by the user.</param>
         internal void Process(IEnumerable<PSModuleInfo> modules)
@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Processes a module with potential globbing
+        /// Processes a module with potential globbing.
         /// </summary>
         /// <param name="name">Module name with globbing.</param>
         private void ProcessModuleWithGlobbing(string name)
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Processes a ModuleSpecification with potential globbing
+        /// Processes a ModuleSpecification with potential globbing.
         /// </summary>
         /// <param name="fullyQualifiedName">ModuleSpecification.</param>
         private void ProcessModuleWithGlobbing(ModuleSpecification fullyQualifiedName)
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Processes a single module with multiple cultures
+        /// Processes a single module with multiple cultures.
         /// </summary>
         /// <param name="module">Module to process.</param>
         private void ProcessModule(UpdatableHelpModuleInfo module)
@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process a single module with a given culture
+        /// Process a single module with a given culture.
         /// </summary>
         /// <param name="module">Module to process.</param>
         /// <param name="culture">Culture to use.</param>
@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands
         #region Common methods
 
         /// <summary>
-        /// Gets a list of modules from the given pattern or ModuleSpecification
+        /// Gets a list of modules from the given pattern or ModuleSpecification.
         /// </summary>
         /// <param name="pattern">Pattern to match.</param>
         /// <param name="fullyQualifiedName">ModuleSpecification.</param>
@@ -631,7 +631,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Checks if it is necessary to update help
+        /// Checks if it is necessary to update help.
         /// </summary>
         /// <param name="module">ModuleInfo.</param>
         /// <param name="currentHelpInfo">Current HelpInfo.xml.</param>
@@ -669,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Checks if the user has attempted to update more than once per day per module
+        /// Checks if the user has attempted to update more than once per day per module.
         /// </summary>
         /// <param name="moduleName">Module name.</param>
         /// <param name="path">Path to help info.</param>
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Resolves a given path to a list of directories
+        /// Resolves a given path to a list of directories.
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <param name="recurse">Resolve recursively?</param>
@@ -774,7 +774,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Resolves a given path to a list of directories recursively
+        /// Resolves a given path to a list of directories recursively.
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <returns>A list of directories.</returns>
@@ -818,7 +818,7 @@ namespace Microsoft.PowerShell.Commands
         #region Logging
 
         /// <summary>
-        /// Logs a command message
+        /// Logs a command message.
         /// </summary>
         /// <param name="message">Message to log.</param>
         internal void LogMessage(string message)
@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
         #region Exception processing
 
         /// <summary>
-        /// Processes an exception for help cmdlets
+        /// Processes an exception for help cmdlets.
         /// </summary>
         /// <param name="moduleName">Module name.</param>
         /// <param name="culture">Culture info.</param>

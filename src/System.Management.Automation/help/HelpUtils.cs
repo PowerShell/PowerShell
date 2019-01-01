@@ -13,7 +13,7 @@ namespace System.Management.Automation
         private static string userHomeHelpPath = null;
 
         /// <summary>
-        /// Get the path to $HOME
+        /// Get the path to $HOME.
         /// </summary>
         internal static string GetUserHomeHelpSearchPath()
         {

@@ -7,12 +7,12 @@ using System.Diagnostics;
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// This class represents a help system URI
+    /// This class represents a help system URI.
     /// </summary>
     internal class UpdatableHelpUri
     {
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="moduleName">Module name.</param>
         /// <param name="moduleGuid">Module guid.</param>
@@ -31,22 +31,22 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Module name
+        /// Module name.
         /// </summary>
         internal string ModuleName { get; }
 
         /// <summary>
-        /// Module GUID
+        /// Module GUID.
         /// </summary>
         internal Guid ModuleGuid { get; }
 
         /// <summary>
-        /// UI Culture
+        /// UI Culture.
         /// </summary>
         internal CultureInfo Culture { get; }
 
         /// <summary>
-        /// Resolved URI
+        /// Resolved URI.
         /// </summary>
         internal string ResolvedUri { get; }
     }
