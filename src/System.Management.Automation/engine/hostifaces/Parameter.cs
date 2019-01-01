@@ -267,7 +267,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     public sealed class CommandParameterCollection : Collection<CommandParameter>
     {
-        //TODO: this class needs a mechanism to lock further changes
+        // TODO: this class needs a mechanism to lock further changes
 
         /// <summary>
         /// Create a new empty instance of this collection type

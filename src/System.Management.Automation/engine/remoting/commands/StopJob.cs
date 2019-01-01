@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to stop
+            // List of jobs to stop
             List<Job> jobsToStop = null;
 
             switch (ParameterSetName)

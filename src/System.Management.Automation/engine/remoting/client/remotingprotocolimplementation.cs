@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
 
             _session = session;
 
-            //Create state machine
+            // Create state machine
             _stateMachine = new ClientRemoteSessionDSHandlerStateMachine();
             _stateMachine.StateChanged += HandleStateChanged;
 
@@ -133,8 +133,8 @@ namespace System.Management.Automation.Remoting
 
         private void HandleConnectComplete(object sender, EventArgs args)
         {
-            //No-OP. Once the negotiation messages are exchanged and the session gets into established state,
-            //it will take care of spawning the receive operation on the connected session
+            // No-OP. Once the negotiation messages are exchanged and the session gets into established state,
+            // it will take care of spawning the receive operation on the connected session
             // There is however a caveat.
             // A rouge remote server if it does not send the required negotiation data in the Connect Response,
             // then the state machine can never get into the established state and the runspace can never get into a opened state
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Remoting
 
         private void HandleDisconnectComplete(object sender, EventArgs args)
         {
-            //Set statemachine event
+            // Set statemachine event
             RemoteSessionStateMachineEventArgs disconnectCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.DisconnectCompleted);
             StateMachine.RaiseEvent(disconnectCompletedArg);
         }
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Remoting
 
         private void HandleReconnectComplete(object sender, EventArgs args)
         {
-            //Set statemachine event
+            // Set statemachine event
             RemoteSessionStateMachineEventArgs reconnectCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ReconnectCompleted);
             StateMachine.RaiseEvent(reconnectCompletedArg);
         }
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Remoting
             // is prepared for a NegotiationReceived response.  Otherwise a race condition can
             // occur when the transport NegotiationReceived arrives too soon, breaking the session.
             // This race condition was observed for OutOfProc transport when reusing the OutOfProc process.
-            //this will change StateMachine to NegotiationSent.
+            // this will change StateMachine to NegotiationSent.
             RemoteSessionStateMachineEventArgs negotiationSendCompletedArg =
                 new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendCompleted);
             _stateMachine.RaiseEvent(negotiationSendCompletedArg);
@@ -295,7 +295,7 @@ namespace System.Management.Automation.Remoting
                 SendNegotiationAsync(arg.SessionStateInfo.State);
             }
 
-            //once session is established.. start receiving data (if not already done and only apples to wsmanclientsessionTM)
+            // once session is established.. start receiving data (if not already done and only apples to wsmanclientsessionTM)
             if (arg.SessionStateInfo.State == RemoteSessionState.Established)
             {
                 WSManClientSessionTransportManager tm = _transportManager as WSManClientSessionTransportManager;
@@ -313,13 +313,13 @@ namespace System.Management.Automation.Remoting
                 CloseConnectionAsync();
             }
 
-            //process disconnect
+            // process disconnect
             if (arg.SessionStateInfo.State == RemoteSessionState.Disconnecting)
             {
                 DisconnectAsync();
             }
 
-            //process reconnect
+            // process reconnect
             if (arg.SessionStateInfo.State == RemoteSessionState.Reconnecting)
             {
                 ReconnectAsync();
@@ -335,7 +335,7 @@ namespace System.Management.Automation.Remoting
             RemoteSessionCapability clientCapability = _session.Context.ClientCapability;
             Dbg.Assert(clientCapability.RemotingDestination == RemotingDestination.Server, "Expected clientCapability.RemotingDestination == RemotingDestination.Server");
 
-            //Encode and send the negotiation reply
+            // Encode and send the negotiation reply
             RemoteDataObject data = RemotingEncoder.GenerateClientSessionCapability(
                                         clientCapability, _session.RemoteRunspacePoolInternal.InstanceId);
             RemoteDataObject<PSObject> dataAsPSObject = RemoteDataObject<PSObject>.CreateFrom(
@@ -561,20 +561,20 @@ namespace System.Management.Automation.Remoting
             {
                 case RemotingTargetInterface.Session:
                     {
-                        //Messages for session can cause statemachine state to change.
-                        //These messages are first processed by Sessiondata structure handler and depending
-                        //on the type of message, appropriate event is raised in state machine
+                        // Messages for session can cause statemachine state to change.
+                        // These messages are first processed by Sessiondata structure handler and depending
+                        // on the type of message, appropriate event is raised in state machine
                         ProcessSessionMessages(dataArg);
                         break;
                     }
 
                 case RemotingTargetInterface.RunspacePool:
                 case RemotingTargetInterface.PowerShell:
-                    //Non Session messages do not change the state of the statemachine.
-                    //However instead of forwarding them to Runspace/pipeline here, an
-                    //event is raised in state machine which verified that state is
-                    //suitable for accepting these messages. if state is suitable statemachine
-                    //will call DoMessageForwading which will forward the messages appropriately
+                    // Non Session messages do not change the state of the statemachine.
+                    // However instead of forwarding them to Runspace/pipeline here, an
+                    // event is raised in state machine which verified that state is
+                    // suitable for accepting these messages. if state is suitable statemachine
+                    // will call DoMessageForwading which will forward the messages appropriately
                     RemoteSessionStateMachineEventArgs msgRcvArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.MessageReceived, null);
                     if (StateMachine.CanByPassRaiseEvent(msgRcvArg))
                     {

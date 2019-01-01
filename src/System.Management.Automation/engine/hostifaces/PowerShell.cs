@@ -4798,8 +4798,8 @@ namespace System.Management.Automation
             // Acquire lock as we are going to change state here..
             lock (_syncObject)
             {
-                //BUGBUG: remote powershell appears to handle state change's differently
-                //Need to speak with remoting dev and resolve this.
+                // BUGBUG: remote powershell appears to handle state change's differently
+                // Need to speak with remoting dev and resolve this.
                 switch (InvocationStateInfo.State)
                 {
                     case PSInvocationState.NotStarted:

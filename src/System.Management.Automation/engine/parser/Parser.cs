@@ -42,7 +42,7 @@ namespace System.Management.Automation.Language
         private bool _inConfiguration;
         private ParseMode _parseMode;
 
-        //private bool _v3FeatureUsed;
+        // private bool _v3FeatureUsed;
         internal string _fileName;
         internal bool ProduceV2Tokens { get; set; }
 
@@ -334,7 +334,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        //public bool V3FeatureUsed { get { return _v3FeatureUsed; } }
+        // public bool V3FeatureUsed { get { return _v3FeatureUsed; } }
 
         internal List<ParseError> ErrorList { get; }
 
@@ -563,7 +563,7 @@ namespace System.Management.Automation.Language
 
         internal void NoteV3FeatureUsed()
         {
-            //_v3FeatureUsed = true;
+            // _v3FeatureUsed = true;
         }
 
         internal void RequireStatementTerminator()
@@ -672,7 +672,7 @@ namespace System.Management.Automation.Language
         internal static IScriptExtent ExtentOf(Ast first, IScriptExtent last) { return ExtentOf(first.Extent, last); }
 
         internal static IScriptExtent ExtentOf(Token first, IScriptExtent last) { return ExtentOf(first.Extent, last); }
-        //private static IScriptExtent Before(Ast ast) { return Before(ast.Extent); }
+        // private static IScriptExtent Before(Ast ast) { return Before(ast.Extent); }
 
         internal static IScriptExtent Before(Token token) { return Before(token.Extent); }
 
@@ -789,12 +789,12 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst ScriptBlockRule(Token lCurly, bool isFilter, StatementAst predefinedStatementAst)
         {
-            //G  script-block:
-            //G      using-statements:opt   param-block:opt   statement-terminators:opt   script-block-body:opt
-            //G
-            //G  using-statements:
-            //G      using-statement
-            //G      using-statements   using-statement
+            // G  script-block:
+            // G      using-statements:opt   param-block:opt   statement-terminators:opt   script-block-body:opt
+            // G
+            // G  using-statements:
+            // G      using-statement
+            // G      using-statements   using-statement
 
             // We could set the mode here, but we can avoid rescanning keywords if the caller
             // sets the mode before skipping newlines.
@@ -860,9 +860,9 @@ namespace System.Management.Automation.Language
 
         private ParamBlockAst ParamBlockRule()
         {
-            //G  param-block:
-            //G      new-lines:opt   attribute-list:opt   new-lines:opt   'param'   new-lines:opt
-            //G              '('   parameter-list:opt   new-lines:opt   ')'
+            // G  param-block:
+            // G      new-lines:opt   attribute-list:opt   new-lines:opt   'param'   new-lines:opt
+            // G              '('   parameter-list:opt   new-lines:opt   ')'
 
             SkipNewlines();
             List<AttributeBaseAst> candidateAttributes = AttributeListRule(false);
@@ -881,7 +881,7 @@ namespace System.Management.Automation.Language
             {
                 UngetToken(lparen);
 
-                //This is not an error, we'll end up trying to invoke a command named 'param'.
+                // This is not an error, we'll end up trying to invoke a command named 'param'.
                 return null;
             }
 
@@ -929,9 +929,9 @@ namespace System.Management.Automation.Language
 
         private List<ParameterAst> ParameterListRule()
         {
-            //G  parameter-list:
-            //G      script-parameter
-            //G      parameter-list   new-lines:opt   ','   script-parameter
+            // G  parameter-list:
+            // G      script-parameter
+            // G      parameter-list   new-lines:opt   ','   script-parameter
 
             List<ParameterAst> parameters = new List<ParameterAst>();
             Token commaToken = null;
@@ -969,10 +969,10 @@ namespace System.Management.Automation.Language
 
         private ParameterAst ParameterRule()
         {
-            //G  script-parameter:
-            //G      new-lines:opt   attribute-list:opt   new-lines:opt   variable   script-parameter-default:opt
-            //G  script-parameter-default:
-            //G      new-lines:opt   '='   new-lines:opt   expression
+            // G  script-parameter:
+            // G      new-lines:opt   attribute-list:opt   new-lines:opt   variable   script-parameter-default:opt
+            // G  script-parameter-default:
+            // G      new-lines:opt   '='   new-lines:opt   expression
 
             List<AttributeBaseAst> attributes;
             VariableToken variableToken;
@@ -1042,9 +1042,9 @@ namespace System.Management.Automation.Language
 
         private List<AttributeBaseAst> AttributeListRule(bool inExpressionMode)
         {
-            //G  attribute-list:
-            //G      attribute
-            //G      attribute-list   attribute
+            // G  attribute-list:
+            // G      attribute
+            // G      attribute-list   attribute
 
             List<AttributeBaseAst> attributes = new List<AttributeBaseAst>();
             AttributeBaseAst attribute = AttributeRule();
@@ -1069,10 +1069,10 @@ namespace System.Management.Automation.Language
 
         private AttributeBaseAst AttributeRule()
         {
-            //G  attribute:
-            //G      '['   attribute-name   '('   attribute-arguments   ')'   ']'
-            //G  attribute-name:
-            //G      type-spec
+            // G  attribute:
+            // G      '['   attribute-name   '('   attribute-arguments   ')'   ']'
+            // G  attribute-name:
+            // G      type-spec
 
             var lBracket = NextLBracket();
             if (lBracket == null)
@@ -1172,12 +1172,12 @@ namespace System.Management.Automation.Language
                                             ICollection<NamedAttributeArgumentAst> namedArguments,
                                             ref IScriptExtent lastItemExtent)
         {
-            //G  attribute-arguments:
-            //G      attribute-argument
-            //G      attribute-argument   new-lines:opt   ','   attribute-arguments
-            //G  attribute-argument:
-            //G      new-lines:opt   expression
-            //G      new-lines:opt   property-name   '='   new-lines:opt   expression
+            // G  attribute-arguments:
+            // G      attribute-argument
+            // G      attribute-argument   new-lines:opt   ','   attribute-arguments
+            // G  attribute-argument:
+            // G      new-lines:opt   expression
+            // G      new-lines:opt   property-name   '='   new-lines:opt   expression
 
             bool oldDisableCommaOperator = _disableCommaOperator;
             Token commaToken = null;
@@ -1285,37 +1285,37 @@ namespace System.Management.Automation.Language
 
         private ITypeName TypeNameRule(bool allowAssemblyQualifiedNames, out Token firstTypeNameToken)
         {
-            //G  type-spec:
-            //G      array-type-name    dimension:opt   ']'
-            //G      generic-type-name   generic-type-arguments   ']'
-            //G      type-name
-            //G  array-type-name:
-            //G      type-name   '['
-            //G  generic-type-name:
-            //G      type-name   '['
-            //G  dimension:
-            //G      ','
-            //G      dimension   ','
-            //G  generic-type-arguments:
-            //G      type-spec
-            //G      generic-type-arguments   ','   type-spec
-            //G  type-name:
-            //G      namespace-type-name
-            //G      namespace-type-name   ','   assembly-name-spec
-            //G  namespace-type-name:
-            //G      nested-type-name
-            //G      namespace-spec   '.'   nested-type-name
-            //G  nested-type-name:
-            //G      type-name-identifier
-            //G      nested-type-name   '+'   type-name-identifier
-            //G  namespace-spec:
-            //G      type-name-identifier
-            //G      type-name-identifier   '.'   type-name-identifier
-            //G  type-name-identifier:
-            //G      type-name-identifier-char
-            //G      type-name-identifier   type-name-identifier-char
-            //G  type-name-identifier-char:
-            //G      any letter, digit, '.', '`', or '_'.
+            // G  type-spec:
+            // G      array-type-name    dimension:opt   ']'
+            // G      generic-type-name   generic-type-arguments   ']'
+            // G      type-name
+            // G  array-type-name:
+            // G      type-name   '['
+            // G  generic-type-name:
+            // G      type-name   '['
+            // G  dimension:
+            // G      ','
+            // G      dimension   ','
+            // G  generic-type-arguments:
+            // G      type-spec
+            // G      generic-type-arguments   ','   type-spec
+            // G  type-name:
+            // G      namespace-type-name
+            // G      namespace-type-name   ','   assembly-name-spec
+            // G  namespace-type-name:
+            // G      nested-type-name
+            // G      namespace-spec   '.'   nested-type-name
+            // G  nested-type-name:
+            // G      type-name-identifier
+            // G      nested-type-name   '+'   type-name-identifier
+            // G  namespace-spec:
+            // G      type-name-identifier
+            // G      type-name-identifier   '.'   type-name-identifier
+            // G  type-name-identifier:
+            // G      type-name-identifier-char
+            // G      type-name-identifier   type-name-identifier-char
+            // G  type-name-identifier-char:
+            // G      any letter, digit, '.', '`', or '_'.
 
             // The above grammar is specified by the CLR.  We don't attempt to implement the above grammar precisely, e.g.
             // we would permit 'a+b.c'.  The above grammar would disallow this.
@@ -1665,9 +1665,9 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst ScriptBlockBodyRule(Token lCurly, List<UsingStatementAst> usingStatements, ParamBlockAst paramBlockAst, bool isFilter, StatementAst predefinedStatementAst)
         {
-            //G  script-block-body:
-            //G      named-block-list
-            //G      statement-list
+            // G  script-block-body:
+            // G      named-block-list
+            // G      statement-list
 
             Token token = PeekToken();
 
@@ -1710,13 +1710,13 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst NamedBlockListRule(Token lCurly, List<UsingStatementAst> usingStatements, ParamBlockAst paramBlockAst)
         {
-            //G  named-block-list:
-            //G      named-block
-            //G      named-block-list   named-block
-            //G  named-block:
-            //G      statement-terminators:opt   block-name   statement-block
-            //G  block-name:  one of
-            //G      'dynamicparam'   'begin'   'process'    'end'
+            // G  named-block-list:
+            // G      named-block
+            // G      named-block-list   named-block
+            // G  named-block:
+            // G      statement-terminators:opt   block-name   statement-block
+            // G  block-name:  one of
+            // G      'dynamicparam'   'begin'   'process'    'end'
 
             NamedBlockAst dynamicParamBlock = null;
             NamedBlockAst beginBlock = null;
@@ -1833,8 +1833,8 @@ namespace System.Management.Automation.Language
 
         private StatementBlockAst StatementBlockRule()
         {
-            //G  statement-block:
-            //G      new-lines:opt   '{'   statement-list:opt   new-lines:opt   '}'
+            // G  statement-block:
+            // G      new-lines:opt   '{'   statement-list:opt   new-lines:opt   '}'
 
             SkipNewlines();
             Token lCurly = NextToken();
@@ -1871,9 +1871,9 @@ namespace System.Management.Automation.Language
 
         private IScriptExtent StatementListRule(List<StatementAst> statements, List<TrapStatementAst> traps)
         {
-            //G  statement-list:
-            //G      statement
-            //G      statement-list   statement
+            // G  statement-list:
+            // G      statement
+            // G      statement-list   statement
 
             StatementAst firstStatement = null;
             StatementAst lastStatement = null;
@@ -1927,33 +1927,33 @@ namespace System.Management.Automation.Language
         /// <returns>A statement ast.  Never returns null, always returns PipelineAst.EmptyPipeline if there was no statement.</returns>
         private StatementAst StatementRule()
         {
-            //G  statement:
-            //G      if-statement
-            //G      label:opt   labeled-statement
-            //G      function-statement
-            //G      flow-control-statement   statement-terminator
-            //G      trap-statement
-            //G      try-statement
-            //G      data-statement
-            //G      pipeline   statement-terminator
-            //G
-            //G  labeled-statement:
-            //G      switch-statement
-            //G      foreach-statement
-            //G      for-statement
-            //G      while-statement
-            //G      do-statement
-            //G
-            //G  flow-control-statement:
-            //G      'break'   label-expression:opt
-            //G      'continue'   label-expression:opt
-            //G      'throw'    pipeline:opt
-            //G      'return'   pipeline:opt
-            //G      'exit'   pipeline:opt
-            //G
-            //G  statement-terminator:
-            //G      ';'
-            //G      new-line-character
+            // G  statement:
+            // G      if-statement
+            // G      label:opt   labeled-statement
+            // G      function-statement
+            // G      flow-control-statement   statement-terminator
+            // G      trap-statement
+            // G      try-statement
+            // G      data-statement
+            // G      pipeline   statement-terminator
+            // G
+            // G  labeled-statement:
+            // G      switch-statement
+            // G      foreach-statement
+            // G      for-statement
+            // G      while-statement
+            // G      do-statement
+            // G
+            // G  flow-control-statement:
+            // G      'break'   label-expression:opt
+            // G      'continue'   label-expression:opt
+            // G      'throw'    pipeline:opt
+            // G      'return'   pipeline:opt
+            // G      'exit'   pipeline:opt
+            // G
+            // G  statement-terminator:
+            // G      ';'
+            // G      new-line-character
             RuntimeHelpers.EnsureSufficientExecutionStack();
             int restorePoint = 0;
 
@@ -2169,12 +2169,12 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst LabelOrKeyRule()
         {
-            //G  label-expression:
-            //G      simple-name
-            //G      unary-expression
-            //G  key-expression:
-            //G      simple-name
-            //G      unary-expression
+            // G  label-expression:
+            // G      simple-name
+            // G      unary-expression
+            // G  key-expression:
+            // G      simple-name
+            // G      unary-expression
 
             var simpleName = SimpleNameRule();
             if (simpleName != null)
@@ -2213,8 +2213,8 @@ namespace System.Management.Automation.Language
 
         private BreakStatementAst BreakStatementRule(Token breakToken)
         {
-            //G  flow-control-statement:
-            //G      'break'   label-expression:opt
+            // G  flow-control-statement:
+            // G      'break'   label-expression:opt
 
             ExpressionAst labelExpr = LabelOrKeyRule();
             IScriptExtent extent = (labelExpr != null)
@@ -2226,8 +2226,8 @@ namespace System.Management.Automation.Language
 
         private ContinueStatementAst ContinueStatementRule(Token continueToken)
         {
-            //G  flow-control-statement:
-            //G      'continue'   label-expression:opt
+            // G  flow-control-statement:
+            // G      'continue'   label-expression:opt
 
             ExpressionAst labelExpr = LabelOrKeyRule();
             IScriptExtent extent = (labelExpr != null)
@@ -2239,8 +2239,8 @@ namespace System.Management.Automation.Language
 
         private ReturnStatementAst ReturnStatementRule(Token token)
         {
-            //G  flow-control-statement:
-            //G      'return'   pipeline:opt
+            // G  flow-control-statement:
+            // G      'return'   pipeline:opt
 
             PipelineBaseAst pipeline = PipelineRule();
             IScriptExtent extent = (pipeline != null)
@@ -2251,8 +2251,8 @@ namespace System.Management.Automation.Language
 
         private ExitStatementAst ExitStatementRule(Token token)
         {
-            //G  flow-control-statement:
-            //G      'exit'   pipeline:opt
+            // G  flow-control-statement:
+            // G      'exit'   pipeline:opt
 
             PipelineBaseAst pipeline = PipelineRule();
             IScriptExtent extent = (pipeline != null)
@@ -2263,8 +2263,8 @@ namespace System.Management.Automation.Language
 
         private ThrowStatementAst ThrowStatementRule(Token token)
         {
-            //G  flow-control-statement:
-            //G      'throw'    pipeline:opt
+            // G  flow-control-statement:
+            // G      'throw'    pipeline:opt
 
             PipelineBaseAst pipeline = PipelineRule();
             IScriptExtent extent = (pipeline != null)
@@ -2275,15 +2275,15 @@ namespace System.Management.Automation.Language
 
         private StatementAst LabeledStatementRule(LabelToken label)
         {
-            //G  statement:
-            //G      label:opt   labeled-statement
-            //G
-            //G  labeled-statement:
-            //G      switch-statement
-            //G      foreach-statement
-            //G      for-statement
-            //G      while-statement
-            //G      do-statement
+            // G  statement:
+            // G      label:opt   labeled-statement
+            // G
+            // G  labeled-statement:
+            // G      switch-statement
+            // G      foreach-statement
+            // G      for-statement
+            // G      while-statement
+            // G      do-statement
 
             StatementAst statement;
             Token token = NextToken();
@@ -2316,8 +2316,8 @@ namespace System.Management.Automation.Language
 
         private StatementAst BlockStatementRule(Token kindToken)
         {
-            //G block-statement
-            //G      keyword    statement-block
+            // G block-statement
+            // G      keyword    statement-block
 
             StatementBlockAst body = StatementBlockRule();
 
@@ -2345,8 +2345,8 @@ namespace System.Management.Automation.Language
         /// </returns>
         private bool InlineScriptRule(Token inlineScriptToken, List<CommandElementAst> elements)
         {
-            //G Command
-            //G      InlineScript    scriptblock-expression
+            // G Command
+            // G      InlineScript    scriptblock-expression
 
             Diagnostics.Assert(elements != null && elements.Count == 0, "The CommandElement list should be empty");
             var commandName = new StringConstantExpressionAst(inlineScriptToken.Extent, inlineScriptToken.Text, StringConstantType.BareWord);
@@ -2375,15 +2375,15 @@ namespace System.Management.Automation.Language
 
         private StatementAst IfStatementRule(Token ifToken)
         {
-            //G  if-statement:
-            //G      'if'   new-lines:opt   '('   pipeline-statement   ')'   statement-block   elseif-clauses:opt   else-clause:opt
-            //G  elseif-clauses:
-            //G      elseif-clause
-            //G      elseif-clauses   elseif-clause
-            //G  elseif-clause:
-            //G      'elseif'   new-lines:opt   '('   pipeline-statement   ')'   statement-block
-            //G  else-clause:
-            //G      'else'   statement-block
+            // G  if-statement:
+            // G      'if'   new-lines:opt   '('   pipeline-statement   ')'   statement-block   elseif-clauses:opt   else-clause:opt
+            // G  elseif-clauses:
+            // G      elseif-clause
+            // G      elseif-clauses   elseif-clause
+            // G  elseif-clause:
+            // G      'elseif'   new-lines:opt   '('   pipeline-statement   ')'   statement-block
+            // G  else-clause:
+            // G      'else'   statement-block
 
             List<IfClause> clauses = new List<IfClause>();
             List<Ast> componentAsts = new List<Ast>();
@@ -2517,33 +2517,33 @@ namespace System.Management.Automation.Language
 
         private StatementAst SwitchStatementRule(LabelToken labelToken, Token switchToken)
         {
-            //G  switch-statement:
-            //G      'switch'   new-lines:opt   switch-parameters:opt   switch-condition   switch-body
-            //G  switch-parameters:
-            //G      switch-parameter
-            //G      switch-parameters   switch-parameter
-            //G  switch-parameter:
-            //G      '-regex'
-            //G      '-wildcard'
-            //G      '-exact'
-            //G      '-casesensitive'
-            //G      '-parallel'
-            //G  switch-condition:
-            //G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
-            //G      -file   new-lines:opt   switch-filename
-            //G  switch-filename:
-            //G      command-argument
-            //G      primary-expression
-            //G  switch-body:
-            //G      new-lines:opt   '{'   new-lines:opt   switch-clauses   '}'
-            //G  switch-clauses:
-            //G      switch-clause
-            //G      switch-clauses   switch-clause
-            //G  switch-clause:
-            //G      switch-clause-condition   statement-block   statement-terminators:opt
-            //G  switch-clause-condition:
-            //G      command-argument
-            //G      primary-expression
+            // G  switch-statement:
+            // G      'switch'   new-lines:opt   switch-parameters:opt   switch-condition   switch-body
+            // G  switch-parameters:
+            // G      switch-parameter
+            // G      switch-parameters   switch-parameter
+            // G  switch-parameter:
+            // G      '-regex'
+            // G      '-wildcard'
+            // G      '-exact'
+            // G      '-casesensitive'
+            // G      '-parallel'
+            // G  switch-condition:
+            // G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
+            // G      -file   new-lines:opt   switch-filename
+            // G  switch-filename:
+            // G      command-argument
+            // G      primary-expression
+            // G  switch-body:
+            // G      new-lines:opt   '{'   new-lines:opt   switch-clauses   '}'
+            // G  switch-clauses:
+            // G      switch-clause
+            // G      switch-clauses   switch-clause
+            // G  switch-clause:
+            // G      switch-clause-condition   statement-block   statement-terminators:opt
+            // G  switch-clause-condition:
+            // G      command-argument
+            // G      primary-expression
 
             IScriptExtent startExtent = (labelToken ?? switchToken).Extent;
             IScriptExtent endErrorStatement = startExtent;
@@ -2857,11 +2857,11 @@ namespace System.Management.Automation.Language
 
         private StatementAst ConfigurationStatementRule(IEnumerable<AttributeAst> customAttributes, Token configurationToken)
         {
-            //G  configuration-statement:
-            //G      'configuration'   new-lines:opt  singleNameExpression  new-lines:opt statement-block
-            //G  singleNameExpression:
-            //G      command-argument
-            //G      primary-expression
+            // G  configuration-statement:
+            // G      'configuration'   new-lines:opt  singleNameExpression  new-lines:opt statement-block
+            // G  singleNameExpression:
+            // G      command-argument
+            // G      primary-expression
 
             IScriptExtent startExtent = configurationToken.Extent;
             IScriptExtent endErrorStatement = startExtent;
@@ -3288,19 +3288,19 @@ namespace System.Management.Automation.Language
 
         private StatementAst ForeachStatementRule(LabelToken labelToken, Token forEachToken)
         {
-            //G  foreach-statement:
-            //G      'foreach'   new-lines:opt   foreach-parameters:opt   new-lines:opt   '('
-            //G          new-lines:opt   variable   new-lines:opt   'in'   new-lines:opt   pipeline
-            //G          new-lines:opt   ')'   statement-block
-            //G  foreach-parameters:
-            //G      foreach-parameter
-            //G      foreach-parameters   foreach-parameter
-            //G  foreach-parameter:
-            //G      '-parallel'
-            //G      '-throttlelimit' new-lines:opt   foreach-throttlelimit
-            //G  foreach-throttlelimit:
-            //G      command-argument
-            //G      primary-expression
+            // G  foreach-statement:
+            // G      'foreach'   new-lines:opt   foreach-parameters:opt   new-lines:opt   '('
+            // G          new-lines:opt   variable   new-lines:opt   'in'   new-lines:opt   pipeline
+            // G          new-lines:opt   ')'   statement-block
+            // G  foreach-parameters:
+            // G      foreach-parameter
+            // G      foreach-parameters   foreach-parameter
+            // G  foreach-parameter:
+            // G      '-parallel'
+            // G      '-throttlelimit' new-lines:opt   foreach-throttlelimit
+            // G  foreach-throttlelimit:
+            // G      command-argument
+            // G      primary-expression
 
             IScriptExtent startOfStatement = labelToken != null ? labelToken.Extent : forEachToken.Extent;
             IScriptExtent endErrorStatement = null;
@@ -3450,25 +3450,25 @@ namespace System.Management.Automation.Language
 
         private StatementAst ForStatementRule(LabelToken labelToken, Token forToken)
         {
-            //G  for-statement:
-            //G      'for'   new-lines:opt   '('
-            //G            new-lines:opt   for-initializer:opt   statement-terminator
-            //G            new-lines:opt   for-condition:opt   statement-terminator
-            //G            new-lines:opt   for-iterator:opt
-            //G            new-lines:opt   ')'   statement-block
-            //G      'for'   new-lines:opt   '('
-            //G            new-lines:opt   for-initializer:opt   statement-terminator
-            //G            new-lines:opt   for-condition:opt
-            //G            new-lines:opt   ')'   statement-block
-            //G      'for'   new-lines:opt   '('
-            //G            new-lines:opt   for-initializer:opt
-            //G            new-lines:opt   ')'   statement-block
-            //G  for-initializer:
-            //G      pipeline
-            //G  for-condition:
-            //G      pipeline
-            //G  for-iterator:
-            //G      pipeline
+            // G  for-statement:
+            // G      'for'   new-lines:opt   '('
+            // G            new-lines:opt   for-initializer:opt   statement-terminator
+            // G            new-lines:opt   for-condition:opt   statement-terminator
+            // G            new-lines:opt   for-iterator:opt
+            // G            new-lines:opt   ')'   statement-block
+            // G      'for'   new-lines:opt   '('
+            // G            new-lines:opt   for-initializer:opt   statement-terminator
+            // G            new-lines:opt   for-condition:opt
+            // G            new-lines:opt   ')'   statement-block
+            // G      'for'   new-lines:opt   '('
+            // G            new-lines:opt   for-initializer:opt
+            // G            new-lines:opt   ')'   statement-block
+            // G  for-initializer:
+            // G      pipeline
+            // G  for-condition:
+            // G      pipeline
+            // G  for-iterator:
+            // G      pipeline
 
             IScriptExtent endErrorStatement = null;
             SkipNewlines();
@@ -3561,8 +3561,8 @@ namespace System.Management.Automation.Language
 
         private StatementAst WhileStatementRule(LabelToken labelToken, Token whileToken)
         {
-            //G  while-statement:
-            //G      'while '  new-lines:opt   '('   new-lines:opt   while-condition   new-lines:opt   ')'   statement-block
+            // G  while-statement:
+            // G      'while '  new-lines:opt   '('   new-lines:opt   while-condition   new-lines:opt   ')'   statement-block
 
             SkipNewlines();
 
@@ -4032,12 +4032,12 @@ namespace System.Management.Automation.Language
 
         private StatementAst DoWhileStatementRule(LabelToken labelToken, Token doToken)
         {
-            //G  do-statement:
-            //G      'do'   statement-block  new-lines:opt   'while'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
-            //G      'do'   statement-block   new-lines:opt   'until'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
-            //G
-            //G  while-condition:
-            //G      new-lines:opt   pipeline
+            // G  do-statement:
+            // G      'do'   statement-block  new-lines:opt   'while'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
+            // G      'do'   statement-block   new-lines:opt   'until'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
+            // G
+            // G  while-condition:
+            // G      new-lines:opt   pipeline
 
             IScriptExtent startExtent = (labelToken ?? doToken).Extent;
             IScriptExtent endErrorStatement = null;
@@ -4140,20 +4140,20 @@ namespace System.Management.Automation.Language
 
         private StatementAst ClassDefinitionRule(List<AttributeBaseAst> customAttributes, Token classToken)
         {
-            //G  class-statement:
-            //G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  '{'   class-member-list   '}'
-            //G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  ':'  base-type-list  '{'  new-lines:opt  class-member-list:opt  '}'
-            //G
-            //G  class-name:
-            //G      simple-name
-            //G
-            //G  base-type-list:
-            //G      new-lines:opt   type-name   new-lines:opt
-            //G      base-class-list  ','   new-lines:opt   type-name   new-lines:opt
-            //G
-            //G  class-member-list:
-            //G      class-member  new-lines:opt
-            //G      class-member-list   class-member
+            // G  class-statement:
+            // G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  '{'   class-member-list   '}'
+            // G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  ':'  base-type-list  '{'  new-lines:opt  class-member-list:opt  '}'
+            // G
+            // G  class-name:
+            // G      simple-name
+            // G
+            // G  base-type-list:
+            // G      new-lines:opt   type-name   new-lines:opt
+            // G      base-class-list  ','   new-lines:opt   type-name   new-lines:opt
+            // G
+            // G  class-member-list:
+            // G      class-member  new-lines:opt
+            // G      class-member-list   class-member
 
             SkipNewlines();
             Token classNameToken;
@@ -4278,7 +4278,7 @@ namespace System.Management.Automation.Language
                     {
                         nestedAsts = new List<Ast>();
                     }
-                    //no need to report error since the error is reported in method StatementRule
+                    // no need to report error since the error is reported in method StatementRule
                     nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
                     nestedAsts.Add(classDefn);
                 }
@@ -4298,25 +4298,25 @@ namespace System.Management.Automation.Language
 
         private MemberAst ClassMemberRule(string className, out List<Ast> astsOnError)
         {
-            //G  class-member:
-            //G      method-member
-            //G      property-member
-            //G
-            //G  method-member:
-            //G      member-attribute-list:opt function-statement
-            //G
-            //G  property-member:
-            //G      member-attribute-list:opt  variable
-            //G      member-attribute-list:opt  variable  '='  expression
-            //G
-            //G  member-attribute-list:
-            //G      member-attribute
-            //G      member-attribute-list  member-attribute
-            //G
-            //G  member-attribute:
-            //G      attribute
-            //G      'static'
-            //G      'hidden'
+            // G  class-member:
+            // G      method-member
+            // G      property-member
+            // G
+            // G  method-member:
+            // G      member-attribute-list:opt function-statement
+            // G
+            // G  property-member:
+            // G      member-attribute-list:opt  variable
+            // G      member-attribute-list:opt  variable  '='  expression
+            // G
+            // G  member-attribute-list:
+            // G      member-attribute
+            // G      member-attribute-list  member-attribute
+            // G
+            // G  member-attribute:
+            // G      attribute
+            // G      'static'
+            // G      'hidden'
 
             IScriptExtent startExtent = null;
             var attributeList = new List<AttributeAst>();
@@ -4617,15 +4617,15 @@ namespace System.Management.Automation.Language
 
         private StatementAst EnumDefinitionRule(List<AttributeBaseAst> customAttributes, Token enumToken)
         {
-            //G  enum-statement:
-            //G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
-            //G
-            //G  enum-name:
-            //G      simple-name
-            //G
-            //G  enum-member-list:
-            //G      enum-member  new-lines:opt
-            //G      enum-member-list   enum-member
+            // G  enum-statement:
+            // G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
+            // G
+            // G  enum-name:
+            // G      simple-name
+            // G
+            // G  enum-member-list:
+            // G      enum-member  new-lines:opt
+            // G      enum-member-list   enum-member
 
             SkipNewlines();
             var name = SimpleNameRule();
@@ -4678,7 +4678,7 @@ namespace System.Management.Automation.Language
             var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, null);
             if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
             {
-                //no need to report error since there is error reported in method StatementRule
+                // no need to report error since there is error reported in method StatementRule
                 List<Ast> nestedAsts = new List<Ast>();
                 nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
                 nestedAsts.Add(enumDefn);
@@ -4690,12 +4690,12 @@ namespace System.Management.Automation.Language
 
         private MemberAst EnumMemberRule()
         {
-            //G  enum-member:
-            //G      enum-member-name
-            //G      enum-member-name  '='  expression
-            //G
-            //G  enum-member-name:
-            //G      simple-name
+            // G  enum-member:
+            // G      enum-member-name
+            // G      enum-member-name  '='  expression
+            // G
+            // G  enum-member-name:
+            // G      simple-name
 
             const PropertyAttributes enumMemberAttributes =
                 PropertyAttributes.Public | PropertyAttributes.Static | PropertyAttributes.Literal;
@@ -4765,16 +4765,16 @@ namespace System.Management.Automation.Language
 
         private StatementAst UsingStatementRule(Token usingToken)
         {
-            //G  using-statement:
-            //G      'using'   'namespace'   identifier
-            //G      'using'   'namespace'   identifier   '='   identifier
-            //G      'using'   'module'   identifier
-            //G      'using'   'module'   identifier   '='   identifier
-            //G      'using'   'module'   hashtable
-            //G      'using'   'module'   identifier   '='   hashtable
-            //G      'using'   'type'   identifier   '='   identifier
-            //G      'using'   'assembly'   identifier
-            //G      'using'   'command'   identifier   '='   identifier
+            // G  using-statement:
+            // G      'using'   'namespace'   identifier
+            // G      'using'   'namespace'   identifier   '='   identifier
+            // G      'using'   'module'   identifier
+            // G      'using'   'module'   identifier   '='   identifier
+            // G      'using'   'module'   hashtable
+            // G      'using'   'module'   identifier   '='   hashtable
+            // G      'using'   'type'   identifier   '='   identifier
+            // G      'using'   'assembly'   identifier
+            // G      'using'   'command'   identifier   '='   identifier
 
             // in case of aliasing (=), first identifier is alias name, second identifier is alias value (the real name).
 
@@ -5026,14 +5026,14 @@ namespace System.Management.Automation.Language
 
         private StatementAst MethodDeclarationRule(Token functionNameToken, string className, bool isStaticMethod)
         {
-            //G  method-statement:
-            //G      new-lines:opt   function-name   function-parameter-declaration   base-ctor-call:opt  '{'   script-block   '}'
-            //G
-            //G  base-ctor-call: // can be present only if function-name == className
-            //G      ':'    new-lines:opt   'base'   new-lines:opt   parenthesized-expression   new-lines:opt
-            //G
-            //G  function-name:
-            //G      command-argument
+            // G  method-statement:
+            // G      new-lines:opt   function-name   function-parameter-declaration   base-ctor-call:opt  '{'   script-block   '}'
+            // G
+            // G  base-ctor-call: // can be present only if function-name == className
+            // G      ':'    new-lines:opt   'base'   new-lines:opt   parenthesized-expression   new-lines:opt
+            // G
+            // G  function-name:
+            // G      command-argument
 
             var functionName = functionNameToken.Text;
             List<ParameterAst> parameters;
@@ -5174,13 +5174,13 @@ namespace System.Management.Automation.Language
 
         private StatementAst FunctionDeclarationRule(Token functionToken)
         {
-            //G  function-statement:
-            //G      'function'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
-            //G      'filter'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
-            //G      'workflow'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
-            //G
-            //G  function-name:
-            //G      command-argument
+            // G  function-statement:
+            // G      'function'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
+            // G      'filter'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
+            // G      'workflow'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
+            // G
+            // G  function-name:
+            // G      command-argument
 
             SkipNewlines();
 
@@ -5273,8 +5273,8 @@ namespace System.Management.Automation.Language
 
         private List<ParameterAst> FunctionParameterDeclarationRule(out IScriptExtent endErrorStatement, out Token rParen)
         {
-            //G  function-parameter-declaration:
-            //G      new-lines:opt   '('   parameter-list   new-lines:opt   ')'
+            // G  function-parameter-declaration:
+            // G      new-lines:opt   '('   parameter-list   new-lines:opt   ')'
 
             List<ParameterAst> parameters = null;
             endErrorStatement = null;
@@ -5307,8 +5307,8 @@ namespace System.Management.Automation.Language
 
         private StatementAst TrapStatementRule(Token trapToken)
         {
-            //G  trap-statement:
-            //G      'trap'  new-lines:opt   type-literal:opt   statement-block
+            // G  trap-statement:
+            // G      'trap'  new-lines:opt   type-literal:opt   statement-block
 
             var restorePoint = _tokenizer.GetRestorePoint();
             SkipNewlines();
@@ -5352,11 +5352,11 @@ namespace System.Management.Automation.Language
         /// <returns>A catch clause, or null there is no catch or there was some error.</returns>
         private CatchClauseAst CatchBlockRule(ref IScriptExtent endErrorStatement, ref List<TypeConstraintAst> errorAsts)
         {
-            //G  catch-clause:
-            //G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
-            //G  catch-type-list:
-            //G      new-lines:opt   type-literal
-            //G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
+            // G  catch-clause:
+            // G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
+            // G  catch-type-list:
+            // G      new-lines:opt   type-literal
+            // G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
 
             SkipNewlines();
             Token catchToken = NextToken();
@@ -5454,20 +5454,20 @@ namespace System.Management.Automation.Language
 
         private StatementAst TryStatementRule(Token tryToken)
         {
-            //G  try-statement:
-            //G      'try'   statement-block   catch-clauses
-            //G      'try'   statement-block   finally-clause
-            //G      'try'   statement-block   catch-clauses   finally-clause
-            //G  catch-clauses:
-            //G      catch-clause
-            //G      catch-clauses   catch-clause
-            //G  catch-clause:
-            //G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
-            //G  catch-type-list:
-            //G      new-lines:opt   type-literal
-            //G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
-            //G  finally-clause:
-            //G      new-lines:opt   'finally'   statement-block
+            // G  try-statement:
+            // G      'try'   statement-block   catch-clauses
+            // G      'try'   statement-block   finally-clause
+            // G      'try'   statement-block   catch-clauses   finally-clause
+            // G  catch-clauses:
+            // G      catch-clause
+            // G      catch-clauses   catch-clause
+            // G  catch-clause:
+            // G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
+            // G  catch-type-list:
+            // G      new-lines:opt   type-literal
+            // G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
+            // G  finally-clause:
+            // G      new-lines:opt   'finally'   statement-block
 
             SkipNewlines();
 
@@ -5533,17 +5533,17 @@ namespace System.Management.Automation.Language
 
         private StatementAst DataStatementRule(Token dataToken)
         {
-            //G  data-statement:
-            //G      'data'    new-lines:opt   data-name   data-commands-allowed:opt   statement-block
-            //G  data-name:
-            //G      simple-name
-            //G  data-commands-allowed:
-            //G      new-lines:opt   '-supportedcommand'   data-commands-list
-            //G  data-commands-list:
-            //G      new-lines:opt   data-command
-            //G      data-commands-list   ','   new-lines:opt   data-command
-            //G  data-command:
-            //G      command-name-expr
+            // G  data-statement:
+            // G      'data'    new-lines:opt   data-name   data-commands-allowed:opt   statement-block
+            // G  data-name:
+            // G      simple-name
+            // G  data-commands-allowed:
+            // G      new-lines:opt   '-supportedcommand'   data-commands-list
+            // G  data-commands-list:
+            // G      new-lines:opt   data-command
+            // G      data-commands-list   ','   new-lines:opt   data-command
+            // G  data-command:
+            // G      command-name-expr
 
             IScriptExtent endErrorStatement = null;
             SkipNewlines();
@@ -5634,17 +5634,17 @@ namespace System.Management.Automation.Language
 
         private PipelineBaseAst PipelineRule()
         {
-            //G  pipeline:
-            //G      assignment-expression
-            //G      expression   redirections:opt  pipeline-tail:opt
-            //G      command   pipeline-tail:opt
-            //G
-            //G  assignment-expression:
-            //G      expression   assignment-operator   statement
-            //G
-            //G  pipeline-tail:
-            //G      '|'   new-lines:opt   command
-            //G      '|'   new-lines:opt   command   pipeline-tail
+            // G  pipeline:
+            // G      assignment-expression
+            // G      expression   redirections:opt  pipeline-tail:opt
+            // G      command   pipeline-tail:opt
+            // G
+            // G  assignment-expression:
+            // G      expression   assignment-operator   statement
+            // G
+            // G  pipeline-tail:
+            // G      '|'   new-lines:opt   command
+            // G      '|'   new-lines:opt   command   pipeline-tail
 
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
@@ -5827,15 +5827,15 @@ namespace System.Management.Automation.Language
 
         private RedirectionAst RedirectionRule(RedirectionToken redirectionToken, RedirectionAst[] redirections, ref IScriptExtent extent)
         {
-            //G  redirections:
-            //G      redirection
-            //G      redirections   redirection
-            //G  redirection:
-            //G      merging-redirection-operator
-            //G      file-redirection-operator   redirected-file-name
-            //G  redirected-file-name:
-            //G      command-argument
-            //G      primary-expression
+            // G  redirections:
+            // G      redirection
+            // G      redirections   redirection
+            // G  redirection:
+            // G      merging-redirection-operator
+            // G      file-redirection-operator   redirected-file-name
+            // G  redirected-file-name:
+            // G      command-argument
+            // G      primary-expression
 
             RedirectionAst result;
 
@@ -6112,30 +6112,30 @@ namespace System.Management.Automation.Language
 
         internal Ast CommandRule(bool forDynamicKeyword)
         {
-            //G  command:
-            //G      command-name   command-elements:opt
-            //G      command-invocation-operator   command-module:opt  command-name-expr   command-elements:opt
-            //G  command-invocation-operator:  one of
-            //G      '&'   '.'
-            //G  command-module:
-            //G      primary-expression
-            //G  command-name:
-            //G      generic-token
-            //G      generic-token-with-subexpr
-            //G  generic-token-with-subexpr: No whitespace is allowed between ) and command-name.
-            //G      generic-token-with-subexpr-start   statement-list:opt   )   command-name
-            //G  command-name-expr:
-            //G      command-name
-            //G      primary-expression
-            //G  command-elements:
-            //G      command-element
-            //G      command-elements   command-element
-            //G  command-element:
-            //G      command-parameter
-            //G      command-argument
-            //G      redirection
-            //G  command-argument:
-            //G      command-name-expr
+            // G  command:
+            // G      command-name   command-elements:opt
+            // G      command-invocation-operator   command-module:opt  command-name-expr   command-elements:opt
+            // G  command-invocation-operator:  one of
+            // G      '&'   '.'
+            // G  command-module:
+            // G      primary-expression
+            // G  command-name:
+            // G      generic-token
+            // G      generic-token-with-subexpr
+            // G  generic-token-with-subexpr: No whitespace is allowed between ) and command-name.
+            // G      generic-token-with-subexpr-start   statement-list:opt   )   command-name
+            // G  command-name-expr:
+            // G      command-name
+            // G      primary-expression
+            // G  command-elements:
+            // G      command-element
+            // G      command-elements   command-element
+            // G  command-element:
+            // G      command-parameter
+            // G      command-argument
+            // G      redirection
+            // G  command-argument:
+            // G      command-name-expr
 
             Token firstToken;
             bool dotSource, ampersand;
@@ -6361,43 +6361,43 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ExpressionRule()
         {
-            //G  expression:
-            //G      logical-expression
-            //G
-            //G  logical-expression:
-            //G      bitwise-expression
-            //G      logical-expression   '-and'   new-lines:opt   bitwise-expression
-            //G      logical-expression   '-or'   new-lines:opt   bitwise-expression
-            //G      logical-expression   '-xor'   new-lines:opt   bitwise-expression
-            //G
-            //G  bitwise-expression:
-            //G      comparison-expression
-            //G      bitwise-expression   '-band'   new-lines:opt   comparison-expression
-            //G      bitwise-expression   '-bor'   new-lines:opt   comparison-expression
-            //G      bitwise-expression   '-bxor'   new-lines:opt   comparison-expression
-            //G
-            //G  comparison-expression:
-            //G      additive-expression
-            //G      comparison-expression   comparison-operator   new-lines:opt   additive-expression
-            //G
-            //G  additive-expression:
-            //G      multiplicative-expression
-            //G      additive-expression   '+'   new-lines:opt   multiplicative-expression
-            //G      additive-expression   dash   new-lines:opt   multiplicative-expression
-            //G
-            //G  multiplicative-expression:
-            //G      format-expression
-            //G      multiplicative-expression   '*'   new-lines:opt   format-expression
-            //G      multiplicative-expression   '/'   new-lines:opt   format-expression
-            //G      multiplicative-expression   '%'   new-lines:opt   format-expression
-            //G
-            //G  format-expression:
-            //G      range-expression
-            //G      format-expression   format-operator    new-lines:opt   range-expression
-            //G
-            //G  range-expression:
-            //G      array-literal-expression
-            //G      range-expression   '..'   new-lines:opt   array-literal-expression
+            // G  expression:
+            // G      logical-expression
+            // G
+            // G  logical-expression:
+            // G      bitwise-expression
+            // G      logical-expression   '-and'   new-lines:opt   bitwise-expression
+            // G      logical-expression   '-or'   new-lines:opt   bitwise-expression
+            // G      logical-expression   '-xor'   new-lines:opt   bitwise-expression
+            // G
+            // G  bitwise-expression:
+            // G      comparison-expression
+            // G      bitwise-expression   '-band'   new-lines:opt   comparison-expression
+            // G      bitwise-expression   '-bor'   new-lines:opt   comparison-expression
+            // G      bitwise-expression   '-bxor'   new-lines:opt   comparison-expression
+            // G
+            // G  comparison-expression:
+            // G      additive-expression
+            // G      comparison-expression   comparison-operator   new-lines:opt   additive-expression
+            // G
+            // G  additive-expression:
+            // G      multiplicative-expression
+            // G      additive-expression   '+'   new-lines:opt   multiplicative-expression
+            // G      additive-expression   dash   new-lines:opt   multiplicative-expression
+            // G
+            // G  multiplicative-expression:
+            // G      format-expression
+            // G      multiplicative-expression   '*'   new-lines:opt   format-expression
+            // G      multiplicative-expression   '/'   new-lines:opt   format-expression
+            // G      multiplicative-expression   '%'   new-lines:opt   format-expression
+            // G
+            // G  format-expression:
+            // G      range-expression
+            // G      format-expression   format-operator    new-lines:opt   range-expression
+            // G
+            // G  range-expression:
+            // G      array-literal-expression
+            // G      range-expression   '..'   new-lines:opt   array-literal-expression
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var oldTokenizerMode = _tokenizer.Mode;
             try
@@ -6522,9 +6522,9 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ArrayLiteralRule()
         {
-            //G  array-literal-expression:
-            //G      unary-expression
-            //G      unary-expression   ','    new-lines:opt   array-literal-expression
+            // G  array-literal-expression:
+            // G      unary-expression
+            // G      unary-expression   ','    new-lines:opt   array-literal-expression
 
             ExpressionAst lastExpr = UnaryExpressionRule();
             ExpressionAst firstExpr = lastExpr;
@@ -6566,31 +6566,31 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst UnaryExpressionRule()
         {
-            //G  unary-expression:
-            //G      primary-expression
-            //G      expression-with-unary-operator
-            //G
-            //G  expression-with-unary-operator:
-            //G      ','   new-lines:opt   unary-expression
-            //G      '-not'   new-lines:opt   unary-expression
-            //G      '!'   new-lines:opt   unary-expression
-            //G      '-bnot'   new-lines:opt   unary-expression
-            //G      '+'   new-lines:opt   unary-expression
-            //G      dash   new-lines:opt   unary-expression
-            //G      pre-increment-expression
-            //G      pre-decrement-expression
-            //G      cast-expression
-            //G      '-split'   new-lines:opt   unary-expression
-            //G      '-join'   new-lines:opt   unary-expression
-            //G
-            //G  pre-increment-expression:
-            //G      '++'   new-lines:opt   unary-expression
-            //G
-            //G  pre-decrement-expression:
-            //G      dashdash   new-lines:opt   unary-expression
-            //G
-            //G  cast-expression:
-            //G      type-literal   unary-expression
+            // G  unary-expression:
+            // G      primary-expression
+            // G      expression-with-unary-operator
+            // G
+            // G  expression-with-unary-operator:
+            // G      ','   new-lines:opt   unary-expression
+            // G      '-not'   new-lines:opt   unary-expression
+            // G      '!'   new-lines:opt   unary-expression
+            // G      '-bnot'   new-lines:opt   unary-expression
+            // G      '+'   new-lines:opt   unary-expression
+            // G      dash   new-lines:opt   unary-expression
+            // G      pre-increment-expression
+            // G      pre-decrement-expression
+            // G      cast-expression
+            // G      '-split'   new-lines:opt   unary-expression
+            // G      '-join'   new-lines:opt   unary-expression
+            // G
+            // G  pre-increment-expression:
+            // G      '++'   new-lines:opt   unary-expression
+            // G
+            // G  pre-decrement-expression:
+            // G      dashdash   new-lines:opt   unary-expression
+            // G
+            // G  cast-expression:
+            // G      type-literal   unary-expression
             RuntimeHelpers.EnsureSufficientExecutionStack();
             ExpressionAst expr = null;
             Token token;
@@ -6741,22 +6741,22 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst PrimaryExpressionRule(bool withMemberAccess)
         {
-            //G  primary-expression:
-            //G      value
-            //G      member-access
-            //G      element-access
-            //G      invocation-expression
-            //G      post-increment-expression
-            //G      post-decrement-expression
-            //G  value:
-            //G      parenthesized-expression
-            //G      sub-expression
-            //G      array-expression
-            //G      script-block-expression
-            //G      hash-literal-expression
-            //G      literal
-            //G      type-literal
-            //G      variable
+            // G  primary-expression:
+            // G      value
+            // G      member-access
+            // G      element-access
+            // G      invocation-expression
+            // G      post-increment-expression
+            // G      post-decrement-expression
+            // G  value:
+            // G      parenthesized-expression
+            // G      sub-expression
+            // G      array-expression
+            // G      script-block-expression
+            // G      hash-literal-expression
+            // G      literal
+            // G      type-literal
+            // G      variable
 
             ExpressionAst expr;
             Token token = NextToken();
@@ -6854,14 +6854,14 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst HashExpressionRule(Token atCurlyToken, bool parsingSchemaElement)
         {
-            //G  hash-literal-expression:
-            //G      '@{'   new-lines:opt   hash-literal-body:opt   new-lines:opt   '}'
-            //G  hash-literal-body:
-            //G      hash-entry
-            //G      hash-literal-body   statement-terminators   hash-entry
-            //G  statement-terminators:
-            //G      statement-terminator
-            //G      statement-terminators   statement-terminator
+            // G  hash-literal-expression:
+            // G      '@{'   new-lines:opt   hash-literal-body:opt   new-lines:opt   '}'
+            // G  hash-literal-body:
+            // G      hash-entry
+            // G      hash-literal-body   statement-terminators   hash-entry
+            // G  statement-terminators:
+            // G      statement-terminator
+            // G      statement-terminators   statement-terminator
 
             SkipNewlines();
 
@@ -6918,8 +6918,8 @@ namespace System.Management.Automation.Language
 
         private KeyValuePair GetKeyValuePair(bool parsingSchemaElement)
         {
-            //G  hash-entry:
-            //G      key-expression   '='   new-lines:opt   statement
+            // G  hash-entry:
+            // G      key-expression   '='   new-lines:opt   statement
 
             Token equals;
             ExpressionAst key;
@@ -7006,8 +7006,8 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ScriptBlockExpressionRule(Token lCurly)
         {
-            //G  script-block-expression:
-            //G      '{'   new-lines:opt   script-block   new-lines:opt   '}'
+            // G  script-block-expression:
+            // G      '{'   new-lines:opt   script-block   new-lines:opt   '}'
 
             ScriptBlockAst scriptBlockAst;
 
@@ -7032,10 +7032,10 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst SubExpressionRule(Token firstToken)
         {
-            //G  array-expression:
-            //G      '@('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
-            //G  sub-expression:
-            //G      '$('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
+            // G  array-expression:
+            // G      '@('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
+            // G  sub-expression:
+            // G      '$('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
 
             IScriptExtent statementListExtent;
             List<TrapStatementAst> traps = new List<TrapStatementAst>();
@@ -7086,8 +7086,8 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ParenthesizedExpressionRule(Token lParen)
         {
-            //G  parenthesized-expression:
-            //G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
+            // G  parenthesized-expression:
+            // G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
             Token rParen;
             PipelineBaseAst pipelineAst;
 
@@ -7149,15 +7149,15 @@ namespace System.Management.Automation.Language
                 }
                 // Enable if we decide we still need to support
                 //     "${}"  or "$var:"
-                //else if (token.Kind == TokenKind.Unknown)
-                //{
-                //    //Diagnostics.Assert(token.Text.Equals("${}", StringComparison.OrdinalIgnoreCase),
+                // else if (token.Kind == TokenKind.Unknown)
+                // {
+                //    // Diagnostics.Assert(token.Text.Equals("${}", StringComparison.OrdinalIgnoreCase),
                 //    //    "The unknown token is only used in an expandable string when it's an empty variable name.");
                 //    // TODO: Need strict-mode check at runtime.
                 //    // TODO: in V2, "${}" expanded to '$', but "$var:" expanded to the empty string
                 //    exprAst = new StringConstantExpressionAst(token.Extent, "$", StringConstantType.BareWord);
                 //    if (_savingTokens) { newNestedTokens.Add(token); }
-                //}
+                // }
                 else
                 {
                     TokenizerState ts = null;
@@ -7186,8 +7186,8 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ExpandableStringRule(StringExpandableToken strToken)
         {
-            //G  value:
-            //G      literal
+            // G  value:
+            // G      literal
 
             ExpressionAst expr;
             // We need to scan the nested tokens even if there was some error. This is used by the tab completion: "pshome is $psh<tab>
@@ -7206,12 +7206,12 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst MemberNameRule()
         {
-            //G  member-name:
-            //G      simple-name
-            //G      string-literal
-            //G      string-literal-with-subexpression
-            //G      expression-with-unary-operator
-            //G      value
+            // G  member-name:
+            // G      simple-name
+            // G      string-literal
+            // G      string-literal-with-subexpression
+            // G      expression-with-unary-operator
+            // G      value
 
             ExpressionAst simpleName = SimpleNameRule();
             if (simpleName != null)
@@ -7230,9 +7230,9 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst MemberAccessRule(ExpressionAst targetExpr, Token operatorToken)
         {
-            //G  member-access: No whitespace is allowed between terms in these productions.
-            //G      primary-expression   '.'   member-name
-            //G      primary-expression   '::'   member-name
+            // G  member-access: No whitespace is allowed between terms in these productions.
+            // G      primary-expression   '.'   member-name
+            // G      primary-expression   '::'   member-name
 
             // On entry, we've verified that operatorToken is not preceded by whitespace.
 
@@ -7267,11 +7267,11 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst MemberInvokeRule(ExpressionAst targetExpr, Token lBracket, Token operatorToken, CommandElementAst member)
         {
-            //G  invocation-expression: target-expression passed as a parameter. lBracket can be '(' or '{'.
-            //G      target-expression   member-name   invoke-param-list
-            //G  invoke-param-list:
-            //G      '('   invoke-param-paren-list
-            //G      script-block
+            // G  invocation-expression: target-expression passed as a parameter. lBracket can be '(' or '{'.
+            // G      target-expression   member-name   invoke-param-list
+            // G  invoke-param-list:
+            // G      '('   invoke-param-paren-list
+            // G      script-block
 
             IScriptExtent lastExtent = null;
 
@@ -7295,15 +7295,15 @@ namespace System.Management.Automation.Language
 
         private List<ExpressionAst> InvokeParamParenListRule(Token lParen, out IScriptExtent lastExtent)
         {
-            //G  argument-list: '(' is passed in lParen
-            //G      argument-expression-list:opt   new-lines:opt   ')'
-            //G  argument-expression-list:
-            //G      argument-expression
-            //G      argument-expression   new-lines:opt   ','   argument-expression-list
-            //G  argument-expression:
-            //G      See grammar for expression - the only difference is that an
-            //G      array-literal-expression is not allowed - the comma is used
-            //G      to separate argument-expressions.
+            // G  argument-list: '(' is passed in lParen
+            // G      argument-expression-list:opt   new-lines:opt   ')'
+            // G  argument-expression-list:
+            // G      argument-expression
+            // G      argument-expression   new-lines:opt   ','   argument-expression-list
+            // G  argument-expression:
+            // G      See grammar for expression - the only difference is that an
+            // G      array-literal-expression is not allowed - the comma is used
+            // G      to separate argument-expressions.
 
             List<ExpressionAst> arguments = new List<ExpressionAst>();
             Token comma = null;
@@ -7376,8 +7376,8 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ElementAccessRule(ExpressionAst primaryExpression, Token lBracket)
         {
-            //G  element-access:
-            //G      primary-expression   '['   new-lines:opt   expression   new-lines:opt   ']'
+            // G  element-access:
+            // G      primary-expression   '['   new-lines:opt   expression   new-lines:opt   ']'
 
             SkipNewlines();
             ExpressionAst indexExpr = ExpressionRule();

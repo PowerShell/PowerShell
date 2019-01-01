@@ -485,7 +485,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                //null or empty value allowed
+                // null or empty value allowed
                 ConstructUri(_scheme, _computerName, null, value);
             }
         }
@@ -890,7 +890,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public WSManConnectionInfo()
         {
-            //ConstructUri(DefaultScheme, DefaultComputerName, DefaultPort, DefaultAppName);
+            // ConstructUri(DefaultScheme, DefaultComputerName, DefaultPort, DefaultAppName);
             UseDefaultWSManPort = true;
         }
 
@@ -1186,7 +1186,7 @@ namespace System.Management.Automation.Runspaces
                 throw e;
             }
 
-            //default host is localhost
+            // default host is localhost
             if (string.IsNullOrEmpty(computerName) || string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 _computerName = DefaultComputerName;
@@ -2384,7 +2384,7 @@ namespace System.Management.Automation.Runspaces
             {
                 byte[] byteArr = System.Text.Encoding.UTF8.GetBytes(arr[i]);
 
-                arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); //+1 for null termination
+                arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); // +1 for null termination
                 System.Diagnostics.Debug.Assert(arrPtr[i] != null, "Invalid array ptr");
 
                 Marshal.Copy(byteArr, 0, (IntPtr)arrPtr[i], byteArr.Length); // copy over the data from the managed byte array

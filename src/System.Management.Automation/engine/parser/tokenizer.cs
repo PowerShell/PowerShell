@@ -2837,10 +2837,10 @@ namespace System.Management.Automation.Language
                 {
                     // Enable if we decide we still need to support
                     //     "${}"  or "$var:"
-                    //if (inStringExpandable)
-                    //{
+                    // if (inStringExpandable)
+                    // {
                     //    return NewToken(TokenKind.Unknown);
-                    //}
+                    // }
 
                     ReportError(NewScriptExtent(_tokenStart, _currentIndex),
                         nameof(ParserStrings.InvalidBracedVariableReference),
@@ -3249,7 +3249,7 @@ namespace System.Management.Automation.Language
             // indeed, '$' is not commonly used in command names.
 
             // Make sure our token does not start with any of these characters.
-            //Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
+            // Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
 
             List<Token> nestedTokens = new List<Token>();
             var formatSb = GetStringBuilder();
@@ -4199,26 +4199,26 @@ namespace System.Management.Automation.Language
 
         internal string GetAssemblyNameSpec()
         {
-            //G  assembly-name-spec:
-            //G      assembly-name
-            //G      assembly-name   ','   assembly-properties
-            //G  assembly-name:
-            //G      assembly-token
-            //G  assembly-properties:
-            //G      assembly-property
-            //G      assembly-properties   ','   assembly-property
-            //G  assembly-property:
-            //G      assembly-property-name   '='   assembly-property-value
-            //G  assembly-property-name:  one of
-            //G      'Version'
-            //G      'PublicKey'
-            //G      'PublicKeyToken'
-            //G      'Culture'
-            //G      'Custom'
-            //G  assembly-property:
-            //G      assembly-token
-            //G  assembly-token:
-            //G      any sequence of characters not ending in whitespace, newlines, ',', '=', or ']'.
+            // G  assembly-name-spec:
+            // G      assembly-name
+            // G      assembly-name   ','   assembly-properties
+            // G  assembly-name:
+            // G      assembly-token
+            // G  assembly-properties:
+            // G      assembly-property
+            // G      assembly-properties   ','   assembly-property
+            // G  assembly-property:
+            // G      assembly-property-name   '='   assembly-property-value
+            // G  assembly-property-name:  one of
+            // G      'Version'
+            // G      'PublicKey'
+            // G      'PublicKeyToken'
+            // G      'Culture'
+            // G      'Custom'
+            // G  assembly-property:
+            // G      assembly-token
+            // G  assembly-token:
+            // G      any sequence of characters not ending in whitespace, newlines, ',', '=', or ']'.
 
             // The above grammar is specified by the CLR (except assembly-token).  We defer validation to the CLR, but
             // use the above grammar to collect the name of the assembly.

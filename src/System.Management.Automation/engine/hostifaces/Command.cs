@@ -369,7 +369,7 @@ namespace System.Management.Automation.Runspaces
 
             if (_mergeUnclaimedPreviousCommandResults != PipelineResultTypes.None)
             {
-                //Currently only merging previous unclaimed error and output is supported.
+                // Currently only merging previous unclaimed error and output is supported.
                 if (mcr != null)
                 {
                     mcr.MergeUnclaimedPreviousErrorResults = true;
@@ -379,7 +379,7 @@ namespace System.Management.Automation.Runspaces
             // Error merge.
             if (MergeInstructions[(int)MergeType.Error] == PipelineResultTypes.Output)
             {
-                //Currently only merging error with output is supported.
+                // Currently only merging error with output is supported.
                 mcr.ErrorMergeTo = MshCommandRuntime.MergeDataStream.Output;
             }
 
@@ -541,7 +541,7 @@ namespace System.Management.Automation.Runspaces
                     helpCategory);
             }
 
-            //Set the merge settings
+            // Set the merge settings
             SetMergeSettingsOnCommandProcessor(commandProcessorBase);
 
             return commandProcessorBase;

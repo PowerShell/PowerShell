@@ -269,7 +269,7 @@ namespace System.Management.Automation
             {
                 lock (_syncRoot)
                 {
-                    //Do not return internal state.
+                    // Do not return internal state.
                     return _runspaceStateInfo.Clone();
                 }
             }
@@ -673,7 +673,7 @@ namespace System.Management.Automation
                         _eventManager = null;
 
                         RunspacePool.Dispose();
-                        //_runspacePool = null;
+                        // _runspacePool = null;
                     }
                     catch (InvalidRunspacePoolStateException e)
                     {
@@ -1148,9 +1148,9 @@ namespace System.Management.Automation
                     throw e;
                 }
 
-                //Add the pipeline to list of Executing pipeline.
-                //Note:_runningPipelines is always accessed with the lock so
-                //there is no need to create a synchronized version of list
+                // Add the pipeline to list of Executing pipeline.
+                // Note:_runningPipelines is always accessed with the lock so
+                // there is no need to create a synchronized version of list
                 _runningPipelines.Add(pipeline);
             }
         }
@@ -1172,9 +1172,9 @@ namespace System.Management.Automation
                 Dbg.Assert(_runspaceStateInfo.State != RunspaceState.BeforeOpen,
                              "Runspace should not be before open when pipeline is running");
 
-                //Remove the pipeline to list of Executing pipeline.
-                //Note:_runningPipelines is always accessed with the lock so
-                //there is no need to create a synchronized version of list
+                // Remove the pipeline to list of Executing pipeline.
+                // Note:_runningPipelines is always accessed with the lock so
+                // there is no need to create a synchronized version of list
                 _runningPipelines.Remove(pipeline);
                 pipeline.PipelineFinishedEvent.Set();
             }
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
         /// a synchronous method call</param>
         internal void DoConcurrentCheckAndAddToRunningPipelines(RemotePipeline pipeline, bool syncCall)
         {
-            //Concurrency check should be done under runspace lock
+            // Concurrency check should be done under runspace lock
             lock (_syncRoot)
             {
                 if (_bSessionStateProxyCallInProgress == true)
@@ -1197,10 +1197,10 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoPipelineWhenSessionStateProxyInProgress);
                 }
 
-                //Delegate to pipeline to do check if it is fine to invoke if another
-                //pipeline is running.
+                // Delegate to pipeline to do check if it is fine to invoke if another
+                // pipeline is running.
                 pipeline.DoConcurrentCheck(syncCall);
-                //Finally add to the list of running pipelines.
+                // Finally add to the list of running pipelines.
                 AddToRunningPipelineList(pipeline);
             }
         }
@@ -1373,7 +1373,7 @@ namespace System.Management.Automation
         {
             lock (_syncRoot)
             {
-                //Call fails if RunspaceState is not BeforeOpen.
+                // Call fails if RunspaceState is not BeforeOpen.
                 if (_runspaceStateInfo.State != RunspaceState.BeforeOpen)
                 {
                     InvalidRunspaceStateException e =
@@ -1414,12 +1414,12 @@ namespace System.Management.Automation
                 {
                     _runspaceStateInfo = new RunspaceStateInfo(state, reason);
 
-                    //Add _runspaceStateInfo to _runspaceEventQueue.
-                    //RaiseRunspaceStateEvents will raise event for each item
-                    //in this queue.
-                    //Note:We are doing clone here instead of passing the member
-                    //_runspaceStateInfo because we donot want outside
-                    //to change our runspace state.
+                    // Add _runspaceStateInfo to _runspaceEventQueue.
+                    // RaiseRunspaceStateEvents will raise event for each item
+                    // in this queue.
+                    // Note:We are doing clone here instead of passing the member
+                    // _runspaceStateInfo because we donot want outside
+                    // to change our runspace state.
                     RunspaceAvailability previousAvailability = _runspaceAvailability;
 
                     this.UpdateRunspaceAvailability(_runspaceStateInfo.State, false);
@@ -1460,9 +1460,9 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    //Clear the events if there are no EventHandlers. This
-                    //ensures that events do not get called for state
-                    //changes prior to their registration.
+                    // Clear the events if there are no EventHandlers. This
+                    // ensures that events do not get called for state
+                    // changes prior to their registration.
                     _runspaceEventQueue.Clear();
                 }
             }
@@ -1478,8 +1478,8 @@ namespace System.Management.Automation
                         this.OnAvailabilityChanged(new RunspaceAvailabilityEventArgs(queueItem.NewRunspaceAvailability));
                     }
 
-                    //Exception raised by events are not error condition for runspace
-                    //object.
+                    // Exception raised by events are not error condition for runspace
+                    // object.
                     if (stateChanged != null)
                     {
                         try
@@ -1513,13 +1513,13 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Finishof")]
         private bool WaitForFinishofPipelines()
         {
-            //Take a snapshot of list of active pipelines.
-            //Note:Before we enter to this CloseHelper routine
-            //CoreClose has already set the state of Runspace
-            //to closing. So no new pipelines can be executed on this
-            //runspace and so no new pipelines will be added to
-            //_runningPipelines. However we still need to lock because
-            //running pipelines can be removed from this.
+            // Take a snapshot of list of active pipelines.
+            // Note:Before we enter to this CloseHelper routine
+            // CoreClose has already set the state of Runspace
+            // to closing. So no new pipelines can be executed on this
+            // runspace and so no new pipelines will be added to
+            // _runningPipelines. However we still need to lock because
+            // running pipelines can be removed from this.
             RemotePipeline[] runningPipelines;
 
             lock (_syncRoot)

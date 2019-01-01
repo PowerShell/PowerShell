@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to wait
+            // List of jobs to wait
             List<Job> matches;
 
             switch (ParameterSetName)

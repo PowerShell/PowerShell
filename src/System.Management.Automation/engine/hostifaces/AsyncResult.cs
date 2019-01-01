@@ -128,7 +128,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         internal void SetAsCompleted(Exception exception)
         {
-            //Dbg.Assert(!isCompleted, "AsynResult already completed");
+            // Dbg.Assert(!isCompleted, "AsynResult already completed");
             if (IsCompleted)
             {
                 return;

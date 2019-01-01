@@ -210,7 +210,7 @@ namespace System.Management.Automation.Remoting
                 "ShellUri", string.Empty);
 
             MySelf = RemotingDestination.Client;
-            //Create session data structure handler for this session
+            // Create session data structure handler for this session
             SessionDataStructureHandler = new ClientRemoteSessionDSHandlerImpl(this,
                 _cryptoHelper,
                 rsPool.ConnectionInfo,
@@ -218,7 +218,7 @@ namespace System.Management.Automation.Remoting
             BaseSessionDataStructureHandler = SessionDataStructureHandler;
             _waitHandleForConfigurationReceived = new ManualResetEvent(false);
 
-            //Register handlers for various ClientSessiondata structure handler events
+            // Register handlers for various ClientSessiondata structure handler events
             SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
             SessionDataStructureHandler.ConnectionStateChanged += HandleConnectionStateChanged;
             SessionDataStructureHandler.EncryptedSessionKeyReceived +=
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void CreateAsync()
         {
-            //Raise a CreateSession event in StateMachine. This start the process of connection and negotiation to a new remote session
+            // Raise a CreateSession event in StateMachine. This start the process of connection and negotiation to a new remote session
             RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startArg);
         }
@@ -246,7 +246,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void ConnectAsync()
         {
-            //Raise the connectsession event in statemachine. This start the process of connection and negotiation to an existing remote session
+            // Raise the connectsession event in statemachine. This start the process of connection and negotiation to an existing remote session
             RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startArg);
         }
@@ -302,7 +302,7 @@ namespace System.Management.Automation.Remoting
                     throw PSTraceSource.NewArgumentNullException("arg");
                 }
 
-                if (arg.SessionStateInfo.State == RemoteSessionState.EstablishedAndKeyReceived) //TODO - Client session would never get into this state... to be removed
+                if (arg.SessionStateInfo.State == RemoteSessionState.EstablishedAndKeyReceived) // TODO - Client session would never get into this state... to be removed
                 {
                     // send the public key
                     StartKeyExchange();
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion KeyExchange
 
-        //TODO:Review Configuration Story
+        // TODO:Review Configuration Story
         #region configuration
 
         private ManualResetEvent _waitHandleForConfigurationReceived;
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Remoting
                      ))
                  )
             {
-                //passed negotiation check
+                // passed negotiation check
             }
             else
             {

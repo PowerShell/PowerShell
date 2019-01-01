@@ -1652,7 +1652,7 @@ namespace System.Management.Automation.Runspaces
 
         // Used for pipeline id generation.
         private long _pipelineIdSeed;
-        //Generate pipeline id unique to this runspace
+        // Generate pipeline id unique to this runspace
         internal long GeneratePipelineId()
         {
             return System.Threading.Interlocked.Increment(ref _pipelineIdSeed);

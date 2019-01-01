@@ -6347,7 +6347,7 @@ namespace System.Management.Automation.Language
         /// </returns>
         internal PipelineAst GenerateSetItemPipelineAst()
         {
-            //**************************
+            // **************************
             // Now construct the AST to call the function that will build the actual object.
             // This is composed of a call to command with the signature
             //    function PSDesiredStateConfiguration\\Configuration
@@ -6452,7 +6452,7 @@ namespace System.Management.Automation.Language
 
             #region "Construct Set-Item pipeline"
 
-            //**************************
+            // **************************
             // Now construct the AST to call the set-item cmdlet that will create the function
             // it will do set-item -Path function:\ConfigurationNameExpr -Value funcBody
 

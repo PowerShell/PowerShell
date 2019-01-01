@@ -959,9 +959,9 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (disposing)
             {
-                //inputstream.Dispose();
-                //outputstream.Dispose();
-                //errorstream.Dispose();
+                // inputstream.Dispose();
+                // outputstream.Dispose();
+                // errorstream.Dispose();
             }
         }
         #endregion IDisposable

@@ -523,7 +523,7 @@ namespace System.Management.Automation
         private string _name;
         private IList<Job> _childJobs;
         internal readonly object syncObject = new object();   // object used for synchronization
-        //ISSUE: Should Result be public property
+        // ISSUE: Should Result be public property
         private PSDataCollection<PSStreamObject> _results = new PSDataCollection<PSStreamObject>();
         private bool _resultsOwner = true;
         private PSDataCollection<ErrorRecord> _error = new PSDataCollection<ErrorRecord>();
@@ -1425,8 +1425,8 @@ namespace System.Management.Automation
                 }
 
 #pragma warning disable 56500
-                //Exception raised in the eventhandler are not error in job.
-                //silently ignore them.
+                // Exception raised in the eventhandler are not error in job.
+                // silently ignore them.
                 try
                 {
                     tracer.WriteMessage("Job", "SetJobState", Guid.Empty, this, "Invoking StateChanged event", null);
@@ -1782,13 +1782,13 @@ namespace System.Management.Automation
             // Create child jobs for each object in the list
             foreach (ExecutionCmdletHelperComputerName helper in computerNameHelpers)
             {
-                //Create Child Job and Register for its StateChanged Event
+                // Create Child Job and Register for its StateChanged Event
                 PSRemotingChildJob childJob = new PSRemotingChildJob(remoteCommand,
                                             helper, _throttleManager);
                 childJob.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
                 childJob.JobUnblocked += new EventHandler(HandleJobUnblocked);
 
-                //Add this job to list of childjobs
+                // Add this job to list of childjobs
                 ChildJobs.Add(childJob);
             }
 
@@ -1817,13 +1817,13 @@ namespace System.Management.Automation
             {
                 ExecutionCmdletHelperRunspace helper = (ExecutionCmdletHelperRunspace)runspaceHelpers[i];
 
-                //Create Child Job object and Register for its state changed event
+                // Create Child Job object and Register for its state changed event
                 PSRemotingChildJob job = new PSRemotingChildJob(remoteCommand,
                                 helper, _throttleManager);
                 job.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
                 job.JobUnblocked += new EventHandler(HandleJobUnblocked);
 
-                //Add the child job to list of child jobs
+                // Add the child job to list of child jobs
                 ChildJobs.Add(job);
             }
 
@@ -1879,8 +1879,8 @@ namespace System.Management.Automation
         /// </summary>
         private void CommonInit(int throttleLimit, List<IThrottleOperation> helpers)
         {
-            //Since no results are produced by any streams. We should
-            //close all the streams
+            // Since no results are produced by any streams. We should
+            // close all the streams
             base.CloseAllStreams();
 
             // set status to "in progress"
@@ -2309,7 +2309,7 @@ namespace System.Management.Automation
 
         private bool _hideComputerName = true;
 
-        //ISSUE: Implement StatusMessage
+        // ISSUE: Implement StatusMessage
         /// <summary>
         /// Checks the status of remote command execution
         /// </summary>
@@ -2327,7 +2327,7 @@ namespace System.Management.Automation
             //        {
             //            if (finishedCount == ChildJobs.Count)
             //            {
-            //                //ISSUE: Change this code to look in to child jobs for exception
+            //                // ISSUE: Change this code to look in to child jobs for exception
             //                if (errors.Count > 0)
             //                {
             //                    statusMessage = "LocalErrors";
@@ -2360,7 +2360,7 @@ namespace System.Management.Automation
 
         #region finish logic
 
-        //This variable is set to true if atleast one child job failed.
+        // This variable is set to true if atleast one child job failed.
         private bool _atleastOneChildJobFailed = false;
 
         // count of number of child jobs which have finished
@@ -2422,7 +2422,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //Ignore state changes which are not resulting in state change to finished.
+            // Ignore state changes which are not resulting in state change to finished.
             if (!IsFinishedState(e.JobStateInfo.State))
             {
                 return;
@@ -2430,7 +2430,7 @@ namespace System.Management.Automation
 
             if (e.JobStateInfo.State == JobState.Failed)
             {
-                //If any of the child job failed, we set status to failed
+                // If any of the child job failed, we set status to failed
                 _atleastOneChildJobFailed = true;
             }
 
@@ -2439,7 +2439,7 @@ namespace System.Management.Automation
             {
                 _finishedChildJobsCount++;
 
-                //We are done
+                // We are done
                 if (_finishedChildJobsCount + _disconnectedChildJobsCount
                     == ChildJobs.Count)
                 {
@@ -2449,9 +2449,9 @@ namespace System.Management.Automation
 
             if (allChildJobsFinished)
             {
-                //if any child job failed, set status to failed
-                //If stop was called set, status to stopped
-                //else completed
+                // if any child job failed, set status to failed
+                // If stop was called set, status to stopped
+                // else completed
                 if (_disconnectedChildJobsCount > 0)
                 {
                     SetJobState(JobState.Disconnected);
@@ -2852,7 +2852,7 @@ namespace System.Management.Automation
 
         #region stop
 
-        //bool isStopCalled = false;
+        // bool isStopCalled = false;
         /// <summary>
         /// Stops the job
         /// </summary>
@@ -2894,7 +2894,7 @@ namespace System.Management.Automation
         {
             get
             {
-                //ISSUE implement this.
+                // ISSUE implement this.
                 return string.Empty;
             }
         }
@@ -3096,8 +3096,8 @@ namespace System.Management.Automation
                         new RemotingErrorRecord(er, originInfo);
                     errorRecord.PreserveInvocationInfoOnce = true;
 
-                    //ISSUE: Add an Assert for ErrorRecord.
-                    //Add to the PSRemotingChild jobs streams
+                    // ISSUE: Add an Assert for ErrorRecord.
+                    // Add to the PSRemotingChild jobs streams
                     this.WriteError(errorRecord);
                 }
             }
@@ -3196,17 +3196,17 @@ namespace System.Management.Automation
         /// <param name="eventArgs">Not used in this method.</param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
-            //Question: Why do we register for HandleThrottleComplete when we have already
-            //registered for PipelineStateChangedEvent?
-            //Answer: Because ThrottleManager at a given time can have some pipelines which are
-            //still not started. If TM.Stop() is called, then it simply discards those pipelines and
-            //PipelineStateChangedEvent is not called for them. For such jobs, we depend on
-            //HandleThrottleComplete to mark the finish of job.
+            // Question: Why do we register for HandleThrottleComplete when we have already
+            // registered for PipelineStateChangedEvent?
+            // Answer: Because ThrottleManager at a given time can have some pipelines which are
+            // still not started. If TM.Stop() is called, then it simply discards those pipelines and
+            // PipelineStateChangedEvent is not called for them. For such jobs, we depend on
+            // HandleThrottleComplete to mark the finish of job.
 
-            //Question: So it is possible in some cases DoFinish can be called twice.
-            //Answer: Yes: One from PipelineStateChangedEvent and Another here. But
-            //DoFinish has logic to check if it has been already called and second call
-            //becomes noOp.
+            // Question: So it is possible in some cases DoFinish can be called twice.
+            // Answer: Yes: One from PipelineStateChangedEvent and Another here. But
+            // DoFinish has logic to check if it has been already called and second call
+            // becomes noOp.
             DoFinish();
         }
 
@@ -3217,13 +3217,13 @@ namespace System.Management.Automation
         /// <param name="stateEventArgs">Operation complete event args.</param>
         protected virtual void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
-            //Question:Why are we registering for OperationComplete if we already
-            //registering for StateChangedEvent and ThrottleComplete event
-            //Answer:Because in case of computer, if Runspace.Open it self fails,
-            //no pipeline is created and no pipeline state changed event is raised.
-            //We can wait for throttle complete, but it is raised only when all the
-            //operations are completed and this means that status of job is not updated
-            //untill Operation Complete.
+            // Question:Why are we registering for OperationComplete if we already
+            // registering for StateChangedEvent and ThrottleComplete event
+            // Answer:Because in case of computer, if Runspace.Open it self fails,
+            // no pipeline is created and no pipeline state changed event is raised.
+            // We can wait for throttle complete, but it is raised only when all the
+            // operations are completed and this means that status of job is not updated
+            // untill Operation Complete.
             ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
             Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
@@ -3492,7 +3492,7 @@ namespace System.Management.Automation
         /// need to be aggregated</param>
         protected void AggregateResultsFromHelper(ExecutionCmdletHelper helper)
         {
-            //Get the pipeline associated with this helper and register for appropriate events
+            // Get the pipeline associated with this helper and register for appropriate events
             Pipeline pipeline = helper.Pipeline;
             pipeline.Output.DataReady += new EventHandler(HandleOutputReady);
             pipeline.Error.DataReady += new EventHandler(HandleErrorReady);
@@ -3716,7 +3716,7 @@ namespace System.Management.Automation
         protected void DeterminedAndSetJobState(ExecutionCmdletHelper helper)
         {
             Exception failureException;
-            //Process the reason in case of failure.
+            // Process the reason in case of failure.
             ProcessJobFailure(helper, out failureException, out _failureErrorRecord);
 
             if (failureException != null)
@@ -3725,12 +3725,12 @@ namespace System.Management.Automation
             }
             else
             {
-                //Get the state of the pipeline
+                // Get the state of the pipeline
                 PipelineState state = helper.Pipeline.PipelineStateInfo.State;
                 if (state == PipelineState.NotStarted)
                 {
-                    //This is a case in which pipeline was not started and TM.Stop was
-                    //called. See comment in HandleThrottleComplete
+                    // This is a case in which pipeline was not started and TM.Stop was
+                    // called. See comment in HandleThrottleComplete
                     SetJobState(JobState.Stopped);
                 }
                 else if (state == PipelineState.Completed)
@@ -3819,10 +3819,10 @@ namespace System.Management.Automation
 
         #region Private Members
 
-        //helper associated with this job object
+        // helper associated with this job object
         private RemotePipeline _remotePipeline = null;
 
-        //object used for synchronization
+        // object used for synchronization
         protected object SyncObject = new object();
 
         private ThrottleManager _throttleManager;
@@ -4169,7 +4169,7 @@ namespace System.Management.Automation
             }
 
             UnregisterThrottleComplete(_throttleManager);
-            //throttleManager = null;
+            // throttleManager = null;
 
             Results.DecrementRef();
         }
@@ -4195,7 +4195,7 @@ namespace System.Management.Automation
             Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
             Exception failureException;
-            //Process the reason in case of failure.
+            // Process the reason in case of failure.
             ErrorRecord failureErrorRecord;
 
             ProcessJobFailure(helper, out failureException, out failureErrorRecord);
