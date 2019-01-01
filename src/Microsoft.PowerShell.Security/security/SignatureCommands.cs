@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // remember to reset the read-only attribute later
                                 readOnlyFileInfo = fInfo;
-                                //Make sure the file is not read only
+                                // Make sure the file is not read only
                                 fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                             }
                         }

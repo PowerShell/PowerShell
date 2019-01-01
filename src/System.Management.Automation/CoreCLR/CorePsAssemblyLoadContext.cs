@@ -269,7 +269,7 @@ namespace System.Management.Automation
                 if (!isAssemblyFileFound || !isAssemblyFileMatching)
                 {
 #if !UNIX
-                    //Try loading from GAC
+                    // Try loading from GAC
                     if (!TryFindInGAC(assemblyName, out asmFilePath))
                     {
                          return null;
@@ -316,13 +316,13 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(_winDir))
             {
-                //cache value of '_winDir' folder in member variable.
+                // cache value of '_winDir' folder in member variable.
                 _winDir = Environment.GetEnvironmentVariable("winDir");
             }
 
             if (string.IsNullOrEmpty(_gacPathMSIL))
             {
-                //cache value of '_gacPathMSIL' folder in member variable.
+                // cache value of '_gacPathMSIL' folder in member variable.
                 _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
             }
 
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                 {
                     if (string.IsNullOrEmpty(_gacPath64))
                     {
-                        //cache value of '_gacPath64' folder in member variable.
+                        // cache value of '_gacPath64' folder in member variable.
                         _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
                     }
 
@@ -346,7 +346,7 @@ namespace System.Management.Automation
                 {
                     if (string.IsNullOrEmpty(_gacPath32))
                     {
-                        //cache value of '_gacPath32' folder in member variable.
+                        // cache value of '_gacPath32' folder in member variable.
                         _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
                     }
 
@@ -370,12 +370,12 @@ namespace System.Management.Automation
 
             if (Directory.Exists(tempAssemblyDirPath))
             {
-                //Enumerate all directories, sort by name and select the last. This selects the latest version.
+                // Enumerate all directories, sort by name and select the last. This selects the latest version.
                 var chosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
 
                 if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {
-                    //Select first or default as the directory will contain only one assembly. If nothing then default is null;
+                    // Select first or default as the directory will contain only one assembly. If nothing then default is null;
                     var foundAssemblyPath = Directory.GetFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
 
                     if (!string.IsNullOrEmpty(foundAssemblyPath))

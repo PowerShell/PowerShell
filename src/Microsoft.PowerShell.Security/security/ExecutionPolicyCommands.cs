@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Determine if we should process this policy change
-#if CORECLR //Seems that we cannot find if the cmdlet is executed interactive or through a script on CoreCLR
+#if CORECLR // Seems that we cannot find if the cmdlet is executed interactive or through a script on CoreCLR
         private bool ShouldProcessPolicyChange(string localPreference)
         {
             return ShouldProcess(localPreference);

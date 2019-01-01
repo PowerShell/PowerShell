@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
             base.Deserialize(so, deserializer);
-            //optional
+            // optional
             this.groupingEntry = (GroupingEntry)deserializer.DeserializeMemberObject(so, "groupingEntry");
         }
     }

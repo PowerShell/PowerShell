@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else if (formatDataIsGroupStartData)
                     {
-                        //GroupStartData gsd = (GroupStartData) formatData;
+                        // GroupStartData gsd = (GroupStartData) formatData;
                         // notify for Gs
                         this.gs(oc);
                     }

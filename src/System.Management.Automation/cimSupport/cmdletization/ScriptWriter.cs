@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Cmdletization
             ScriptWriter.s_xmlReaderSettings.MaxCharactersInDocument = 128 * 1024 * 1024; // generous guess for the upper bound
 
 #if CORECLR // The XML Schema file 'cmdlets-over-objects.xsd' is missing in Github, and it's likely the resource string
-            //'CmdletizationCoreResources.Xml_cmdletsOverObjectsXsd' needs to be reworked to work in .NET Core.
+            // 'CmdletizationCoreResources.Xml_cmdletsOverObjectsXsd' needs to be reworked to work in .NET Core.
             ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Ignore;
 #else
             ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Parse; // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
@@ -929,12 +929,12 @@ function __cmdletization_BindCommonParameters
             }
         }
 
-        private const string StaticCommonParameterSetTemplate = "{1}"; //"{0}::{1}";
-        private const string StaticMethodParameterSetTemplate = "{0}"; //"{1}::{0}";
+        private const string StaticCommonParameterSetTemplate = "{1}"; // "{0}::{1}";
+        private const string StaticMethodParameterSetTemplate = "{0}"; // "{1}::{0}";
 
-        private const string InstanceCommonParameterSetTemplate = "{1}"; //"{0}::{1}::{2}";
-        private const string InstanceQueryParameterSetTemplate = "{0}"; //"{1}::{0}::{2}";
-        private const string InstanceMethodParameterSetTemplate = "{2}"; //"{1}::{2}::{0}";
+        private const string InstanceCommonParameterSetTemplate = "{1}"; // "{0}::{1}::{2}";
+        private const string InstanceQueryParameterSetTemplate = "{0}"; // "{1}::{0}::{2}";
+        private const string InstanceMethodParameterSetTemplate = "{2}"; // "{1}::{2}::{0}";
 
         private const string InputObjectQueryParameterSetName = "InputObject (cdxml)";
         private const string SingleQueryParameterSetName = "Query (cdxml)";

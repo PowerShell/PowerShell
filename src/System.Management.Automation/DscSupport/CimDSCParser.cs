@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                     string className = c.CimSystemProperties.ClassName;
                     if ((superClassName != null) && (superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase)))
                     {
-                        //Get the name of the file without schema.mof extension
+                        // Get the name of the file without schema.mof extension
                         if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))
                         {
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private const int IndexModuleVersion = 1;
         private const int IndexClassName = 2;
 
-        //Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
+        // Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
         private static readonly string[] s_hiddenResourceList =
     {
         "MSFT_BaseConfigurationProviderRegistration",
@@ -494,12 +494,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         "MSFT_PSConfigurationProviderRegistration",
     };
 
-        //Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
+        // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
         private static readonly HashSet<string> s_hiddenResourceCache = new HashSet<string>(s_hiddenResourceList,
             StringComparer.OrdinalIgnoreCase);
 
-        //a collection to hold current importing script based resource file
-        //this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
+        // a collection to hold current importing script based resource file
+        // this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
         private static readonly HashSet<string> s_currentImportingScriptFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -871,7 +871,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return null;
         }
 
-        //Callback implementation...
+        // Callback implementation...
         private static CimClass MyClassCallback(string serverName, string namespaceName, string className)
         {
             foreach (KeyValuePair<string, Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>> cimClass in ClassCache)
@@ -1217,7 +1217,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             catch (Microsoft.Management.Infrastructure.CimException)
             {
-                //exception means no DSCAlias
+                // exception means no DSCAlias
             }
 
             return null;
@@ -2514,7 +2514,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 return false;
             }
 
-            //BUGBUG - need to fix up how the module gets set.
+            // BUGBUG - need to fix up how the module gets set.
             Token[] tokens;
             ParseError[] errors;
             var ast = Parser.ParseFile(fileName, out tokens, out errors);
@@ -3260,8 +3260,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (!ScriptKeywordFileCache.Contains(schemaFilePath))
                 {
                     // Parsing the file is all that needs to be done to add the keywords
-                    //BUGBUG - need to fix up how the module gets set.
-                    //BUGBUG - should fail somehow if errors is not empty
+                    // BUGBUG - need to fix up how the module gets set.
+                    // BUGBUG - should fail somehow if errors is not empty
                     Token[] tokens; ParseError[] errors;
                     s_currentImportingScriptFiles.Add(schemaFilePath);
                     Parser.ParseFile(schemaFilePath, out tokens, out errors);

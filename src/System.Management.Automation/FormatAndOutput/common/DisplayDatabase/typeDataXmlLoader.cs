@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (Exception e) // will rethrow
                 {
-                    //Error in file {0}: {1}
+                    // Error in file {0}: {1}
 
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFile, FilePath, e.Message));
                     throw;
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (Exception e) // will rethrow
             {
-                //Error in formatting data "{0}": {1}
+                // Error in formatting data "{0}": {1}
 
                 this.ReportErrorForLoadingFromObjectModel(
                     StringUtil.Format(FormatAndOutXmlLoadingStrings.ErrorInFormattingData, typeDefinition.TypeName, e.Message), typeDefinition.TypeName);
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (tableBody.header.columnHeaderDefinitionList.Count !=
                     tableBody.defaultDefinition.rowItemDefinitionList.Count)
                 {
-                    //Error at XPath {0} in file {1}: Header item count = {2} does not match default row item count = {3}.
+                    // Error at XPath {0} in file {1}: Header item count = {2} does not match default row item count = {3}.
                     this.ReportErrorForLoadingFromObjectModel(
                         StringUtil.Format(FormatAndOutXmlLoadingStrings.IncorrectHeaderItemCountInFormattingData, typeName, viewIndex,
                         tableBody.header.columnHeaderDefinitionList.Count,
@@ -818,7 +818,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        //Error at XPath {0} in file {1}: There cannot be more than one default {2}.
+                        // Error at XPath {0} in file {1}: There cannot be more than one default {2}.
                         this.ReportErrorForLoadingFromObjectModel(
                             StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyDefaultShapeEntryInFormattingData, typeName, viewIndex, XmlTags.ListEntryNode), typeName);
                         listBody.defaultEntryDefinition = null;
@@ -911,11 +911,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we must have at least a definition in th elist
             if (lved.itemDefinitionList.Count == 0)
             {
-                //Error: At least one list view item must be specified.
+                // Error: At least one list view item must be specified.
                 this.ReportErrorForLoadingFromObjectModel(
                     StringUtil.Format(FormatAndOutXmlLoadingStrings.NoListViewItemInFormattingData, typeName, viewIndex), typeName);
                 lved.itemDefinitionList = null;
-                return; //fatal
+                return; // fatal
             }
         }
 
@@ -981,7 +981,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        //Error at XPath {0} in file {1}: There cannot be more than one default {2}.
+                        // Error at XPath {0} in file {1}: There cannot be more than one default {2}.
                         this.ReportErrorForLoadingFromObjectModel(
                             StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyDefaultShapeEntryInFormattingData, typeName, viewIndex, XmlTags.WideEntryNode), typeName);
                         wideBody.defaultEntryDefinition = null;
@@ -1194,7 +1194,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            //Error at XPath {0} in file {1}: Invalid {2} value.
+                            // Error at XPath {0} in file {1}: Invalid {2} value.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNodeValue, ComputeCurrentXPath(), FilePath, XmlTags.PropertyCountForTableNode));
                         }
                     }
@@ -1212,7 +1212,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            //Error at XPath {0} in file {1}: Invalid {2} value.
+                            // Error at XPath {0} in file {1}: Invalid {2} value.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNodeValue, ComputeCurrentXPath(), FilePath, XmlTags.MultilineTablesNode));
                         }
                     }
@@ -1249,7 +1249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         EnumerableExpansionDirective eed = LoadEnumerableExpansionDirective(n, k++);
                         if (eed == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.EnumerableExpansionNode));
                             return null; // fatal error
                         }
@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (appliesToNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         appliesToNodeFound = true;
@@ -1293,22 +1293,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (expandNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         expandNodeFound = true;
                         string s = GetMandatoryInnerText(n);
                         if (s == null)
                         {
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         bool success = EnumerableExpansionConversion.Convert(s, out eed.enumerableExpansion);
                         if (!success)
                         {
-                            //Error at XPath {0} in file {1}: Invalid {2} value.
+                            // Error at XPath {0} in file {1}: Invalid {2} value.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNodeValue, ComputeCurrentXPath(), FilePath, XmlTags.ExpandNode));
-                            return null; //fatal
+                            return null; // fatal
                         }
                     }
                     else
@@ -1473,7 +1473,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (appliesTo.referenceList.Count == 0)
                 {
                     // we do not accept an empty list
-                    //Error at XPath {0} in file {1}: No type or condition is specified for applying the view.
+                    // Error at XPath {0} in file {1}: No type or condition is specified for applying the view.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.EmptyAppliesTo, ComputeCurrentXPath(), FilePath));
                     return null;
                 }
@@ -1584,7 +1584,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (typeFound && typeGroupFound)
                 {
-                    //Error at XPath {0} in file {1}: Cannot have SelectionSetName and TypeName at the same time.
+                    // Error at XPath {0} in file {1}: Cannot have SelectionSetName and TypeName at the same time.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.SelectionSetNameAndTypeName, ComputeCurrentXPath(), FilePath));
                     return null; // fatal error
                 }
@@ -1608,7 +1608,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return retVal;
                 }
                 // failure: expression is mandatory
-                //Error at XPath {0} in file {1}: An expression is expected.
+                // Error at XPath {0} in file {1}: An expression is expected.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectExpression, ComputeCurrentXPath(), FilePath));
                 return null;
             }
@@ -1683,7 +1683,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (controlFound && labelFound)
                 {
-                    //Error at XPath {0} in file {1}: Cannot have control and label at the same time.
+                    // Error at XPath {0} in file {1}: Cannot have control and label at the same time.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ControlAndLabel, ComputeCurrentXPath(), FilePath));
                     return null; // fatal error
                 }
@@ -1692,7 +1692,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     if (!expressionNodeFound)
                     {
-                        //Error at XPath {0} in file {1}: Cannot have control or label without an expression.
+                        // Error at XPath {0} in file {1}: Cannot have control or label without an expression.
                         this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ControlLabelWithoutExpression, ComputeCurrentXPath(), FilePath));
                         return null; // fatal error
                     }
@@ -1721,7 +1721,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // failure: expression is mandatory
-                //Error at XPath {0} in file {1}: An expression is expected.
+                // Error at XPath {0} in file {1}: An expression is expected.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectExpression, ComputeCurrentXPath(), FilePath));
                 return null;
             }
@@ -1767,7 +1767,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (e == null)
             {
-                //Error at XPath {0} in file {1}: Node should be an XmlElement.
+                // Error at XPath {0} in file {1}: Node should be an XmlElement.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NonXmlElementNode, ComputeCurrentXPath(), FilePath));
                 return false;
             }
@@ -1868,7 +1868,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 case DisplayResourceManagerCache.AssemblyBindingStatus.FoundInGac:
                     {
-                        //"(Global Assembly Cache) {0}"
+                        // "(Global Assembly Cache) {0}"
                         assemblyDisplayName = StringUtil.Format(FormatAndOutXmlLoadingStrings.AssemblyInGAC, resource.assemblyName);
                     }
 
@@ -1886,21 +1886,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 case DisplayResourceManagerCache.LoadingResult.AssemblyNotFound:
                     {
-                        //Error at XPath {0} in file {1}: Assembly {2} is not found.
+                        // Error at XPath {0} in file {1}: Assembly {2} is not found.
                         msg = StringUtil.Format(FormatAndOutXmlLoadingStrings.AssemblyNotFound, ComputeCurrentXPath(), FilePath, assemblyDisplayName);
                     }
 
                     break;
                 case DisplayResourceManagerCache.LoadingResult.ResourceNotFound:
                     {
-                        //Error at XPath {0} in file {1}: Resource {2} in assembly {3} is not found.
+                        // Error at XPath {0} in file {1}: Resource {2} in assembly {3} is not found.
                         msg = StringUtil.Format(FormatAndOutXmlLoadingStrings.ResourceNotFound, ComputeCurrentXPath(), FilePath, resource.baseName, assemblyDisplayName);
                     }
 
                     break;
                 case DisplayResourceManagerCache.LoadingResult.StringNotFound:
                     {
-                        //Error at XPath {0} in file {1}: String {2} from resource {3} in assembly {4} is not found.
+                        // Error at XPath {0} in file {1}: String {2} from resource {3} in assembly {4} is not found.
                         msg = StringUtil.Format(FormatAndOutXmlLoadingStrings.StringResourceNotFound, ComputeCurrentXPath(), FilePath,
                             resource.resourceId, resource.baseName, assemblyDisplayName);
                     }
@@ -1928,7 +1928,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (ParseException e)
             {
-                //Error at XPath {0} in file {1}: Invalid script block "{2}".
+                // Error at XPath {0} in file {1}: Invalid script block "{2}".
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidScriptBlock, ComputeCurrentXPath(), FilePath, e.Message));
                 return false;
             }
@@ -1973,7 +1973,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _token.expressionValue = _loader.GetMandatoryInnerText(n);
                     if (_token.expressionValue == null)
                     {
-                        //Error at XPath {0} in file {1}: Missing property.
+                        // Error at XPath {0} in file {1}: Missing property.
                         _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoProperty, _loader.ComputeCurrentXPath(), _loader.FilePath));
                         _fatalError = true;
                         return false; // fatal error
@@ -1997,7 +1997,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _token.expressionValue = _loader.GetMandatoryInnerText(n);
                     if (_token.expressionValue == null)
                     {
-                        //Error at XPath {0} in file {1}: Missing script block text.
+                        // Error at XPath {0} in file {1}: Missing script block text.
                         _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoScriptBlockText, _loader.ComputeCurrentXPath(), _loader.FilePath));
                         _fatalError = true;
                         return false; // fatal error
@@ -2090,7 +2090,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         formatString = _loader.GetMandatoryInnerText(n);
                         if (formatString == null)
                         {
-                            //Error at XPath {0} in file {1}: Missing a format string.
+                            // Error at XPath {0} in file {1}: Missing a format string.
                             _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoFormatString, _loader.ComputeCurrentXPath(), _loader.FilePath));
                             return false; // fatal error
                         }
@@ -2107,7 +2107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         textToken = _loader.LoadText(n);
                         if (textToken == null)
                         {
-                            //Error at XPath {0} in file {1}: Invalid {2}.
+                            // Error at XPath {0} in file {1}: Invalid {2}.
                             _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNode, _loader.ComputeCurrentXPath(), _loader.FilePath, XmlTags.TextNode));
                             return false; // fatal error
                         }
@@ -2124,7 +2124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // RULE: cannot have a text node and an expression at the same time
                     if (textNodeFound)
                     {
-                        //Error at XPath {0} in file {1}: {2} cannot be specified with an expression.
+                        // Error at XPath {0} in file {1}: {2} cannot be specified with an expression.
                         _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NodeWithExpression, _loader.ComputeCurrentXPath(),
                             _loader.FilePath, XmlTags.TextNode));
                         return false; // fatal error
@@ -2149,7 +2149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // RULE: we cannot have a format string without an expression node
                     if (formatStringNodeFound)
                     {
-                        //Error at XPath {0} in file {1}: {2} cannot be specified without an expression.
+                        // Error at XPath {0} in file {1}: {2} cannot be specified without an expression.
                         _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NodeWithoutExpression, _loader.ComputeCurrentXPath(),
                             _loader.FilePath, XmlTags.FormatStringNode));
                         return false; // fatal error

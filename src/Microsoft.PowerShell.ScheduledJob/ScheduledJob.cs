@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         public override void StartJobAsync()
         {
-            //StartJob();
+            // StartJob();
             throw new PSNotSupportedException();
         }
 

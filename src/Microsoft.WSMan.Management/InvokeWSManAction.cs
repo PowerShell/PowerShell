@@ -259,7 +259,7 @@ namespace Microsoft.WSMan.Management
 
             helper.WSManOp = "invoke";
 
-            //create the connection string
+            // create the connection string
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
 
         }
@@ -272,10 +272,10 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                //create the resourcelocator object
+                // create the resourcelocator object
                 IWSManResourceLocator m_resource = helper.InitializeResourceLocator(optionset, selectorset, null, null, m_wsmanObject, resourceuri);
 
-                //create the session object
+                // create the session object
                 m_session = helper.CreateSessionObject(m_wsmanObject, Authentication, sessionoption, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
 
                 string rootNode = helper.GetRootNodeName(helper.WSManOp, m_resource.ResourceUri, action);
@@ -315,7 +315,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>

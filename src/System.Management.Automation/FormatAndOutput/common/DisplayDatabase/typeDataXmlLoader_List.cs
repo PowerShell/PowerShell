@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ListControlEntryDefinition lved = LoadListControlEntryDefinition(n, entryIndex++);
                         if (lved == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.ListEntryNode));
                             listBody.defaultEntryDefinition = null;
                             return; // fatal error
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             }
                             else
                             {
-                                //Error at XPath {0} in file {1}: There cannot be more than one default {2}.
+                                // Error at XPath {0} in file {1}: There cannot be more than one default {2}.
                                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.ListEntryNode));
                                 listBody.defaultEntryDefinition = null;
                                 return; // fatal error
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (listBody.optionalEntryList == null)
                 {
-                    //Error at XPath {0} in file {1}: There must be at least one default {2}.
+                    // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.ListEntryNode));
                 }
             }
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (appliesToNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         appliesToNodeFound = true;
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (bodyNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         bodyNodeFound = true;
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (lved.itemDefinitionList == null)
                 {
-                    //Error at XPath {0} in file {1}: Missing definition list.
+                    // Error at XPath {0} in file {1}: Missing definition list.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefinitionList, ComputeCurrentXPath(), FilePath));
                     return null;
                 }
@@ -174,10 +174,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ListControlItemDefinition lvid = LoadListControlItemDefinition(n);
                         if (lvid == null)
                         {
-                            //Error at XPath {0} in file {1}: Invalid property entry.
+                            // Error at XPath {0} in file {1}: Invalid property entry.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidPropertyEntry, ComputeCurrentXPath(), FilePath));
                             lved.itemDefinitionList = null;
-                            return; //fatal
+                            return; // fatal
                         }
 
                         lved.itemDefinitionList.Add(lvid);
@@ -191,10 +191,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we must have at least a definition in th elist
                 if (lved.itemDefinitionList.Count == 0)
                 {
-                    //Error at XPath {0} in file {1}: At least one list view item must be specified.
+                    // Error at XPath {0} in file {1}: At least one list view item must be specified.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoListViewItem, ComputeCurrentXPath(), FilePath));
                     lved.itemDefinitionList = null;
-                    return; //fatal
+                    return; // fatal
                 }
             }
         }

@@ -1619,12 +1619,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                                         FullName = allInfo.FullName.ToString(),
                                         Description = allInfo.AdminComment.ToString(),
 
-                                        //TODO: why is this coming up as 864000000000 (number of ticks per day)?
+                                        // TODO: why is this coming up as 864000000000 (number of ticks per day)?
                                         PasswordChangeableDate = DateTimeFromSam(allInfo.PasswordCanChange.QuadPart),
 
                                         PasswordExpires = DateTimeFromSam(allInfo.PasswordMustChange.QuadPart),
 
-                                        //TODO: why is this coming up as 0X7FFFFFFFFFFFFFFF (largest signed 64-bit, and well out of range of DateTime)?
+                                        // TODO: why is this coming up as 0X7FFFFFFFFFFFFFFF (largest signed 64-bit, and well out of range of DateTime)?
                                         AccountExpires = DateTimeFromSam(allInfo.AccountExpires.QuadPart),
                                         LastLogon = DateTimeFromSam(allInfo.LastLogon.QuadPart),
                                         PasswordLastSet = DateTimeFromSam(allInfo.PasswordLastSet.QuadPart),
@@ -2778,7 +2778,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 // Bug: 7407413 :
                 // If accountname is in the format domain1\user1,
-                //then AccountName.ToString() will return domain1\domain1\user1
+                // then AccountName.ToString() will return domain1\domain1\user1
                 // Ideally , accountname should be processed to hold only account name (without domain)
                 // as we are keeping the domain in 'DomainName' variable.
 
@@ -2828,7 +2828,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             switch (info.Use)
             {
-                case SID_NAME_USE.SidTypeAlias:     //TODO: is this the right thing to do???
+                case SID_NAME_USE.SidTypeAlias:     // TODO: is this the right thing to do???
                 case SID_NAME_USE.SidTypeGroup:
                 case SID_NAME_USE.SidTypeWellKnownGroup:
                     rv.ObjectClass = Strings.ObjectClassGroup;
@@ -2948,7 +2948,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     return new UserNotFoundException(context.ObjectName, context.target);
 
                 case NtStatus.STATUS_SPECIAL_GROUP:     // The group specified is a special group and cannot be operated on in the requested fashion.
-                //case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
+                // case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
 
                     return new InvalidOperationException(StringUtil.Format(Strings.InvalidForGroup, context.ObjectName));
 
@@ -2984,7 +2984,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 case NtStatus.STATUS_PASSWORD_RESTRICTION:
                     return new InvalidPasswordException(Native.Win32.RtlNtStatusToDosError(ntStatus));
 
-                //TODO: do we want to handle these?
+                // TODO: do we want to handle these?
                 //      they appear to be returned only in functions we are not calling
                 case NtStatus.STATUS_INVALID_SID:       // member sid is corrupted
                 case NtStatus.STATUS_INVALID_MEMBER:    // member has wrong account type

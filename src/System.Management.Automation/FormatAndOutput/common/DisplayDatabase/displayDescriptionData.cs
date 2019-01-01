@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             Nullable<T> y = x;
             this._value = y;
-            //this._value = (Nullable<T>)x;
+            // this._value = (Nullable<T>)x;
         }
 
         internal T Value
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed partial class AppliesTo
     {
-        //it can contain either a type or type group reference
+        // it can contain either a type or type group reference
         internal List<TypeOrGroupReference> referenceList = new List<TypeOrGroupReference>();
     }
 

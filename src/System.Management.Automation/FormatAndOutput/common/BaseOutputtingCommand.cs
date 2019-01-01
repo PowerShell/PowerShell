@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             object o = _formatObjectDeserializer.Deserialize(so);
 
-            //Console.WriteLine("OutCommandInner.Execute() retrieved object {0}, of type {1}", o.ToString(), o.GetType());
+            // Console.WriteLine("OutCommandInner.Execute() retrieved object {0}, of type {1}", o.ToString(), o.GetType());
             if (NeedsPreprocessing(o))
             {
                 return false;
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            //Console.WriteLine("OutCommandInner.Execute() calling ctxManager.Process({0})",o.ToString());
+            // Console.WriteLine("OutCommandInner.Execute() calling ctxManager.Process({0})",o.ToString());
             List<PacketInfoData> info = _cache.Add((PacketInfoData)o);
 
             if (info != null)
@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="c">Current context, with Fs in it.</param>
         private void ProcessFormatEnd(FormatEndData fe, FormatMessagesContextManager.OutputContext c)
         {
-            //Console.WriteLine("ProcessFormatEnd");
+            // Console.WriteLine("ProcessFormatEnd");
             // we just add an empty line to the display
             this.LineOutput.WriteLine(string.Empty);
         }
@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="c">The context containing the Gs entry.</param>
         private void ProcessGroupStart(FormatMessagesContextManager.OutputContext c)
         {
-            //Console.WriteLine("ProcessGroupStart");
+            // Console.WriteLine("ProcessGroupStart");
             GroupOutputContext goc = (GroupOutputContext)c;
 
             if (goc.Data.groupingEntry != null)
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="c">Current context, with Gs in it.</param>
         private void ProcessGroupEnd(GroupEndData ge, FormatMessagesContextManager.OutputContext c)
         {
-            //Console.WriteLine("ProcessGroupEnd");
+            // Console.WriteLine("ProcessGroupEnd");
             GroupOutputContext goc = (GroupOutputContext)c;
 
             goc.GroupEnd();

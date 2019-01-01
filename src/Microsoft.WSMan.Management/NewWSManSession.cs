@@ -252,7 +252,7 @@ namespace Microsoft.WSMan.Management
                 return;
             }
 
-            //Creating the Session Object
+            // Creating the Session Object
             SessionOption objSessionOption = new SessionOption();
 
             objSessionOption.SPNPort = spnport;
@@ -261,7 +261,7 @@ namespace Microsoft.WSMan.Management
             objSessionOption.SkipCACheck = skipcacheck;
             objSessionOption.OperationTimeout = operationtimeout;
             objSessionOption.SkipRevocationCheck = skiprevocationcheck;
-            //Proxy Settings
+            // Proxy Settings
             objSessionOption.ProxyAccessType = _proxyaccesstype;
             objSessionOption.ProxyAuthentication = proxyauthentication;
 

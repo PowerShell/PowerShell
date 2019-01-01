@@ -259,7 +259,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    //always in the format http://server:port/applicationname
+                    // always in the format http://server:port/applicationname
                     string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
                     string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
@@ -331,7 +331,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>

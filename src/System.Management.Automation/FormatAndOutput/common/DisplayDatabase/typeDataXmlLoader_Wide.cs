@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         WideControlEntryDefinition wved = LoadWideControlEntry(n, entryIndex++);
                         if (wved == null)
                         {
-                            //Error at XPath {0} in file {1}: Invalid {2}.
+                            // Error at XPath {0} in file {1}: Invalid {2}.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNode, ComputeCurrentXPath(), FilePath, XmlTags.WideEntryNode));
                             return;
                         }
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             }
                             else
                             {
-                                //Error at XPath {0} in file {1}: There cannot be more than one default {2}.
+                                // Error at XPath {0} in file {1}: There cannot be more than one default {2}.
                                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.WideEntryNode));
                                 wideBody.defaultEntryDefinition = null;
                                 return; // fatal error
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (wideBody.defaultEntryDefinition == null)
                 {
-                    //Error at XPath {0} in file {1}: There must be at least one default {2}.
+                    // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.WideEntryNode));
                 }
             }
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (appliesToNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         appliesToNodeFound = true;
@@ -177,16 +177,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (propertyEntryNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         propertyEntryNodeFound = true;
                         wved.formatTokenList = LoadPropertyEntry(n);
                         if (wved.formatTokenList == null)
                         {
-                            //Error at XPath {0} in file {1}: Invalid {2}.
+                            // Error at XPath {0} in file {1}: Invalid {2}.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNode, ComputeCurrentXPath(), FilePath, XmlTags.WideItemNode));
-                            return null; //fatal
+                            return null; // fatal
                         }
                     }
                     else
@@ -197,9 +197,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (wved.formatTokenList.Count == 0)
                 {
-                    //Error at XPath {0} in file {1}: Missing WideItem.
+                    // Error at XPath {0} in file {1}: Missing WideItem.
                     this.ReportMissingNode(XmlTags.WideItemNode);
-                    return null; //fatal error
+                    return null; // fatal error
                 }
 
                 return wved;
