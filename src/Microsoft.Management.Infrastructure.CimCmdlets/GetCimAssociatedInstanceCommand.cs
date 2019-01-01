@@ -32,7 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// constructor.
         /// </summary>
         public GetCimAssociatedInstanceCommand()
             : base(parameters, parameterSets)
@@ -99,7 +99,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Property for internal usage purpose
+        /// Property for internal usage purpose.
         /// </summary>
         internal CimInstance CimInstance
         {
@@ -300,7 +300,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region internal const strings
 
         /// <summary>
-        /// Noun of current cmdlet
+        /// Noun of current cmdlet.
         /// </summary>
         internal const string Noun = @"CimAssociatedInstance";
 
@@ -316,7 +316,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -345,7 +345,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {

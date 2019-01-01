@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// constructor.
         /// </summary>
         public RemoveCimSessionCommand()
             : base(parameters, parameterSets)
@@ -184,7 +184,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
         /// <summary>
         /// <see cref="CimRemoveSession"/> object used to remove the session from
-        /// session cache
+        /// session cache.
         /// </summary>
         private CimRemoveSession cimRemoveSession;
 
@@ -197,7 +197,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -229,7 +229,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {

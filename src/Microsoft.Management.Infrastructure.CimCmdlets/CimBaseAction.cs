@@ -69,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSyncAction : CimBaseAction, IDisposable
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CimSyncAction()
         {
@@ -124,12 +124,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// action completed event
+        /// action completed event.
         /// </summary>
         private ManualResetEventSlim completeEvent;
 
         /// <summary>
-        /// response result
+        /// response result.
         /// </summary>
         protected CimResponseType responseType;
 
@@ -137,7 +137,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region IDisposable interface
         /// <summary>
-        /// IDisposable interface
+        /// IDisposable interface.
         /// </summary>
         private bool _disposed;
 

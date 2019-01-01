@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GetWinEventCommand : PSCmdlet
     {
         /// <summary>
-        /// ListLog parameter
+        /// ListLog parameter.
         /// </summary>
         [Parameter(
                 Position = 0,
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _listLog = { "*" };
 
         /// <summary>
-        /// GetLog parameter
+        /// GetLog parameter.
         /// </summary>
         [Parameter(
                 Position = 0,
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _logName = { "*" };
 
         /// <summary>
-        /// ListProvider parameter
+        /// ListProvider parameter.
         /// </summary>
         [Parameter(
                 Position = 0,
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _listProvider = { "*" };
 
         /// <summary>
-        /// ProviderName parameter
+        /// ProviderName parameter.
         /// </summary>
         [Parameter(
                 Position = 0,
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _providerName;
 
         /// <summary>
-        /// Path parameter
+        /// Path parameter.
         /// </summary>
         [Parameter(
                 Position = 0,
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _path;
 
         /// <summary>
-        /// MaxEvents parameter
+        /// MaxEvents parameter.
         /// </summary>
         [Parameter(
                 ParameterSetName = "FileSet",
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
         private Int64 _maxEvents = -1;
 
         /// <summary>
-        /// ComputerName parameter
+        /// ComputerName parameter.
         /// </summary>
         [Parameter(
                 ParameterSetName = "ListProviderSet",
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         private string _computerName = string.Empty;
 
         /// <summary>
-        /// Credential parameter
+        /// Credential parameter.
         /// </summary>
         [Parameter(ParameterSetName = "ListProviderSet")]
         [Parameter(ParameterSetName = "GetProviderSet")]
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
         private PSCredential _credential = PSCredential.Empty;
 
         /// <summary>
-        /// FilterXPath parameter
+        /// FilterXPath parameter.
         /// </summary>
         [Parameter(
                 ParameterSetName = "FileSet",
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
         private string _filter = "*";
 
         /// <summary>
-        /// FilterXml parameter
+        /// FilterXml parameter.
         /// </summary>
         [Parameter(
                 Position = 0,
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         private XmlDocument _xmlQuery = null;
 
         /// <summary>
-        /// FilterHashtable parameter
+        /// FilterHashtable parameter.
         /// </summary>
         [Parameter(
                 Position = 0,
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
         private Hashtable[] _selector;
 
         /// <summary>
-        /// Force switch
+        /// Force switch.
         /// </summary>
         [Parameter(ParameterSetName = "ListLogSet")]
         [Parameter(ParameterSetName = "GetProviderSet")]
@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _force;
 
         /// <summary>
-        /// Oldest switch
+        /// Oldest switch.
         /// </summary>
         [Parameter(ParameterSetName = "FileSet")]
         [Parameter(ParameterSetName = "GetProviderSet")]
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
         private const string hashkey_supress_lc = "suppresshashfilter";
 
         /// <summary>
-        /// BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here
+        /// BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// EndProcessing() is invoked once per pipeline
+        /// EndProcessing() is invoked once per pipeline.
         /// </summary>
         protected override void EndProcessing()
         {

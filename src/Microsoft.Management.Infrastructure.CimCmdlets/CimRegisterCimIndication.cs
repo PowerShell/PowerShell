@@ -305,7 +305,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The cmdlet object who issue this subscription,
         /// to throw ThrowTerminatingError
-        /// in case there is a subscription failure
+        /// in case there is a subscription failure.
         /// </summary>
         /// <param name="cmdlet"></param>
         internal Cmdlet Cmdlet
@@ -315,7 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// target computername
+        /// target computername.
         /// </summary>
         internal String TargetComputerName
         {
@@ -344,7 +344,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="timeout"></param>
@@ -362,7 +362,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// Exception occurred while start the subscription
+        /// Exception occurred while start the subscription.
         /// </summary>
         internal Exception Exception
         {

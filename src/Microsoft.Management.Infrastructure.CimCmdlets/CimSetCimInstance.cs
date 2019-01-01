@@ -312,7 +312,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         /// <summary>
-        /// action
+        /// action.
         /// </summary>
         private const string action = @"Set-CimInstance";
         #endregion

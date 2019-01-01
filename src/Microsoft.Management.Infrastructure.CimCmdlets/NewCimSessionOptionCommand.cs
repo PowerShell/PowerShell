@@ -42,7 +42,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// constructor.
         /// </summary>
         public NewCimSessionOptionCommand()
             : base(parameters, parameterSets)
@@ -76,7 +76,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "CertificateCACheck".
-        /// Switch indicating if Certificate Authority should be validated
+        /// Switch indicating if Certificate Authority should be validated.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = WSManParameterSet)]
@@ -97,7 +97,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "CertificateCNCheck".
-        /// Switch indicating if Certificate Name should be validated
+        /// Switch indicating if Certificate Name should be validated.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = WSManParameterSet)]
@@ -139,7 +139,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "EncodePortInServicePrincipalName".
-        /// Switch indicating if to encode Port In Service Principal Name
+        /// Switch indicating if to encode Port In Service Principal Name.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = WSManParameterSet)]
@@ -388,7 +388,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "Protocol".
-        /// Switch indicating if to encode Port In Service Principal Name
+        /// Switch indicating if to encode Port In Service Principal Name.
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -410,7 +410,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "UICulture".
-        /// Specifies the UI Culture to use. i.e. en-us, ar-sa
+        /// Specifies the UI Culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public CultureInfo UICulture
@@ -424,7 +424,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "Culture".
-        /// Specifies the culture to use. i.e. en-us, ar-sa
+        /// Specifies the culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public CultureInfo Culture
@@ -514,7 +514,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region helper functions
         /// <summary>
-        /// Create DComSessionOptions
+        /// Create DComSessionOptions.
         /// </summary>
         /// <returns></returns>
         internal DComSessionOptions CreateDComSessionOptions()
@@ -554,7 +554,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create WSMANSessionOptions
+        /// Create WSMANSessionOptions.
         /// </summary>
         /// <returns></returns>
         internal WSManSessionOptions CreateWSMANSessionOptions()
@@ -707,7 +707,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -808,7 +808,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {

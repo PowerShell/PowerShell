@@ -317,7 +317,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteError : CimSyncAction
     {
         /// <summary>
-        /// Constructor with an <see cref="CimInstance"/> error
+        /// Constructor with an <see cref="CimInstance"/> error.
         /// </summary>
         /// <param name="error"></param>
         public CimWriteError(CimInstance error, InvocationContext context)
@@ -327,7 +327,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Construct with an exception object
+        /// Construct with an exception object.
         /// </summary>
         /// <param name="exception"></param>
         public CimWriteError(Exception exception, InvocationContext context, CimResultContext cimResultContext)

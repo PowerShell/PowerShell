@@ -177,7 +177,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// Returns the object that generates events to be monitored
+        /// Returns the object that generates events to be monitored.
         /// </summary>
         protected override object GetSourceObject()
         {
@@ -234,7 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Returns the event name to be monitored on the input object
+        /// Returns the event name to be monitored on the input object.
         /// </summary>
         protected override String GetSourceObjectEventName()
         {
@@ -281,7 +281,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
         /// <summary>
-        /// check argument value
+        /// check argument value.
         /// </summary>
         private void CheckArgument()
         {
@@ -289,13 +289,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Parameter binder used to resolve parameter set name
+        /// Parameter binder used to resolve parameter set name.
         /// </summary>
         private ParameterBinder parameterBinder = new ParameterBinder(
             parameters, parameterSets);
 
         /// <summary>
-        /// Set the parameter
+        /// Set the parameter.
         /// </summary>
         /// <param name="parameterName"></param>
         private void SetParameter(object value, string parameterName)
@@ -317,7 +317,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -354,7 +354,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
