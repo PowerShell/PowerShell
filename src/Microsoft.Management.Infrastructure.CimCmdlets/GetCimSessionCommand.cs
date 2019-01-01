@@ -144,7 +144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             cimGetSession = new CimGetSession();
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -153,7 +153,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             base.CheckParameterSet();
             cimGetSession.GetCimSession(this);
-        }//End ProcessRecord()
+        }
 
         #endregion
 
@@ -208,5 +208,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.NameSet, new ParameterSetEntry(1)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

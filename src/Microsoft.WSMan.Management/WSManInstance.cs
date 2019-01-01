@@ -969,7 +969,7 @@ namespace Microsoft.WSMan.Management
                 if (m_session != null)
                     Dispose(m_session);
             }
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
@@ -1252,7 +1252,7 @@ namespace Microsoft.WSMan.Management
 
             }
 
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
@@ -1516,7 +1516,7 @@ namespace Microsoft.WSMan.Management
 
             }
 
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -1561,7 +1561,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
@@ -1595,8 +1595,8 @@ namespace Microsoft.WSMan.Management
         {
             helper.CleanUp();
 
-        }//End EndProcessing()
-    }//End Class
+        }
+    }
 
     #endregion
 }

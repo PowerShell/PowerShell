@@ -470,5 +470,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private const string actionTemplate = @"Invoke-CimMethod: {0}";
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

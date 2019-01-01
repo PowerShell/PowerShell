@@ -494,11 +494,11 @@ namespace Microsoft.WSMan.Management
                                 }
                             }
 
-                        }//end for
-                    }//end if valueset
+                        }
+                    }
                     resultString = xmlfile.OuterXml;
                     break;
-            }//end switch
+            }
             return resultString;
         }
 

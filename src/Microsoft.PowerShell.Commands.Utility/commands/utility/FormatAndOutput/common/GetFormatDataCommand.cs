@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 viewList.Add(formatdef);
-            }// foreach(ViewDefinition...
+            }
 
             // write out all the available type definitions
             foreach (var pair in typedefs)

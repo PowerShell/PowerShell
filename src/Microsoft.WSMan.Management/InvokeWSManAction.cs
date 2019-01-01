@@ -304,7 +304,7 @@ namespace Microsoft.WSMan.Management
 
             }
 
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
@@ -341,5 +341,5 @@ namespace Microsoft.WSMan.Management
         }
 
 
-    }//End Class
+    }
 }

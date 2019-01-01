@@ -147,5 +147,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private const string action = @"Remove-CimInstance";
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

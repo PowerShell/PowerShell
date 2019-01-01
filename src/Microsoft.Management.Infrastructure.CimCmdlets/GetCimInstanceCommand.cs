@@ -450,7 +450,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.CmdletOperation = new CmdletOperationBase(this);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -467,7 +467,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             cimGetInstance.GetCimInstance(this);
             cimGetInstance.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -479,7 +479,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimGetInstance.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -668,5 +668,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.QuerySessionSet, new ParameterSetEntry(2)     }
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

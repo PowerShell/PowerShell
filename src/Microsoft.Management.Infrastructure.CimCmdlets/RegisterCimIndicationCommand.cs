@@ -258,7 +258,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 DebugHelper.WriteLog("RegisterCimIndicationCommand::EndProcessing subscribe to Unsubscribed event", 4);
                 newSubscriber.Unsubscribed += new PSEventUnsubscribedEventHandler(newSubscriber_Unsubscribed);
             }
-        }//End EndProcessing()
+        }
 
         /// <summary>
         /// <para>
@@ -365,5 +365,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

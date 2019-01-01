@@ -878,7 +878,7 @@ $result
                     {
                         _waitOnComputers.Add(computer);
                     }
-                }//end foreach
+                }
 
                 if (_waitOnComputers.Count > 0)
                 {
@@ -1059,7 +1059,7 @@ $result
                             _status = StringUtil.Format(ComputerResources.WaitForMultipleComputers, machineCompleteRestart, _waitOnComputers.Count);
                             _percent = machineCompleteRestart * 100 / _waitOnComputers.Count;
                         }
-                    }// end while(true)
+                    }
 
                     if (_timeUp)
                     {
@@ -1081,9 +1081,9 @@ $result
                             // Wait for PowerShell. All computers that finished restarting are put in "allDoneList"
                         } while (false);
                     }
-                }// end if(waitOnComputer.Count > 0)
-            }//end DefaultParameter
-        }//End Processrecord
+                }
+            }
+        }
 
         /// <summary>
         /// to implement ^C
@@ -1203,7 +1203,7 @@ $result
                 flags[0] = forcedShutdown;
 
             ProcessWSManProtocol(flags);
-        }//End Processrecord
+        }
 
         /// <summary>
         /// to implement ^C
@@ -2256,6 +2256,6 @@ $result
         }
     }
     #endregion Helper
-}//End namespace
+}
 
 #endif

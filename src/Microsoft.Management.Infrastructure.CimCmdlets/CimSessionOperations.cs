@@ -1112,7 +1112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -1189,7 +1189,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -1265,7 +1265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
         }
-    }//End Class
+    }
 
     #endregion
 
@@ -1303,4 +1303,4 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #endregion
 
-}//End namespace
+}

@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        }//ProcessRecord
+        }
 
         /// <summary>
         /// Ensure that the argument is a collection containing no PSObjects.
@@ -314,5 +314,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    }//InvokeWMIObject
+    }
 }

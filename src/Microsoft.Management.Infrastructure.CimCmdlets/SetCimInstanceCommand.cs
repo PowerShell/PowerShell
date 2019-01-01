@@ -308,7 +308,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             this.CmdletOperation = new CmdletOperationSetCimInstance(this, cimSetCimInstance);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -319,7 +319,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimSetCimInstance cimSetCimInstance = this.GetOperationAgent();
             cimSetCimInstance.SetCimInstance(this);
             cimSetCimInstance.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -331,7 +331,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimSetCimInstance.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -445,5 +445,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.CimInstanceComputerSet, new ParameterSetEntry(1, true)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

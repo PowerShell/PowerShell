@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(userName, msg);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

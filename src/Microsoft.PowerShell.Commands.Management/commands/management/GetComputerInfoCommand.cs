@@ -2647,7 +2647,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Key of a CIM_System instance in an enterprise environment
         /// </summary>
-        public string CsName { get; internal set; } //TODO: get rid of this? Is this about CIM rather than about the computer?
+        public string CsName { get; internal set; }
 
         /// <summary>
         /// An array of <see cref="NetworkAdapter"/> objects describing any

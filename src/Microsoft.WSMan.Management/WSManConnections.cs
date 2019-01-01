@@ -282,9 +282,9 @@ namespace Microsoft.WSMan.Management
             }
 
             helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
-        }//End BeginProcessing()
+        }
 
-    }//end class
+    }
     #endregion
 
     #region Disconnect-WSMAN
@@ -378,8 +378,8 @@ namespace Microsoft.WSMan.Management
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
             }
-        }//End BeginProcessing()
+        }
 
-    }//End Class
+    }
     #endregion Disconnect-WSMAN
 }

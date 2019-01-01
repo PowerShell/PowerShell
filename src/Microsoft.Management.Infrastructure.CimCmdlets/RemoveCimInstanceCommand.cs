@@ -251,7 +251,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             this.CmdletOperation = new CmdletOperationRemoveCimInstance(this, cimRemoveInstance);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -262,7 +262,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimRemoveCimInstance cimRemoveInstance = this.GetOperationAgent();
             cimRemoveInstance.RemoveCimInstance(this);
             cimRemoveInstance.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -274,7 +274,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimRemoveInstance.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -379,5 +379,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.QuerySessionSet, new ParameterSetEntry(2)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

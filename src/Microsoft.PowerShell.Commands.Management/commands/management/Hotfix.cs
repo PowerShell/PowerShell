@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                     this.Dispose();
                 }
             }
-        }//end of BeginProcessing method
+        }
 
         /// <summary>
         /// to implement ^C
@@ -240,6 +240,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion "IDisposable Members"
-    }//end class
+    }
     #endregion
-}//Microsoft.Powershell.commands
+}

@@ -173,7 +173,7 @@ namespace Microsoft.WSMan.Management
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
             }
-        }//End BeginProcessing()
+        }
 
         #region IDisposable Members
 
@@ -200,6 +200,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-    }//End Class
+    }
     #endregion
 }

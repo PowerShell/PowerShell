@@ -316,5 +316,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private const string action = @"Set-CimInstance";
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

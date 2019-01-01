@@ -67,7 +67,7 @@ namespace System.Diagnostics.Eventing.Reader
                     }
                 }
             }
-        }//End Prepare Data
+        }
 
         public string Name
         {

@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands
         private DateTime _initial = new DateTime();
 
         #endregion Private
-    }//GetEventLogCommand
+    }
     #endregion GetEventLogCommand
 
     #region ClearEventLogCommand
@@ -718,7 +718,7 @@ namespace Microsoft.PowerShell.Commands
         //beginprocessing
 
         #endregion Overrides
-    }//ClearEventLogCommand
+    }
     #endregion ClearEventLogCommand
 
     #region WriteEventLogCommand
@@ -862,10 +862,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteNonTerminatingError(ex, "PathDoesNotExist", StringUtil.Format(EventlogResources.PathDoesNotExist, null, ComputerName, null), ErrorCategory.InvalidOperation);
             }
-        }//beginprocessing
+        }
 
         #endregion Overrides
-    }//WriteEventLogCommand
+    }
     #endregion WriteEventLogCommand
 
     #region LimitEventLogCommand
@@ -1304,7 +1304,7 @@ namespace Microsoft.PowerShell.Commands
         }
         //End BeginProcessing()
         #endregion override
-    }//End Class
+    }
     #endregion NewEventLogCommand
 
     #region RemoveEventLogCommand
@@ -1444,9 +1444,9 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(ex, "NewEventlogException", ErrorCategory.SecurityError, null);
                 WriteError(er);
             }
-        }//End BeginProcessing()
-    }//End Class
+        }
+    }
 
     #endregion RemoveEventLogCommand
-}//Microsoft.PowerShell.Commands
+}
 

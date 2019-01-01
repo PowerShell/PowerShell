@@ -1916,7 +1916,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-            } //End try
+            }
             finally
             {
                 if (IntPtr.Zero != password)

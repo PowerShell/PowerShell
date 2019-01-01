@@ -211,7 +211,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.CmdletOperation = new CmdletOperationBase(this);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -227,7 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             cimGetCimClass.GetCimClass(this);
             cimGetCimClass.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -239,7 +239,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimGetCimClass.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -315,5 +315,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.ComputerSetName, new ParameterSetEntry(0, true)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

@@ -278,6 +278,6 @@ namespace Microsoft.WSMan.Management
 
             WriteObject(objSessionOption);
 
-        }//End BeginProcessing()
-    }//End Class
+        }
+    }
 }

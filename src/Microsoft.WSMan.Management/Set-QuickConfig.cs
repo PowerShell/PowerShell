@@ -95,7 +95,7 @@ namespace Microsoft.WSMan.Management
 
             QuickConfigRemoting(true);
             QuickConfigRemoting(false);
-        }//End BeginProcessing()
+        }
 
         #region private
 
@@ -290,6 +290,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-    }//End Class
+    }
     #endregion Set-WsManQuickConfig
 }

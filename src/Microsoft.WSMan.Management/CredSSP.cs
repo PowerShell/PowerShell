@@ -352,7 +352,7 @@ namespace Microsoft.WSMan.Management
             {
                 DisableServerSideSettings();
             }
-        }//End BeginProcessing()
+        }
 
         #region IDisposable Members
 
@@ -378,7 +378,7 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-    }//End Class
+    }
     #endregion DisableWsManCredSSP
 
     #region EnableCredSSP
@@ -478,7 +478,7 @@ namespace Microsoft.WSMan.Management
             {
                 EnableServerSideSettings();
             }
-        }//End BeginProcessing()
+        }
 
 
         #endregion
@@ -729,7 +729,7 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-    }//End Class
+    }
     #endregion EnableCredSSP
 
     #region Get-CredSSP

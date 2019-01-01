@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteObject(instance, true);
-        }//End BeginProcessing()
+        }
 
         #endregion
 
@@ -484,6 +484,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    }//end class
+    }
     #endregion
-}//Microsoft.Powershell.commands
+}

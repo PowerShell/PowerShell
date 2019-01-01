@@ -1333,7 +1333,7 @@ namespace Microsoft.PowerShell.Commands
 
                     result.Append(queryCloser);
                 }
-            } //end foreach hashtable
+            }
 
             result.Append(queryListClose);
 

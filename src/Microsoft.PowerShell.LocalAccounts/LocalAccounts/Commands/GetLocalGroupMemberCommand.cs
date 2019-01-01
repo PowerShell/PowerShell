@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
             return ProcessesMembership(sam.GetLocalGroupMembers(groupSid));
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 
