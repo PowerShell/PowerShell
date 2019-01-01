@@ -20,7 +20,7 @@ using DWORD = System.UInt32;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// implementation of RawConsole for powershell
+    /// implementation of RawConsole for powershell.
     /// </summary>
 
     internal sealed
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentException">
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentException">
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// Cursor size
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Helper method to create and trace PipelineStoppedException
+        /// Helper method to create and trace PipelineStoppedException.
         /// </summary>
         /// <returns></returns>
         private PipelineStoppedException NewPipelineStoppedException()
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Used by ReadKey, cache KeyEvent based on if input.RepeatCount > 1
+        /// Used by ReadKey, cache KeyEvent based on if input.RepeatCount > 1.
         /// </summary>
         /// <param name="input">Input key event record.</param>
         /// <param name="cache">Cache key event.</param>
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell
         ///    key events: {Ctrl, KeyDown}, {Ctrl-c KeyDown}, {Ctrl, KeyUp}, {c, KeyUp} if Ctrl is released before c.
         ///    In this case, {Ctrl, KeyUp}, {c, KeyUp} would be returned.
         /// 2) If the cache is non-empty, a call to ReadLine will not return the cached keys. This
-        ///    behavior is the same as that of System.Console.ReadKey
+        ///    behavior is the same as that of System.Console.ReadKey.
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -797,7 +797,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentNullException">
@@ -1141,7 +1141,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="source">
         /// area to be moved
@@ -1203,7 +1203,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -1218,7 +1218,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="offset"></param>
@@ -1239,7 +1239,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -1256,7 +1256,7 @@ namespace Microsoft.PowerShell
 #region internal
 
         /// <summary>
-        /// Clear the ReadKey cache
+        /// Clear the ReadKey cache.
         /// </summary>
         /// <exception/>
         internal void ClearKeyCache()
@@ -1299,7 +1299,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get output buffer info
+        /// Get output buffer info.
         /// </summary>
         /// <param name="bufferInfo"></param>
         /// <returns></returns>
@@ -1501,7 +1501,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Cached Window Title, for systems that needs it
+        /// Cached Window Title, for systems that needs it.
         /// </summary>
         private string _title = string.Empty;
 
@@ -1683,7 +1683,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -1695,7 +1695,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="offset"></param>

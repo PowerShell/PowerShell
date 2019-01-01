@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isHtmlSet = false;
 
         /// <summary>
-        /// This method implements the BeginProcessing method for Set-Clipboard command
+        /// This method implements the BeginProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the ProcessRecord method for Set-Clipboard command
+        /// This method implements the ProcessRecord method for Set-Clipboard command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the EndProcessing method for Set-Clipboard command
+        /// This method implements the EndProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void EndProcessing()
         {

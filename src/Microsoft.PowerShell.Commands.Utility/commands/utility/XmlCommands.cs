@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///Cleaning up the MemoryStream
+        ///Cleaning up the MemoryStream.
         /// </summary>
         private void CleanUp()
         {

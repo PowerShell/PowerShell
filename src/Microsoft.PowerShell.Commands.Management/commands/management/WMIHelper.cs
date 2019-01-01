@@ -25,13 +25,13 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Base class for all WMI helper classes. This is an abstract class
-    /// and the helpers need to derive from this
+    /// and the helpers need to derive from this.
     /// </summary>
     internal abstract class AsyncCmdletHelper : IThrottleOperation
     {
         /// <summary>
         /// Exception raised internally when any method of this class
-        /// is executed
+        /// is executed.
         /// </summary>
         internal Exception InternalException
         {
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiAsyncCmdletHelper : AsyncCmdletHelper
     {
         /// <summary>
-        /// Internal Constructor
+        /// Internal Constructor.
         /// </summary>
         /// <param name="childJob">Job associated with this operation.</param>
         /// <param name="wmiObject">Object associated with this operation.</param>
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         private int _cmdCount = 1;
         private PSWmiChildJob _job;
         /// <summary>
-        /// current operation state
+        /// current operation state.
         /// </summary>
         internal WmiState State
         {
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         private WmiState _state;
 
         /// <summary>
-        /// Cancel WMI connection
+        /// Cancel WMI connection.
         /// </summary>
         internal override void StopOperation()
         {
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
             RaiseOperationCompleteEvent(null, OperationState.StopComplete);
         }
         /// <summary>
-        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter
+        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter.
         /// </summary>
         private string GetWmiQueryString()
         {
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
         private Cmdlet _wmiObject;
 
         /// <summary>
-        /// Raise operation completion event
+        /// Raise operation completion event.
         /// </summary>
         internal void RaiseOperationCompleteEvent(EventArgs baseEventArgs, OperationState state)
         {
@@ -677,7 +677,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Check if we need to enable the shutdown privilege
+        /// Check if we need to enable the shutdown privilege.
         /// </summary>
         /// <param name="computer"></param>
         /// <param name="methodName"></param>
@@ -1004,16 +1004,16 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Enumerated type defining the state of the WMI operation
+    /// Enumerated type defining the state of the WMI operation.
     /// </summary>
     public enum WmiState
     {
         /// <summary>
-        /// The operation has not been started
+        /// The operation has not been started.
         /// </summary>
         NotStarted = 0,
         /// <summary>
-        /// The operation is executing
+        /// The operation is executing.
         /// </summary>
         Running = 1,
         /// <summary>
@@ -1048,20 +1048,20 @@ namespace Microsoft.PowerShell.Commands
     #endregion Helper Classes
 
     /// <summary>
-    /// A class to set WMI connection options
+    /// A class to set WMI connection options.
     /// </summary>
     public class WmiBaseCmdlet : Cmdlet
     {
         #region Parameters
 
         /// <summary>
-        /// Perform Async operation
+        /// Perform Async operation.
         /// </summary>
         [Parameter]
         public SwitchParameter AsJob { get; set; } = false;
 
         /// <summary>
-        /// The Impersonation level to use
+        /// The Impersonation level to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1071,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
         public ImpersonationLevel Impersonation { get; set; } = ImpersonationLevel.Impersonate;
 
         /// <summary>
-        /// The Authentication level to use
+        /// The Authentication level to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1081,7 +1081,7 @@ namespace Microsoft.PowerShell.Commands
         public AuthenticationLevel Authentication { get; set; } = AuthenticationLevel.PacketPrivacy;
 
         /// <summary>
-        /// The Locale to use
+        /// The Locale to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1091,7 +1091,7 @@ namespace Microsoft.PowerShell.Commands
         public string Locale { get; set; } = null;
 
         /// <summary>
-        /// If all Privileges are enabled
+        /// If all Privileges are enabled.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1101,7 +1101,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter EnableAllPrivileges { get; set; }
 
         /// <summary>
-        /// The Authority to use
+        /// The Authority to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1111,7 +1111,7 @@ namespace Microsoft.PowerShell.Commands
         public string Authority { get; set; } = null;
 
         /// <summary>
-        /// The credential to use
+        /// The credential to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1122,13 +1122,13 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// The credential to use
+        /// The credential to use.
         /// </summary>
         [Parameter]
         public Int32 ThrottleLimit { get; set; } = s_DEFAULT_THROTTLE_LIMIT;
 
         /// <summary>
-        /// The ComputerName in which to query
+        /// The ComputerName in which to query.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1145,7 +1145,7 @@ namespace Microsoft.PowerShell.Commands
             set { _computerName = value; serverNameSpecified = true; }
         }
         /// <summary>
-        /// The WMI namespace to use
+        /// The WMI namespace to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1167,7 +1167,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string[] _computerName = new string[] { "localhost" };
         /// <summary>
-        /// WMI namespace
+        /// WMI namespace.
         /// </summary>
         private string _nameSpace = "root\\cimv2";
         /// <summary>
@@ -1185,7 +1185,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Command code
         /// <summary>
-        /// Get connection options
+        /// Get connection options.
         /// </summary>
         internal ConnectionOptions GetConnectionOption()
         {
@@ -1208,7 +1208,7 @@ namespace Microsoft.PowerShell.Commands
             return options;
         }
         /// <summary>
-        /// Set wmi instance helper
+        /// Set wmi instance helper.
         /// </summary>
         internal ManagementObject SetWmiInstanceGetObject(ManagementPath mPath, string serverName)
         {
@@ -1286,7 +1286,7 @@ namespace Microsoft.PowerShell.Commands
             return mObject;
         }
         /// <summary>
-        /// Set wmi instance helper for building management path
+        /// Set wmi instance helper for building management path.
         /// </summary>
         internal ManagementPath SetWmiInstanceBuildManagementPath()
         {
@@ -1376,7 +1376,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Set wmi instance helper for pipeline input
+        /// Set wmi instance helper for pipeline input.
         /// </summary>
         internal ManagementObject SetWmiInstanceGetPipelineObject()
         {
@@ -1460,7 +1460,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Command code
     }
     /// <summary>
-    /// A class to perform async operations for WMI cmdlets
+    /// A class to perform async operations for WMI cmdlets.
     /// </summary>
 
     internal class PSWmiJob : Job
@@ -1468,7 +1468,7 @@ namespace Microsoft.PowerShell.Commands
         #region internal constructor
 
         /// <summary>
-        ///Internal constructor for initializing WMI jobs
+        ///Internal constructor for initializing WMI jobs.
         /// </summary>
         internal PSWmiJob(Cmdlet cmds, string[] computerName, int throttleLimt, string command)
         : base(command, null)
@@ -1521,7 +1521,7 @@ namespace Microsoft.PowerShell.Commands
         private const string WMIJobType = "WmiJob";
 
         /// <summary>
-        /// Handles the StateChanged event from each of the child job objects
+        /// Handles the StateChanged event from each of the child job objects.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1586,7 +1586,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _stopIsCalled = false;
         private string _statusMessage;
         /// <summary>
-        /// Message indicating status of the job
+        /// Message indicating status of the job.
         /// </summary>
         public override string StatusMessage
         {
@@ -1597,7 +1597,7 @@ namespace Microsoft.PowerShell.Commands
         }
         //ISSUE: Implement StatusMessage
         /// <summary>
-        /// Checks the status of remote command execution
+        /// Checks the status of remote command execution.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void SetStatusMessage()
@@ -1607,7 +1607,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _moreData = false;
         /// <summary>
-        /// indicates if more data is available
+        /// indicates if more data is available.
         /// </summary>
         /// <remarks>
         /// This has more data if any of the child jobs have more data.
@@ -1640,7 +1640,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Computers on which this job is running
+        /// Computers on which this job is running.
         /// </summary>
         public override string Location
         {
@@ -1665,7 +1665,7 @@ namespace Microsoft.PowerShell.Commands
             return location.ToString();
         }
         /// <summary>
-        /// Stop Job
+        /// Stop Job.
         /// </summary>
         public override void StopJob()
         {
@@ -1716,7 +1716,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isDisposed = false;
         /// <summary>
-        /// Initialization common to both constructors
+        /// Initialization common to both constructors.
         /// </summary>
         private void CommonInit(int throttleLimit)
         {
@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles JobUnblocked event from a child job and decrements
         /// count of blocked child jobs. When count reaches 0, sets the
-        /// state of the parent job to running
+        /// state of the parent job to running.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments, should be empty in this
@@ -1764,14 +1764,14 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Class for WmiChildJob object. This job object Execute wmi cmdlet
+    /// Class for WmiChildJob object. This job object Execute wmi cmdlet.
     /// </summary>
     internal class PSWmiChildJob : Job
     {
         #region internal constructor
 
         /// <summary>
-        /// Internal constructor for initializing WMI jobs
+        /// Internal constructor for initializing WMI jobs.
         /// </summary>
         internal PSWmiChildJob(Cmdlet cmds, string computerName, ThrottleManager throttleManager)
         : base(null, null)
@@ -1834,14 +1834,14 @@ namespace Microsoft.PowerShell.Commands
         private ArrayList _wmiSinkArray;
         /// <summary>
         /// Event raised by this job to indicate to its parent that
-        /// its now unblocked by the user
+        /// its now unblocked by the user.
         /// </summary>
         internal event EventHandler JobUnblocked;
 
         /// <summary>
         /// Set the state of the current job from blocked to
         /// running and raise an event indicating to this
-        /// parent job that this job is unblocked
+        /// parent job that this job is unblocked.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal void UnblockJob()
@@ -1865,7 +1865,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// it receives Management objects
+        /// it receives Management objects.
         /// </summary>
         private void NewObject(object sender, ObjectReadyEventArgs obj)
         {
@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// It is called when the call to Win32shutdown is successfully completed
+        /// It is called when the call to Win32shutdown is successfully completed.
         /// </summary>
         private void JobDoneForWin32Shutdown(object sender, EventArgs arg)
         {
@@ -1933,13 +1933,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Message indicating status of the job
+        /// Message indicating status of the job.
         /// </summary>
         public override string StatusMessage { get; } = "test";
 
         /// <summary>
         /// Indicates if there is more data available in
-        /// this Job
+        /// this Job.
         /// </summary>
         public override bool HasMoreData
         {
@@ -1951,12 +1951,12 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns the computer on which this command is
-        /// running
+        /// running.
         /// </summary>
         public override string Location { get; }
 
         /// <summary>
-        /// Stops the job
+        /// Stops the job.
         /// </summary>
         public override void StopJob()
         {
@@ -1992,7 +1992,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isDisposed;
 
         /// <summary>
-        /// Handles operation complete event
+        /// Handles operation complete event.
         /// </summary>
         private void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
@@ -2021,7 +2021,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         /// <summary>
-        /// Handles WMI state changed
+        /// Handles WMI state changed.
         /// </summary>
         private void HandleWMIState(object sender, WmiJobStateEventArgs stateEventArgs)
         {
@@ -2048,7 +2048,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Handle a throttle complete event
+        /// Handle a throttle complete event.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">Not used in this method.</param>

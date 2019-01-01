@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Constructs a new instance
+        /// Constructs a new instance.
         /// </summary>
         /// <param name="parent">
         /// A reference to the parent ConsoleHost that created this instance.
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This method handles the failure in executing pipeline asynchronously
+        /// This method handles the failure in executing pipeline asynchronously.
         /// </summary>
         /// <param name="ex"></param>
         private void AsyncPipelineFailureHandler(Exception ex)

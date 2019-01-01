@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This specifies whether the objects should
         /// be rendered as an HTML TABLE or
-        /// HTML LIST
+        /// HTML LIST.
         /// </summary>
         /// <value></value>
         [Parameter]

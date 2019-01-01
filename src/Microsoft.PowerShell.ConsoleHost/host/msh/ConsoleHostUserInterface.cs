@@ -22,13 +22,13 @@ namespace Microsoft.PowerShell
     using PowerShell = System.Management.Automation.PowerShell;
 
     /// <summary>
-    /// ConsoleHostUserInterface implements console-mode user interface for powershell
+    /// ConsoleHostUserInterface implements console-mode user interface for powershell.
     /// </summary>
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal partial class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
     {
         /// <summary>
-        /// Command completion implementation object
+        /// Command completion implementation object.
         /// </summary>
         private PowerShell _commandCompletionPowerShell;
 
@@ -38,12 +38,12 @@ namespace Microsoft.PowerShell
         private static PSHostUserInterface s_h = null;
 
         /// <summary>
-        /// Return true if the console supports a VT100 like virtual terminal
+        /// Return true if the console supports a VT100 like virtual terminal.
         /// </summary>
         public override bool SupportsVirtualTerminal { get; }
 
         /// <summary>
-        /// Constructs an instance
+        /// Constructs an instance.
         /// </summary>
         /// <param name="parent"></param>
         /// <exception/>
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell
         //}
 
         /// <summary>
-        /// true if command completion is currently running
+        /// true if command completion is currently running.
         /// </summary>
 
         internal bool IsCommandCompletionRunning
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell
         #region Line-oriented interaction
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Handle writing print token with proper cursor adjustment for ReadLineSafe
+        /// Handle writing print token with proper cursor adjustment for ReadLineSafe.
         /// </summary>
         /// <param name="printToken">
         /// token output for each char input. It must be a one-char string
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Handle backspace with proper cursor adjustment for ReadLineSafe
+        /// Handle backspace with proper cursor adjustment for ReadLineSafe.
         /// </summary>
         /// <param name="originalCursorPosition">
         /// it is the cursor position where ReadLineSafe begins
@@ -514,7 +514,7 @@ namespace Microsoft.PowerShell
 #if !UNIX
         /// <summary>
         /// If <paramref name="m"/> is set on <paramref name="flagToUnset"/>, unset it and return true;
-        /// otherwise return false
+        /// otherwise return false.
         /// </summary>
         /// <param name="flagToUnset">
         /// a flag in ConsoleControl.ConsoleModes to be unset in <paramref name="m"/>
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="foregroundColor"></param>
         /// <param name="backgroundColor"></param>
@@ -704,7 +704,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="value"></param>
         /// <exception cref="HostException">
@@ -842,7 +842,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Struct used by WrapText
+        /// Struct used by WrapText.
         /// </summary>
 
         [Flags]
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell
 #endregion Word Wrapping
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
@@ -1093,7 +1093,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="record"></param>
         public override void WriteInformation(InformationRecord record)
@@ -1110,7 +1110,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
@@ -1148,7 +1148,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">

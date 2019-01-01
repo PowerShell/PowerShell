@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
             Text = 0,
 
             /// <summary>
-            /// XML-serialized format
+            /// XML-serialized format.
             /// </summary>
 
             XML = 1,
