@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         /// <summary>
         /// name of the "get" property that allows access to CLSID information.
-        /// This is needed by the ERS API's
+        /// This is needed by the ERS API's.
         /// </summary>
         internal const string classidProperty = "ClassId2e4f51ef21dd47e99d3c952918aff9cd";
 
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// string containing a GUID, to be set by each derived class
         /// "get" property to get CLSID information.
         /// It is named with a GUID like name to avoid potential collisions with
-        /// properties of payload objects
+        /// properties of payload objects.
         /// </summary>
         public abstract string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get; }
     }
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract partial class ControlInfoData : PacketInfoData
     {
         /// <summary>
-        /// null by default, present only if grouping specified
+        /// null by default, present only if grouping specified.
         /// </summary>
         public GroupingEntry groupingEntry = null;
     }
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// sequence start: the very first message sent
+    /// sequence start: the very first message sent.
     /// </summary>
     internal sealed partial class FormatStartData : StartData
     {
@@ -84,12 +84,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
-        /// optional
+        /// optional.
         /// </summary>
         public PageHeaderEntry pageHeaderEntry;
 
         /// <summary>
-        /// optional
+        /// optional.
         /// </summary>
         public PageFooterEntry pageFooterEntry;
 
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// sequence end: the very last message sent
+    /// sequence end: the very last message sent.
     /// </summary>
     internal sealed class FormatEndData : ControlInfoData
     {
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// group start: message marking the beginning of a group
+    /// group start: message marking the beginning of a group.
     /// </summary>
     internal sealed class GroupStartData : StartData
     {
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// group end: message marking the end of a group
+    /// group end: message marking the end of a group.
     /// </summary>
     internal sealed class GroupEndData : ControlInfoData
     {
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// generic entry containing payload data and related formatting info
+    /// generic entry containing payload data and related formatting info.
     /// </summary>
     internal sealed partial class FormatEntryData : PacketInfoData
     {
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// mandatory, but depending on the shape we send in
-        /// it must match what got sent in the format start message
+        /// it must match what got sent in the format start message.
         /// </summary>
         public FormatEntryInfo formatEntryInfo = null;
 
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// width of the column:
         /// == 0 -> let the outputter decide
-        /// > 0 -> user provided value
+        /// > 0 -> user provided value.
         /// </summary>
         public int width = 0;
 
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// number of objects to compute the best fit.
         /// Zero: all the objects
-        /// a positive number N: use the first N
+        /// a positive number N: use the first N.
         /// </summary>
         public int objectCount = 0;
     }

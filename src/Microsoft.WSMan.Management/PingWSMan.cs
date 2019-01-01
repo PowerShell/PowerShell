@@ -21,7 +21,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Issues an operation against the remote machine to ensure that the wsman
-    /// service is running
+    /// service is running.
     /// </summary>
 
     [Cmdlet(VerbsDiagnostic.Test, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141464")]
@@ -31,7 +31,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ComputerName".
         /// Executes the management operation on the specified computer. The default is
         /// the local computer. Type the fully qualified domain name, NETBIOS name or IP
-        /// address to indicate the remote host
+        /// address to indicate the remote host.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("cn")]
@@ -178,7 +178,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -188,7 +188,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void

@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// alignment values
     /// NOTE: we do not use an enum because this will have to be
-    /// serialized and ERS/serialization do not support enumerations
+    /// serialized and ERS/serialization do not support enumerations.
     /// </summary>
     internal static class TextAlignment
     {
@@ -26,23 +26,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// definition of a table control
+    /// definition of a table control.
     /// </summary>
     internal sealed class TableControlBody : ControlBody
     {
         /// <summary>
-        /// optional, if not present, use data off the default table row definition
+        /// optional, if not present, use data off the default table row definition.
         /// </summary>
         internal TableHeaderDefinition header = new TableHeaderDefinition();
 
         /// <summary>
         /// default row definition
-        /// It's mandatory
+        /// It's mandatory.
         /// </summary>
         internal TableRowDefinition defaultDefinition;
 
         /// <summary>
-        /// optional list of row definition overrides. It can be empty if there are no overrides
+        /// optional list of row definition overrides. It can be empty if there are no overrides.
         /// </summary>
         internal List<TableRowDefinition> optionalDefinitionList = new List<TableRowDefinition>();
 
@@ -69,17 +69,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// information about the table header
-    /// NOTE: if an instance of this class is present, the list must not be empty
+    /// NOTE: if an instance of this class is present, the list must not be empty.
     /// </summary>
     internal sealed class TableHeaderDefinition
     {
         /// <summary>
-        /// if true, direct the outputter to suppress table header printing
+        /// if true, direct the outputter to suppress table header printing.
         /// </summary>
         internal bool hideHeader;
 
         /// <summary>
-        /// mandatory list of column header definitions
+        /// mandatory list of column header definitions.
         /// </summary>
         internal List<TableColumnHeaderDefinition> columnHeaderDefinitionList =
                             new List<TableColumnHeaderDefinition>();
@@ -105,43 +105,43 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// optional label
         /// If not present, use the name of the property from the matching
-        /// mandatory row description
+        /// mandatory row description.
         /// </summary>
         internal TextToken label = null;
 
         /// <summary>
         /// general alignment for the column
         /// If not present, either use the one from the row definition
-        /// or the data driven heuristics
+        /// or the data driven heuristics.
         /// </summary>
         internal int alignment = TextAlignment.Undefined;
 
         /// <summary>
-        /// width of the column
+        /// width of the column.
         /// </summary>
         internal int width = 0; // undefined
     }
 
     /// <summary>
-    /// definition of the data to be displayed in a table row
+    /// definition of the data to be displayed in a table row.
     /// </summary>
     internal sealed class TableRowDefinition
     {
         /// <summary>
         /// applicability clause
-        /// Only valid if not the default definition
+        /// Only valid if not the default definition.
         /// </summary>
         internal AppliesTo appliesTo;
 
         /// <summary>
         /// if true, the current table row should be allowed
-        /// to wrap to multiple lines, else truncated
+        /// to wrap to multiple lines, else truncated.
         /// </summary>
         internal bool multiLine;
 
         /// <summary>
         /// mandatory list of column items.
-        /// It cannot be empty
+        /// It cannot be empty.
         /// </summary>
         internal List<TableRowItemDefinition> rowItemDefinitionList = new List<TableRowItemDefinition>();
 
@@ -166,12 +166,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// cell definition inside a row
+    /// cell definition inside a row.
     /// </summary>
     internal sealed class TableRowItemDefinition
     {
         /// <summary>
-        /// optional alignment to override the default one at the header level
+        /// optional alignment to override the default one at the header level.
         /// </summary>
         internal int alignment = TextAlignment.Undefined;
 
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines a table control
+    /// Defines a table control.
     /// </summary>
     public sealed class TableControl : PSControl
     {
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines if this object is safe to be written
+        /// Determines if this object is safe to be written.
         /// </summary>
         /// <returns>True if safe, false otherwise.</returns>
         internal override bool SafeForExport()
@@ -317,7 +317,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the header for a particular column in a table control
+    /// Defines the header for a particular column in a table control.
     /// </summary>
     public sealed class TableControlColumnHeader
     {
@@ -365,7 +365,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Defines a particular column within a row
-    /// in a table control
+    /// in a table control.
     /// </summary>
     public sealed class TableControlColumn
     {
@@ -379,7 +379,7 @@ namespace System.Management.Automation
         public string FormatString { get; internal set; }
 
         /// <summary>
-        /// Returns the value of the entry
+        /// Returns the value of the entry.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -417,7 +417,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines a single row in a table control
+    /// Defines a single row in a table control.
     /// </summary>
     public sealed class TableControlRow
     {
@@ -535,7 +535,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Complete a row definition
+        /// Complete a row definition.
         /// </summary>
         public TableControlBuilder EndRowDefinition()
         {
