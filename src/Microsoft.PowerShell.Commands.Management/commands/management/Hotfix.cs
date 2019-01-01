@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
     #region Get-HotFix
 
     /// <summary>
-    /// Cmdlet for Get-Hotfix Proxy
+    /// Cmdlet for Get-Hotfix Proxy.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "HotFix", DefaultParameterSetName = "Default",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135217", RemotingCapability = RemotingCapability.SupportedByCommand)]
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Id { get; set; }
 
         /// <summary>
-        /// To search on description of Hotfixes
+        /// To search on description of Hotfixes.
         /// </summary>
         [Parameter(ParameterSetName = "Description")]
         [ValidateNotNullOrEmpty]
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Description { get; set; }
 
         /// <summary>
-        /// Parameter to pass the Computer Name
+        /// Parameter to pass the Computer Name.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         }//end of BeginProcessing method
 
         /// <summary>
-        /// to implement ^C
+        /// to implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
         #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method
+        /// Dispose Method.
         /// </summary>
         public void Dispose()
         {

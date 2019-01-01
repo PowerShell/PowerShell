@@ -14,7 +14,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// CIM-specific ObjectModelWrapper
+    /// CIM-specific ObjectModelWrapper.
     /// </summary>
     public sealed class CimCmdletAdapter :
         SessionBasedCmdletAdapter<CimInstance, CimSession>,
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Changing Session parameter to CimSession
 
         /// <summary>
-        /// CimSession to operate on
+        /// CimSession to operate on.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region ObjectModelWrapper overrides
 
         /// <summary>
-        /// Creates a query builder for CIM OM
+        /// Creates a query builder for CIM OM.
         /// </summary>
         /// <returns>Query builder for CIM OM.</returns>
         public override QueryBuilder GetQueryBuilder()

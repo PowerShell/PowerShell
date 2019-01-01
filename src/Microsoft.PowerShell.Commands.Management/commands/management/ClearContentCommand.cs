@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Command code
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess
