@@ -14,7 +14,7 @@ using Microsoft.PowerShell;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Deals with DirectoryEntry objects
+    /// Deals with DirectoryEntry objects.
     /// </summary>
     internal class DirectoryEntryAdapter : DotNetAdapter
     {
@@ -37,7 +37,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
-        /// the corresponding PSMemberInfo
+        /// the corresponding PSMemberInfo.
         /// </summary>
         /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
         /// <param name="memberName">Name of the member to be retrieved.</param>
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         #region property
 
         /// <summary>
-        /// Returns the value from a property coming from a previous call to GetMember
+        /// Returns the value from a property coming from a previous call to GetMember.
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
         /// <returns>The value of the property.</returns>
@@ -183,7 +183,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the value of a property coming from a previous call to GetMember
+        /// Sets the value of a property coming from a previous call to GetMember.
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to GetMember.</param>
         /// <param name="setValue">Value to set the property with.</param>
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is settable
+        /// Returns true if the property is settable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is settable.</returns>
@@ -261,7 +261,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is gettable
+        /// Returns true if the property is gettable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is gettable.</returns>
@@ -271,7 +271,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the name of the type corresponding to the property's value
+        /// Returns the name of the type corresponding to the property's value.
         /// </summary>
         /// <param name="property">PSProperty obtained in a previous GetMember.</param>
         /// <param name="forDisplay">True if the result is for display purposes only.</param>
@@ -302,7 +302,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Called after a non null return from GetMember to try to call
-        /// the method with the arguments
+        /// the method with the arguments.
         /// </summary>
         /// <param name="method">The non empty return from GetMethods.</param>
         /// <param name="arguments">The arguments to use.</param>
@@ -363,7 +363,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the string representation of the method in the object
+        /// Returns the string representation of the method in the object.
         /// </summary>
         /// <returns>The string representation of the method in the object.</returns>
         protected override string MethodToString(PSMethod method)

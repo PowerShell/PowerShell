@@ -30,7 +30,7 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// Perform disambiguation on enum names
+        /// Perform disambiguation on enum names.
         /// </summary>
         /// <returns>Complete enum name after disambiguation.</returns>
         internal static string EnumDisambiguate(string text, Type enumType)

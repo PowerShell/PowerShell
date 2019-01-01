@@ -107,7 +107,7 @@ namespace System.Management.Automation
         ParserError = 17,
 
         /// <summary>
-        /// Operation not permitted
+        /// Operation not permitted.
         /// </summary>
         PermissionDenied = 18,
 
@@ -143,7 +143,7 @@ namespace System.Management.Automation
         FromStdErr = 24,
 
         /// <summary>
-        /// Used for security exceptions
+        /// Used for security exceptions.
         /// </summary>
         SecurityError = 25,
 
@@ -211,7 +211,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// text description of the operation which
-        /// encountered the error
+        /// encountered the error.
         /// </summary>
         /// <value>text description of the operation</value>
         /// <remarks>
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the error
+        /// text description of the error.
         /// </summary>
         /// <value>text description of the error</value>
         /// <remarks>
@@ -277,7 +277,7 @@ namespace System.Management.Automation
         private bool _reasonIsExceptionType;
 
         /// <summary>
-        /// text description of the target object
+        /// text description of the target object.
         /// </summary>
         /// <value>text description of the target object</value>
         /// <remarks>
@@ -317,7 +317,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// text description of the type of the target object
+        /// text description of the type of the target object.
         /// </summary>
         /// <value>text description of the type of the target object</value>
         /// <remarks>
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation
         private string _serializedFullyQualifiedErrorId = null;
 
         /// <summary>
-        /// Message overridee for CategoryInfo.GetMessage method
+        /// Message overridee for CategoryInfo.GetMessage method.
         /// </summary>
         internal string _serializedErrorCategoryMessageOverride = null;
 
@@ -1216,7 +1216,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the value for note from mshObject
+        /// Gets the value for note from mshObject.
         /// </summary>
         /// <param name="mshObject">
         /// PSObject from which value is fetched.
@@ -1472,7 +1472,7 @@ namespace System.Management.Automation
         private ErrorCategoryInfo _categoryInfo;
 
         /// <summary>
-        /// String which uniquely identifies this error condition
+        /// String which uniquely identifies this error condition.
         /// </summary>
         /// <value>never null</value>
         /// <remarks>
@@ -1631,7 +1631,7 @@ namespace System.Management.Automation
         private ReadOnlyCollection<int> _pipelineIterationInfo = Utils.EmptyReadOnlyCollection<int>();
 
         /// <summary>
-        /// Whether to serialize the InvocationInfo during remote calls
+        /// Whether to serialize the InvocationInfo during remote calls.
         /// </summary>
         internal bool SerializeExtendedInfo
         {
