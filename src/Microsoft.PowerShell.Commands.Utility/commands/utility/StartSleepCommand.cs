@@ -58,14 +58,14 @@ namespace Microsoft.PowerShell.Commands
 
         #region methods
 
-        //Wait handle which is used by thread to sleep.
+        // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
 
-        //object used for synchronizes pipeline thread and stop thread
-        //access to waitHandle
+        // object used for synchronizes pipeline thread and stop thread
+        // access to waitHandle
         private object _syncObject = new object();
 
-        //this is set to true by stopProcessing
+        // this is set to true by stopProcessing
         private bool _stopping = false;
 
         /// <summary>

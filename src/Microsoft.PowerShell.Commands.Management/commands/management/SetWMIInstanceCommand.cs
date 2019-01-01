@@ -123,9 +123,9 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 ManagementPath mPath = null;
-                //If Class is specified only CreateOnly flag is supported
+                // If Class is specified only CreateOnly flag is supported
                 mPath = this.SetWmiInstanceBuildManagementPath();
-                //If server name is specified loop through it.
+                // If server name is specified loop through it.
                 if (mPath != null)
                 {
                     if (!(mPath.Server == "." && serverNameSpecified))

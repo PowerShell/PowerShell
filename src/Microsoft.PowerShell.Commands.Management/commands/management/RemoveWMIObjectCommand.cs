@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (namespaceSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "NamespaceSpecifiedWithPath",
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (mPath.Server != "." && serverNameSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "ComputerNameSpecifiedWithPath",

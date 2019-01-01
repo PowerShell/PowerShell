@@ -141,15 +141,15 @@ namespace Microsoft.PowerShell.Commands
                         catch (SystemException) // thrown by SecurityIdentifier.constr
                         {
                         }
-                        //catch (ArgumentException) // thrown (indirectly) by SecurityIdentifier.constr (on XP only?)
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
-                        //catch (PlatformNotSupportedException) // thrown (indirectly) by SecurityIdentifier.Translate (on Win95 only?)
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
-                        //catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
+                        // catch (ArgumentException) // thrown (indirectly) by SecurityIdentifier.constr (on XP only?)
+                        // { catch not needed - this is already caught as SystemException
+                        // }
+                        // catch (PlatformNotSupportedException) // thrown (indirectly) by SecurityIdentifier.Translate (on Win95 only?)
+                        // { catch not needed - this is already caught as SystemException
+                        // }
+                        // catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate
+                        // { catch not needed - this is already caught as SystemException
+                        // }
                     }
 
                     WriteObject(obj);

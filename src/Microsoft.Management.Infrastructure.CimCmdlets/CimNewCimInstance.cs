@@ -86,7 +86,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     case CimBaseCommand.ResourceUriSessionSet:
                     case CimBaseCommand.ResourceUriComputerSet:
                         {
-                            nameSpace = cmdlet.Namespace; //passing null is ok for resourceUri set
+                            nameSpace = cmdlet.Namespace; // passing null is ok for resourceUri set
                             cimInstance = CreateCimInstance("DummyClass",
                                 nameSpace,
                                 cmdlet.Key,

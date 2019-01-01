@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
                     StringCollection clipBoardContent = Clipboard.GetFileDropList();
                     dropFiles = new HashSet<string>(clipBoardContent.Cast<string>().ToList(), StringComparer.OrdinalIgnoreCase);
 
-                    //we need the count of original files so we can get the accurate files number that has been appended.
+                    // we need the count of original files so we can get the accurate files number that has been appended.
                     clipBoardContentLength = clipBoardContent.Count;
                 }
             }
@@ -335,15 +335,15 @@ EndSelection:<<<<<<<<4";
             int fragmentEndIdx = html.LastIndexOf(EndFragment, StringComparison.OrdinalIgnoreCase);
 
             // if html tag is missing add it surrounding the given html
-            //find the index of "<html", ignore white space and case
+            // find the index of "<html", ignore white space and case
             int htmlOpenIdx = Regex.Match(html, @"<\s*h\s*t\s*m\s*l", RegexOptions.IgnoreCase).Index;
             int htmlOpenEndIdx = htmlOpenIdx > 0 ? html.IndexOf('>', htmlOpenIdx) + 1 : -1;
-            //find the index of "</html", ignore white space and case
+            // find the index of "</html", ignore white space and case
             int htmlCloseIdx = Regex.Match(html, @"<\s*/\s*h\s*t\s*m\s*l", RegexOptions.IgnoreCase).Index;
 
             if (fragmentStartIdx < 0 && fragmentEndIdx < 0)
             {
-                //find the index of "<body", ignore white space and case
+                // find the index of "<body", ignore white space and case
                 int bodyOpenIdx = Regex.Match(html, @"<\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
                 int bodyOpenEndIdx = bodyOpenIdx > 0 ? html.IndexOf('>', bodyOpenIdx) + 1 : -1;
 
@@ -361,7 +361,7 @@ EndSelection:<<<<<<<<4";
                 else
                 {
                     // insert start/end fragments in the proper place (related to html/body tags if exists) so the paste will work correctly
-                    //find the index of "</body", ignore white space and case
+                    // find the index of "</body", ignore white space and case
                     int bodyCloseIdx = Regex.Match(html, @"<\s*/\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
 
                     if (htmlOpenEndIdx < 0)

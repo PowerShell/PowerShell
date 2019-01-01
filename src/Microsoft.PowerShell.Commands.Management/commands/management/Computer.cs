@@ -1302,7 +1302,7 @@ $result
         /// <summary>
         /// Emit the output.
         /// </summary>
-        //[Alias("Restart")]
+        // [Alias("Restart")]
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
@@ -1446,7 +1446,7 @@ $result
                     {
                         Timeout = TimeSpan.FromMilliseconds(10000),
                         CancellationToken = cancelTokenSource.Token,
-                        //This prefix works against all versions of the WinRM server stack, both win8 and win7
+                        // This prefix works against all versions of the WinRM server stack, both win8 and win7
                         ResourceUriPrefix = new Uri(ComputerWMIHelper.CimUriPrefix)
                     };
 
@@ -2098,7 +2098,7 @@ $result
             {
                 Timeout = TimeSpan.FromMilliseconds(10000),
                 CancellationToken = cancelToken,
-                //This prefix works against all versions of the WinRM server stack, both win8 and win7
+                // This prefix works against all versions of the WinRM server stack, both win8 and win7
                 ResourceUriPrefix = new Uri(ComputerWMIHelper.CimUriPrefix)
             };
 

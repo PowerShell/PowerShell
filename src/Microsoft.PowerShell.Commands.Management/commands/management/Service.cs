@@ -1435,7 +1435,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                //Set the NoWait parameter to false since we are not adding this switch to this cmdlet.
+                // Set the NoWait parameter to false since we are not adding this switch to this cmdlet.
                 List<ServiceController> stoppedServices = DoStopService(serviceController, Force, true);
 
                 if (stoppedServices.Count > 0)
@@ -1598,7 +1598,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This is not a parameter for this cmdlet.
         /// </summary>
-        //This has been shadowed from base class and removed parameter tag to fix gcm "Set-Service" -syntax
+        // This has been shadowed from base class and removed parameter tag to fix gcm "Set-Service" -syntax
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public new string[] Include
         {
@@ -1618,7 +1618,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This is not a parameter for this cmdlet.
         /// </summary>
-        //This has been shadowed from base class and removed parameter tag to fix gcm "Set-Service" -syntax
+        // This has been shadowed from base class and removed parameter tag to fix gcm "Set-Service" -syntax
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public new string[] Exclude
         {
@@ -1669,14 +1669,14 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException ex)
             {
-                //cannot use WriteNonterminatingError as service is null
+                // cannot use WriteNonterminatingError as service is null
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
             }
             catch (InvalidOperationException ex)
             {
-                //cannot use WriteNonterminatingError as service is null
+                // cannot use WriteNonterminatingError as service is null
                 ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
@@ -1837,10 +1837,10 @@ namespace Microsoft.PowerShell.Commands
                             if (!service.Status.Equals(ServiceControllerStatus.Running))
                             {
                                 if (service.Status.Equals(ServiceControllerStatus.Paused))
-                                    //resume service
+                                    // resume service
                                     DoResumeService(service);
                                 else
-                                    //start service
+                                    // start service
                                     DoStartService(service);
                             }
                         }

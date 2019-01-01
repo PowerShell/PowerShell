@@ -1158,7 +1158,7 @@ namespace Microsoft.PowerShell.Commands
             if (ContentType != null)
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
-                //request
+                // request
             }
             // ContentType == null
             else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))

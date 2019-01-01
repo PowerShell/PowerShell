@@ -114,8 +114,8 @@ namespace Microsoft.PowerShell
             if (cer != null)
             {
                 er = cer.ErrorRecord;
-                //Exception inside the error record is ParentContainsErrorRecordException which
-                //doesn't have stack trace. Replace it with top level exception.
+                // Exception inside the error record is ParentContainsErrorRecordException which
+                // doesn't have stack trace. Replace it with top level exception.
                 er = new ErrorRecord(er, ex);
             }
 
@@ -235,10 +235,10 @@ namespace Microsoft.PowerShell
                         }
                         catch (PipelineClosedException)
                         {
-                            //This exception can occurs when input is closed. This can happen
-                            //for various reasons. For ex:Command in the pipeline is invalid and
-                            //command discovery throws exception which closes the pipeline and
-                            //hence the Input pipe.
+                            // This exception can occurs when input is closed. This can happen
+                            // for various reasons. For ex:Command in the pipeline is invalid and
+                            // command discovery throws exception which closes the pipeline and
+                            // hence the Input pipe.
                             break;
                         }
                     };
@@ -249,17 +249,17 @@ namespace Microsoft.PowerShell
 
                 pipelineWaiter.Wait();
 
-                //report error if pipeline failed
+                // report error if pipeline failed
                 if (tempPipeline.PipelineStateInfo.State == PipelineState.Failed && tempPipeline.PipelineStateInfo.Reason != null)
                 {
                     if (_parent.OutputFormat == Serialization.DataFormat.Text)
                     {
-                        //Report the exception using normal error reporting
+                        // Report the exception using normal error reporting
                         exceptionThrown = tempPipeline.PipelineStateInfo.Reason;
                     }
                     else
                     {
-                        //serialize the error record
+                        // serialize the error record
                         AsyncPipelineFailureHandler(tempPipeline.PipelineStateInfo.Reason);
                     }
                 }

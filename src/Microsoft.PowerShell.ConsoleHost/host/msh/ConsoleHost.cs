@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell
                 case ConsoleSpecialKey.ControlBreak:
                     if (s_cpp.NonInteractive)
                     {
-                        //ControlBreak mimics ControlC in Noninteractive shells
+                        // ControlBreak mimics ControlC in Noninteractive shells
                         SpinUpBreakHandlerThread(shouldEndSession: true);
                     }
                     else
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell
                 case ConsoleControl.ConsoleBreakSignal.CtrlBreak:
                     if (s_cpp.NonInteractive)
                     {
-                        //ControlBreak mimics ControlC in Noninteractive shells
+                        // ControlBreak mimics ControlC in Noninteractive shells
                         SpinUpBreakHandlerThread(shouldEndSession: true);
                     }
                     else

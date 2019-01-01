@@ -963,7 +963,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //adding the processes into the list
+            // adding the processes into the list
             foreach (Process process in MatchingProcesses())
             {
                 // Idle process has processid zero,so handle that because we cannot wait on it.
