@@ -258,7 +258,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             /// <summary>
-            /// Default constructor
+            /// Default constructor.
             /// </summary>
             public Context()
             {
@@ -395,7 +395,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 #region Local Groups
         /// <summary>
-        /// Retrieve a named local group
+        /// Retrieve a named local group.
         /// </summary>
         /// <param name="groupName">Name of the desired local group.</param>
         /// <returns>
@@ -417,7 +417,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Retrieve a local group by SID
+        /// Retrieve a local group by SID.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the desired group.
@@ -462,7 +462,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Update a local group with new property values
+        /// Update a local group with new property values.
         /// </summary>
         /// <param name="group">
         /// A <see cref="LocalGroup"/> object representing the group to be updated.
@@ -746,7 +746,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
 #region Local Users
         /// <summary>
-        /// Retrieve a named local user
+        /// Retrieve a named local user.
         /// </summary>
         /// <param name="userName">Name of the desired local user.</param>
         /// <returns>
@@ -768,7 +768,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Retrieve a local user by SID
+        /// Retrieve a local user by SID.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the desired user.
@@ -792,7 +792,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Create a local user
+        /// Create a local user.
         /// </summary>
         /// <param name="user">A <see cref="LocalUser"/> object containing
         /// information about the local user to be created.
@@ -900,7 +900,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Enable or disable a Local User
+        /// Enable or disable a Local User.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the user to enable or disable.
@@ -920,7 +920,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Enable or disable a Local User
+        /// Enable or disable a Local User.
         /// </summary>
         /// <param name="user">
         /// A <see cref="LocalUser"/> object representing the user to enable or disable.
@@ -1290,7 +1290,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Remove a group identified by SID
+        /// Remove a group identified by SID.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the
@@ -3135,7 +3135,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         private static volatile OperatingSystem localOs;
 
         /// <summary>
-        /// It only contains the properties that get used in powershell
+        /// It only contains the properties that get used in powershell.
         /// </summary>
         internal sealed class OperatingSystem
         {
@@ -3153,7 +3153,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             /// <summary>
-            /// OS version
+            /// OS version.
             /// </summary>
             public Version Version
             {
@@ -3161,7 +3161,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             /// <summary>
-            /// VersionString
+            /// VersionString.
             /// </summary>
             public string VersionString
             {

@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Add brokered properties for easy access to important properties
-        /// of security descriptor
+        /// of security descriptor.
         /// </summary>
         internal static void AddBrokeredProperties(
             Collection<PSObject> results,
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// InputObject Parameter
-        /// Gets or sets the inputObject for which to obtain the security descriptor
+        /// Gets or sets the inputObject for which to obtain the security descriptor.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByInputObject")]
         public PSObject InputObject
@@ -928,7 +928,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// InputObject Parameter
-        /// Gets or sets the inputObject for which to set the security descriptor
+        /// Gets or sets the inputObject for which to set the security descriptor.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByInputObject")]
         public PSObject InputObject

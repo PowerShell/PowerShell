@@ -17,7 +17,7 @@ using System.Globalization;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Session Login Type
+    /// Session Login Type.
     /// </summary>
     public enum SessionAuthentication
     {
@@ -28,7 +28,7 @@ namespace System.Diagnostics.Eventing.Reader
     }
 
     /// <summary>
-    /// The type: log / external log file to query
+    /// The type: log / external log file to query.
     /// </summary>
     public enum PathType
     {

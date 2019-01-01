@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Process group requested by -Name
+        /// Process group requested by -Name.
         /// </summary>
         /// <remarks>
         /// Arguments to -Name will be treated as names,
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process group requested by -SID
+        /// Process group requested by -SID.
         /// </summary>
         private void ProcessSid()
         {
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process group given through -InputObject
+        /// Process group given through -InputObject.
         /// </summary>
         private void ProcessGroup()
         {

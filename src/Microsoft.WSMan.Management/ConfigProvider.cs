@@ -204,7 +204,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Adds the required drive
+        /// Adds the required drive.
         /// </summary>
         /// <returns></returns>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
@@ -216,7 +216,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Removes the required drive
+        /// Removes the required drive.
         /// </summary>
         /// <returns></returns>
         protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
@@ -319,7 +319,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// Checks whether the path is Valid.
-        /// eg. winrm/config/client
+        /// eg. winrm/config/client.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -332,7 +332,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Check whether an Item Exist in the winrm configuration
+        /// Check whether an Item Exist in the winrm configuration.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -576,7 +576,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// This cmdlet is used to get a particular item.
-        /// cd wsman:\localhost\client> Get-Item .\Auth
+        /// cd wsman:\localhost\client> Get-Item .\Auth.
         /// </summary>
         /// <param name="path"></param>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
@@ -1369,7 +1369,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// This is method which create the dynamic or runtime parameter for set-item
+        /// This is method which create the dynamic or runtime parameter for set-item.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="value"></param>
@@ -1399,7 +1399,7 @@ namespace Microsoft.WSMan.Management
         #region ContainerCmdletProvider
         /// <summary>
         /// Gets the Child items. dir functionality
-        /// wsman:\localhost\client> dir
+        /// wsman:\localhost\client> dir.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="recurse"></param>
@@ -1424,7 +1424,7 @@ namespace Microsoft.WSMan.Management
         #region NavigationalCmdletProvider
 
         /// <summary>
-        /// Checks whether the specified path is a container path
+        /// Checks whether the specified path is a container path.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -1915,7 +1915,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// Dynamic parameter used by New-Item. According to different path. This method return the
-        /// required dynamic parameters
+        /// required dynamic parameters.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="itemTypeName"></param>
@@ -2418,7 +2418,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Get the input string for create
+        /// Get the input string for create.
         /// </summary>
         /// <param name="ResourceURI"></param>
         /// <param name="value"></param>
@@ -2655,7 +2655,7 @@ namespace Microsoft.WSMan.Management
 
         #region "WsMan linking Operations"
         /// <summary>
-        /// To put a resource value. Wsman put operation
+        /// To put a resource value. Wsman put operation.
         /// </summary>
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
@@ -2767,7 +2767,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// WsMan Enumerate operation
+        /// WsMan Enumerate operation.
         /// </summary>
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
@@ -2813,7 +2813,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// WsMan Delete Operation
+        /// WsMan Delete Operation.
         /// </summary>
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
@@ -2845,7 +2845,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// WsMan Create Operation
+        /// WsMan Create Operation.
         /// </summary>
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
@@ -2901,7 +2901,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Checks whether a value is present in Wsman config
+        /// Checks whether a value is present in Wsman config.
         /// </summary>
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
@@ -3258,7 +3258,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Converts XmlNodes ChildNodes to Properties of PSObject
+        /// Converts XmlNodes ChildNodes to Properties of PSObject.
         /// </summary>
         /// <param name="xmlnode"></param>
         /// <returns></returns>
@@ -3419,7 +3419,7 @@ namespace Microsoft.WSMan.Management
         ///
         /// Currently this supports only retrieving Resource_XXXX dir contents.
         /// if you need support at other levels implement them.
-        /// Example resource dir: WSMan:\localhost\Plugin\someplugin\Resources\Resource_XXXXXXX
+        /// Example resource dir: WSMan:\localhost\Plugin\someplugin\Resources\Resource_XXXXXXX.
         /// </summary>
         /// <param name="path"></param>
         /// <returns>
@@ -3873,7 +3873,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Used By ItemExists, HasChildItem,IsValidPath, IsItemContainer
+        /// Used By ItemExists, HasChildItem,IsValidPath, IsItemContainer.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -5607,7 +5607,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
         /// Defines a set of extended options for the WSMan session.  This hashtable can
-        /// be created using New-WSManSessionOption
+        /// be created using New-WSManSessionOption.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -5958,7 +5958,7 @@ namespace Microsoft.WSMan.Management
 #region "ClientCertificate Dynamic Parameters"
     /// <summary>
     /// Client Certificate Dynamic Parameters
-    /// Path - WsMan:\Localhost\ClientCertificate
+    /// Path - WsMan:\Localhost\ClientCertificate.
     /// </summary>
     public class WSManProviderClientCertificateParameters
     {
@@ -6225,7 +6225,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Set-Item Dynamic parameters
-    /// Path - WsMan:\Localhost\Client> Set-Item .\TrustedHosts
+    /// Path - WsMan:\Localhost\Client> Set-Item .\TrustedHosts.
     /// </summary>
     public class WSManProviderSetItemDynamicParameters
     {
@@ -6263,28 +6263,28 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         internal const char AlternatePathSeparator = '/';
         /// <summary>
-        /// Double Quotes used while constructing XML
+        /// Double Quotes used while constructing XML.
         /// </summary>
         internal const char EnclosingDoubleQuotes = '\"';
         /// <summary>
-        /// Equalto Used while constructing XML
+        /// Equalto Used while constructing XML.
         /// </summary>
         internal const char Equalto = '=';
         /// <summary>
-        /// For XML Construction
+        /// For XML Construction.
         /// </summary>
         internal const char GreaterThan = '>';
         /// <summary>
-        /// XML Closing Tag
+        /// XML Closing Tag.
         /// </summary>
         internal const string XmlClosingTag = "/>";
         /// <summary>
-        /// White space used while constructing XML
+        /// White space used while constructing XML.
         /// </summary>
         internal const char SingleWhiteSpace = ' ';
 
         /// <summary>
-        /// Root node of WsMan
+        /// Root node of WsMan.
         /// </summary>
         internal const string ProviderName = "WSMan";
 
@@ -6314,66 +6314,66 @@ namespace Microsoft.WSMan.Management
 #region WsMan Containers
 
         /// <summary>
-        /// Plugin Container
+        /// Plugin Container.
         /// </summary>
         internal const string containerPlugin = "Plugin";
         /// <summary>
-        /// Client Container
+        /// Client Container.
         /// </summary>
         internal const string containerClient = "Client";
         /// <summary>
-        /// Shell Container
+        /// Shell Container.
         /// </summary>
         internal const string containerShell = "Shell";
         /// <summary>
-        /// ClientCertificate Container
+        /// ClientCertificate Container.
         /// </summary>
         internal const string containerClientCertificate = "ClientCertificate";
         /// <summary>
-        /// Listener Container
+        /// Listener Container.
         /// </summary>
         internal const string containerListener = "Listener";
         /// <summary>
-        /// Service Container
+        /// Service Container.
         /// </summary>
         internal const string containerService = "Service";
         /// <summary>
-        /// Auth Container - Under Client,Service
+        /// Auth Container - Under Client,Service.
         /// </summary>
         internal const string containerAuth = "Auth";
         /// <summary>
-        /// DefaultPorts Container - Under Client,Service
+        /// DefaultPorts Container - Under Client,Service.
         /// </summary>
         internal const string containerDefaultPorts = "DefaultPorts";
         /// <summary>
-        /// TrustedHosts Container - Under Client,Service
+        /// TrustedHosts Container - Under Client,Service.
         /// </summary>
         internal const string containerTrustedHosts = "TrustedHosts";
         /// <summary>
-        /// Security Container - Under Plugin
+        /// Security Container - Under Plugin.
         /// </summary>
         internal const string containerSecurity = "Security";
         /// <summary>
-        /// Resources Container - Under Plugin
+        /// Resources Container - Under Plugin.
         /// </summary>
         internal const string containerResources = "Resources";
 
         /// <summary>
-        /// Resource in Resources Container - Under Plugin
+        /// Resource in Resources Container - Under Plugin.
         /// </summary>
         internal const string containerSingleResource = "Resource";
         /// <summary>
-        /// InitParameters Container - Under Plugin
+        /// InitParameters Container - Under Plugin.
         /// </summary>
         internal const string containerInitParameters = "InitializationParameters";
 
         /// <summary>
-        /// Quotas Container - Under Plugin
+        /// Quotas Container - Under Plugin.
         /// </summary>
         internal const string containerQuotasParameters = "Quotas";
 
         /// <summary>
-        /// Winrs Container - Exposed as Shell
+        /// Winrs Container - Exposed as Shell.
         /// </summary>
         internal const string containerWinrs = "Winrs";
 
@@ -6383,7 +6383,7 @@ namespace Microsoft.WSMan.Management
         internal const string containerCertMapping = "Service/certmapping";
 
         /// <summary>
-        /// Possible Values in Plugin Top Level XML
+        /// Possible Values in Plugin Top Level XML.
         /// </summary>
         internal static readonly string[] NewItemPluginConfigParams =
             new string[] {
@@ -6510,7 +6510,7 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
 #region "WsMan Output Objects"
 
     /// <summary>
-    /// Base Output object
+    /// Base Output object.
     /// </summary>
     public class WSManConfigElement
     {
@@ -6560,7 +6560,7 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
         }
     }
     /// <summary>
-    /// Leaf Element
+    /// Leaf Element.
     /// </summary>
     public class WSManConfigLeafElement : WSManConfigElement
     {
@@ -6603,7 +6603,7 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
         private object _value;
     }
     /// <summary>
-    /// Container Element
+    /// Container Element.
     /// </summary>
     public class WSManConfigContainerElement : WSManConfigElement
     {

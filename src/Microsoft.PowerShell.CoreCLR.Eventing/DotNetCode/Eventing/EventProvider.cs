@@ -194,7 +194,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// IsEnabled, method used to test if provider is enabled
+        /// IsEnabled, method used to test if provider is enabled.
         /// </summary>
         public bool IsEnabled()
         {
@@ -202,7 +202,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// IsEnabled, method used to test if event is enabled
+        /// IsEnabled, method used to test if event is enabled.
         /// </summary>
         /// <param name="level">
         /// Level to test
@@ -484,7 +484,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteEvent method to write parameters with event schema properties
+        /// WriteEvent method to write parameters with event schema properties.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.
@@ -497,7 +497,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteEvent, method to write a string with event schema properties
+        /// WriteEvent, method to write a string with event schema properties.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.
@@ -556,7 +556,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteEvent, method to be used by generated code on a derived class
+        /// WriteEvent, method to be used by generated code on a derived class.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.
@@ -595,7 +595,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// WriteTransferEvent, method to write a parameters with event schema properties
+        /// WriteTransferEvent, method to write a parameters with event schema properties.
         /// </summary>
         /// <param name="eventDescriptor">
         /// Event Descriptor for this event.

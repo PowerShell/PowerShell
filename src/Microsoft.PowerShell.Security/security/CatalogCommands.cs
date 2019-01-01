@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     public abstract class CatalogCommandsBase : PSCmdlet
     {
         /// <summary>
-        /// Path of folder/file to generate or validate the catalog file
+        /// Path of folder/file to generate or validate the catalog file.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string CatalogFilePath
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         private string catalogFilePath;
 
         /// <summary>
-        /// Path of folder/file to generate or validate the catalog file
+        /// Path of folder/file to generate or validate the catalog file.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string[] Path
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Processes records from the input pipeline.
         /// For each input object, the command either generate the Catalog or
-        /// Validates the existing Catalog
+        /// Validates the existing Catalog.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Performs the action i.e. Generate or Validate the Windows Catalog File
+        /// Performs the action i.e. Generate or Validate the Windows Catalog File.
         /// </summary>
         /// <param name="path">
         /// The name of the Folder or file on which to perform the action.
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'New-FileCatalog' cmdlet.
-    /// This cmdlet generates the catalog for File or Folder
+    /// This cmdlet generates the catalog for File or Folder.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "FileCatalog", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=786749")]
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
         public NewFileCatalogCommand() : base("New-FileCatalog") { }
 
         /// <summary>
-        /// Catalog version
+        /// Catalog version.
         /// </summary>
         [Parameter()]
         public int CatalogVersion
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
         private int catalogVersion = 1;
 
         /// <summary>
-        /// Generate the Catalog for the Path
+        /// Generate the Catalog for the Path.
         /// </summary>
         /// <param name="path">
         /// File or Folder Path
@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'Test-FileCatalog' cmdlet.
-    /// This cmdlet validates the Integrity of catalog
+    /// This cmdlet validates the Integrity of catalog.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "FileCatalog", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=786750")]
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         private bool detailed = false;
 
         /// <summary>
-        /// Patterns used to exclude files from DiskPaths and Catalog
+        /// Patterns used to exclude files from DiskPaths and Catalog.
         /// </summary>
         [Parameter()]
         public string[] FilesToSkip
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
         internal WildcardPattern[] excludedPatterns = null;
 
         /// <summary>
-        /// Validate the Integrity of given Catalog
+        /// Validate the Integrity of given Catalog.
         /// </summary>
         /// <param name="path">
         /// File or Folder Path

@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     public enum TaskMultipleInstancePolicy
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
         /// <summary>
@@ -398,7 +398,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         Queue = 3,
         /// <summary>
-        /// Stop currently running task (job) and start a new one
+        /// Stop currently running task (job) and start a new one.
         /// </summary>
         StopExisting = 4
     }

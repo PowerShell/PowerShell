@@ -215,7 +215,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// Evt Variant types
+        /// Evt Variant types.
         /// </summary>
         internal enum EvtVariantType
         {
@@ -337,7 +337,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// The query flags to get information about query
+        /// The query flags to get information about query.
         /// </summary>
         internal enum EvtQueryPropertyId
         {
@@ -346,7 +346,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// Publisher Metadata properties
+        /// Publisher Metadata properties.
         /// </summary>
         internal enum EvtPublisherMetadataPropertyId
         {

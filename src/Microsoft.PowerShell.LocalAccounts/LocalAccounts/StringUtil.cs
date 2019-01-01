@@ -7,7 +7,7 @@ using System.Management.Automation.SecurityAccountsManager.Native;
 namespace System.Management.Automation.SecurityAccountsManager
 {
     /// <summary>
-    /// Contains utility functions for formatting localizable strings
+    /// Contains utility functions for formatting localizable strings.
     /// </summary>
     internal class StringUtil
     {
