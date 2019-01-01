@@ -714,7 +714,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Parses the specified constant hashtable string into a Hashtable object
+        /// Parses the specified constant hashtable string into a Hashtable object.
         /// </summary>
         /// <param name="input">The Hashtable string.</param>
         /// <param name="result">The Hashtable object.</param>
@@ -2335,7 +2335,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Handle the InlineScript syntax in the script workflow
+        /// Handle the InlineScript syntax in the script workflow.
         /// </summary>
         /// <param name="inlineScriptToken"></param>
         /// <param name="elements"></param>
@@ -3256,7 +3256,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Reads an argument expression for a keyword or keyword parameter.
-        /// This can be either a bare word or an expression
+        /// This can be either a bare word or an expression.
         /// </summary>
         /// <param name="keywordToken">The token of the associated keyword.</param>
         private ExpressionAst GetWordOrExpression(Token keywordToken)
@@ -3646,7 +3646,7 @@ namespace System.Management.Automation.Language
         /// This custom keyword does not introduce a new AST node type. Instead it generates a
         /// CommandAst that calls a PowerShell command to implement the keyword's logic.
         /// This command has one of two signatures:
-        ///     keywordImplCommand
+        ///     keywordImplCommand.
         /// </summary>
         /// <param name="functionName">The name of the function to invoke.</param>
         /// <param name="keywordData">The data for this keyword definition.</param>

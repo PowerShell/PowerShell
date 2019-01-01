@@ -30,7 +30,7 @@ using WORD = System.UInt16;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Custom culture
+    /// Custom culture.
     /// </summary>
     internal class VistaCultureInfo : CultureInfo
     {
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell
         private object _syncObject = new object();
 
         /// <summary>
-        /// Constructs a CultureInfo that keeps track of fallbacks
+        /// Constructs a CultureInfo that keeps track of fallbacks.
         /// </summary>
         /// <param name="name">Name of the culture to construct.</param>
         /// <param name="fallbacks">
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell
         private static object s_syncObject = new object();
 
         /// <summary>
-        /// Gets the UICulture to be used by console host
+        /// Gets the UICulture to be used by console host.
         /// </summary>
         internal static CultureInfo UICulture
         {
@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Checks if the current operating system is Vista or later
+        /// Checks if the current operating system is Vista or later.
         /// </summary>
         /// <returns>
         /// true, if vista and above

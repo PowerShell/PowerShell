@@ -304,7 +304,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Tracks where a variable is defined and what range of instructions it's used in
+        /// Tracks where a variable is defined and what range of instructions it's used in.
         /// </summary>
         private sealed class VariableScope
         {

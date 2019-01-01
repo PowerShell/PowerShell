@@ -19,7 +19,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Pipeline class to be used for LocalRunspace
+    /// Pipeline class to be used for LocalRunspace.
     /// </summary>
     internal sealed class LocalPipeline : PipelineBase
     {
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Copy constructor to support cloning
+        /// Copy constructor to support cloning.
         /// </summary>
         /// <param name="pipeline">The source pipeline.</param>
         internal LocalPipeline(LocalPipeline pipeline)
@@ -254,7 +254,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Prepares the invoke thread for execution
+        /// Prepares the invoke thread for execution.
         /// </summary>
         private void SetupInvokeThread(Thread invokeThread, bool changeName)
         {
@@ -759,7 +759,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Start method for asynchronous Stop
+        /// Start method for asynchronous Stop.
         /// </summary>
         private void StopThreadProc()
         {
@@ -770,7 +770,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Gets PipelineStopper object which maintains stack of PipelineProcessor
-        /// for this pipeline
+        /// for this pipeline.
         /// </summary>
         /// <value></value>
         internal PipelineStopper Stopper
@@ -781,7 +781,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
         /// <summary>
-        /// Helper method for Stop functionality
+        /// Helper method for Stop functionality.
         /// </summary>
         private void StopHelper()
         {
@@ -811,7 +811,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Returns true if pipeline is stopping
+        /// Returns true if pipeline is stopping.
         /// </summary>
         /// <value></value>
         internal bool IsStopping
@@ -932,7 +932,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Resolves command.CommandInfo to an appropriate CommandProcessorBase implementation
+        /// Resolves command.CommandInfo to an appropriate CommandProcessorBase implementation.
         /// </summary>
         /// <param name="command">Command to resolve.</param>
         /// <returns></returns>
@@ -998,7 +998,7 @@ namespace System.Management.Automation.Runspaces
         private DateTime _pipelineStartTime;
 
         /// <summary>
-        /// Adds an entry in history for this pipeline
+        /// Adds an entry in history for this pipeline.
         /// </summary>
         private void RecordPipelineStartTime()
         {
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// sets the history string to the specified one
+        /// sets the history string to the specified one.
         /// </summary>
         /// <param name="historyString">History string to set to.</param>
         internal override void SetHistoryString(string historyString)
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Gets the execution context in the thread local storage of current
-        /// thread
+        /// thread.
         /// </summary>
         /// <returns>
         /// ExecutionContext, if it available in TLS
@@ -1099,7 +1099,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Holds reference to LocalRunspace to which this pipeline is
-        /// associated with
+        /// associated with.
         /// </summary>
         private LocalRunspace LocalRunspace
         {
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation.Runspaces
         #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// Set to true when object is disposed.
         /// </summary>
         private bool _disposed;
 
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation.Runspaces
 #endif
 
         /// <summary>
-        /// Returns the worker thread
+        /// Returns the worker thread.
         /// </summary>
         internal Thread Worker
         {
@@ -1223,7 +1223,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Posts an item to the worker thread and wait for its completion
+        /// Posts an item to the worker thread and wait for its completion.
         /// </summary>
         internal void Start(ThreadStart workItem)
         {
@@ -1242,7 +1242,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shortcut for dispose
+        /// Shortcut for dispose.
         /// </summary>
         internal void Close()
         {
@@ -1250,7 +1250,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Implementation of the worker thread
+        /// Implementation of the worker thread.
         /// </summary>
         private void WorkerProc()
         {
@@ -1266,7 +1266,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Releases the worker thread
+        /// Releases the worker thread.
         /// </summary>
         public void Dispose()
         {
@@ -1290,7 +1290,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Ensure we release the worker thread
+        /// Ensure we release the worker thread.
         /// </summary>
         ~PipelineThread()
         {
@@ -1312,18 +1312,18 @@ namespace System.Management.Automation.Runspaces
     internal class PipelineStopper
     {
         /// <summary>
-        /// stack of current executing pipeline processor
+        /// stack of current executing pipeline processor.
         /// </summary>
         private Stack<PipelineProcessor> _stack = new Stack<PipelineProcessor>();
 
         /// <summary>
-        /// Object used for synchronization
+        /// Object used for synchronization.
         /// </summary>
         private object _syncRoot = new object();
         private LocalPipeline _localPipeline;
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         internal PipelineStopper(LocalPipeline localPipeline)
         {
@@ -1331,7 +1331,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This is set true when stop is called
+        /// This is set true when stop is called.
         /// </summary>
         private bool _stopping;
         internal bool IsStopping
@@ -1348,7 +1348,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Push item in to PipelineProcessor stack
+        /// Push item in to PipelineProcessor stack.
         /// </summary>
         /// <param name="item"></param>
         internal void Push(PipelineProcessor item)
@@ -1373,7 +1373,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Pop top item from PipelineProcessor stack
+        /// Pop top item from PipelineProcessor stack.
         /// </summary>
         internal void Pop(bool fromSteppablePipeline)
         {

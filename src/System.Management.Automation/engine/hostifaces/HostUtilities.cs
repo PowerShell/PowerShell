@@ -102,7 +102,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the object that serves as a value to $profile and the paths on it
+        /// Gets the object that serves as a value to $profile and the paths on it.
         /// </summary>
         /// <param name="shellId">The id identifying the host or shell used in profile file names.</param>
         /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Remove the GUID from the message if the message is in the pre-defined format
+        /// Remove the GUID from the message if the message is in the pre-defined format.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="matchPattern"></param>
@@ -554,7 +554,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get suggestion text from suggestion scriptblock
+        /// Get suggestion text from suggestion scriptblock.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Need to keep this for legacy reflection based use")]
         private static string GetSuggestionText(Object suggestion, PSModuleInfo invocationModule)

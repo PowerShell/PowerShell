@@ -346,7 +346,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Returns all the stack traces associates with an exception
+        /// Returns all the stack traces associates with an exception.
         /// </summary>
         public static IList<StackTrace> GetExceptionStackTraces(Exception rethrow)
         {

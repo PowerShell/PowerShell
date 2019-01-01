@@ -270,7 +270,7 @@ namespace System.Management.Automation.Host
         private TranscriptionData _volatileTranscriptionData;
 
         /// <summary>
-        /// Transcribes a command being invoked
+        /// Transcribes a command being invoked.
         /// </summary>
         /// <param name="commandText">The text of the command being invoked.</param>
         /// <param name="invocation">The invocation info of the command being transcribed.</param>
@@ -646,7 +646,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Transcribes / records the completion of a command
+        /// Transcribes / records the completion of a command.
         /// </summary>
         /// <param name="invocation"></param>
         internal void TranscribeCommandComplete(InvocationInfo invocation)
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Host
         #endregion Dialog-oriented interaction
 
         /// <summary>
-        /// Creates a new instance of the PSHostUserInterface class
+        /// Creates a new instance of the PSHostUserInterface class.
         /// </summary>
         protected PSHostUserInterface()
         {

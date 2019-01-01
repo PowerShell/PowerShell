@@ -315,7 +315,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Returns true if we can jump into this node
+        /// Returns true if we can jump into this node.
         /// </summary>
         internal bool CanJumpInto
         {

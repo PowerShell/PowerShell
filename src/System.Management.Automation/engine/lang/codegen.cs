@@ -60,7 +60,7 @@ namespace System.Management.Automation.Language
         /// Escapes content so that it is safe for inclusion in a string that will later be used as a
         /// format string. If this is to be embedded inside of a single-quoted string, be sure to also
         /// call EscapeSingleQuotedStringContent.
-        /// For example: "'" + EscapeSingleQuotedStringContent(EscapeFormatStringContent(userContent)) + "'" -f $args
+        /// For example: "'" + EscapeSingleQuotedStringContent(EscapeFormatStringContent(userContent)) + "'" -f $args.
         /// </summary>
         /// <param name="value">The content to be included in a format string.</param>
         /// <returns>Content with all curly braces escaped.</returns>
