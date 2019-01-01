@@ -44,7 +44,7 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Contains a methods DISPID (in a string formatted of "[DISPID=N]"
-        /// and a chained list of delegates to invoke
+        /// and a chained list of delegates to invoke.
         /// </summary>
         private class ComEventSinkMethod
         {

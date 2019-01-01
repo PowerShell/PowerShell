@@ -12,13 +12,13 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the out-lineoutput command
     /// it provides a wrapper for the OutCommandInner class,
-    /// which is the general purpose output command
+    /// which is the general purpose output command.
     /// </summary>
     [Cmdlet(VerbsData.Out, "LineOutput")]
     public class OutLineOutputCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// command line switch for ILineOutput communication channel
+        /// command line switch for ILineOutput communication channel.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, Position = 0)]
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         private object _lineOutput = null;
 
         /// <summary>
-        /// set inner command
+        /// set inner command.
         /// </summary>
         public OutLineOutputCommand()
         {

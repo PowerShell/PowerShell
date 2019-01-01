@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
     public class PSPropertyExpression
     {
         /// <summary>
-        /// constructor
+        /// constructor.
         /// </summary>
         /// <param name="s">Expression.</param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Create a property expression with a ScriptBlock
+        /// Create a property expression with a ScriptBlock.
         /// </summary>
         /// <param name="scriptBlock">ScriptBlock to evaluate when retrieving the property value from an object.</param>
         /// <exception cref="ArgumentNullException"></exception>

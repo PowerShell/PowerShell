@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Cmdletization
     internal sealed class MethodParametersCollection : KeyedCollection<string, MethodParameter>
     {
         /// <summary>
-        /// Creates an empty collection of method parameters
+        /// Creates an empty collection of method parameters.
         /// </summary>
         public MethodParametersCollection()
             : base(StringComparer.Ordinal, 5)
@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Gets key for a method parameter
+        /// Gets key for a method parameter.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>

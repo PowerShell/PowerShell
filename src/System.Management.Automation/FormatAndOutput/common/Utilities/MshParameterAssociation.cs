@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// helper class to hold a resolved expression and its
-    /// originating parameter
+    /// originating parameter.
     /// </summary>
     internal sealed class MshResolvedExpressionParameterAssociation
     {
