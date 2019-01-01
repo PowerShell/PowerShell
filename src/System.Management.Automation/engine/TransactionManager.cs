@@ -15,28 +15,28 @@ namespace System.Management.Automation
     public enum PSTransactionStatus
     {
         /// <summary>
-        /// The transaction has been rolled back
+        /// The transaction has been rolled back.
         /// </summary>
         RolledBack = 0,
 
         /// <summary>
-        /// The transaction has been committed
+        /// The transaction has been committed.
         /// </summary>
         Committed = 1,
 
         /// <summary>
-        /// The transaction is currently active
+        /// The transaction is currently active.
         /// </summary>
         Active = 2
     }
 
     /// <summary>
-    /// Represents an active transaction
+    /// Represents an active transaction.
     /// </summary>
     public sealed class PSTransaction : IDisposable
     {
         /// <summary>
-        /// Initializes a new instance of the PSTransaction class
+        /// Initializes a new instance of the PSTransaction class.
         /// </summary>
         internal PSTransaction(RollbackSeverity rollbackPreference, TimeSpan timeout)
         {
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the PSTransaction class using a CommittableTransaction
+        /// Initializes a new instance of the PSTransaction class using a CommittableTransaction.
         /// </summary>
         internal PSTransaction(CommittableTransaction transaction, RollbackSeverity severity)
         {
@@ -58,12 +58,12 @@ namespace System.Management.Automation
         private CommittableTransaction _transaction;
 
         /// <summary>
-        /// Gets the rollback preference for this transaction
+        /// Gets the rollback preference for this transaction.
         /// </summary>
         public RollbackSeverity RollbackPreference { get; }
 
         /// <summary>
-        /// Gets the number of subscribers to this transaction
+        /// Gets the number of subscribers to this transaction.
         /// </summary>
         public int SubscriberCount
         {
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Activates the transaction held by this PSTransaction
+        /// Activates the transaction held by this PSTransaction.
         /// </summary>
         internal void Activate()
         {
@@ -114,7 +114,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Commits the transaction held by this PSTransaction
+        /// Commits the transaction held by this PSTransaction.
         /// </summary>
         internal void Commit()
         {
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Rolls back the transaction held by this PSTransaction
+        /// Rolls back the transaction held by this PSTransaction.
         /// </summary>
         internal void Rollback()
         {
@@ -166,7 +166,7 @@ namespace System.Management.Automation
         internal bool IsCommitted { get; set; } = false;
 
         /// <summary>
-        /// Destructor for the PSTransaction class
+        /// Destructor for the PSTransaction class.
         /// </summary>
         ~PSTransaction()
         {
@@ -202,12 +202,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Supports the transaction management infrastructure for the PowerShell engine
+    /// Supports the transaction management infrastructure for the PowerShell engine.
     /// </summary>
     public sealed class PSTransactionContext : IDisposable
     {
         /// <summary>
-        /// Initializes a new instance of the PSTransactionManager class
+        /// Initializes a new instance of the PSTransactionManager class.
         /// </summary>
         internal PSTransactionContext(PSTransactionManager transactionManager)
         {
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         private PSTransactionManager _transactionManager;
 
         /// <summary>
-        /// Destructor for the PSTransactionManager class
+        /// Destructor for the PSTransactionManager class.
         /// </summary>
         ~PSTransactionContext()
         {
@@ -257,17 +257,17 @@ namespace System.Management.Automation
     public enum RollbackSeverity
     {
         /// <summary>
-        /// Non-terminating errors or worse
+        /// Non-terminating errors or worse.
         /// </summary>
         Error,
 
         /// <summary>
-        /// Terminating errors or worse
+        /// Terminating errors or worse.
         /// </summary>
         TerminatingError,
 
         /// <summary>
-        /// Do not rollback the transaction on error
+        /// Do not rollback the transaction on error.
         /// </summary>
         Never
     }
@@ -276,12 +276,12 @@ namespace System.Management.Automation
 namespace System.Management.Automation.Internal
 {
     /// <summary>
-    /// Supports the transaction management infrastructure for the PowerShell engine
+    /// Supports the transaction management infrastructure for the PowerShell engine.
     /// </summary>
     internal sealed class PSTransactionManager : IDisposable
     {
         /// <summary>
-        /// Initializes a new instance of the PSTransactionManager class
+        /// Initializes a new instance of the PSTransactionManager class.
         /// </summary>
         internal PSTransactionManager()
         {
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Internal
         private static bool s_engineProtectionEnabled = false;
 
         /// <summary>
-        /// Gets the rollback preference for the active transaction
+        /// Gets the rollback preference for the active transaction.
         /// </summary>
         internal RollbackSeverity RollbackPreference
         {
@@ -505,7 +505,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Sets the base transaction; any transactions created thereafter will be nested to this instance
+        /// Sets the base transaction; any transactions created thereafter will be nested to this instance.
         /// </summary>
         internal void SetBaseTransaction(CommittableTransaction transaction, RollbackSeverity severity)
         {
@@ -528,7 +528,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Removes the transaction added by SetBaseTransaction
+        /// Removes the transaction added by SetBaseTransaction.
         /// </summary>
         internal void ClearBaseTransaction()
         {
@@ -550,7 +550,7 @@ namespace System.Management.Automation.Internal
         private PSTransaction _baseTransaction;
 
         /// <summary>
-        /// Returns the current engine transaction
+        /// Returns the current engine transaction.
         /// </summary>
         internal PSTransaction GetCurrent()
         {
@@ -663,7 +663,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Destructor for the PSTransactionManager class
+        /// Destructor for the PSTransactionManager class.
         /// </summary>
         ~PSTransactionManager()
         {

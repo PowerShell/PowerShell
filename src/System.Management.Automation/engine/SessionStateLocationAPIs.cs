@@ -159,7 +159,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Changes the current working directory to the path specified
+        /// Changes the current working directory to the path specified.
         /// </summary>
         /// <param name="path">
         /// The path of the new current working directory
@@ -1022,7 +1022,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the default stack ID to the specified stack ID
+        /// Sets the default stack ID to the specified stack ID.
         /// </summary>
         /// <param name="stackName">
         /// The stack ID to be used as the default.

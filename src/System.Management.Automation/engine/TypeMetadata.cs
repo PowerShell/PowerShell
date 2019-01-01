@@ -136,7 +136,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Specifies if this parameter takes all the remaining unbound
-        /// arguments that were specified
+        /// arguments that were specified.
         /// </summary>
         /// <value></value>
         public bool ValueFromRemainingArguments
@@ -284,7 +284,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor used by rehydration
+        /// Constructor used by rehydration.
         /// </summary>
         internal ParameterSetMetadata(
             int position,
@@ -476,7 +476,7 @@ namespace System.Management.Automation
         /// <summary>
         /// An internal constructor which constructs a ParameterMetadata object
         /// from compiled command parameter metadata. ParameterMetadata
-        /// is a proxy written on top of CompiledCommandParameter
+        /// is a proxy written on top of CompiledCommandParameter.
         /// </summary>
         /// <param name="cmdParameterMD">
         /// Internal CompiledCommandParameter metadata
@@ -490,7 +490,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor used by implicit remoting
+        /// Constructor used by implicit remoting.
         /// </summary>
         internal ParameterMetadata(
             Collection<string> aliases,
@@ -512,7 +512,7 @@ namespace System.Management.Automation
         #region Public Methods/Properties
 
         /// <summary>
-        /// Gets the name of the parameter
+        /// Gets the name of the parameter.
         /// </summary>
         public string Name
         {
@@ -560,7 +560,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Specifies if the parameter is Dynamic
+        /// Specifies if the parameter is Dynamic.
         /// </summary>
         public bool IsDynamic
         {
@@ -569,7 +569,7 @@ namespace System.Management.Automation
             set { _isDynamic = value; }
         }
         /// <summary>
-        /// Specifies the alias names for this parameter
+        /// Specifies the alias names for this parameter.
         /// </summary>
         public Collection<string> Aliases
         {
@@ -591,7 +591,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Specifies if the parameter is a SwitchParameter
+        /// Specifies if the parameter is a SwitchParameter.
         /// </summary>
         public bool SwitchParameter
         {
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// The metadata associated with a bindable type
+    /// The metadata associated with a bindable type.
     /// </summary>
     internal class InternalParameterMetadata
     {
@@ -1228,7 +1228,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Gets the type name of the bindable type
+        /// Gets the type name of the bindable type.
         /// </summary>
         internal string TypeName { get; } = string.Empty;
 
@@ -1257,14 +1257,14 @@ namespace System.Management.Automation
         private Type _type;
 
         /// <summary>
-        /// The flags used when reflecting against the object to create the metadata
+        /// The flags used when reflecting against the object to create the metadata.
         /// </summary>
         internal static readonly BindingFlags metaDataBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
         #region helper methods
 
         /// <summary>
-        /// Fills in the data for an instance of this class using the specified runtime-defined parameters
+        /// Fills in the data for an instance of this class using the specified runtime-defined parameters.
         /// </summary>
         /// <param name="runtimeDefinedParameters">
         /// A description of the parameters and their metadata.
@@ -1465,7 +1465,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines if the specified member represents a parameter based on its attributes
+        /// Determines if the specified member represents a parameter based on its attributes.
         /// </summary>
         /// <param name="member">
         /// The member to check to see if it is a parameter.

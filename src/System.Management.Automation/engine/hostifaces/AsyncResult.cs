@@ -8,7 +8,7 @@ namespace System.Management.Automation.Runspaces
 {
     /// <summary>
     /// Base class for AsyncResult objects that are returned by various
-    /// Async operations supported by RunspacePool , PowerShell types
+    /// Async operations supported by RunspacePool , PowerShell types.
     /// </summary>
     internal class AsyncResult : IAsyncResult
     {
@@ -28,7 +28,7 @@ namespace System.Management.Automation.Runspaces
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="ownerId">
         /// Instance Id of the object creating this instance
@@ -52,7 +52,7 @@ namespace System.Management.Automation.Runspaces
         #region IAsync Overrides
 
         /// <summary>
-        /// This always returns false
+        /// This always returns false.
         /// </summary>
         public bool CompletedSynchronously
         {
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
         internal AsyncCallback Callback { get; }
 
         /// <summary>
-        /// SyncObject
+        /// SyncObject.
         /// </summary>
         internal object SyncObject { get; } = new object();
 

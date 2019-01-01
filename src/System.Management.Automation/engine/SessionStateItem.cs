@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -20,7 +20,7 @@ namespace System.Management.Automation
         #region GetItem
 
         /// <summary>
-        /// Gets the specified object
+        /// Gets the specified object.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the object(s). They can be either a relative (most common)
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the specified object
+        /// Gets the specified object.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the object(s). They can be either a relative (most common)
@@ -356,7 +356,7 @@ namespace System.Management.Automation
         #region SetItem
 
         /// <summary>
-        /// Gets the specified object
+        /// Gets the specified object.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the object. It can be either a relative (most common)
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the specified object to the specified value
+        /// Sets the specified object to the specified value.
         /// </summary>
         /// <param name="paths">
         /// The path(s) to the object. It can be either a relative (most common)

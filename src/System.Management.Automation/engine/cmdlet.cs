@@ -110,7 +110,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the parameter set
+        /// Sets the parameter set.
         /// </summary>
         /// <param name="parameterSetName">
         /// The name of the valid parameter set.
@@ -417,7 +417,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display verbose information
+        /// Display verbose information.
         /// </summary>
         /// <param name="text">Verbose output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -454,7 +454,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display warning information
+        /// Display warning information.
         /// </summary>
         /// <param name="text">Warning output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -528,7 +528,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display progress information
+        /// Display progress information.
         /// </summary>
         /// <param name="progressRecord">Progress information.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -567,7 +567,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Displays progress output if enabled
+        /// Displays progress output if enabled.
         /// </summary>
         /// <param name="sourceId">
         /// Identifies which command is reporting progress
@@ -599,7 +599,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display debug information
+        /// Display debug information.
         /// </summary>
         /// <param name="text">Debug output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -1659,7 +1659,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public PSTransactionContext CurrentPSTransaction
@@ -1678,7 +1678,7 @@ namespace System.Management.Automation
 
         #region ThrowTerminatingError
         /// <summary>
-        /// Terminate the command and report an error
+        /// Terminate the command and report an error.
         /// </summary>
         /// <param name="errorRecord">
         /// The error which caused the command to be terminated
