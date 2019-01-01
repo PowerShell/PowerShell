@@ -209,7 +209,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts an object to a string adn, if the string is not empty, adds it to the list
+        /// Converts an object to a string adn, if the string is not empty, adds it to the list.
         /// </summary>
         /// <param name="list">The list to update.</param>
         /// <param name="obj">The object to convert to a string...</param>

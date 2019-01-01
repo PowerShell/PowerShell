@@ -142,7 +142,7 @@ namespace System.Management.Automation
         // will clean the cached ErrorRecord and erase any other changes,
         // so the ErrorId etc. should be set first.
         /// <summary>
-        /// Additional information about the error
+        /// Additional information about the error.
         /// </summary>
         /// <value></value>
         /// <remarks>
