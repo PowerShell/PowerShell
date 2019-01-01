@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.PSTraceSource.GetTracer("FileSystemProvider", "The namespace navigation provider for the file system");
 
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "FileSystem";
 
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// overrides the method of CmdletProvider, considering the additional
-        /// dynamic parameters of FileSystemProvider
+        /// dynamic parameters of FileSystemProvider.
         /// </summary>
         /// <returns>
         /// whether the filter or attribute filter is set.
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Implementation of ICmdletProviderSupportsHelp interface.
-        /// Gets provider-specific help content for the corresponding cmdlet
+        /// Gets provider-specific help content for the corresponding cmdlet.
         /// </summary>
         /// <param name="helpItemName">
         /// Name of command that the help is requested for.
@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Return the UNC path for a given network drive
-        /// using the Windows API
+        /// using the Windows API.
         /// </summary>
         /// <param name="driveName"></param>
         /// <returns></returns>
@@ -1008,7 +1008,7 @@ namespace Microsoft.PowerShell.Commands
         #region ItemCmdletProvider methods
 
         /// <summary>
-        /// Retrieves the dynamic parameters required for the Get-Item cmdlet
+        /// Retrieves the dynamic parameters required for the Get-Item cmdlet.
         /// </summary>
         /// <param name="path">The path of the file to process.</param>
         /// <returns>An instance of the FileSystemProviderGetItemDynamicParameters class that represents the dynamic parameters.</returns>
@@ -1020,7 +1020,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines if the specified path is syntactically and semantically valid.
         /// An example path looks like this
-        ///     C:\WINNT\Media\chimes.wav
+        ///     C:\WINNT\Media\chimes.wav.
         /// </summary>
         /// <param name="path">
         /// The fully qualified path to validate.
@@ -1829,7 +1829,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Provides a mode property for FileSystemInfo
+        /// Provides a mode property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
@@ -2496,7 +2496,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Creates a directory at the specified path
+        /// Creates a directory at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path of the directory to create
@@ -2794,7 +2794,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieves the dynamic parameters required for the Remove-Item cmdlet
+        /// Retrieves the dynamic parameters required for the Remove-Item cmdlet.
         /// </summary>
         /// <param name="path">The path of the file to process.</param>
         /// <param name="recurse">Whether to recurse into containers.</param>
@@ -3120,7 +3120,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implementation of ItemExists for the provider. This implementation
         /// allows the caller to decide if it wants to WriteError or not based
-        /// on the returned ErrorRecord
+        /// on the returned ErrorRecord.
         /// </summary>
         /// <param name="path">
         /// The path of the object to check
@@ -4766,7 +4766,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the specified path is either a drive root or a UNC root
+        /// Determines if the specified path is either a drive root or a UNC root.
         /// </summary>
         /// <param name="path">
         /// The path
@@ -5190,7 +5190,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get the common base path of two paths
+        /// Get the common base path of two paths.
         /// </summary>
         /// <param name="path1">One path.</param>
         /// <param name="path2">Another path.</param>
@@ -5216,7 +5216,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Tokenizes the specified path onto a stack
+        /// Tokenizes the specified path onto a stack.
         /// </summary>
         /// <param name="path">
         /// The path to tokenize.
@@ -5377,7 +5377,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Pops each leaf element of the stack and uses MakePath to generate the relative path
+        /// Pops each leaf element of the stack and uses MakePath to generate the relative path.
         /// </summary>
         /// <param name="normalizedPathStack">
         /// The stack containing the leaf elements of the path.
@@ -7038,7 +7038,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Managed equivalent of NETRESOURCE structure of WNet API
+        /// Managed equivalent of NETRESOURCE structure of WNet API.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         private struct NetResource
@@ -7066,7 +7066,7 @@ namespace Microsoft.PowerShell.Commands
             private HashSet<(UInt64, UInt64)> _visitations;
 
             /// <summary>
-            /// Construct a new InodeTracker with an initial path
+            /// Construct a new InodeTracker with an initial path.
             /// </summary>
             internal InodeTracker(string path)
             {
@@ -7190,12 +7190,12 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Defines the container cmdlet dynamic providers
+    /// Defines the container cmdlet dynamic providers.
     /// </summary>
     internal sealed class GetChildDynamicParameters
     {
         /// <summary>
-        /// Gets or sets the attribute filtering enum evaluator
+        /// Gets or sets the attribute filtering enum evaluator.
         /// </summary>
         [Parameter]
         public FlagsExpression<FileAttributes> Attributes { get; set; }
@@ -7207,7 +7207,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter FollowSymlink { get; set; }
 
         /// <summary>
-        /// Gets or sets the filter directory flag
+        /// Gets or sets the filter directory flag.
         /// </summary>
         [Parameter]
         [Alias("ad", "d")]
@@ -7221,7 +7221,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _attributeDirectory;
 
         /// <summary>
-        /// Gets or sets the filter file flag
+        /// Gets or sets the filter file flag.
         /// </summary>
         [Parameter]
         [Alias("af")]
@@ -7235,7 +7235,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _attributeFile;
 
         /// <summary>
-        /// Gets or sets the filter hidden flag
+        /// Gets or sets the filter hidden flag.
         /// </summary>
         [Parameter]
         [Alias("ah", "h")]
@@ -7249,7 +7249,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _attributeHidden;
 
         /// <summary>
-        /// Gets or sets the filter readonly flag
+        /// Gets or sets the filter readonly flag.
         /// </summary>
         [Parameter]
         [Alias("ar")]
@@ -7263,7 +7263,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _attributeReadOnly;
 
         /// <summary>
-        /// Gets or sets the filter system flag
+        /// Gets or sets the filter system flag.
         /// </summary>
         [Parameter]
         [Alias("as")]
@@ -7308,7 +7308,7 @@ namespace Microsoft.PowerShell.Commands
         private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
-        /// Return file contents as a byte stream or create file from a series of bytes
+        /// Return file contents as a byte stream or create file from a series of bytes.
         /// </summary>
         [Parameter]
         public SwitchParameter AsByteStream { get; set; }
@@ -7457,7 +7457,7 @@ namespace Microsoft.PowerShell.Commands
         public DateTime? OlderThan { get; set; }
 
         /// <summary>
-        /// A parameter to test if a file is newer than a certain time or date
+        /// A parameter to test if a file is newer than a certain time or date.
         /// </summary>
         [Parameter]
         public DateTime? NewerThan { get; set; }
@@ -8220,14 +8220,14 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Provides access to alternate data streams on a file
+    /// Provides access to alternate data streams on a file.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
         Justification = "Needed by both the FileSystem provider and Unblock-File cmdlet.")]
     public static class AlternateDataStreamUtilities
     {
         /// <summary>
-        /// List all of the streams on a file
+        /// List all of the streams on a file.
         /// </summary>
         /// <param name="path">The fully-qualified path to the file.</param>
         /// <returns>The list of streams (and their size) in the file.</returns>
@@ -8279,7 +8279,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Creates a file stream on a file
+        /// Creates a file stream on a file.
         /// </summary>
         /// <param name="path">The fully-qualified path to the file.</param>
         /// <param name="streamName">The name of the alternate data stream to open.</param>

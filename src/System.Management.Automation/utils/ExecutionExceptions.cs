@@ -25,7 +25,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Instantiates a new instance of the CmdletInvocationException class
+        /// Instantiates a new instance of the CmdletInvocationException class.
         /// </summary>
         /// <param name="errorRecord"></param>
         internal CmdletInvocationException(ErrorRecord errorRecord)
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the CmdletInvocationException class
+        /// Instantiates a new instance of the CmdletInvocationException class.
         /// </summary>
         /// <param name="innerException">Wrapped exception.</param>
         /// <param name="invocationInfo">
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the CmdletInvocationException class
+        /// Instantiates a new instance of the CmdletInvocationException class.
         /// </summary>
         public CmdletInvocationException()
             : base()
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the CmdletInvocationException class
+        /// Instantiates a new instance of the CmdletInvocationException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -103,7 +103,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the CmdletInvocationException class
+        /// Instantiates a new instance of the CmdletInvocationException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -156,7 +156,7 @@ namespace System.Management.Automation
 
         #region Properties
         /// <summary>
-        /// The error reported by the cmdlet
+        /// The error reported by the cmdlet.
         /// </summary>
         /// <value>never null</value>
         public override ErrorRecord ErrorRecord
@@ -194,7 +194,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Instantiates a new instance of the CmdletProviderInvocationException class
+        /// Instantiates a new instance of the CmdletProviderInvocationException class.
         /// </summary>
         /// <param name="innerException">Wrapped exception.</param>
         /// <param name="myInvocation">
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the CmdletProviderInvocationException class
+        /// Instantiates a new instance of the CmdletProviderInvocationException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public CmdletProviderInvocationException()
@@ -239,7 +239,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the CmdletProviderInvocationException class
+        /// Instantiates a new instance of the CmdletProviderInvocationException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -249,7 +249,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the CmdletProviderInvocationException class
+        /// Instantiates a new instance of the CmdletProviderInvocationException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -264,7 +264,7 @@ namespace System.Management.Automation
 
         #region Properties
         /// <summary>
-        /// InnerException as ProviderInvocationException
+        /// InnerException as ProviderInvocationException.
         /// </summary>
         /// <value>ProviderInvocationException</value>
         public ProviderInvocationException ProviderInvocationException
@@ -327,7 +327,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Instantiates a new instance of the PipelineStoppedException class
+        /// Instantiates a new instance of the PipelineStoppedException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public PipelineStoppedException()
@@ -354,7 +354,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the PipelineStoppedException class
+        /// Instantiates a new instance of the PipelineStoppedException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the PipelineStoppedException class
+        /// Instantiates a new instance of the PipelineStoppedException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -390,7 +390,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Instantiates a new instance of the PipelineClosedException class
+        /// Instantiates a new instance of the PipelineClosedException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public PipelineClosedException()
@@ -399,7 +399,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the PipelineClosedException class
+        /// Instantiates a new instance of the PipelineClosedException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -409,7 +409,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the PipelineClosedException class
+        /// Instantiates a new instance of the PipelineClosedException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -453,7 +453,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Instantiates a new instance of the ActionPreferenceStopException class
+        /// Instantiates a new instance of the ActionPreferenceStopException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public ActionPreferenceStopException()
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ActionPreferenceStopException class
+        /// Instantiates a new instance of the ActionPreferenceStopException class.
         /// </summary>
         /// <param name="error">
         /// Non-terminating error which triggered the Stop
@@ -480,7 +480,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ActionPreferenceStopException class
+        /// Instantiates a new instance of the ActionPreferenceStopException class.
         /// </summary>
         /// <param name="invocationInfo"></param>
         /// <param name="message"></param>
@@ -492,7 +492,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ActionPreferenceStopException class
+        /// Instantiates a new instance of the ActionPreferenceStopException class.
         /// </summary>
         internal ActionPreferenceStopException(InvocationInfo invocationInfo,
                                                ErrorRecord errorRecord,
@@ -561,7 +561,7 @@ namespace System.Management.Automation
         #endregion Serialization
 
         /// <summary>
-        /// Instantiates a new instance of the ActionPreferenceStopException class
+        /// Instantiates a new instance of the ActionPreferenceStopException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -580,7 +580,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ActionPreferenceStopException class
+        /// Instantiates a new instance of the ActionPreferenceStopException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -656,7 +656,7 @@ namespace System.Management.Automation
 #pragma warning restore 56506
 
         /// <summary>
-        /// Instantiates a new instance of the ParentContainsErrorRecordException class
+        /// Instantiates a new instance of the ParentContainsErrorRecordException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ParentContainsErrorRecordException class
+        /// Instantiates a new instance of the ParentContainsErrorRecordException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public ParentContainsErrorRecordException()
@@ -675,7 +675,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ParentContainsErrorRecordException class
+        /// Instantiates a new instance of the ParentContainsErrorRecordException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -706,7 +706,7 @@ namespace System.Management.Automation
         }
         #endregion Serialization
         /// <summary>
-        /// Gets the message for the exception
+        /// Gets the message for the exception.
         /// </summary>
         public override string Message
         {
@@ -755,7 +755,7 @@ namespace System.Management.Automation
     {
         #region constructors
         /// <summary>
-        /// Instantiates a new instance of the RedirectedException class
+        /// Instantiates a new instance of the RedirectedException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public RedirectedException()
@@ -766,7 +766,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the RedirectedException class
+        /// Instantiates a new instance of the RedirectedException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -778,7 +778,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the RedirectedException class
+        /// Instantiates a new instance of the RedirectedException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -827,7 +827,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Instantiates a new instance of the ScriptCallDepthException class
+        /// Instantiates a new instance of the ScriptCallDepthException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public ScriptCallDepthException()
@@ -836,7 +836,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ScriptCallDepthException class
+        /// Instantiates a new instance of the ScriptCallDepthException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -846,7 +846,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the ScriptCallDepthException class
+        /// Instantiates a new instance of the ScriptCallDepthException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -936,7 +936,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Instantiates a new instance of the PipelineDepthException class
+        /// Instantiates a new instance of the PipelineDepthException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public PipelineDepthException()
@@ -945,7 +945,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the PipelineDepthException class
+        /// Instantiates a new instance of the PipelineDepthException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -955,7 +955,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the PipelineDepthException class
+        /// Instantiates a new instance of the PipelineDepthException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -1053,7 +1053,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Instantiates a new instance of the HaltCommandException class
+        /// Instantiates a new instance of the HaltCommandException class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public HaltCommandException()
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the HaltCommandException class
+        /// Instantiates a new instance of the HaltCommandException class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -1072,7 +1072,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Instantiates a new instance of the HaltCommandException class
+        /// Instantiates a new instance of the HaltCommandException class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>

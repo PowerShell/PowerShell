@@ -176,12 +176,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the signature type of the signature
+        /// Returns the signature type of the signature.
         /// </summary>
         public SignatureType SignatureType { get; internal set; }
 
         /// <summary>
-        /// True if the item is signed as part of an operating system release
+        /// True if the item is signed as part of an operating system release.
         /// </summary>
         public bool IsOSBinary { get; internal set; }
 
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class Signature
         ///
-        /// Call this ctor when creating an invalid signature object
+        /// Call this ctor when creating an invalid signature object.
         /// </summary>
         /// <param name="filePath">This signature is found in this file.</param>
         /// <param name="error">Win32 error code.</param>
@@ -246,7 +246,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class Signature
         ///
-        /// Call this ctor when creating an invalid signature object
+        /// Call this ctor when creating an invalid signature object.
         /// </summary>
         /// <param name="filePath">This signature is found in this file.</param>
         /// <param name="error">Win32 error code.</param>

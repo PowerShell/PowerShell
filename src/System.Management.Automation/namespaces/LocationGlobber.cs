@@ -45,7 +45,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructs an instance of the LocationGlobber from the current SessionState
+        /// Constructs an instance of the LocationGlobber from the current SessionState.
         /// </summary>
         /// <param name="sessionState">
         /// The instance of session state on which this location globber acts.
@@ -1454,7 +1454,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines if the given path is relative or absolute
+        /// Determines if the given path is relative or absolute.
         /// </summary>
         /// <param name="path">
         /// The path used in the determination
@@ -1542,7 +1542,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines if the given path is relative or absolute
+        /// Determines if the given path is relative or absolute.
         /// </summary>
         /// <param name="path">
         /// The path used in the determination
@@ -1998,7 +1998,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Builds a provider specific path from the current working
-        /// directory using the specified relative path
+        /// directory using the specified relative path.
         /// </summary>
         /// <param name="drive">
         /// The drive to generate the provider specific path from.
@@ -2291,7 +2291,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Uses the drive and a relative working path to construct
-        /// a string which has a fully qualified provider specific path
+        /// a string which has a fully qualified provider specific path.
         /// </summary>
         /// <param name="drive">
         /// The drive to use as the root of the path.
@@ -3141,7 +3141,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the drive qualifier from a drive qualified MSH path
+        /// Removes the drive qualifier from a drive qualified MSH path.
         /// </summary>
         /// <param name="path">
         /// The path to remove the drive qualifier from.
@@ -3243,7 +3243,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the provider qualifier from a provider-qualified MSH path
+        /// Removes the provider qualifier from a provider-qualified MSH path.
         /// </summary>
         /// <param name="path">
         /// The path to remove the provider qualifier from.
@@ -4094,7 +4094,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the child names in the specified path by using the provider
+        /// Gets the child names in the specified path by using the provider.
         /// </summary>
         /// <param name="dir">
         /// The path of the directory to get the child names from. If this is an Msh Path,

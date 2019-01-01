@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell
     /// Defines the available configuration scopes for an execution
     /// policy. They are in the following priority, with successive
     /// elements overriding the items that precede them:
-    /// LocalMachine -> CurrentUser -> Runspace
+    /// LocalMachine -> CurrentUser -> Runspace.
     /// </summary>
     public enum ExecutionPolicyScope
     {
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell
 namespace System.Management.Automation.Internal
 {
     /// <summary>
-    /// The SAFER policy associated with this file
+    /// The SAFER policy associated with this file.
     /// </summary>
     internal enum SaferPolicy
     {
@@ -112,7 +112,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// Security Support APIs
+    /// Security Support APIs.
     /// </summary>
     public static class SecuritySupport
     {
@@ -214,7 +214,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// A value indicating that the current process was launched by GPScript.exe
-        /// Used to determine execution policy when group policies are in effect
+        /// Used to determine execution policy when group policies are in effect.
         /// </summary>
         /// <remarks>
         /// This is somewhat expensive to determine and does not change within the lifetime of the current process
@@ -372,7 +372,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Returns true if file has product binary signature
+        /// Returns true if file has product binary signature.
         /// </summary>
         /// <param name="file">Name of file to check.</param>
         /// <returns>True when file has product binary signature.</returns>
@@ -482,7 +482,7 @@ namespace System.Management.Automation.Internal
         private static bool _saferIdentifyLevelApiSupported = true;
 
         /// <summary>
-        /// Get the pass / fail result of calling the SAFER API
+        /// Get the pass / fail result of calling the SAFER API.
         /// </summary>
         /// <param name="path">The path to the file in question.</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
@@ -578,7 +578,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// throw if file does not exist
+        /// throw if file does not exist.
         /// </summary>
         /// <param name="filePath">Path to file.</param>
         /// <returns>Does not return a value.</returns>
@@ -592,7 +592,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// check to see if the specified cert is suitable to be
-        /// used as a code signing cert
+        /// used as a code signing cert.
         /// </summary>
         /// <param name="c">Certificate object.</param>
         /// <returns>True on success, false otherwise.</returns>
@@ -656,7 +656,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// check if the specified cert has a private key in it
+        /// check if the specified cert has a private key in it.
         /// </summary>
         /// <param name="cert">Certificate object.</param>
         /// <returns>True on success, false otherwise.</returns>
@@ -666,7 +666,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Get the EKUs of a cert
+        /// Get the EKUs of a cert.
         /// </summary>
         /// <param name="cert">Certificate object.</param>
         /// <returns>A collection of cert eku strings.</returns>
@@ -724,7 +724,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// convert an int to a DWORD
+        /// convert an int to a DWORD.
         /// </summary>
         /// <param name="n">Signed int number.</param>
         /// <returns>DWORD.</returns>
@@ -735,7 +735,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// convert a DWORD to int
+        /// convert a DWORD to int.
         /// </summary>
         /// <param name="n">Number.</param>
         /// <returns>Int.</returns>
@@ -747,7 +747,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// information used for filtering a set of certs
+    /// information used for filtering a set of certs.
     /// </summary>
     internal sealed class CertificateFilterInfo
     {
@@ -756,7 +756,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// purpose of a certificate
+        /// purpose of a certificate.
         /// </summary>
         internal CertificatePurpose Purpose
         {
@@ -766,7 +766,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// SSL Server Authentication
+        /// SSL Server Authentication.
         /// </summary>
         internal bool SSLServerAuthentication
         {
@@ -776,7 +776,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// DNS name of a certificate
+        /// DNS name of a certificate.
         /// </summary>
         internal string DnsName
         {
@@ -784,7 +784,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// EKU OID list of a certificate
+        /// EKU OID list of a certificate.
         /// </summary>
         internal string[] Eku
         {
@@ -792,7 +792,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// remaining validity period in days for a certificate
+        /// remaining validity period in days for a certificate.
         /// </summary>
         internal int ExpiringInDays
         {
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// combine properties into a filter string
+        /// combine properties into a filter string.
         /// </summary>
         internal string FilterString
         {
@@ -970,7 +970,7 @@ namespace System.Management.Automation
     using System.Security.Cryptography.Pkcs;
 
     /// <summary>
-    /// Utility class for CMS (Cryptographic Message Syntax) related operations
+    /// Utility class for CMS (Cryptographic Message Syntax) related operations.
     /// </summary>
     internal static class CmsUtils
     {
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation
         internal static string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
 
         /// <summary>
-        /// Adds Ascii armour to a byte stream in Base64 format
+        /// Adds Ascii armour to a byte stream in Base64 format.
         /// </summary>
         /// <param name="bytes">The bytes to encode.</param>
         internal static string GetAsciiArmor(byte[] bytes)
@@ -1043,7 +1043,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes Ascii armour from a byte stream
+        /// Removes Ascii armour from a byte stream.
         /// </summary>
         /// <param name="actualContent">The Ascii armored content.</param>
         /// <param name="beginMarker">The marker of the start of the Base64 content.</param>
@@ -1085,12 +1085,12 @@ namespace System.Management.Automation
     public class CmsMessageRecipient
     {
         /// <summary>
-        /// Creates an instance of the CmsMessageRecipient class
+        /// Creates an instance of the CmsMessageRecipient class.
         /// </summary>
         internal CmsMessageRecipient() { }
 
         /// <summary>
-        /// Creates an instance of the CmsMessageRecipient class
+        /// Creates an instance of the CmsMessageRecipient class.
         /// </summary>
         /// <param name="identifier">
         ///     The identifier of the CmsMessageRecipient.
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation
         private string _identifier = null;
 
         /// <summary>
-        /// Creates an instance of the CmsMessageRecipient class
+        /// Creates an instance of the CmsMessageRecipient class.
         /// </summary>
         /// <param name="certificate">The certificate to use.</param>
         public CmsMessageRecipient(X509Certificate2 certificate)
@@ -1121,7 +1121,7 @@ namespace System.Management.Automation
         private X509Certificate2 _pendingCertificate = null;
 
         /// <summary>
-        /// Gets the certificate associated with this recipient
+        /// Gets the certificate associated with this recipient.
         /// </summary>
         public X509Certificate2Collection Certificates
         {
@@ -1473,17 +1473,17 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the purpose for resolution of a CmsMessageRecipient
+    /// Defines the purpose for resolution of a CmsMessageRecipient.
     /// </summary>
     public enum ResolutionPurpose
     {
         /// <summary>
-        /// This message recipient is intended to be used for message encryption
+        /// This message recipient is intended to be used for message encryption.
         /// </summary>
         Encryption,
 
         /// <summary>
-        /// This message recipient is intended to be used for message decryption
+        /// This message recipient is intended to be used for message decryption.
         /// </summary>
         Decryption
     }
@@ -1696,7 +1696,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Uninitialize the AMSI interface
+        /// Uninitialize the AMSI interface.
         /// </summary>
         internal static void Uninitialize()
         {

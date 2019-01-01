@@ -53,7 +53,7 @@ namespace System.Management.Automation
         public CommandNotFoundException() : base() {; }
 
         /// <summary>
-        /// Constructs a CommandNotFoundException
+        /// Constructs a CommandNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         public CommandNotFoundException(string message) : base(message) {; }
 
         /// <summary>
-        /// Constructs a CommandNotFoundException
+        /// Constructs a CommandNotFoundException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -73,7 +73,7 @@ namespace System.Management.Automation
 
         #region Serialization
         /// <summary>
-        /// Serialization constructor for class CommandNotFoundException
+        /// Serialization constructor for class CommandNotFoundException.
         /// </summary>
         /// <param name="info">
         /// serialization information
@@ -337,12 +337,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an PSVersionNotCompatibleException
+        /// Constructs an PSVersionNotCompatibleException.
         /// </summary>
         public ScriptRequiresException() : base() {; }
 
         /// <summary>
-        /// Constructs an PSVersionNotCompatibleException
+        /// Constructs an PSVersionNotCompatibleException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -350,7 +350,7 @@ namespace System.Management.Automation
         public ScriptRequiresException(string message) : base(message) {; }
 
         /// <summary>
-        /// Constructs an PSVersionNotCompatibleException
+        /// Constructs an PSVersionNotCompatibleException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -419,7 +419,7 @@ namespace System.Management.Automation
         private string _commandName = string.Empty;
 
         /// <summary>
-        /// Gets the PSVersion that the script requires
+        /// Gets the PSVersion that the script requires.
         /// </summary>
         public Version RequiresPSVersion
         {
@@ -429,7 +429,7 @@ namespace System.Management.Automation
         private Version _requiresPSVersion;
 
         /// <summary>
-        /// Gets the missing snap-ins that the script requires
+        /// Gets the missing snap-ins that the script requires.
         /// </summary>
         public ReadOnlyCollection<string> MissingPSSnapIns
         {
@@ -449,7 +449,7 @@ namespace System.Management.Automation
         private string _requiresShellId;
 
         /// <summary>
-        /// Gets or sets the path to the incompatible shell
+        /// Gets or sets the path to the incompatible shell.
         /// </summary>
         public string RequiresShellPath
         {
