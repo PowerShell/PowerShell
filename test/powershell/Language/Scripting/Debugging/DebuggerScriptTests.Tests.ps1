@@ -498,7 +498,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         $moduleDirectory = [io.path]::Combine($moduleRoot, $moduleName)
         $moduleFile = [io.path]::Combine($moduleDirectory, $moduleName + ".psm1")
 
-        mkdir $moduleDirectory 2> $null
+        New-Item -ItemType Directory $moduleDirectory 2> $null
 
         write-output '
         function ModuleFunction1
