@@ -182,7 +182,7 @@ function Enable-PSWSManCombinedTrace
 
     if (!(Test-Path $pshome\Traces))
     {
-        New-Item -ItemType Directory -Force $pshome\Traces | out-null
+        mkdir -Force $pshome\Traces | out-null
     }
 
     if (Test-Path $logfile)

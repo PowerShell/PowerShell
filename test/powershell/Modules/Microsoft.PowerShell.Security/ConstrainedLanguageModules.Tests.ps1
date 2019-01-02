@@ -41,7 +41,7 @@ try
 
             $modulePathName = "modulePath_$(Get-Random -Max 9999)"
             $modulePath = Join-Path $testdrive $modulePathName
-            New-Item -ItemType Directory $modulePath
+            mkdir $modulePath
             $trustedModuleFile = Join-Path $modulePath "T1TestModule_System32.psm1"
             $script | Out-File -FilePath $trustedModuleFile
         }
@@ -175,7 +175,7 @@ try
             function PublicFnE {{ "PublicFnE"; PublicDSFnE }}
             function PrivateFnE {{ "PrivateFnE"; PrivateDSFnE }}
 '@ -f $dotSourceFilePathE | Out-File -FilePath $moduleFilePathE
-
+    
             # Module with dot source ps1 file and nested modules that do use Export-ModuleMember
             $scriptModuleNameF = "ModuleDotSourceNestedExport_System32"
             $moduleFilePathF = Join-Path $TestModulePath ($scriptModuleNameF + ".psm1")
@@ -467,7 +467,7 @@ try
                 $module = Import-Module -Name $manifestFileName -Force -PassThru
 
                 & $module PrivateFn
-
+                
                 throw "No Exception!"
             }
             catch
@@ -492,7 +492,7 @@ try
             $modulePath = Join-Path $TestDrive $moduleName
             New-Item -ItemType Directory -Path $modulePath
 
-            # Parent module directory
+            # Parent module directory 
             $scriptModuleName = "TrustedParentModule_System32"
             $scriptModulePath = Join-Path $modulePath $scriptModuleName
             $moduleFileName = Join-Path $scriptModulePath ($scriptModuleName + ".psm1")
@@ -554,7 +554,7 @@ try
 
                 # Private functions should not be available in the session
                 # Get-Command will import the TrustedImportModule_System32 module from the PSModulePath to find PrivateFn1
-                # However, it should not get TrustedImportModule_System32 from the module cache because it was loaded in a
+                # However, it should not get TrustedImportModule_System32 from the module cache because it was loaded in a 
                 # different language mode, and should instead re-load it (equivalent to Import-Module -Force)
                 $GetCommandPrivateFnCmdInfo = Get-Command -Name "PrivateFn1" 2>$null
             }
@@ -581,7 +581,7 @@ try
                 Import-Module -Name $scriptModuleName -Force
 
                 # Directly import nested TrustedImportModule_System32 module.
-                # This makes TrustedImportModule_System32 functions visible but should not use the existing loaded module
+                # This makes TrustedImportModule_System32 functions visible but should not use the existing loaded module 
                 # since all functions are visible, but instead should re-load the module with the correct language context,
                 # ensuring only explictly exported functions are visible.
                 Import-Module -Name $scriptModuleImportName
@@ -631,8 +631,8 @@ try
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
                 throw "No Exception!"
             }
-            catch
-            {
+            catch 
+            { 
                 $expectedError = $_
             }
             finally

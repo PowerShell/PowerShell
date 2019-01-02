@@ -301,8 +301,8 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class C { [int]foo() { try { throw "foo"} catch [ArgumentException] {} catch {throw $_} } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [int]foo() { try { throw "foo"} catch [ArgumentException] {return 1} catch {} } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [int]foo() { while ($false) { return 1 } } }' MethodHasCodePathNotReturn 15
-    ShouldBeParseError 'class C { [int]foo() { try { New-Item -ItemType Directory foo } finally { rm -rec foo } } }' MethodHasCodePathNotReturn 15
-    ShouldBeParseError 'class C { [int]foo() { try { New-Item -ItemType Directory foo; return 1 } catch { } } }' MethodHasCodePathNotReturn 15
+    ShouldBeParseError 'class C { [int]foo() { try { mkdir foo } finally { rm -rec foo } } }' MethodHasCodePathNotReturn 15
+    ShouldBeParseError 'class C { [int]foo() { try { mkdir foo; return 1 } catch { } } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [bool] Test() { if ($false) { return $true; } } }' MethodHasCodePathNotReturn 17
 
     ShouldBeParseError 'class C { [int]$i; [void] foo() {$i = 10} }' MissingThis 33
