@@ -46,7 +46,7 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
 
         if ($null -ne $breakpoint) { $breakpoint | remove-psbreakpoint }
         if (Test-Path $scriptFullName) { Remove-Item $scriptFullName -Force }
-        if ($null -ne (Get-PSDrive -Name tmpTestA1 2>$null)) { Remove-PSDrive -Name tmpTestA1 -Force }
+        if ($null -ne (Get-PSDrive -Name tmpTestA1 2> $null)) { Remove-PSDrive -Name tmpTestA1 -Force }
     }
 }
 

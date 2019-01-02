@@ -79,8 +79,8 @@ try
                 Import-Module -Name $trustedModuleName1 -Force -ErrorAction Stop;
 "@
                 $command += @'
-                $null = help NestedFn1 2>$null;
-                $result = Get-Command NestedFn1 2>$null;
+                $null = help NestedFn1 2> $null;
+                $result = Get-Command NestedFn1 2> $null;
                 return ($result -ne $null)
 '@
                 $isCommandAccessible = powershell.exe -noprofile -nologo -c $command

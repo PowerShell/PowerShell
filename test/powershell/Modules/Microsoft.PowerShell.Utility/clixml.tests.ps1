@@ -218,14 +218,14 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         $skipNotWindows = ! $shouldRunTest
         if ( $shouldRunTest )
         {
-            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
+            (Get-Process -Name 'win32calc','calculator' 2> $null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
     AfterAll {
         if ( $shouldRunTest )
         {
-            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
+            (Get-Process -Name 'win32calc','calculator' 2> $null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -238,7 +238,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         $count = 0
         while (!$calcProc -and ($count++ -lt 20))
         {
-            $calcProc = Get-Process -Name 'win32calc','calculator' 2>$null
+            $calcProc = Get-Process -Name 'win32calc','calculator' 2> $null
             Start-Sleep -Milliseconds 500
         }
 
