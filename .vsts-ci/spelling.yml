@@ -54,7 +54,7 @@ phases:
     displayName: Test Spelling
     condition: succeededOrFailed()
     
-   - bash: |
+  - bash: |
       find . -name \*.md -exec markdown-link-check {} \;
     displayName: Test Links
     condition: succeededOrFailed()
