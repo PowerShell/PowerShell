@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         #region CmdletProvider overrides
 
         /// <summary>
-        /// Starts the Registry provider. It sets the PathSeparator information
+        /// Starts the Registry provider. It sets the PathSeparator property.
         /// </summary>
         /// <param name="providerInfo">
         /// The ProviderInfo object that holds the provider's configuration.
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (providerInfo != null) 
             {
-                providerInfo.PathSeparator = new [] { "\\" };
+                providerInfo.PathSeparator = new[] { "\\" };
             }
 
             return providerInfo;

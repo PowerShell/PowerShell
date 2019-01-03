@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Starts the File System provider. This method sets the Home for the
         /// provider to providerInfo.Home if specified, and %USERPROFILE%
-        /// otherwise.
+        /// otherwise. It also sets the PathSeparator property.
         /// </summary>
         /// <param name="providerInfo">
         /// The ProviderInfo object that holds the provider's configuration.
@@ -356,9 +356,10 @@ namespace Microsoft.PowerShell.Commands
             // Set the home folder for the user
             if (providerInfo != null)
             {
-                providerInfo.PathSeparator = new [] { "\\" , "/" };
+                providerInfo.PathSeparator = new[] { "\\", "/" };
 
-                if (string.IsNullOrEmpty(providerInfo.Home)) {
+                if (string.IsNullOrEmpty(providerInfo.Home)) 
+                {
                     // %USERPROFILE% - indicate where a user's home directory is located in the file system.
                     string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
 
