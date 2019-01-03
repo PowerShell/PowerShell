@@ -260,12 +260,12 @@ namespace System.Management.Automation
         public bool VolumeSeparatedByColon { get; internal set; } = true;
         
         /// <summary>
-        /// Gets or sets the path separators characters for this provider
+        /// Gets the path separators characters for this provider.
         /// </summary>
         /// <returns>
-        /// Array of strings representing the path separators for this provider
+        /// Array of strings representing the path separators characters for this provider.
         /// </returns>
-        public string[] PathSeparator { get; internal set; } = {};
+        public string[] PathSeparator { get; internal set; } = { };
 
         /// <summary>
         /// Constructs an instance of the class using an existing reference
