@@ -33,7 +33,9 @@ Describe "Get-PSProvider" -Tags "CI" {
 
     Context 'Registry provider' {
         It 'has PathSeparator property' {
-            (Get-PSProvider Registry).PathSeparator | Should -Be @("\")
+            if ($IsWindows) {
+                (Get-PSProvider Registry).PathSeparator | Should -Be @("\")
+            }
         }
     }
 
