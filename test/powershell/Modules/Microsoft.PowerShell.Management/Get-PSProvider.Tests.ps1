@@ -24,4 +24,28 @@ Describe "Get-PSProvider" -Tags "CI" {
 
 	{ $actual | Format-List } | Should -Not -Throw
     }
+
+    Context 'FileSystem provider' {
+        It 'has PathSeparator property' {
+            (Get-PSProvider FileSystem).PathSeparator | Should -Be @("\", "/")
+        }
+    }
+
+    Context 'Registry provider' {
+        It 'has PathSeparator property' {
+            (Get-PSProvider Registry).PathSeparator | Should -Be @("\")
+        }
+    }
+
+    Context 'Variable provider' {
+        It 'has PathSeparator property' {
+            (Get-PSProvider Variable).PathSeparator | Should -Be @("\", "/")
+        }
+    }
+
+    Context 'Function provider' {
+        It 'has PathSeparator property' {
+            (Get-PSProvider Function).PathSeparator | Should -Be @("\", "/")
+        }
+    }
 }

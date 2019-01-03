@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region CmdletProvider members
         /// <summary>
-        /// Starts the File System provider.  This method sets the Home for the
+        /// Starts the File System provider. This method sets the Home for the
         /// provider to providerInfo.Home if specified, and %USERPROFILE%
         /// otherwise.
         /// </summary>
@@ -354,21 +354,25 @@ namespace Microsoft.PowerShell.Commands
         protected override ProviderInfo Start(ProviderInfo providerInfo)
         {
             // Set the home folder for the user
-            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home))
+            if (providerInfo != null)
             {
-                // %USERPROFILE% - indicate where a user's home directory is located in the file system.
-                string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
+                providerInfo.PathSeparator = new [] { "\\" , "/" };
 
-                if (!string.IsNullOrEmpty(homeDirectory))
-                {
-                    if (Directory.Exists(homeDirectory))
+                if (string.IsNullOrEmpty(providerInfo.Home)) {
+                    // %USERPROFILE% - indicate where a user's home directory is located in the file system.
+                    string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
+
+                    if (!string.IsNullOrEmpty(homeDirectory))
                     {
-                        s_tracer.WriteLine("Home = {0}", homeDirectory);
-                        providerInfo.Home = homeDirectory;
+                        if (Directory.Exists(homeDirectory))
+                        {
+                            s_tracer.WriteLine("Home = {0}", homeDirectory);
+                            providerInfo.Home = homeDirectory;
+                        }
+                        else
+                    {
+                            s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
                     }
-                    else
-                    {
-                        s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
                     }
                 }
             }
