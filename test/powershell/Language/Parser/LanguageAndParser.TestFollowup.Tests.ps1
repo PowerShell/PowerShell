@@ -306,6 +306,6 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
 
 Describe "Hashtable is case insensitive" -Tag CI {
     It "When LANG is C.UTF-8" -Skip:($IsWindows) {
-        sh -c 'LANG=C.UTF-8 pwsh -c ''$h=@{h=1};$h.H''' | Should -Be 1
+        sh -c 'LANG=C.UTF-8 pwsh -NoProfile -Command ''$h=@{p=1};$h.P''' | Should -Be 1
     }
 }
