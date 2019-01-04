@@ -27,13 +27,13 @@ try
 
             $trustedModuleName1 = "TrustedModule$(Get-Random -Max 999)_System32"
             $trustedModulePath1 = Join-Path $TestDrive $trustedModuleName1
-            mkdir $trustedModulePath1
+            New-Item -ItemType Directory $trustedModulePath1
             $trustedModuleFilePath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psm1")
             $trustedModuleManifestPath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psd1")
 
             $trustedModuleName2 = "TrustedModule$(Get-Random -Max 999)_System32"
             $trustedModulePath2 = Join-Path $TestDrive $trustedModuleName2
-            mkdir $trustedModulePath2
+            New-Item -ItemType Directory $trustedModulePath2
             $trustedModuleFilePath2 = Join-Path $trustedModulePath2 ($trustedModuleName2 + ".psm1")
 
             $trustedModuleScript1 = @'

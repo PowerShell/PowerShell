@@ -41,7 +41,7 @@ try
 
             $modulePathName = "modulePath_$(Get-Random -Max 9999)"
             $modulePath = Join-Path $testdrive $modulePathName
-            mkdir $modulePath
+            New-Item -ItemType Directory $modulePath
             $trustedModuleFile = Join-Path $modulePath "T1TestModule_System32.psm1"
             $script | Out-File -FilePath $trustedModuleFile
         }
