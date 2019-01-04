@@ -33,9 +33,10 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $null = $ps.BeginInvoke()
         # Wait for invocation to start running.
         Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Running" }
+        # Not using synchronous Stop() to avoid blocking Pester.
         $null = $ps.BeginStop($null, $null)
-        # wait a bit to ensure state has changed, not using synchronous Stop() to avoid blocking Pester
-        Start-Sleep -Milliseconds 100
+        # Wait for invocation to stop.
+        Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -TimeoutInMilliseconds 1000 -IntervalInMilliseconds 10
         $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()
     }
