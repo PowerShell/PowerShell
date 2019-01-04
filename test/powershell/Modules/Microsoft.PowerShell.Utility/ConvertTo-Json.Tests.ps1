@@ -26,13 +26,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $null = $ps.AddScript({
             $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
             $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
-            (1..100).ForEach{ ConvertTo-Json -InputObject $obj -Depth 10 -Verbose }
+            (1..100).ForEach{ ConvertTo-Json -InputObject $obj -Depth 10 }
             # the conversion is expected to take some time, this throw is in case it doesn't
             throw "Should not have thrown exception"
         })
         $null = $ps.BeginInvoke()
-        # wait for verbose message from ConvertTo-Json to ensure cmdlet is processing
-        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 }
+        # Wait for invocation to start running.
+        Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Running" }
         $null = $ps.BeginStop($null, $null)
         # wait a bit to ensure state has changed, not using synchronous Stop() to avoid blocking Pester
         Start-Sleep -Milliseconds 100
