@@ -1890,6 +1890,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Handle the '-SecurityDescriptor' parameter
+
+                    IntPtr psecurityDescriptor = IntPtr.Zero;
+
                     bool returnStatus = NativeMethods.ConvertStringSecurityDescriptorToSecurityDescriptorW(
                                                     securityDescriptor,
                                                     NativeMethods.stringSDRevision,
