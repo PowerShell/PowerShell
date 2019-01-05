@@ -1560,9 +1560,27 @@ namespace Microsoft.PowerShell.Commands
                 startupType = value;
             }
         }
+
         // We set the initial value to an invalid value so that we can
         // distinguish when this is and is not set.
         internal ServiceStartupType startupType = ServiceStartupType.InvalidValue;
+
+        /// <summary>
+        /// The following is the definition of the input parameter "SecurityDescriptor".
+        /// Changes the SecurityDescriptor of the service.
+        /// </summary>
+        [Parameter]
+        [Alias("sd")]
+        [ValidateNotNullOrEmpty]
+        public string SecurityDescriptor
+        {
+            get { return securityDescriptor; }
+            set
+            {
+                securityDescriptor = value;
+            }
+        }
+        private string securityDescriptor ;
 
         /// <summary>
         /// The following is the definition of the input parameter "Status".
@@ -1718,8 +1736,9 @@ namespace Microsoft.PowerShell.Commands
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
-                        NativeMethods.SERVICE_CHANGE_CONFIG
+                        NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER | NativeMethods.ACCESS_SYSTEM_SECURITY
                         );
+
                     if (IntPtr.Zero == hService)
                     {
                         int lastError = Marshal.GetLastWin32Error();
@@ -1868,6 +1887,34 @@ namespace Microsoft.PowerShell.Commands
                                 DoPauseService(service);
                             }
                         }
+                    }
+
+                    // Handle the '-SecurityDescriptor' parameter
+                    bool returnStatus = NativeMethods.ConvertStringSecurityDescriptorToSecurityDescriptorW(
+                                                    securityDescriptor,
+                                                    NativeMethods.stringSDRevision,
+                                                    psecurityDescriptor,
+                                                    IntPtr.Zero);
+
+                    if(!string.IsNullOrEmpty(securityDescriptor))
+                    {
+                        bool executionStatus = NativeMethods.SetServiceObjectSecurity(
+                            hService,
+                            psecurityDescriptor,
+                            IntPtr.Zero
+                            );
+                    }
+
+                    if (!executionStatus)
+                    {
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteNonTerminatingError(
+                            service,
+                            exception,
+                            "CouldNotSetServiceSecurityDescriptor",
+                            ServiceResources.CouldNotSetServiceSecurityDescriptor,
+                            ErrorCategory.PermissionDenied);
                     }
 
                     if (PassThru.IsPresent)
@@ -2567,7 +2614,10 @@ namespace Microsoft.PowerShell.Commands
         internal const DWORD SERVICE_CONFIG_DESCRIPTION = 1;
         internal const DWORD SERVICE_CONFIG_DELAYED_AUTO_START_INFO = 3;
         internal const DWORD SERVICE_CONFIG_SERVICE_SID_INFO = 5;
-
+        internal const DWORD WRITE_DAC =18;
+        internal const DWORD WRITE_OWNER =19;
+        internal const DWORD ACCESS_SYSTEM_SECURITY =24;
+        internal const DWORD stringSDRevision = 1;
         internal const DWORD SERVICE_WIN32_OWN_PROCESS = 0x10;
         internal const DWORD SERVICE_ERROR_NORMAL = 1;
 
@@ -2687,6 +2737,24 @@ namespace Microsoft.PowerShell.Commands
             [In, MarshalAs(UnmanagedType.LPWStr)] string lpServiceStartName,
             [In] IntPtr lpPassword
         );
+
+
+        [DllImport(PinvokeDllNames.SetServiceObjectSecurityDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern
+        bool SetServiceObjectSecurity(
+            NakedWin32Handle hSCManager,
+            DWORD dwSecurityInformation,
+            IntPtr lpSecurityDescriptor
+            );
+
+        [DllImport(PinvokeDllNames.ConvertStringSecurityDescriptorToSecurityDescriptorWDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern
+        bool ConvertStringSecurityDescriptorToSecurityDescriptorW(
+            [In, MarshalAs(UnmanagedType.LPWStr)] string stringSecurityDescriptor,
+            DWORD stringSDRevision,
+            IntPtr psecurityDescriptor,
+            IntPtr psecurityDescriptorSize
+            );
 
         /// <summary>
         /// CreateJobObject API creates or opens a job object.
