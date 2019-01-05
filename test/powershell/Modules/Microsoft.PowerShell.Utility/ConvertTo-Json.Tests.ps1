@@ -31,6 +31,7 @@ Describe 'ConvertTo-Json' -tags 'CI' {
                 $obj = [pscustomobject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
                 $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
                 (1..100).ForEach{
+                    Write-Verbose 'Ready' -Verbose
                     ConvertTo-Json -InputObject $obj -Depth 10
                 }
                 throw 'ConvertTo-Json finished processing before it could be stopped.'
@@ -38,10 +39,7 @@ Describe 'ConvertTo-Json' -tags 'CI' {
 
         [void]$ps.BeginInvoke()
 
-        # Wait for instance to start.
-        if (-not (Wait-UntilTrue { $ps.InvocationStateInfo.State -eq [PSInvocationState]::Running } -TimeoutInMilliseconds 1000 -IntervalInMilliseconds 10)) {
-             throw 'PowerShell instance did not start.'
-        }
+        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -TimeoutInMilliseconds 1000 -IntervalInMilliseconds 10
 
         # Not using synchronous Stop() to avoid blocking Pester.
         [void]$ps.BeginStop($null, $null)
