@@ -444,7 +444,7 @@ namespace Microsoft.PowerShell.Commands
         ///     delaysign{+|-}           - delay-sign the assembly using only the public portion of the strong name key
         ///     keyfile:file             - specifies a strong name key file
         ///     keycontainer:string      - specifies a strong name key container
-        ///     highentropyva{+|-}       - enable high-entropy ASLR
+        ///     highentropyva{+|-}       - enable high-entropy ASLR.
         /// </summary>
         [Parameter(ParameterSetName = FromSourceParameterSetName)]
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
@@ -681,7 +681,7 @@ namespace Microsoft.PowerShell.Commands
         ///   - System.Private.Uri.dll - the runtime dll that contains 'System.Uri' and related types
         /// Referencing these runtime dlls may cause ambiguous type identity or other issues.
         ///   - System.Runtime.dll - the corresponding reference dll will be automatically included
-        ///   - System.Runtime.InteropServices.dll - the corresponding reference dll will be automatically included
+        ///   - System.Runtime.InteropServices.dll - the corresponding reference dll will be automatically included.
         /// </summary>
         private static HashSet<string> InitRefAssemblyNamesToIgnore()
         {

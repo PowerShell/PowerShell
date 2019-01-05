@@ -126,7 +126,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingException
+        /// Constructs a ParameterBindingException.
         /// </summary>
         /// <param name="innerException">
         /// The inner exception.
@@ -314,7 +314,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializes the exception
+        /// Serializes the exception.
         /// </summary>
         /// <param name="info">
         /// serialization information
@@ -349,7 +349,7 @@ namespace System.Management.Automation
         public ParameterBindingException() : base() {; }
 
         /// <summary>
-        /// Constructors a ParameterBindingException
+        /// Constructors a ParameterBindingException.
         /// </summary>
         /// <param name="message">
         /// Message to be included in exception.
@@ -360,7 +360,7 @@ namespace System.Management.Automation
         public ParameterBindingException(string message) : base(message) { _message = message; }
 
         /// <summary>
-        /// Constructs a ParameterBindingException
+        /// Constructs a ParameterBindingException.
         /// </summary>
         /// <param name="message">
         /// Message to be included in the exception.
@@ -382,7 +382,7 @@ namespace System.Management.Automation
 
         #region Properties
         /// <summary>
-        /// Gets the message for the exception
+        /// Gets the message for the exception.
         /// </summary>
         public override string Message
         {
@@ -419,7 +419,7 @@ namespace System.Management.Automation
         private Type _parameterType;
 
         /// <summary>
-        /// Gets the Type that was specified as the parameter value
+        /// Gets the Type that was specified as the parameter value.
         /// </summary>
         public Type TypeSpecified
         {
@@ -432,7 +432,7 @@ namespace System.Management.Automation
         private Type _typeSpecified;
 
         /// <summary>
-        /// Gets the errorId of this ParameterBindingException
+        /// Gets the errorId of this ParameterBindingException.
         /// </summary>
         public string ErrorId
         {
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         #region Preferred constructors
 
         /// <summary>
-        /// Constructs a ParameterBindingValidationException
+        /// Constructs a ParameterBindingValidationException.
         /// </summary>
         /// <param name="errorCategory">
         /// The category for the error.
@@ -595,7 +595,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingValidationException
+        /// Constructs a ParameterBindingValidationException.
         /// </summary>
         /// <param name="innerException">
         /// The inner exception.
@@ -680,7 +680,7 @@ namespace System.Management.Automation
 
         #region serialization
         /// <summary>
-        /// Constructs a ParameterBindingValidationException from serialized data
+        /// Constructs a ParameterBindingValidationException from serialized data.
         /// </summary>
         /// <param name="info">
         /// serialization information
@@ -721,7 +721,7 @@ namespace System.Management.Automation
         #region Preferred constructors
 
         /// <summary>
-        /// Constructs a ParameterBindingArgumentTransformationException
+        /// Constructs a ParameterBindingArgumentTransformationException.
         /// </summary>
         /// <param name="errorCategory">
         /// The category for the error.
@@ -791,7 +791,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingArgumentTransformationException
+        /// Constructs a ParameterBindingArgumentTransformationException.
         /// </summary>
         /// <param name="innerException">
         /// The inner exception.
@@ -870,7 +870,7 @@ namespace System.Management.Automation
         #endregion Preferred constructors
         #region serialization
         /// <summary>
-        /// Constructs a ParameterBindingArgumentTransformationException using serialized data
+        /// Constructs a ParameterBindingArgumentTransformationException using serialized data.
         /// </summary>
         /// <param name="info">
         /// serialization information
@@ -894,7 +894,7 @@ namespace System.Management.Automation
         #region Preferred constructors
 
         /// <summary>
-        /// Constructs a ParameterBindingParameterDefaultValueException
+        /// Constructs a ParameterBindingParameterDefaultValueException.
         /// </summary>
         /// <param name="errorCategory">
         /// The category for the error.
@@ -964,7 +964,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingParameterDefaultValueException
+        /// Constructs a ParameterBindingParameterDefaultValueException.
         /// </summary>
         /// <param name="innerException">
         /// The inner exception.
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation
 
         #region serialization
         /// <summary>
-        /// Constructs a ParameterBindingParameterDefaultValueException using serialized data
+        /// Constructs a ParameterBindingParameterDefaultValueException using serialized data.
         /// </summary>
         /// <param name="info">
         /// serialization information

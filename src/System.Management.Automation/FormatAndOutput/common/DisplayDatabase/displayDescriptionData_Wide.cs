@@ -13,35 +13,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region Wide View Definitions
 
     /// <summary>
-    /// in line definition of a wide control
+    /// in line definition of a wide control.
     /// </summary>
     internal sealed class WideControlBody : ControlBody
     {
         /// <summary>
-        /// number of columns to use for wide display
+        /// number of columns to use for wide display.
         /// </summary>
         internal int columns = 0;
 
         /// <summary>
         /// default wide entry definition
-        /// It's mandatory
+        /// It's mandatory.
         /// </summary>
         internal WideControlEntryDefinition defaultEntryDefinition = null;
 
         /// <summary>
-        /// optional list of list entry definition overrides. It can be empty if there are no overrides
+        /// optional list of list entry definition overrides. It can be empty if there are no overrides.
         /// </summary>
         internal List<WideControlEntryDefinition> optionalEntryList = new List<WideControlEntryDefinition>();
     }
 
     /// <summary>
-    /// definition of the data to be displayed in a list entry
+    /// definition of the data to be displayed in a list entry.
     /// </summary>
     internal sealed class WideControlEntryDefinition
     {
         /// <summary>
         /// applicability clause
-        /// Only valid if not the default definition
+        /// Only valid if not the default definition.
         /// </summary>
         internal AppliesTo appliesTo = null;
 
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines a list control
+    /// Defines a list control.
     /// </summary>
     public sealed class WideControl : PSControl
     {
@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicates if this control does not have
-        /// any script blocks and is safe to export
+        /// any script blocks and is safe to export.
         /// </summary>
         /// <returns>True if exportable, false otherwise.</returns>
         internal override bool SafeForExport()
@@ -175,7 +175,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines one item in a wide control entry
+    /// Defines one item in a wide control entry.
     /// </summary>
     public sealed class WideControlEntryItem
     {

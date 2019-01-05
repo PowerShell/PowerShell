@@ -69,7 +69,7 @@ namespace System.Management.Automation
         private static Collection<string> s_ignoredCommands = new Collection<string>();
 
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         static MshLog()
         {
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get Log Provider based on Execution Context
+        /// Get Log Provider based on Execution Context.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <returns></returns>
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get Log Provider based on Log Context
+        /// Get Log Provider based on Log Context.
         /// </summary>
         /// <param name="logContext"></param>
         /// <returns></returns>
@@ -235,7 +235,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a variation of LogEngineHealthEvent api to make additionalInfo and newEngineState
-        /// optional
+        /// optional.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="eventId"></param>
@@ -267,7 +267,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a variation of LogEngineHealthEvent api to make newEngineState
-        /// optional
+        /// optional.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="eventId"></param>
@@ -285,7 +285,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a variation of LogEngineHealthEvent api to make additionalInfo
-        /// optional
+        /// optional.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="eventId"></param>
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Log context cache
+    /// Log context cache.
     /// </summary>
     internal class LogContextCache
     {
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation
     #region Command State and Provider State
 
     /// <summary>
-    /// Severity of the event
+    /// Severity of the event.
     /// </summary>
     internal enum Severity
     {
@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// enum for command states
+    /// enum for command states.
     /// </summary>
     internal enum CommandState
     {
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// enum for provider states
+    /// enum for provider states.
     /// </summary>
     internal enum ProviderState
     {

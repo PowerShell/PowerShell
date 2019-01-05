@@ -395,7 +395,7 @@ namespace System.Management.Automation.Remoting
         /// Prepares the collection for a stream connect
         ///     When reconnecting from same client, its possible that fragment stream get interrupted if server is dropping data
         ///     When connecting from a new client, its possible to get trailing fragments of a previously partially transmitted object
-        ///     Logic based on this flag, ensures such offsync/trailing fragments get ignored until the next full object starts flowing
+        ///     Logic based on this flag, ensures such offsync/trailing fragments get ignored until the next full object starts flowing.
         /// </summary>
         internal void PrepareForStreamConnect()
         {
@@ -746,7 +746,7 @@ namespace System.Management.Automation.Remoting
         #region Constructor
 
         /// <summary>
-        /// Construct a priority receive data collection
+        /// Construct a priority receive data collection.
         /// </summary>
         /// <param name="defragmentor">Defragmentor used to deserialize an object.</param>
         /// <param name="createdByClientTM">
@@ -795,7 +795,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Prepares receive data streams for a reconnection
+        /// Prepares receive data streams for a reconnection.
         /// </summary>
         internal void PrepareForStreamConnect()
         {

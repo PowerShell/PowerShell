@@ -22,59 +22,59 @@ using System.Text;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// base exception to be used for all the exceptions that this framework will generate
+    /// base exception to be used for all the exceptions that this framework will generate.
     /// </summary>
     internal abstract class TypeInfoDataBaseLoaderException : SystemException
     {
     }
 
     /// <summary>
-    /// exception thrown by the loader when the maximum number of errors is exceeded
+    /// exception thrown by the loader when the maximum number of errors is exceeded.
     /// </summary>
     internal class TooManyErrorsException : TypeInfoDataBaseLoaderException
     {
         /// <summary>
-        /// error count that triggered the exception
+        /// error count that triggered the exception.
         /// </summary>
         internal int errorCount;
     }
 
     /// <summary>
-    /// entry logged by the loader and made available to external consumers
+    /// entry logged by the loader and made available to external consumers.
     /// </summary>
     internal class XmlLoaderLoggerEntry
     {
         internal enum EntryType { Error, Trace };
 
         /// <summary>
-        /// type of information being logged
+        /// type of information being logged.
         /// </summary>
         internal EntryType entryType;
 
         /// <summary>
-        /// path of the file the info refers to
+        /// path of the file the info refers to.
         /// </summary>
         internal string filePath = null;
 
         /// <summary>
-        /// XPath location inside the file
+        /// XPath location inside the file.
         /// </summary>
         internal string xPath = null;
 
         /// <summary>
-        /// message to be displayed to the user
+        /// message to be displayed to the user.
         /// </summary>
         internal string message = null;
 
         /// <summary>
-        /// indicate whether we fail to load the file due to the security reason
+        /// indicate whether we fail to load the file due to the security reason.
         /// </summary>
         internal bool failToLoadFile = false;
     }
 
     /// <summary>
     /// logger object used by the loader (class XmlLoaderBase) to write log entries.
-    /// It logs to a memory buffer and (optionally) to a text file
+    /// It logs to a memory buffer and (optionally) to a text file.
     /// </summary>
     internal class XmlLoaderLogger : IDisposable
     {
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #endregion tracer
         /// <summary>
-        /// log an entry
+        /// log an entry.
         /// </summary>
         /// <param name="entry">Entry to log.</param>
         internal void LogEntry(XmlLoaderLoggerEntry entry)
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// IDisposable implementation
+        /// IDisposable implementation.
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
         public void Dispose()
@@ -147,24 +147,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// if true, log entries to memory
+        /// if true, log entries to memory.
         /// </summary>
         private bool _saveInMemory = true;
 
         /// <summary>
-        /// list of entries logged if saveInMemory is true
+        /// list of entries logged if saveInMemory is true.
         /// </summary>
         private List<XmlLoaderLoggerEntry> _entries = new List<XmlLoaderLoggerEntry>();
 
         /// <summary>
-        /// true if we ever logged an error
+        /// true if we ever logged an error.
         /// </summary>
         private bool _hasErrors = false;
     }
 
     /// <summary>
     /// base class providing XML loading basic functionality (stack management and logging facilities)
-    /// NOTE: you need to implement to load an actual XML document and traverse it as see fit
+    /// NOTE: you need to implement to load an actual XML document and traverse it as see fit.
     /// </summary>
     internal abstract class XmlLoaderBase : IDisposable
     {
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion tracer
 
         /// <summary>
-        /// class representing a stack frame for the XML document tree traversal
+        /// class representing a stack frame for the XML document tree traversal.
         /// </summary>
         private sealed class XmlLoaderStackFrame : IDisposable
         {
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// IDisposable implementation
+            /// IDisposable implementation.
             /// </summary>
             public void Dispose()
             {
@@ -198,12 +198,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            ///  back pointer to the loader, used to pop a stack frame
+            ///  back pointer to the loader, used to pop a stack frame.
             /// </summary>
             private XmlLoaderBase _loader;
 
             /// <summary>
-            /// node the stack frame refers to
+            /// node the stack frame refers to.
             /// </summary>
             internal XmlNode node;
 
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// IDisposable implementation
+        /// IDisposable implementation.
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
         public void Dispose()
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// get the list of log entries
+        /// get the list of log entries.
         /// </summary>
         /// <value>list of entries logged during a load</value>
         internal List<XmlLoaderLoggerEntry> LogEntries
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// check if there were errors
+        /// check if there were errors.
         /// </summary>
         /// <value>true of the log entry list has errors</value>
         internal bool HasErrors
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// to be called when starting a stack frame.
-        /// The returned IDisposable should be used in a using(){...} block
+        /// The returned IDisposable should be used in a using(){...} block.
         /// </summary>
         /// <param name="n">Node to push on the stack.</param>
         /// <returns>Object to dispose when exiting the frame.</returns>
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// to be called when starting a stack frame.
-        /// The returned IDisposable should be used in a using(){...} block
+        /// The returned IDisposable should be used in a using(){...} block.
         /// </summary>
         /// <param name="n">Node to push on the stack.</param>
         /// <param name="index">Index of the node of the same name in a collection.</param>
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// called by the Dispose code of the XmlLoaderStackFrame object
-        /// to pop a frame off the stack
+        /// to pop a frame off the stack.
         /// </summary>
         private void RemoveStackFrame()
         {
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// For tracing purposes only, don't add to log
+        /// For tracing purposes only, don't add to log.
         /// </summary>
         /// <param name="message">
         /// trace message, non-localized string is OK.
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Report error when loading formatting data from object model
+        /// Report error when loading formatting data from object model.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="typeName"></param>
@@ -664,7 +664,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// file system path for the file we are loading from
+        /// file system path for the file we are loading from.
         /// </summary>
         protected string FilePath
         {

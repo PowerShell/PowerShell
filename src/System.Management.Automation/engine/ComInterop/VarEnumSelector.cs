@@ -22,7 +22,7 @@ namespace System.Management.Automation.ComInterop
     ///   accessible as .NET methods.
     /// 4.We could use the type library to check what the expected type is. However, the type library may not be available.
     ///
-    /// VarEnumSelector implements option # 3
+    /// VarEnumSelector implements option # 3.
     /// </summary>
     internal class VarEnumSelector
     {
@@ -204,7 +204,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Get the (one representative type for each) primitive type families that the argument can be converted to
+        /// Get the (one representative type for each) primitive type families that the argument can be converted to.
         /// </summary>
         private static List<VarEnum> GetConversionsToComPrimitiveTypeFamilies(Type argumentType)
         {
@@ -346,7 +346,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Is there a unique primitive type that has the best conversion for the argument
+        /// Is there a unique primitive type that has the best conversion for the argument.
         /// </summary>
         private static bool TryGetPrimitiveComTypeViaConversion(Type argumentType, out VarEnum primitiveVarEnum)
         {
@@ -443,7 +443,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Get the COM Variant type that argument should be marshaled as for a call to COM
+        /// Get the COM Variant type that argument should be marshaled as for a call to COM.
         /// </summary>
         private VariantBuilder GetVariantBuilder(Type argumentType)
         {

@@ -11,12 +11,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// internal class to manage the grouping algorithm for the
-    /// format-xxx commands
+    /// format-xxx commands.
     /// </summary>
     internal sealed class GroupingInfoManager
     {
         /// <summary>
-        /// Initialize with the grouping property data
+        /// Initialize with the grouping property data.
         /// </summary>
         /// <param name="groupingExpression">Name of the grouping property.</param>
         /// <param name="displayLabel">Display name of the property.</param>
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// compute the string value of the grouping property
+        /// compute the string value of the grouping property.
         /// </summary>
         /// <param name="so">Object to use to compute the property value.</param>
         /// <returns>True if there was an update.</returns>
@@ -106,17 +106,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private string _label = null;
 
         /// <summary>
-        /// value of the current active grouping key
+        /// value of the current active grouping key.
         /// </summary>
         private string _groupingKeyDisplayName = null;
 
         /// <summary>
-        /// name of the current grouping key
+        /// name of the current grouping key.
         /// </summary>
         private PSPropertyExpression _groupingKeyExpression = null;
 
         /// <summary>
-        /// the current value of the grouping key
+        /// the current value of the grouping key.
         /// </summary>
         private object _currentGroupingKeyPropertyValue = AutomationNull.Value;
     }

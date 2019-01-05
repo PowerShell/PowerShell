@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Task Scheduler information:
         /// - Triggers
         /// - Options
-        /// - Enabled state
+        /// - Enabled state.
         /// </summary>
         /// <returns>Boolean if this object data is modified.</returns>
         private bool UpdateDefinitionFromWTS()
@@ -2332,7 +2332,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     ///  "InitializationScript"    -> ScriptBlock
     ///  "ArgumentList"            -> object[]
     ///  "RunAs32"                 -> Boolean
-    ///  "Authentication"          -> AuthenticationMechanism
+    ///  "Authentication"          -> AuthenticationMechanism.
     /// </summary>
     [Serializable]
     public sealed class ScheduledJobInvocationInfo : JobInvocationInfo

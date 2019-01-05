@@ -153,7 +153,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// used by powershell DS handler. notifies transport that powershell is back to running state
-        /// no payload
+        /// no payload.
         /// </summary>
         internal override void ReportExecutionStatusAsRunning()
         {

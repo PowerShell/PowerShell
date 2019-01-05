@@ -35,13 +35,13 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Event handling matrix. It defines what action to take when an event occur.
-        /// [State,Event]=>Action
+        /// [State,Event]=>Action.
         /// </summary>
         private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
         private Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
 
         /// <summary>
-        /// Current state of session
+        /// Current state of session.
         /// </summary>
         private RemoteSessionState _state;
 
@@ -62,19 +62,19 @@ namespace System.Management.Automation.Remoting
         // and processed
 
         /// <summary>
-        /// Timer to be used for key exchange
+        /// Timer to be used for key exchange.
         /// </summary>
         private Timer _keyExchangeTimer;
 
         /// <summary>
-        /// indicates that the client has previously completed the session key exchange
+        /// indicates that the client has previously completed the session key exchange.
         /// </summary>
         private bool _keyExchanged = false;
 
         /// <summary>
         /// this is to queue up a disconnect request when a key exchange is in process
         /// the session will be disconnect once the exchange is complete
-        /// intermediate disconnect requests are tracked by this flag
+        /// intermediate disconnect requests are tracked by this flag.
         /// </summary>
         private bool _pendingDisconnect = false;
 
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Remoting
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
-        /// of processing the events
+        /// of processing the events.
         /// </summary>
         private void ProcessEvents()
         {
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Remoting
         /// Raises the StateChanged events which are queued
         /// All StateChanged events will be raised once the
         /// processing of the State Machine events are
-        /// complete
+        /// complete.
         /// </summary>
         private void RaiseStateMachineEvents()
         {
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Unique identifier for this state machine. Used
-        /// in tracing
+        /// in tracing.
         /// </summary>
         private Guid _id;
 
@@ -166,7 +166,7 @@ namespace System.Management.Automation.Remoting
         /// Handler to be used in cases, where setting the state is the
         /// only task being performed. This method also asserts
         /// if the specified event is valid for the current state of
-        /// the state machine
+        /// the state machine.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">Event args.</param>
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Handles the timeout for key exchange
+        /// Handles the timeout for key exchange.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
@@ -352,7 +352,7 @@ namespace System.Management.Automation.Remoting
         /// Handler to be used in cases, where raising an event to
         /// the state needs to be performed. This method also
         /// asserts if the specified event is valid for
-        /// the current state of the state machine
+        /// the current state of the state machine.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">Event args.</param>
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Remoting
 
         #region constructor
         /// <summary>
-        /// Creates an instance of ClientRemoteSessionDSHandlerStateMachine
+        /// Creates an instance of ClientRemoteSessionDSHandlerStateMachine.
         /// </summary>
         internal ClientRemoteSessionDSHandlerStateMachine()
         {
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handles a fatal error message. Throws a well defined error message,
         /// which contains the reason for the fatal error as an inner exception.
-        /// This way the internal details are not surfaced to the user
+        /// This way the internal details are not surfaced to the user.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -781,7 +781,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Sets the state of the state machine. Since only
         /// one thread can be manipulating the state at a time
-        /// the state is not synchronized
+        /// the state is not synchronized.
         /// </summary>
         /// <param name="newState">New state of the state machine.</param>
         /// <param name="reason">reason why the state machine is set

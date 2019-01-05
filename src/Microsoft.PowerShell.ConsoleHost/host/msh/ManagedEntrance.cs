@@ -14,12 +14,12 @@ using System.Runtime.InteropServices;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Defines an entry point from unmanaged code to managed Msh
+    /// Defines an entry point from unmanaged code to managed Msh.
     /// </summary>
     public sealed class UnmanagedPSEntry
     {
         /// <summary>
-        /// Starts managed MSH
+        /// Starts managed MSH.
         /// </summary>
         /// <param name="consoleFilePath">
         /// Deprecated: Console file used to create a runspace configuration to start MSH

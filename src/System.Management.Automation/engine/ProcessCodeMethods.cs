@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell {
     /// <summary>
-    /// Helper functions for process info
+    /// Helper functions for process info.
     /// </summary>
     public static class ProcessCodeMethods
     {
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell {
         }
 
         /// <summary>
-        /// CodeMethod for getting the parent process of a process
+        /// CodeMethod for getting the parent process of a process.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>The parent process, or null if the parent is no longer running.</returns>
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell {
         }
 
         /// <summary>
-        /// Returns the parent id of a process or -1 if it fails
+        /// Returns the parent id of a process or -1 if it fails.
         /// </summary>
         /// <param name="process"></param>
         /// <returns>The pid of the parent process.</returns>

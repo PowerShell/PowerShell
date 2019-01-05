@@ -1354,7 +1354,7 @@ namespace System.Management.Automation
         internal class CatchAll { }
 
         /// <summary>
-        /// Represent a handler search result
+        /// Represent a handler search result.
         /// </summary>
         private class HandlerSearchResult
         {
@@ -1448,7 +1448,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Find the matching handler for the caught exception
+        /// Find the matching handler for the caught exception.
         /// </summary>
         internal static int FindMatchingHandler(MutableTuple tuple, RuntimeException rte, Type[] types, ExecutionContext context)
         {
@@ -1519,7 +1519,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Find the matching handler by the exception type
+        /// Find the matching handler by the exception type.
         /// </summary>
         private static int FindMatchingHandlerByType(Type exceptionType, Type[] types)
         {
@@ -1822,7 +1822,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set error variables like $error and $stacktrace
+        /// Set error variables like $error and $stacktrace.
         /// </summary>
         /// <param name="extent"></param>
         /// <param name="rte"></param>
@@ -2421,7 +2421,7 @@ namespace System.Management.Automation
     public enum WhereOperatorSelectionMode
     {
         /// <summary>
-        /// Return all matches
+        /// Return all matches.
         /// </summary>
         Default = 0,
         /// <summary>
@@ -2429,15 +2429,15 @@ namespace System.Management.Automation
         /// </summary>
         First = 1,
         /// <summary>
-        /// Return the last matching element
+        /// Return the last matching element.
         /// </summary>
         Last = 2,       // return last match
         /// <summary>
-        /// Skip until the condition is true, then return the rest
+        /// Skip until the condition is true, then return the rest.
         /// </summary>
         SkipUntil = 3,
         /// <summary>
-        /// Return elements until the condition is true then skip the rest
+        /// Return elements until the condition is true then skip the rest.
         /// </summary>
         Until = 4,
         /// <summary>
@@ -2449,7 +2449,7 @@ namespace System.Management.Automation
     internal static class EnumerableOps
     {
         /// <summary>
-        /// Implements the Where(expression) operation on collections
+        /// Implements the Where(expression) operation on collections.
         /// </summary>
         /// <param name="enumerator">The enumerator over the collection to search.</param>
         /// <param name="expressionSB">
@@ -3266,7 +3266,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A routine used to advance an enumerator and catch errors that might occur
-        /// performing the operation
+        /// performing the operation.
         /// </summary>
         /// <param name="context">The execution context used to see if the pipeline is stopping.</param>
         /// <param name="enumerator">THe enumerator to advance.</param>

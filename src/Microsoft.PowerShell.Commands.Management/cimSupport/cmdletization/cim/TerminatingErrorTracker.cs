@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Tracks (per-session) terminating errors in a given cmdlet invocation
+    /// Tracks (per-session) terminating errors in a given cmdlet invocation.
     /// </summary>
     internal class TerminatingErrorTracker
     {

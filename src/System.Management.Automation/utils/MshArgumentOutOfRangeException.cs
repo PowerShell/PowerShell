@@ -23,7 +23,7 @@ namespace System.Management.Automation
     {
         #region ctor
         /// <summary>
-        /// Constructor for class PSArgumentOutOfRangeException
+        /// Constructor for class PSArgumentOutOfRangeException.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public PSArgumentOutOfRangeException()
@@ -108,7 +108,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Additional information about the error
+        /// Additional information about the error.
         /// </summary>
         /// <value></value>
         /// <remarks>

@@ -251,7 +251,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Get called from the LeaveFinallyInstruction
+        /// Get called from the LeaveFinallyInstruction.
         /// </summary>
         public int YieldToPendingContinuation()
         {

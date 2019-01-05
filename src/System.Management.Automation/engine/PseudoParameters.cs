@@ -71,7 +71,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the name of the parameter
+        /// Gets or sets the name of the parameter.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// If <paramref name="value"/> is null or empty on set.

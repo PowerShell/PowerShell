@@ -10,7 +10,7 @@ using COM = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A Wrapper class for COM object's Type Information
+    /// A Wrapper class for COM object's Type Information.
     /// </summary>
     internal class ComTypeInfo
     {
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         private Guid _guid = Guid.Empty;
 
         /// <summary>
-        ///  Constructor
+        ///  Constructor.
         /// </summary>
         /// <param name="info">ITypeInfo object being wrapped by this object.</param>
         internal ComTypeInfo(COM.ITypeInfo info)
@@ -90,7 +90,7 @@ namespace System.Management.Automation
         internal COM.INVOKEKIND? NewEnumInvokeKind { get; private set; }
 
         /// <summary>
-        /// Initializes the typeinfo object
+        /// Initializes the typeinfo object.
         /// </summary>
         private void Initialize()
         {

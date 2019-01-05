@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// Attribute to represent an EtwEvent
+    /// Attribute to represent an EtwEvent.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -19,7 +19,7 @@ namespace System.Management.Automation.Tracing
     public sealed class EtwEvent : Attribute
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="eventId"></param>
         public EtwEvent(long eventId)
@@ -28,13 +28,13 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// EventId
+        /// EventId.
         /// </summary>
         public long EventId { get; }
     }
 
     /// <summary>
-    /// Delegates that defines a call back with no parameter
+    /// Delegates that defines a call back with no parameter.
     /// </summary>
     public delegate void CallbackNoParameter();
 
@@ -50,7 +50,7 @@ namespace System.Management.Automation.Tracing
     public delegate void CallbackWithStateAndArgs(object state, System.Timers.ElapsedEventArgs args);
 
     /// <summary>
-    /// ETW events argument class
+    /// ETW events argument class.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class EtwEventArgs : EventArgs
@@ -108,13 +108,13 @@ namespace System.Management.Automation.Tracing
             private AsyncCallback asyncCallback;
 
             /// <summary>
-            /// parentActivityId
+            /// parentActivityId.
             /// </summary>
             protected readonly Guid parentActivityId;
             private readonly EtwActivity tracer;
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -136,7 +136,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -185,7 +185,7 @@ namespace System.Management.Automation.Tracing
             private CallbackWithStateAndArgs callbackWithStateAndArgs;
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback(object state, System.Timers.ElapsedEventArgs args)
             {
@@ -218,7 +218,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// Correlate
+            /// Correlate.
             /// </summary>
             private void Correlate()
             {
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback()
             {
@@ -237,7 +237,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback(object state)
             {
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback(IAsyncResult asyncResult)
             {
@@ -267,7 +267,7 @@ namespace System.Management.Automation.Tracing
         private EventProvider currentProvider;
 
         /// <summary>
-        /// Event handler for the class
+        /// Event handler for the class.
         /// </summary>
         public static event EventHandler<EtwEventArgs> EventWritten;
 
@@ -304,7 +304,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Returns the ActivityId set in current thread
+        /// Returns the ActivityId set in current thread.
         /// </summary>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
@@ -316,7 +316,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected EtwActivity()
         {
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// CorrelateWithActivity (EventId: 0x1f05/7941)
         /// This method also sets a new activity id in current thread.
-        /// And then correlates the new id with parentActivityId
+        /// And then correlates the new id with parentActivityId.
         /// </summary>
         public void CorrelateWithActivity(Guid parentActivityId)
         {
@@ -344,7 +344,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// IsEnabled
+        /// IsEnabled.
         /// </summary>
         public bool IsEnabled
         {
@@ -355,7 +355,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Checks whether a provider matching certain levels and keyword is enabled
+        /// Checks whether a provider matching certain levels and keyword is enabled.
         /// </summary>
         /// <param name="levels">Levels to check.</param>
         /// <param name="keywords">Keywords to check.</param>
@@ -367,7 +367,7 @@ namespace System.Management.Automation.Tracing
 
         /// <summary>
         /// Correlates parent activity id set in the thread with a new activity id
-        /// If parent activity id is not, it just sets a new activity in the current thread. And does not write the Transfer event
+        /// If parent activity id is not, it just sets a new activity in the current thread. And does not write the Transfer event.
         /// </summary>
         public void Correlate()
         {
@@ -376,7 +376,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Wraps a callback with no params
+        /// Wraps a callback with no params.
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
@@ -391,7 +391,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Wraps a callback with one object param
+        /// Wraps a callback with one object param.
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
@@ -406,7 +406,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Wraps a AsyncCallback with IAsyncResult param
+        /// Wraps a AsyncCallback with IAsyncResult param.
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Tracing
                 Set = 2,
 
                 /// <summary>
-                /// Creates a new activity id
+                /// Creates a new activity id.
                 /// </summary>
                 Create = 3,
 
@@ -542,7 +542,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// Provides interop access to creating, querying and setting the current activity identifier
+            /// Provides interop access to creating, querying and setting the current activity identifier.
             /// </summary>
             /// <param name="controlCode">The <see cref="ActivityControlCode"/> indicating the type of operation to perform.</param>
             /// <param name="activityId">The activity id to set or retrieve.</param>

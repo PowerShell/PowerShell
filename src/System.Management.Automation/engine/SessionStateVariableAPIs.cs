@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -1451,7 +1451,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new variable in the specified scope
+        /// Creates a new variable in the specified scope.
         /// </summary>
         /// <param name="variable">
         /// The variable to create

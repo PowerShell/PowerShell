@@ -98,7 +98,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the name of the method or property defined by funcdesc
+        /// Gets the name of the method or property defined by funcdesc.
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type.</param>
         /// <param name="funcdesc">FuncDesc of property of method.</param>
@@ -113,7 +113,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Gets the name of the custom type defined in the type library
+        ///  Gets the name of the custom type defined in the type library.
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type.</param>
         /// <param name="refptr">Reference to the custom type.</param>
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Determine .net type for the given type descriptor
+        ///  Determine .net type for the given type descriptor.
         /// </summary>
         /// <param name="typedesc">COM type descriptor to convert.</param>
         /// <returns>Type represented by the typedesc.</returns>
@@ -257,7 +257,7 @@ namespace System.Management.Automation
 #pragma warning restore 618
 
         /// <summary>
-        /// Converts a FuncDesc out of GetFuncDesc into a MethodInformation
+        /// Converts a FuncDesc out of GetFuncDesc into a MethodInformation.
         /// </summary>
         private static ComMethodInformation GetMethodInformation(COM.FUNCDESC funcdesc, bool skipLastParameter)
         {
@@ -277,7 +277,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Obtains the parameter information for a given FuncDesc
+        /// Obtains the parameter information for a given FuncDesc.
         /// </summary>
         internal static ParameterInformation[] GetParameterInformation(COM.FUNCDESC funcdesc, bool skipLastParameter)
         {

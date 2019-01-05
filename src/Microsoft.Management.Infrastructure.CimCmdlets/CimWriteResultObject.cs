@@ -15,7 +15,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteResultObject : CimBaseAction
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CimWriteResultObject(object result, XOperationContextBase theContext)
         {
@@ -37,7 +37,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region members
         /// <summary>
-        /// result object
+        /// result object.
         /// </summary>
         internal object Result
         {

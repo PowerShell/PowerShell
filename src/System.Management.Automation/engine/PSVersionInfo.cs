@@ -62,7 +62,7 @@ namespace System.Management.Automation
         private static SemanticVersion s_psV6Version;
 
         /// <summary>
-        /// A constant to track current PowerShell Edition
+        /// A constant to track current PowerShell Edition.
         /// </summary>
         internal const string PSEditionValue = "Core";
 
@@ -339,7 +339,7 @@ namespace System.Management.Automation
         /// We want see special order:
         ///     1. PSVersionName
         ///     2. PSEditionName
-        ///     3. Remaining properties in alphabetical order
+        ///     3. Remaining properties in alphabetical order.
         /// </summary>
         public override ICollection Keys
         {
@@ -880,7 +880,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded == operator
+        /// Overloaded == operator.
         /// </summary>
         public static bool operator ==(SemanticVersion v1, SemanticVersion v2)
         {
@@ -893,7 +893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded != operator
+        /// Overloaded != operator.
         /// </summary>
         public static bool operator !=(SemanticVersion v1, SemanticVersion v2)
         {
@@ -901,7 +901,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &lt; operator
+        /// Overloaded &lt; operator.
         /// </summary>
         public static bool operator <(SemanticVersion v1, SemanticVersion v2)
         {
@@ -909,7 +909,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &lt;= operator
+        /// Overloaded &lt;= operator.
         /// </summary>
         public static bool operator <=(SemanticVersion v1, SemanticVersion v2)
         {
@@ -917,7 +917,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &gt; operator
+        /// Overloaded &gt; operator.
         /// </summary>
         public static bool operator >(SemanticVersion v1, SemanticVersion v2)
         {
@@ -925,7 +925,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overloaded &gt;= operator
+        /// Overloaded &gt;= operator.
         /// </summary>
         public static bool operator >=(SemanticVersion v1, SemanticVersion v2)
         {

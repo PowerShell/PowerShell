@@ -110,7 +110,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Construct a remote runspace based on the connection information
-        /// and the specified host
+        /// and the specified host.
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// initialsessionstate information for this runspace
+        /// initialsessionstate information for this runspace.
         /// </summary>
         public override InitialSessionState InitialSessionState
         {
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return version of this runspace
+        /// Return version of this runspace.
         /// </summary>
         public override Version Version { get; } = PSVersionInfo.PSVersion;
 
@@ -261,7 +261,7 @@ namespace System.Management.Automation
         internal Version ServerVersion { get; private set; }
 
         /// <summary>
-        /// Retrieve information about current state of the runspace
+        /// Retrieve information about current state of the runspace.
         /// </summary>
         public override RunspaceStateInfo RunspaceStateInfo
         {
@@ -276,7 +276,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This property determines whether a new thread is create for each invocation
+        /// This property determines whether a new thread is create for each invocation.
         /// </summary>
         /// <remarks>
         /// Any updates to the value of this property must be done before the Runspace is opened
@@ -314,7 +314,7 @@ namespace System.Management.Automation
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
-        /// Gets the current availability of the Runspace
+        /// Gets the current availability of the Runspace.
         /// </summary>
         public override RunspaceAvailability RunspaceAvailability
         {
@@ -336,7 +336,7 @@ namespace System.Management.Automation
         public override event EventHandler<RunspaceAvailabilityEventArgs> AvailabilityChanged;
 
         /// <summary>
-        /// Returns true if there are any subscribers to the AvailabilityChanged event
+        /// Returns true if there are any subscribers to the AvailabilityChanged event.
         /// </summary>
         internal override bool HasAvailabilityChangedSubscribers
         {
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Raises the AvailabilityChanged event
+        /// Raises the AvailabilityChanged event.
         /// </summary>
         protected override void OnAvailabilityChanged(RunspaceAvailabilityEventArgs e)
         {
@@ -363,7 +363,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Connection information to this runspace
+        /// Connection information to this runspace.
         /// </summary>
         public override RunspaceConnectionInfo ConnectionInfo
         {
@@ -374,12 +374,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// ConnectionInfo originally supplied by the user
+        /// ConnectionInfo originally supplied by the user.
         /// </summary>
         public override RunspaceConnectionInfo OriginalConnectionInfo { get; }
 
         /// <summary>
-        /// Gets the event manager
+        /// Gets the event manager.
         /// </summary>
         public override PSEventManager Events
         {
@@ -394,7 +394,7 @@ namespace System.Management.Automation
 #pragma warning disable 56503
 
         /// <summary>
-        /// Gets the execution context for this runspace
+        /// Gets the execution context for this runspace.
         /// </summary>
         internal override ExecutionContext GetExecutionContext
         {
@@ -405,7 +405,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the internal host is in a nested prompt
+        /// Returns true if the internal host is in a nested prompt.
         /// </summary>
         internal override bool InNestedPrompt
         {
@@ -419,7 +419,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the client remote session associated with this
-        /// runspace
+        /// runspace.
         /// </summary>
         /// <remarks>This member is actually not required
         /// for the product code. However, there are
@@ -507,7 +507,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Debugger
+        /// Debugger.
         /// </summary>
         public override Debugger Debugger
         {
@@ -612,7 +612,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Dispose this runspace
+        /// Dispose this runspace.
         /// </summary>
         /// <param name="disposing">True if called from Dispose.</param>
         protected override void Dispose(bool disposing)
@@ -1021,7 +1021,7 @@ namespace System.Management.Automation
         #region CreatePipeline
 
         /// <summary>
-        /// Create an empty pipeline
+        /// Create an empty pipeline.
         /// </summary>
         /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a pipeline from a command string
+        /// Create a pipeline from a command string.
         /// </summary>
         /// <param name="command">A valid command string.</param>
         /// <returns>
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Check to see, if there is any other pipeline running in this
-        /// runspace. If not, then add this to the list of pipelines
+        /// runspace. If not, then add this to the list of pipelines.
         /// </summary>
         /// <param name="pipeline">Pipeline to check and add.</param>
         /// <param name="syncCall">whether this is being called from
@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Asserts if the current state of the runspace is BeforeOpen
+        /// Asserts if the current state of the runspace is BeforeOpen.
         /// </summary>
         private void AssertIfStateIsBeforeOpen()
         {
@@ -1495,7 +1495,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a pipeline
+        /// Creates a pipeline.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="addToHistory"></param>
@@ -1564,7 +1564,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handles any host calls received from the server
+        /// Handles any host calls received from the server.
         /// </summary>
         /// <param name="sender">Sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event, contains
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Forward the events from the runspace pool to the current instance
+        /// Forward the events from the runspace pool to the current instance.
         /// </summary>
         private void HandleRunspacePoolForwardEvent(object sender, PSEventArgs e)
         {
@@ -1661,7 +1661,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if another Invoke-Command is executing
         /// in this runspace in the currently running local pipeline
-        /// ahead on the specified invoke-command
+        /// ahead on the specified invoke-command.
         /// </summary>
         /// <param name="invokeCommand">current invoke-command
         /// instance</param>
@@ -1710,7 +1710,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Keeps track of the current invoke command executing
-        /// within the current local pipeline
+        /// within the current local pipeline.
         /// </summary>
         /// <param name="invokeCommand">reference to invoke command
         /// which is currently being processed</param>
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Clears the current invoke-command reference stored within
-        /// this remote runspace
+        /// this remote runspace.
         /// </summary>
         internal void ClearInvokeCommand()
         {
@@ -1756,12 +1756,12 @@ namespace System.Management.Automation
         #region Misc Properties / Events
 
         /// <summary>
-        /// The runspace pool that this remote runspace wraps
+        /// The runspace pool that this remote runspace wraps.
         /// </summary>
         internal RunspacePool RunspacePool { get; }
 
         /// <summary>
-        /// EventHandler used to report connection URI redirections to the application
+        /// EventHandler used to report connection URI redirections to the application.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Uri>> URIRedirectionReported;
 
@@ -1800,7 +1800,7 @@ namespace System.Management.Automation
     #region Remote Debugger
 
     /// <summary>
-    /// RemoteDebugger
+    /// RemoteDebugger.
     /// </summary>
     internal sealed class RemoteDebugger : Debugger, IDisposable
     {
@@ -1824,12 +1824,12 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        /// RemoteDebuggerStopEvent
+        /// RemoteDebuggerStopEvent.
         /// </summary>
         public const string RemoteDebuggerStopEvent = "PSInternalRemoteDebuggerStopEvent";
 
         /// <summary>
-        /// RemoteDebuggerBreakpointUpdatedEvent
+        /// RemoteDebuggerBreakpointUpdatedEvent.
         /// </summary>
         public const string RemoteDebuggerBreakpointUpdatedEvent = "PSInternalRemoteDebuggerBreakpointUpdatedEvent";
 
@@ -1847,7 +1847,7 @@ namespace System.Management.Automation
         private RemoteDebugger() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="runspace">Associated remote runspace.</param>
         public RemoteDebugger(RemoteRunspace runspace)
@@ -1993,7 +1993,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// StopProcessCommand
+        /// StopProcessCommand.
         /// </summary>
         public override void StopProcessCommand()
         {
@@ -2008,7 +2008,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetDebuggerAction
+        /// SetDebuggerAction.
         /// </summary>
         /// <param name="resumeAction">DebuggerResumeAction.</param>
         public override void SetDebuggerAction(DebuggerResumeAction resumeAction)
@@ -2032,7 +2032,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// GetDebuggerStopped
+        /// GetDebuggerStopped.
         /// </summary>
         /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
@@ -2064,7 +2064,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// SetDebugMode
+        /// SetDebugMode.
         /// </summary>
         /// <param name="mode"></param>
         public override void SetDebugMode(DebugModes mode)
@@ -2145,7 +2145,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// InternalProcessCommand
+        /// InternalProcessCommand.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="output"></param>
@@ -2156,7 +2156,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsRemote
+        /// IsRemote.
         /// </summary>
         internal override bool IsRemote
         {
@@ -2206,7 +2206,7 @@ namespace System.Management.Automation
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
@@ -2243,7 +2243,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsRemoteDebug
+        /// IsRemoteDebug.
         /// </summary>
         internal bool IsRemoteDebug
         {
@@ -2343,7 +2343,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsDebuggerSteppingEnabled
+        /// IsDebuggerSteppingEnabled.
         /// </summary>
         internal override bool IsDebuggerSteppingEnabled
         {
@@ -2833,7 +2833,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the APIs to access drives out of session state
+        /// Get the APIs to access drives out of session state.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.

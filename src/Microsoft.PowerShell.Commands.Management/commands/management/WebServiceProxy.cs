@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     #region New-WebServiceProxy
 
     /// <summary>
-    /// Cmdlet for new-WebService Proxy
+    /// Cmdlet for new-WebService Proxy.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "WebServiceProxy", DefaultParameterSetName = "NoCredentials", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135238")]
     public sealed class NewWebServiceProxy : PSCmdlet
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// URI of the web service
+        /// URI of the web service.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         private System.Uri _uri;
 
         /// <summary>
-        /// Parameter Class name
+        /// Parameter Class name.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         private string _class;
 
         /// <summary>
-        /// namespace
+        /// namespace.
         /// </summary>
         [Parameter(Position = 2)]
         [ValidateNotNullOrEmpty]
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         private string _namespace;
 
         /// <summary>
-        /// Credential
+        /// Credential.
         /// </summary>
         [Parameter(ParameterSetName = "Credential")]
         [ValidateNotNullOrEmpty]
@@ -147,13 +147,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private int _sourceHash;
         /// <summary>
-        /// Random class
+        /// Random class.
         /// </summary>
 
         private object _cachelock = new object();
         private static Random s_rnd = new Random();
         /// <summary>
-        /// BeginProcessing code
+        /// BeginProcessing code.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
         private static object s_sequenceNumberLock = new object();
 
         /// <summary>
-        /// Generates a random name
+        /// Generates a random name.
         /// </summary>
         /// <returns>String.</returns>
         private string GenerateRandomName()
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Generates the Assembly
+        /// Generates the Assembly.
         /// </summary>
         /// <param name="NameSpace"></param>
         /// <param name="ClassName"></param>
@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Function to add all the assemblies required to generate the web proxy
+        /// Function to add all the assemblies required to generate the web proxy.
         /// </summary>
         /// <param name="assembly"></param>
         /// <param name="parameters"></param>
@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
         }
         /// <summary>
         /// Instantiates the object
-        ///  if a type of WebServiceBindingAttribute is not found, throw an exception
+        ///  if a type of WebServiceBindingAttribute is not found, throw an exception.
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>

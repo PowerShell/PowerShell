@@ -133,12 +133,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// The host implemented PSHost interface
+        /// The host implemented PSHost interface.
         /// </summary>
         protected PSHost Host { get; }
 
         /// <summary>
-        /// InitialSessionState information for this runspace
+        /// InitialSessionState information for this runspace.
         /// </summary>
         public override InitialSessionState InitialSessionState { get; }
 
@@ -147,14 +147,14 @@ namespace System.Management.Automation.Runspaces
         #region properties
 
         /// <summary>
-        /// Return version of this runspace
+        /// Return version of this runspace.
         /// </summary>
         public override Version Version { get; } = PSVersionInfo.PSVersion;
 
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
 
         /// <summary>
-        /// Retrieve information about current state of the runspace
+        /// Retrieve information about current state of the runspace.
         /// </summary>
         public override RunspaceStateInfo RunspaceStateInfo
         {
@@ -169,7 +169,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets the current availability of the Runspace
+        /// Gets the current availability of the Runspace.
         /// </summary>
         public override RunspaceAvailability RunspaceAvailability
         {
@@ -181,12 +181,12 @@ namespace System.Management.Automation.Runspaces
         private RunspaceAvailability _runspaceAvailability = RunspaceAvailability.None;
 
         /// <summary>
-        /// Object used for synchronization
+        /// Object used for synchronization.
         /// </summary>
         protected internal object SyncRoot { get; } = new object();
 
         /// <summary>
-        /// Information about the computer where this runspace is created
+        /// Information about the computer where this runspace is created.
         /// </summary>
         public override RunspaceConnectionInfo ConnectionInfo
         {
@@ -198,7 +198,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Original Connection Info that the user passed
+        /// Original Connection Info that the user passed.
         /// </summary>
         public override RunspaceConnectionInfo OriginalConnectionInfo
         {
@@ -282,7 +282,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Derived class's open implementation
+        /// Derived class's open implementation.
         /// </summary>
         protected abstract void OpenHelper(bool syncCall);
 
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Close the runspace
+        /// Close the runspace.
         /// </summary>
         /// <param name="syncCall">If true runspace is closed synchronously
         /// else runspaces is closed asynchronously
@@ -420,7 +420,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Derived class's close implementation
+        /// Derived class's close implementation.
         /// </summary>
         /// <param name="syncCall">If true runspace is closed synchronously
         /// else runspaces is closed asynchronously
@@ -519,7 +519,7 @@ namespace System.Management.Automation.Runspaces
         #region CreatePipeline
 
         /// <summary>
-        /// Create an empty pipeline
+        /// Create an empty pipeline.
         /// </summary>
         /// <returns>An empty pipeline.</returns>
         public override Pipeline CreatePipeline()
@@ -528,7 +528,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Create a pipeline from a command string
+        /// Create a pipeline from a command string.
         /// </summary>
         /// <param name="command">A valid command string.</param>
         /// <returns>
@@ -603,7 +603,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Create a pipeline from a command string
+        /// Create a pipeline from a command string.
         /// </summary>
         /// <param name="command">A valid command string or string.Empty.</param>
         /// <param name="addToHistory">If true command is added to history.</param>
@@ -628,7 +628,7 @@ namespace System.Management.Automation.Runspaces
         public override event EventHandler<RunspaceAvailabilityEventArgs> AvailabilityChanged;
 
         /// <summary>
-        /// Returns true if there are any subscribers to the AvailabilityChanged event
+        /// Returns true if there are any subscribers to the AvailabilityChanged event.
         /// </summary>
         internal override bool HasAvailabilityChangedSubscribers
         {
@@ -636,7 +636,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Raises the AvailabilityChanged event
+        /// Raises the AvailabilityChanged event.
         /// </summary>
         protected override void OnAvailabilityChanged(RunspaceAvailabilityEventArgs e)
         {
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Set the current runspace state - no error
+        /// Set the current runspace state - no error.
         /// </summary>
         /// <param name="state">The new state.</param>
         protected void SetRunspaceState(RunspaceState state)
@@ -950,7 +950,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Stops all the running pipelines
+        /// Stops all the running pipelines.
         /// </summary>
         protected void StopPipelines()
         {
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// This method stops all the pipelines which are nested
-        /// under specified pipeline
+        /// under specified pipeline.
         /// </summary>
         /// <param name="pipeline"></param>
         /// <returns></returns>

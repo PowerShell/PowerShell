@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Construct a new LocalGroup object that is a copy of another
+        /// Construct a new LocalGroup object that is a copy of another.
         /// </summary>
         /// <param name="other"></param>
         private LocalGroup(LocalGroup other)

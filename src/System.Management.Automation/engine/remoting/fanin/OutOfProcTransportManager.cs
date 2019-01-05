@@ -123,7 +123,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Common method to create a packet that contains only a PS Guid
-        /// with element name changing
+        /// with element name changing.
         /// </summary>
         /// <param name="element"></param>
         /// <param name="psGuid"></param>
@@ -395,7 +395,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// A wrapper around TextWriter to allow for synchronized writing to a stream.
     /// Synchronization is required to avoid collision when multiple TransportManager's
-    /// write data at the same time to the same writer
+    /// write data at the same time to the same writer.
     /// </summary>
     internal class OutOfProcessTextWriter
     {
@@ -410,7 +410,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Constructs the wrapper
+        /// Constructs the wrapper.
         /// </summary>
         /// <param name="writerToWrap"></param>
         internal OutOfProcessTextWriter(TextWriter writerToWrap)
@@ -580,7 +580,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Create a transport manager for command
+        /// Create a transport manager for command.
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <param name="cmd"></param>
@@ -601,7 +601,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Kills the server process and disposes other resources
+        /// Kills the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
         internal override void Dispose(bool isDisposing)
@@ -1083,7 +1083,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Kills the server process and disposes other resources
+        /// Kills the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
         internal override void Dispose(bool isDisposing)

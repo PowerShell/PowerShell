@@ -376,7 +376,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Have received a public key from the other side
-        /// Import or take other action based on the state
+        /// Import or take other action based on the state.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments which contains the
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Start the key exchange process
+        /// Start the key exchange process.
         /// </summary>
         internal override void StartKeyExchange()
         {
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Complete the Key exchange process
+        /// Complete the Key exchange process.
         /// </summary>
         internal override void CompleteKeyExchange()
         {
@@ -431,7 +431,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Send an encrypted session key to the client
+        /// Send an encrypted session key to the client.
         /// </summary>
         internal void SendEncryptedSessionKey()
         {

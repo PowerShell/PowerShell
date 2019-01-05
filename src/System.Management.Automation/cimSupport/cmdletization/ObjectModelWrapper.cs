@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="className"></param>
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// When overridden in the derived class, creates a query builder for a given object model
+        /// When overridden in the derived class, creates a query builder for a given object model.
         /// </summary>
         /// <returns>Query builder for a given object model.</returns>
         public virtual QueryBuilder GetQueryBuilder()
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private PSCmdlet _cmdlet;
 
         /// <summary>
-        /// Name of the class (from the object model handled by this ObjectModelWrapper) that is wrapped by the currently executing cmdlet
+        /// Name of the class (from the object model handled by this ObjectModelWrapper) that is wrapped by the currently executing cmdlet.
         /// </summary>
         public string ClassName
         {
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private string _classVersion;
 
         /// <summary>
-        /// Module version
+        /// Module version.
         /// </summary>
         public Version ModuleVersion
         {

@@ -9,7 +9,7 @@ using System;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Cmdlet to get available list of results
+    /// Cmdlet to get available list of results.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113328")]
     [OutputType(typeof(Job))]
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// SessionId for which job
-        /// need to be obtained
+        /// need to be obtained.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0,
                   ParameterSetName = JobCmdletBase.SessionIdParameterSet)]
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Extract result objects corresponding to the specified
-        /// names or expressions
+        /// names or expressions.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         /// <summary>
-        /// Filter jobs based on HasMoreData
+        /// Filter jobs based on HasMoreData.
         /// </summary>
         /// <param name="jobList"></param>
         /// <returns>Return the list of jobs after applying HasMoreData filter.</returns>
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the all child jobs with specified ChildJobState in the job list
+        /// Find the all child jobs with specified ChildJobState in the job list.
         /// </summary>
         /// <param name="jobList"></param>
         /// <returns>Returns job list including all child jobs with ChildJobState or all if IncludeChildJob is specified.</returns>

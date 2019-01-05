@@ -419,15 +419,15 @@ namespace System.Management.Automation
         #region StateInfo
 
         /// <summary>
-        /// Name of property when Exception is serialized as error record
+        /// Name of property when Exception is serialized as error record.
         /// </summary>
         internal const string ExceptionAsErrorRecord = "ExceptionAsErrorRecord";
         /// <summary>
-        /// Property used for encoding state of pipeline when serializing PipelineStateInfo
+        /// Property used for encoding state of pipeline when serializing PipelineStateInfo.
         /// </summary>
         internal const string PipelineState = "PipelineState";
         /// <summary>
-        /// Property used for encoding state of runspace when serializing RunspaceStateInfo
+        /// Property used for encoding state of runspace when serializing RunspaceStateInfo.
         /// </summary>
         internal const string RunspaceState = "RunspaceState";
 
@@ -436,7 +436,7 @@ namespace System.Management.Automation
         #region PSEventArgs
 
         /// <summary>
-        /// Properties used for serialization of PSEventArgs
+        /// Properties used for serialization of PSEventArgs.
         /// </summary>
         internal const string PSEventArgsComputerName = "PSEventArgs.ComputerName";
         internal const string PSEventArgsRunspaceId = "PSEventArgs.RunspaceId";
@@ -635,7 +635,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for
-        /// creating a RunspacePool on the server
+        /// creating a RunspacePool on the server.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
@@ -697,7 +697,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for
-        /// creating a RunspacePool on the server
+        /// creating a RunspacePool on the server.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
@@ -754,7 +754,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Generates a response message to ConnectRunspace that includes
-        /// sufficient information to construction client RunspacePool state
+        /// sufficient information to construction client RunspacePool state.
         /// </summary>
         /// <param name="runspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
@@ -789,7 +789,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for
-        /// modifying the maxrunspaces of the specified runspace pool on the server
+        /// modifying the maxrunspaces of the specified runspace pool on the server.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="maxRunspaces">new value of maxRunspaces for the
@@ -820,7 +820,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for
-        /// modifying the maxrunspaces of the specified runspace pool on the server
+        /// modifying the maxrunspaces of the specified runspace pool on the server.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">new value of minRunspaces for the
@@ -851,7 +851,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for
-        /// that contains a response to SetMaxRunspaces or SetMinRunspaces
+        /// that contains a response to SetMaxRunspaces or SetMinRunspaces.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="callId">Call id of the call at client.</param>
@@ -881,7 +881,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for
-        /// getting the available runspaces on the server
+        /// getting the available runspaces on the server.
         /// </summary>
         /// <param name="clientRunspacePoolId">guid of the runspace pool on which
         /// this needs to be queried</param>
@@ -909,7 +909,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a remoting data structure handler message for
-        /// transferring a roles public key to the other side
+        /// transferring a roles public key to the other side.
         /// </summary>
         /// <param name="runspacePoolId">Runspace pool id.</param>
         /// <param name="publicKey">Public key to send across.</param>
@@ -938,7 +938,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a remoting data structure handler message for
-        /// requesting a public key from the client to the server
+        /// requesting a public key from the client to the server.
         /// </summary>
         /// <param name="runspacePoolId">Runspace pool id.</param>
         /// <returns>Data structure message.</returns>
@@ -960,7 +960,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a remoting data structure handler message for
-        /// sending an encrypted session key to the client
+        /// sending an encrypted session key to the client.
         /// </summary>
         /// <param name="runspacePoolId">Runspace pool id.</param>
         /// <param name="encryptedSessionKey">Encrypted session key.</param>
@@ -988,7 +988,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This methods generates a Remoting data structure handler message for
-        /// creating a command discovery pipeline on the server
+        /// creating a command discovery pipeline on the server.
         /// </summary>
         /// <param name="shell">The client remote powershell from which the
         /// message needs to be generated.
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This methods generates a Remoting data structure handler message for
-        /// creating a PowerShell on the server
+        /// creating a PowerShell on the server.
         /// </summary>
         /// <param name="shell">The client remote powershell from which the
         /// create powershell message needs to be generated</param>
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting
-        /// application private data from server to client
+        /// application private data from server to client.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the client RunspacePool.</param>
         /// <param name="applicationPrivateData">Application private data.</param>
@@ -1179,7 +1179,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a state
-        /// information from server to client
+        /// information from server to client.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the client RunspacePool.</param>
         /// <param name="stateInfo">State information object.</param>
@@ -1223,7 +1223,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a PowerShell
-        /// event from server to client
+        /// event from server to client.
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the client RunspacePool.</param>
         /// <param name="e">PowerShell event.</param>
@@ -1282,7 +1282,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the PS remoting protocol version associated with the provided
+        /// Returns the PS remoting protocol version associated with the provided.
         /// </summary>
         /// <param name="rsPool">RunspacePool.</param>
         /// <returns>PS remoting protocol version.</returns>
@@ -1298,7 +1298,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for sending a powershell
-        /// input data from the client to the server
+        /// input data from the client to the server.
         /// </summary>
         /// <param name="data">Input data to send.</param>
         /// <param name="clientRemoteRunspacePoolId">Client runspace pool id.</param>
@@ -1323,7 +1323,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for signalling
-        /// end of input data for powershell
+        /// end of input data for powershell.
         /// </summary>
         /// <param name="clientRemoteRunspacePoolId">Client runspace pool id.</param>
         /// <param name="clientPowerShellId">Client powershell id.</param>
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a
-        /// powershell output data from server to client
+        /// powershell output data from server to client.
         /// </summary>
         /// <param name="data">Data to be sent.</param>
         /// <param name="clientPowerShellId">id of client powershell
@@ -1375,7 +1375,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a
         /// powershell informational message (debug/verbose/warning/progress)from
-        /// server to client
+        /// server to client.
         /// </summary>
         /// <param name="data">Data to be sent.</param>
         /// <param name="clientPowerShellId">id of client powershell
@@ -1405,7 +1405,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a
         /// powershell progress message from
-        /// server to client
+        /// server to client.
         /// </summary>
         /// <param name="progressRecord">Progress record to send.</param>
         /// <param name="clientPowerShellId">id of client powershell
@@ -1438,7 +1438,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a
         /// powershell information stream message from
-        /// server to client
+        /// server to client.
         /// </summary>
         /// <param name="informationRecord">Information record to send.</param>
         /// <param name="clientPowerShellId">id of client powershell
@@ -1470,7 +1470,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a
-        /// powershell error record from server to client
+        /// powershell error record from server to client.
         /// </summary>
         /// <param name="errorRecord">Error record to be sent.</param>
         /// <param name="clientPowerShellId">id of client powershell
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method creates a remoting data structure handler message for transporting a
-        /// powershell state information from server to client
+        /// powershell state information from server to client.
         /// </summary>
         /// <param name="stateInfo">State information object.</param>
         /// <param name="clientPowerShellId">id of client powershell
@@ -1839,7 +1839,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the RunspacePool state info from the
-        /// data object specified
+        /// data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>RunspacePoolStateInfo.</returns>
@@ -1858,7 +1858,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the application private data from the
-        /// data object specified
+        /// data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>Application private data.</returns>
@@ -1873,7 +1873,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the public key from the encoded message
+        /// Gets the public key from the encoded message.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>Public key as string.</returns>
@@ -1888,7 +1888,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the encrypted session key from the encoded message
+        /// Gets the encrypted session key from the encoded message.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>Encrypted session key as string.</returns>
@@ -1904,7 +1904,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the RunspacePool state info from the
-        /// data object specified
+        /// data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>RunspacePoolStateInfo.</returns>
@@ -1944,7 +1944,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the minimum runspaces to create in the
-        /// runspace pool from the data object specified
+        /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>Minimum runspaces.</returns>
@@ -1960,7 +1960,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the maximum runspaces to create in the
-        /// runspace pool from the data object specified
+        /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>Maximum runspaces.</returns>
@@ -1976,7 +1976,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the thread options for the runspaces in the
-        /// runspace pool from the data object specified
+        /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>Thread options.</returns>
@@ -1993,7 +1993,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generates RunspacePoolInitInfo object from a received PSObject
+        /// Generates RunspacePoolInitInfo object from a received PSObject.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>RunspacePoolInitInfo generated.</returns>
@@ -2012,7 +2012,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the thread options for the runspaces in the
-        /// runspace pool from the data object specified
+        /// runspace pool from the data object specified.
         /// </summary>
         /// <param name="dataAsPSObject">Data object to decode.</param>
         /// <returns>Thread options.</returns>
@@ -2028,7 +2028,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// decode and obtain the host info for the host
-        /// associated with the runspace pool
+        /// associated with the runspace pool.
         /// </summary>
         /// <param name="dataAsPSObject">DataAsPSObject object to decode.</param>
         /// <returns>Host information.</returns>
@@ -2044,7 +2044,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the exception if any from the serialized state info object
+        /// Gets the exception if any from the serialized state info object.
         /// </summary>
         /// <param name="stateInfo"></param>
         /// <returns></returns>
@@ -2061,7 +2061,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the exception from serialized error record
+        /// Get the exception from serialized error record.
         /// </summary>
         /// <param name="serializedErrorRecord"></param>
         /// <returns></returns>
@@ -2080,7 +2080,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the output from the message
+        /// Gets the output from the message.
         /// </summary>
         /// <param name="data">Object to decode.</param>
         /// <returns>Output object.</returns>
@@ -2093,7 +2093,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the PSInvocationStateInfo from the data
+        /// Gets the PSInvocationStateInfo from the data.
         /// </summary>
         /// <param name="data">Object to decode.</param>
         /// <returns>PSInvocationInfo.</returns>
@@ -2112,7 +2112,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the ErrorRecord from the message
+        /// Gets the ErrorRecord from the message.
         /// </summary>
         /// <param name="data">Data to decode.</param>
         /// <returns>Error record.</returns>
@@ -2131,7 +2131,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the WarningRecord from the message
+        /// Gets the WarningRecord from the message.
         /// </summary>
         internal static WarningRecord GetPowerShellWarning(object data)
         {
@@ -2144,7 +2144,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the VerboseRecord from the message
+        /// Gets the VerboseRecord from the message.
         /// </summary>
         internal static VerboseRecord GetPowerShellVerbose(object data)
         {
@@ -2157,7 +2157,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the DebugRecord from the message
+        /// Gets the DebugRecord from the message.
         /// </summary>
         internal static DebugRecord GetPowerShellDebug(object data)
         {
@@ -2170,7 +2170,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the ProgressRecord from the message
+        /// Gets the ProgressRecord from the message.
         /// </summary>
         internal static ProgressRecord GetPowerShellProgress(object data)
         {
@@ -2184,7 +2184,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the InformationRecord from the message
+        /// Gets the InformationRecord from the message.
         /// </summary>
         internal static InformationRecord GetPowerShellInformation(object data)
         {
@@ -2198,7 +2198,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the PowerShell object from the specified data
+        /// Gets the PowerShell object from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
         /// <returns>Deserialized PowerShell object.</returns>
@@ -2215,7 +2215,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the PowerShell object from the specified data
+        /// Gets the PowerShell object from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
         /// <returns>Deserialized PowerShell object.</returns>
@@ -2289,7 +2289,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the NoInput setting from the specified data
+        /// Gets the NoInput setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
         /// <returns><c>true</c> if there is no pipeline input; <c>false</c> otherwise.</returns>
@@ -2306,7 +2306,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the AddToHistory setting from the specified data
+        /// Gets the AddToHistory setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
         /// <returns><c>true</c> if there is addToHistory data; <c>false</c> otherwise.</returns>
@@ -2323,7 +2323,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the IsNested setting from the specified data
+        /// Gets the IsNested setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
         /// <returns><c>true</c> if there is IsNested data; <c>false</c> otherwise.</returns>
@@ -2341,7 +2341,7 @@ namespace System.Management.Automation
 
 #if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
-        /// Gets the invocation settings information from the message
+        /// Gets the invocation settings information from the message.
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -2352,7 +2352,7 @@ namespace System.Management.Automation
         }
 #endif
         /// <summary>
-        /// Gets the stream options from the message
+        /// Gets the stream options from the message.
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -2363,7 +2363,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Decodes a RemoteSessionCapability object
+        /// Decodes a RemoteSessionCapability object.
         /// </summary>
         /// <param name="data">Data to decode.</param>
         /// <returns>RemoteSessionCapability object.</returns>
@@ -2408,7 +2408,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if the server supports batch invocation
+        /// Checks if the server supports batch invocation.
         /// </summary>
         /// <param name="runspace">Runspace instance.</param>
         /// <returns>True if batch invocation is supported, false if not.</returns>

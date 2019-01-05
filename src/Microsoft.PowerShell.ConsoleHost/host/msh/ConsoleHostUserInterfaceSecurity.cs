@@ -11,7 +11,7 @@ using System.Globalization;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// ConsoleHostUserInterface implements console-mode user interface for powershell
+    /// ConsoleHostUserInterface implements console-mode user interface for powershell.
     /// </summary>
     internal partial
     class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface

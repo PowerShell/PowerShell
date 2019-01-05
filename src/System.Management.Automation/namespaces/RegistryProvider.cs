@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion tracer
 
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Registry";
 
@@ -1076,7 +1076,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Removes the specified registry key and all sub-keys
+        /// Removes the specified registry key and all sub-keys.
         /// </summary>
         /// <param name="path">
         /// The path to the key to remove.
@@ -2083,7 +2083,7 @@ namespace Microsoft.PowerShell.Commands
         #region IDynamicPropertyCmdletProvider
 
         /// <summary>
-        /// Creates a new property on the specified item
+        /// Creates a new property on the specified item.
         /// </summary>
         /// <param name="path">
         /// The path to the item on which the new property should be created.
@@ -3099,7 +3099,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// IT resets the a registry key value to its default
+        /// IT resets the a registry key value to its default.
         /// </summary>
         /// <param name="key">Key whose value has to be reset.</param>
         /// <param name="valueName">Name of the value to reset.</param>
@@ -3205,7 +3205,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// checks the container. if the container is the hive container (Registry::\)
-        /// it throws an exception
+        /// it throws an exception.
         /// </summary>
         /// <param name="path">Path to check.</param>
         /// <returns>False if the operation is not allowed.</returns>
@@ -3225,7 +3225,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// checks the container. if the container is the hive container (Registry::\)
-        /// it throws an exception
+        /// it throws an exception.
         /// </summary>
         /// <param name="sourcePath">Source path to check.</param>
         /// <param name="destinationPath">Destination path to check.</param>
@@ -3783,7 +3783,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Uses LanguagePrimitives.ConvertTo to convert the value to the type that is appropriate
-        /// for the specified RegistryValueKind
+        /// for the specified RegistryValueKind.
         /// </summary>
         /// <param name="value">
         /// The value to convert.
@@ -3879,7 +3879,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// helper to infer the RegistryValueKind from an object
+        /// helper to infer the RegistryValueKind from an object.
         /// </summary>
         /// <param name="value">Object whose RegistryValueKind has to be determined.</param>
         /// <returns>Corresponding RegistryValueKind.</returns>
@@ -3921,7 +3921,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Helper to get RegistryValueKind for a Property
+        /// Helper to get RegistryValueKind for a Property.
         /// </summary>
         /// <param name="key">RegistryKey containing property.</param>
         /// <param name="valueName">Property for which RegistryValueKind is requested.</param>
@@ -3950,7 +3950,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// helper to read back an existing registry key value
+        /// helper to read back an existing registry key value.
         /// </summary>
         /// <param name="key">Key to read the value from.</param>
         /// <param name="valueName">Name of the value to read.</param>
@@ -3983,7 +3983,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Wraps a registry item in a PSObject and sets the TreatAs to
         /// Microsoft.Win32.RegistryKey. This way values will be presented
-        /// in the same format as keys
+        /// in the same format as keys.
         /// </summary>
         /// <param name="key">
         /// The registry key to be written out.
@@ -4032,7 +4032,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Takes a string and tries to parse it into a RegistryValueKind enum
         /// type.
-        /// If the conversion fails, WriteError() is called
+        /// If the conversion fails, WriteError() is called.
         /// </summary>
         /// <param name="type">
         /// The type as specified by the user that should be parsed into a RegistryValueKind enum.
@@ -4139,13 +4139,13 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Defines dynamic parameters for the registry provider
+    /// Defines dynamic parameters for the registry provider.
     /// </summary>
     public class RegistryProviderSetItemDynamicParameter
     {
         /// <summary>
         /// Gets or sets the Type parameter as a dynamic parameter for
-        /// the registry provider's SetItem method
+        /// the registry provider's SetItem method.
         /// </summary>
         /// <remarks>
         /// The only acceptable values for this parameter are those found

@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _sourcePathOrExtension;
 
         /// <summary>
-        /// File contents as a byte array
+        /// File contents as a byte array.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
         [ValidateNotNullOrEmpty]
@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Not implemented
+        /// Not implemented.
         /// </summary>
         protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
         {
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// get SigningOption value corresponding to a string name
+        /// get SigningOption value corresponding to a string name.
         /// </summary>
         /// <param name="optionName">Name of option.</param>
         /// <returns>SigningOption.</returns>

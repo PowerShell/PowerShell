@@ -144,7 +144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationRemoveCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationRemoveCimInstance(Cmdlet cmdlet,
@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationSetCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationSetCimInstance(Cmdlet cmdlet,
@@ -286,7 +286,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationInvokeCimMethod : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationInvokeCimMethod(Cmdlet cmdlet,
@@ -351,7 +351,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationTestCimSession : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationTestCimSession(Cmdlet cmdlet,

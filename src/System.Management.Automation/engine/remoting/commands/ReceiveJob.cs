@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
     ///              $job = Get-WMIObject '....' -AsJob
     ///              Receive-PSJob -Job $job -ComputerName "Server2"
     ///              The parameter ComputerName cannot be used with jobs which are
-    ///              not PSRemotingJob
+    ///              not PSRemotingJob.
     /// </summary>
     [Cmdlet(VerbsCommunications.Receive, "Job", DefaultParameterSetName = ReceiveJobCommand.LocationParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113372", RemotingCapability = RemotingCapability.SupportedByCommand)]
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Job object from which specific results need to
-        /// be extracted
+        /// be extracted.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Name of the computer for which the results needs to be
-        /// returned
+        /// returned.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceiveJobCommand.ComputerNameParameterSet,
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Locations for which the results needs to be returned.
         /// This will cater to all kinds of jobs and not only
-        /// remoting jobs
+        /// remoting jobs.
         /// </summary>
         [Parameter(ParameterSetName = ReceiveJobCommand.LocationParameterSet,
                    Position = 1)]
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Runspaces for which the results needs to be
-        /// returned
+        /// returned.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceiveJobCommand.SessionParameterSet,
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Retrieve the results for the specified computers or
-        /// runspaces
+        /// runspaces.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// StopProcessing - when the command is stopped,
         /// unregister all the event handlers from the jobs
-        /// and decrement reference for results
+        /// and decrement reference for results.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// if we are not stopping, continue writing output
-        /// as and when they are available
+        /// as and when they are available.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -721,7 +721,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Write the results from this Job object. This does not write from the
-        /// child jobs of this job object
+        /// child jobs of this job object.
         /// </summary>
         /// <param name="job">Job object from which to write the results from
         /// </param>
@@ -983,7 +983,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes the job objects if required by the cmdlet
+        /// Writes the job objects if required by the cmdlet.
         /// </summary>
         /// <param name="jobsToWrite">Collection of jobs to write.</param>
         /// <remarks>this method is intended to be called only from

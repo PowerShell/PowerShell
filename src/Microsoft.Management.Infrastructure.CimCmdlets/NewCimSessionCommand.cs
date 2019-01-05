@@ -242,7 +242,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         /// <summary>
-        /// Build a CimSessionOptions, used to create CimSession
+        /// Build a CimSessionOptions, used to create CimSession.
         /// </summary>
         /// <returns>Null means no prefer CimSessionOptions.</returns>
         internal void BuildSessionOptions(out CimSessionOptions outputOptions, out CimCredential outputCredential)
@@ -360,7 +360,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region IDisposable
         /// <summary>
-        /// Clean up resources
+        /// Clean up resources.
         /// </summary>
         protected override void DisposeInternal()
         {

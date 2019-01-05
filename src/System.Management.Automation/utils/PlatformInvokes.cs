@@ -376,7 +376,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Restore the previous privilege state
+        /// Restore the previous privilege state.
         /// </summary>
         /// <param name="privilegeName"></param>
         /// <param name="previousPrivilegeState"></param>
@@ -506,7 +506,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the pseudo handler of the current process
+        /// Get the pseudo handler of the current process.
         /// </summary>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.GetCurrentProcessDllName)]
@@ -578,7 +578,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             public void Dispose()
             {
@@ -586,7 +586,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             /// <param name="disposing"></param>
             private void Dispose(bool disposing)

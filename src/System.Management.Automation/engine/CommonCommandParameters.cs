@@ -15,7 +15,7 @@ namespace System.Management.Automation.Internal
         #region ctor
 
         /// <summary>
-        /// Constructs an instance with the specified command instance
+        /// Constructs an instance with the specified command instance.
         /// </summary>
         /// <param name="commandRuntime">
         /// The instance of the command that the parameters should set the

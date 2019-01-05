@@ -94,7 +94,7 @@ namespace Microsoft.WSMan.Management
     /// Disables CredSSP authentication on the client. CredSSP authentication
     /// enables an application to delegate the user's credentials from the client to
     /// the server, hence allowing the user to perform management operations that
-    /// access a second hop
+    /// access a second hop.
     /// </summary>
 
     [Cmdlet(VerbsLifecycle.Disable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141438")]
@@ -357,7 +357,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -367,7 +367,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -393,7 +393,7 @@ namespace Microsoft.WSMan.Management
     /// 1. Enables WSMan local configuration on client to enable CredSSP
     /// 2. Sets CredSSP policy AllowFreshCredentials to wsman/Delegate. This policy
     /// allows delegating explicit credentials to a server when server
-    /// authentication is achieved via a trusted X509 certificate or Kerberos
+    /// authentication is achieved via a trusted X509 certificate or Kerberos.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141442")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
@@ -401,7 +401,7 @@ namespace Microsoft.WSMan.Management
     public class EnableWSManCredSSPCommand : WSManCredSSPCommandBase, IDisposable/*, IDynamicParameters*/
     {
         /// <summary>
-        /// delegate parameter
+        /// delegate parameter.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
@@ -650,7 +650,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Updates the grouppolicy registry settings
+        /// Updates the grouppolicy registry settings.
         /// </summary>
         /// <param name="applicationname"></param>
         /// <param name="delegatestring"></param>
@@ -709,7 +709,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -718,7 +718,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -745,7 +745,7 @@ namespace Microsoft.WSMan.Management
     /// 2. Gets the configuration information for the CredSSP policy
     /// AllowFreshCredentials . This policy allows delegating explicit credentials
     /// to a server when server authentication is achieved via a trusted X509
-    /// certificate or Kerberos
+    /// certificate or Kerberos.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
@@ -909,7 +909,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -918,7 +918,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void

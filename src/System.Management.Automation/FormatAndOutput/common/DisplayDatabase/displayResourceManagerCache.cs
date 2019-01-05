@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Get a reference to an assembly object by looking up the currently loaded assemblies
+        /// Get a reference to an assembly object by looking up the currently loaded assemblies.
         /// </summary>
         /// <param name="resourceReference">the string resource reference object containing
         /// the name of the assembly to load</param>
@@ -140,12 +140,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// helper class to resolve an assembly name to an assembly reference
-        /// The class caches previous results for faster lookup
+        /// The class caches previous results for faster lookup.
         /// </summary>
         private class AssemblyNameResolver
         {
             /// <summary>
-            /// resolve the assembly name against the set of loaded assemblies
+            /// resolve the assembly name against the set of loaded assemblies.
             /// </summary>
             /// <param name="assemblyName"></param>
             /// <returns></returns>

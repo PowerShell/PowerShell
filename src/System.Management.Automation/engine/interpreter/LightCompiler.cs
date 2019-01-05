@@ -121,7 +121,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// No finally block
+        /// No finally block.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndTargetIndex, ExceptionHandler[] handlers)
             : this(tryStart, tryEnd, gotoEndTargetIndex, Instruction.UnknownInstrIndex, Instruction.UnknownInstrIndex, handlers)
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// No catch blocks
+        /// No catch blocks.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndTargetIndex, int finallyStart, int finallyEnd)
             : this(tryStart, tryEnd, gotoEndTargetIndex, finallyStart, finallyEnd, null)
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Generic constructor
+        /// Generic constructor.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndLabelIndex, int finallyStart, int finallyEnd, ExceptionHandler[] handlers)
         {
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Goto the index of the first instruction of the suitable catch block
+        /// Goto the index of the first instruction of the suitable catch block.
         /// </summary>
         internal int GotoHandler(InterpretedFrame frame, object exception, out ExceptionHandler handler)
         {
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Interpreter
     }
 
     /// <summary>
-    /// The re-throw instruction will throw this exception
+    /// The re-throw instruction will throw this exception.
     /// </summary>
     internal sealed class RethrowException : SystemException
     {

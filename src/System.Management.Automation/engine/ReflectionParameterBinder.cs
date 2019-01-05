@@ -62,7 +62,7 @@ namespace System.Management.Automation
         #region Parameter default values
 
         /// <summary>
-        /// Gets the default value for the specified parameter
+        /// Gets the default value for the specified parameter.
         /// </summary>
         /// <param name="name">
         /// The name of the parameter to get the default value of.

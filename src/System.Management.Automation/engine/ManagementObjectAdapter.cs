@@ -125,7 +125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the TypeNameHierarchy out of an ManagementBaseObject
+        /// Returns the TypeNameHierarchy out of an ManagementBaseObject.
         /// </summary>
         /// <param name="obj">Object to get the TypeNameHierarchy from.</param>
         /// <remarks>
@@ -161,7 +161,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
-        /// the corresponding PSMemberInfo
+        /// the corresponding PSMemberInfo.
         /// </summary>
         /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
         /// <param name="memberName">Name of the member to be retrieved.</param>
@@ -224,7 +224,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Called after a non null return from GetMember to try to call
-        /// the method with the arguments
+        /// the method with the arguments.
         /// </summary>
         /// <param name="method">The non empty return from GetMethods.</param>
         /// <param name="arguments">The arguments to use.</param>
@@ -241,7 +241,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called after a non null return from GetMember to return the overloads
+        /// Called after a non null return from GetMember to return the overloads.
         /// </summary>
         /// <param name="method">The return of GetMember.</param>
         /// <returns></returns>
@@ -255,7 +255,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is settable
+        /// Returns true if the property is settable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is settable.</returns>
@@ -291,7 +291,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is gettable
+        /// Returns true if the property is gettable.
         /// </summary>
         /// <param name="property">Property to check.</param>
         /// <returns>True if the property is gettable.</returns>
@@ -301,7 +301,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the name of the type corresponding to the property
+        /// Returns the name of the type corresponding to the property.
         /// </summary>
         /// <param name="property">PSProperty obtained in a previous DoGetProperty.</param>
         /// <param name="forDisplay">True if the result is for display purposes only.</param>
@@ -334,7 +334,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the value from a property coming from a previous call to DoGetProperty
+        /// Returns the value from a property coming from a previous call to DoGetProperty.
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty.</param>
         /// <returns>The value of the property.</returns>
@@ -386,7 +386,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the string representation of the property in the object
+        /// Returns the string representation of the property in the object.
         /// </summary>
         /// <param name="property">Property obtained in a previous GetMember.</param>
         /// <returns>The string representation of the property in the object.</returns>
@@ -417,7 +417,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns an array with the property attributes
+        /// Returns an array with the property attributes.
         /// </summary>
         /// <param name="property">Property we want the attributes from.</param>
         /// <returns>An array with the property attributes.</returns>
@@ -431,7 +431,7 @@ namespace System.Management.Automation
         #region Private/Internal Methods
 
         /// <summary>
-        /// Retrieves the table for instance methods
+        /// Retrieves the table for instance methods.
         /// </summary>
         /// <param name="wmiObject">Object containing methods to load in typeTable.</param>
         /// <param name="staticBinding">Controls what methods are adapted.</param>
@@ -483,7 +483,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Populates methods of a ManagementClass in a CacheTable
+        /// Populates methods of a ManagementClass in a CacheTable.
         /// </summary>
         /// <param name="mgmtClass">Class to get the method info from.</param>
         /// <param name="methodTable">Cachetable to update.</param>
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ManagementClass object from the supplied mgmtBaseObject.
         /// ManagementObject has scope, options, path which need to be carried over to the ManagementClass for
-        /// retrieving method/property/parameter metadata
+        /// retrieving method/property/parameter metadata.
         /// </summary>
         /// <param name="mgmtBaseObject"></param>
         /// <returns></returns>
@@ -544,7 +544,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the object type associated with a CimType:object
+        /// Gets the object type associated with a CimType:object.
         /// </summary>
         /// <param name="pData">PropertyData representing a parameter.</param>
         /// <returns>
@@ -581,7 +581,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the dotnet type of a given PropertyData
+        /// Gets the dotnet type of a given PropertyData.
         /// </summary>
         /// <param name="pData">PropertyData input.</param>
         /// <returns>A string representing dotnet type.</returns>
@@ -895,7 +895,7 @@ namespace System.Management.Automation
             string methodName, ManagementBaseObject inParams);
 
         /// <summary>
-        /// Get a method object given method name
+        /// Get a method object given method name.
         /// </summary>
         /// <typeparam name="T">PSMemberInfo</typeparam>
         /// <param name="wmiObject">Object for which the method is required.</param>
@@ -992,7 +992,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds method information of the ManagementClass. Only static methods are added for
-        /// an object of type ManagementClass
+        /// an object of type ManagementClass.
         /// </summary>
         /// <typeparam name="T">PSMemberInfo</typeparam>
         /// <param name="wmiObject">Object for which the members need to be retrieved.</param>
@@ -1054,7 +1054,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Deals with ManagementObject objects.
-    /// This class do not adapt static methods
+    /// This class do not adapt static methods.
     /// </summary>
     internal class ManagementObjectAdapter : ManagementClassApdapter
     {

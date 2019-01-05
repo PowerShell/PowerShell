@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
     /// > Get-PSSession | Connect-PSSession
     ///
     /// Connect all disconnected PS sessions on a remote computer
-    /// > Connect-PSSession serverName
+    /// > Connect-PSSession serverName.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Connect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ConnectPSSessionCommand.NameParameterSet,
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
         /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
-        /// not specified as well, then "WSMAN" will be used
+        /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// RemoteRunspaceId to retrieve corresponding PSSession
-        /// object
+        /// object.
         /// </summary>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet,
                    Mandatory = true)]
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of the remote runspaceinfo object
+        /// Name of the remote runspaceinfo object.
         /// </summary>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.NameParameterSet,
                    Mandatory = true)]
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         public int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] ContainerId
         {
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override Guid[] VMId
         {
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] VMName
         {
@@ -1047,7 +1047,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Dispose method of IDisposable. Gets called in the following cases:
         ///     1. Pipeline explicitly calls dispose on cmdlets
-        ///     2. Called by the garbage collector
+        ///     2. Called by the garbage collector.
         /// </summary>
         public void Dispose()
         {
@@ -1058,7 +1058,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Internal dispose method which does the actual
-        /// dispose operations and finalize suppressions
+        /// dispose operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">Whether method is called
         /// from Dispose or destructor</param>

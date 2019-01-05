@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     ///    - Current-user Group Policy
     ///    - Current session preference
     ///    - Current user machine preference
-    ///    - Local machine preference
+    ///    - Local machine preference.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ExecutionPolicy", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113315")]
     [OutputType(typeof(ExecutionPolicy))]

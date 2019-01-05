@@ -1447,7 +1447,7 @@ namespace System.Management.Automation.Language
     internal static class DscResourceChecker
     {
         /// <summary>
-        /// Check if it is a qualified DSC resource type
+        /// Check if it is a qualified DSC resource type.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="typeDefinitionAst"></param>
@@ -1540,7 +1540,7 @@ namespace System.Management.Automation.Language
             }
         }
         /// <summary>
-        /// Look up all the way up until find all the required members
+        /// Look up all the way up until find all the required members.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type.</param>
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation.Language
             }
         }
         /// <summary>
-        /// Check if it is a Get method with correct return type and signature
+        /// Check if it is a Get method with correct return type and signature.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="functionMemberAst">The function member AST.</param>
@@ -1642,7 +1642,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Check if it is a Test method with correct return type and signature
+        /// Check if it is a Test method with correct return type and signature.
         /// </summary>
         /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation.Language
                     functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool));
         }
         /// <summary>
-        /// Check if it is a Set method with correct return type and signature
+        /// Check if it is a Set method with correct return type and signature.
         /// </summary>
         /// <param name="functionMemberAst">The function member AST.</param>
         /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>

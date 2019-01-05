@@ -42,7 +42,7 @@ namespace System.Management.Automation.Remoting
         protected AbstractServerTransportManager _transportManager;
 
         /// <summary>
-        /// ServerDriverRemoteHost
+        /// ServerDriverRemoteHost.
         /// </summary>
         private ServerDriverRemoteHost _serverDriverRemoteHost;
 
@@ -311,7 +311,7 @@ namespace System.Management.Automation.Remoting
         #region Overrides
 
         /// <summary>
-        /// True if runspace is pushed
+        /// True if runspace is pushed.
         /// </summary>
         public override bool IsRunspacePushed
         {
@@ -322,7 +322,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Push runspace to use for remote command execution
+        /// Push runspace to use for remote command execution.
         /// </summary>
         /// <param name="runspace">RemoteRunspace.</param>
         public override void PushRunspace(Runspace runspace)
@@ -369,7 +369,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Pop runspace
+        /// Pop runspace.
         /// </summary>
         public override void PopRunspace()
         {
@@ -399,7 +399,7 @@ namespace System.Management.Automation.Remoting
         #region Properties
 
         /// <summary>
-        /// Server Debugger
+        /// Server Debugger.
         /// </summary>
         internal Debugger ServerDebugger
         {
@@ -409,7 +409,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Pushed runspace or null
+        /// Pushed runspace or null.
         /// </summary>
         internal Runspace PushedRunspace
         {

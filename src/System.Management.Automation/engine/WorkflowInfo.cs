@@ -13,7 +13,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the workflow.
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the workflow.
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the workflow.
@@ -97,7 +97,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the workflow.
@@ -121,7 +121,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the WorkflowInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the WorkflowInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the workflow.
@@ -143,7 +143,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the WorkflowInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the WorkflowInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the workflow.
@@ -200,7 +200,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Update a workflow
+        /// Update a workflow.
         /// </summary>
         /// <param name="function">
         /// The script block that the function should represent.

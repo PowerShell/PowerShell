@@ -596,7 +596,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clears the cached scriptblocks
+        /// Clears the cached scriptblocks.
         /// </summary>
         internal static void ClearScriptBlockCache()
         {
@@ -788,7 +788,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// DebuggerHidden
+        /// DebuggerHidden.
         /// </summary>
         public bool DebuggerHidden
         {
@@ -2314,7 +2314,7 @@ namespace System.Management.Automation
         /// <summary>
         /// IDisposable implementation
         /// When the command is complete, release the associated scope
-        /// and other members
+        /// and other members.
         /// </summary>
         public void Dispose()
         {

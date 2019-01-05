@@ -182,7 +182,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Look for typeinfo using IDispatch.GetTypeInfo
+        /// Look for typeinfo using IDispatch.GetTypeInfo.
         /// </summary>
         /// <param name="dispatch"></param>
         /// <param name="throwIfMissingExpectedTypeInfo">

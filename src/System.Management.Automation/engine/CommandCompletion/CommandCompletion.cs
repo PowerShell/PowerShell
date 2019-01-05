@@ -707,7 +707,7 @@ namespace System.Management.Automation
             #region "Handle Command"
 
             /// <summary>
-            /// Used when remoting from a win8 machine to a win7 machine
+            /// Used when remoting from a win8 machine to a win7 machine.
             /// </summary>
             /// <param name="lastWord"></param>
             /// <param name="isSnapinSpecified"></param>

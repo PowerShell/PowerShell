@@ -12,7 +12,7 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Information about a loaded Cmdlet Provider
+    /// Information about a loaded Cmdlet Provider.
     /// </summary>
     /// <remarks>
     /// A cmdlet provider may want to derive from this class to provide their
@@ -41,7 +41,7 @@ namespace System.Management.Automation
         public string Name { get; }
 
         /// <summary>
-        /// Gets the full name of the provider including the pssnapin name if available
+        /// Gets the full name of the provider including the pssnapin name if available.
         /// </summary>
         internal string FullName
         {
@@ -139,7 +139,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the description for the provider
+        /// Gets or sets the description for the provider.
         /// </summary>
         public string Description { get; set; }
 
@@ -247,7 +247,7 @@ namespace System.Management.Automation
         ///  are separated by a colon or not.
         ///
         /// This is true for all PSDrives on all platforms, except for filesystems on
-        /// non-windows platforms
+        /// non-windows platforms.
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 
@@ -506,7 +506,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the provider
+        /// Creates an instance of the provider.
         /// </summary>
         /// <returns>
         /// An instance of the provider or null if one could not be created.

@@ -47,7 +47,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds common properties like PSSnapIn,ModuleName from maml2 to maml1
+        /// Adds common properties like PSSnapIn,ModuleName from maml2 to maml1.
         /// </summary>
         /// <param name="maml1"></param>
         /// <param name="maml2"></param>

@@ -16,7 +16,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private ContentCmdletProviderIntrinsics()
         {
@@ -26,7 +26,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="cmdlet">
         /// An instance of the cmdlet.
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
         /// <param name="sessionState">
         /// An instance of the sessionState.
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         #region GetContentReader
 
         /// <summary>
-        /// Gets the content reader for the item at the specified path
+        /// Gets the content reader for the item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path to the item to get the content reader for.
@@ -111,7 +111,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the content reader for the item at the specified path
+        /// Gets the content reader for the item at the specified path.
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) to get the content reader for.
@@ -419,7 +419,7 @@ namespace System.Management.Automation
         #region ClearContent
 
         /// <summary>
-        /// Clears the content from the item(s) specified by the path
+        /// Clears the content from the item(s) specified by the path.
         /// </summary>
         /// <param name="path">
         /// The path to the item(s) to clear the content from.
@@ -456,7 +456,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clears the content from the item(s) specified by the path
+        /// Clears the content from the item(s) specified by the path.
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) to clear the content from.

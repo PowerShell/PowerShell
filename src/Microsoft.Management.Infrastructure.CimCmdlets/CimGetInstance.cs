@@ -23,12 +23,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class FormatPartialCimInstance : IObjectPreProcess
     {
         /// <summary>
-        /// Partial ciminstance pstypename
+        /// Partial ciminstance pstypename.
         /// </summary>
         internal const string PartialPSTypeName = @"Microsoft.Management.Infrastructure.CimInstance#__PartialCIMInstance";
 
         /// <summary>
-        /// Add pstypename to the resultobject if necessary
+        /// Add pstypename to the resultobject if necessary.
         /// </summary>
         /// <param name="resultObject"></param>
         /// <returns></returns>
@@ -461,7 +461,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
@@ -495,7 +495,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
@@ -512,7 +512,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Set <see cref="IObjectPreProcess"/> object to proxy to pre-process
-        /// the result object if necessary
+        /// the result object if necessary.
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
@@ -527,12 +527,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         /// <summary>
-        /// wql query format with where clause
+        /// wql query format with where clause.
         /// </summary>
         private const string queryWithWhere = @"SELECT {0} FROM {1} WHERE {2}";
 
         /// <summary>
-        /// wql query format without where clause
+        /// wql query format without where clause.
         /// </summary>
         private const string queryWithoutWhere = @"SELECT {0} FROM {1}";
         #endregion

@@ -36,7 +36,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// Cimindication exception event args, which containing occurred exception
+    /// Cimindication exception event args, which containing occurred exception.
     /// </summary>
     public class CimIndicationEventExceptionEventArgs : CimIndicationEventArgs
     {
@@ -75,7 +75,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public class CimIndicationEventInstanceEventArgs : CimIndicationEventArgs
     {
         /// <summary>
-        /// Get ciminstance of the indication object
+        /// Get ciminstance of the indication object.
         /// </summary>
         public CimInstance NewEvent
         {
@@ -86,7 +86,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Get MachineId of the indication object
+        /// Get MachineId of the indication object.
         /// </summary>
         public string MachineId
         {
@@ -97,7 +97,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Get BookMark of the indication object
+        /// Get BookMark of the indication object.
         /// </summary>
         public string Bookmark
         {
@@ -343,7 +343,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region internal method
         /// <summary>
         /// Set the cmdlet object to throw ThrowTerminatingError
-        /// in case there is a subscription failure
+        /// in case there is a subscription failure.
         /// </summary>
         /// <param name="cmdlet"></param>
         internal void SetCmdlet(Cmdlet cmdlet)
@@ -364,22 +364,22 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimRegisterCimIndication cimRegisterCimIndication;
 
         /// <summary>
-        /// the status of <see cref="CimIndicationWatcher"/> object
+        /// the status of <see cref="CimIndicationWatcher"/> object.
         /// </summary>
         private Status status;
 
         /// <summary>
-        /// lock started field
+        /// lock started field.
         /// </summary>
         private object myLock;
 
         /// <summary>
-        /// CimSession parameter name
+        /// CimSession parameter name.
         /// </summary>
         private const string cimSessionParameterName = "cimSession";
 
         /// <summary>
-        /// QueryExpression parameter name
+        /// QueryExpression parameter name.
         /// </summary>
         private const string queryExpressionParameterName = "queryExpression";
 

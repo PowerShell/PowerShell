@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// class to load the XML document into data structures.
-    /// It encapsulates the file format specific code
+    /// It encapsulates the file format specific code.
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase
     {
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion tracer
 
         /// <summary>
-        /// table of XML node tags used in the file format
+        /// table of XML node tags used in the file format.
         /// </summary>
         private static class XmlTags
         {
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// table of miscellanea string constant values for XML nodes
+        /// table of miscellanea string constant values for XML nodes.
         /// </summary>
         private static class XMLStringValues
         {
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _suppressValidation = false;
 
         /// <summary>
-        /// entry point for the loader algorithm
+        /// entry point for the loader algorithm.
         /// </summary>
         /// <param name="info">Information needed to load the file.</param>
         /// <param name="db">Database instance to load the file into.</param>
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// entry point for the loader algorithm to load formatting data from ExtendedTypeDefinition
+        /// entry point for the loader algorithm to load formatting data from ExtendedTypeDefinition.
         /// </summary>
         /// <param name="typeDefinition">The ExtendedTypeDefinition instance to load formatting data from.</param>
         /// <param name="db">Database instance to load the formatting data into.</param>
@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// load the content of the XML document into the data instance.
-        /// It assumes that the XML document has been successfully loaded
+        /// It assumes that the XML document has been successfully loaded.
         /// </summary>
         /// <param name="doc">XML document to load from, cannot be null.</param>
         /// <param name="db">Instance of the databaseto load into.</param>
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     TableControl
         ///     ListControl
         ///     WideControl
-        ///     CustomControl
+        ///     CustomControl.
         /// </summary>
         /// <param name="typeDefinition">ExtendedTypeDefinition instances to load from, cannot be null.</param>
         /// <param name="db">Instance of the database to load into.</param>
@@ -451,7 +451,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load the view into a ViewDefinition
+        /// Load the view into a ViewDefinition.
         /// </summary>
         /// <param name="typeNames">The TypeName tag under SelectedBy tag.</param>
         /// <param name="formatView"></param>
@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load the headers defined for columns
+        /// Load the headers defined for columns.
         /// </summary>
         /// <param name="tableBody"></param>
         /// <param name="headers"></param>
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load the column items into the TableRowDefinition
+        /// Load the column items into the TableRowDefinition.
         /// </summary>
         /// <param name="trd"></param>
         /// <param name="columns"></param>
@@ -695,7 +695,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion Load TableControl
 
         /// <summary>
-        /// Load the expression information from DisplayEntry
+        /// Load the expression information from DisplayEntry.
         /// </summary>
         /// <param name="displayEntry"></param>
         /// <param name="viewIndex"></param>
@@ -743,7 +743,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load EntrySelectedBy (TypeName) into AppliesTo
+        /// Load EntrySelectedBy (TypeName) into AppliesTo.
         /// </summary>
         /// <returns></returns>
         private AppliesTo LoadAppliesToSectionFromObjectModel(List<string> selectedBy, List<DisplayEntry> condition)
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Load ListControl
 
         /// <summary>
-        /// Load LoisControl into the ListControlBody
+        /// Load LoisControl into the ListControlBody.
         /// </summary>
         /// <param name="list"></param>
         /// <param name="viewIndex"></param>
@@ -840,7 +840,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load ListEntry into ListControlEntryDefinition
+        /// Load ListEntry into ListControlEntryDefinition.
         /// </summary>
         /// <param name="listEntry"></param>
         /// <param name="viewIndex"></param>
@@ -868,7 +868,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load ListItems into ListControlItemDefinition
+        /// Load ListItems into ListControlItemDefinition.
         /// </summary>
         /// <param name="lved"></param>
         /// <param name="listItems"></param>
@@ -924,7 +924,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Load WideControl
 
         /// <summary>
-        /// Load the WideControl into the WideControlBody
+        /// Load the WideControl into the WideControlBody.
         /// </summary>
         /// <param name="wide"></param>
         /// <param name="viewIndex"></param>
@@ -953,7 +953,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load WideEntries
+        /// Load WideEntries.
         /// </summary>
         /// <param name="wideBody"></param>
         /// <param name="wideEntries"></param>
@@ -1002,7 +1002,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load WideEntry into WieControlEntryDefinition
+        /// Load WideEntry into WieControlEntryDefinition.
         /// </summary>
         /// <param name="wideItem"></param>
         /// <param name="viewIndex"></param>
@@ -1916,7 +1916,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Expression Loading
         /// <summary>
         /// helper to verify the text of a string block and
-        /// log an error if an exception is thrown
+        /// log an error if an exception is thrown.
         /// </summary>
         /// <param name="scriptBlockText">Script block string to verify.</param>
         /// <returns>True if parsed correctly, false if failed.</returns>
@@ -1942,7 +1942,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper class to wrap the loading of a script block/property name alternative tag
+        /// helper class to wrap the loading of a script block/property name alternative tag.
         /// </summary>
         private sealed class ExpressionNodeMatch
         {
@@ -2042,7 +2042,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// helper class to wrap the loading of an expression (using ExpressionNodeMatch)
-        /// plus the formatting string and an alternative text node
+        /// plus the formatting string and an alternative text node.
         /// </summary>
         private sealed class ViewEntryNodeMatch
         {

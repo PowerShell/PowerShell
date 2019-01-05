@@ -16,12 +16,12 @@ namespace System.Management.Automation
     ///
     /// Help File help information are stored in '.help.txt' files. These files are
     /// located in the Monad / CustomShell Path as well as in the Application Base
-    /// of PSSnapIns
+    /// of PSSnapIns.
     /// </summary>
     internal class HelpFileHelpProvider : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         internal HelpFileHelpProvider(HelpSystem helpSystem) : base(helpSystem)
         {
@@ -30,7 +30,7 @@ namespace System.Management.Automation
         #region Common Properties
 
         /// <summary>
-        /// Name of the provider
+        /// Name of the provider.
         /// </summary>
         /// <value>Name of the provider</value>
         internal override string Name
@@ -42,7 +42,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category of the provider
+        /// Help category of the provider.
         /// </summary>
         /// <value>Help category of the provider</value>
         internal override HelpCategory HelpCategory

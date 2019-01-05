@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             /// <summary>
-            /// Releases resources associated with this object
+            /// Releases resources associated with this object.
             /// </summary>
             public void Dispose()
             {
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             /// <summary>
-            /// Releases resources associated with this object
+            /// Releases resources associated with this object.
             /// </summary>
             private void Dispose(bool disposing)
             {
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Cim
         private readonly List<IDisposable> _trackedDisposables = new List<IDisposable>();
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         public void Dispose()
         {
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         private void Dispose(bool disposing)
         {
@@ -583,7 +583,7 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        /// Returns a type of CIM representation if conversion from/to CIM can be done purely with LanguagePrimitives.ConvertTo
+        /// Returns a type of CIM representation if conversion from/to CIM can be done purely with LanguagePrimitives.ConvertTo.
         /// </summary>
         /// <param name="dotNetType"></param>
         /// <returns></returns>

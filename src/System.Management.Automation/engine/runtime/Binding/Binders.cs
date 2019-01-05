@@ -1108,7 +1108,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// This binder is used to optimize the conversion of the result
+    /// This binder is used to optimize the conversion of the result.
     /// </summary>
     internal class PSPipelineResultToBoolBinder : DynamicMetaObjectBinder
     {
@@ -4868,7 +4868,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The binder for getting a member of a class, like $foo.bar or [foo]::bar
+    /// The binder for getting a member of a class, like $foo.bar or [foo]::bar.
     /// </summary>
     internal class PSGetMemberBinder : GetMemberBinder
     {
@@ -5915,7 +5915,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The binder for setting a member, like $foo.bar = 1 or [foo]::bar = 1
+    /// The binder for setting a member, like $foo.bar = 1 or [foo]::bar = 1.
     /// </summary>
     internal class PSSetMemberBinder : SetMemberBinder
     {

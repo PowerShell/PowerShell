@@ -315,7 +315,7 @@ namespace System.Management.Automation
         private Cmdlet _command;
 
         /// <summary>
-        /// This makes the origin of the provider request visible to the internals
+        /// This makes the origin of the provider request visible to the internals.
         /// </summary>
         internal CommandOrigin Origin { get; } = CommandOrigin.Internal;
 
@@ -351,7 +351,7 @@ namespace System.Management.Automation
         #region Internal properties
 
         /// <summary>
-        /// Gets the execution context of the engine
+        /// Gets the execution context of the engine.
         /// </summary>
         internal ExecutionContext ExecutionContext { get; }
 
@@ -402,12 +402,12 @@ namespace System.Management.Automation
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the dynamic parameters for the context
+        /// Gets or sets the dynamic parameters for the context.
         /// </summary>
         internal object DynamicParameters { get; set; }
 
         /// <summary>
-        /// Returns MyInvocation from the underlying cmdlet
+        /// Returns MyInvocation from the underlying cmdlet.
         /// </summary>
         internal InvocationInfo MyInvocation
         {
@@ -496,7 +496,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         public PSTransactionContext CurrentPSTransaction
         {
@@ -551,7 +551,7 @@ namespace System.Management.Automation
         #region User feedback mechanisms
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="target">
         /// Name of the target resource being acted upon
@@ -576,7 +576,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="target">
         /// Name of the target resource being acted upon
@@ -603,7 +603,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="verboseDescription">
         /// This should contain a textual description of the action to be
@@ -646,7 +646,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Confirm the operation with the user
+        /// Confirm the operation with the user.
         /// </summary>
         /// <param name="verboseDescription">
         /// This should contain a textual description of the action to be
@@ -701,7 +701,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Ask the user whether to continue/stop or break to a subshell
+        /// Ask the user whether to continue/stop or break to a subshell.
         /// </summary>
         /// <param name="query">
         /// Message to display to the user. This routine will append
@@ -728,7 +728,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Ask the user whether to continue/stop or break to a subshell
+        /// Ask the user whether to continue/stop or break to a subshell.
         /// </summary>
         /// <param name="query">
         /// Message to display to the user. This routine will append
@@ -972,7 +972,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes all the accumulated errors to the specified context using WriteError
+        /// Writes all the accumulated errors to the specified context using WriteError.
         /// </summary>
         /// <param name="errorContext">
         /// The context to write the errors to.

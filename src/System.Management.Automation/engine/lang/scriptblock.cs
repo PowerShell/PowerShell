@@ -126,7 +126,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns PowerShell object representing the pipeline contained in this ScriptBlock
+        /// Returns PowerShell object representing the pipeline contained in this ScriptBlock.
         /// </summary>
         /// <remarks>
         /// Some ScriptBlocks are too complicated to be converted into a PowerShell object.
@@ -1000,7 +1000,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handles OnScriptBlockInvoke event, this is called by the event manager
+        /// Handles OnScriptBlockInvoke event, this is called by the event manager.
         /// </summary>
         private static void OnScriptBlockInvokeEventHandler(object sender, PSEventArgs args)
         {
@@ -1247,7 +1247,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Finalizer for class SteppablePipeline
+        /// Finalizer for class SteppablePipeline.
         /// </summary>
         ~SteppablePipeline()
         {
@@ -1268,7 +1268,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException
-        /// with the message set to typeof(ScriptBlockToPowerShellNotSupportedException).FullName
+        /// with the message set to typeof(ScriptBlockToPowerShellNotSupportedException).FullName.
         /// </summary>
         public ScriptBlockToPowerShellNotSupportedException()
             : base(typeof(ScriptBlockToPowerShellNotSupportedException).FullName)
@@ -1276,7 +1276,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message
+        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message)
@@ -1285,7 +1285,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException
+        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
         /// <param name="innerException">The exceptions's inner exception.</param>
@@ -1295,7 +1295,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Recommended constructor for the class
+        /// Recommended constructor for the class.
         /// </summary>
         /// <param name="errorId">String that uniquely identifies each thrown Exception.</param>
         /// <param name="innerException">The inner exception.</param>
@@ -1313,7 +1313,7 @@ namespace System.Management.Automation
 
         #region Serialization
         /// <summary>
-        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters
+        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -1328,12 +1328,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines Event arguments passed to OnScriptBlockInvocationEventHandler
+    /// Defines Event arguments passed to OnScriptBlockInvocationEventHandler.
     /// </summary>
     internal sealed class ScriptBlockInvocationEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructs ScriptBlockInvocationEventArgs
+        /// Constructs ScriptBlockInvocationEventArgs.
         /// </summary>
         /// <param name="scriptBlock">The scriptblock to invoke
         /// </param>

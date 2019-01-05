@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Represents an error during execution of a CIM job
+    /// Represents an error during execution of a CIM job.
     /// </summary>
     [Serializable]
     public class CimJobException : SystemException, IContainsErrorRecord

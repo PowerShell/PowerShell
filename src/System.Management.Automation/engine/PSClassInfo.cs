@@ -7,12 +7,12 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Contains a PS Class information
+    /// Contains a PS Class information.
     /// </summary>
     public sealed class PSClassInfo
     {
         /// <summary>
-        /// Initializes a new instance of the PSClassInfo class
+        /// Initializes a new instance of the PSClassInfo class.
         /// </summary>
         /// <param name="name">Name of the PS Class.</param>
         internal PSClassInfo(string name)
@@ -52,12 +52,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Contains a class field information
+    /// Contains a class field information.
     /// </summary>
     public sealed class PSClassMemberInfo
     {
         /// <summary>
-        /// Initializes a new instance of the PSClassMemberInfo class
+        /// Initializes a new instance of the PSClassMemberInfo class.
         /// </summary>
         internal PSClassMemberInfo(string name, string memberType, string defaultValue)
         {
@@ -70,12 +70,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets name of the member
+        /// Gets or sets name of the member.
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets or sets type of the member
+        /// Gets or sets type of the member.
         /// </summary>
         public string TypeName { get; private set; }
 

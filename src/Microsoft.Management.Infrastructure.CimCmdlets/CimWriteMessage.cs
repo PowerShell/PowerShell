@@ -20,12 +20,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// channel id
+        /// channel id.
         /// </summary>
         private UInt32 channel;
 
         /// <summary>
-        /// message to write to the channel
+        /// message to write to the channel.
         /// </summary>
         private string message;
         #endregion

@@ -11,7 +11,7 @@ using System.IO;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// These are platform abstractions and platform specific implementations
+    /// These are platform abstractions and platform specific implementations.
     /// </summary>
     public static class Platform
     {
@@ -163,7 +163,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Some common environment variables used in PS have different
-        /// names in different OS platforms
+        /// names in different OS platforms.
         /// </summary>
         internal static class CommonEnvVariableNames
         {
@@ -175,7 +175,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Remove the temporary directory created for the current process
+        /// Remove the temporary directory created for the current process.
         /// </summary>
         internal static void RemoveTemporaryDirectory()
         {
@@ -197,7 +197,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get a temporary directory to use for the current process
+        /// Get a temporary directory to use for the current process.
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
@@ -231,7 +231,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// function for choosing directory location of PowerShell for profile loading
+        /// function for choosing directory location of PowerShell for profile loading.
         /// </summary>
         public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {

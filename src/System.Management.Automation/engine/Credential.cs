@@ -57,7 +57,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Validates the username, but not its existence.
-        /// or correctness
+        /// or correctness.
         /// </summary>
         ValidateUserNameSyntax,
 
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         private static GetSymmetricEncryptionKey s_delegate = null;
 
         /// <summary>
-        /// GetObjectData
+        /// GetObjectData.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -145,7 +145,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// PSCredential
+        /// PSCredential.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>

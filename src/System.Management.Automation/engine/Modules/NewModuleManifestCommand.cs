@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _nestedModules;
 
         /// <summary>
-        /// Set the GUID in the manifest file
+        /// Set the GUID in the manifest file.
         /// </summary>
         [Parameter]
         public Guid Guid
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         private Guid _guid = Guid.NewGuid();
 
         /// <summary>
-        /// Set the author string in the manifest
+        /// Set the author string in the manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
         private string _author;
 
         /// <summary>
-        /// Set the company name in the manifest
+        /// Set the company name in the manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         private string _companyName = string.Empty;
 
         /// <summary>
-        /// Set the copyright string in the module manifest
+        /// Set the copyright string in the module manifest.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _moduleVersion = new Version(0, 0, 1);
 
         /// <summary>
-        /// Set the module description
+        /// Set the module description.
         /// </summary>
         [Parameter]
         [AllowEmptyString]
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         private string _description;
 
         /// <summary>
-        /// Set the ProcessorArchitecture required by this module
+        /// Set the ProcessorArchitecture required by this module.
         /// </summary>
         [Parameter]
         public ProcessorArchitecture ProcessorArchitecture
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         private ProcessorArchitecture? _processorArchitecture = null;
 
         /// <summary>
-        /// Set the PowerShell version required by this module
+        /// Set the PowerShell version required by this module.
         /// </summary>
         [Parameter]
         public Version PowerShellVersion
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _PowerShellHostVersion = null;
 
         /// <summary>
-        /// Sets the list of Dependencies for the module
+        /// Sets the list of Dependencies for the module.
         /// </summary>
         [Parameter]
         [ArgumentTypeConverter(typeof(ModuleSpecification[]))]
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _requiredModules;
 
         /// <summary>
-        /// Sets the list of types files for the module
+        /// Sets the list of types files for the module.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _types;
 
         /// <summary>
-        /// Sets the list of formats files for the module
+        /// Sets the list of formats files for the module.
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands
         public string ReleaseNotes { get; set; }
 
         /// <summary>
-        /// Specify the HelpInfo URI
+        /// Specify the HelpInfo URI.
         /// </summary>
         [Parameter]
         [AllowNull]
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// Specify the Default Command Prefix
+        /// Specify the Default Command Prefix.
         /// </summary>
         [Parameter]
         [AllowNull]
@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Return a single-quoted string using the AbsoluteUri member to ensure it is escaped correctly
+        /// Return a single-quoted string using the AbsoluteUri member to ensure it is escaped correctly.
         /// </summary>
         /// <param name="name">The Uri to quote.</param>
         /// <returns>The quoted AbsoluteUri.</returns>
@@ -563,7 +563,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Return a single-quoted string from a Version object
+        /// Return a single-quoted string from a Version object.
         /// </summary>
         /// <param name="name">The Version object to quote.</param>
         /// <returns>The quoted Version string.</returns>
@@ -651,7 +651,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Takes a collection of "module specifications" (string or hashtable)
-        /// and returns the collection as a string that can be inserted into a module manifest
+        /// and returns the collection as a string that can be inserted into a module manifest.
         /// </summary>
         /// <param name="moduleSpecs">The list to quote.</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from.</param>

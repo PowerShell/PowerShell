@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimPromptUser : CimSyncAction
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CimPromptUser(string message,
             CimPromptType prompt)
@@ -119,7 +119,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// prompt message
+        /// prompt message.
         /// </summary>
         public string Message
         {
@@ -132,7 +132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string message;
 
         /// <summary>
-        /// prompt type -Normal or Critical
+        /// prompt type -Normal or Critical.
         /// </summary>
         private CimPromptType prompt;
 

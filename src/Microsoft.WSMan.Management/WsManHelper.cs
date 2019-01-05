@@ -91,7 +91,7 @@ namespace Microsoft.WSMan.Management
         internal class Sessions
         {
             /// <summary>
-            /// dictionary object to store the connection
+            /// dictionary object to store the connection.
             /// </summary>
             internal static Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
 
@@ -200,7 +200,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// add a session to dictionary
+        /// add a session to dictionary.
         /// </summary>
         /// <param name="key">Connection string.</param>
         /// <param name="value">Session object.</param>
@@ -941,7 +941,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// This method is used by Connect-WsMan Cmdlet and New-Item of WsMan Provider to create connection to WsMan
+        /// This method is used by Connect-WsMan Cmdlet and New-Item of WsMan Provider to create connection to WsMan.
         /// </summary>
         /// <param name="ParameterSetName"></param>
         /// <param name="connectionuri"></param>
@@ -1128,7 +1128,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// Get the resource value from WinRm.ini
-        /// from %windir%\system32\winrm\[Hexadecimal Language Folder]\winrm.ini
+        /// from %windir%\system32\winrm\[Hexadecimal Language Folder]\winrm.ini.
         /// </summary>
         /// <param name="Key"></param>
         /// <returns></returns>

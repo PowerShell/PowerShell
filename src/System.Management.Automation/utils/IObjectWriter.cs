@@ -36,7 +36,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Returns the number of objects currently in the underlying stream
+        /// Returns the number of objects currently in the underlying stream.
         /// </summary>
         public abstract int Count
         {
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -82,7 +82,7 @@ namespace System.Management.Automation.Runspaces
         public abstract void Flush();
 
         /// <summary>
-        /// Write a single object into the underlying stream
+        /// Write a single object into the underlying stream.
         /// </summary>
         /// <param name="obj">The object to add to the stream.</param>
         /// <returns>
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Runspaces
         public abstract int Write(object obj);
 
         /// <summary>
-        /// Write multiple objects to the underlying stream
+        /// Write multiple objects to the underlying stream.
         /// </summary>
         /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">

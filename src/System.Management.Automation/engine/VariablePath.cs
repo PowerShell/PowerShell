@@ -286,7 +286,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the namespace specific string
+        /// Gets the namespace specific string.
         /// </summary>
         internal string UnqualifiedPath
         {

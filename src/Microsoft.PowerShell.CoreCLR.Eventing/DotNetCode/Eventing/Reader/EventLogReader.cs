@@ -38,7 +38,7 @@ namespace System.Diagnostics.Eventing.Reader
         /// </summary>
         private int _currentIndex;
         /// <summary>
-        /// The number of events read from the batch into the eventsBuffer
+        /// The number of events read from the batch into the eventsBuffer.
         /// </summary>
         private int _eventCount;
 

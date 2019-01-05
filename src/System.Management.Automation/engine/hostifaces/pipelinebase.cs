@@ -22,7 +22,7 @@ namespace System.Management.Automation.Runspaces
         #region constructors
 
         /// <summary>
-        /// Create a pipeline initialized with a command string
+        /// Create a pipeline initialized with a command string.
         /// </summary>
         /// <param name="runspace">The associated Runspace/></param>
         /// <param name="command">Command string.</param>
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Copy constructor to support cloning
+        /// Copy constructor to support cloning.
         /// </summary>
         /// <param name="pipeline">The source pipeline.</param>
         /// <remarks>
@@ -176,7 +176,7 @@ namespace System.Management.Automation.Runspaces
         private bool _isNested;
 
         /// <summary>
-        /// Is this pipeline nested
+        /// Is this pipeline nested.
         /// </summary>
         public override bool IsNested
         {
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Stop execution of pipeline
+        /// Stop execution of pipeline.
         /// </summary>
         /// <param name="syncCall">If false, call is asynchronous.</param>
         protected abstract void ImplementStop(bool syncCall);
@@ -417,7 +417,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Invoke the pipeline asynchronously
+        /// Invoke the pipeline asynchronously.
         /// </summary>
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
@@ -747,7 +747,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This returns true if pipeline state is Completed, Failed or Stopped
+        /// This returns true if pipeline state is Completed, Failed or Stopped.
         /// </summary>
         /// <returns></returns>
         protected bool IsPipelineFinished()
@@ -821,7 +821,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Set the new execution state
+        /// Set the new execution state.
         /// </summary>
         /// <param name="state">The new state.</param>
         protected void SetPipelineState(PipelineState state)
@@ -963,12 +963,12 @@ namespace System.Management.Automation.Runspaces
         //can access it.
 
         /// <summary>
-        /// if true, this pipeline is added in history
+        /// if true, this pipeline is added in history.
         /// </summary>
         internal bool AddToHistory { get; set; }
 
         /// <summary>
-        /// String which is added in the history
+        /// String which is added in the history.
         /// </summary>
         /// <remarks>This needs to be internal so that it can be replaced
         /// by invoke-cmd to place correct string in history.</remarks>
@@ -1021,7 +1021,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Object used for synchronization
+        /// Object used for synchronization.
         /// </summary>
         protected internal object SyncRoot { get; } = new object();
 
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation.Runspaces
         #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// Set to true when object is disposed.
         /// </summary>
         private bool _disposed;
 

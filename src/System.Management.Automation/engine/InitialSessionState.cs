@@ -167,7 +167,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Is internal so it can be set by the engine code...
         /// This is used to specify whether this command was imported or not
-        /// If noClobber is specified during Import-Module, it is set to false
+        /// If noClobber is specified during Import-Module, it is set to false.
         /// </summary>
         internal bool _isImported = true;
     }
@@ -1790,7 +1790,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Specifies the execution policy to be used for this session state instance
+        /// Specifies the execution policy to be used for this session state instance.
         /// </summary>
         public Microsoft.PowerShell.ExecutionPolicy ExecutionPolicy
         {

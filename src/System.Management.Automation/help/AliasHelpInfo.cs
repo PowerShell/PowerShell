@@ -59,7 +59,7 @@ namespace System.Management.Automation
         internal override string Synopsis { get; } = string.Empty;
 
         /// <summary>
-        /// Help category for alias help. This is always HelpCategory.Alias
+        /// Help category for alias help. This is always HelpCategory.Alias.
         /// </summary>
         /// <value>Help category for alias help</value>
         internal override HelpCategory HelpCategory

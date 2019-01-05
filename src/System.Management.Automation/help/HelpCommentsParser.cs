@@ -18,7 +18,7 @@ using System.Reflection;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Parses help comments and turns them into HelpInfo objects
+    /// Parses help comments and turns them into HelpInfo objects.
     /// </summary>
     internal class HelpCommentsParser
     {

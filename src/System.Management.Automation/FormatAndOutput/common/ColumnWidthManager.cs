@@ -7,12 +7,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// class providing an algorithm for automatic resizing
-    /// of table columns
+    /// of table columns.
     /// </summary>
     internal sealed class ColumnWidthManager
     {
         /// <summary>
-        /// class providing an algorithm for automatic resizing
+        /// class providing an algorithm for automatic resizing.
         /// </summary>
         /// <param name="tableWidth">Overall width of the table in characters.</param>
         /// <param name="minimumColumnWidth">Minimum usable column width.</param>
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// calculate the widths by applying some heuristics to get them to fit on the
         /// allotted table width. It first assigns widths to the columns that do not have a specified
         /// width, then it checks if the total width exceeds the screen widths. If so, it proceeds
-        /// with column elimination, starting from the right most column
+        /// with column elimination, starting from the right most column.
         /// </summary>
         /// <param name="columnWidths">Array of column widths to appropriately size.</param>
         internal void CalculateColumnWidths(Span<int> columnWidths)
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// computes the total table width from the column width array
+        /// computes the total table width from the column width array.
         /// </summary>
         /// <param name="columnWidths">Column widths array.</param>
         /// <returns></returns>

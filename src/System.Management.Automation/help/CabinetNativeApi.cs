@@ -83,7 +83,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Finalizer to ensure destruction of unmanaged resources
+        /// Finalizer to ensure destruction of unmanaged resources.
         /// </summary>
         ~CabinetExtractor()
         {
@@ -146,7 +146,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Frees all the delegate handles
+        /// Frees all the delegate handles.
         /// </summary>
         private void CleanUpDelegates()
         {
@@ -429,7 +429,7 @@ namespace System.Management.Automation.Internal
         #region Helper methods for non-trivial conversions
 
         /// <summary>
-        /// Converts an unmanaged define into a known managed value
+        /// Converts an unmanaged define into a known managed value.
         /// </summary>
         /// <param name="origin">Defined in stdio.h.</param>
         /// <returns>The appropriate System.IO.SeekOrigin value.</returns>
@@ -626,7 +626,7 @@ namespace System.Management.Automation.Internal
         #region PInvoke Definitions
 
         /// <summary>
-        /// Creates an FDI context
+        /// Creates an FDI context.
         /// </summary>
         /// <param name="pfnalloc">_In_ PFNALLOC - Memory allocation delegate.</param>
         /// <param name="pfnfree">_In_ PFNFREE - Memory free delegate.</param>
@@ -651,7 +651,7 @@ namespace System.Management.Automation.Internal
             FdiERF erf);
 
         /// <summary>
-        /// Extracts files from cabinets
+        /// Extracts files from cabinets.
         /// </summary>
         /// <param name="hfdi">_In_ HFDI - A valid FDI context handle returned by FDICreate.</param>
         /// <param name="pszCabinet">_In_ LPSTR - The name of the cabinet file.</param>
@@ -672,7 +672,7 @@ namespace System.Management.Automation.Internal
             IntPtr pvUser);
 
         /// <summary>
-        /// Deletes an open FDI context
+        /// Deletes an open FDI context.
         /// </summary>
         /// <param name="hfdi">_In_ HFDI - The FDI context handle to destroy.</param>
         /// <returns></returns>

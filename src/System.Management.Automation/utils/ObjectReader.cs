@@ -11,7 +11,7 @@ namespace System.Management.Automation.Internal
     using System.Management.Automation;
 
     /// <summary>
-    /// A PipelineReader for an ObjectStream
+    /// A PipelineReader for an ObjectStream.
     /// </summary>
     /// <remarks>
     /// This class is not safe for multi-threaded operations.
@@ -19,7 +19,7 @@ namespace System.Management.Automation.Internal
     internal abstract class ObjectReaderBase<T> : PipelineReader<T>, IDisposable
     {
         /// <summary>
-        /// Construct with an existing ObjectStream
+        /// Construct with an existing ObjectStream.
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
@@ -36,7 +36,7 @@ namespace System.Management.Automation.Internal
         #region Events
 
         /// <summary>
-        /// Event fired when objects are added to the underlying stream
+        /// Event fired when objects are added to the underlying stream.
         /// </summary>
         public override event EventHandler DataReady
         {
@@ -73,7 +73,7 @@ namespace System.Management.Automation.Internal
         #region Public Properties
 
         /// <summary>
-        /// Waitable handle for caller's to block until data is ready to read from the underlying stream
+        /// Waitable handle for caller's to block until data is ready to read from the underlying stream.
         /// </summary>
         public override WaitHandle WaitHandle
         {
@@ -117,7 +117,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Returns the number of objects in the underlying stream
+        /// Returns the number of objects in the underlying stream.
         /// </summary>
         public override int Count
         {
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Internal
         #region Public Methods
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -172,7 +172,7 @@ namespace System.Management.Automation.Internal
         #region Private Methods
 
         /// <summary>
-        /// Handle DataReady events from the underlying stream
+        /// Handle DataReady events from the underlying stream.
         /// </summary>
         /// <param name="sender">The stream raising the event.</param>
         /// <param name="args">Standard event args.</param>
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Internal
         #region Private fields
 
         /// <summary>
-        /// The underlying stream
+        /// The underlying stream.
         /// </summary>
         /// <remarks>Can never be null</remarks>
         protected ObjectStreamBase _stream;
@@ -210,7 +210,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// public method for dispose
+        /// public method for dispose.
         /// </summary>
         public void Dispose()
         {
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources
+        /// release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected abstract void Dispose(bool disposing);
@@ -229,7 +229,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// A PipelineReader reading objects from an ObjectStream
+    /// A PipelineReader reading objects from an ObjectStream.
     /// </summary>
     /// <remarks>
     /// This class is not safe for multi-threaded operations.
@@ -238,7 +238,7 @@ namespace System.Management.Automation.Internal
     {
         #region ctor
         /// <summary>
-        /// Construct with an existing ObjectStream
+        /// Construct with an existing ObjectStream.
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Internal
         #endregion ctor
 
         /// <summary>
-        /// Read at most <paramref name="count"/> objects
+        /// Read at most <paramref name="count"/> objects.
         /// </summary>
         /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
@@ -262,7 +262,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Read a single object from the stream
+        /// Read a single object from the stream.
         /// </summary>
         /// <returns>The next object in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
@@ -317,7 +317,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Peek the next object
+        /// Peek the next object.
         /// </summary>
         /// <returns>The next object in the stream or ObjectStream.EmptyObject if the stream is empty.</returns>
         public override object Peek()
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources
+        /// release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// A PipelineReader reading PSObjects from an ObjectStream
+    /// A PipelineReader reading PSObjects from an ObjectStream.
     /// </summary>
     /// <remarks>
     /// This class is not safe for multi-threaded operations.
@@ -348,7 +348,7 @@ namespace System.Management.Automation.Internal
     {
         #region ctor
         /// <summary>
-        /// Construct with an existing ObjectStream
+        /// Construct with an existing ObjectStream.
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Internal
         #endregion ctor
 
         /// <summary>
-        /// Read at most <paramref name="count"/> objects
+        /// Read at most <paramref name="count"/> objects.
         /// </summary>
         /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
@@ -372,7 +372,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Read a single PSObject from the stream
+        /// Read a single PSObject from the stream.
         /// </summary>
         /// <returns>The next PSObject in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
@@ -427,7 +427,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Peek the next PSObject
+        /// Peek the next PSObject.
         /// </summary>
         /// <returns>The next PSObject in the stream or ObjectStream.EmptyObject if the stream is empty.</returns>
         public override PSObject Peek()
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources
+        /// release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// A ObjectReader for a PSDataCollection ObjectStream
+    /// A ObjectReader for a PSDataCollection ObjectStream.
     /// </summary>
     /// <remarks>
     /// PSDataCollection is introduced after 1.0. PSDataCollection is
@@ -496,7 +496,7 @@ namespace System.Management.Automation.Internal
 
         #region ctor
         /// <summary>
-        /// Construct with an existing ObjectStream
+        /// Construct with an existing ObjectStream.
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources
+        /// release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
@@ -636,7 +636,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// A ObjectReader for a PSDataCollection ObjectStream
+    /// A ObjectReader for a PSDataCollection ObjectStream.
     /// </summary>
     /// <remarks>
     /// PSDataCollection is introduced after 1.0. PSDataCollection is
@@ -655,7 +655,7 @@ namespace System.Management.Automation.Internal
 
         #region ctor
         /// <summary>
-        /// Construct with an existing ObjectStream
+        /// Construct with an existing ObjectStream.
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <param name="computerName"></param>
@@ -675,13 +675,13 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Computer name passed in by the pipeline which
-        /// created this reader
+        /// created this reader.
         /// </summary>
         internal string ComputerName { get; }
 
         /// <summary>
         /// Runspace Id passed in by the pipeline which
-        /// created this reader
+        /// created this reader.
         /// </summary>
         internal Guid RunspaceId { get; }
 
@@ -791,7 +791,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Converts to the return type based on language primitives
+        /// Converts to the return type based on language primitives.
         /// </summary>
         /// <param name="inputObject">Input object to convert.</param>
         /// <returns>Input object converted to the specified return type.</returns>
@@ -813,7 +813,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// release all resources
+        /// release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)

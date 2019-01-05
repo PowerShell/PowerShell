@@ -11,7 +11,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the configuration.
@@ -30,7 +30,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the configuration.
@@ -54,7 +54,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the configuration.
@@ -76,7 +76,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the configuration.
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the ConfigurationInfo class with the specified name and ScriptBlock.
         /// </summary>
         /// <param name="name">
         /// The name of the configuration.
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Indication whether the configuration is a meta-configuration
+        /// Indication whether the configuration is a meta-configuration.
         /// </summary>
         public bool IsMetaConfiguration
         { get; internal set; }

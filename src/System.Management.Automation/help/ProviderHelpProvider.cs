@@ -21,7 +21,7 @@ namespace System.Management.Automation
     internal class ProviderHelpProvider : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         internal ProviderHelpProvider(HelpSystem helpSystem) : base(helpSystem)
         {

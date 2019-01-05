@@ -17,7 +17,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Event Metadata
+    /// Event Metadata.
     /// </summary>
     public sealed class EventMetadata
     {

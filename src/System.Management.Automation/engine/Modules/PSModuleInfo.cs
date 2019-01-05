@@ -181,7 +181,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Specifies the language mode for script based modules
+        /// Specifies the language mode for script based modules.
         /// </summary>
         internal PSLanguageMode? LanguageMode
         {
@@ -190,14 +190,14 @@ namespace System.Management.Automation
         } = PSLanguageMode.FullLanguage;
 
         /// <summary>
-        /// Set to true when script module automatically exports all functions by default
+        /// Set to true when script module automatically exports all functions by default.
         /// </summary>
         internal bool ModuleAutoExportsAllFunctions { get; set; }
 
         internal bool ModuleHasPrivateMembers { get; set; }
 
         /// <summary>
-        /// True if the module had errors during loading
+        /// True if the module had errors during loading.
         /// </summary>
         internal bool HadErrorsLoading { get; set; }
 
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         public string Name { get; private set; } = string.Empty;
 
         /// <summary>
-        /// Sets the name property of the PSModuleInfo object
+        /// Sets the name property of the PSModuleInfo object.
         /// </summary>
         /// <param name="name">The name to set it to.</param>
         internal void SetName(string name)
@@ -430,12 +430,12 @@ namespace System.Management.Automation
         public Uri RepositorySourceLocation { get; internal set; }
 
         /// <summary>
-        /// The version of this module
+        /// The version of this module.
         /// </summary>
         public Version Version { get; private set; } = new Version(0, 0);
 
         /// <summary>
-        /// Sets the module version
+        /// Sets the module version.
         /// </summary>
         /// <param name="version">The version to set...</param>
         internal void SetVersion(Version version)
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         internal void SetModuleType(ModuleType moduleType) { ModuleType = moduleType; }
 
         /// <summary>
-        /// Module Author
+        /// Module Author.
         /// </summary>
         public string Author
         {
@@ -483,7 +483,7 @@ namespace System.Management.Automation
         private ModuleAccessMode _accessMode = ModuleAccessMode.ReadWrite;
 
         /// <summary>
-        /// CLR Version
+        /// CLR Version.
         /// </summary>
         public Version ClrVersion
         {
@@ -492,7 +492,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Company Name
+        /// Company Name.
         /// </summary>
         public string CompanyName
         {
@@ -501,7 +501,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copyright
+        /// Copyright.
         /// </summary>
         public string Copyright
         {
@@ -510,7 +510,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// .NET Framework Version
+        /// .NET Framework Version.
         /// </summary>
         public Version DotNetFrameworkVersion
         {
@@ -668,7 +668,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Prefix
+        /// Prefix.
         /// </summary>
         public string Prefix
         {
@@ -677,7 +677,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Add function to the fixed exports list
+        /// Add function to the fixed exports list.
         /// </summary>
         /// <param name="name">The function to add.</param>
         internal void AddDetectedFunctionExport(string name)
@@ -847,7 +847,7 @@ namespace System.Management.Automation
         internal List<AliasInfo> CompiledAliasExports { get; } = new List<AliasInfo>();
 
         /// <summary>
-        /// FileList
+        /// FileList.
         /// </summary>
         public IEnumerable<string> FileList
         {
@@ -896,7 +896,7 @@ namespace System.Management.Automation
         internal bool IsConsideredEditionCompatible { get; set; } = true;
 
         /// <summary>
-        /// ModuleList
+        /// ModuleList.
         /// </summary>
         public IEnumerable<object> ModuleList
         {
@@ -937,7 +937,7 @@ namespace System.Management.Automation
         private readonly List<PSModuleInfo> _nestedModules = new List<PSModuleInfo>();
 
         /// <summary>
-        /// PowerShell Host Name
+        /// PowerShell Host Name.
         /// </summary>
         public string PowerShellHostName
         {
@@ -946,7 +946,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// PowerShell Host Version
+        /// PowerShell Host Version.
         /// </summary>
         public Version PowerShellHostVersion
         {
@@ -955,7 +955,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// PowerShell Version
+        /// PowerShell Version.
         /// </summary>
         public Version PowerShellVersion
         {
@@ -964,7 +964,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Processor Architecture
+        /// Processor Architecture.
         /// </summary>
         public ProcessorArchitecture ProcessorArchitecture
         {
@@ -973,7 +973,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Scripts to Process
+        /// Scripts to Process.
         /// </summary>
         public IEnumerable<string> Scripts
         {
@@ -988,7 +988,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Required Assemblies
+        /// Required Assemblies.
         /// </summary>
         public IEnumerable<string> RequiredAssemblies
         {
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation
         private ReadOnlyCollection<ModuleSpecification> _readonlyRequiredModulesSpecification;
 
         /// <summary>
-        /// Add a module to the list of required modules specification
+        /// Add a module to the list of required modules specification.
         /// </summary>
         /// <param name="requiredModuleSpecification">The module to add.</param>
         internal void AddRequiredModuleSpecification(ModuleSpecification requiredModuleSpecification)
@@ -1055,7 +1055,7 @@ namespace System.Management.Automation
         private List<ModuleSpecification> _requiredModulesSpecification = new List<ModuleSpecification>();
 
         /// <summary>
-        /// Root Module
+        /// Root Module.
         /// </summary>
         public string RootModule
         {
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This member is used to copy over the RootModule in case the module is a manifest module
-        /// This is so that only ModuleInfo for modules with type=Manifest have RootModule populated
+        /// This is so that only ModuleInfo for modules with type=Manifest have RootModule populated.
         /// </summary>
         internal string RootModuleForManifest
         {
@@ -1192,7 +1192,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Add alias to the detected alias list
+        /// Add alias to the detected alias list.
         /// </summary>
         /// <param name="name">The alias to add.</param>
         /// <param name="value">The command it resolves to.</param>
@@ -1419,7 +1419,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Optional script that is going to be called just before Remove-Module cmdlet removes the module
+        /// Optional script that is going to be called just before Remove-Module cmdlet removes the module.
         /// </summary>
         public ScriptBlock OnRemove { get; set; }
 
@@ -1484,7 +1484,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Enables or disables the appdomain module path cache
+        /// Enables or disables the appdomain module path cache.
         /// </summary>
         public static bool UseAppDomainLevelModuleCache { get; set; }
 
@@ -1592,11 +1592,11 @@ namespace System.Management.Automation
     public enum ModuleAccessMode
     {
         /// <summary>
-        /// The default access mode for the module
+        /// The default access mode for the module.
         /// </summary>
         ReadWrite = 0,
         /// <summary>
-        /// The module is readonly and can only be removed with -force
+        /// The module is readonly and can only be removed with -force.
         /// </summary>
         ReadOnly = 1,
         /// <summary>

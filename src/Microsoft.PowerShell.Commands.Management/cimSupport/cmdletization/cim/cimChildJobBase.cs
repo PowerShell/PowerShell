@@ -17,7 +17,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Base class for all child jobs that wrap CIM operations
+    /// Base class for all child jobs that wrap CIM operations.
     /// </summary>
     internal abstract class CimChildJobBase<T> :
         StartableJob,
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Indicates a location where this job is running
+        /// Indicates a location where this job is running.
         /// </summary>
         public override string Location
         {
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Status message associated with the Job
+        /// Status message associated with the Job.
         /// </summary>
         public override string StatusMessage
         {

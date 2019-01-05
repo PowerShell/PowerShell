@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
     /// > Disconnect-PSSession -Id $session.Id
     ///
     /// Disconnect a collection of PS sessions:
-    /// > Get-PSSession | Disconnect-PSSession
+    /// > Get-PSSession | Disconnect-PSSession.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         private PSSessionOption _sessionOption;
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] ContainerId
         {
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override Guid[] VMId
         {
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] VMName
         {
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Dispose method of IDisposable. Gets called in the following cases:
         ///     1. Pipeline explicitly calls dispose on cmdlets
-        ///     2. Called by the garbage collector
+        ///     2. Called by the garbage collector.
         /// </summary>
         public void Dispose()
         {
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Internal dispose method which does the actual
-        /// dispose operations and finalize suppressions
+        /// dispose operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">Whether method is called
         /// from Dispose or destructor</param>

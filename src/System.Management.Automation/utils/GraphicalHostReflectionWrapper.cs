@@ -16,7 +16,7 @@ namespace System.Management.Automation.Internal
     /// Microsoft.PowerShell.GraphicalHost.dll contains:
     ///    1) out-gridview window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
     ///    2) show-command window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
-    ///    3) the help window used in the System.Management.Automation.dll's get-help cmdlet when -ShowWindow is specified
+    ///    3) the help window used in the System.Management.Automation.dll's get-help cmdlet when -ShowWindow is specified.
     /// </summary>
     internal class GraphicalHostReflectionWrapper
     {
@@ -26,17 +26,17 @@ namespace System.Management.Automation.Internal
         private Assembly _graphicalHostAssembly;
 
         /// <summary>
-        /// A type in Microsoft.PowerShell.GraphicalHost.dll we want to invoke members on
+        /// A type in Microsoft.PowerShell.GraphicalHost.dll we want to invoke members on.
         /// </summary>
         private Type _graphicalHostHelperType;
 
         /// <summary>
-        /// An object in Microsoft.PowerShell.GraphicalHost.dll of type graphicalHostHelperType
+        /// An object in Microsoft.PowerShell.GraphicalHost.dll of type graphicalHostHelperType.
         /// </summary>
         private object _graphicalHostHelperObject;
 
         /// <summary>
-        /// Prevents a default instance of the GraphicalHostReflectionWrapper class from being created
+        /// Prevents a default instance of the GraphicalHostReflectionWrapper class from being created.
         /// </summary>
         private GraphicalHostReflectionWrapper()
         {
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Retrieves a wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
-        /// in Microsoft.PowerShell.GraphicalHost.dll
+        /// in Microsoft.PowerShell.GraphicalHost.dll.
         /// </summary>
         /// <param name="parentCmdlet">The cmdlet requesting the wrapper (used to throw terminating errors).</param>
         /// <param name="graphicalHostHelperTypeName">The type name we want to invoke members from.</param>
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Retrieves a wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
-        /// in Microsoft.PowerShell.GraphicalHost.dll
+        /// in Microsoft.PowerShell.GraphicalHost.dll.
         /// </summary>
         /// <param name="parentCmdlet">The cmdlet requesting the wrapper (used to throw terminating errors).</param>
         /// <param name="graphicalHostHelperTypeName">The type name we want to invoke members from.</param>
@@ -141,7 +141,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Used to escape characters that are not friendly to WPF binding
+        /// Used to escape characters that are not friendly to WPF binding.
         /// </summary>
         /// <param name="propertyName">Property name to be used in binding.</param>
         /// <returns>String with escaped characters.</returns>
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Returns true if the <paramref name="parentCmdlet"/> is being run remotely
+        /// Returns true if the <paramref name="parentCmdlet"/> is being run remotely.
         /// </summary>
         /// <param name="parentCmdlet">Cmdlet we want to see if is running remotely.</param>
         /// <returns>True if the <paramref name="parentCmdlet"/> is being run remotely.</returns>

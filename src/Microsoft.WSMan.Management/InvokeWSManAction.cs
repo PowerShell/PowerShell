@@ -30,7 +30,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "Action".
         /// Indicates the method which needs to be executed on the management object
-        /// specified by the ResourceURI and selectors
+        /// specified by the ResourceURI and selectors.
         /// </summary>
         [Parameter(Mandatory = true,
                   Position = 1)]
@@ -106,7 +106,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "FilePath".
         /// Updates the management resource specified by the ResourceURI and SelectorSet
-        /// via this input file
+        /// via this input file.
         /// </summary>
         [Parameter]
         [Alias("Path")]
@@ -159,7 +159,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
         /// management resource if there are are more than 1 instance of the resource
-        /// class
+        /// class.
         /// </summary>
         [Parameter(Position = 2,
                    ValueFromPipeline = true,
@@ -178,7 +178,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
         /// Defines a set of extended options for the WSMan session. This hashtable can
-        /// be created using New-WSManSessionOption
+        /// be created using New-WSManSessionOption.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -229,7 +229,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
-        /// URI of the resource class/instance representation
+        /// URI of the resource class/instance representation.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
@@ -309,7 +309,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -319,7 +319,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void

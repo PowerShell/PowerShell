@@ -21,14 +21,14 @@ namespace Microsoft.WSMan.Management
 {
 
     /// <summary>
-    /// Session option class
+    /// Session option class.
     /// </summary>
 
     public sealed class SessionOption
     {
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public bool SkipCACheck
         {
@@ -43,7 +43,7 @@ namespace Microsoft.WSMan.Management
         private bool _SkipCACheck;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public bool SkipCNCheck
         {
@@ -58,7 +58,7 @@ namespace Microsoft.WSMan.Management
         private bool _SkipCNCheck;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public bool SkipRevocationCheck
         {
@@ -74,7 +74,7 @@ namespace Microsoft.WSMan.Management
         private bool _SkipRevocationCheck;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public bool UseEncryption
         {
@@ -89,7 +89,7 @@ namespace Microsoft.WSMan.Management
         private bool _useencryption = true;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public bool UseUtf16
         {
@@ -104,7 +104,7 @@ namespace Microsoft.WSMan.Management
         private bool _UTF16;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public ProxyAuthentication ProxyAuthentication
         {
@@ -119,7 +119,7 @@ namespace Microsoft.WSMan.Management
         private ProxyAuthentication _ProxyAuthentication;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
         public int SPNPort
@@ -135,7 +135,7 @@ namespace Microsoft.WSMan.Management
         private int _SPNPort;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public int OperationTimeout
         {
@@ -150,7 +150,7 @@ namespace Microsoft.WSMan.Management
         private int _OperationTimeout;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public NetworkCredential ProxyCredential
         {
@@ -165,7 +165,7 @@ namespace Microsoft.WSMan.Management
         private NetworkCredential _ProxyCredential;
 
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         public ProxyAccessType ProxyAccessType
         {
@@ -181,45 +181,45 @@ namespace Microsoft.WSMan.Management
     }
 
     /// <summary>
-    /// property
+    /// property.
     /// </summary>
     public enum ProxyAccessType
     {
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         ProxyIEConfig = 0,
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         ProxyWinHttpConfig = 1,
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         ProxyAutoDetect = 2,
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         ProxyNoProxyServer = 3
     }
 
     /// <summary>
-    /// property
+    /// property.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue")]
     public enum ProxyAuthentication
     {
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         Negotiate = 1,
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         Basic = 2,
         /// <summary>
-        /// property
+        /// property.
         /// </summary>
         Digest = 4
     }

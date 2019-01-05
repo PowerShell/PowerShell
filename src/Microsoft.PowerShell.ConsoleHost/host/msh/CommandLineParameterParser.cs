@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell
     internal class NullHostUserInterface : PSHostUserInterface
     {
         /// <summary>
-        /// RawUI
+        /// RawUI.
         /// </summary>
         public override PSHostRawUserInterface RawUI
         {
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Prompt
+        /// Prompt.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForChoice
+        /// PromptForChoice.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential
+        /// PromptForCredential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential
+        /// PromptForCredential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ReadLine
+        /// ReadLine.
         /// </summary>
         /// <returns></returns>
         public override string ReadLine()
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ReadLineAsSecureString
+        /// ReadLineAsSecureString.
         /// </summary>
         /// <returns></returns>
         public override SecureString ReadLineAsSecureString()
@@ -105,14 +105,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Write
+        /// Write.
         /// </summary>
         /// <param name="value"></param>
         public override void Write(string value)
         { }
 
         /// <summary>
-        /// Write
+        /// Write.
         /// </summary>
         /// <param name="foregroundColor"></param>
         /// <param name="backgroundColor"></param>
@@ -121,14 +121,14 @@ namespace Microsoft.PowerShell
         { }
 
         /// <summary>
-        /// WriteDebugLine
+        /// WriteDebugLine.
         /// </summary>
         /// <param name="message"></param>
         public override void WriteDebugLine(string message)
         { }
 
         /// <summary>
-        /// WriteErrorLine
+        /// WriteErrorLine.
         /// </summary>
         /// <param name="value"></param>
         public override void WriteErrorLine(string value)
@@ -137,14 +137,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// WriteLine
+        /// WriteLine.
         /// </summary>
         /// <param name="value"></param>
         public override void WriteLine(string value)
         { }
 
         /// <summary>
-        /// WriteProgress
+        /// WriteProgress.
         /// </summary>
         /// <param name="sourceId"></param>
         /// <param name="record"></param>
@@ -152,14 +152,14 @@ namespace Microsoft.PowerShell
         { }
 
         /// <summary>
-        /// WriteVerboseLine
+        /// WriteVerboseLine.
         /// </summary>
         /// <param name="message"></param>
         public override void WriteVerboseLine(string message)
         { }
 
         /// <summary>
-        /// WriteWarningLine
+        /// WriteWarningLine.
         /// </summary>
         /// <param name="message"></param>
         public override void WriteWarningLine(string message)

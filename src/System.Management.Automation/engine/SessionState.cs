@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
 
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This is a bridge class between internal classes and a public interface. It requires this much coupling.")]
@@ -39,7 +39,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructor for session state object
+        /// Constructor for session state object.
         /// </summary>
         /// <param name="context">
         /// The context for the runspace to which this session state object belongs.
@@ -166,7 +166,7 @@ namespace System.Management.Automation
         private SessionState _publicSessionState;
 
         /// <summary>
-        /// Gets the engine APIs to access providers
+        /// Gets the engine APIs to access providers.
         /// </summary>
         internal ProviderIntrinsics InvokeProvider
         {
@@ -176,7 +176,7 @@ namespace System.Management.Automation
         private ProviderIntrinsics _invokeProvider;
 
         /// <summary>
-        /// The module info object associated with this session state
+        /// The module info object associated with this session state.
         /// </summary>
         internal PSModuleInfo Module { get; set; } = null;
 
@@ -190,7 +190,7 @@ namespace System.Management.Automation
         internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Get/set constraints for this execution environment
+        /// Get/set constraints for this execution environment.
         /// </summary>
         internal PSLanguageMode LanguageMode
         {
@@ -206,7 +206,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode
+        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode.
         /// </summary>
         internal bool UseFullLanguageModeInDebugger
         {
@@ -440,7 +440,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs a new instance of a ProviderInvocationException
-        /// using the specified data
+        /// using the specified data.
         /// </summary>
         /// <param name="resourceId">
         /// The resource ID to use as the format message for the error.
@@ -478,7 +478,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs a new instance of a ProviderInvocationException
-        /// using the specified data
+        /// using the specified data.
         /// </summary>
         /// <param name="resourceId">
         /// The resource ID to use as the format message for the error.
