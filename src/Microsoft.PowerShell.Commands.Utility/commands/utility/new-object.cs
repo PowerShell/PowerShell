@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
                                 "TypeNotFound",
                                 ErrorCategory.InvalidType,
                                 targetObject: null));
-                                return ;
+                                return;
                     }
 
                     throw e;
