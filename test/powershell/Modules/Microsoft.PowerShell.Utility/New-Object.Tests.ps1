@@ -88,6 +88,10 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         $e.CategoryInfo | Should -Match "PSArgumentException"
     }
 
+    It "New-Object with invalid type and ErrorAction Ignore should not throw Exception"{
+        { New-Object -TypeName LiarType -ErrorAction Ignore } | Should -Not -Throw
+    }
+
     It "New-Object with invalid argument should throw Exception"{
         $e = { New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -ErrorAction Stop } |
 	        Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand" -PassThru

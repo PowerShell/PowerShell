@@ -159,12 +159,13 @@ namespace Microsoft.PowerShell.Commands
                             NewObjectStrings.TypeNotFound,
                             TypeName);
 
-                        ThrowTerminatingError(
+                        WriteError(
                             new ErrorRecord(
                                 mshArgE,
                                 "TypeNotFound",
                                 ErrorCategory.InvalidType,
                                 targetObject: null));
+                                return ;
                     }
 
                     throw e;
