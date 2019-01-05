@@ -31,7 +31,7 @@ Describe 'ConvertTo-Json' -tags 'CI' {
                 $obj = [pscustomobject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
                 $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
                 (1..100).ForEach{
-                    Write-Verbose 'Ready' -Verbose
+                    Write-Verbose -Message 'Ready' -Verbose
                     ConvertTo-Json -InputObject $obj -Depth 10
                 }
                 throw 'ConvertTo-Json finished processing before it could be stopped.'
@@ -39,6 +39,7 @@ Describe 'ConvertTo-Json' -tags 'CI' {
 
         [void]$ps.BeginInvoke()
 
+        # Wait until there is output in the verbose stream.
         Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -TimeoutInMilliseconds 1000 -IntervalInMilliseconds 10
 
         # Not using synchronous Stop() to avoid blocking Pester.
