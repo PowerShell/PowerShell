@@ -585,7 +585,7 @@ namespace System.Management.Automation.Internal
         public CommandScore(CommandInfo command, int score)
         {
             Command = command;
-            Score=  score;
+            Score =  score;
         }
 
         public CommandInfo Command;
