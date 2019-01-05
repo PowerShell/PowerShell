@@ -2450,7 +2450,7 @@ namespace Microsoft.PowerShell
 
                         if (_parent.InDebugMode)
                         {
-                            DebuggerCommandResults results = ProcessDebugCommand(line.Trim(), out e);
+                            DebuggerCommandResults results = ProcessDebugCommand(line, out e);
 
                             if (results.ResumeAction != null)
                             {
