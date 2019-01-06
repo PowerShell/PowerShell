@@ -675,25 +675,29 @@ namespace System.Management.Automation
     internal static class ProviderInfoPathSeparators 
     {
         public static readonly ReadOnlyCollection<string> FileSystem = new ReadOnlyCollection<string>(
-            new List<string> { 
+            new List<string> 
+            { 
                 StringLiterals.DefaultPathSeparatorString, 
                 StringLiterals.AlternatePathSeparatorString
             });
 
         public static readonly ReadOnlyCollection<string> Variable = new ReadOnlyCollection<string>(
-            new List<string> { 
+            new List<string> 
+            { 
                 StringLiterals.DefaultPathSeparatorString, 
                 StringLiterals.AlternatePathSeparatorString
             });        
         
         public static readonly ReadOnlyCollection<string> Function = new ReadOnlyCollection<string>( 
-            new List<string> { 
+            new List<string> 
+            { 
                 StringLiterals.DefaultPathSeparatorString, 
                 StringLiterals.AlternatePathSeparatorString
             });     
 
         public static readonly ReadOnlyCollection<string> Registry = new ReadOnlyCollection<string>( 
-            new List<string> { 
+            new List<string> 
+            { 
                 StringLiterals.DefaultPathSeparatorString, 
             });   
     }
