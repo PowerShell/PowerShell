@@ -211,7 +211,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy a collection of AST elements
+        /// Copy a collection of AST elements.
         /// </summary>
         /// <typeparam name="T">The actual AST type</typeparam>
         /// <param name="elements">Collection of ASTs.</param>
@@ -230,7 +230,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy a single AST element
+        /// Copy a single AST element.
         /// </summary>
         /// <typeparam name="T">The actual AST type</typeparam>
         /// <param name="element">An AST instance.</param>
@@ -376,7 +376,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Get ancestor Ast of the given type of the given ast
+        /// Get ancestor Ast of the given type of the given ast.
         /// </summary>
         /// <param name="ast"></param>
         /// <returns></returns>
@@ -408,7 +408,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the SequencePointAst instance
+        /// Copy the SequencePointAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<Ast> NestedAst { get; private set; }
 
         /// <summary>
-        /// Copy the ErrorStatementAst instance
+        /// Copy the ErrorStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -649,7 +649,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<Ast> NestedAst { get; private set; }
 
         /// <summary>
-        /// Copy the ErrorExpressionAst instance
+        /// Copy the ErrorExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -1159,7 +1159,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the ScriptBlockAst instance
+        /// Copy the ScriptBlockAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -1650,7 +1650,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<ParameterAst> Parameters { get; private set; }
 
         /// <summary>
-        /// Copy the ParamBlockAst instance
+        /// Copy the ParamBlockAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -1826,7 +1826,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<TrapStatementAst> Traps { get; private set; }
 
         /// <summary>
-        /// Copy the NamedBlockAst instance
+        /// Copy the NamedBlockAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -1932,7 +1932,7 @@ namespace System.Management.Automation.Language
         public bool ExpressionOmitted { get; private set; }
 
         /// <summary>
-        /// Copy the NamedAttributeArgumentAst instance
+        /// Copy the NamedAttributeArgumentAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -2051,7 +2051,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<NamedAttributeArgumentAst> NamedArguments { get; private set; }
 
         /// <summary>
-        /// Copy the AttributeAst instance
+        /// Copy the AttributeAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -2135,7 +2135,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the TypeConstraintAst instance
+        /// Copy the TypeConstraintAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -2247,7 +2247,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the ParameterAst instance
+        /// Copy the ParameterAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -2412,7 +2412,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<TrapStatementAst> Traps { get; private set; }
 
         /// <summary>
-        /// Copy the StatementBlockAst instance
+        /// Copy the StatementBlockAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -2632,7 +2632,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the TypeDefinitionAst
+        /// Copy the TypeDefinitionAst.
         /// </summary>
         public override Ast Copy()
         {
@@ -2877,7 +2877,7 @@ namespace System.Management.Automation.Language
         internal PSModuleInfo ModuleInfo { get; private set; }
 
         /// <summary>
-        /// Copy the UsingStatementAst
+        /// Copy the UsingStatementAst.
         /// </summary>
         public override Ast Copy()
         {
@@ -3279,17 +3279,17 @@ namespace System.Management.Automation.Language
         public bool IsPrivate { get { return (MethodAttributes & MethodAttributes.Private) != 0; } }
 
         /// <summary>
-        /// Returns true if the method is hidden
+        /// Returns true if the method is hidden.
         /// </summary>
         public bool IsHidden { get { return (MethodAttributes & MethodAttributes.Hidden) != 0; } }
 
         /// <summary>
-        /// Returns true if the method is static
+        /// Returns true if the method is static.
         /// </summary>
         public bool IsStatic { get { return (MethodAttributes & MethodAttributes.Static) != 0; } }
 
         /// <summary>
-        /// Returns true if the method is a constructor
+        /// Returns true if the method is a constructor.
         /// </summary>
         public bool IsConstructor
         {
@@ -3700,7 +3700,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the FunctionDefinitionAst instance
+        /// Copy the FunctionDefinitionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -3917,7 +3917,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst ElseClause { get; private set; }
 
         /// <summary>
-        /// Copy the IfStatementAst instance
+        /// Copy the IfStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4035,7 +4035,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst Body { get; private set; }
 
         /// <summary>
-        /// Copy the DataStatementAst instance
+        /// Copy the DataStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4255,7 +4255,7 @@ namespace System.Management.Automation.Language
         public ForEachFlags Flags { get; private set; }
 
         /// <summary>
-        /// Copy the ForEachStatementAst instance
+        /// Copy the ForEachStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4346,7 +4346,7 @@ namespace System.Management.Automation.Language
         public PipelineBaseAst Iterator { get; private set; }
 
         /// <summary>
-        /// Copy the ForStatementAst instance
+        /// Copy the ForStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4409,7 +4409,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the DoWhileStatementAst instance
+        /// Copy the DoWhileStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4465,7 +4465,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the DoUntilStatementAst instance
+        /// Copy the DoUntilStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4521,7 +4521,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the WhileStatementAst instance
+        /// Copy the WhileStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4668,7 +4668,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst Default { get; private set; }
 
         /// <summary>
-        /// Copy the SwitchStatementAst instance
+        /// Copy the SwitchStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4787,7 +4787,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst Body { get; private set; }
 
         /// <summary>
-        /// Copy the CatchClauseAst instance
+        /// Copy the CatchClauseAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4900,7 +4900,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst Finally { get; private set; }
 
         /// <summary>
-        /// Copy the TryStatementAst instance
+        /// Copy the TryStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -4988,7 +4988,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst Body { get; private set; }
 
         /// <summary>
-        /// Copy the TrapStatementAst instance
+        /// Copy the TrapStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5052,7 +5052,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Label { get; private set; }
 
         /// <summary>
-        /// Copy the BreakStatementAst instance
+        /// Copy the BreakStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5109,7 +5109,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Label { get; private set; }
 
         /// <summary>
-        /// Copy the ContinueStatementAst instance
+        /// Copy the ContinueStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5166,7 +5166,7 @@ namespace System.Management.Automation.Language
         public PipelineBaseAst Pipeline { get; private set; }
 
         /// <summary>
-        /// Copy the ReturnStatementAst instance
+        /// Copy the ReturnStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5223,7 +5223,7 @@ namespace System.Management.Automation.Language
         public PipelineBaseAst Pipeline { get; private set; }
 
         /// <summary>
-        /// Copy the ExitStatementAst instance
+        /// Copy the ExitStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5314,7 +5314,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the ThrowStatementAst instance
+        /// Copy the ThrowStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5485,7 +5485,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the PipelineAst instance
+        /// Copy the PipelineAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5609,7 +5609,7 @@ namespace System.Management.Automation.Language
         public IScriptExtent ErrorPosition { get; private set; }
 
         /// <summary>
-        /// Copy the CommandParameterAst instance
+        /// Copy the CommandParameterAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5755,7 +5755,7 @@ namespace System.Management.Automation.Language
         public DynamicKeyword DefiningKeyword { get; set; }
 
         /// <summary>
-        /// Copy the CommandAst instance
+        /// Copy the CommandAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5841,7 +5841,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Expression { get; private set; }
 
         /// <summary>
-        /// Copy the CommandExpressionAst instance
+        /// Copy the CommandExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -5970,7 +5970,7 @@ namespace System.Management.Automation.Language
         public RedirectionStream ToStream { get; private set; }
 
         /// <summary>
-        /// Copy the MergingRedirectionAst instance
+        /// Copy the MergingRedirectionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -6040,7 +6040,7 @@ namespace System.Management.Automation.Language
         public bool Append { get; private set; }
 
         /// <summary>
-        /// Copy the FileRedirectionAst instance
+        /// Copy the FileRedirectionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -6146,7 +6146,7 @@ namespace System.Management.Automation.Language
         public IScriptExtent ErrorPosition { get; private set; }
 
         /// <summary>
-        /// Copy the AssignmentStatementAst instance
+        /// Copy the AssignmentStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -6199,28 +6199,28 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Defines types of configuration document
+    /// Defines types of configuration document.
     /// </summary>
     public enum ConfigurationType
     {
         /// <summary>
-        /// Resource configuration
+        /// Resource configuration.
         /// </summary>
         Resource = 0,
 
         /// <summary>
-        /// Meta configuration
+        /// Meta configuration.
         /// </summary>
         Meta = 1
     }
 
     /// <summary>
-    /// The ast represents the DSC configuration statement
+    /// The ast represents the DSC configuration statement.
     /// </summary>
     public class ConfigurationDefinitionAst : StatementAst
     {
         /// <summary>
-        /// Construct a configuration statement
+        /// Construct a configuration statement.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
@@ -6265,7 +6265,7 @@ namespace System.Management.Automation.Language
         public ScriptBlockExpressionAst Body { get; private set; }
 
         /// <summary>
-        /// The configuration type
+        /// The configuration type.
         /// </summary>
         public ConfigurationType ConfigurationType { get; private set; }
 
@@ -6340,14 +6340,14 @@ namespace System.Management.Automation.Language
         internal List<DynamicKeyword> DefinedKeywords { get; set; }
 
         /// <summary>
-        /// Generate ast that defines a function for this <see cref="ConfigurationDefinitionAst"/> object
+        /// Generate ast that defines a function for this <see cref="ConfigurationDefinitionAst"/> object.
         /// </summary>
         /// <returns>
         /// The <see cref="PipelineAst"/> that defines a function for this <see cref="ConfigurationDefinitionAst"/> object
         /// </returns>
         internal PipelineAst GenerateSetItemPipelineAst()
         {
-            //**************************
+            // **************************
             // Now construct the AST to call the function that will build the actual object.
             // This is composed of a call to command with the signature
             //    function PSDesiredStateConfiguration\\Configuration
@@ -6452,7 +6452,7 @@ namespace System.Management.Automation.Language
 
             #region "Construct Set-Item pipeline"
 
-            //**************************
+            // **************************
             // Now construct the AST to call the set-item cmdlet that will create the function
             // it will do set-item -Path function:\ConfigurationNameExpr -Value funcBody
 
@@ -6700,12 +6700,12 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast represents the DynamicKeyword statement
+    /// The ast represents the DynamicKeyword statement.
     /// </summary>
     public class DynamicKeywordStatementAst : StatementAst
     {
         /// <summary>
-        /// Construct a DynamicKeyword statement
+        /// Construct a DynamicKeyword statement.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
@@ -6735,7 +6735,7 @@ namespace System.Management.Automation.Language
         ///   (2) InstanceName
         ///   (3) Body, could be ScriptBlockExpressionAst (for Node keyword) or a HashtableAst (remaining)
         ///
-        /// This property is never null and never empty
+        /// This property is never null and never empty.
         /// </summary>
         public ReadOnlyCollection<CommandElementAst> CommandElements { get; private set; }
 
@@ -7058,7 +7058,7 @@ namespace System.Management.Automation.Language
         public virtual Type StaticType { get { return typeof(object); } }
 
         /// <summary>
-        /// Determine if the results of ParenExpression/SubExpression should be preserved in case of exception
+        /// Determine if the results of ParenExpression/SubExpression should be preserved in case of exception.
         /// </summary>
         /// <remarks>
         /// We should preserve the partial output in case of exception only if the SubExpression/ParenExpression meets following conditions:
@@ -7164,7 +7164,7 @@ namespace System.Management.Automation.Language
         public IScriptExtent ErrorPosition { get; private set; }
 
         /// <summary>
-        /// Copy the BinaryExpressionAst instance
+        /// Copy the BinaryExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -7264,7 +7264,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Child { get; private set; }
 
         /// <summary>
-        /// Copy the UnaryExpressionAst instance
+        /// Copy the UnaryExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -7312,7 +7312,7 @@ namespace System.Management.Automation.Language
     public class BlockStatementAst : StatementAst
     {
         /// <summary>
-        /// Construct a keyword block expression
+        /// Construct a keyword block expression.
         /// </summary>
         /// <param name="extent"></param>
         /// <param name="kind"></param>
@@ -7341,12 +7341,12 @@ namespace System.Management.Automation.Language
         public StatementBlockAst Body { get; private set; }
 
         /// <summary>
-        /// The keyword name
+        /// The keyword name.
         /// </summary>
         public Token Kind { get; private set; }
 
         /// <summary>
-        /// Copy the BlockStatementAst instance
+        /// Copy the BlockStatementAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -7416,7 +7416,7 @@ namespace System.Management.Automation.Language
         public AttributeBaseAst Attribute { get; private set; }
 
         /// <summary>
-        /// Copy the AttributedExpressionAst instance
+        /// Copy the AttributedExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -7531,7 +7531,7 @@ namespace System.Management.Automation.Language
         public TypeConstraintAst Type { get { return (TypeConstraintAst)Attribute; } }
 
         /// <summary>
-        /// Copy the ConvertExpressionAst instance
+        /// Copy the ConvertExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -7646,7 +7646,7 @@ namespace System.Management.Automation.Language
         public bool Static { get; private set; }
 
         /// <summary>
-        /// Copy the MemberExpressionAst instance
+        /// Copy the MemberExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -7719,7 +7719,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<ExpressionAst> Arguments { get; private set; }
 
         /// <summary>
-        /// Copy the InvokeMemberExpressionAst instance
+        /// Copy the InvokeMemberExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -8343,7 +8343,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Get the actual generic type if it's necessary
+        /// Get the actual generic type if it's necessary.
         /// </summary>
         /// <param name="generic"></param>
         /// <returns></returns>
@@ -8785,7 +8785,7 @@ namespace System.Management.Automation.Language
         public ITypeName TypeName { get; private set; }
 
         /// <summary>
-        /// Copy the TypeExpressionAst instance
+        /// Copy the TypeExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -8884,7 +8884,7 @@ namespace System.Management.Automation.Language
         public bool Splatted { get; private set; }
 
         /// <summary>
-        /// Check if the variable is one of $true, $false and $null
+        /// Check if the variable is one of $true, $false and $null.
         /// </summary>
         /// <returns>
         /// True if it is a constant variable
@@ -8906,7 +8906,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the VariableExpressionAst instance
+        /// Copy the VariableExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9071,7 +9071,7 @@ namespace System.Management.Automation.Language
         public object Value { get; private set; }
 
         /// <summary>
-        /// Copy the ConstantExpressionAst instance
+        /// Copy the ConstantExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9183,7 +9183,7 @@ namespace System.Management.Automation.Language
         public new string Value { get { return (string)base.Value; } }
 
         /// <summary>
-        /// Copy the StringConstantExpressionAst instance
+        /// Copy the StringConstantExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9340,7 +9340,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<ExpressionAst> NestedExpressions { get; private set; }
 
         /// <summary>
-        /// Copy the ExpandableStringExpressionAst instance
+        /// Copy the ExpandableStringExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9420,7 +9420,7 @@ namespace System.Management.Automation.Language
         public ScriptBlockAst ScriptBlock { get; private set; }
 
         /// <summary>
-        /// Copy the ScriptBlockExpressionAst instance
+        /// Copy the ScriptBlockExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9492,7 +9492,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<ExpressionAst> Elements { get; private set; }
 
         /// <summary>
-        /// Copy the ArrayLiteralAst instance
+        /// Copy the ArrayLiteralAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9575,7 +9575,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<KeyValuePair> KeyValuePairs { get; private set; }
 
         /// <summary>
-        /// Copy the HashtableAst instance
+        /// Copy the HashtableAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9666,7 +9666,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst SubExpression { get; private set; }
 
         /// <summary>
-        /// Copy the ArrayExpressionAst instance
+        /// Copy the ArrayExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9732,7 +9732,7 @@ namespace System.Management.Automation.Language
         public PipelineBaseAst Pipeline { get; private set; }
 
         /// <summary>
-        /// Copy the ParenExpressionAst instance
+        /// Copy the ParenExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9798,7 +9798,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst SubExpression { get; private set; }
 
         /// <summary>
-        /// Copy the SubExpressionAst instance
+        /// Copy the SubExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9866,7 +9866,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Copy the UsingExpressionAst instance
+        /// Copy the UsingExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
@@ -9881,7 +9881,7 @@ namespace System.Management.Automation.Language
         internal const string UsingPrefix = "__using_";
 
         /// <summary>
-        /// Get the underlying "using variable" from a UsingExpressionAst
+        /// Get the underlying "using variable" from a UsingExpressionAst.
         /// </summary>
         /// <param name="usingExpressionAst">
         /// A UsingExpressionAst
@@ -9901,7 +9901,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// A UsingExpressionAst must contains a VariableExpressionAst
+        /// A UsingExpressionAst must contains a VariableExpressionAst.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
@@ -10010,7 +10010,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Index { get; private set; }
 
         /// <summary>
-        /// Copy the IndexExpressionAst instance
+        /// Copy the IndexExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {

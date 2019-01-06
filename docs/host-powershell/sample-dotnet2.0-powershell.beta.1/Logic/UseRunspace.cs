@@ -10,7 +10,7 @@ namespace Application.Test
     public sealed class Logic
     {
         /// <summary>
-        /// Start the actual logic
+        /// Start the actual logic.
         /// </summary>
         public static int Start(string[] args)
         {

@@ -266,7 +266,7 @@ namespace System.Management.Automation
         /// </summary>
         public static Type MakeTupleType(params Type[] types)
         {
-            //ContractUtils.RequiresNotNull(types, "types");
+            // ContractUtils.RequiresNotNull(types, "types");
 
             return MakeTupleType(types, 0, types.Length);
         }
@@ -276,7 +276,7 @@ namespace System.Management.Automation
         /// </summary>
         public static int GetSize(Type tupleType)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             int count = 0;
             lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count)) return count;
@@ -323,8 +323,8 @@ namespace System.Management.Automation
         /// </summary>
         public static MutableTuple MakeTuple(Type tupleType, Dictionary<string, int> nameToIndexMap, Func<MutableTuple> creator = null)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
-            //ContractUtils.RequiresNotNull(args, "args");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(args, "args");
 
             int size = GetSize(tupleType);
             var bitArray = new BitArray(size);
@@ -338,7 +338,7 @@ namespace System.Management.Automation
         /// </summary>
         public static object[] GetTupleValues(MutableTuple tuple)
         {
-            //ContractUtils.RequiresNotNull(tuple, "tuple");
+            // ContractUtils.RequiresNotNull(tuple, "tuple");
 
             List<object> res = new List<object>();
 
@@ -360,7 +360,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static IEnumerable<PropertyInfo> GetAccessProperties(Type tupleType, int size, int index)
         {
-            //ContractUtils.RequiresNotNull(tupleType, "tupleType");
+            // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             if (index < 0 || index >= size) throw new ArgumentException("index");
 

@@ -63,7 +63,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -84,7 +84,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
@@ -106,8 +106,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants
-                //to stop the pipeline.
+                // PipelineStoppedException is thrown by host when it wants
+                // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -121,7 +121,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
@@ -145,8 +145,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants
-                //to stop the pipeline.
+                // PipelineStoppedException is thrown by host when it wants
+                // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="value">
         /// </param>
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="foregroundColor">
         /// </param>
@@ -240,7 +240,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="value">
         /// </param>
@@ -284,7 +284,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="foregroundColor">
         /// </param>
@@ -315,7 +315,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// Helper function for WriteDebugLine
+        /// Helper function for WriteDebugLine.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="preference"></param>
@@ -437,7 +437,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// Gets the informational message buffers of the host
+        /// Gets the informational message buffers of the host.
         /// </summary>
         /// <returns>Informational message buffers.</returns>
         internal PSInformationalBuffers GetInformationalMessageBuffers()
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="record"/> is not null and the UI property of the external host is null,
@@ -563,7 +563,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
@@ -609,7 +609,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
@@ -706,7 +706,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="caption">
         /// </param>
@@ -752,8 +752,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants
-                //to stop the pipeline.
+                // PipelineStoppedException is thrown by host when it wants
+                // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -767,7 +767,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -795,8 +795,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants
-                //to stop the pipeline.
+                // PipelineStoppedException is thrown by host when it wants
+                // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -860,8 +860,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants
-                //to stop the pipeline.
+                // PipelineStoppedException is thrown by host when it wants
+                // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {

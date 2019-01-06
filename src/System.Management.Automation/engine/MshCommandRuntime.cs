@@ -39,7 +39,7 @@ namespace System.Management.Automation
         internal InternalHost CBhost;
 
         /// <summary>
-        /// The host object for this object
+        /// The host object for this object.
         /// </summary>
         public PSHost Host { get; }
 
@@ -76,7 +76,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This allows all success output to be set to a variable.  Similar to the way -errorvariable sets
         /// all errors to a variable name.  Semantically this is equivalent to :  cmd |set-var varname -passthru
-        /// but it should be MUCH faster as there is no binding that takes place
+        /// but it should be MUCH faster as there is no binding that takes place.
         /// </summary>
         /// <exception cref="System.ArgumentNullException">
         /// may not be set to null
@@ -108,7 +108,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// for diagnostic purposes
+        /// for diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -293,7 +293,7 @@ namespace System.Management.Automation
         private Int64 _sourceId /* = 0 */;
 
         /// <summary>
-        /// Display progress information
+        /// Display progress information.
         /// </summary>
         /// <param name="progressRecord">Progress information.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -356,7 +356,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Displays progress output if enabled
+        /// Displays progress output if enabled.
         /// </summary>
         /// <param name="sourceId">
         /// Identifies which command is reporting progress
@@ -424,7 +424,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display debug information
+        /// Display debug information.
         /// </summary>
         /// <param name="text">Debug output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -461,7 +461,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display debug information
+        /// Display debug information.
         /// </summary>
         internal void WriteDebug(DebugRecord record, bool overrideInquire = false)
         {
@@ -521,7 +521,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display verbose information
+        /// Display verbose information.
         /// </summary>
         /// <param name="text">Verbose output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -552,7 +552,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display verbose information
+        /// Display verbose information.
         /// </summary>
         internal void WriteVerbose(VerboseRecord record, bool overrideInquire = false)
         {
@@ -612,7 +612,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display warning information
+        /// Display warning information.
         /// </summary>
         /// <param name="text">Warning output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -643,7 +643,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display warning information
+        /// Display warning information.
         /// </summary>
         internal void WriteWarning(WarningRecord record, bool overrideInquire = false)
         {
@@ -705,7 +705,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display tagged object information
+        /// Display tagged object information.
         /// </summary>
         public void WriteInformation(InformationRecord informationRecord)
         {
@@ -713,7 +713,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display tagged object information
+        /// Display tagged object information.
         /// </summary>
         internal void WriteInformation(InformationRecord record, bool overrideInquire = false)
         {
@@ -972,7 +972,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Configures the number of objects to buffer before calling the downstream Cmdlet
+        /// Configures the number of objects to buffer before calling the downstream Cmdlet.
         /// </summary>
         /// <remarks>
         /// This is a common parameter via class CommonParameters.
@@ -1421,7 +1421,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Helper function for ShouldProcess APIs
+        /// Helper function for ShouldProcess APIs.
         /// </summary>
         /// <param name="verboseDescription">
         /// Description of operation, to be printed for Continue or WhatIf
@@ -1961,7 +1961,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         public PSTransactionContext CurrentPSTransaction
         {
@@ -2160,7 +2160,7 @@ namespace System.Management.Automation
         //
 
         /// <summary>
-        /// Claims the unclaimed error output of all previous commands
+        /// Claims the unclaimed error output of all previous commands.
         /// </summary>
         internal bool MergeUnclaimedPreviousErrorResults { get; set; } = false;
 
@@ -2235,7 +2235,7 @@ namespace System.Management.Automation
 
         #region Internal helpers
         /// <summary>
-        /// throws if the pipeline is stopping
+        /// throws if the pipeline is stopping.
         /// </summary>
         /// <exception cref="System.Management.Automation.PipelineStoppedException"></exception>
         internal void ThrowIfStopping()
@@ -2247,7 +2247,7 @@ namespace System.Management.Automation
         /// <summary>
         /// throws if the caller is trying to call WriteObject/WriteError
         /// from the wrong thread, or not during a call to
-        /// BeginProcessing/ProcessRecord/EndProcessing
+        /// BeginProcessing/ProcessRecord/EndProcessing.
         /// </summary>
         /// <exception cref="System.InvalidOperationException"></exception>
         internal void ThrowIfWriteNotPermitted(bool needsToWriteToPipeline)
@@ -2302,7 +2302,7 @@ namespace System.Management.Automation
                 _pp._permittedToWriteThread = Thread.CurrentThread;
             }
             /// <summary>
-            /// End the scope where WriteObject/WriteError is permitted
+            /// End the scope where WriteObject/WriteError is permitted.
             /// </summary>
             /// <!--
             /// Not a true public, since the class is internal.
@@ -2405,7 +2405,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Append an error to the ErrorVariable if specified, and also to $ERROR
+        /// Append an error to the ErrorVariable if specified, and also to $ERROR.
         /// </summary>
         /// <param name="obj">Exception or ErrorRecord.</param>
         /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
@@ -2923,7 +2923,7 @@ namespace System.Management.Automation
         private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
         private bool _isDebugPreferenceCached = false;
         /// <summary>
-        /// Preference setting
+        /// Preference setting.
         /// </summary>
         /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
         /// (get-only) An error occurred accessing $DebugPreference.
@@ -2971,7 +2971,7 @@ namespace System.Management.Automation
         private bool _isVerbosePreferenceCached = false;
         private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
         /// <summary>
-        /// Preference setting
+        /// Preference setting.
         /// </summary>
         /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
         /// An error occurred accessing $VerbosePreference.
@@ -3020,7 +3020,7 @@ namespace System.Management.Automation
         private bool _isWarningPreferenceCached = false;
         private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
         /// <summary>
-        /// Preference setting
+        /// Preference setting.
         /// </summary>
         /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
         /// An error occurred accessing $WarningPreference.
@@ -3132,14 +3132,14 @@ namespace System.Management.Automation
 
         internal bool UseTransactionFlagSet { get; private set; } = false;
 
-        //This is used so that people can tell whether the debug switch was specified.  This
+        // This is used so that people can tell whether the debug switch was specified.  This
         // Is useful in the Cmdlet-calling-Cmdlet case where you'd like the underlying Cmdlet to
         // have the same switches.
         private bool _debugFlag = false;
 
         /// <summary>
         /// Debug tell the command system to provide Programmer/Support type messages to understand what is really occuring
-        /// and give the user the opportunity to stop or debug the situation
+        /// and give the user the opportunity to stop or debug the situation.
         /// </summary>
         /// <remarks>
         /// This is a common parameter via class CommonParameters.
@@ -3192,7 +3192,7 @@ namespace System.Management.Automation
         private ActionPreference _errorAction = InitialSessionState.defaultErrorActionPreference;
         private bool _isErrorActionPreferenceCached = false;
         /// <summary>
-        /// ErrorAction tells the command what to do when an error occurs
+        /// ErrorAction tells the command what to do when an error occurs.
         /// </summary>
         /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
         /// (get-only) An error occurred accessing $ErrorAction.
@@ -3386,7 +3386,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Complete implementation of WriteDebug/WriteVerbose/WriteProgress
+        /// Complete implementation of WriteDebug/WriteVerbose/WriteProgress.
         /// </summary>
         /// <param name="inquireCaption"></param>
         /// <param name="inquireMessage"></param>
@@ -3461,7 +3461,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Helper for continue prompt, handles Inquire
+        /// Helper for continue prompt, handles Inquire.
         /// </summary>
         /// <param name="inquireMessage">May be null.</param>
         /// <param name="inquireCaption">May be null.</param>
@@ -3687,7 +3687,7 @@ namespace System.Management.Automation
 
         internal void RemoveVariableListsInPipe()
         {
-            //Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
+            // Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
             if (_outVarList != null)
             {

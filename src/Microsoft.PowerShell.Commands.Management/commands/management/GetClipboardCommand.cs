@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetClipboardCommand : PSCmdlet
     {
         /// <summary>
-        /// Property that sets clipboard type. This will return the required format from clipboard
+        /// Property that sets clipboard type. This will return the required format from clipboard.
         /// </summary>
         [Parameter]
         public ClipboardFormat Format { get; set; }
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isRawSet = false;
 
         /// <summary>
-        /// This method implements the ProcessRecord method for Get-Clipboard command
+        /// This method implements the ProcessRecord method for Get-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
         {

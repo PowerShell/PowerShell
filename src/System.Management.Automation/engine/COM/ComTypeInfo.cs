@@ -10,7 +10,7 @@ using COM = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A Wrapper class for COM object's Type Information
+    /// A Wrapper class for COM object's Type Information.
     /// </summary>
     internal class ComTypeInfo
     {
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         private Guid _guid = Guid.Empty;
 
         /// <summary>
-        ///  Constructor
+        ///  Constructor.
         /// </summary>
         /// <param name="info">ITypeInfo object being wrapped by this object.</param>
         internal ComTypeInfo(COM.ITypeInfo info)
@@ -90,7 +90,7 @@ namespace System.Management.Automation
         internal COM.INVOKEKIND? NewEnumInvokeKind { get; private set; }
 
         /// <summary>
-        /// Initializes the typeinfo object
+        /// Initializes the typeinfo object.
         /// </summary>
         private void Initialize()
         {
@@ -98,7 +98,7 @@ namespace System.Management.Automation
             {
                 COM.TYPEATTR typeattr = GetTypeAttr(_typeinfo);
 
-                //Initialize the type information guid
+                // Initialize the type information guid
                 _guid = typeattr.guid;
 
                 for (int i = 0; i < typeattr.cFuncs; i++)
@@ -156,13 +156,13 @@ namespace System.Management.Automation
 
                     if ((typeattr.typekind == COM.TYPEKIND.TKIND_INTERFACE))
                     {
-                        //We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
+                        // We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
                         typeinfo = GetDispatchTypeInfoFromCustomInterfaceTypeInfo(typeinfo);
                     }
 
                     if ((typeattr.typekind == COM.TYPEKIND.TKIND_COCLASS))
                     {
-                        //We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
+                        // We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
                         typeinfo = GetDispatchTypeInfoFromCoClassTypeInfo(typeinfo);
                     }
 
@@ -250,11 +250,11 @@ namespace System.Management.Automation
             }
             catch (COMException ce)
             {
-                //check if the error code is TYPE_E_ELEMENTNOTFOUND.
-                //This error code is thrown when we can't IDispatch interface.
+                // check if the error code is TYPE_E_ELEMENTNOTFOUND.
+                // This error code is thrown when we can't IDispatch interface.
                 if (ce.HResult != ComUtil.TYPE_E_ELEMENTNOTFOUND)
                 {
-                    //For other codes, rethrow the exception.
+                    // For other codes, rethrow the exception.
                     throw;
                 }
             }
@@ -269,16 +269,16 @@ namespace System.Management.Automation
         /// <returns>ITypeInfo reference to the Dispatch interface.</returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCoClassTypeInfo(COM.ITypeInfo typeinfo)
         {
-            //Get the number of interfaces implemented by this CoClass.
+            // Get the number of interfaces implemented by this CoClass.
             COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
             int count = typeattr.cImplTypes;
             int href;
             COM.ITypeInfo interfaceinfo = null;
 
-            //For each interface implemented by this coclass
+            // For each interface implemented by this coclass
             for (int i = 0; i < count; i++)
             {
-                //Get the type information?
+                // Get the type information?
                 typeinfo.GetRefTypeOfImplType(i, out href);
                 typeinfo.GetRefTypeInfo(href, out interfaceinfo);
                 typeattr = GetTypeAttr(interfaceinfo);
@@ -289,7 +289,7 @@ namespace System.Management.Automation
                     return interfaceinfo;
                 }
 
-                //Nope. Is this a dual interface
+                // Nope. Is this a dual interface
                 if ((typeattr.wTypeFlags & COM.TYPEFLAGS.TYPEFLAG_FDUAL) != 0)
                 {
                     interfaceinfo = GetDispatchTypeInfoFromCustomInterfaceTypeInfo(interfaceinfo);

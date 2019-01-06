@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
                 catch (TransactionException)
                 {
-                    //ignore.
+                    // ignore.
                 }
                 finally
                 {
@@ -1291,7 +1291,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                         data = new String[strings.Count];
                         strings.CopyTo((string[])data, 0);
-                        //data = strings.GetAllItems(String.class);
+                        // data = strings.GetAllItems(String.class);
                     }
 
                     break;
@@ -1671,19 +1671,19 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                 case Win32Native.ERROR_INVALID_HANDLE:
                     // **
-                    //* For normal RegistryKey instances we dispose the SafeRegHandle and throw IOException.
-                    //* However, for HKEY_PERFORMANCE_DATA (on a local or remote machine) we avoid disposing the
-                    //* SafeRegHandle and only throw the IOException.  This is to workaround reentrancy issues
-                    //* in PerformanceCounter.NextValue() where the API could throw {NullReference, ObjectDisposed, ArgumentNull}Exception
-                    //* on reentrant calls because of this error code path in RegistryKey
-                    //*
-                    //* Normally we'd make our caller synchronize access to a shared RegistryKey instead of doing something like this,
-                    //* however we shipped PerformanceCounter.NextValue() un-synchronized in v2.0RTM and customers have taken a dependency on
-                    //* this behavior (being able to simultaneously query multiple remote-machine counters on multiple threads, instead of
-                    //* having serialized access).
-                    //*
-                    //* FUTURE: Consider changing PerformanceCounterLib to handle its own Win32 RegistryKey API calls instead of depending
-                    //* on Microsoft.Win32.RegistryKey, so that RegistryKey can be clean of special-cases for HKEY_PERFORMANCE_DATA.
+                    // * For normal RegistryKey instances we dispose the SafeRegHandle and throw IOException.
+                    // * However, for HKEY_PERFORMANCE_DATA (on a local or remote machine) we avoid disposing the
+                    // * SafeRegHandle and only throw the IOException.  This is to workaround reentrancy issues
+                    // * in PerformanceCounter.NextValue() where the API could throw {NullReference, ObjectDisposed, ArgumentNull}Exception
+                    // * on reentrant calls because of this error code path in RegistryKey
+                    // *
+                    // * Normally we'd make our caller synchronize access to a shared RegistryKey instead of doing something like this,
+                    // * however we shipped PerformanceCounter.NextValue() un-synchronized in v2.0RTM and customers have taken a dependency on
+                    // * this behavior (being able to simultaneously query multiple remote-machine counters on multiple threads, instead of
+                    // * having serialized access).
+                    // *
+                    // * FUTURE: Consider changing PerformanceCounterLib to handle its own Win32 RegistryKey API calls instead of depending
+                    // * on Microsoft.Win32.RegistryKey, so that RegistryKey can be clean of special-cases for HKEY_PERFORMANCE_DATA.
                     //
                     _hkey.SetHandleAsInvalid();
                     _hkey = null;

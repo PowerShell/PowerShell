@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// This parameter specifies the script block to run in the current
-        /// PowerShell transaction
+        /// PowerShell transaction.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public ScriptBlock TransactedScript
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _transactedScript;
 
         /// <summary>
-        /// Commits the current transaction
+        /// Commits the current transaction.
         /// </summary>
         protected override void EndProcessing()
         {

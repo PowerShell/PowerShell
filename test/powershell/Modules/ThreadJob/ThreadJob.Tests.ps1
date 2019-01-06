@@ -391,23 +391,23 @@ Describe 'Job2 class API tests' -Tags 'CI' {
 
         $job = Start-ThreadJob -ScriptBlock { "Hello" } | Wait-Job
 
-        $getJob = Get-Job -InstanceId $job.InstanceId 2>$null
+        $getJob = Get-Job -InstanceId $job.InstanceId 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -Name $job.Name 2>$null
+        $getJob = Get-Job -Name $job.Name 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -Command ' "hello" ' 2>$null
+        $getJob = Get-Job -Command ' "hello" ' 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -State $job.JobStateInfo.State 2>$null
+        $getJob = Get-Job -State $job.JobStateInfo.State 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -Id $job.Id 2>$null
+        $getJob = Get-Job -Id $job.Id 2> $null
         $getJob | Should -Be $job
 
         # Get-Job -Filter is not supported
-        $result = Get-Job -Filter @{Id = ($job.Id)} 3>$null
+        $result = Get-Job -Filter @{Id = ($job.Id)} 3> $null
         $result | Should -BeNullOrEmpty
     }
 

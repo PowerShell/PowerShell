@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         #region Definitions of cmdlet parameters
 
         /// <summary>
-        /// Gets or sets the path(s) or name(s) of the commands to retrieve
+        /// Gets or sets the path(s) or name(s) of the commands to retrieve.
         /// </summary>
         [Parameter(
             Position = 0,
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _nameContainsWildcard;
 
         /// <summary>
-        /// Gets or sets the verb parameter to the cmdlet
+        /// Gets or sets the verb parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
         public string[] Verb
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _verbs = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// Gets or sets the noun parameter to the cmdlet
+        /// Gets or sets the noun parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
         [ArgumentCompleter(typeof(NounArgumentCompleter))]
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _nouns = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// Gets or sets the PSSnapin/Module parameter to the cmdlet
+        /// Gets or sets the PSSnapin/Module parameter to the cmdlet.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isModuleSpecified = false;
 
         /// <summary>
-        /// Gets or sets the FullyQualifiedModule parameter to the cmdlet
+        /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isFullyQualifiedModuleSpecified = false;
 
         /// <summary>
-        /// Gets or sets the type of the command to get
+        /// Gets or sets the type of the command to get.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "AllCommandSet")]
         [Alias("Type")]
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _listImported;
 
         /// <summary>
-        /// The parameter that filters commands returned to only include commands that have a parameter with a name that matches one of the ParameterName's arguments
+        /// The parameter that filters commands returned to only include commands that have a parameter with a name that matches one of the ParameterName's arguments.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
         private HashSet<string> _matchedParameterNames;
 
         /// <summary>
-        /// The parameter that filters commands returned to only include commands that have a parameter of a type that matches one of the ParameterType's arguments
+        /// The parameter that filters commands returned to only include commands that have a parameter of a type that matches one of the ParameterType's arguments.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Begin Processing
+        /// Begin Processing.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// method that implements get-command
+        /// method that implements get-command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -412,7 +412,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes out the accumulated matching commands
+        /// Writes out the accumulated matching commands.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The comparer to sort CommandInfo objects in the result list
+        /// The comparer to sort CommandInfo objects in the result list.
         /// </summary>
         private class CommandInfoComparer : IComparer<CommandInfo>
         {
@@ -662,7 +662,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes out the commands for the AllCommandSet using the specified CommandType
+        /// Writes out the commands for the AllCommandSet using the specified CommandType.
         /// </summary>
         private void AccumulateMatchingCommands()
         {
@@ -1263,7 +1263,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets matching commands from the module tables
+        /// Gets matching commands from the module tables.
         /// </summary>
         /// <param name="commandName">
         /// The commandname to look for
@@ -1339,7 +1339,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Determines if the specific command information has already been
-        /// added to the result from CommandSearcher
+        /// added to the result from CommandSearcher.
         /// </summary>
         /// <param name="command">
         /// The command information to check for duplication.

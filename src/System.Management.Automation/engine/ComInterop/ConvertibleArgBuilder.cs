@@ -26,7 +26,7 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression MarshalToRef(Expression parameter)
         {
-            //we are not supporting convertible InOut
+            // we are not supporting convertible InOut
             throw Assert.Unreachable;
         }
     }

@@ -139,7 +139,7 @@ namespace System.Management.Automation
         internal bool IsGettable { get; private set; } = false;
 
         /// <summary>
-        /// Get value of this property
+        /// Get value of this property.
         /// </summary>
         /// <param name="target">Instance of the object from which to get the property value.</param>
         /// <returns>Value of the property.</returns>
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get value of this property
+        /// Get value of this property.
         /// </summary>
         /// <param name="target">Instance of the object from which to get the property value.</param>
         /// <param name="arguments">Parameters to get the property value.</param>
@@ -358,7 +358,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the property signature string
+        /// Returns the property signature string.
         /// </summary>
         /// <returns>Property signature.</returns>
         public override string ToString()

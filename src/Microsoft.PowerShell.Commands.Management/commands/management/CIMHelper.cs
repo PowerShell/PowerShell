@@ -250,7 +250,7 @@ namespace Extensions
         /// <summary>
         /// An "overload" of the
         /// <see cref="Microsoft.Management.Infrastructure.CimSession"/>.QueryInstances
-        /// method that takes only the namespace and query string as a parameters
+        /// method that takes only the namespace and query string as a parameters.
         /// </summary>
         /// <param name="session">The CimSession to be queried.</param>
         /// <param name="nameSpace">A string containing the namespace to run the query against.</param>

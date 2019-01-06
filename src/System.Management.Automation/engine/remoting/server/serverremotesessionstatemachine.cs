@@ -49,7 +49,7 @@ namespace System.Management.Automation.Remoting
         private RemoteSessionState _state;
 
         /// <summary>
-        /// timer used for key exchange
+        /// timer used for key exchange.
         /// </summary>
         private Timer _keyExchangeTimer;
 
@@ -121,7 +121,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyReceived, (int)RemoteSessionEvent.KeySendFailed] += DoKeyExchange;
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyReceived, (int)RemoteSessionEvent.KeySent] += DoKeyExchange;
 
-            //with connect, a new client can negotiate a key change to a server that has already negotiated key exchange with a previous client
+            // with connect, a new client can negotiate a key change to a server that has already negotiated key exchange with a previous client
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyRequested] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceiveFailed] += DoKeyExchange; //
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Remoting
             if (arg.StateEvent == RemoteSessionEvent.MessageReceived)
             {
                 if (_state == RemoteSessionState.Established ||
-                    _state == RemoteSessionState.EstablishedAndKeySent || //server session will never be in this state.. TODO- remove this
+                    _state == RemoteSessionState.EstablishedAndKeySent || // server session will never be in this state.. TODO- remove this
                     _state == RemoteSessionState.EstablishedAndKeyReceived ||
                     _state == RemoteSessionState.EstablishedAndKeyExchanged)
                 {
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Remoting
 
             // currently server state machine doesn't raise events
             // this will allow server state machine to raise events.
-            //RaiseStateMachineEvents();
+            // RaiseStateMachineEvents();
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Remoting
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
-        /// of processing the events
+        /// of processing the events.
         /// </summary>
         private void ProcessEvents()
         {
@@ -497,7 +497,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(_state == RemoteSessionState.Established ||
                            _state == RemoteSessionState.EstablishedAndKeyExchanged ||
                            _state == RemoteSessionState.EstablishedAndKeyReceived ||
-                           _state == RemoteSessionState.EstablishedAndKeySent,  //server session will never be in this state.. TODO- remove this
+                           _state == RemoteSessionState.EstablishedAndKeySent,  // server session will never be in this state.. TODO- remove this
                            "State must be Established or EstablishedAndKeySent or EstablishedAndKeyReceived or EstablishedAndKeyExchanged");
 
                 RemotingTargetInterface targetInterface = fsmEventArg.RemoteData.TargetInterface;
@@ -505,7 +505,7 @@ namespace System.Management.Automation.Remoting
 
                 Guid clientRunspacePoolId;
                 ServerRunspacePoolDriver runspacePoolDriver;
-                //string errorMessage = null;
+                // string errorMessage = null;
 
                 RemoteDataEventArgs remoteDataForSessionArg = null;
 
@@ -644,7 +644,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Handle connect event - this is raised when a new client tries to connect to an existing session
-        /// No changes to state. Calls into the session to handle any post connect operations
+        /// No changes to state. Calls into the session to handle any post connect operations.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="fsmEventArg"></param>
@@ -688,7 +688,7 @@ namespace System.Management.Automation.Remoting
                     case RemoteSessionState.Connecting:
                     case RemoteSessionState.Connected:
                     case RemoteSessionState.Established:
-                    case RemoteSessionState.EstablishedAndKeySent:  //server session will never be in this state.. TODO- remove this
+                    case RemoteSessionState.EstablishedAndKeySent:  // server session will never be in this state.. TODO- remove this
                     case RemoteSessionState.EstablishedAndKeyReceived:
                     case RemoteSessionState.EstablishedAndKeyExchanged:
                     case RemoteSessionState.NegotiationReceived:
@@ -893,15 +893,15 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This method contains all the logic for handling the state machine
-        /// for key exchange. All the different scenarios are covered in this
+        /// for key exchange. All the different scenarios are covered in this.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Event args.</param>
         private void DoKeyExchange(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
-            //There are corner cases with disconnect that can result in client receiving outdated key exchange packets
-            //***TODO*** Deal with this on the client side. Key exchange packets should have additional information
-            //that identify the context of negotiation. Just like callId in SetMax and SetMinRunspaces messages
+            // There are corner cases with disconnect that can result in client receiving outdated key exchange packets
+            // ***TODO*** Deal with this on the client side. Key exchange packets should have additional information
+            // that identify the context of negotiation. Just like callId in SetMax and SetMinRunspaces messages
             Dbg.Assert(_state >= RemoteSessionState.Established,
                 "Key Receiving can only be raised after reaching the Established state");
 
@@ -909,7 +909,7 @@ namespace System.Management.Automation.Remoting
             {
                 case RemoteSessionEvent.KeyReceived:
                     {
-                        //does the server ever start key exchange process??? This may not be required
+                        // does the server ever start key exchange process??? This may not be required
                         if (_state == RemoteSessionState.EstablishedAndKeyRequested)
                         {
                             // reset the timer
@@ -977,7 +977,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Handles the timeout for key exchange
+        /// Handles the timeout for key exchange.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)

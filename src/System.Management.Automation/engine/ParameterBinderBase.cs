@@ -16,28 +16,28 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Flags
+    /// Flags.
     /// </summary>
     [Flags]
     internal enum ParameterBindingFlags
     {
         /// <summary>
-        /// No flags specified
+        /// No flags specified.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Set when the argument should be converted to the parameter type
+        /// Set when the argument should be converted to the parameter type.
         /// </summary>
         ShouldCoerceType = 0x01,
 
         /// <summary>
-        /// Set when the argument should not be validated or recorded in BoundParameters
+        /// Set when the argument should not be validated or recorded in BoundParameters.
         /// </summary>
         IsDefaultValue = 0x02,
 
         /// <summary>
-        /// Set when script blocks can be bound as a script block parameter instead of a normal argument
+        /// Set when script blocks can be bound as a script block parameter instead of a normal argument.
         /// </summary>
         DelayBindScriptBlock = 0x04,
 
@@ -185,7 +185,7 @@ namespace System.Management.Automation
         internal bool RecordBoundParameters = true;
 
         /// <summary>
-        /// Full Qualified ID for the obsolete parameter warning
+        /// Full Qualified ID for the obsolete parameter warning.
         /// </summary>
         internal const string FQIDParameterObsolete = "ParameterObsolete";
 
@@ -193,7 +193,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Derived classes must override this method to get the default parameter
-        /// value so that it can be restored between pipeline input
+        /// value so that it can be restored between pipeline input.
         /// </summary>
         /// <param name="name">
         /// The name of the parameter to get the default value of.
@@ -899,7 +899,7 @@ namespace System.Management.Automation
         #endregion Parameter binding
 
         /// <summary>
-        /// The invocation information for the code that is being bound
+        /// The invocation information for the code that is being bound.
         /// </summary>
         private InvocationInfo _invocationInfo;
         internal InvocationInfo InvocationInfo
@@ -911,7 +911,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The context of the currently running engine
+        /// The context of the currently running engine.
         /// </summary>
         private ExecutionContext _context;
         internal ExecutionContext Context
@@ -1151,7 +1151,7 @@ namespace System.Management.Automation
                                 // Invalid types which cannot be associated with a bool
                                 // Since there is a catch block which appropriately
                                 // handles this situation we just throw an exception here
-                                //throw new PSInvalidCastException();
+                                // throw new PSInvalidCastException();
                                 ParameterBindingException pbe =
                                     new ParameterBindingException(
                                         ErrorCategory.InvalidArgument,
@@ -1915,7 +1915,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 
@@ -1925,7 +1925,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 

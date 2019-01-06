@@ -331,7 +331,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Collect values for UsingExpressions, in the form of a dictionary and an array.
         ///  - The dictionary form is used when the remote server is PSv5 and later version for handling UsingExpression in Invoke-Command/Start-Job
-        ///  - The array form is used when the remote server is PSv3 and PSv4 for handling UsingExpression in Invoke-Command
+        ///  - The array form is used when the remote server is PSv3 and PSv4 for handling UsingExpression in Invoke-Command.
         /// </summary>
         /// <remarks>
         /// We still keep the array-form using values because we want to avoid any breaking changes when running Invoke-Command

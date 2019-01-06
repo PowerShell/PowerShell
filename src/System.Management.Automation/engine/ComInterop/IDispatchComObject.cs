@@ -338,7 +338,7 @@ namespace System.Management.Automation.ComInterop
                         );
                         members.Add(new KeyValuePair<string, object>(method.Name, value));
 
-                        //evaluation failed for some reason. pass exception out
+                        // evaluation failed for some reason. pass exception out
                     }
                     catch (Exception ex)
                     {
@@ -589,14 +589,14 @@ namespace System.Management.Automation.ComInterop
 
             if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_INTERFACE)
             {
-                //We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
+                // We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
                 typeInfo = ComTypeInfo.GetDispatchTypeInfoFromCustomInterfaceTypeInfo(typeInfo);
                 typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             }
 
             if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_COCLASS)
             {
-                //We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
+                // We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
                 typeInfo = ComTypeInfo.GetDispatchTypeInfoFromCoClassTypeInfo(typeInfo);
                 typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             }

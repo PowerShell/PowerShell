@@ -46,7 +46,7 @@ namespace System.Management.Automation.PerformanceData
 
         #region Constructors
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected CounterSetInstanceBase(CounterSetRegistrarBase counterSetRegistrarInst)
         {
@@ -206,7 +206,7 @@ namespace System.Management.Automation.PerformanceData
 
     /// <summary>
     /// PSCounterSetInstance is a thin wrapper
-    /// on System.Diagnostics.PerformanceData.CounterSetInstance
+    /// on System.Diagnostics.PerformanceData.CounterSetInstance.
     /// </summary>
     public class PSCounterSetInstance : CounterSetInstanceBase
     {
@@ -267,7 +267,7 @@ namespace System.Management.Automation.PerformanceData
 
         #region Constructors
         /// <summary>
-        /// Constructor for creating an instance of PSCounterSetInstance
+        /// Constructor for creating an instance of PSCounterSetInstance.
         /// </summary>
         public PSCounterSetInstance(CounterSetRegistrarBase counterSetRegBaseObj)
             : base(counterSetRegBaseObj)

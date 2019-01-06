@@ -22,7 +22,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Common base class for all WSMan cmdlets that
-    /// take Authentication, CertificateThumbprint and Credential parameters
+    /// take Authentication, CertificateThumbprint and Credential parameters.
     /// </summary>
     public class AuthenticatingWSManCommand : PSCmdlet
     {
@@ -111,7 +111,7 @@ namespace Microsoft.WSMan.Management
 
     #region Connect-WsMan
     /// <summary>
-    /// connect wsman cmdlet
+    /// connect wsman cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141437")]
     public class ConnectWSManCommand : AuthenticatingWSManCommand
@@ -214,7 +214,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
         /// Defines a set of extended options for the WSMan session.  This hashtable can
-        /// be created using New-WSManSessionOption
+        /// be created using New-WSManSessionOption.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -259,7 +259,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    //always in the format http://server:port/applicationname
+                    // always in the format http://server:port/applicationname
                     string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
                     string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
@@ -282,9 +282,9 @@ namespace Microsoft.WSMan.Management
             }
 
             helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
-        }//End BeginProcessing()
+        }
 
-    }//end class
+    }
     #endregion
 
     #region Disconnect-WSMAN
@@ -325,17 +325,17 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// public dispose method.
         /// </summary>
         public
         void
@@ -378,8 +378,8 @@ namespace Microsoft.WSMan.Management
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
             }
-        }//End BeginProcessing()
+        }
 
-    }//End Class
+    }
     #endregion Disconnect-WSMAN
 }

@@ -153,7 +153,7 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// A class that keeps the information from format.ps1xml files in a cache table
+    /// A class that keeps the information from format.ps1xml files in a cache table.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public sealed class FormatTable
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Runspaces
         #region Constructor
 
         /// <summary>
-        /// Default Constructor
+        /// Default Constructor.
         /// </summary>
         internal FormatTable()
         {
@@ -297,7 +297,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Returns a format table instance with all default
-        /// format files loaded
+        /// format files loaded.
         /// </summary>
         /// <returns></returns>
         public static FormatTable LoadDefaultFormatFiles()

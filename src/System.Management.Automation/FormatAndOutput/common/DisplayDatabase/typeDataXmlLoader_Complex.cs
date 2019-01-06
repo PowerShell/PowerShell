@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// class to load the XML document into data structures.
-    /// It encapsulates the file format specific code
+    /// It encapsulates the file format specific code.
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase
     {
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ComplexControlEntryDefinition cced = LoadComplexControlEntryDefinition(n, entryIndex++);
                         if (cced == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.ComplexEntryNode));
                             complexBody.defaultEntry = null;
                             return; // fatal error
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             }
                             else
                             {
-                                //Error at XPath {0} in file {1}: There cannot be more than one default {2}.
+                                // Error at XPath {0} in file {1}: There cannot be more than one default {2}.
                                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.ComplexEntryNode));
                                 complexBody.defaultEntry = null;
                                 return; // fatal error
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (complexBody.defaultEntry == null)
                 {
-                    //Error at XPath {0} in file {1}: There must be at least one default {2}.
+                    // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.ComplexEntryNode));
                 }
             }
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (appliesToNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         appliesToNodeFound = true;
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (bodyNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         bodyNodeFound = true;
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (cced.itemDefinition.formatTokenList == null)
                 {
-                    //MissingNode=Error at XPath {0} in file {1}: Missing Node {2}.
+                    // MissingNode=Error at XPath {0} in file {1}: Missing Node {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingNode, ComputeCurrentXPath(), FilePath, XmlTags.ComplexItemNode));
                     return null;
                 }
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         if (cpt == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.ExpressionBindingNode));
                             return null;
                         }
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         if (nlt == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.NewLineNode));
                             return null;
                         }
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         if (tt == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.TextNode));
                             return null;
                         }
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         if (frame == null)
                         {
-                            //Error at XPath {0} in file {1}: {2} failed to load.
+                            // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.FrameNode));
                             return null;
                         }
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (formatTokenList.Count == 0)
                 {
-                    //Error at XPath {0} in file {1}: Empty custom control token list.
+                    // Error at XPath {0} in file {1}: Empty custom control token list.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.EmptyCustomControlList, ComputeCurrentXPath(), FilePath));
                     return null;
                 }
@@ -471,14 +471,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (val == null)
                 {
-                    //Error at XPath {0} in file {1}: Missing inner text value.
+                    // Error at XPath {0} in file {1}: Missing inner text value.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingInnerText, ComputeCurrentXPath(), FilePath));
                     return retVal;
                 }
 
                 if (!int.TryParse(val, out retVal))
                 {
-                    //Error at XPath {0} in file {1}: An integer is expected.
+                    // Error at XPath {0} in file {1}: An integer is expected.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectInteger, ComputeCurrentXPath(), FilePath));
                     return retVal;
                 }
@@ -497,7 +497,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (val < 0)
                 {
-                    //Error at XPath {0} in file {1}: A non-negative integer is expected.
+                    // Error at XPath {0} in file {1}: A non-negative integer is expected.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectNaturalNumber, ComputeCurrentXPath(), FilePath));
                     success = false;
                 }
@@ -528,7 +528,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (leftIndentFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         leftIndentFound = true;
@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (rightIndentFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         rightIndentFound = true;
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (itemNodeFound)
                         {
                             this.ProcessDuplicateNode(n);
-                            return null; //fatal
+                            return null; // fatal
                         }
 
                         itemNodeFound = true;
@@ -608,7 +608,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (frame.itemDefinition.formatTokenList == null)
                 {
-                    //MissingNode=Error at XPath {0} in file {1}: Missing Node {2}.
+                    // MissingNode=Error at XPath {0} in file {1}: Missing Node {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingNode, ComputeCurrentXPath(), FilePath, XmlTags.ComplexItemNode));
                     return null;
                 }
@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 val = true;
                 return true;
             }
-            //Error at XPath {0} in file {1}: A Boolean value is expected.
+            // Error at XPath {0} in file {1}: A Boolean value is expected.
             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectBoolean, ComputeCurrentXPath(), FilePath));
 
             return false;

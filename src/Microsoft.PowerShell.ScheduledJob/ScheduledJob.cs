@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         public override void StartJobAsync()
         {
-            //StartJob();
+            // StartJob();
             throw new PSNotSupportedException();
         }
 
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// StopJob
+        /// StopJob.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// StopJobAsync
+        /// StopJobAsync.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             throw new PSNotSupportedException();
         }
         /// <summary>
-        /// SuspendJob
+        /// SuspendJob.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// SuspendJobAsync
+        /// SuspendJobAsync.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>

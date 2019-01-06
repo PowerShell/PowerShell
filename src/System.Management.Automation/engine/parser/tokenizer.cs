@@ -22,15 +22,15 @@ namespace System.Management.Automation.Language
     public enum DynamicKeywordNameMode
     {
         /// <summary>
-        /// This keyword does not take a name value
+        /// This keyword does not take a name value.
         /// </summary>
         NoName = 0,
         /// <summary>
-        /// Name must be present and simple non-empty bare word
+        /// Name must be present and simple non-empty bare word.
         /// </summary>
         SimpleNameRequired = 1,
         /// <summary>
-        /// Name must be present but can also be an expression
+        /// Name must be present but can also be an expression.
         /// </summary>
         NameRequired = 2,
         /// <summary>
@@ -38,33 +38,33 @@ namespace System.Management.Automation.Language
         /// </summary>
         SimpleOptionalName = 3,
         /// <summary>
-        /// Name may be optionally present, expression or bare word
+        /// Name may be optionally present, expression or bare word.
         /// </summary>
         OptionalName = 4,
     };
 
     /// <summary>
-    /// Defines the body mode for a dynamic keyword. It can be a scriptblock, hashtable or command which means no body
+    /// Defines the body mode for a dynamic keyword. It can be a scriptblock, hashtable or command which means no body.
     /// </summary>
     public enum DynamicKeywordBodyMode
     {
         /// <summary>
-        /// The keyword act like a command
+        /// The keyword act like a command.
         /// </summary>
         Command = 0,
         /// <summary>
-        /// The keyword has a scriptblock body
+        /// The keyword has a scriptblock body.
         /// </summary>
         ScriptBlock = 1,
         /// <summary>
-        /// The keyword has hashtable body
+        /// The keyword has hashtable body.
         /// </summary>
         Hashtable = 2,
     }
 
     /// <summary>
     /// Defines the schema/behaviour for a dynamic keyword.
-    /// a constrained
+    /// a constrained.
     /// </summary>
     public class DynamicKeyword
     {
@@ -86,7 +86,7 @@ namespace System.Management.Automation.Language
         private static Dictionary<string, DynamicKeyword> t_dynamicKeywords;
 
         /// <summary>
-        /// stack of DynamicKeywords Cache
+        /// stack of DynamicKeywords Cache.
         /// </summary>
         private static Stack<Dictionary<string, DynamicKeyword>> DynamicKeywordsStack
         {
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Push current dynamicKeywords cache into stack
+        /// Push current dynamicKeywords cache into stack.
         /// </summary>
         public static void Push()
         {
@@ -118,7 +118,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Pop up previous dynamicKeywords cache
+        /// Pop up previous dynamicKeywords cache.
         /// </summary>
         public static void Pop()
         {
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Check if it is a hidden keyword
+        /// Check if it is a hidden keyword.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Language
         #endregion
 
         /// <summary>
-        /// Duplicates the DynamicKeyword
+        /// Duplicates the DynamicKeyword.
         /// </summary>
         /// <returns>A copy of the DynamicKeyword.</returns>
         public DynamicKeyword Copy()
@@ -270,17 +270,17 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The keyword string
-        /// If an alias qualifier exist, use alias
+        /// If an alias qualifier exist, use alias.
         /// </summary>
         public string Keyword { get; set; }
 
         /// <summary>
-        /// The keyword resource name string
+        /// The keyword resource name string.
         /// </summary>
         public string ResourceName { get; set; }
 
         /// <summary>
-        /// Set to true if we should be looking for a scriptblock instead of a hashtable
+        /// Set to true if we should be looking for a scriptblock instead of a hashtable.
         /// </summary>
         public DynamicKeywordBodyMode BodyMode { get; set; }
 
@@ -304,17 +304,17 @@ namespace System.Management.Automation.Language
         public bool MetaStatement { get; set; }
 
         /// <summary>
-        /// Indicate that the keyword is reserved for future use by powershell
+        /// Indicate that the keyword is reserved for future use by powershell.
         /// </summary>
         public bool IsReservedKeyword { get; set; }
 
         /// <summary>
-        /// Contains the list of properties that are reserved for future use
+        /// Contains the list of properties that are reserved for future use.
         /// </summary>
         public bool HasReservedProperties { get; set; }
 
         /// <summary>
-        /// A list of the properties allowed for this constuctor
+        /// A list of the properties allowed for this constuctor.
         /// </summary>
         public Dictionary<string, DynamicKeywordProperty> Properties
         {
@@ -343,12 +343,12 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// A custom function that gets executed at parsing time before parsing dynamickeyword block
-        /// The delegate has one parameter: DynamicKeyword
+        /// The delegate has one parameter: DynamicKeyword.
         /// </summary>
         public Func<DynamicKeyword, ParseError[]> PreParse { get; set; }
 
         /// <summary>
-        /// A custom function that gets executed at parsing time after parsing dynamickeyword block
+        /// A custom function that gets executed at parsing time after parsing dynamickeyword block.
         /// </summary>
         public Func<DynamicKeywordStatementAst, ParseError[]> PostParse { get; set; }
 
@@ -383,7 +383,7 @@ namespace System.Management.Automation.Language
         };
 
         /// <summary>
-        /// Get allowed keyword list for a given keyword
+        /// Get allowed keyword list for a given keyword.
         /// </summary>
         /// <param name="keyword"></param>
         /// <param name="allowedKeywords"></param>
@@ -412,17 +412,17 @@ namespace System.Management.Automation.Language
     public class DynamicKeywordProperty
     {
         /// <summary>
-        /// The name of the property
+        /// The name of the property.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The required type of the property
+        /// The required type of the property.
         /// </summary>
         public string TypeConstraint { get; set; }
 
         /// <summary>
-        /// Any attributes that the property has
+        /// Any attributes that the property has.
         /// </summary>
         public List<string> Attributes
         {
@@ -442,7 +442,7 @@ namespace System.Management.Automation.Language
         private List<string> _values;
 
         /// <summary>
-        /// Mapping the descriptive values to the actual values
+        /// Mapping the descriptive values to the actual values.
         /// </summary>
         public Dictionary<string, string> ValueMap
         {
@@ -462,7 +462,7 @@ namespace System.Management.Automation.Language
         public bool IsKey { get; set; }
 
         /// <summary>
-        /// Indicates a range constraint on the property value
+        /// Indicates a range constraint on the property value.
         /// </summary>
         public Tuple<int, int> Range { get; set; }
     }
@@ -475,7 +475,7 @@ namespace System.Management.Automation.Language
     public class DynamicKeywordParameter : DynamicKeywordProperty
     {
         /// <summary>
-        /// Type if this is a switch parameter and takes no argument
+        /// Type if this is a switch parameter and takes no argument.
         /// </summary>
         public bool Switch { get; set; }
     }
@@ -2837,10 +2837,10 @@ namespace System.Management.Automation.Language
                 {
                     // Enable if we decide we still need to support
                     //     "${}"  or "$var:"
-                    //if (inStringExpandable)
-                    //{
+                    // if (inStringExpandable)
+                    // {
                     //    return NewToken(TokenKind.Unknown);
-                    //}
+                    // }
 
                     ReportError(NewScriptExtent(_tokenStart, _currentIndex),
                         nameof(ParserStrings.InvalidBracedVariableReference),
@@ -3249,7 +3249,7 @@ namespace System.Management.Automation.Language
             // indeed, '$' is not commonly used in command names.
 
             // Make sure our token does not start with any of these characters.
-            //Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
+            // Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
 
             List<Token> nestedTokens = new List<Token>();
             var formatSb = GetStringBuilder();
@@ -4199,26 +4199,26 @@ namespace System.Management.Automation.Language
 
         internal string GetAssemblyNameSpec()
         {
-            //G  assembly-name-spec:
-            //G      assembly-name
-            //G      assembly-name   ','   assembly-properties
-            //G  assembly-name:
-            //G      assembly-token
-            //G  assembly-properties:
-            //G      assembly-property
-            //G      assembly-properties   ','   assembly-property
-            //G  assembly-property:
-            //G      assembly-property-name   '='   assembly-property-value
-            //G  assembly-property-name:  one of
-            //G      'Version'
-            //G      'PublicKey'
-            //G      'PublicKeyToken'
-            //G      'Culture'
-            //G      'Custom'
-            //G  assembly-property:
-            //G      assembly-token
-            //G  assembly-token:
-            //G      any sequence of characters not ending in whitespace, newlines, ',', '=', or ']'.
+            // G  assembly-name-spec:
+            // G      assembly-name
+            // G      assembly-name   ','   assembly-properties
+            // G  assembly-name:
+            // G      assembly-token
+            // G  assembly-properties:
+            // G      assembly-property
+            // G      assembly-properties   ','   assembly-property
+            // G  assembly-property:
+            // G      assembly-property-name   '='   assembly-property-value
+            // G  assembly-property-name:  one of
+            // G      'Version'
+            // G      'PublicKey'
+            // G      'PublicKeyToken'
+            // G      'Culture'
+            // G      'Custom'
+            // G  assembly-property:
+            // G      assembly-token
+            // G  assembly-token:
+            // G      any sequence of characters not ending in whitespace, newlines, ',', '=', or ']'.
 
             // The above grammar is specified by the CLR (except assembly-token).  We defer validation to the CLR, but
             // use the above grammar to collect the name of the assembly.

@@ -42,15 +42,15 @@ namespace Microsoft.PowerShell.Commands
         internal enum MatchMode
         {
             /// <summary>
-            /// Select all processes
+            /// Select all processes.
             /// </summary>
             All,
             /// <summary>
-            /// Select processes matching the supplied names
+            /// Select processes matching the supplied names.
             /// </summary>
             ByName,
             /// <summary>
-            /// Select the processes matching the id
+            /// Select the processes matching the id.
             /// </summary>
             ById,
             /// <summary>
@@ -963,7 +963,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //adding the processes into the list
+            // adding the processes into the list
             foreach (Process process in MatchingProcesses())
             {
                 // Idle process has processid zero,so handle that because we cannot wait on it.
@@ -2950,7 +2950,7 @@ namespace Microsoft.PowerShell.Commands
             _processName = info.GetString("ProcessName");
         }
         /// <summary>
-        /// Serializer
+        /// Serializer.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>

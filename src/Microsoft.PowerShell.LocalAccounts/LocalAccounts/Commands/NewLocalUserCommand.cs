@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionNewUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

@@ -21,7 +21,7 @@ using DWORD = System.UInt32;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the possible status when validating integrity of catalog
+    /// Defines the possible status when validating integrity of catalog.
     /// </summary>
     public enum CatalogValidationStatus
     {
@@ -37,38 +37,38 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Object returned by Catalog Cmdlets
+    /// Object returned by Catalog Cmdlets.
     /// </summary>
     public class CatalogInformation
     {
         /// <summary>
-        /// status of catalog
+        /// status of catalog.
         /// </summary>
         public CatalogValidationStatus Status { get; set; }
 
         /// <summary>
-        /// Hash Algorithm used to calculate the hashes of files in Catalog
+        /// Hash Algorithm used to calculate the hashes of files in Catalog.
         /// </summary>
         public string HashAlgorithm { get; set; }
 
         /// <summary>
-        /// Dictionary mapping files relative paths to their hash values found from Catalog
+        /// Dictionary mapping files relative paths to their hash values found from Catalog.
         /// </summary>
         public Dictionary<string, string> CatalogItems { get; set; }
 
         /// <summary>
-        /// Dictionary mapping files relative paths to their hash values
+        /// Dictionary mapping files relative paths to their hash values.
         /// </summary>
         public Dictionary<string, string> PathItems { get; set; }
 
         /// <summary>
-        /// Signature for the catalog
+        /// Signature for the catalog.
         /// </summary>
         public Signature Signature { get; set; }
     }
 
     /// <summary>
-    /// Helper functions for Windows Catalog functionality
+    /// Helper functions for Windows Catalog functionality.
     /// </summary>
     internal static class CatalogHelper
     {
@@ -84,7 +84,7 @@ namespace System.Management.Automation
         private static PSCmdlet _cmdlet = null;
 
         /// <summary>
-        /// Find out the Version of Catalog by reading its Meta data. We can have either version 1 or version 2 catalog
+        /// Find out the Version of Catalog by reading its Meta data. We can have either version 1 or version 2 catalog.
         /// </summary>
         /// <param name="catalogHandle">Handle to open catalog file.</param>
         /// <returns>Version of the catalog.</returns>
@@ -152,7 +152,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generate the Catalog Definition File representing files and folders
+        /// Generate the Catalog Definition File representing files and folders.
         /// </summary>
         /// <param name="Path">Path of expected output .cdf file.</param>
         /// <param name="catalogFilePath">Path of the output catalog file.</param>
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get file attribute (Relative path in our case) from catalog
+        /// Get file attribute (Relative path in our case) from catalog.
         /// </summary>
         /// <param name="fileToHash">File to hash.</param>
         /// <param name="dirInfo">Directory information about file needed to calculate relative file path.</param>
@@ -217,7 +217,7 @@ namespace System.Management.Automation
 
             if (dirInfo != null)
             {
-                //Relative path of the file is the path inside the containing folder excluding folder Name
+                // Relative path of the file is the path inside the containing folder excluding folder Name
                 relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
             }
             else
@@ -248,7 +248,7 @@ namespace System.Management.Automation
             }
         }
         /// <summary>
-        /// Generate the Catalog file for Input Catalog Definition File
+        /// Generate the Catalog file for Input Catalog Definition File.
         /// </summary>
         /// <param name="cdfFilePath">Path to the Input .cdf file.</param>
         internal static void GenerateCatalogFile(string cdfFilePath)
@@ -326,7 +326,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// To generate Catalog for the folder
+        /// To generate Catalog for the folder.
         /// </summary>
         /// <param name="Path">Path to folder or File.</param>
         /// <param name="catalogFilePath">Catalog File Path.</param>
@@ -371,7 +371,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get file attribute (Relative path in our case) from catalog
+        /// Get file attribute (Relative path in our case) from catalog.
         /// </summary>
         /// <param name="memberAttrInfo">Pointer to current attribute of catalog member.</param>
         /// <returns>Value of the attribute.</returns>
@@ -397,7 +397,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Make a hash for the file
+        /// Make a hash for the file.
         /// </summary>
         /// <param name="filePath">Path of the file.</param>
         /// <param name="hashAlgorithm">Used to calculate Hash.</param>
@@ -474,7 +474,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Make list of hashes for given Catalog File
+        /// Make list of hashes for given Catalog File.
         /// </summary>
         /// <param name="catalogFilePath">Path to the folder having catalog file.</param>
         /// <param name="excludedPatterns"></param>
@@ -572,7 +572,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process file in path for its relative paths
+        /// Process file in path for its relative paths.
         /// </summary>
         /// <param name="relativePath">Relative path of file found in catalog.</param>
         /// <param name="fileHash">Hash of file found in catalog.</param>
@@ -597,7 +597,7 @@ namespace System.Management.Automation
             }
         }
         /// <summary>
-        /// Process file in path for its relative paths
+        /// Process file in path for its relative paths.
         /// </summary>
         /// <param name="fileToHash">File to hash.</param>
         /// <param name="dirInfo">Directory information about file needed to calculate relative file path.</param>
@@ -612,7 +612,7 @@ namespace System.Management.Automation
 
             if (dirInfo != null)
             {
-                //Relative path of the file is the path inside the containing folder excluding folder Name
+                // Relative path of the file is the path inside the containing folder excluding folder Name
                 relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
                 exclude = fileToHash.Name;
             }
@@ -650,7 +650,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generate the hashes of all the files in given folder
+        /// Generate the hashes of all the files in given folder.
         /// </summary>
         /// <param name="folderPaths">Path to folder or File.</param>
         /// <param name="catalogFilePath">Catalog file path it should be skipped when calculating the hashes.</param>
@@ -686,7 +686,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Compare Dictionary objects
+        /// Compare Dictionary objects.
         /// </summary>
         /// <param name="catalogItems">Hashes extracted from Catalog.</param>
         /// <param name="pathItems">Hashes created from folders path.</param>
@@ -703,7 +703,7 @@ namespace System.Management.Automation
             List<string> relativePathsNotInFolder = relativePathsFromFolder.Except(relativePathsFromCatalog, StringComparer.CurrentCultureIgnoreCase).ToList();
             List<string> relativePathsNotInCatalog = relativePathsFromCatalog.Except(relativePathsFromFolder, StringComparer.CurrentCultureIgnoreCase).ToList();
 
-            //Found extra hashes in Folder
+            // Found extra hashes in Folder
             if ((relativePathsNotInFolder.Count != 0) || (relativePathsNotInCatalog.Count != 0))
             {
                 Status = false;
@@ -729,7 +729,7 @@ namespace System.Management.Automation
             return Status;
         }
         /// <summary>
-        /// To Validate the Integrity of Catalog
+        /// To Validate the Integrity of Catalog.
         /// </summary>
         /// <param name="catalogFolders">Folder for which catalog is created.</param>
         /// <param name="catalogFilePath">File Name of the Catalog.</param>
@@ -768,7 +768,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check if file meets the skip validation criteria
+        /// Check if file meets the skip validation criteria.
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="excludedPatterns"></param>
@@ -789,7 +789,7 @@ namespace System.Management.Automation
             return false;
         }
         /// <summary>
-        /// Call back when error is thrown by catalog API's
+        /// Call back when error is thrown by catalog API's.
         /// </summary>
         private static void ParseErrorCallback(DWORD dwErrorArea, DWORD dwLocalError, string pwszLine)
         {

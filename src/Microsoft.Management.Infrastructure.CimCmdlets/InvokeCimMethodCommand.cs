@@ -27,7 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// constructor
+        /// constructor.
         /// </summary>
         public InvokeCimMethodCommand()
             : base(parameters, parameterSets)
@@ -169,7 +169,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
         /// Takes a CimInstance object retrieved by a Get-CimInstance call.
-        /// Invoke the method against the given instance
+        /// Invoke the method against the given instance.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -192,7 +192,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Property for internal usage purpose
+        /// Property for internal usage purpose.
         /// </summary>
         internal CimInstance CimInstance
         {
@@ -381,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             this.CmdletOperation = new CmdletOperationInvokeCimMethod(this, cimInvokeMethod);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -393,7 +393,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimInvokeCimMethod cimInvokeMethod = this.GetOperationAgent();
             cimInvokeMethod.InvokeCimMethod(this);
             cimInvokeMethod.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -405,7 +405,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimInvokeMethod.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -437,7 +437,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// check argument value
+        /// check argument value.
         /// </summary>
         private void CheckArgument()
         {
@@ -471,7 +471,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// static parameter definition entries.
         /// </summary>
         static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
@@ -558,7 +558,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// static parameter set entries.
         /// </summary>
         static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
@@ -574,5 +574,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.CimClassSessionSet, new ParameterSetEntry(3)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

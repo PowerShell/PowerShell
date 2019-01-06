@@ -86,7 +86,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     case CimBaseCommand.ResourceUriSessionSet:
                     case CimBaseCommand.ResourceUriComputerSet:
                         {
-                            nameSpace = cmdlet.Namespace; //passing null is ok for resourceUri set
+                            nameSpace = cmdlet.Namespace; // passing null is ok for resourceUri set
                             cimInstance = CreateCimInstance("DummyClass",
                                 nameSpace,
                                 cmdlet.Key,
@@ -236,7 +236,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
@@ -362,9 +362,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         /// <summary>
-        /// action
+        /// action.
         /// </summary>
         private const string action = @"New-CimInstance";
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

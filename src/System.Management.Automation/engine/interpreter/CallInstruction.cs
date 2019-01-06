@@ -217,7 +217,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Uses reflection to create new instance of the appropriate ReflectedCaller
+        /// Uses reflection to create new instance of the appropriate ReflectedCaller.
         /// </summary>
         private static CallInstruction SlowCreate(MethodInfo info, ParameterInfo[] pis)
         {

@@ -23,21 +23,21 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// The WMI namespace to use
+        /// The WMI namespace to use.
         /// </summary>
         [Parameter]
         [Alias("NS")]
         public string Namespace { get; set; } = "root\\cimv2";
 
         /// <summary>
-        /// The credential to use
+        /// The credential to use.
         /// </summary>
         [Parameter]
         [Credential()]
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// The ComputerName in which to query
+        /// The ComputerName in which to query.
         /// </summary>
         [Parameter]
         [Alias("Cn")]
@@ -45,19 +45,19 @@ namespace Microsoft.PowerShell.Commands
         public string ComputerName { get; set; } = "localhost";
 
         /// <summary>
-        /// The WMI class to use
+        /// The WMI class to use.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class { get; set; } = null;
 
         /// <summary>
-        /// The query string to search for objects
+        /// The query string to search for objects.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
         public string Query { get; set; } = null;
 
         /// <summary>
-        /// Timeout in milliseconds
+        /// Timeout in milliseconds.
         /// </summary>
         [Parameter]
         [Alias("TimeoutMSec")]
@@ -98,14 +98,14 @@ namespace Microsoft.PowerShell.Commands
         #endregion helper functions
 
         /// <summary>
-        /// Returns the object that generates events to be monitored
+        /// Returns the object that generates events to be monitored.
         /// </summary>
         protected override object GetSourceObject()
         {
             string wmiQuery = this.Query;
             if (this.Class != null)
             {
-                //Validate class format
+                // Validate class format
                 for (int i = 0; i < this.Class.Length; i++)
                 {
                     if (Char.IsLetterOrDigit(this.Class[i]) || this.Class[i].Equals('_'))
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the event name to be monitored on the input object
+        /// Returns the event name to be monitored on the input object.
         /// </summary>
         protected override string GetSourceObjectEventName()
         {

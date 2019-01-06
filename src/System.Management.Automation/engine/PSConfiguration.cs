@@ -237,7 +237,7 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// Corresponding settings of the original Group Policies
+        /// Corresponding settings of the original Group Policies.
         /// </summary>
         internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)
         {
@@ -643,7 +643,7 @@ namespace System.Management.Automation.Configuration
     internal abstract class PolicyBase { }
 
     /// <summary>
-    /// Setting about ScriptExecution
+    /// Setting about ScriptExecution.
     /// </summary>
     internal sealed class ScriptExecution : PolicyBase
     {
@@ -652,7 +652,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ScriptBlockLogging
+    /// Setting about ScriptBlockLogging.
     /// </summary>
     internal sealed class ScriptBlockLogging : PolicyBase
     {
@@ -661,7 +661,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ModuleLogging
+    /// Setting about ModuleLogging.
     /// </summary>
     internal sealed class ModuleLogging : PolicyBase
     {
@@ -670,7 +670,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about Transcription
+    /// Setting about Transcription.
     /// </summary>
     internal sealed class Transcription : PolicyBase
     {
@@ -680,7 +680,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about UpdatableHelp
+    /// Setting about UpdatableHelp.
     /// </summary>
     internal sealed class UpdatableHelp : PolicyBase
     {
@@ -689,7 +689,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ConsoleSessionConfiguration
+    /// Setting about ConsoleSessionConfiguration.
     /// </summary>
     internal sealed class ConsoleSessionConfiguration : PolicyBase
     {
@@ -698,7 +698,7 @@ namespace System.Management.Automation.Configuration
     }
 
     /// <summary>
-    /// Setting about ProtectedEventLogging
+    /// Setting about ProtectedEventLogging.
     /// </summary>
     internal sealed class ProtectedEventLogging : PolicyBase
     {

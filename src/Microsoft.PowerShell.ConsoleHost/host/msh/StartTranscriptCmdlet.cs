@@ -10,7 +10,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implements the start-transcript cmdlet
+    /// Implements the start-transcript cmdlet.
     /// </summary>
 
     [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113408")]
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The name of the file in which to write the transcript. If not provided, the file indicated by the variable
         /// $TRANSCRIPT is used.  If neither the filename is supplied or $TRANSCRIPT is not set, the filename shall be $HOME/My
-        /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt
+        /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt.
         /// </summary>
         /// <value></value>
 
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Starts the transcription
+        /// Starts the transcription.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
                         // Save some disk write time by checking whether file is readonly..
                         if (Force)
                         {
-                            //Make sure the file is not read only
+                            // Make sure the file is not read only
                             // Note that we will not clear the ReadOnly flag later
                             fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                         }

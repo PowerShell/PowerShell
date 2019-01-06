@@ -17,7 +17,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// We don't need PSTransaction related types on CSS because System.Transactions
-    /// namespace is not available in CoreCLR
+    /// namespace is not available in CoreCLR.
     /// </summary>
     public sealed class PSTransactionContext : IDisposable
     {
@@ -33,17 +33,17 @@ namespace System.Management.Automation
     public enum RollbackSeverity
     {
         /// <summary>
-        /// Non-terminating errors or worse
+        /// Non-terminating errors or worse.
         /// </summary>
         Error,
 
         /// <summary>
-        /// Terminating errors or worse
+        /// Terminating errors or worse.
         /// </summary>
         TerminatingError,
 
         /// <summary>
-        /// Do not rollback the transaction on error
+        /// Do not rollback the transaction on error.
         /// </summary>
         Never
     }
@@ -55,7 +55,7 @@ namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// We don't need PSTransaction related types on CSS because System.Transactions
-    /// namespace is not available in CoreCLR
+    /// namespace is not available in CoreCLR.
     /// </summary>
     internal sealed class PSTransactionManager : IDisposable
     {
@@ -96,7 +96,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets the rollback preference for the active transaction
+        /// Gets the rollback preference for the active transaction.
         /// </summary>
         internal RollbackSeverity RollbackPreference
         {
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Security
         private SystemPolicy() { }
 
         /// <summary>
-        /// Gets the system lockdown policy
+        /// Gets the system lockdown policy.
         /// </summary>
         /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Gets lockdown policy as applied to a file
+        /// Gets lockdown policy as applied to a file.
         /// </summary>
         /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
         public static SystemEnforcementMode GetLockdownPolicy(string path, System.Runtime.InteropServices.SafeHandle handle)
@@ -623,7 +623,7 @@ namespace System.Management.Automation.Security
     }
 
     /// <summary>
-    /// How the policy is being enforced
+    /// How the policy is being enforced.
     /// </summary>
     internal enum SystemEnforcementMode
     {
@@ -678,27 +678,27 @@ namespace System.Management.Automation.Tracing
     public enum PowerShellTraceTask
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// CreateRunspace
+        /// CreateRunspace.
         /// </summary>
         CreateRunspace = 1,
 
         /// <summary>
-        /// ExecuteCommand
+        /// ExecuteCommand.
         /// </summary>
         ExecuteCommand = 2,
 
         /// <summary>
-        /// Serialization
+        /// Serialization.
         /// </summary>
         Serialization = 3,
 
         /// <summary>
-        /// PowerShellConsoleStartup
+        /// PowerShellConsoleStartup.
         /// </summary>
         PowerShellConsoleStartup = 4,
     }
@@ -711,52 +711,52 @@ namespace System.Management.Automation.Tracing
     public enum PowerShellTraceKeywords : ulong
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Runspace
+        /// Runspace.
         /// </summary>
         Runspace = 0x1,
 
         /// <summary>
-        /// Pipeline
+        /// Pipeline.
         /// </summary>
         Pipeline = 0x2,
 
         /// <summary>
-        /// Protocol
+        /// Protocol.
         /// </summary>
         Protocol = 0x4,
 
         /// <summary>
-        /// Transport
+        /// Transport.
         /// </summary>
         Transport = 0x8,
 
         /// <summary>
-        /// Host
+        /// Host.
         /// </summary>
         Host = 0x10,
 
         /// <summary>
-        /// Cmdlets
+        /// Cmdlets.
         /// </summary>
         Cmdlets = 0x20,
 
         /// <summary>
-        /// Serializer
+        /// Serializer.
         /// </summary>
         Serializer = 0x40,
 
         /// <summary>
-        /// Session
+        /// Session.
         /// </summary>
         Session = 0x80,
 
         /// <summary>
-        /// ManagedPlugIn
+        /// ManagedPlugIn.
         /// </summary>
         ManagedPlugIn = 0x100,
 

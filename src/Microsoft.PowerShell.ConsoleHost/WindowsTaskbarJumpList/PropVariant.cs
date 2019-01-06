@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell
         IntPtr _ptr;
 
         /// <summary>
-        /// Set a string value
+        /// Set a string value.
         /// </summary>
         internal PropVariant(string value)
         {
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~PropVariant()
         {

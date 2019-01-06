@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.EndProcessing();
 
-            //close the writer
+            // close the writer
             _writer.Flush();
             _writer.Dispose();
 

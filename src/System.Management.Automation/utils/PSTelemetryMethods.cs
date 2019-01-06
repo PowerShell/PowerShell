@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         /// <summary>
-        /// Report that a new local session (runspace) is created
+        /// Report that a new local session (runspace) is created.
         /// </summary>
         internal static void ReportLocalSessionCreated(
             System.Management.Automation.Runspaces.InitialSessionState iss,
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         /// <summary>
-        /// Report that a new remote session (runspace) is created
+        /// Report that a new remote session (runspace) is created.
         /// </summary>
         internal static void ReportRemoteSessionCreated(
             System.Management.Automation.Runspaces.RunspaceConnectionInfo connectionInfo)
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         private static readonly int s_promptHashCode = "prompt".GetHashCode();
 
         /// <summary>
-        /// Report some telemetry about the scripts that are run
+        /// Report some telemetry about the scripts that are run.
         /// </summary>
         internal static void ReportScriptTelemetry(Ast ast, bool dotSourced, long compileTimeInMS)
         {

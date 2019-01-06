@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
     /// > Receive-PSSession $session.Name
     ///
     /// Receive a running command from a computer.
-    /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job
+    /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
         /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
-        /// not specified as well, then "WSMAN" will be used
+        /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
@@ -1314,7 +1314,7 @@ namespace Microsoft.PowerShell.Commands
     public enum OutTarget
     {
         /// <summary>
-        /// Default mode.  If
+        /// Default mode.  If.
         /// </summary>
         Default = 0,
 

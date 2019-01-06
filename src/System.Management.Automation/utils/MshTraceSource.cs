@@ -26,7 +26,7 @@ namespace System.Management.Automation
     /// (filters) can be set. Each flag enables one or more method for tracing.
     ///
     /// For instance, the Exception flag will enable tracing on these methods:
-    ///     TraceException
+    ///     TraceException.
     /// </summary>
     /// <remarks>
     /// To get an instance of this class a user should define a public static
@@ -47,12 +47,12 @@ namespace System.Management.Automation
     public partial class PSTraceSource
     {
         /// <summary>
-        /// Lock object for the GetTracer method
+        /// Lock object for the GetTracer method.
         /// </summary>
         private static object s_getTracerLock = new object();
 
         /// <summary>
-        /// A helper to get an instance of the PSTraceSource class
+        /// A helper to get an instance of the PSTraceSource class.
         /// </summary>
         /// <param name="name">
         /// The name of the category that this class
@@ -75,7 +75,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// A helper to get an instance of the PSTraceSource class
+        /// A helper to get an instance of the PSTraceSource class.
         /// </summary>
         /// <param name="name">
         /// The name of the category that this class
@@ -337,7 +337,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Traces the Message and StackTrace properties of the exception
-        /// and returns the new exception
+        /// and returns the new exception.
         /// </summary>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSInvalidOperationException NewInvalidOperationException()

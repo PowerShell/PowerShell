@@ -83,7 +83,7 @@ namespace System.Management.Automation
         #region Public methods
 
         /// <summary>
-        /// Gets the APIs to access drives
+        /// Gets the APIs to access drives.
         /// </summary>
         public DriveManagementIntrinsics Drive
         {
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the APIs to access providers
+        /// Gets the APIs to access providers.
         /// </summary>
         public CmdletProviderManagementIntrinsics Provider
         {
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the APIs to access paths and location
+        /// Gets the APIs to access paths and location.
         /// </summary>
         public PathIntrinsics Path
         {
@@ -115,7 +115,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get/set constraints for this execution environment
+        /// Get/set constraints for this execution environment.
         /// </summary>
         public PSLanguageMode LanguageMode
         {
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode
+        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode.
         /// </summary>
         public bool UseFullLanguageModeInDebugger
         {
@@ -300,7 +300,7 @@ namespace System.Management.Automation
         #region Internal methods
 
         /// <summary>
-        /// Gets a reference to the "real" session state object instead of the facade
+        /// Gets a reference to the "real" session state object instead of the facade.
         /// </summary>
         internal SessionStateInternal Internal
         {
@@ -325,12 +325,12 @@ namespace System.Management.Automation
     public enum SessionStateEntryVisibility
     {
         /// <summary>
-        /// Entries are visible to requests from outside the runspace
+        /// Entries are visible to requests from outside the runspace.
         /// </summary>
         Public = 0,
 
         /// <summary>
-        /// Entries are not visible to requests from outside the runspace
+        /// Entries are not visible to requests from outside the runspace.
         /// </summary>
         Private = 1
     }
@@ -347,12 +347,12 @@ namespace System.Management.Automation
     public enum PSLanguageMode
     {
         /// <summary>
-        /// All PowerShell language elements are available
+        /// All PowerShell language elements are available.
         /// </summary>
         FullLanguage = 0,
 
         /// <summary>
-        /// A subset of language elements are available to external requests
+        /// A subset of language elements are available to external requests.
         /// </summary>
         RestrictedLanguage = 1,
 

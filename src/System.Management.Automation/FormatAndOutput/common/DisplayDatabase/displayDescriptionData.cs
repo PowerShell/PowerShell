@@ -15,17 +15,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal enum EnumerableExpansion
     {
         /// <summary>
-        /// process core only, ignore IEumerable
+        /// process core only, ignore IEumerable.
         /// </summary>
         CoreOnly,
 
         /// <summary>
-        /// process IEnumerable, ignore core
+        /// process IEnumerable, ignore core.
         /// </summary>
         EnumOnly,
 
         /// <summary>
-        /// process both core and IEnumerable, core first
+        /// process both core and IEnumerable, core first.
         /// </summary>
         Both,
     }
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
         /// <summary>
-        /// cache for resource strings in format.ps1xml
+        /// cache for resource strings in format.ps1xml.
         /// </summary>
         internal DisplayResourceManagerCache displayResourceManagerCache = new DisplayResourceManagerCache();
     }
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             Nullable<T> y = x;
             this._value = y;
-            //this._value = (Nullable<T>)x;
+            // this._value = (Nullable<T>)x;
         }
 
         internal T Value
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class FormatErrorPolicy
     {
         /// <summary>
-        /// if true, display error messages
+        /// if true, display error messages.
         /// </summary>
         internal bool ShowErrorsAsMessages
         {
@@ -176,13 +176,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// string to display in the formatted display (e.g. cell in a table)
-        /// when the evaluation of a PSPropertyExpression fails
+        /// when the evaluation of a PSPropertyExpression fails.
         /// </summary>
         internal string errorStringInFormattedOutput = "#ERR";
 
         /// <summary>
         /// string to display in the formatted display (e.g. cell in a table)
-        /// when a format operation on a value fails
+        /// when a format operation on a value fails.
         /// </summary>
         internal string formatErrorStringInFormattedOutput = "#FMTERR";
     }
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal string name;
 
         /// <summary>
-        /// optional expression for conditional binding
+        /// optional expression for conditional binding.
         /// </summary>
         internal ExpressionToken conditionToken = null;
     }
@@ -285,12 +285,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class FrameToken : FormatToken
     {
         /// <summary>
-        /// item associated with this frame definition
+        /// item associated with this frame definition.
         /// </summary>
         internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition();
 
         /// <summary>
-        /// frame info associated with this frame definition
+        /// frame info associated with this frame definition.
         /// </summary>
         internal FrameInfoDefinition frameInfoDefinition = new FrameInfoDefinition();
     }
@@ -299,13 +299,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         /// <summary>
         /// left indentation for a frame is relative to the parent frame.
-        /// it must be a value >=0
+        /// it must be a value >=0.
         /// </summary>
         internal int leftIndentation = 0;
 
         /// <summary>
         /// right indentation for a frame is relative to the parent frame.
-        /// it must be a value >=0
+        /// it must be a value >=0.
         /// </summary>
         internal int rightIndentation = 0;
 
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract class PropertyTokenBase : FormatToken
     {
         /// <summary>
-        /// optional expression for conditional binding
+        /// optional expression for conditional binding.
         /// </summary>
         internal ExpressionToken conditionToken = null;
 
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class CompoundPropertyToken : PropertyTokenBase
     {
         /// <summary>
-        /// an inline control or a reference to a control definition
+        /// an inline control or a reference to a control definition.
         /// </summary>
         internal ControlBase control = null;
     }
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region Control Definitions: common data
 
     /// <summary>
-    /// root class for all the control types
+    /// root class for all the control types.
     /// </summary>
     internal abstract class ControlBase
     {
@@ -410,17 +410,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// reference to a control
+    /// reference to a control.
     /// </summary>
     internal sealed class ControlReference : ControlBase
     {
         /// <summary>
-        /// name of the control we refer to, it cannot be null
+        /// name of the control we refer to, it cannot be null.
         /// </summary>
         internal string name = null;
 
         /// <summary>
-        /// type of the control we refer to, it cannot be null
+        /// type of the control we refer to, it cannot be null.
         /// </summary>
         internal Type controlType = null;
     }
@@ -428,33 +428,33 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// base class for all control definitions
     /// NOTE: this is an extensibility point, if a new control
-    /// needs to be created, it has to be derived from this class
+    /// needs to be created, it has to be derived from this class.
     /// </summary>
     internal abstract class ControlBody : ControlBase
     {
         /// <summary>
-        /// RULE: valid only for table and wide only
+        /// RULE: valid only for table and wide only.
         /// </summary>
         internal bool? autosize = null;
 
         /// <summary>
-        /// RULE: only valid for table
+        /// RULE: only valid for table.
         /// </summary>
         internal bool repeatHeader = false;
     }
 
     /// <summary>
-    /// class to hold a definition of a control
+    /// class to hold a definition of a control.
     /// </summary>
     internal sealed class ControlDefinition
     {
         /// <summary>
-        /// name of the control we define, it cannot be null
+        /// name of the control we define, it cannot be null.
         /// </summary>
         internal string name = null;
 
         /// <summary>
-        /// body of the control we define, it cannot be null
+        /// body of the control we define, it cannot be null.
         /// </summary>
         internal ControlBody controlBody = null;
     }
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed partial class AppliesTo
     {
-        //it can contain either a type or type group reference
+        // it can contain either a type or type group reference
         internal List<TypeOrGroupReference> referenceList = new List<TypeOrGroupReference>();
     }
 
@@ -487,67 +487,67 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class StartGroup
     {
         /// <summary>
-        /// expression to be used to select the grouping
+        /// expression to be used to select the grouping.
         /// </summary>
         internal ExpressionToken expression = null;
 
         /// <summary>
-        /// an inline control or a reference to a control definition
+        /// an inline control or a reference to a control definition.
         /// </summary>
         internal ControlBase control = null;
 
         /// <summary>
         /// alternative (and simplified) representation for the control
-        /// RULE: if the control object is null, use this one
+        /// RULE: if the control object is null, use this one.
         /// </summary>
         internal TextToken labelTextToken = null;
     }
 
     /// <summary>
-    /// container for control definitions
+    /// container for control definitions.
     /// </summary>
     internal sealed class FormatControlDefinitionHolder
     {
         /// <summary>
-        /// list of control definitions
+        /// list of control definitions.
         /// </summary>
         internal List<ControlDefinition> controlDefinitionList = new List<ControlDefinition>();
     }
 
     /// <summary>
-    /// definition of a view
+    /// definition of a view.
     /// </summary>
     internal sealed class ViewDefinition
     {
         internal DatabaseLoadingInfo loadingInfo;
 
         /// <summary>
-        /// the name of this view. Must not be null
+        /// the name of this view. Must not be null.
         /// </summary>
         internal string name;
 
         /// <summary>
-        /// applicability of the view. Mandatory
+        /// applicability of the view. Mandatory.
         /// </summary>
         internal AppliesTo appliesTo = new AppliesTo();
 
         /// <summary>
-        /// optional grouping directive
+        /// optional grouping directive.
         /// </summary>
         internal GroupBy groupBy;
 
         /// <summary>
-        /// container for optional local formatting directives
+        /// container for optional local formatting directives.
         /// </summary>
         internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
         /// <summary>
-        /// main control for the view (e.g. reference to a control or a control body
+        /// main control for the view (e.g. reference to a control or a control body.
         /// </summary>
         internal ControlBase mainControl;
 
         /// <summary>
-        /// RULE: only valid for list and complex
+        /// RULE: only valid for list and complex.
         /// </summary>
         internal bool outOfBand;
 
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// base class for all the "shape"-Directive classes
+    /// base class for all the "shape"-Directive classes.
     /// </summary>
     internal abstract class FormatDirective
     {
@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Specifies additional type definitions for an object
+    /// Specifies additional type definitions for an object.
     /// </summary>
     public sealed class ExtendedTypeDefinition
     {
@@ -613,13 +613,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The formatting view definition for
-        /// the specified type
+        /// the specified type.
         /// </summary>
         public List<FormatViewDefinition> FormatViewDefinition { get; internal set; }
 
         /// <summary>
         /// Overloaded to string method for
-        /// better display
+        /// better display.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -628,7 +628,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor for the ExtendedTypeDefinition
+        /// Constructor for the ExtendedTypeDefinition.
         /// </summary>
         /// <param name="typeName"></param>
         /// <param name="viewDefinitions"></param>
@@ -647,7 +647,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initiate an instance of ExtendedTypeDefinition with the type name
+        /// Initiate an instance of ExtendedTypeDefinition with the type name.
         /// </summary>
         /// <param name="typeName"></param>
         public ExtendedTypeDefinition(string typeName) : this()
@@ -666,7 +666,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines a formatting view for a particular type
+    /// Defines a formatting view for a particular type.
     /// </summary>
     [DebuggerDisplay("{Name}")]
     public sealed class FormatViewDefinition
@@ -701,7 +701,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines a control for the formatting types defined by PowerShell
+    /// Defines a control for the formatting types defined by PowerShell.
     /// </summary>
     public abstract class PSControl
     {
@@ -749,12 +749,12 @@ namespace System.Management.Automation
         public DisplayEntry Expression { get; set; }
 
         /// <summary>
-        /// Optional - used to specify a label for the header of a group
+        /// Optional - used to specify a label for the header of a group.
         /// </summary>
         public string Label { get; set; }
 
         /// <summary>
-        /// Optional - used to format the header of a group
+        /// Optional - used to format the header of a group.
         /// </summary>
         public CustomControl CustomControl { get; set; }
 
@@ -925,12 +925,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Specifies possible alignment enumerations for display cells
+    /// Specifies possible alignment enumerations for display cells.
     /// </summary>
     public enum Alignment
     {
         /// <summary>
-        /// not defined
+        /// not defined.
         /// </summary>
         Undefined = 0,
 
@@ -940,7 +940,7 @@ namespace System.Management.Automation
         Left = 1,
 
         /// <summary>
-        /// center of the cell
+        /// center of the cell.
         /// </summary>
         Center = 2,
 
@@ -951,17 +951,17 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Specifies the type of entry value
+    /// Specifies the type of entry value.
     /// </summary>
     public enum DisplayEntryValueType
     {
         /// <summary>
-        /// The value is a property. Look for a property with the specified name
+        /// The value is a property. Look for a property with the specified name.
         /// </summary>
         Property = 0,
 
         /// <summary>
-        /// The value is a scriptblock. Evaluate the script block and fill the entry with the result
+        /// The value is a scriptblock. Evaluate the script block and fill the entry with the result.
         /// </summary>
         ScriptBlock = 1,
     }

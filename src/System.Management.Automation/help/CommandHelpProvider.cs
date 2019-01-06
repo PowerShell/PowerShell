@@ -28,7 +28,7 @@ namespace System.Management.Automation
     internal class CommandHelpProvider : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for CommandHelpProvider
+        /// Constructor for CommandHelpProvider.
         /// </summary>
         internal CommandHelpProvider(HelpSystem helpSystem) : base(helpSystem)
         {
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         #region Common Properties
 
         /// <summary>
-        /// Name of this provider
+        /// Name of this provider.
         /// </summary>
         /// <value>Name of this provider</value>
         internal override string Name
@@ -551,7 +551,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Finds a help file associated with the given cmdlet
+        /// Finds a help file associated with the given cmdlet.
         /// </summary>
         /// <param name="cmdletInfo"></param>
         /// <returns></returns>
@@ -974,7 +974,7 @@ namespace System.Management.Automation
         ///     a. If the help file has an extension .maml.
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
-        ///        schema
+        ///        schema.
         /// </summary>
         /// <param name="helpFile"></param>
         /// <param name="helpItemsNode"></param>

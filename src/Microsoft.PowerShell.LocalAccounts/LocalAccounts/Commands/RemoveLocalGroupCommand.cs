@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Process groups requested by -Name
+        /// Process groups requested by -Name.
         /// </summary>
         /// <remarks>
         /// All arguments to -Name will be treated as names,
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process groups requested by -SID
+        /// Process groups requested by -SID.
         /// </summary>
         private void ProcessSids()
         {
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process groups given through -InputObject
+        /// Process groups given through -InputObject.
         /// </summary>
         private void ProcessGroups()
         {
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionRemoveGroup);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

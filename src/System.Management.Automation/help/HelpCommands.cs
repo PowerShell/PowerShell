@@ -21,13 +21,13 @@ using Microsoft.Win32;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements get-help command
+    /// This class implements get-help command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113316")]
     public sealed class GetHelpCommand : PSCmdlet
     {
         /// <summary>
-        /// Help Views
+        /// Help Views.
         /// </summary>
         internal enum HelpView
         {
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Default constructor for the GetHelpCommand class
+        /// Default constructor for the GetHelpCommand class.
         /// </summary>
         public GetHelpCommand()
         {
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet Parameters
 
         /// <summary>
-        /// Target to search for help
+        /// Target to search for help.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         public string Path { get; set; }
 
         /// <summary>
-        /// List of help categories to search for help
+        /// List of help categories to search for help.
         /// </summary>
         [Parameter]
         [ValidateSet(
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         private string _provider = string.Empty;
 
         /// <summary>
-        /// Changes the view of HelpObject returned
+        /// Changes the view of HelpObject returned.
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Changes the view of HelpObject returned
+        /// Changes the view of HelpObject returned.
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Changes the view of HelpObject returned
+        /// Changes the view of HelpObject returned.
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet API implementation
 
         /// <summary>
-        /// Implements the BeginProcessing() method for get-help command
+        /// Implements the BeginProcessing() method for get-help command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implements the ProcessRecord() method for get-help command
+        /// Implements the ProcessRecord() method for get-help command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Validates input parameters
+        /// Validates input parameters.
         /// </summary>
         /// <param name="cat">Category specified by the user.</param>
         /// <exception cref="ArgumentException">
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Checks if we can connect to the internet
+        /// Checks if we can connect to the internet.
         /// </summary>
         /// <returns></returns>
         private bool HasInternetConnection()
@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
     public static class GetHelpCodeMethods
     {
         /// <summary>
-        /// Verifies if the InitialSessionState of the current process
+        /// Verifies if the InitialSessionState of the current process.
         /// </summary>
         /// <returns></returns>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()

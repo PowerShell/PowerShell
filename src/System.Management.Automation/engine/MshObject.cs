@@ -515,7 +515,7 @@ namespace System.Management.Automation
         #endregion private to the constructors
 
         /// <summary>
-        /// Initializes a new instance of PSObject with an PSCustomObject BaseObject
+        /// Initializes a new instance of PSObject with an PSCustomObject BaseObject.
         /// </summary>
         public PSObject()
         {
@@ -524,7 +524,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of PSObject with an PSCustomObject BaseObject
-        /// with an initial capacity for members
+        /// with an initial capacity for members.
         /// </summary>
         /// <param name="instanceMemberCapacity">The initial capacity for the instance member collection.</param>
         public PSObject(int instanceMemberCapacity) : this()
@@ -549,7 +549,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a PSObject from an ISerializable context
+        /// Creates a PSObject from an ISerializable context.
         /// </summary>
         /// <param name="info">Serialization information for this instance.</param>
         /// <param name="context">The streaming context for this instance.</param>
@@ -592,7 +592,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is the main field in the class representing
-        /// the System.Object we are encapsulating
+        /// the System.Object we are encapsulating.
         /// </summary>
         private object _immediateBaseObject;
 
@@ -712,18 +712,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects
+        /// Null for live objects but not null for deserialized objects.
         /// </summary>
         internal PSMemberInfoInternalCollection<PSPropertyInfo> adaptedMembers;
 
         /// <summary>
         /// Members from the adapter of the object before it was serialized
-        /// Null for live objects but not null for deserialized objects
+        /// Null for live objects but not null for deserialized objects.
         /// </summary>
         internal PSMemberInfoInternalCollection<PSPropertyInfo> clrMembers;
 
         /// <summary>
-        /// Set to true when the BaseObject is PSCustomObject
+        /// Set to true when the BaseObject is PSCustomObject.
         /// </summary>
         internal bool immediateBaseObjectIsEmpty;
 
@@ -736,7 +736,7 @@ namespace System.Management.Automation
         #region properties
 
         /// <summary>
-        /// Gets the member collection
+        /// Gets the member collection.
         /// </summary>
         public PSMemberInfoCollection<PSMemberInfo> Members
         {
@@ -1226,7 +1226,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called from an PSObject instance ToString to provide a string representation for an object
+        /// Called from an PSObject instance ToString to provide a string representation for an object.
         /// </summary>
         /// <param name="context">
         /// ExecutionContext used to fetch the separator.
@@ -1493,8 +1493,8 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public override string ToString()
         {
-            //If ToString value from deserialization is available,
-            //simply return it.
+            // If ToString value from deserialization is available,
+            // simply return it.
             if (_toStringFromDeserialization != null)
             {
                 return _toStringFromDeserialization;
@@ -1514,8 +1514,8 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            //If ToString value from deserialization is available,
-            //simply return it.
+            // If ToString value from deserialization is available,
+            // simply return it.
             if (_toStringFromDeserialization != null)
             {
                 return _toStringFromDeserialization;
@@ -1731,7 +1731,7 @@ namespace System.Management.Automation
         #region public const strings
 
         /// <summary>
-        /// The name of the member set for adapted members
+        /// The name of the member set for adapted members.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1739,7 +1739,7 @@ namespace System.Management.Automation
         public const string AdaptedMemberSetName = "psadapted";
 
         /// <summary>
-        /// The name of the member set for extended members
+        /// The name of the member set for extended members.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1747,7 +1747,7 @@ namespace System.Management.Automation
         public const string ExtendedMemberSetName = "psextended";
 
         /// <summary>
-        /// The name of the member set for the BaseObject's members
+        /// The name of the member set for the BaseObject's members.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1755,7 +1755,7 @@ namespace System.Management.Automation
         public const string BaseObjectMemberSetName = "psbase";
 
         /// <summary>
-        /// The PSObject's properties
+        /// The PSObject's properties.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation
         internal const string PSObjectMemberSetName = "psobject";
 
         /// <summary>
-        /// a shortcut to .PSObject.TypeNames
+        /// a shortcut to .PSObject.TypeNames.
         /// </summary>
         /// <remarks>
         /// This needs to be Lower cased as it saves some comparison time elsewhere.
@@ -1775,7 +1775,7 @@ namespace System.Management.Automation
         #region serialization
 
         /// <summary>
-        /// Implements the ISerializable contract for serializing a PSObject
+        /// Implements the ISerializable contract for serializing a PSObject.
         /// </summary>
         /// <param name="info">Serialization information for this instance.</param>
         /// <param name="context">The streaming context for this instance.</param>
@@ -1952,7 +1952,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is only going to be called if SerializationMethod is SpecificProperties
+        /// This is only going to be called if SerializationMethod is SpecificProperties.
         /// </summary>
         /// <param name="backupTypeTable">
         /// TypeTable to use if this PSObject.GetTypeTable() returns null. This will happen
@@ -2005,7 +2005,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This flag is set to true in deserialized shellobject
+        /// This flag is set to true in deserialized shellobject.
         /// </summary>
         internal bool isDeserialized;
 
@@ -2026,7 +2026,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set base object
+        /// Set base object.
         /// </summary>
         /// <param name="value">Object which is set as core.</param>
         /// <param name="overrideTypeInfo">If true, overwrite the type information.</param>
@@ -2044,7 +2044,7 @@ namespace System.Management.Automation
             }
         }
 
-        //This is toString value set on deserialization
+        // This is toString value set on deserialization
         private string _toStringFromDeserialization = null;
 
         internal bool preserveToString = false;
@@ -2072,7 +2072,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the to string value on deserialization
+        /// Sets the to string value on deserialization.
         /// </summary>
         internal string ToStringFromDeserialization
         {
@@ -2322,13 +2322,13 @@ namespace System.Management.Automation
     public class PSCustomObject
     {
         /// <summary>
-        /// To prevent other instances than SelfInstance
+        /// To prevent other instances than SelfInstance.
         /// </summary>
         private PSCustomObject() { }
 
         internal static PSCustomObject SelfInstance = new PSCustomObject();
         /// <summary>
-        /// Returns an empty string
+        /// Returns an empty string.
         /// </summary>
         public override string ToString()
         {
@@ -2355,7 +2355,7 @@ namespace System.Management.Automation
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Contains auxiliary ToString CodeMethod implementations for some types
+    /// Contains auxiliary ToString CodeMethod implementations for some types.
     /// </summary>
     public static partial class ToStringCodeMethods
     {
@@ -2456,7 +2456,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ToString implementation for Type
+        /// ToString implementation for Type.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a Type.</param>
         public static string Type(PSObject instance)
@@ -2470,7 +2470,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ToString implementation for XmlNode
+        /// ToString implementation for XmlNode.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping an XmlNode.</param>
         public static string XmlNode(PSObject instance)
@@ -2485,7 +2485,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ToString implementation for XmlNodeList
+        /// ToString implementation for XmlNodeList.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping an XmlNodeList.</param>
         public static string XmlNodeList(PSObject instance)

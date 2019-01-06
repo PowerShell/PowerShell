@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
             uint res = _pdhHelper.EnumObjects(machine, ref counterSets);
             if (res != 0)
             {
-                //add an error message
+                // add an error message
                 string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("NoCounterSetsOnComputer"), machine, res);
                 Exception exc = new Exception(msg);
                 WriteError(new ErrorRecord(exc, "NoCounterSetsOnComputer", ErrorCategory.InvalidResult, machine));
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         categoryType = PerformanceCounterCategoryType.MultiInstance;
                     }
-                    else //if (counterSetInstances.Count == 1) //???
+                    else // if (counterSetInstances.Count == 1) //???
                     {
                         categoryType = PerformanceCounterCategoryType.SingleInstance;
                     }
@@ -535,14 +535,14 @@ namespace Microsoft.PowerShell.Commands
 
                 if (res == 0)
                 {
-                    //Display valid data
+                    // Display valid data
                     if (!bSkip)
                     {
                         WriteSampleSetObject(nextSet);
                         sampleReads++;
                     }
 
-                    //Don't need to skip anymore
+                    // Don't need to skip anymore
                     bSkip = false;
                 }
                 else if (res == PdhResults.PDH_NO_DATA || res == PdhResults.PDH_INVALID_DATA)
@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in _accumulatedCounters)
             {
-                if (path.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase)) //NOTE: can we do anything smarter here?
+                if (path.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase)) // NOTE: can we do anything smarter here?
                 {
                     retColl.Add(path);
                 }

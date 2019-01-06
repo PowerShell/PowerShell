@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gives the criteria to filter breakpoints
+        /// Gives the criteria to filter breakpoints.
         /// </summary>
         private delegate bool FilterSelector<T>(Breakpoint breakpoint, T target);
 

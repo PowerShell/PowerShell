@@ -94,12 +94,12 @@ namespace System.Management.Automation.Language
         string Text { get; }
 
         /// <summary>
-        /// The starting offset of the extent
+        /// The starting offset of the extent.
         /// </summary>
         int StartOffset { get; }
 
         /// <summary>
-        /// The ending offset of the extent
+        /// The ending offset of the extent.
         /// </summary>
         int EndOffset { get; }
     }
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Return a message that looks like:
-        ///     12+ $x + &lt;&lt;&lt;&lt; $b
+        ///     12+ $x + &lt;&lt;&lt;&lt; $b.
         /// </summary>
         internal static string BriefMessage(IScriptPosition position)
         {
@@ -596,7 +596,7 @@ namespace System.Management.Automation.Language
         private readonly string _fullScript;
 
         /// <summary>
-        /// Creates a new script position, which represents a point in a script
+        /// Creates a new script position, which represents a point in a script.
         /// </summary>
         /// <param name="scriptName">The name of the file, or if the script did not come from a file, then null.</param>
         /// <param name="scriptLineNumber">The line number of the position, with the value 1 being the first line.</param>
@@ -620,7 +620,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Creates a new script position, which represents a point in a script
+        /// Creates a new script position, which represents a point in a script.
         /// </summary>
         /// <param name="scriptName">The name of the file, or if the script did not come from a file, then null.</param>
         /// <param name="scriptLineNumber">The line number of the position, with the value 1 being the first line.</param>
@@ -671,7 +671,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// A script extent used to customize the display of error location information
+    /// A script extent used to customize the display of error location information.
     /// </summary>
     public sealed class ScriptExtent : IScriptExtent
     {

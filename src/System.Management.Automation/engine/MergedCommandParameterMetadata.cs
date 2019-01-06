@@ -174,7 +174,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a bit-field representing all valid parameter sets
+        /// Gets a bit-field representing all valid parameter sets.
         /// </summary>
         internal uint AllParameterSetFlags
         {
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         private IList<string> _parameterSetMap = new List<string>();
 
         /// <summary>
-        /// The name of the default parameter set
+        /// The name of the default parameter set.
         /// </summary>
         private string _defaultParameterSetName;
 
@@ -570,7 +570,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a collection of all the parameters that are allowed in the parameter set
+        /// Gets a collection of all the parameters that are allowed in the parameter set.
         /// </summary>
         /// <param name="parameterSetFlag">
         /// The bit representing the parameter set from which the parameters should be retrieved.
@@ -654,7 +654,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the compiled command parameter for the association
+        /// Gets the compiled command parameter for the association.
         /// </summary>
         internal CompiledCommandParameter Parameter { get; private set; }
 

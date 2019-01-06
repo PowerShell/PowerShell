@@ -440,8 +440,8 @@ namespace System.Management.Automation
         private Token GetNextToken(string input, ref int _offset)
         {
             StringBuilder sb = new StringBuilder();
-            //bool singleQuoted = false;
-            //bool doubleQuoted = false;
+            // bool singleQuoted = false;
+            // bool doubleQuoted = false;
             bool readingIdentifier = false;
             while (_offset < input.Length)
             {

@@ -86,7 +86,7 @@ namespace System.Management.Automation
         #region internal members
 
         /// <summary>
-        /// Returns a CmdletParameterBinderController for the specified command
+        /// Returns a CmdletParameterBinderController for the specified command.
         /// </summary>
         /// <param name="command">
         /// The cmdlet to bind parameters to.
@@ -137,7 +137,7 @@ namespace System.Management.Automation
         private CmdletParameterBinderController _cmdletParameterBinderController;
 
         /// <summary>
-        /// Get the ObsoleteAttribute of the current command
+        /// Get the ObsoleteAttribute of the current command.
         /// </summary>
         internal override ObsoleteAttribute ObsoleteAttribute
         {
@@ -147,7 +147,7 @@ namespace System.Management.Automation
         private ObsoleteAttribute _obsoleteAttribute;
 
         /// <summary>
-        /// Binds the specified command-line parameters to the target
+        /// Binds the specified command-line parameters to the target.
         /// </summary>
         /// <returns>
         /// true if encode succeeds otherwise false.
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Execute BeginProcessing part of command
+        /// Execute BeginProcessing part of command.
         /// </summary>
         internal override void DoBegin()
         {
@@ -428,12 +428,12 @@ namespace System.Management.Automation
         #region helper_methods
 
         /// <summary>
-        /// Tells whether it is the first call to Read
+        /// Tells whether it is the first call to Read.
         /// </summary>
         private bool _firstCallToRead = true;
 
         /// <summary>
-        /// Tells whether to bail out in the next call to Read
+        /// Tells whether to bail out in the next call to Read.
         /// </summary>
         private bool _bailInNextCall;
 
@@ -632,7 +632,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads an object from an input pipeline and attempts to bind the parameters
+        /// Reads an object from an input pipeline and attempts to bind the parameters.
         /// </summary>
         /// <param name="inputObject">
         /// The pipeline input object to be processed.
@@ -680,7 +680,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes the command's request object
+        /// Initializes the command's request object.
         /// </summary>
         /// <param name="cmdletInformation">
         /// The information about the cmdlet.

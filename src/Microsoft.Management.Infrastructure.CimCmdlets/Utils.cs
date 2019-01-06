@@ -65,7 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static string DefaultQueryDialect = @"WQL";
 
         /// <summary>
-        /// Name of the note property that controls if "PSComputerName" column is shown
+        /// Name of the note property that controls if "PSComputerName" column is shown.
         /// </summary>
         internal static string ShowComputerNameNoteProperty = "PSShowComputerName";
 
@@ -94,7 +94,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Get computer name, if it is null then return default one
+        /// Get computer name, if it is null then return default one.
         /// </summary>
         /// <param name="computerName"></param>
         /// <returns></returns>
@@ -149,12 +149,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Whether the log been initialized
+        /// Whether the log been initialized.
         /// </summary>
         private static bool logInitialized = false;
 
         /// <summary>
-        /// Flag used to control generating message into powershell
+        /// Flag used to control generating message into powershell.
         /// </summary>
         private static bool generateVerboseMessage = true;
         internal static bool GenerateVerboseMessage
@@ -165,17 +165,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Flag used to control generating message into powershell
+        /// Flag used to control generating message into powershell.
         /// </summary>
         internal static string logFile = @"c:\temp\Cim.log";
 
         /// <summary>
-        /// Indent space string
+        /// Indent space string.
         /// </summary>
         internal static string space = @"    ";
 
         /// <summary>
-        /// Indent space strings array
+        /// Indent space strings array.
         /// </summary>
         internal static string[] spaces = {
                                               string.Empty,
@@ -187,7 +187,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                           };
 
         /// <summary>
-        /// Lock the log file
+        /// Lock the log file.
         /// </summary>
         internal static object logLock = new object();
 
@@ -216,14 +216,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             StackTrace trace = new StackTrace();
             StackFrame frame = trace.GetFrame(depth);
-            //if (withFileName)
-            //{
+            // if (withFileName)
+            // {
             //    return string.Format(CultureInfo.CurrentUICulture, "{0}#{1}:{2}:", frame.GetFileName()., frame.GetFileLineNumber(), frame.GetMethod().Name);
-            //}
-            //else
-            //{
+            // }
+            // else
+            // {
             //    return string.Format(CultureInfo.CurrentUICulture, "{0}:", frame.GetMethod());
-            //}
+            // }
 
             return string.Format(CultureInfo.CurrentUICulture, "{0}::{1}        ",
                 frame.GetMethod().DeclaringType.Name,
@@ -232,7 +232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// Write message to log file named @logFile
+        /// Write message to log file named @logFile.
         /// </summary>
         /// <param name="message"></param>
         internal static void WriteLog(string message)
@@ -241,7 +241,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Write blank line to log file named @logFile
+        /// Write blank line to log file named @logFile.
         /// </summary>
         /// <param name="message"></param>
         internal static void WriteEmptyLine()
@@ -250,7 +250,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Write message to log file named @logFile with args
+        /// Write message to log file named @logFile with args.
         /// </summary>
         /// <param name="message"></param>
         internal static void WriteLog(string message, int indent, params object[] args)
@@ -261,7 +261,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Write message to log file w/o arguments
+        /// Write message to log file w/o arguments.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="indent"></param>
@@ -271,7 +271,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Write message to log file named @logFile with args
+        /// Write message to log file named @logFile with args.
         /// </summary>
         /// <param name="message"></param>
         internal static void WriteLogEx(string message, int indent, params object[] args)
@@ -283,7 +283,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Write message to log file w/o arguments
+        /// Write message to log file w/o arguments.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="indent"></param>
@@ -294,7 +294,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Write message to log file w/o arguments
+        /// Write message to log file w/o arguments.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="indent"></param>
@@ -305,7 +305,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        ///  Format the message
+        ///  Format the message.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="args"></param>
@@ -383,7 +383,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal static class ValidationHelper
     {
         /// <summary>
-        /// Validate the argument is not null
+        /// Validate the argument is not null.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="argumentName"></param>
@@ -396,7 +396,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Validate the argument is not null and not whitespace
+        /// Validate the argument is not null and not whitespace.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="argumentName"></param>
@@ -410,7 +410,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Validate that given classname/propertyname is a valid name compliance with DMTF standard.
-        /// Only for verifying ClassName and PropertyName argument
+        /// Only for verifying ClassName and PropertyName argument.
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="value"></param>

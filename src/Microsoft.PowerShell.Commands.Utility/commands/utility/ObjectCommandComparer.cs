@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return 1;
             }
-            //both are nonexisting
+            // both are nonexisting
             return 0;
         }
 

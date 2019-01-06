@@ -7,12 +7,12 @@ using System.Reflection;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Defines an entry point for the .NET CLI "powershell" app
+    /// Defines an entry point for the .NET CLI "powershell" app.
     /// </summary>
     public sealed class ManagedPSEntry
     {
         /// <summary>
-        /// Starts the managed MSH
+        /// Starts the managed MSH.
         /// </summary>
         /// <param name="args">
         /// Command line arguments to the managed MSH

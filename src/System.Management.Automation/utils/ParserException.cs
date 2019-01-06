@@ -59,7 +59,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Initializes a new instance of the class ParseException
+        /// Initializes a new instance of the class ParseException.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public ParseException() : base()
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         #endregion Serialization
 
         /// <summary>
-        /// Initializes a new instance of the class IncompleteParseException
+        /// Initializes a new instance of the class IncompleteParseException.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public IncompleteParseException() : base()

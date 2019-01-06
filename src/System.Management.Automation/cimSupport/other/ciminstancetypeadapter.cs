@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Cim
         {
             PSAdaptedProperty propertyToAdd = new PSAdaptedProperty(propertyName, property);
             propertyToAdd.baseObject = baseObject;
-            //propertyToAdd.adapter = this;
+            // propertyToAdd.adapter = this;
             return propertyToAdd;
         }
 
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Cim
         {
             PSAdaptedProperty psComputerNameProperty = new PSAdaptedProperty(RemotingConstants.ComputerNameNoteProperty, cimInstance);
             psComputerNameProperty.baseObject = cimInstance;
-            //psComputerNameProperty.adapter = this;
+            // psComputerNameProperty.adapter = this;
             return psComputerNameProperty;
         }
 

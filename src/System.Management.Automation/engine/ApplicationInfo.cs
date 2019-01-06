@@ -77,7 +77,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source of this command
+        /// Gets the source of this command.
         /// </summary>
         public override string Source
         {
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the source version
+        /// Gets the source version.
         /// </summary>
         public override Version Version
         {

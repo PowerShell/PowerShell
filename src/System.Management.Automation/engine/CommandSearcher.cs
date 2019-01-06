@@ -11,7 +11,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Used to enumerate the commands on the system that match the specified
-    /// command name
+    /// command name.
     /// </summary>
     internal class CommandSearcher : IEnumerable<CommandInfo>, IEnumerator<CommandInfo>
     {
@@ -56,7 +56,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an instance of a command enumerator
+        /// Gets an instance of a command enumerator.
         /// </summary>
         /// <returns>
         /// An instance of this class as IEnumerator.
@@ -72,7 +72,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Moves the enumerator to the next command match. Public for IEnumerable
+        /// Moves the enumerator to the next command match. Public for IEnumerable.
         /// </summary>
         /// <returns>
         /// true if there was another command that matches, false otherwise.
@@ -436,7 +436,7 @@ namespace System.Management.Automation
         #region private members
 
         /// <summary>
-        /// Gets the next command info using the command name as a path
+        /// Gets the next command info using the command name as a path.
         /// </summary>
         /// <returns>
         /// A CommandInfo for the next command if it exists as a path, or null otherwise.
@@ -635,7 +635,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the next matching alias
+        /// Gets the next matching alias.
         /// </summary>
         /// <returns>
         /// A CommandInfo representing the next matching alias if found, otherwise null.
@@ -714,7 +714,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the next matching function
+        /// Gets the next matching function.
         /// </summary>
         /// <returns>
         /// A CommandInfo representing the next matching function if found, otherwise null.
@@ -1053,7 +1053,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Resolves the given path as an PSPath and ensures that it was resolved
-        /// by the FileSystemProvider
+        /// by the FileSystemProvider.
         /// </summary>
         /// <param name="path">
         /// The path to resolve.
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a collection of patterns used to find the command
+        /// Creates a collection of patterns used to find the command.
         /// </summary>
         /// <param name="name">
         /// The name of the command to search for.
@@ -1324,7 +1324,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The command name to search for
+        /// The command name to search for.
         /// </summary>
         private string _commandName;
 
@@ -1469,7 +1469,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Resets the enumerator to before the first command match, public for IEnumerable
+        /// Resets the enumerator to before the first command match, public for IEnumerable.
         /// </summary>
         public void Reset()
         {
@@ -1505,12 +1505,12 @@ namespace System.Management.Automation
         private CommandOrigin _commandOrigin = CommandOrigin.Internal;
 
         /// <summary>
-        /// An enumerator of the matching aliases
+        /// An enumerator of the matching aliases.
         /// </summary>
         private IEnumerator<AliasInfo> _matchingAlias;
 
         /// <summary>
-        /// An enumerator of the matching functions
+        /// An enumerator of the matching functions.
         /// </summary>
         private IEnumerator<CommandInfo> _matchingFunctionEnumerator;
 
@@ -1523,7 +1523,7 @@ namespace System.Management.Automation
         private CanDoPathLookupResult _canDoPathLookupResult = CanDoPathLookupResult.Yes;
 
         /// <summary>
-        /// The current state of the enumerator
+        /// The current state of the enumerator.
         /// </summary>
         private SearchState _currentState = SearchState.SearchingAliases;
 

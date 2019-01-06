@@ -138,7 +138,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns a token that allows a job to be constructed with a specific id and instanceId.
-        /// The original job must have been saved using "SaveJobIdForReconstruction" in the JobSourceAdapter
+        /// The original job must have been saved using "SaveJobIdForReconstruction" in the JobSourceAdapter.
         /// </summary>
         /// <param name="instanceId">The instance id desired.</param>
         /// <param name="typeName">The requesting type name for JobSourceAdapter implementation.</param>

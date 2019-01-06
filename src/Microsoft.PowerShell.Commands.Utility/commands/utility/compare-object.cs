@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         ///     While there is no space in referenceEntryBacklog
         ///       Emit oldest entry in referenceEntryBacklog as unmatched
         ///       Remove oldest entry from referenceEntryBacklog
-        ///     Add referenceEntry to referenceEntryBacklog
+        ///     Add referenceEntry to referenceEntryBacklog.
         /// </summary>
         /// <param name="differenceEntry"></param>
         private void Process(OrderByPropertyEntry differenceEntry)

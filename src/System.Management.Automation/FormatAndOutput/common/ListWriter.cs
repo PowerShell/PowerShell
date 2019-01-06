@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// class to write object properties in list form by using
-    /// the host screen interfaces
+    /// the host screen interfaces.
     /// </summary>
     internal class ListWriter
     {
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private int _propertyLabelsDisplayLength = 0;
 
         /// <summary>
-        /// column width of the screen
+        /// column width of the screen.
         /// </summary>
         private int _columnWidth = 0;
 
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write the values of the properties of an object
+        /// write the values of the properties of an object.
         /// </summary>
         /// <param name="values">Array with the values in form of formatted strings.</param>
         /// <param name="lo">LineOutput interface to write to.</param>
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// helper, writing a single property to the screen.
-        /// It wraps the value of the property if it is tool long to fit
+        /// It wraps the value of the property if it is tool long to fit.
         /// </summary>
         /// <param name="k">Index of property to write.</param>
         /// <param name="propertyValue">String value of the property to write.</param>
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// internal helper to split a line that is too long to fit and pad it to the left
-        /// with a given string
+        /// with a given string.
         /// </summary>
         /// <param name="prependString">String to add to the left.</param>
         /// <param name="line">Line to print.</param>
@@ -227,19 +227,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// set to true when the width of the screen is too small to do anything useful
+        /// set to true when the width of the screen is too small to do anything useful.
         /// </summary>
         private bool _disabled = false;
 
         private const string Separator = " : ";
 
         /// <summary>
-        /// minimum width for the property label field
+        /// minimum width for the property label field.
         /// </summary>
         private const int MinLabelWidth = 1;
 
         /// <summary>
-        /// minimum width for the property value field
+        /// minimum width for the property value field.
         /// </summary>
         private const int MinFieldWidth = 1;
     }

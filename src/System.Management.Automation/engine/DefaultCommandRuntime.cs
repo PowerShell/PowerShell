@@ -94,38 +94,38 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default implementation - just discards it's arguments
+        /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="progressRecord">Progress record to write.</param>
         public void WriteProgress(ProgressRecord progressRecord) {; }
 
         /// <summary>
-        /// Default implementation - just discards it's arguments
+        /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="sourceId">Source ID to write for.</param>
         /// <param name="progressRecord">Record to write.</param>
         public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) {; }
 
         /// <summary>
-        /// Default implementation - just discards it's arguments
+        /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
         public void WriteVerbose(string text) {; }
 
         /// <summary>
-        /// Default implementation - just discards it's arguments
+        /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
         public void WriteWarning(string text) {; }
 
         /// <summary>
-        /// Default implementation - just discards it's arguments
+        /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
         public void WriteCommandDetail(string text) {; }
 
         /// <summary>
-        /// Default implementation - just discards it's arguments
+        /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="informationRecord">Record to write.</param>
         public void WriteInformation(InformationRecord informationRecord) {; }
@@ -206,7 +206,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         public PSTransactionContext CurrentPSTransaction
         {

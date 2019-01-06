@@ -24,7 +24,7 @@ namespace System.Management.Automation
         internal ExecutionContext Context { get; }
 
         /// <summary>
-        /// Gets the CommandDiscovery instance for the current engine
+        /// Gets the CommandDiscovery instance for the current engine.
         /// </summary>
         internal CommandDiscovery CommandDiscovery { get; }
 

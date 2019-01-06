@@ -130,15 +130,15 @@ namespace Microsoft.WSMan.Management
     public enum AuthenticationMechanism
     {
         /// <summary>
-        /// Use no authentication
+        /// Use no authentication.
         /// </summary>
         None = 0x0,
         /// <summary>
-        /// Use Default authentication
+        /// Use Default authentication.
         /// </summary>
         Default = 0x1,
         /// <summary>
-        /// Use digest authentication for a remote operation
+        /// Use digest authentication for a remote operation.
         /// </summary>
         Digest = 0x2,
         /// <summary>
@@ -146,19 +146,19 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         Negotiate = 0x4,
         /// <summary>
-        /// Use basic authentication for a remote operation
+        /// Use basic authentication for a remote operation.
         /// </summary>
         Basic = 0x8,
         /// <summary>
-        /// Use kerberos authentication for a remote operation
+        /// Use kerberos authentication for a remote operation.
         /// </summary>
         Kerberos = 0x10,
         /// <summary>
-        /// Use client certificate authentication for a remote operation
+        /// Use client certificate authentication for a remote operation.
         /// </summary>
         ClientCertificate = 0x20,
         /// <summary>
-        /// Use CredSSP authentication for a remote operation
+        /// Use CredSSP authentication for a remote operation.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Credssp")]
         Credssp = 0x80,

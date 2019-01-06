@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
-        /// class
+        /// class.
         /// </summary>
         public GetCredentialCommand() : base()
         {

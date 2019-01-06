@@ -60,12 +60,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// class provides all information regarding the
-    /// current invocation to .net api
+    /// current invocation to .net api.
     /// </summary>
     internal class InvocationContext
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="proxy"></param>
         internal InvocationContext(CimSessionProxy proxy)
@@ -78,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="proxy"></param>
         internal InvocationContext(string computerName, CimInstance targetCimInstance)
@@ -143,7 +143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CmdletActionEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="action">CimBaseAction object bound to the event.</param>
         public CmdletActionEventArgs(CimBaseAction action)
@@ -160,7 +160,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class OperationEventArgs : EventArgs
     {
         /// <summary>
-        /// constructor
+        /// constructor.
         /// </summary>
         /// <param name="operationCancellation">Object used to cancel the operation.</param>
         /// <param name="operation">Async observable operation.</param>
@@ -198,7 +198,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private static long gOperationCounter = 0;
 
         /// <summary>
-        /// temporary CimSession cache lock
+        /// temporary CimSession cache lock.
         /// </summary>
         private static readonly object temporarySessionCacheLock = new object();
 
@@ -315,7 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CmdletActionEventArgs actionArgs);
 
         /// <summary>
-        /// Define an Event based on the NewActionHandler
+        /// Define an Event based on the NewActionHandler.
         /// </summary>
         public event NewCmdletActionHandler OnNewCmdletAction;
 
@@ -330,7 +330,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             OperationEventArgs actionArgs);
 
         /// <summary>
-        /// Event triggered when a new operation is started
+        /// Event triggered when a new operation is started.
         /// </summary>
         public event OperationEventHandler OnOperationCreated;
 
@@ -426,7 +426,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Create <see cref="CimSession"/> by given computer name,
-        /// session options
+        /// session options.
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
@@ -450,7 +450,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create wrapper object by given session object
+        /// Create wrapper object by given session object.
         /// </summary>
         /// <param name="session"></param>
         public CimSessionProxy(CimSession session)
@@ -459,7 +459,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create wrapper object by given session object
+        /// Create wrapper object by given session object.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="operOptions">Used when create async operation.</param>
@@ -469,7 +469,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Initialize CimSessionProxy object
+        /// Initialize CimSessionProxy object.
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="session"></param>
@@ -544,7 +544,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region set operation options
 
         /// <summary>
-        /// Set timeout value (seconds) of the operation
+        /// Set timeout value (seconds) of the operation.
         /// </summary>
         public UInt32 OperationTimeout
         {
@@ -562,7 +562,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Set resource URI of the operation
+        /// Set resource URI of the operation.
         /// </summary>
         public Uri ResourceUri
         {
@@ -614,7 +614,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Enable the pssemantics
+        /// Enable the pssemantics.
         /// </summary>
         private void EnablePSSemantics()
         {
@@ -660,7 +660,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Initialize the operation option
+        /// Initialize the operation option.
         /// </summary>
         private void InitOption(CimOperationOptions operOptions)
         {
@@ -717,7 +717,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Remove object from cache
+        /// Remove object from cache.
         /// </summary>
         /// <param name="operation"></param>
         private void RemoveOperation(IObservable<object> operation)
@@ -953,7 +953,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// PromptUser callback
+        /// PromptUser callback.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="prompt"></param>
@@ -1113,7 +1113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// delete a cim instance asynchronously
+        /// delete a cim instance asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="instance"></param>
@@ -1133,7 +1133,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Get cim instance asynchronously
+        /// Get cim instance asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="instanceId"></param>
@@ -1153,7 +1153,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Modify cim instance asynchronously
+        /// Modify cim instance asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="instance"></param>
@@ -1174,7 +1174,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Enumerate cim instance associated with the
-        /// given instance asynchronously
+        /// given instance asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="sourceInstance"></param>
@@ -1208,7 +1208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Enumerate cim instance asynchronously
+        /// Enumerate cim instance asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="className"></param>
@@ -1273,7 +1273,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Enumerate cim class asynchronously
+        /// Enumerate cim class asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="className"></param>
@@ -1291,7 +1291,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Enumerate cim class asynchronously
+        /// Enumerate cim class asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="className"></param>
@@ -1310,7 +1310,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Get cim class asynchronously
+        /// Get cim class asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="className"></param>
@@ -1330,7 +1330,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Invoke method of a given cim instance asynchronously
+        /// Invoke method of a given cim instance asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="instance"></param>
@@ -1357,7 +1357,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Invoke static method of a given class asynchronously
+        /// Invoke static method of a given class asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="className"></param>
@@ -1430,7 +1430,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region pre action APIs
         /// <summary>
-        /// Called before new action event
+        /// Called before new action event.
         /// </summary>
         /// <param name="args"></param>
         protected virtual bool PreNewActionEvent(CmdletActionEventArgs args)
@@ -1438,7 +1438,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return true;
         }
         /// <summary>
-        /// Called before operation delete event
+        /// Called before operation delete event.
         /// </summary>
         /// <param name="args"></param>
         protected virtual void PreOperationDeleteEvent(OperationEventArgs args)
@@ -1449,21 +1449,21 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region post action APIs
 
         /// <summary>
-        /// Called after new action event
+        /// Called after new action event.
         /// </summary>
         /// <param name="args"></param>
         protected virtual void PostNewActionEvent(CmdletActionEventArgs args)
         {
         }
         /// <summary>
-        /// Called after operation create event
+        /// Called after operation create event.
         /// </summary>
         /// <param name="args"></param>
         protected virtual void PostOperationCreateEvent(OperationEventArgs args)
         {
         }
         /// <summary>
-        /// Called after operation delete event
+        /// Called after operation delete event.
         /// </summary>
         /// <param name="args"></param>
         protected virtual void PostOperationDeleteEvent(OperationEventArgs args)
@@ -1498,7 +1498,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The current CimInstance object, against which issued
-        /// current operation, it could be null
+        /// current operation, it could be null.
         /// </summary>
         internal CimInstance TargetCimInstance
         {
@@ -1550,37 +1550,37 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// lock object used to lock
-        /// operation & cancelOperation members
+        /// operation & cancelOperation members.
         /// </summary>
         private readonly object stateLock = new object();
 
         /// <summary>
-        /// the operation issued by cimSession
+        /// the operation issued by cimSession.
         /// </summary>
         private IObservable<object> operation;
 
         /// <summary>
-        /// the current operation name
+        /// the current operation name.
         /// </summary>
         private string operationName;
 
         /// <summary>
-        /// the current operation parameters
+        /// the current operation parameters.
         /// </summary>
         private Hashtable operationParameters = new Hashtable();
 
         /// <summary>
-        /// handler used to cancel operation
+        /// handler used to cancel operation.
         /// </summary>
         private IDisposable _cancelOperation;
 
         /// <summary>
-        /// cancelOperation disposed flag
+        /// cancelOperation disposed flag.
         /// </summary>
         private int _cancelOperationDisposed = 0;
 
         /// <summary>
-        /// Dispose the cancel operation
+        /// Dispose the cancel operation.
         /// </summary>
         private void DisposeCancelOperation()
         {
@@ -1597,7 +1597,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Set the cancel operation
+        /// Set the cancel operation.
         /// </summary>
         private IDisposable CancelOperation
         {
@@ -1616,7 +1616,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// current protocol name
-        /// DCOM or WSMAN
+        /// DCOM or WSMAN.
         /// </summary>
         internal ProtocolType Protocol
         {
@@ -1629,7 +1629,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private ProtocolType protocol;
 
         /// <summary>
-        /// cross operation context object
+        /// cross operation context object.
         /// </summary>
         internal XOperationContextBase ContextObject
         {
@@ -1647,7 +1647,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private XOperationContextBase contextObject;
 
         /// <summary>
-        /// invocation context object
+        /// invocation context object.
         /// </summary>
         private InvocationContext invocationContextObject;
 
@@ -1682,7 +1682,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region IDisposable
 
         /// <summary>
-        /// IDisposable interface
+        /// IDisposable interface.
         /// </summary>
         private int _disposed;
 
@@ -1990,7 +1990,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #endregion
 
-    }//End Class
+    }
 
     #region class CimSessionProxyTestConnection
     /// <summary>
@@ -2019,7 +2019,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region pre action APIs
 
         /// <summary>
-        /// Called after operation delete event
+        /// Called after operation delete event.
         /// </summary>
         /// <param name="args"></param>
         protected override void PreOperationDeleteEvent(OperationEventArgs args)
@@ -2077,7 +2077,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region pre action APIs
         /// <summary>
-        /// Called before new action event
+        /// Called before new action event.
         /// </summary>
         /// <param name="args"></param>
         protected override bool PreNewActionEvent(CmdletActionEventArgs args)
@@ -2231,7 +2231,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region pre action APIs
         /// <summary>
-        /// Called before new action event
+        /// Called before new action event.
         /// </summary>
         /// <param name="args"></param>
         protected override bool PreNewActionEvent(CmdletActionEventArgs args)
@@ -2326,7 +2326,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region pre action APIs
         /// <summary>
-        /// Called before new action event
+        /// Called before new action event.
         /// </summary>
         /// <param name="args"></param>
         protected override bool PreNewActionEvent(CmdletActionEventArgs args)
@@ -2346,7 +2346,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// Ture indicates need to output the modified result
+        /// Ture indicates need to output the modified result.
         /// </summary>
         private bool passThru = false;
 
@@ -2354,4 +2354,4 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     #endregion
-}//End namespace
+}

@@ -69,7 +69,7 @@ namespace System.Management.Automation
         private static Collection<string> s_ignoredCommands = new Collection<string>();
 
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         static MshLog()
         {
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get Log Provider based on Execution Context
+        /// Get Log Provider based on Execution Context.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <returns></returns>
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get Log Provider based on Log Context
+        /// Get Log Provider based on Log Context.
         /// </summary>
         /// <param name="logContext"></param>
         /// <returns></returns>
@@ -134,7 +134,7 @@ namespace System.Management.Automation
 
             try
             {
-#if !CORECLR    //TODO:CORECLR EventLogLogProvider not handled yet
+#if !CORECLR    // TODO:CORECLR EventLogLogProvider not handled yet
                 LogProvider eventLogLogProvider = new EventLogLogProvider(shellId);
                 providers.Add(eventLogLogProvider);
 #endif
@@ -235,7 +235,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a variation of LogEngineHealthEvent api to make additionalInfo and newEngineState
-        /// optional
+        /// optional.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="eventId"></param>
@@ -267,7 +267,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a variation of LogEngineHealthEvent api to make newEngineState
-        /// optional
+        /// optional.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="eventId"></param>
@@ -285,7 +285,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a variation of LogEngineHealthEvent api to make additionalInfo
-        /// optional
+        /// optional.
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="eventId"></param>
@@ -1025,20 +1025,20 @@ namespace System.Management.Automation
 
         #region EventId Constants
 
-        //General health issues.
+        // General health issues.
         internal const int EVENT_ID_GENERAL_HEALTH_ISSUE = 100;
 
         // Dependency. resource not available
         internal const int EVENT_ID_RESOURCE_NOT_AVAILABLE = 101;
-        //Connectivity. network connection failure
+        // Connectivity. network connection failure
         internal const int EVENT_ID_NETWORK_CONNECTIVITY_ISSUE = 102;
-        //Settings. fail to set some configuration settings
+        // Settings. fail to set some configuration settings
         internal const int EVENT_ID_CONFIGURATION_FAILURE = 103;
-        //Performance. system is experiencing some performance issues
+        // Performance. system is experiencing some performance issues
         internal const int EVENT_ID_PERFORMANCE_ISSUE = 104;
-        //Security: system is experiencing some security issues
+        // Security: system is experiencing some security issues
         internal const int EVENT_ID_SECURITY_ISSUE = 105;
-        //Workload. system is overloaded.
+        // Workload. system is overloaded.
         internal const int EVENT_ID_SYSTEM_OVERLOADED = 106;
 
         // Beta 1 only -- Unexpected Exception
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Log context cache
+    /// Log context cache.
     /// </summary>
     internal class LogContextCache
     {
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation
     #region Command State and Provider State
 
     /// <summary>
-    /// Severity of the event
+    /// Severity of the event.
     /// </summary>
     internal enum Severity
     {
@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// enum for command states
+    /// enum for command states.
     /// </summary>
     internal enum CommandState
     {
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// enum for provider states
+    /// enum for provider states.
     /// </summary>
     internal enum ProviderState
     {

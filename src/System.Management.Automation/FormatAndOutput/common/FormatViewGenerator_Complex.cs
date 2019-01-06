@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// class to process a complex control directive and generate
-    /// the corresponding formatting tokens
+    /// the corresponding formatting tokens.
     /// </summary>
     internal sealed class ComplexControlGenerator
     {
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// class to generate a complex view from properties
+    /// class to generate a complex view from properties.
     /// </summary>
     internal sealed class ComplexViewObjectBrowser
     {
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// given an object, generate a tree-like view
-        /// of the object
+        /// of the object.
         /// </summary>
         /// <param name="so">Object to process.</param>
         /// <param name="inputParameters">Parameters from the command line.</param>
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// recursive call to display an object
+        /// recursive call to display an object.
         /// </summary>
         /// <param name="so">Object to display.</param>
         /// <param name="currentLevel">Current level in the traversal.</param>
@@ -608,7 +608,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// recursive call to display an object
+        /// recursive call to display an object.
         /// </summary>
         /// <param name="e">Enumeration to display.</param>
         /// <param name="level">Current level in the traversal.</param>
@@ -666,7 +666,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// display a leaf value
+        /// display a leaf value.
         /// </summary>
         /// <param name="val">Object to display.</param>
         /// <param name="formatValueList">List of format tokens to add to.</param>
@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// determine if we have to stop the expansion
+        /// determine if we have to stop the expansion.
         /// </summary>
         /// <param name="val">Object to verify.</param>
         /// <param name="level">Current level of recursion.</param>
@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// treat as scalar check
+        /// treat as scalar check.
         /// </summary>
         /// <param name="typeNames">Name of the type to check.</param>
         /// <returns>True if it has to be treated as a scalar.</returns>
@@ -769,7 +769,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ComplexSpecificParameters _complexSpecificParameters;
 
         /// <summary>
-        /// indentation added to each level in the recursion
+        /// indentation added to each level in the recursion.
         /// </summary>
         private int _indentationStep = 2;
 

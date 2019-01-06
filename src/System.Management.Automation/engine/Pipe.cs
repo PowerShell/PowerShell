@@ -88,7 +88,7 @@ namespace System.Management.Automation.Internal
         private PipelineWriter _externalWriter;
 
         /// <summary>
-        /// for diagnostic purposes
+        /// for diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// OutBufferCount configures the number of objects to buffer before calling the downstream Cmdlet
+        /// OutBufferCount configures the number of objects to buffer before calling the downstream Cmdlet.
         /// </summary>
         internal int OutBufferCount { get; set; } = 0;
 
@@ -313,7 +313,7 @@ namespace System.Management.Automation.Internal
         #region ctor
 
         /// <summary>
-        /// Default constructor - Creates the object queue
+        /// Default constructor - Creates the object queue.
         /// </summary>
         /// <remarks>
         /// The initial Queue capacity is 1, but it will grow automatically.
@@ -324,7 +324,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// This overload causes output to be written into a List
+        /// This overload causes output to be written into a List.
         /// </summary>
         /// <param name="resultList"></param>
         internal Pipe(List<object> resultList)
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This overload causes output to be
         /// written onto an Collection[PSObject] which is more useful
-        /// in many circumstances than arraylist
+        /// in many circumstances than arraylist.
         /// </summary>
         /// <param name="resultCollection">The collection to write into.</param>
         internal Pipe(System.Collections.ObjectModel.Collection<PSObject> resultCollection)
