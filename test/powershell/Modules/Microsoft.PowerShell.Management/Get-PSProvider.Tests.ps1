@@ -25,42 +25,55 @@ Describe "Get-PSProvider" -Tags "CI" {
 	{ $actual | Format-List } | Should -Not -Throw
     }
 
-    Context 'FileSystem provider' {
-        It 'has PathSeparator property' {
-            (Get-PSProvider FileSystem).PathSeparator | Should -Be @("\", "/")
+    Context 'PathSeparators' {
+        BeforeAll {
+            $windowsTestCases = @(
+                @{Provider = 'FileSystem'; Value = @("\", "/")}
+                @{Provider = 'Variable'; Value = @("\", "/")}
+                @{Provider = 'Function'; Value = @("\", "/")}
+                @{Provider = 'Registry'; Value = @("\")}
+            )
+
+            $nonWindowsTestCases = @(
+                @{Provider = 'FileSystem'; Value = @("/", "\")}
+                @{Provider = 'Variable'; Value = @("/", "\")}
+                @{Provider = 'Function'; Value = @("/", "\")}
+            )
+
+            $testCases = if ($IsWindows) {
+                            $windowsTestCases
+                        }
+                        else {
+                            $nonWindowsTestCases
+                        }
         }
 
-        It 'changes on copy do not affect original PathSeparator' {
-            $separator = (Get-PSProvider FileSystem).PathSeparator
+        It '<Provider> provider has PathSeparator property' -TestCases $testCases {
+            param ($Provider, $Value)
+
+            (Get-PSProvider $Provider).PathSeparator | Should -Be $Value
+        }
+
+        It 'cannot modify PathSeparator collection in <Provider> provider' -TestCases $testCases {
+            param ($Provider, $Value)
+
+            $separator = (Get-PSProvider $Provider).PathSeparator
+
             { $separator[0] = "w" } | Should -Throw
-
-            # copying to a new object
-            $copy = @("", "")
-            $separator.CopyTo($copy, 0)
-
-            $copy[0] = "w"
-
-            (Get-PSProvider FileSystem).PathSeparator | Should -Be @("\", "/")
         }
-    }
 
-    Context 'Registry provider' {
-        It 'has PathSeparator property' {
-            if ($IsWindows) {
-                (Get-PSProvider Registry).PathSeparator | Should -Be @("\")
-            }
-        }
-    }
+        It 'copying and modifying values does not affect PathSeparator property in <Provider> provider' -TestCases $testCases {
+            param ($Provider, $Value)
 
-    Context 'Variable provider' {
-        It 'has PathSeparator property' {
-            (Get-PSProvider Variable).PathSeparator | Should -Be @("\", "/")
-        }
-    }
+            $separator = (Get-PSProvider $Provider).PathSeparator
 
-    Context 'Function provider' {
-        It 'has PathSeparator property' {
-            (Get-PSProvider Function).PathSeparator | Should -Be @("\", "/")
+                # copying to a new object
+                $copy = @("", "")
+                $separator.CopyTo($copy, 0)
+
+                $copy[0] = "w"
+
+                (Get-PSProvider $Provider).PathSeparator | Should -Be $Value
         }
     }
 }
