@@ -2,12 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Text;
-using System.Security;
-using System.Management.Automation;
 using System.Collections.Generic;
+using System.IO;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 // Once Serialization is available on CoreCLR: using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Microsoft.PowerShell.Commands
@@ -18,9 +20,26 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Format, "Hex", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
     [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
     [Alias("fhx")]
-    public sealed class FormatHex : PSCmdlet
+    public sealed class FormatHexCommand : PSCmdlet
     {
         private const int BUFFERSIZE = 16;
+
+        /// <summary>
+        /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
+        /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing()
+        /// </summary>
+        private List<byte> _inputBytes;
+
+        /// <summary>
+        /// If the input is determined to be heterogenous piped input or each input object turns out to be a complete
+        /// array of items, we output each item as we receive it to avoid squashing output together in strange ways.
+        /// </summary>
+        private bool _isHeterogenousPipedInput = false;
+
+        /// <summary>
+        /// Keep track of prior input types to determine if we're given a heterogenous collection.
+        /// </summary>
+        private Type _lastInputType;
 
         #region Parameters
 
@@ -28,15 +47,15 @@ namespace Microsoft.PowerShell.Commands
         /// Path of file(s) to process.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Path { get; set; }
 
         /// <summary>
         /// Literal path of file to process.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
-        [ValidateNotNullOrEmpty()]
-        [Alias("PSPath", "LP")]
+        [Parameter(Mandatory = true, ParameterSetName = "LiteralPath", ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNullOrEmpty]
+        [Alias("PSPath", "LP", "FullName")]
         public string[] LiteralPath { get; set; }
 
         /// <summary>
@@ -49,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         /// Type of character encoding for InputObject.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
@@ -94,6 +113,26 @@ namespace Microsoft.PowerShell.Commands
                                               ResolvePaths(LiteralPath, true) : ResolvePaths(Path, false);
 
                 ProcessPath(pathsToProcess);
+            }
+        }
+
+        /// <summary>
+        /// Implements the EndProcessing method for the FormatHex command
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            if (_inputBytes != null)
+            {
+                int offset = Math.Min(_inputBytes.Count, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
+                int count = Math.Min(_inputBytes.Count - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
+                if (offset != 0 || count != _inputBytes.Count)
+                {
+                    WriteHexadecimal(_inputBytes.GetRange(offset, count).ToArray(), null, 0);
+                }
+                else
+                {
+                    WriteHexadecimal(_inputBytes.ToArray(), null, 0);
+                }
             }
         }
 
@@ -195,11 +234,11 @@ namespace Microsoft.PowerShell.Commands
                         if (count > Count)
                         {
                             bytesRead -= (int)(count - Count);
-                            WriteHexidecimal(buffer.Slice(0, bytesRead), path, offset);
+                            WriteHexadecimal(buffer.Slice(0, bytesRead), path, offset);
                             break;
                         }
 
-                        WriteHexidecimal(buffer.Slice(0, bytesRead), path, offset);
+                        WriteHexadecimal(buffer.Slice(0, bytesRead), path, offset);
 
                         offset += bytesRead;
                     }
@@ -235,81 +274,185 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputObject"></param>
         private void ProcessObjectContent(PSObject inputObject)
         {
-            object obj = inputObject.BaseObject;
-            byte[] inputBytes = null;
+            dynamic baseObject = inputObject.BaseObject;
+            Type baseType = baseObject.GetType();
+            int elements = 1;
+            bool isArray = false;
+            bool isBool = false;
+            bool isEnum = false;
 
-            switch (obj)
+            byte[] processResult = null;
+            if (baseType.IsArray)
             {
-                case System.IO.FileSystemInfo fsi:
-                    string[] path = { fsi.FullName };
-                    List<string> pathsToProcess = ResolvePaths(path, true);
-                    ProcessPath(pathsToProcess);
-                    return;
-                case string str:
-                    inputBytes = Encoding.GetBytes(str);
-                    break;
-                case byte b:
-                    inputBytes = new byte[] { b };
-                    break;
-                case byte[] byteArray:
-                    inputBytes = byteArray;
-                    break;
-                case Int32 iInt32:
-                    inputBytes = BitConverter.GetBytes(iInt32);
-                    break;
-                case Int32[] i32s:
-                    int i32 = 0;
-                    inputBytes = new byte[sizeof(Int32) * i32s.Length];
-                    Span<byte> inputStreamArray32 = inputBytes;
-
-                    foreach (Int32 value in i32s)
-                    {
-                        BitConverter.TryWriteBytes(inputStreamArray32.Slice(i32), value);
-                        i32 += sizeof(Int32);
-                    }
-
-                    break;
-                case Int64 iInt64:
-                    inputBytes = BitConverter.GetBytes(iInt64);
-                    break;
-                case Int64[] inputInt64s:
-                    int i64 = 0;
-                    inputBytes = new byte[sizeof(Int64) * inputInt64s.Length];
-                    Span<byte> inputStreamArray64 = inputBytes;
-
-                    foreach (Int64 value in inputInt64s)
-                    {
-                        BitConverter.TryWriteBytes(inputStreamArray64.Slice(i64), value);
-                        i64 += sizeof(Int64);
-                    }
-
-                    break;
-
-                // If the object type is not supported, throw an error. Once Serialization is
-                // available on CoreCLR, other types will be supported.
-                default:
-                {
-                    string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                    ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
-                                                                "FormatHexTypeNotSupported",
-                                                                ErrorCategory.InvalidArgument,
-                                                                obj.GetType());
-                    WriteError(errorRecord);
-                    break;
-                }
+                baseType = baseType.GetElementType();
+                elements = (int)baseObject.Length;
+                isArray = true;
+                _isHeterogenousPipedInput = true;
             }
 
-            if (inputBytes != null)
+            if (baseType == typeof(FileInfo))
             {
-                int offset = Math.Min(inputBytes.Length, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
-                int count = Math.Min(inputBytes.Length - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
-                if (offset != 0 || count != inputBytes.Length)
+                List<string> paths = new List<string>();
+                if (!isArray)
                 {
-                    WriteHexidecimal(inputBytes.AsSpan().Slice(offset, count), null, 0);
+                    paths.Add(baseObject.FullName);
                 }
                 else
                 {
-                    WriteHexidecimal(inputBytes, null, 0);
+                    foreach (FileInfo file in baseObject)
+                    {
+                        paths.Add(file.FullName);
+                    }
+                }
+
+                List<string> pathsToProcess = new List<string>(ResolvePaths(paths.ToArray(), true));
+                ProcessPath(pathsToProcess);
+                return;
+            }
+
+            if (baseType == typeof(string))
+            {
+                _isHeterogenousPipedInput = true;
+
+                if (!isArray)
+                {
+                    baseObject = new string[] { baseObject };
+                }
+
+                foreach (string str in (Array)baseObject)
+                {
+                    processResult = Encoding.GetBytes(str);
+                    int offset = Math.Min(processResult.Length, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
+                    int count = Math.Min(processResult.Length - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
+                    if (offset != 0 || count != processResult.Length)
+                    {
+                        WriteHexadecimal(processResult.AsSpan().Slice(offset, count), null, 0);
+                    }
+                    else
+                    {
+                        WriteHexadecimal(processResult, null, 0);
+                    }
+                }
+
+                return;
+            }
+
+            if (baseType.IsEnum)
+            {
+                baseType = baseType.GetEnumUnderlyingType();
+                isEnum = true;
+            }
+
+            if (!_isHeterogenousPipedInput)
+            {
+                if (_lastInputType != null && baseType != _lastInputType)
+                {
+                    _isHeterogenousPipedInput = true;
+                }
+                else
+                {
+                    _lastInputType = baseType;
+                }
+            }
+
+            if (baseType.IsPrimitive && elements > 0)
+            {
+                if (baseType == typeof(bool))
+                {
+                    isBool = true;
+                }
+
+                var elementSize = Marshal.SizeOf(baseType);
+                processResult = new byte[elementSize * elements];
+                if (!isArray)
+                {
+                    baseObject = new object[1] { baseObject };
+                }
+
+                int index = 0;
+                foreach (dynamic item in (Array)baseObject)
+                {
+                    if (elementSize == 1)
+                    {
+                        processResult[index] = (byte)item;
+                    }
+                    else
+                    {
+                        // bool is 4 bytes, apparently -- @lzybkr
+                        dynamic byteConverterInput;
+                        if (isEnum)
+                        {
+                            byteConverterInput = Convert.ChangeType(item, baseType);
+                        }
+                        else if (isBool)
+                        {
+                            byteConverterInput = Convert.ToInt32(item);
+                        }
+                        else
+                        {
+                            byteConverterInput = item;
+                        }
+
+                        byte[] bytes = BitConverter.GetBytes(byteConverterInput);
+                        for (int i = 0; i < bytes.Length; i++)
+                        {
+                            processResult[i + index] = bytes[i];
+                        }
+                    }
+
+                    index += elementSize;
+                }
+            }
+            else
+            {
+                // Type is neither any kind of primitive, enum, string, nor file, so we write an error
+                string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, baseObject.GetType());
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new ArgumentException(errorMessage),
+                    "FormatHexTypeNotSupported",
+                    ErrorCategory.InvalidArgument,
+                    baseObject.GetType());
+                WriteError(errorRecord);
+                return;
+            }
+
+            if (_isHeterogenousPipedInput)
+            {
+                if (_inputBytes != null)
+                {
+                    // If we've been collecting individual bytes now, and some other input has been detected,
+                    // we revert to heterogenous behaviour
+                    foreach (byte b in _inputBytes)
+                    {
+                        WriteHexadecimal(new byte[] { b }, null, 0);
+                    }
+
+                    _inputBytes = null;
+                }
+
+                if (processResult != null)
+                {
+                    int offset = Math.Min(processResult.Length, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
+                    int count = Math.Min(processResult.Length - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
+                    if (offset != 0 || count != processResult.Length)
+                    {
+                        WriteHexadecimal(processResult.AsSpan().Slice(offset, count), null, 0);
+                    }
+                    else
+                    {
+                        WriteHexadecimal(processResult, null, 0);
+                    }
+                }
+            }
+            else
+            {
+                if (_inputBytes == null)
+                {
+                    _inputBytes = new List<byte>(processResult);
+                }
+                else
+                {
+                    _inputBytes.AddRange(processResult);
                 }
             }
         }
@@ -324,13 +467,13 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputBytes">Bytes for the hexadecimial representaion.</param>
         /// <param name="path">File path.</param>
         /// <param name="offset">Offset in the file.</param>
-        private void WriteHexidecimal(Span<byte> inputBytes, string path, Int64 offset)
+        private void WriteHexadecimal(Span<byte> inputBytes, string path, Int64 offset)
         {
             ByteCollection byteCollectionObject = new ByteCollection((UInt64)offset, inputBytes.ToArray(), path);
             WriteObject(byteCollectionObject);
         }
 
-        private void WriteHexidecimal(byte[] inputBytes, string path, Int64 offset)
+        private void WriteHexadecimal(byte[] inputBytes, string path, Int64 offset)
         {
             ByteCollection byteCollectionObject = new ByteCollection((UInt64)offset, inputBytes, path);
             WriteObject(byteCollectionObject);
