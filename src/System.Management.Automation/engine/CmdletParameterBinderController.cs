@@ -4376,7 +4376,7 @@ namespace System.Management.Automation
         private bool _isChanged;
 
         /// <summary>
-        /// check to see if the hashtable has been changed since last check.
+        /// Check to see if the hashtable has been changed since last check.
         /// </summary>
         /// <returns>True for changed; false for not changed.</returns>
         public bool ChangeSinceLastCheck()
@@ -4398,7 +4398,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// constructor takes a hash table.
+        /// Constructor takes a hash table.
         /// </summary>
         /// <remarks>
         /// Check for the keys' formats and make it versionable

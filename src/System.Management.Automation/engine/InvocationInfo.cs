@@ -323,7 +323,7 @@ namespace System.Management.Automation
         public int PipelineLength { get; internal set; }
 
         /// <summary>
-        /// which element this command was in the containing pipeline.
+        /// Which element this command was in the containing pipeline.
         /// </summary>
         /// <value>which element this command was in the containing pipeline</value>
         public int PipelinePosition { get; internal set; }

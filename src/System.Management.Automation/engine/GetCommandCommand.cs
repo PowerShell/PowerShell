@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// method that implements get-command.
+        /// Method that implements get-command.
         /// </summary>
         protected override void ProcessRecord()
         {
