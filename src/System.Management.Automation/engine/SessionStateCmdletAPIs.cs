@@ -7,7 +7,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -127,7 +127,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an IEnumerable for the cmdlet table
+        /// Gets an IEnumerable for the cmdlet table.
         /// </summary>
         internal IDictionary<string, List<CmdletInfo>> GetCmdletTable()
         {
@@ -165,7 +165,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an IEnumerable for the cmdlet table for a given scope
+        /// Gets an IEnumerable for the cmdlet table for a given scope.
         /// </summary>
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like

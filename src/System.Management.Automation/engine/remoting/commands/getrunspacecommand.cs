@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
     ///     get-psession -VMName vmName -Name sessionName
     ///
     /// Get PSSessions from container. Optionally filter on state, session instanceid or session name.
-    ///     get-psession -ContainerId containerId -InstanceId instanceId
+    ///     get-psession -ContainerId containerId -InstanceId instanceId.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSSession", DefaultParameterSetName = PSRunspaceCmdlet.NameParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135219", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
         /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
-        /// not specified as well, then "WSMAN" will be used
+        /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Resolves shellname
+        /// Resolves shellname.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the list of runspaces from the global cache and write them
         /// down. If no computername or instance id is specified then
-        /// list all runspaces
+        /// list all runspaces.
         /// </summary>
         protected override void ProcessRecord()
         {

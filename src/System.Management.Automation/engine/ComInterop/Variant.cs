@@ -234,7 +234,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Release any unmanaged memory associated with the Variant
+        /// Release any unmanaged memory associated with the Variant.
         /// </summary>
         /// <returns></returns>
         public void Clear()

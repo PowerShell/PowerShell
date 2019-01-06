@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _asCustomObject;
 
         /// <summary>
-        /// The arguments to pass to the scriptblock used to create the module
+        /// The arguments to pass to the scriptblock used to create the module.
         /// </summary>
         [Parameter(ValueFromRemainingArguments = true)]
         [Alias("Args")]

@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         #region tracer
 
         /// <summary>
-        /// An instance of the PSTraceSource class used for trace output
+        /// An instance of the PSTraceSource class used for trace output.
         /// </summary>
         [Dbg.TraceSourceAttribute(
              "SessionStateProvider",
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Derived classes must override to get items from session state
+        /// Derived classes must override to get items from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the item to get.
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Since items are often more than their value, this method should
-        /// be overridden to provide the value for an item
+        /// be overridden to provide the value for an item.
         /// </summary>
         /// <param name="item">
         /// The item to extract the value from.
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sets a session state item to a given value
+        /// Sets a session state item to a given value.
         /// </summary>
         /// <param name="name">
         /// Name of the item to set
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
         #region ContainerCmdletProvider overrides
 
         /// <summary>
-        /// Gets the item(s) at the given path
+        /// Gets the item(s) at the given path.
         /// </summary>
         /// <param name="path">
         /// The name of the item to retrieve, or all if empty or null.
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the name(s) of the item(s) at the given path
+        /// Gets the name(s) of the item(s) at the given path.
         /// </summary>
         /// <param name="path">
         /// The name of the item to retrieve, or all if empty or null.
@@ -496,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if there are any items
+        /// Determines if there are any items.
         /// </summary>
         /// <param name="path">
         /// The container to check to see if there are any children.
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if the specified item exists
+        /// Determines if the specified item exists.
         /// </summary>
         /// <param name="path">
         /// The path to the item to check. If this is null or empty, the item
@@ -1033,7 +1033,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Always throws a NotSupportedException
+        /// Always throws a NotSupportedException.
         /// </summary>
         /// <param name="path">
         /// ignored.
@@ -1054,21 +1054,21 @@ namespace Microsoft.PowerShell.Commands
         // so these methods just return null
 
         /// <summary>
-        /// Always returns null
+        /// Always returns null.
         /// </summary>
         /// <param name="path"></param>
         /// <returns>Null.</returns>
         public object GetContentReaderDynamicParameters(string path) { return null; }
 
         /// <summary>
-        /// Always returns null
+        /// Always returns null.
         /// </summary>
         /// <param name="path"></param>
         /// <returns>Null.</returns>
         public object GetContentWriterDynamicParameters(string path) { return null; }
 
         /// <summary>
-        /// Always returns null
+        /// Always returns null.
         /// </summary>
         /// <param name="path"></param>
         /// <returns>Null.</returns>
@@ -1079,13 +1079,13 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// The content reader/writer for all providers deriving from SessionStateProviderBase
+    /// The content reader/writer for all providers deriving from SessionStateProviderBase.
     /// </summary>
     public class SessionStateProviderBaseContentReaderWriter : IContentReader, IContentWriter
     {
         /// <summary>
         /// Constructs a content reader/writer for the specified provider using the specified
-        /// path to read or write the content
+        /// path to read or write the content.
         /// </summary>
         /// <param name="path">
         /// The path to the session state item which the content will be read or written.
@@ -1120,7 +1120,7 @@ namespace Microsoft.PowerShell.Commands
         private SessionStateProviderBase _provider;
 
         /// <summary>
-        /// Reads the content from the item
+        /// Reads the content from the item.
         /// </summary>
         /// <param name="readCount">
         /// The number of "blocks" of data to be read from the item.
@@ -1192,7 +1192,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// None of the derived providers supports seeking for V1 so this
-        /// always throws a NotSupportedException
+        /// always throws a NotSupportedException.
         /// </summary>
         /// <param name="offset">
         /// ignored

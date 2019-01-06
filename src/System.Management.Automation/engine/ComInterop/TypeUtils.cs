@@ -14,7 +14,7 @@ namespace System.Management.Automation.ComInterop
         private const BindingFlags AnyStatic = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
         internal const MethodAttributes PublicStatic = MethodAttributes.Public | MethodAttributes.Static;
 
-        //CONFORMING
+        // CONFORMING
         internal static Type GetNonNullableType(Type type)
         {
             if (IsNullableType(type))
@@ -25,13 +25,13 @@ namespace System.Management.Automation.ComInterop
             return type;
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static bool IsNullableType(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static bool AreReferenceAssignable(Type dest, Type src)
         {
             // WARNING: This actually implements "Is this identity assignable and/or reference assignable?"
@@ -47,7 +47,7 @@ namespace System.Management.Automation.ComInterop
 
             return false;
         }
-        //CONFORMING
+        // CONFORMING
         internal static bool AreAssignable(Type dest, Type src)
         {
             if (dest == src)
@@ -77,7 +77,7 @@ namespace System.Management.Automation.ComInterop
             return false;
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static bool IsImplicitlyConvertible(Type source, Type destination)
         {
             return IsIdentityConversion(source, destination) ||
@@ -92,7 +92,7 @@ namespace System.Management.Automation.ComInterop
                 (considerUserDefined && GetUserDefinedCoercionMethod(source, destination, true) != null);
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static MethodInfo GetUserDefinedCoercionMethod(Type convertFrom, Type convertToType, bool implicitOnly)
         {
             // check for implicit coercions first
@@ -126,7 +126,7 @@ namespace System.Management.Automation.ComInterop
             return null;
         }
 
-        //CONFORMING
+        // CONFORMING
         internal static MethodInfo FindConversionOperator(MethodInfo[] methods, Type typeFrom, Type typeTo, bool implicitOnly)
         {
             foreach (MethodInfo mi in methods)
@@ -144,13 +144,13 @@ namespace System.Management.Automation.ComInterop
             return null;
         }
 
-        //CONFORMING
+        // CONFORMING
         private static bool IsIdentityConversion(Type source, Type destination)
         {
             return source == destination;
         }
 
-        //CONFORMING
+        // CONFORMING
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private static bool IsImplicitNumericConversion(Type source, Type destination)
         {
@@ -270,13 +270,13 @@ namespace System.Management.Automation.ComInterop
             return false;
         }
 
-        //CONFORMING
+        // CONFORMING
         private static bool IsImplicitReferenceConversion(Type source, Type destination)
         {
             return AreAssignable(destination, source);
         }
 
-        //CONFORMING
+        // CONFORMING
         private static bool IsImplicitBoxingConversion(Type source, Type destination)
         {
             if (source.IsValueType && (destination == typeof(object) || destination == typeof(System.ValueType)))

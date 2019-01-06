@@ -14,7 +14,7 @@ using System.Reflection;
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// Positional parameter comparer
+    /// Positional parameter comparer.
     /// </summary>
     internal class PositionalParameterComparer : IComparer
     {
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Help
     {
         internal static string TypeNameForDefaultHelp = "ExtendedCmdletHelpInfo";
         /// <summary>
-        /// Generates a HelpInfo PSObject from a CmdletInfo object
+        /// Generates a HelpInfo PSObject from a CmdletInfo object.
         /// </summary>
         /// <param name="input">Command info.</param>
         /// <returns>HelpInfo PSObject.</returns>
@@ -148,7 +148,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the details properties
+        /// Adds the details properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">Command name.</param>
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the syntax properties
+        /// Adds the syntax properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="cmdletName">Command name.</param>
@@ -202,7 +202,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Add the syntax item properties
+        /// Add the syntax item properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="cmdletName">Cmdlet name, you can't get this from parameterSets.</param>
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the parameter properties
+        /// Adds the parameter properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">Parameter name.</param>
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the parameterType properties
+        /// Adds the parameterType properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameterType">The type of a parameter.</param>
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the parameterValue properties
+        /// Adds the parameterValue properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameterType">The type of a parameter.</param>
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the InputTypes properties
+        /// Adds the InputTypes properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameters">Command parameters.</param>
@@ -631,7 +631,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the OutputTypes properties
+        /// Adds the OutputTypes properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="outputTypes">Output types.</param>
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the aliases properties
+        /// Adds the aliases properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">Command name.</param>
@@ -703,7 +703,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the remarks properties
+        /// Adds the remarks properties.
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="cmdletName"></param>
@@ -721,7 +721,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds the related links properties
+        /// Adds the related links properties.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="relatedLink"></param>
@@ -776,7 +776,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the parameter attribute from parameter metadata
+        /// Gets the parameter attribute from parameter metadata.
         /// </summary>
         /// <param name="attributes">Parameter attributes.</param>
         /// <returns>Collection of parameter attributes.</returns>
@@ -798,7 +798,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the validate set attribute from parameter metadata
+        /// Gets the validate set attribute from parameter metadata.
         /// </summary>
         /// <param name="attributes">Parameter attributes.</param>
         /// <returns>Collection of parameter attributes.</returns>
@@ -820,7 +820,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the pipeline input type
+        /// Gets the pipeline input type.
         /// </summary>
         /// <param name="paramAttrib">Parameter attribute.</param>
         /// <returns>Pipeline input type.</returns>
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Checks if a set of parameters contains any of the common parameters
+        /// Checks if a set of parameters contains any of the common parameters.
         /// </summary>
         /// <param name="parameters">Parameters to check.</param>
         /// <returns>True if it contains common parameters, false otherwise.</returns>
@@ -891,7 +891,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Checks if the module contains HelpInfoUri
+        /// Checks if the module contains HelpInfoUri.
         /// </summary>
         /// <param name="module"></param>
         /// <param name="moduleName"></param>

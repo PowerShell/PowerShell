@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         #region SSH Parameter Set
 
         /// <summary>
-        /// Host name for an SSH remote connection
+        /// Host name for an SSH remote connection.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
             ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
         #region Suppress PSRemotingBaseCmdlet SSH hash parameter set
 
         /// <summary>
-        /// Suppress SSHConnection parameter set
+        /// Suppress SSHConnection parameter set.
         /// </summary>
         public override Hashtable[] SSHConnection
         {
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Resolves shellname and appname
+        /// Resolves shellname and appname.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// This method will until the runspace is opened and warnings if any
-        /// are reported
+        /// are reported.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -1284,7 +1284,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Create remote runspace for SSH session
+        /// Create remote runspace for SSH session.
         /// </summary>
         private RemoteRunspace GetRunspaceForSSHSession()
         {

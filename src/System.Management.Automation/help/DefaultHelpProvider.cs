@@ -14,7 +14,7 @@ namespace System.Management.Automation
     internal class DefaultHelpProvider : HelpFileHelpProvider
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         internal DefaultHelpProvider(HelpSystem helpSystem)
             : base(helpSystem)

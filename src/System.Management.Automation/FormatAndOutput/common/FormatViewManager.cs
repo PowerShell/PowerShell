@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// class to manage the selection of a desired view type and
-    /// manage state associated to the selected view
+    /// manage state associated to the selected view.
     /// </summary>
     internal sealed class FormatViewManager
     {
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 StringBuilder unKnowViewFormatStringBuilder = new StringBuilder();
                 if (validViewFormats.Length > 0)
                 {
-                    //unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
+                    // unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
                     unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameErrorSuffix, viewName, formatTypeName));
                     unKnowViewFormatStringBuilder.Append(validViewFormats.ToString());
                 }
@@ -453,14 +453,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// the view generator that produced data for a selected shape
+        /// the view generator that produced data for a selected shape.
         /// </summary>
         private ViewGenerator _viewGenerator = null;
     }
 
     /// <summary>
     /// class to manage the selection of a desired view type
-    /// for out of band objects
+    /// for out of band objects.
     /// </summary>
     internal static class OutOfBandFormatViewManager
     {
@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     ///
     /// Depending on settings, it queues the failing PSPropertyExpressionResult
     /// instances and generates a list of out-of-band FormatEntryData
-    /// objects to be sent to the output pipeline
+    /// objects to be sent to the output pipeline.
     /// </summary>
     internal sealed class FormatErrorManager
     {
@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// log a failed evaluation of an PSPropertyExpression
+        /// log a failed evaluation of an PSPropertyExpression.
         /// </summary>
         /// <param name="result">PSPropertyExpressionResult containing the failed evaluation data.</param>
         /// <param name="sourceObject">Object used to evaluate the PSPropertyExpression.</param>
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// log a failed formatting operation
+        /// log a failed formatting operation.
         /// </summary>
         /// <param name="error">String format error object.</param>
         internal void LogStringFormatError(StringFormatError error)
@@ -663,7 +663,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// provide a list of ErrorRecord entries
         /// to be written to the error pipeline and clear the list of pending
-        /// errors
+        /// errors.
         /// </summary>
         /// <returns>List of ErrorRecord objects.</returns>
         internal List<ErrorRecord> DrainFailedResultList()
@@ -684,7 +684,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Conversion between an error internal representation and ErrorRecord
+        /// Conversion between an error internal representation and ErrorRecord.
         /// </summary>
         /// <param name="error">Internal error object.</param>
         /// <returns>Corresponding ErrorRecord instance.</returns>
@@ -726,7 +726,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private FormatErrorPolicy _formatErrorPolicy;
 
         /// <summary>
-        /// current list of failed PSPropertyExpression evaluations
+        /// current list of failed PSPropertyExpression evaluations.
         /// </summary>
         private List<FormattingError> _formattingErrorList = new List<FormattingError>();
     }

@@ -75,40 +75,40 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// Specifies the type of session configuration that
-    /// should be used for creating a connection info
+    /// should be used for creating a connection info.
     /// </summary>
     public enum PSSessionType
     {
         /// <summary>
         /// Default PowerShell remoting
-        /// endpoint
+        /// endpoint.
         /// </summary>
         DefaultRemoteShell = 0,
 
         /// <summary>
-        /// Default Workflow endpoint
+        /// Default Workflow endpoint.
         /// </summary>
         Workflow = 1,
     }
 
     /// <summary>
     /// Specify the type of access mode that should be
-    /// used when creating a session configuration
+    /// used when creating a session configuration.
     /// </summary>
     public enum PSSessionConfigurationAccessMode
     {
         /// <summary>
-        /// Disable the configuration
+        /// Disable the configuration.
         /// </summary>
         Disabled = 0,
 
         /// <summary>
-        /// Allow local access
+        /// Allow local access.
         /// </summary>
         Local = 1,
 
         /// <summary>
-        /// Default allow remote access
+        /// Default allow remote access.
         /// </summary>
         Remote = 2,
     }
@@ -142,24 +142,24 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Class which defines connection path to a remote runspace
     /// that needs to be created. Transport specific connection
-    /// paths will be derived from this
+    /// paths will be derived from this.
     /// </summary>
     public abstract class RunspaceConnectionInfo
     {
         #region Public Properties
 
         /// <summary>
-        /// Name of the computer
+        /// Name of the computer.
         /// </summary>
         public abstract string ComputerName { get; set; }
 
         /// <summary>
-        /// Credential used for the connection
+        /// Credential used for the connection.
         /// </summary>
         public abstract PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Authentication mechanism to use while connecting to the server
+        /// Authentication mechanism to use while connecting to the server.
         /// </summary>
         public abstract AuthenticationMechanism AuthenticationMechanism { get; set; }
 
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Runspaces
         public abstract string CertificateThumbprint { get; set; }
 
         /// <summary>
-        /// Culture that the remote session should use
+        /// Culture that the remote session should use.
         /// </summary>
         public CultureInfo Culture
         {
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Runspaces
         private CultureInfo _culture = CultureInfo.CurrentCulture;
 
         /// <summary>
-        /// UI culture that the remote session should use
+        /// UI culture that the remote session should use.
         /// </summary>
         public CultureInfo UICulture
         {
@@ -269,7 +269,7 @@ namespace System.Management.Automation.Runspaces
         /// depending on whether he/she is connecting to a machine in the data
         /// center or across a slow WAN.
         ///
-        /// Default: 3*60*1000 == 3minutes
+        /// Default: 3*60*1000 == 3minutes.
         /// </summary>
         public int OperationTimeout { get; set; } = BaseTransportManager.ClientDefaultOperationTimeoutMs;
 
@@ -361,7 +361,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Validates port number is in range
+        /// Validates port number is in range.
         /// </summary>
         /// <param name="port">Port number to validate.</param>
         internal virtual void ValidatePortInRange(int port)
@@ -381,12 +381,12 @@ namespace System.Management.Automation.Runspaces
         #region Constants
 
         /// <summary>
-        /// Maximum value for port
+        /// Maximum value for port.
         /// </summary>
         protected const int MaxPort = 0xFFFF;
 
         /// <summary>
-        /// Minimum value for port
+        /// Minimum value for port.
         /// </summary>
         protected const int MinPort = 0;
 
@@ -395,14 +395,14 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// Class which defines path to a remote runspace that
-    /// need to be created
+    /// need to be created.
     /// </summary>
     public sealed class WSManConnectionInfo : RunspaceConnectionInfo
     {
         #region Public Properties
 
         /// <summary>
-        /// Uri associated with this connection path
+        /// Uri associated with this connection path.
         /// </summary>
         public Uri ConnectionUri
         {
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Name of the computer
+        /// Name of the computer.
         /// </summary>
         public override string ComputerName
         {
@@ -440,7 +440,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Scheme used for connection
+        /// Scheme used for connection.
         /// </summary>
         public string Scheme
         {
@@ -457,7 +457,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Port in which to connect
+        /// Port in which to connect.
         /// </summary>
         public int Port
         {
@@ -474,7 +474,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// AppName which identifies the connection
-        /// end point in the machine
+        /// end point in the machine.
         /// </summary>
         public string AppName
         {
@@ -485,13 +485,13 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                //null or empty value allowed
+                // null or empty value allowed
                 ConstructUri(_scheme, _computerName, null, value);
             }
         }
 
         /// <summary>
-        /// Credential used for the connection
+        /// Credential used for the connection.
         /// </summary>
         public override PSCredential Credential
         {
@@ -524,7 +524,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Authentication mechanism to use while connecting to the server
+        /// Authentication mechanism to use while connecting to the server.
         /// </summary>
         public override AuthenticationMechanism AuthenticationMechanism
         {
@@ -596,7 +596,7 @@ namespace System.Management.Automation.Runspaces
         internal WSManAuthenticationMechanism WSManAuthenticationMechanism { get; private set; } = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
 
         /// <summary>
-        /// Allow default credentials for Negotiate
+        /// Allow default credentials for Negotiate.
         /// </summary>
         internal bool AllowImplicitCredentialForNegotiate { get; private set; }
 
@@ -627,7 +627,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Maximum uri redirection count
+        /// Maximum uri redirection count.
         /// </summary>
         public int MaximumConnectionRedirectionCount { get; set; }
 
@@ -675,7 +675,7 @@ namespace System.Management.Automation.Runspaces
         ///  application has to explicitly load the user profile prior to using this option.
         ///
         /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct
-        /// connection to the server is used
+        /// connection to the server is used.
         /// </summary>
         public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
 
@@ -686,7 +686,7 @@ namespace System.Management.Automation.Runspaces
         /// - Negotiate: Use the default authentication (ad defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Basic:  Use basic authentication for establishing a remote connection
-        /// - Digest: Use Digest authentication for establishing a remote connection
+        /// - Digest: Use Digest authentication for establishing a remote connection.
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Runspaces
         /// certificate is signed by a trusted certificate authority (CA). Use only when
         /// the remote computer is trusted by other means, for example, if the remote
         /// computer is part of a network that is physically secure and isolated or the
-        /// remote computer is listed as a trusted host in WinRM configuration
+        /// remote computer is listed as a trusted host in WinRM configuration.
         /// </summary>
         public bool SkipCACheck { get; set; }
 
@@ -751,14 +751,14 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the
         /// hostname of the server. Used only in remote operations using https. This
-        /// option should only be used for trusted machines
+        /// option should only be used for trusted machines.
         /// </summary>
         public bool SkipRevocationCheck { get; set; }
 
         /// <summary>
         /// Specifies that no encryption will be used when doing remote operations over
         /// http. Unencrypted traffic is not allowed by default and must be enabled in
-        /// the local configuration
+        /// the local configuration.
         /// </summary>
         public bool NoEncryption { get; set; }
 
@@ -802,7 +802,7 @@ namespace System.Management.Automation.Runspaces
         #region Constructors
 
         /// <summary>
-        /// Constructor used to create a WSManConnectionInfo
+        /// Constructor used to create a WSManConnectionInfo.
         /// </summary>
         /// <param name="computerName">Computer to connect to.</param>
         /// <param name="scheme">Scheme to be used for connection.</param>
@@ -829,7 +829,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor used to create a WSManConnectionInfo
+        /// Constructor used to create a WSManConnectionInfo.
         /// </summary>
         /// <param name="computerName">Computer to connect to.</param>
         /// <param name="scheme">Scheme to be used for connection.</param>
@@ -850,7 +850,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor used to create a WSManConnectionInfo
+        /// Constructor used to create a WSManConnectionInfo.
         /// </summary>
         /// <param name="useSsl"></param>
         /// <param name="computerName"></param>
@@ -886,18 +886,18 @@ namespace System.Management.Automation.Runspaces
         /// life time and default open timeout
         ///        http://localhost/
         /// The default shellname Microsoft.PowerShell will be
-        /// used
+        /// used.
         /// </summary>
         public WSManConnectionInfo()
         {
-            //ConstructUri(DefaultScheme, DefaultComputerName, DefaultPort, DefaultAppName);
+            // ConstructUri(DefaultScheme, DefaultComputerName, DefaultPort, DefaultAppName);
             UseDefaultWSManPort = true;
         }
 
         /// <summary>
         /// Constructor to create a WSManConnectionInfo with a uri
         /// and explicit credentials - server life time is
-        /// default and open timeout is default
+        /// default and open timeout is default.
         /// </summary>
         /// <param name="uri">Uri of remote runspace.</param>
         /// <param name="shellUri"></param>
@@ -964,7 +964,7 @@ namespace System.Management.Automation.Runspaces
         /// constructor to create a WSManConnectionInfo with a
         /// uri specified and the default credentials,
         /// default server life time and default open
-        /// timeout
+        /// timeout.
         /// </summary>
         /// <param name="uri">Uri of remote runspace.</param>
         /// <exception cref="ArgumentException">When an
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Does a shallow copy of the current instance
+        /// Does a shallow copy of the current instance.
         /// </summary>
         /// <returns></returns>
         public WSManConnectionInfo Copy()
@@ -1085,12 +1085,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// string for http scheme
+        /// string for http scheme.
         /// </summary>
         public const string HttpScheme = "http";
 
         /// <summary>
-        /// string for https scheme
+        /// string for https scheme.
         /// </summary>
         public const string HttpsScheme = "https";
 
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Converts <paramref name="rsCI"/> to a WSManConnectionInfo. If conversion succeeds extracts
-        /// the property..otherwise returns default value
+        /// the property..otherwise returns default value.
         /// </summary>
         /// <param name="rsCI"></param>
         /// <param name="property"></param>
@@ -1186,7 +1186,7 @@ namespace System.Management.Automation.Runspaces
                 throw e;
             }
 
-            //default host is localhost
+            // default host is localhost
             if (string.IsNullOrEmpty(computerName) || string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
                 _computerName = DefaultComputerName;
@@ -1381,7 +1381,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Default appname. This is empty as WSMan configuration has support
         /// for this. Look at
-        /// get-item WSMan:\localhost\Client\URLPrefix
+        /// get-item WSMan:\localhost\Client\URLPrefix.
         /// </summary>
         private static readonly string s_defaultAppName = "/wsman";
 
@@ -1401,41 +1401,41 @@ namespace System.Management.Automation.Runspaces
 #endif
 
         /// <summary>
-        /// default port for http scheme
+        /// default port for http scheme.
         /// </summary>
         private const int DefaultPortHttp = 80;
 
         /// <summary>
-        /// default port for https scheme
+        /// default port for https scheme.
         /// </summary>
         private const int DefaultPortHttps = 443;
 
         /// <summary>
         /// This is the default port value which when specified
         /// results in the default port for the scheme to be
-        /// assumed
+        /// assumed.
         /// </summary>
         private const int DefaultPort = 0;
 
         /// <summary>
-        /// default remote host name
+        /// default remote host name.
         /// </summary>
         private const string DefaultComputerName = "localhost";
 
         /// <summary>
-        /// String that represents the local host Uri
+        /// String that represents the local host Uri.
         /// </summary>
         private const string LocalHostUriString = "http://localhost/wsman";
 
         /// <summary>
-        /// Default value for shell
+        /// Default value for shell.
         /// </summary>
         private const string DefaultShellUri =
              System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
 
         /// <summary>
         /// Default credentials - null indicates credentials of
-        /// current user
+        /// current user.
         /// </summary>
         private const PSCredential DefaultCredential = null;
 
@@ -1508,7 +1508,7 @@ namespace System.Management.Automation.Runspaces
         private const string DefaultM3PEndpoint = Remoting.Client.WSManNativeApi.ResourceURIPrefix + DefaultM3PShellName;
 
         /// <summary>
-        /// Constructor that constructs the configuration name from its type
+        /// Constructor that constructs the configuration name from its type.
         /// </summary>
         /// <param name="configurationType">Type of configuration to construct.</param>
         public WSManConnectionInfo(PSSessionType configurationType) : this()
@@ -1569,7 +1569,7 @@ namespace System.Management.Automation.Runspaces
         public bool RunAs32 { get; set; }
 
         /// <summary>
-        /// Powershell version to execute the job in
+        /// Powershell version to execute the job in.
         /// </summary>
         public Version PSVersion { get; set; }
 
@@ -1590,7 +1590,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Credential used for the connection
+        /// Credential used for the connection.
         /// </summary>
         public override PSCredential Credential
         {
@@ -1669,7 +1669,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates a connection info instance used to create a runspace on a different
-        /// process on the local machine
+        /// process on the local machine.
         /// </summary>
         internal NewProcessConnectionInfo(PSCredential credential)
         {
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation.Runspaces
         #region Constructors
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public NamedPipeConnectionInfo()
         {
@@ -1735,7 +1735,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         public NamedPipeConnectionInfo(
@@ -1744,7 +1744,7 @@ namespace System.Management.Automation.Runspaces
         { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Application domain name to connect to, or default AppDomain if blank.</param>
@@ -1755,7 +1755,7 @@ namespace System.Management.Automation.Runspaces
         { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         /// <param name="appDomainName">Name of application domain to connect to.  Connection is to default application domain if blank.</param>
@@ -1785,7 +1785,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Credential
+        /// Credential.
         /// </summary>
         public override PSCredential Credential
         {
@@ -1799,7 +1799,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Authentication
+        /// Authentication.
         /// </summary>
         public override AuthenticationMechanism AuthenticationMechanism
         {
@@ -1821,7 +1821,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// CertificateThumbprint
+        /// CertificateThumbprint.
         /// </summary>
         public override string CertificateThumbprint
         {
@@ -1867,7 +1867,7 @@ namespace System.Management.Automation.Runspaces
         #region Properties
 
         /// <summary>
-        /// User Name
+        /// User Name.
         /// </summary>
         public string UserName
         {
@@ -1876,7 +1876,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Key File Path
+        /// Key File Path.
         /// </summary>
         private string KeyFilePath
         {
@@ -1885,7 +1885,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Port for connection
+        /// Port for connection.
         /// </summary>
         private int Port
         {
@@ -1894,7 +1894,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Subsystem to use
+        /// Subsystem to use.
         /// </summary>
         private string Subsystem
         {
@@ -1907,13 +1907,13 @@ namespace System.Management.Automation.Runspaces
         #region Constructors
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         private SSHConnectionInfo()
         { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="userName">User Name.</param>
         /// <param name="computerName">Computer Name.</param>
@@ -1933,7 +1933,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="userName">User Name.</param>
         /// <param name="computerName">Computer Name.</param>
@@ -1951,7 +1951,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="userName">User Name.</param>
         /// <param name="computerName">Computer Name.</param>
@@ -1985,7 +1985,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Credential
+        /// Credential.
         /// </summary>
         public override PSCredential Credential
         {
@@ -1995,7 +1995,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Authentication
+        /// Authentication.
         /// </summary>
         public override AuthenticationMechanism AuthenticationMechanism
         {
@@ -2005,7 +2005,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// CertificateThumbprint
+        /// CertificateThumbprint.
         /// </summary>
         public override string CertificateThumbprint
         {
@@ -2031,7 +2031,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// CreateClientSessionTransportManager
+        /// CreateClientSessionTransportManager.
         /// </summary>
         /// <param name="instanceId"></param>
         /// <param name="sessionName"></param>
@@ -2050,7 +2050,7 @@ namespace System.Management.Automation.Runspaces
         #region Internal Methods
 
         /// <summary>
-        /// StartSSHProcess
+        /// StartSSHProcess.
         /// </summary>
         /// <returns></returns>
         internal int StartSSHProcess(
@@ -2139,12 +2139,12 @@ namespace System.Management.Automation.Runspaces
         #region Constants
 
         /// <summary>
-        /// Default value for port
+        /// Default value for port.
         /// </summary>
         private const int DefaultPort = 22;
 
         /// <summary>
-        /// Default value for subsystem
+        /// Default value for subsystem.
         /// </summary>
         private const string DefaultSubsystem = "powershell";
 
@@ -2384,7 +2384,7 @@ namespace System.Management.Automation.Runspaces
             {
                 byte[] byteArr = System.Text.Encoding.UTF8.GetBytes(arr[i]);
 
-                arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); //+1 for null termination
+                arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); // +1 for null termination
                 System.Diagnostics.Debug.Assert(arrPtr[i] != null, "Invalid array ptr");
 
                 Marshal.Copy(byteArr, 0, (IntPtr)arrPtr[i], byteArr.Length); // copy over the data from the managed byte array
@@ -2496,7 +2496,7 @@ namespace System.Management.Automation.Runspaces
         private const int CREATE_SUSPENDED = 0x00000004;
 
         /// <summary>
-        /// CreateProcessWithRedirectedStd
+        /// CreateProcessWithRedirectedStd.
         /// </summary>
         private static Process CreateProcessWithRedirectedStd(
             ProcessStartInfo startInfo,

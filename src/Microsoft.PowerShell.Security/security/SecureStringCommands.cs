@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class ConvertFromSecureStringCommand : ConvertFromToSecureStringCommandBase
     {
         /// <summary>
-        /// Initializes a new instance of the ExportSecureStringCommand class
+        /// Initializes a new instance of the ExportSecureStringCommand class.
         /// </summary>
         public ConvertFromSecureStringCommand() : base("ConvertFrom-SecureString") { }
 

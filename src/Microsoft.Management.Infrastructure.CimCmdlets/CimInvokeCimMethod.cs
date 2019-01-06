@@ -323,7 +323,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
@@ -461,14 +461,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         /// <summary>
-        /// operation target
+        /// operation target.
         /// </summary>
         private const string targetClass = @"{0}";
 
         /// <summary>
-        /// action
+        /// action.
         /// </summary>
         private const string actionTemplate = @"Invoke-CimMethod: {0}";
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

@@ -321,7 +321,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets the list of versions under the specified module base path in descending sorted order
+        /// Gets the list of versions under the specified module base path in descending sorted order.
         /// </summary>
         /// <param name="moduleBase">Module base path.</param>
         /// <returns>Sorted list of versions.</returns>
@@ -382,7 +382,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets a list of matching commands
+        /// Gets a list of matching commands.
         /// </summary>
         /// <param name="pattern">Command pattern.</param>
         /// <param name="commandOrigin"></param>
@@ -475,7 +475,7 @@ namespace System.Management.Automation.Internal
                         tempModuleInfo.SetModuleBase(Utils.DefaultPowerShellAppBase);
                     }
 
-                    //moduleVersionRequired is bypassed by FullyQualifiedModule from calling method. This is the only place where guid will be involved.
+                    // moduleVersionRequired is bypassed by FullyQualifiedModule from calling method. This is the only place where guid will be involved.
                     if (moduleVersionRequired && modulePath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         tempModuleInfo.SetVersion(ModuleIntrinsics.GetManifestModuleVersion(modulePath));

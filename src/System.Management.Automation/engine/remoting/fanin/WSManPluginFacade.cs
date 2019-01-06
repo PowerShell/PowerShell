@@ -81,7 +81,7 @@ namespace System.Management.Automation.Remoting
         IntPtr arguments);
 
     /// <summary>
-    /// Delegate that is passed to native layer for callback on operation shutdown notifications
+    /// Delegate that is passed to native layer for callback on operation shutdown notifications.
     /// </summary>
     /// <param name="shutdownContext">IntPtr.</param>
     internal delegate void WSMPluginOperationShutdownDelegate(
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
         /// <summary>
-        /// Initializes the delegate struct for later use
+        /// Initializes the delegate struct for later use.
         /// </summary>
         internal WSManPluginEntryDelegates()
         {
@@ -343,61 +343,61 @@ namespace System.Management.Automation.Remoting
         internal class WSManPluginEntryDelegatesInternal
         {
             /// <summary>
-            /// wsManPluginShutdownPluginCallbackNative
+            /// wsManPluginShutdownPluginCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginShutdownPluginCallbackNative;
 
             /// <summary>
-            /// WSManPluginShellCallbackNative
+            /// WSManPluginShellCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginShellCallbackNative;
 
             /// <summary>
-            /// WSManPluginReleaseShellContextCallbackNative
+            /// WSManPluginReleaseShellContextCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginReleaseShellContextCallbackNative;
 
             /// <summary>
-            /// WSManPluginCommandCallbackNative
+            /// WSManPluginCommandCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginCommandCallbackNative;
 
             /// <summary>
-            /// WSManPluginReleaseCommandContextCallbackNative
+            /// WSManPluginReleaseCommandContextCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginReleaseCommandContextCallbackNative;
 
             /// <summary>
-            /// WSManPluginSendCallbackNative
+            /// WSManPluginSendCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginSendCallbackNative;
 
             /// <summary>
-            /// WSManPluginReceiveCallbackNative
+            /// WSManPluginReceiveCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginReceiveCallbackNative;
 
             /// <summary>
-            /// WSManPluginSignalCallbackNative
+            /// WSManPluginSignalCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginSignalCallbackNative;
 
             /// <summary>
-            /// WSManPluginConnectCallbackNative
+            /// WSManPluginConnectCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginConnectCallbackNative;
 
             /// <summary>
-            /// WSManPluginCommandCallbackNative
+            /// WSManPluginCommandCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginShutdownCallbackNative;
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Remoting
         #region Delegate Handling
 
         /// <summary>
-        /// Matches signature for WSManPluginManagedEntryWrapper.InitPlugin
+        /// Matches signature for WSManPluginManagedEntryWrapper.InitPlugin.
         /// </summary>
         /// <param name="wkrPtrs"></param>
         /// <returns></returns>

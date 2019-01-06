@@ -17,7 +17,7 @@ namespace System.Management.Automation
     internal abstract class HelpProviderWithFullCache : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for HelpProviderWithFullCache
+        /// Constructor for HelpProviderWithFullCache.
         /// </summary>
         internal HelpProviderWithFullCache(HelpSystem helpSystem) : base(helpSystem)
         {

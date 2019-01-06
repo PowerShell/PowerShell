@@ -77,7 +77,7 @@ namespace System.Management.Automation
             _computerName = ((RemoteRunspace)_runspace).ConnectionInfo.ComputerName;
             _runspaceId = _runspace.InstanceId;
 
-            //Initialize streams
+            // Initialize streams
             _inputCollection = new PSDataCollection<object>();
             _inputCollection.ReleaseOnEnumeration = true;
 
@@ -93,19 +93,19 @@ namespace System.Management.Automation
 
             SetCommandCollection(_commands);
 
-            //Create event which will be signalled when pipeline execution
-            //is completed/failed/stoped.
-            //Note:Runspace.Close waits for all the running pipeline
-            //to finish.  This Event must be created before pipeline is
-            //added to list of running pipelines. This avoids the race condition
-            //where Close is called after pipeline is added to list of
-            //running pipeline but before event is created.
+            // Create event which will be signalled when pipeline execution
+            // is completed/failed/stoped.
+            // Note:Runspace.Close waits for all the running pipeline
+            // to finish.  This Event must be created before pipeline is
+            // added to list of running pipelines. This avoids the race condition
+            // where Close is called after pipeline is added to list of
+            // running pipeline but before event is created.
             PipelineFinishedEvent = new ManualResetEvent(false);
         }
 
         /// <summary>
         /// Constructs a remote pipeline for the specified runspace and
-        /// specified command
+        /// specified command.
         /// </summary>
         /// <param name="runspace">Runspace in which to create the pipeline.</param>
         /// <param name="command">Command as a string, to be used in pipeline creation.</param>
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a cloned pipeline from the specified one
+        /// Creates a cloned pipeline from the specified one.
         /// </summary>
         /// <param name="pipeline">Pipeline to clone from.</param>
         /// <remarks>This constructor is private because this will
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// override for creating a copy of pipeline
+        /// override for creating a copy of pipeline.
         /// </summary>
         /// <returns>
         /// Pipeline object which is copy of this pipeline
@@ -240,7 +240,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Is this pipeline nested
+        /// Is this pipeline nested.
         /// </summary>
         public override bool IsNested
         {
@@ -252,7 +252,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// internal method to set the value of IsNested. This is called
-        /// by serializer
+        /// by serializer.
         /// </summary>
         internal void SetIsNested(bool isNested)
         {
@@ -262,7 +262,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// internal method to set the value of IsSteppable. This is called
-        /// during DoConcurrentCheck
+        /// during DoConcurrentCheck.
         /// </summary>
         internal void SetIsSteppable(bool isSteppable)
         {
@@ -281,7 +281,7 @@ namespace System.Management.Automation
             {
                 lock (_syncRoot)
                 {
-                    //Note:We do not return internal state.
+                    // Note:We do not return internal state.
                     return _pipelineStateInfo.Clone();
                 }
             }
@@ -326,7 +326,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// String which is added in the history
+        /// String which is added in the history.
         /// </summary>
         /// <remarks>This needs to be internal so that it can be replaced
         /// by invoke-cmd to place correct string in history.</remarks>
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Whether the pipeline needs to be added to history of the runspace
+        /// Whether the pipeline needs to be added to history of the runspace.
         /// </summary>
         public bool AddToHistory
         {
@@ -386,7 +386,7 @@ namespace System.Management.Automation
         #region Invoke
 
         /// <summary>
-        /// Invoke the pipeline asynchronously
+        /// Invoke the pipeline asynchronously.
         /// </summary>
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
@@ -526,7 +526,7 @@ namespace System.Management.Automation
         #region Stop
 
         /// <summary>
-        /// Stop the pipeline synchronously
+        /// Stop the pipeline synchronously.
         /// </summary>
         public override void Stop()
         {
@@ -577,7 +577,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if the pipeline is in a state where it can be stopped
+        /// Verifies if the pipeline is in a state where it can be stopped.
         /// </summary>
         private bool CanStopPipeline(out bool isAlreadyStopping)
         {
@@ -595,15 +595,15 @@ namespace System.Management.Automation
                         returnResult = false;
                         break;
 
-                    //If pipeline execution has failed or completed or
-                    //stoped, return silently.
+                    // If pipeline execution has failed or completed or
+                    // stoped, return silently.
                     case PipelineState.Stopped:
                     case PipelineState.Completed:
                     case PipelineState.Failed:
                         return false;
 
-                    //If pipeline is in Stopping state, ignore the second
-                    //stop.
+                    // If pipeline is in Stopping state, ignore the second
+                    // stop.
                     case PipelineState.Stopping:
                         isAlreadyStopping = true;
                         return false;
@@ -635,7 +635,7 @@ namespace System.Management.Automation
         #region Dispose
 
         /// <summary>
-        /// Disposes the pipeline
+        /// Disposes the pipeline.
         /// </summary>
         /// <param name="disposing">True, when called on Dispose().</param>
         protected override void Dispose(bool disposing)
@@ -662,7 +662,7 @@ namespace System.Management.Automation
                     // wait for the pipeline to stop..this will block
                     // if the pipeline is already stopping.
                     Stop();
-                    //_pipelineFinishedEvent.Close();
+                    // _pipelineFinishedEvent.Close();
 
                     if (_powershell != null)
                     {
@@ -770,12 +770,12 @@ namespace System.Management.Automation
                 _pipelineStateInfo = new PipelineStateInfo(copyState, reason);
                 copyStateInfo = _pipelineStateInfo;
 
-                //Add _pipelineStateInfo to _executionEventQueue.
-                //RaisePipelineStateEvents will raise event for each item
-                //in this queue.
-                //Note:We are doing clone here instead of passing the member
-                //_pipelineStateInfo because we donot want outside
-                //to change pipeline state.
+                // Add _pipelineStateInfo to _executionEventQueue.
+                // RaisePipelineStateEvents will raise event for each item
+                // in this queue.
+                // Note:We are doing clone here instead of passing the member
+                // _pipelineStateInfo because we donot want outside
+                // to change pipeline state.
                 RunspaceAvailability previousAvailability = _runspace.RunspaceAvailability;
 
                 Guid? cmdInstanceId = (_powershell != null) ? _powershell.InstanceId : (Guid?)null;
@@ -822,9 +822,9 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    //Clear the events if there are no EventHandlers. This
-                    //ensures that events do not get called for state
-                    //changes prior to their registration.
+                    // Clear the events if there are no EventHandlers. This
+                    // ensures that events do not get called for state
+                    // changes prior to their registration.
                     _executionEventQueue.Clear();
                 }
             }
@@ -840,8 +840,8 @@ namespace System.Management.Automation
                         _runspace.RaiseAvailabilityChangedEvent(queueItem.NewRunspaceAvailability);
                     }
 
-                    //Exception raised in the eventhandler are not error in pipeline.
-                    //silently ignore them.
+                    // Exception raised in the eventhandler are not error in pipeline.
+                    // silently ignore them.
                     if (stateChanged != null)
                     {
                         try
@@ -936,7 +936,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle host call received
+        /// Handle host call received.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing the host call to invoke.</param>
@@ -954,11 +954,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Does the cleanup necessary on pipeline completion
+        /// Does the cleanup necessary on pipeline completion.
         /// </summary>
         private void Cleanup()
         {
-            //Close the output stream if it is not closed.
+            // Close the output stream if it is not closed.
             if (_outputStream.IsOpen)
             {
                 try
@@ -971,7 +971,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //Close the error stream if it is not closed.
+            // Close the error stream if it is not closed.
             if (_errorStream.IsOpen)
             {
                 try
@@ -984,7 +984,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //Close the input stream if it is not closed.
+            // Close the input stream if it is not closed.
             if (_inputStream.IsOpen)
             {
                 try
@@ -999,9 +999,9 @@ namespace System.Management.Automation
 
             try
             {
-                //Runspace object maintains a list of pipelines in execution.
-                //Remove this pipeline from the list. This method also calls the
-                //pipeline finished event.
+                // Runspace object maintains a list of pipelines in execution.
+                // Remove this pipeline from the list. This method also calls the
+                // pipeline finished event.
                 ((RemoteRunspace)_runspace).RemoveFromRunningPipelineList(this);
 
                 PipelineFinishedEvent.Set();
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The underlying powershell object on which this remote pipeline
-        /// is created
+        /// is created.
         /// </summary>
         internal PowerShell PowerShell
         {
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the history string to the specified string
+        /// Sets the history string to the specified string.
         /// </summary>
         /// <param name="historyString">New history string to set to.</param>
         internal override void SetHistoryString(string historyString)

@@ -121,7 +121,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// No finally block
+        /// No finally block.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndTargetIndex, ExceptionHandler[] handlers)
             : this(tryStart, tryEnd, gotoEndTargetIndex, Instruction.UnknownInstrIndex, Instruction.UnknownInstrIndex, handlers)
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// No catch blocks
+        /// No catch blocks.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndTargetIndex, int finallyStart, int finallyEnd)
             : this(tryStart, tryEnd, gotoEndTargetIndex, finallyStart, finallyEnd, null)
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Generic constructor
+        /// Generic constructor.
         /// </summary>
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndLabelIndex, int finallyStart, int finallyEnd, ExceptionHandler[] handlers)
         {
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Goto the index of the first instruction of the suitable catch block
+        /// Goto the index of the first instruction of the suitable catch block.
         /// </summary>
         internal int GotoHandler(InterpretedFrame frame, object exception, out ExceptionHandler handler)
         {
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Interpreter
     }
 
     /// <summary>
-    /// The re-throw instruction will throw this exception
+    /// The re-throw instruction will throw this exception.
     /// </summary>
     internal sealed class RethrowException : SystemException
     {
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Interpreter
 
         private class DebugInfoComparer : IComparer<DebugInfo>
         {
-            //We allow comparison between int and DebugInfo here
+            // We allow comparison between int and DebugInfo here
             int IComparer<DebugInfo>.Compare(DebugInfo d1, DebugInfo d2)
             {
                 if (d1.Index > d2.Index) return 1;
@@ -205,22 +205,22 @@ namespace System.Management.Automation.Interpreter
 
         public static DebugInfo GetMatchingDebugInfo(DebugInfo[] debugInfos, int index)
         {
-            //Create a faked DebugInfo to do the search
+            // Create a faked DebugInfo to do the search
             DebugInfo d = new DebugInfo { Index = index };
 
-            //to find the closest debug info before the current index
+            // to find the closest debug info before the current index
 
             int i = Array.BinarySearch<DebugInfo>(debugInfos, d, s_debugComparer);
             if (i < 0)
             {
-                //~i is the index for the first bigger element
-                //if there is no bigger element, ~i is the length of the array
+                // ~i is the index for the first bigger element
+                // if there is no bigger element, ~i is the length of the array
                 i = ~i;
                 if (i == 0)
                 {
                     return null;
                 }
-                //return the last one that is smaller
+                // return the last one that is smaller
                 i = i - 1;
             }
 
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Interpreter
             return new LightDelegateCreator(MakeInterpreter(node.Name), node);
         }
 
-        //internal LightDelegateCreator CompileTop(LightLambdaExpression node) {
+        // internal LightDelegateCreator CompileTop(LightLambdaExpression node) {
         //    foreach (var p in node.Parameters) {
         //        var local = _locals.DefineLocal(p, 0);
         //        _instructions.EmitInitializeParameter(local.Index);
@@ -355,7 +355,7 @@ namespace System.Management.Automation.Interpreter
         //    Debug.Assert(_instructions.CurrentStackDepth == (node.ReturnType != typeof(void) ? 1 : 0));
         //
         //    return new LightDelegateCreator(MakeInterpreter(node.Name), node);
-        //}
+        // }
 
         private Interpreter MakeInterpreter(string lambdaName)
         {
@@ -425,11 +425,11 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        //private void EnsureVariable(ParameterExpression variable) {
+        // private void EnsureVariable(ParameterExpression variable) {
         //    if (!_locals.ContainsVariable(variable)) {
         //        EnsureAvailableForClosure(variable);
         //    }
-        //}
+        // }
 
         private LocalVariable ResolveLocal(ParameterExpression variable)
         {
@@ -1473,9 +1473,9 @@ namespace System.Management.Automation.Interpreter
 
                     if (handler.Filter != null)
                     {
-                        //PushLabelBlock(LabelScopeKind.Filter);
+                        // PushLabelBlock(LabelScopeKind.Filter);
                         throw new NotImplementedException();
-                        //PopLabelBlock(LabelScopeKind.Filter);
+                        // PopLabelBlock(LabelScopeKind.Filter);
                     }
 
                     var parameter = handler.Variable ?? Expression.Parameter(handler.Test);
@@ -1805,7 +1805,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             // TODO: do not create a new Call Expression
-            //if (PlatformAdaptationLayer.IsCompactFramework) {
+            // if (PlatformAdaptationLayer.IsCompactFramework) {
             //    // Workaround for a bug in Compact Framework
             //    Compile(
             //        AstUtils.Convert(
@@ -1817,9 +1817,9 @@ namespace System.Management.Automation.Interpreter
             //            node.Type
             //        )
             //    );
-            //} else {
+            // } else {
             CompileMethodCallExpression(Expression.Call(node.Expression, node.Expression.Type.GetMethod("Invoke"), node.Arguments));
-            //}
+            // }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]

@@ -15,7 +15,7 @@ namespace System.Management.Automation.Language
     #region "AstArgumentPair"
 
     /// <summary>
-    /// The types for AstParameterArgumentPair
+    /// The types for AstParameterArgumentPair.
     /// </summary>
     internal enum AstParameterArgumentType
     {
@@ -27,48 +27,48 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The base class for parameter argument pair
+    /// The base class for parameter argument pair.
     /// </summary>
     internal abstract class AstParameterArgumentPair
     {
         /// <summary>
-        /// The parameter Ast
+        /// The parameter Ast.
         /// </summary>
         public CommandParameterAst Parameter { get; protected set; }
 
         /// <summary>
-        /// The argument type
+        /// The argument type.
         /// </summary>
         public AstParameterArgumentType ParameterArgumentType { get; protected set; }
 
         /// <summary>
-        /// Indicate if the parameter is specified
+        /// Indicate if the parameter is specified.
         /// </summary>
         public bool ParameterSpecified { get; protected set; } = false;
 
         /// <summary>
-        /// Indicate if the parameter is specified
+        /// Indicate if the parameter is specified.
         /// </summary>
         public bool ArgumentSpecified { get; protected set; } = false;
 
         /// <summary>
-        /// The parameter name
+        /// The parameter name.
         /// </summary>
         public string ParameterName { get; protected set; }
 
         /// <summary>
-        /// The parameter text
+        /// The parameter text.
         /// </summary>
         public string ParameterText { get; protected set; }
 
         /// <summary>
-        /// The argument type
+        /// The argument type.
         /// </summary>
         public Type ArgumentType { get; protected set; }
     }
 
     /// <summary>
-    /// Represent a parameter argument pair. The argument is a pipeline input object
+    /// Represent a parameter argument pair. The argument is a pipeline input object.
     /// </summary>
     internal sealed class PipeObjectPair : AstParameterArgumentPair
     {
@@ -112,7 +112,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Get the argument
+        /// Get the argument.
         /// </summary>
         public ExpressionAst[] Argument { get; } = null;
     }
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Get the argument
+        /// Get the argument.
         /// </summary>
         public bool Argument
         {
@@ -231,17 +231,17 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Indicate if the argument is contained in the CommandParameterAst
+        /// Indicate if the argument is contained in the CommandParameterAst.
         /// </summary>
         public bool ParameterContainsArgument { get; } = false;
 
         /// <summary>
-        /// Indicate if the argument is of type CommandParameterAst
+        /// Indicate if the argument is of type CommandParameterAst.
         /// </summary>
         public bool ArgumentIsCommandParameterAst { get; } = false;
 
         /// <summary>
-        /// Get the argument
+        /// Get the argument.
         /// </summary>
         public CommandElementAst Argument { get; } = null;
     }
@@ -255,7 +255,7 @@ namespace System.Management.Automation.Language
     public static class StaticParameterBinder
     {
         /// <summary>
-        /// Bind a CommandAst to one of PowerShell's built-in commands
+        /// Bind a CommandAst to one of PowerShell's built-in commands.
         /// </summary>
         /// <param name="commandAst">The CommandAst that represents the command invocation.</param>
         /// <returns>The StaticBindingResult that represents the binding.</returns>
@@ -266,7 +266,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Bind a CommandAst to the specified command
+        /// Bind a CommandAst to the specified command.
         /// </summary>
         /// <param name="commandAst">The CommandAst that represents the command invocation.</param>
         /// <param name="resolve">Boolean to determine whether binding should be syntactic, or should attempt
@@ -279,7 +279,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Bind a CommandAst to the specified command
+        /// Bind a CommandAst to the specified command.
         /// </summary>
         /// <param name="commandAst">The CommandAst that represents the command invocation.</param>
         /// <param name="resolve">Boolean to determine whether binding should be syntactic, or should attempt
@@ -706,7 +706,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Represents the binding of a parameter to its argument
+    /// Represents the binding of a parameter to its argument.
     /// </summary>
     public class ParameterBindingResult
     {
@@ -764,12 +764,12 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Represents the exception generated by the static parameter binding process
+    /// Represents the exception generated by the static parameter binding process.
     /// </summary>
     public class StaticBindingError
     {
         /// <summary>
-        /// Creates a StaticBindingException
+        /// Creates a StaticBindingException.
         /// </summary>
         /// <param name="commandElement">The element associated with the exception.</param>
         /// <param name="exception">The parameter binding exception that got raised.</param>
@@ -801,7 +801,7 @@ namespace System.Management.Automation.Language
     internal sealed class PseudoBindingInfo
     {
         /// <summary>
-        /// The pseudo binding succeeded
+        /// The pseudo binding succeeded.
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="validParameterSetsFlags"></param>
@@ -848,7 +848,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// The pseudo binding failed with parameter set confliction
+        /// The pseudo binding failed with parameter set confliction.
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="defaultParameterSetFlag"></param>
@@ -907,7 +907,7 @@ namespace System.Management.Automation.Language
     {
         /*
         /// <summary>
-        /// Get the parameter binding metadata
+        /// Get the parameter binding metadata.
         /// </summary>
         /// <param name="possibleParameterSets"></param>
         /// <returns></returns>
@@ -922,23 +922,23 @@ namespace System.Management.Automation.Language
         internal enum BindingType
         {
             /// <summary>
-            /// Caller is binding a parameter argument
+            /// Caller is binding a parameter argument.
             /// </summary>
             ArgumentBinding = 0,
 
             /// <summary>
-            /// Caller is performing completion on a parameter argument
+            /// Caller is performing completion on a parameter argument.
             /// </summary>
             ArgumentCompletion,
 
             /// <summary>
-            /// Caller is performing completion on a parameter name
+            /// Caller is performing completion on a parameter name.
             /// </summary>
             ParameterCompletion
         }
 
         /// <summary>
-        /// Get the parameter binding metadata
+        /// Get the parameter binding metadata.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="pipeArgumentType">Indicate the type of the piped-in argument.</param>
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Sets a temporary default host on the ExecutionContext
+        /// Sets a temporary default host on the ExecutionContext.
         /// </summary>
         /// <param name="executionContext">ExecutionContext.</param>
         private void SetTemporaryDefaultHost(ExecutionContext executionContext)
@@ -1139,7 +1139,7 @@ namespace System.Management.Automation.Language
         private Dictionary<CommandParameterAst, ParameterBindingException> _bindingExceptions;
 
         /// <summary>
-        /// Initialize collection/dictionary members when it's necessary
+        /// Initialize collection/dictionary members when it's necessary.
         /// </summary>
         private void InitializeMembers()
         {
@@ -1415,7 +1415,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(argument.ParameterSpecified && !argument.ArgumentSpecified,
                     "At this point, the parameters should have no arguments");
 
-                //Now check the parameter name with the bindable parameters
+                // Now check the parameter name with the bindable parameters
                 string parameterName = argument.ParameterName;
                 MergedCompiledCommandParameter matchingParameter = null;
 

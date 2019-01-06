@@ -33,7 +33,7 @@ namespace System.Management.Automation
         private readonly ExecutionContext _context;
 
         /// <summary>
-        /// Session state for current Microsoft Command Shell session
+        /// Session state for current Microsoft Command Shell session.
         /// </summary>
         /// <remarks>
         /// _sessionState is mainly used for alias help search in the case
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         #region Common Properties
 
         /// <summary>
-        /// Name of alias help provider
+        /// Name of alias help provider.
         /// </summary>
         /// <value>Name of alias help provider</value>
         internal override string Name

@@ -191,7 +191,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Gets the name of the parameter
+        /// Gets the name of the parameter.
         /// </summary>
         internal string Name { get; private set; }
 
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the parameter set data for this parameter for the specified parameter set
+        /// Gets the parameter set data for this parameter for the specified parameter set.
         /// </summary>
         /// <param name="parameterSetFlag">
         /// The parameter set to get the parameter set data for.

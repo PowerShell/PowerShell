@@ -26,7 +26,7 @@ namespace System.Management.Automation
         private static readonly int s_variantSize = Marshal.SizeOf<Variant>();
 
         /// <summary>
-        /// Make a by-Ref VARIANT value based on the passed-in VARIANT argument
+        /// Make a by-Ref VARIANT value based on the passed-in VARIANT argument.
         /// </summary>
         /// <param name="srcVariantPtr">The source Variant pointer.</param>
         /// <param name="destVariantPtr">The destination Variant pointer.</param>
@@ -126,7 +126,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invoke the COM member
+        /// Invoke the COM member.
         /// </summary>
         /// <param name="target">IDispatch object.</param>
         /// <param name="dispId">Dispatch identifier that identifies the member.</param>
@@ -331,7 +331,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// VARIANT type used for passing arguments in COM interop
+        /// VARIANT type used for passing arguments in COM interop.
         /// </summary>
         [StructLayout(LayoutKind.Explicit)]
         internal struct Variant

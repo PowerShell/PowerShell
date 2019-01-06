@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private bool _disposed;
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         public void Dispose()
         {
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Releases resources associated with this object
+        /// Releases resources associated with this object.
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Cmdletization
         #region Common parameters (AsJob, ThrottleLimit, Session)
 
         /// <summary>
-        /// Session to operate on
+        /// Session to operate on.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         protected TSession[] Session
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private bool _sessionWasSpecified;
 
         /// <summary>
-        /// Whether to wrap and emit the whole operation as a background job
+        /// Whether to wrap and emit the whole operation as a background job.
         /// </summary>
         [Parameter]
         public SwitchParameter AsJob
@@ -395,7 +395,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Queries for instance and invokes an instance method
+        /// Queries for instance and invokes an instance method.
         /// </summary>
         /// <param name="query">Query parameters.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>

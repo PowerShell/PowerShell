@@ -131,7 +131,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
             this.cmdlet = cmdlet;
         }
-    }//End Class
+    }
 
     #region Class CmdletOperationRemoveCimInstance
 
@@ -144,7 +144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationRemoveCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationRemoveCimInstance(Cmdlet cmdlet,
@@ -193,7 +193,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private const string cimRemoveCimInstanceParameterName = @"cimRemoveCimInstance";
 
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationSetCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationSetCimInstance(Cmdlet cmdlet,
@@ -273,7 +273,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private const string theCimSetCimInstanceParameterName = @"theCimSetCimInstance";
 
         #endregion
-    }//End Class
+    }
     #endregion
 
     #region Class CmdletOperationInvokeCimMethod
@@ -286,7 +286,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationInvokeCimMethod : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationInvokeCimMethod(Cmdlet cmdlet,
@@ -336,7 +336,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private const string theCimInvokeCimMethodParameterName = @"theCimInvokeCimMethod";
 
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -351,7 +351,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationTestCimSession : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method
+        /// Constructor method.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationTestCimSession(Cmdlet cmdlet,
@@ -397,7 +397,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private const string theCimNewSessionParameterName = @"theCimNewSession";
 
         #endregion
-    }//End Class
+    }
 
     #endregion
-}//End namespace
+}

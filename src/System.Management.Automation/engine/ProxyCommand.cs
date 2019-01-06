@@ -7,14 +7,14 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A ProxyCommand class used to represent a Command constructed Dynamically
+    /// A ProxyCommand class used to represent a Command constructed Dynamically.
     /// </summary>
     public sealed class ProxyCommand
     {
         #region Private Constructor
 
         /// <summary>
-        /// Private Constructor to restrict inheritance
+        /// Private Constructor to restrict inheritance.
         /// </summary>
         private ProxyCommand()
         {

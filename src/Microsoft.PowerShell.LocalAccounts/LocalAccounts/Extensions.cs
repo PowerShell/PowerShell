@@ -12,7 +12,7 @@ using Microsoft.PowerShell.LocalAccounts;
 namespace System.Management.Automation.SecurityAccountsManager.Extensions
 {
     /// <summary>
-    /// Provides extension methods for the Cmdlet class
+    /// Provides extension methods for the Cmdlet class.
     /// </summary>
     internal static class CmdletExtensions
     {
@@ -52,12 +52,12 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
     }
 
     /// <summary>
-    /// Provides extension methods for the PSCmdlet class
+    /// Provides extension methods for the PSCmdlet class.
     /// </summary>
     internal static class PSExtensions
     {
         /// <summary>
-        /// Determine if a given parameter was provided to the cmdlet
+        /// Determine if a given parameter was provided to the cmdlet.
         /// </summary>
         /// <param name="cmdlet">
         /// The <see cref="PSCmdlet"/> object to check.

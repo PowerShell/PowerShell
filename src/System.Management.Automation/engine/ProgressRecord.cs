@@ -524,7 +524,7 @@ namespace System.Management.Automation
     enum ProgressRecordType
     {
         ///<summary>
-        /// Operation just started or is not yet complete
+        /// Operation just started or is not yet complete.
         /// </summary>
         /// <remarks>
         /// A cmdlet can call WriteProgress with ProgressRecordType.Processing
@@ -542,7 +542,7 @@ namespace System.Management.Automation
         Processing,
 
         /// <summary>
-        /// Operation is complete
+        /// Operation is complete.
         /// </summary>
         /// <remarks>
         /// If a cmdlet uses WriteProgress, it should use

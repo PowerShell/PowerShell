@@ -54,7 +54,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
@@ -81,7 +81,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
@@ -108,7 +108,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
@@ -135,7 +135,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// </value>
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// </value>
@@ -180,7 +180,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <value>
         /// </value>
@@ -197,7 +197,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="exitCode"></param>
         public override void SetShouldExit(int exitCode)
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// Internal proxy for EnterNestedPrompt
+        /// Internal proxy for EnterNestedPrompt.
         /// </summary>
         /// <param name="callingCommand"></param>
         internal void EnterNestedPrompt(InternalCommand callingCommand)
@@ -408,7 +408,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         public override PSObject PrivateData
         {
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// Checks if the host is in a nested prompt
+        /// Checks if the host is in a nested prompt.
         /// </summary>
         /// <returns>True, if host in nested prompt
         /// false, otherwise.</returns>

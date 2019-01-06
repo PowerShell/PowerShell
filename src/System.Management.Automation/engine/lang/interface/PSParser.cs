@@ -19,7 +19,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// PSParser class
+    /// PSParser class.
     /// </summary>
     /// <remarks>
     /// This is a class providing the interface for parsing a script into a collection of
@@ -63,7 +63,7 @@ namespace System.Management.Automation
     public sealed class PSParser
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <remarks>
         /// This constructor is made private intentionally. The only way to create an instance

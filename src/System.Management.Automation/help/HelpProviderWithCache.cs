@@ -14,7 +14,7 @@ namespace System.Management.Automation
     internal abstract class HelpProviderWithCache : HelpProvider
     {
         /// <summary>
-        /// Constructor for HelpProviderWithCache
+        /// Constructor for HelpProviderWithCache.
         /// </summary>
         internal HelpProviderWithCache(HelpSystem helpSystem) : base(helpSystem)
         {
@@ -23,7 +23,7 @@ namespace System.Management.Automation
         #region Help Provider Interface
 
         /// <summary>
-        /// _helpCache is a hashtable to stores helpInfo
+        /// _helpCache is a hashtable to stores helpInfo.
         /// </summary>
         /// <remarks>
         /// This hashtable is made case-insensitive so that helpInfo can be retrieved case insensitively.
@@ -100,7 +100,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Search help for a target
+        /// Search help for a target.
         /// </summary>
         /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
@@ -194,7 +194,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get help entry from cache
+        /// Get help entry from cache.
         /// </summary>
         /// <param name="target">The key for the help entry to retrieve.</param>
         /// <returns>The HelpInfo in cache corresponding the key specified.</returns>

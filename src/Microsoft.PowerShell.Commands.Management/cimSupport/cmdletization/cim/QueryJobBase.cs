@@ -8,7 +8,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Base job for queries
+    /// Base job for queries.
     /// </summary>
     internal abstract class QueryJobBase : CimChildJobBase<CimInstance>
     {

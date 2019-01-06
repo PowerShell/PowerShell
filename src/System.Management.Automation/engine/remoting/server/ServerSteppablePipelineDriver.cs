@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Execution context used for stepping
+    /// Execution context used for stepping.
     /// </summary>
     internal class ExecutionContextForStepping : IDisposable
     {
@@ -55,7 +55,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// This class wraps a RunspacePoolInternal object. It is used to function
-    /// as a server side runspacepool
+    /// as a server side runspacepool.
     /// </summary>
     internal class ServerSteppablePipelineDriver
     {
@@ -66,7 +66,7 @@ namespace System.Management.Automation
         // associated with this powershell
         // data structure handler object to handle all
         // communications with the client
-        //private bool datasent = false;          // if the remaining data has been sent
+        // private bool datasent = false;          // if the remaining data has been sent
         // to the client before sending state
         // information
         // data to client
@@ -186,24 +186,24 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// Local PowerShell instance
+        /// Local PowerShell instance.
         /// </summary>
         internal PowerShell LocalPowerShell { get; }
 
         /// <summary>
         /// Instance id by which this powershell driver is
         /// identified. This is the same as the id of the
-        /// powershell on the client side
+        /// powershell on the client side.
         /// </summary>
         internal Guid InstanceId { get; }
 
         /// <summary>
-        /// Server remote host
+        /// Server remote host.
         /// </summary>
         internal ServerRemoteHost RemoteHost { get; }
 
         /// <summary>
-        /// Serialization options for the streams in this powershell
+        /// Serialization options for the streams in this powershell.
         /// </summary>
         internal RemoteStreamOptions RemoteStreamOptions { get; }
 
@@ -212,63 +212,63 @@ namespace System.Management.Automation
         /// this object. This is the same as the id of
         /// the runspace pool at the client side which
         /// is associated with the powershell on the
-        /// client side
+        /// client side.
         /// </summary>
         internal Guid RunspacePoolId { get; }
 
         /// <summary>
         /// ServerPowerShellDataStructureHandler associated with this
-        /// powershell driver
+        /// powershell driver.
         /// </summary>
         internal ServerPowerShellDataStructureHandler DataStructureHandler { get; }
 
         /// <summary>
-        /// Pipeline invocation state
+        /// Pipeline invocation state.
         /// </summary>
         internal PSInvocationState PipelineState { get; private set; }
 
         /// <summary>
-        /// Checks if the steppable pipeline has input
+        /// Checks if the steppable pipeline has input.
         /// </summary>
         internal bool NoInput { get; }
 
         /// <summary>
-        /// Steppablepipeline object
+        /// Steppablepipeline object.
         /// </summary>
         internal SteppablePipeline SteppablePipeline { get; set; }
 
         /// <summary>
-        /// Synchronization object
+        /// Synchronization object.
         /// </summary>
         internal object SyncObject { get; } = new object();
 
         /// <summary>
-        /// Processing input
+        /// Processing input.
         /// </summary>
         internal bool ProcessingInput { get; set; }
 
         /// <summary>
-        /// Input enumerator
+        /// Input enumerator.
         /// </summary>
         internal IEnumerator<object> InputEnumerator { get; }
 
         /// <summary>
-        /// Input collection
+        /// Input collection.
         /// </summary>
         internal PSDataCollection<object> Input { get; }
 
         /// <summary>
-        /// Is the pipeline pulsed
+        /// Is the pipeline pulsed.
         /// </summary>
         internal bool Pulsed { get; set; }
 
         /// <summary>
-        /// Total objects processed
+        /// Total objects processed.
         /// </summary>
         internal int TotalObjectsProcessed { get; set; }
 
         /// <summary>
-        /// Starts the exectution
+        /// Starts the exectution.
         /// </summary>
         internal void Start()
         {
@@ -287,7 +287,7 @@ namespace System.Management.Automation
         #region DataStructure related event handling / processing
 
         /// <summary>
-        /// Close the input collection of the local powershell
+        /// Close the input collection of the local powershell.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -305,7 +305,7 @@ namespace System.Management.Automation
 
         private void HandleSessionConnected(object sender, EventArgs eventArgs)
         {
-            //Close input if its active. no need to synchronize as input stream would have already been processed
+            // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
             if (Input != null)
             {
@@ -314,7 +314,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle a host message response received
+        /// Handle a host message response received.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -324,7 +324,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Stop the local powershell
+        /// Stop the local powershell.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Unused.</param>
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Add input to the local powershell's input collection
+        /// Add input to the local powershell's input collection.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -405,7 +405,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Performs the stop operation
+        /// Performs the stop operation.
         /// </summary>
         internal void PerformStop()
         {

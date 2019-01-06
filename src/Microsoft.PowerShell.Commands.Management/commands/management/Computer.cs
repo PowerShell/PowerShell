@@ -37,13 +37,13 @@ namespace Microsoft.PowerShell.Commands
     #region Restart-Computer
 
     /// <summary>
-    /// This exception is thrown when the timeout expires before a computer finishes restarting
+    /// This exception is thrown when the timeout expires before a computer finishes restarting.
     /// </summary>
     [Serializable]
     public sealed class RestartComputerTimeoutException : RuntimeException
     {
         /// <summary>
-        /// Name of the computer that is restarting
+        /// Name of the computer that is restarting.
         /// </summary>
         public string ComputerName { get; private set; }
 
@@ -69,12 +69,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Construct a RestartComputerTimeoutException
+        /// Construct a RestartComputerTimeoutException.
         /// </summary>
         public RestartComputerTimeoutException() : base() { }
 
         /// <summary>
-        /// Constructs a RestartComputerTimeoutException
+        /// Constructs a RestartComputerTimeoutException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         public RestartComputerTimeoutException(string message) : base(message) { }
 
         /// <summary>
-        /// Constructs a RestartComputerTimeoutException
+        /// Constructs a RestartComputerTimeoutException.
         /// </summary>
         /// <param name="message">
         /// The message used in the exception.
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Serialization
         /// <summary>
-        /// Serialization constructor for class RestartComputerTimeoutException
+        /// Serialization constructor for class RestartComputerTimeoutException.
         /// </summary>
         /// <param name="info">
         /// serialization information
@@ -139,29 +139,29 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Defines the services that Restart-Computer can wait on
+    /// Defines the services that Restart-Computer can wait on.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum WaitForServiceTypes
     {
         /// <summary>
-        /// Wait for the WMI service to be ready
+        /// Wait for the WMI service to be ready.
         /// </summary>
         Wmi = 0x0,
 
         /// <summary>
-        /// Wait for the WinRM service to be ready
+        /// Wait for the WinRM service to be ready.
         /// </summary>
         WinRM = 0x1,
 
         /// <summary>
-        /// Wait for the PowerShell to be ready
+        /// Wait for the PowerShell to be ready.
         /// </summary>
         PowerShell = 0x2,
     }
 
     /// <summary>
-    /// Restarts the computer
+    /// Restarts the computer.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = DefaultParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         private const int forcedReboot = 6; // see https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
         /// <summary>
-        /// The authentication options for CIM_WSMan connection
+        /// The authentication options for CIM_WSMan connection.
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
         [ValidateSet(
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter "Credential".
         /// Specifies a user account that has permission to perform this action. Type a
         /// user-name, such as "User01" or "Domain01\User01", or enter a PSCredential
-        /// object, such as one from the Get-Credential cmdlet
+        /// object, such as one from the Get-Credential cmdlet.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force { get; set; }
 
         /// <summary>
-        /// Specify the Wait parameter. Prompt will be blocked is the Timeout is not 0
+        /// Specify the Wait parameter. Prompt will be blocked is the Timeout is not 0.
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
         public SwitchParameter Wait { get; set; }
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _delaySpecified = false;
 
         /// <summary>
-        /// Script to test if the PowerShell is ready
+        /// Script to test if the PowerShell is ready.
         /// </summary>
         private const string TestPowershellScript = @"
 $array = @($input)
@@ -317,12 +317,12 @@ $result
 ";
 
         /// <summary>
-        /// The indicator to use when show progress
+        /// The indicator to use when show progress.
         /// </summary>
         private string[] _indicator = { "|", "/", "-", "\\" };
 
         /// <summary>
-        /// The activity id
+        /// The activity id.
         /// </summary>
         private int _activityId;
 
@@ -333,12 +333,12 @@ $result
         private const int SecondsToWaitForRestartToBegin = 25;
 
         /// <summary>
-        /// Actual time out in seconds
+        /// Actual time out in seconds.
         /// </summary>
         private int _timeoutInMilliseconds;
 
         /// <summary>
-        /// Indicate to exit
+        /// Indicate to exit.
         /// </summary>
         private bool _exit, _timeUp;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
@@ -371,7 +371,7 @@ $result
         #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method
+        /// Dispose Method.
         /// </summary>
         public void Dispose()
         {
@@ -460,7 +460,7 @@ $result
         }
 
         /// <summary>
-        /// Write out progress
+        /// Write out progress.
         /// </summary>
         /// <param name="activity"></param>
         /// <param name="status"></param>
@@ -475,7 +475,7 @@ $result
         }
 
         /// <summary>
-        /// Calculate the progress percentage
+        /// Calculate the progress percentage.
         /// </summary>
         /// <param name="currentStage"></param>
         /// <returns></returns>
@@ -502,7 +502,7 @@ $result
         }
 
         /// <summary>
-        /// Event handler for the timer
+        /// Event handler for the timer.
         /// </summary>
         /// <param name="s"></param>
         private void OnTimedEvent(object s)
@@ -721,7 +721,7 @@ $result
         }
 
         /// <summary>
-        /// Test the PowerShell state for the restarting computer
+        /// Test the PowerShell state for the restarting computer.
         /// </summary>
         /// <param name="computerNames"></param>
         /// <param name="nextTestList"></param>
@@ -878,7 +878,7 @@ $result
                     {
                         _waitOnComputers.Add(computer);
                     }
-                }//end foreach
+                }
 
                 if (_waitOnComputers.Count > 0)
                 {
@@ -1059,7 +1059,7 @@ $result
                             _status = StringUtil.Format(ComputerResources.WaitForMultipleComputers, machineCompleteRestart, _waitOnComputers.Count);
                             _percent = machineCompleteRestart * 100 / _waitOnComputers.Count;
                         }
-                    }// end while(true)
+                    }
 
                     if (_timeUp)
                     {
@@ -1081,12 +1081,12 @@ $result
                             // Wait for PowerShell. All computers that finished restarting are put in "allDoneList"
                         } while (false);
                     }
-                }// end if(waitOnComputer.Count > 0)
-            }//end DefaultParameter
-        }//End Processrecord
+                }
+            }
+        }
 
         /// <summary>
-        /// to implement ^C
+        /// to implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -1114,7 +1114,7 @@ $result
     #region Stop-Computer
 
     /// <summary>
-    /// cmdlet to stop computer
+    /// cmdlet to stop computer.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
@@ -1130,7 +1130,7 @@ $result
         #region "Parameters"
 
         /// <summary>
-        /// The authentication options for CIM_WSMan connection
+        /// The authentication options for CIM_WSMan connection.
         /// </summary>
         [Parameter]
         [ValidateSet(
@@ -1159,7 +1159,7 @@ $result
         /// The following is the definition of the input parameter "Credential".
         /// Specifies a user account that has permission to perform this action. Type a
         /// user-name, such as "User01" or "Domain01\User01", or enter a PSCredential
-        /// object, such as one from the Get-Credential cmdlet
+        /// object, such as one from the Get-Credential cmdlet.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
@@ -1167,7 +1167,7 @@ $result
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Force the operation to take place if possible
+        /// Force the operation to take place if possible.
         /// </summary>
         [Parameter]
         public SwitchParameter Force { get; set; } = false;
@@ -1177,7 +1177,7 @@ $result
         #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method
+        /// Dispose Method.
         /// </summary>
         public void Dispose()
         {
@@ -1193,7 +1193,7 @@ $result
         #region "Overrides"
 
         /// <summary>
-        /// ProcessRecord
+        /// ProcessRecord.
         /// </summary>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         protected override void ProcessRecord()
@@ -1203,10 +1203,10 @@ $result
                 flags[0] = forcedShutdown;
 
             ProcessWSManProtocol(flags);
-        }//End Processrecord
+        }
 
         /// <summary>
-        /// to implement ^C
+        /// to implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -1293,7 +1293,7 @@ $result
         #region Parameters
 
         /// <summary>
-        /// Target computers to rename
+        /// Target computers to rename.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -1302,12 +1302,12 @@ $result
         /// <summary>
         /// Emit the output.
         /// </summary>
-        //[Alias("Restart")]
+        // [Alias("Restart")]
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// The domain credential of the domain the target computer joined
+        /// The domain credential of the domain the target computer joined.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -1315,7 +1315,7 @@ $result
         public PSCredential DomainCredential { get; set; }
 
         /// <summary>
-        /// The administrator credential of the target computer
+        /// The administrator credential of the target computer.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -1323,14 +1323,14 @@ $result
         public PSCredential LocalCredential { get; set; }
 
         /// <summary>
-        /// New names for the target computers
+        /// New names for the target computers.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public string NewName { get; set; }
 
         /// <summary>
-        /// Suppress the ShouldContinue
+        /// Suppress the ShouldContinue.
         /// </summary>
         [Parameter]
         public SwitchParameter Force
@@ -1343,7 +1343,7 @@ $result
         private bool _force;
 
         /// <summary>
-        /// To restart the target computer after rename it
+        /// To restart the target computer after rename it.
         /// </summary>
         [Parameter]
         public SwitchParameter Restart
@@ -1356,7 +1356,7 @@ $result
         private bool _restart;
 
         /// <summary>
-        /// The authentication options for CIM_WSMan connection
+        /// The authentication options for CIM_WSMan connection.
         /// </summary>
         [Parameter]
         [ValidateSet(
@@ -1374,7 +1374,7 @@ $result
         #region "Private Methods"
 
         /// <summary>
-        /// Check to see if the target computer is the local machine
+        /// Check to see if the target computer is the local machine.
         /// </summary>
         private string ValidateComputerName()
         {
@@ -1446,7 +1446,7 @@ $result
                     {
                         Timeout = TimeSpan.FromMilliseconds(10000),
                         CancellationToken = cancelTokenSource.Token,
-                        //This prefix works against all versions of the WinRM server stack, both win8 and win7
+                        // This prefix works against all versions of the WinRM server stack, both win8 and win7
                         ResourceUriPrefix = new Uri(ComputerWMIHelper.CimUriPrefix)
                     };
 
@@ -1601,7 +1601,7 @@ $result
         }
 
         /// <summary>
-        /// EndProcessing method
+        /// EndProcessing method.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -1624,7 +1624,7 @@ $result
         private const string MatchFormat = "{0}:{1}";
 
         /// <summary>
-        /// The HasSucceeded which shows the operation was success or not
+        /// The HasSucceeded which shows the operation was success or not.
         /// </summary>
         public bool HasSucceeded { get; set; }
 
@@ -1707,27 +1707,27 @@ $result
     internal static class ComputerWMIHelper
     {
         /// <summary>
-        /// The maximum length of a valid NetBIOS name
+        /// The maximum length of a valid NetBIOS name.
         /// </summary>
         internal const int NetBIOSNameMaxLength = 15;
 
         /// <summary>
-        /// System Restore Class used by Cmdlets
+        /// System Restore Class used by Cmdlets.
         /// </summary>
         internal const string WMI_Class_SystemRestore = "SystemRestore";
 
         /// <summary>
-        /// OperatingSystem WMI class used by Cmdlets
+        /// OperatingSystem WMI class used by Cmdlets.
         /// </summary>
         internal const string WMI_Class_OperatingSystem = "Win32_OperatingSystem";
 
         /// <summary>
-        /// Service WMI class used by Cmdlets
+        /// Service WMI class used by Cmdlets.
         /// </summary>
         internal const string WMI_Class_Service = "Win32_Service";
 
         /// <summary>
-        /// Win32_ComputerSystem WMI class used by Cmdlets
+        /// Win32_ComputerSystem WMI class used by Cmdlets.
         /// </summary>
         internal const string WMI_Class_ComputerSystem = "Win32_ComputerSystem";
 
@@ -1737,12 +1737,12 @@ $result
         internal const string WMI_Class_PingStatus = "Win32_PingStatus";
 
         /// <summary>
-        /// CIMV2 path
+        /// CIMV2 path.
         /// </summary>
         internal const string WMI_Path_CIM = "\\root\\cimv2";
 
         /// <summary>
-        /// Default path
+        /// Default path.
         /// </summary>
         internal const string WMI_Path_Default = "\\root\\default";
 
@@ -1757,42 +1757,42 @@ $result
         internal const int ErrorCode_Service = 1056;
 
         /// <summary>
-        /// The name of the privilege to shutdown a local system
+        /// The name of the privilege to shutdown a local system.
         /// </summary>
         internal const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
 
         /// <summary>
-        /// The name of the privilege to shutdown a remote system
+        /// The name of the privilege to shutdown a remote system.
         /// </summary>
         internal const string SE_REMOTE_SHUTDOWN_NAME = "SeRemoteShutdownPrivilege";
 
         /// <summary>
-        /// CimUriPrefix
+        /// CimUriPrefix.
         /// </summary>
         internal const string CimUriPrefix = "http://schemas.microsoft.com/wbem/wsman/1/wmi/root/cimv2";
 
         /// <summary>
-        /// CimOperatingSystemNamespace
+        /// CimOperatingSystemNamespace.
         /// </summary>
         internal const string CimOperatingSystemNamespace = "root/cimv2";
 
         /// <summary>
-        /// CimOperatingSystemShutdownMethod
+        /// CimOperatingSystemShutdownMethod.
         /// </summary>
         internal const string CimOperatingSystemShutdownMethod = "Win32shutdown";
 
         /// <summary>
-        /// CimQueryDialect
+        /// CimQueryDialect.
         /// </summary>
         internal const string CimQueryDialect = "WQL";
 
         /// <summary>
-        /// Local host name
+        /// Local host name.
         /// </summary>
         internal const string localhostStr = "localhost";
 
         /// <summary>
-        /// Get the local admin user name from a local NetworkCredential
+        /// Get the local admin user name from a local NetworkCredential.
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="psLocalCredential"></param>
@@ -1823,7 +1823,7 @@ $result
         }
 
         /// <summary>
-        /// Generate a random password
+        /// Generate a random password.
         /// </summary>
         /// <param name="passwordLength"></param>
         /// <returns></returns>
@@ -1846,7 +1846,7 @@ $result
         }
 
         /// <summary>
-        /// Gets the Scope
+        /// Gets the Scope.
         /// </summary>
         /// <param name="computer"></param>
         /// <param name="namespaceParameter"></param>
@@ -1912,7 +1912,7 @@ $result
         }
 
         /// <summary>
-        /// Returns the given computernames in a string
+        /// Returns the given computernames in a string.
         /// </summary>
         /// <param name="computerNames"></param>
         internal static string GetMachineNames(string[] computerNames)
@@ -2005,7 +2005,7 @@ $result
         }
 
         /// <summary>
-        /// Check whether the new computer name is valid
+        /// Check whether the new computer name is valid.
         /// </summary>
         /// <param name="computerName"></param>
         /// <returns></returns>
@@ -2098,7 +2098,7 @@ $result
             {
                 Timeout = TimeSpan.FromMilliseconds(10000),
                 CancellationToken = cancelToken,
-                //This prefix works against all versions of the WinRM server stack, both win8 and win7
+                // This prefix works against all versions of the WinRM server stack, both win8 and win7
                 ResourceUriPrefix = new Uri(ComputerWMIHelper.CimUriPrefix)
             };
 
@@ -2256,6 +2256,6 @@ $result
         }
     }
     #endregion Helper
-}//End namespace
+}
 
 #endif

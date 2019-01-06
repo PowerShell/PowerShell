@@ -9,7 +9,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to get the property of an item at a specified path
+    /// A command to get the property of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ItemProperty", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113320")]
     public class GetItemPropertyCommand : ItemPropertyCommandBase
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The properties to retrieve from the item
+        /// The properties to retrieve from the item.
         /// </summary>
         [Parameter(Position = 1)]
         [Alias("PSProperty")]
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Gets the properties of an item at the specified path
+        /// Gets the properties of an item at the specified path.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path", Mandatory = false, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The properties to retrieve from the item
+        /// The properties to retrieve from the item.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true)]
         [Alias("PSProperty")]

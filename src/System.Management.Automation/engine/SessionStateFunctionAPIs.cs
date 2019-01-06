@@ -10,7 +10,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets an IEnumerable for the function table for a given scope
+        /// Gets an IEnumerable for the function table for a given scope.
         /// </summary>
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
@@ -106,12 +106,12 @@ namespace System.Management.Automation
         internal bool UseExportList { get; set; } = false;
 
         /// <summary>
-        /// Set to true when module functions are being explicitly exported using Export-ModuleMember
+        /// Set to true when module functions are being explicitly exported using Export-ModuleMember.
         /// </summary>
         internal bool FunctionsExported { get; set; }
 
         /// <summary>
-        /// Set to true when any processed module functions are being explicitly exported using '*' wildcard
+        /// Set to true when any processed module functions are being explicitly exported using '*' wildcard.
         /// </summary>
         internal bool FunctionsExportedWithWildcard
         {

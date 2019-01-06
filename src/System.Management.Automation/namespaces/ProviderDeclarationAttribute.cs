@@ -131,7 +131,7 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// The provider supports ShouldProcess. When this capability is specified, the
         /// -Whatif and -Confirm parameters become available to the user when using
-        /// this provider
+        /// this provider.
         /// </summary>
         ShouldProcess = 0x10,
 

@@ -21,20 +21,20 @@ namespace Microsoft.PowerShell
     {
         /// <summary>
         /// Used by Prompt to indicate any common errors when converting the user input string to
-        ///  the type of the parameter
+        ///  the type of the parameter.
         /// </summary>
         private enum PromptCommonInputErrors
         {
             /// <summary>
-            /// No error or not an error prompt handles
+            /// No error or not an error prompt handles.
             /// </summary>
             None,
             /// <summary>
-            /// Format error
+            /// Format error.
             /// </summary>
             Format,
             /// <summary>
-            /// Overflow error
+            /// Overflow error.
             /// </summary>
             Overflow
         }
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell
         /// !h  prints out field's Quick Help, returns null
         /// All others tilde comments are invalid and return null
         ///
-        /// returns null iff there's nothing the caller can process
+        /// returns null iff there's nothing the caller can process.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="desc"></param>

@@ -36,7 +36,7 @@ namespace System.Management.Automation
         private InformationRecord() { }
 
         /// <summary>
-        /// Copy constructor
+        /// Copy constructor.
         /// </summary>
         internal InformationRecord(InformationRecord baseRecord)
         {
@@ -58,7 +58,7 @@ namespace System.Management.Automation
         // are that way because they are fundamental properties of the record itself.
 
         /// <summary>
-        /// The message data for this informational record
+        /// The message data for this informational record.
         /// </summary>
         [DataMember]
         public object MessageData { get; internal set; }
@@ -90,7 +90,7 @@ namespace System.Management.Automation
         private List<string> _tags;
 
         /// <summary>
-        /// The user that generated this informational record
+        /// The user that generated this informational record.
         /// </summary>
         [DataMember]
         public string User
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         private string _user;
 
         /// <summary>
-        /// The computer that generated this informational record
+        /// The computer that generated this informational record.
         /// </summary>
         [DataMember]
         public string Computer
@@ -129,7 +129,7 @@ namespace System.Management.Automation
         private string _computerName;
 
         /// <summary>
-        /// The process that generated this informational record
+        /// The process that generated this informational record.
         /// </summary>
         [DataMember]
         public uint ProcessId
@@ -150,12 +150,12 @@ namespace System.Management.Automation
         private uint? _processId;
 
         /// <summary>
-        /// The native thread that generated this informational record
+        /// The native thread that generated this informational record.
         /// </summary>
         public uint NativeThreadId { get; set; }
 
         /// <summary>
-        /// The managed thread that generated this informational record
+        /// The managed thread that generated this informational record.
         /// </summary>
         [DataMember]
         public uint ManagedThreadId { get; set; }
@@ -230,27 +230,27 @@ namespace System.Management.Automation
     public class HostInformationMessage
     {
         /// <summary>
-        /// The message being output by the host
+        /// The message being output by the host.
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
-        /// 'True' if the host should not append a NewLine to the message output
+        /// 'True' if the host should not append a NewLine to the message output.
         /// </summary>
         public bool? NoNewLine { get; set; }
 
         /// <summary>
-        /// The foreground color of the message
+        /// The foreground color of the message.
         /// </summary>
         public ConsoleColor? ForegroundColor { get; set; }
 
         /// <summary>
-        /// The background color of the message
+        /// The background color of the message.
         /// </summary>
         public ConsoleColor? BackgroundColor { get; set; }
 
         /// <summary>
-        /// Returns a string-based representation of the host information message
+        /// Returns a string-based representation of the host information message.
         /// </summary>
         /// <returns></returns>
         public override string ToString()

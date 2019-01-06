@@ -16,7 +16,7 @@ using System.IO;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines if the item at the specified path exists
+        /// Determines if the item at the specified path exists.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -754,7 +754,7 @@ namespace System.Management.Automation
         #region RemoveItem
 
         /// <summary>
-        /// Deletes the specified object
+        /// Deletes the specified object.
         /// </summary>
         /// <param name="paths">
         /// A relative or absolute path to the object to be deleted.
@@ -801,7 +801,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Deletes the specified object
+        /// Deletes the specified object.
         /// </summary>
         /// <param name="paths">
         /// A relative or absolute path to the object to be deleted.
@@ -4435,7 +4435,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies the specified item(s) to the specified destination
+        /// Copies the specified item(s) to the specified destination.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -4512,7 +4512,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Recursively copies many items to a single container
+        /// Recursively copies many items to a single container.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -4929,17 +4929,17 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the action to be taken for Navigation cmdlets
+    /// Defines the action to be taken for Navigation cmdlets.
     /// </summary>
     internal enum ProcessMode
     {
         /// <summary>
-        /// Write out the details
+        /// Write out the details.
         /// </summary>
         Enumerate = 1,
 
         /// <summary>
-        /// Delete the item
+        /// Delete the item.
         /// </summary>
         Delete = 2
     }

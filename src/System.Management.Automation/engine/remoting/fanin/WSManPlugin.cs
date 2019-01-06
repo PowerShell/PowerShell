@@ -369,7 +369,7 @@ namespace System.Management.Automation.Remoting
 
             bool isRegisterWaitForSingleObjectSucceeded = true;
 
-            //always synchronize calls to OperationComplete once notification handle is registered.. else duplicate OperationComplete calls are bound to happen
+            // always synchronize calls to OperationComplete once notification handle is registered.. else duplicate OperationComplete calls are bound to happen
             lock (mgdShellSession.shellSyncObject)
             {
                 mgdShellSession.registeredShutdownNotification = 1;
@@ -384,9 +384,9 @@ namespace System.Management.Automation.Remoting
                 }
                 else
                 {
-                    //On non-windows platforms the shutdown notification is done through a callback instead of a windows event handle.
-                    //Register the callback and this will then signal the event. Note, the gch object is deleted in the shell shutdown
-                    //notification that will always come in to shut down the operation.
+                    // On non-windows platforms the shutdown notification is done through a callback instead of a windows event handle.
+                    // Register the callback and this will then signal the event. Note, the gch object is deleted in the shell shutdown
+                    // notification that will always come in to shut down the operation.
 
                     GCHandle gch = GCHandle.Alloc(eventWaitHandle);
                     IntPtr p = GCHandle.ToIntPtr(gch);
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Remoting
                     bool ignore = mgdShellSession.registeredShutDownWaitHandle.Unregister(null);
                     mgdShellSession.registeredShutDownWaitHandle = null;
 
-                    //this will called OperationComplete
+                    // this will called OperationComplete
                     PerformCloseOperation(context);
                 }
 
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Remoting
             if (mgdShellSession == null)
             {
                 // this should never be the case. this will protect the service.
-                //Dbg.Assert(false, "context.shellContext not matched");
+                // Dbg.Assert(false, "context.shellContext not matched");
                 return;
             }
 
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Remoting
             if (mgdShellSession == null)
             {
                 // this should never be the case. this will protect the service.
-                //Dbg.Assert(false, "context.shellContext not matched");
+                // Dbg.Assert(false, "context.shellContext not matched");
                 return;
             }
 
@@ -584,7 +584,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Helper function to validate incoming values
+        /// Helper function to validate incoming values.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="shellContext"></param>
@@ -738,7 +738,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Connect
+        /// Connect.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="flags"></param>
@@ -757,9 +757,9 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            //TODO... What does this mean from a new client that has specified diff locale from original client?
+            // TODO... What does this mean from a new client that has specified diff locale from original client?
             SetThreadProperties(requestDetails);
-            //TODO.. Add new ETW events and log
+            // TODO.. Add new ETW events and log
             /*etwTracer.AnalyticChannel.WriteInformation(PSEventId.ServerReceivedData,
                     PSOpcode.Open, PSTask.None,
                 ((IntPtr)shellContext).ToString(), ((IntPtr)commandContext).ToString(), ((IntPtr)requestDetails).ToString());*/
@@ -1022,7 +1022,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Was private. Made protected internal for easier testing
+        /// Was private. Made protected internal for easier testing.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <returns></returns>
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// extract message from exception (if any) and report operation complete with it to WSMan
+        /// extract message from exception (if any) and report operation complete with it to WSMan.
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="reasonForClose"></param>
@@ -1471,22 +1471,22 @@ namespace System.Management.Automation.Remoting
             // requestDetails cannot not be null.
             Dbg.Assert(requestDetails != null, "requestDetails cannot be null");
 
-            //IntPtr nativeLocaleData = IntPtr.Zero;
+            // IntPtr nativeLocaleData = IntPtr.Zero;
             WSManNativeApi.WSManDataStruct outputStruct = new WSManNativeApi.WSManDataStruct();
             int hResult = wsmanPinvokeStatic.WSManPluginGetOperationParameters(
                 requestDetails.unmanagedHandle,
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
-            //ref nativeLocaleData);
+            // ref nativeLocaleData);
             bool retrievingLocaleSucceeded = (0 == hResult);
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
-            //IntPtr nativeDataLocaleData = IntPtr.Zero;
+            // IntPtr nativeDataLocaleData = IntPtr.Zero;
             hResult = wsmanPinvokeStatic.WSManPluginGetOperationParameters(
                 requestDetails.unmanagedHandle,
                 WSManPluginConstants.WSManPluginParamsGetRequestedDataLocale,
                 outputStruct);
-            //ref nativeDataLocaleData);
+            // ref nativeDataLocaleData);
             bool retrievingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
             WSManNativeApi.WSManData_UnToMan dataLocaleData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeDataLocaleData
 

@@ -7,14 +7,14 @@ using DWORD = System.UInt32;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Runspace class for local runspace
+    /// Runspace class for local runspace.
     /// </summary>
 
     internal sealed partial
     class LocalRunspace : RunspaceBase
     {
         /// <summary>
-        /// initialize default values of preference vars
+        /// initialize default values of preference vars.
         /// </summary>
         /// <returns>Does not return a value.</returns>
         private void InitializeDefaults()

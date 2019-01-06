@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         private string _path;
 
         /// <summary>
-        /// Implements the record processing for this cmdlet
+        /// Implements the record processing for this cmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (module != null)
                     {
-                        //Validate file existence
+                        // Validate file existence
                         if (module.RequiredAssemblies != null)
                         {
                             foreach (string requiredAssembliespath in module.RequiredAssemblies)
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        //RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml or .dll.  Anything else is invalid.
+                        // RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml or .dll.  Anything else is invalid.
                         if (module.RootModule != null && module.RootModule != string.Empty)
                         {
                             string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                //Then, we validate if the path is under module scope
+                // Then, we validate if the path is under module scope
                 if (verifyPathScope && !System.IO.Path.GetFullPath(path).StartsWith(System.IO.Path.GetFullPath(module.ModuleBase), StringComparison.OrdinalIgnoreCase))
                 {
                     return false;

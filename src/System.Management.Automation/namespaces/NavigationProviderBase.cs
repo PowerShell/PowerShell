@@ -702,7 +702,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Get the common base path of two paths
+        /// Get the common base path of two paths.
         /// </summary>
         /// <param name="path1">One path.</param>
         /// <param name="path2">Another path.</param>
@@ -940,7 +940,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Test if the path is an absolute path
+        /// Test if the path is an absolute path.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -962,7 +962,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Tokenizes the specified path onto a stack
+        /// Tokenizes the specified path onto a stack.
         /// </summary>
         /// <param name="path">
         /// The path to tokenize.
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Pops each leaf element of the stack and uses MakePath to generate the relative path
+        /// Pops each leaf element of the stack and uses MakePath to generate the relative path.
         /// </summary>
         /// <param name="normalizedPathStack">
         /// The stack containing the leaf elements of the path.

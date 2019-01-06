@@ -167,7 +167,7 @@ namespace System.Management.Automation
         private string[] _completions;
 
         /// <summary>
-        /// Initializes a new instance of the ArgumentCompletionsAttribute class
+        /// Initializes a new instance of the ArgumentCompletionsAttribute class.
         /// </summary>
         /// <param name="completions">List of complete values.</param>
         /// <exception cref="ArgumentNullException">For null arguments.</exception>

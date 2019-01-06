@@ -18,7 +18,7 @@ using System.Linq;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The powershell custom AssemblyLoadContext implementation
+    /// The powershell custom AssemblyLoadContext implementation.
     /// </summary>
     internal partial class PowerShellAssemblyLoadContext
     {
@@ -39,7 +39,7 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Initialize a singleton of PowerShellAssemblyLoadContext
+        /// Initialize a singleton of PowerShellAssemblyLoadContext.
         /// </summary>
         internal static PowerShellAssemblyLoadContext InitializeSingleton(string basePaths)
         {
@@ -54,7 +54,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="basePaths">
         /// Base directory paths that are separated by semicolon ';'. They will be the default paths to probe assemblies.
@@ -121,7 +121,7 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        /// Assembly cache across the AppDomain
+        /// Assembly cache across the AppDomain.
         /// </summary>
         /// <remarks>
         /// We user the assembly short name (AssemblyName.Name) as the key.
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// Singleton instance of PowerShellAssemblyLoadContext
+        /// Singleton instance of PowerShellAssemblyLoadContext.
         /// </summary>
         internal static PowerShellAssemblyLoadContext Instance
         {
@@ -172,7 +172,7 @@ namespace System.Management.Automation
         #region Internal_Methods
 
         /// <summary>
-        /// Get the current loaded assemblies
+        /// Get the current loaded assemblies.
         /// </summary>
         internal IEnumerable<Assembly> GetAssembly(string namespaceQualifiedTypeName)
         {
@@ -195,7 +195,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set the profile optimization root on the appropriate load context
+        /// Set the profile optimization root on the appropriate load context.
         /// </summary>
         internal void SetProfileOptimizationRootImpl(string directoryPath)
         {
@@ -203,7 +203,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Start the profile optimization on the appropriate load context
+        /// Start the profile optimization on the appropriate load context.
         /// </summary>
         internal void StartProfileOptimizationImpl(string profile)
         {
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         #region Private_Methods
 
         /// <summary>
-        /// The handler for the Resolving event
+        /// The handler for the Resolving event.
         /// </summary>
         private Assembly Resolve(AssemblyLoadContext loadContext, AssemblyName assemblyName)
         {
@@ -269,7 +269,7 @@ namespace System.Management.Automation
                 if (!isAssemblyFileFound || !isAssemblyFileMatching)
                 {
 #if !UNIX
-                    //Try loading from GAC
+                    // Try loading from GAC
                     if (!TryFindInGAC(assemblyName, out asmFilePath))
                     {
                          return null;
@@ -316,13 +316,13 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(_winDir))
             {
-                //cache value of '_winDir' folder in member variable.
+                // cache value of '_winDir' folder in member variable.
                 _winDir = Environment.GetEnvironmentVariable("winDir");
             }
 
             if (string.IsNullOrEmpty(_gacPathMSIL))
             {
-                //cache value of '_gacPathMSIL' folder in member variable.
+                // cache value of '_gacPathMSIL' folder in member variable.
                 _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
             }
 
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                 {
                     if (string.IsNullOrEmpty(_gacPath64))
                     {
-                        //cache value of '_gacPath64' folder in member variable.
+                        // cache value of '_gacPath64' folder in member variable.
                         _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
                     }
 
@@ -346,7 +346,7 @@ namespace System.Management.Automation
                 {
                     if (string.IsNullOrEmpty(_gacPath32))
                     {
-                        //cache value of '_gacPath32' folder in member variable.
+                        // cache value of '_gacPath32' folder in member variable.
                         _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
                     }
 
@@ -370,12 +370,12 @@ namespace System.Management.Automation
 
             if (Directory.Exists(tempAssemblyDirPath))
             {
-                //Enumerate all directories, sort by name and select the last. This selects the latest version.
+                // Enumerate all directories, sort by name and select the last. This selects the latest version.
                 var chosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
 
                 if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {
-                    //Select first or default as the directory will contain only one assembly. If nothing then default is null;
+                    // Select first or default as the directory will contain only one assembly. If nothing then default is null;
                     var foundAssemblyPath = Directory.GetFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
 
                     if (!string.IsNullOrEmpty(foundAssemblyPath))
@@ -395,7 +395,7 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        /// Try to get the specified assembly from cache
+        /// Try to get the specified assembly from cache.
         /// </summary>
         private bool TryGetAssemblyFromCache(AssemblyName assemblyName, out Assembly asmLoaded)
         {
@@ -416,7 +416,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check if the loaded assembly matches the request
+        /// Check if the loaded assembly matches the request.
         /// </summary>
         /// <param name="requestedAssembly">AssemblyName of the requested assembly.</param>
         /// <param name="loadedAssembly">AssemblyName of the loaded assembly.</param>
@@ -482,7 +482,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Throw FileLoadException
+        /// Throw FileLoadException.
         /// </summary>
         private void ThrowFileLoadException(string errorTemplate, params object[] args)
         {
@@ -491,7 +491,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Throw FileNotFoundException
+        /// Throw FileNotFoundException.
         /// </summary>
         private void ThrowFileNotFoundException(string errorTemplate, params object[] args)
         {

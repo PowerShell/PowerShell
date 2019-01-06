@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell
     ///    internet, Monad provides a warning prompt to alert the user.  To
     ///    suppress this warning message, right-click on the file in File Explorer,
     ///    select "Properties," and then "Unblock."  Requires Shell.
-    /// Bypass - No files must be signed, and internet origin is not verified
+    /// Bypass - No files must be signed, and internet origin is not verified.
     /// </summary>
     public sealed class PSAuthorizationManager : AuthorizationManager
     {
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell
         // execution policy that dictates what can run in msh
         private ExecutionPolicy _executionPolicy;
 
-        //shellId supplied by runspace configuration
+        // shellId supplied by runspace configuration
         private string _shellId;
 
         /// <summary>
@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Trust a publisher by adding it to the "Trusted Publishers" store
+        /// Trust a publisher by adding it to the "Trusted Publishers" store.
         /// </summary>
         /// <param name="signature"></param>
         private void TrustPublisher(Signature signature)

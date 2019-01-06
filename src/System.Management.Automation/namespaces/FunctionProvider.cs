@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class FunctionProvider : SessionStateProviderBase
     {
         /// <summary>
-        /// Gets the name of the provider
+        /// Gets the name of the provider.
         /// </summary>
         public const string ProviderName = "Function";
 
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the function drive
+        /// Initializes the function drive.
         /// </summary>
         /// <returns>
         /// An array of a single PSDriveInfo object representing the functions drive.
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         #region Dynamic Parameters
 
         /// <summary>
-        /// Gets the dynamic parameters for the NewItem cmdlet
+        /// Gets the dynamic parameters for the NewItem cmdlet.
         /// </summary>
         /// <param name="path">
         /// Ignored.
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the dynamic parameters for the NewItem cmdlet
+        /// Gets the dynamic parameters for the NewItem cmdlet.
         /// </summary>
         /// <param name="path">
         /// Ignored.
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         #region protected members
 
         /// <summary>
-        /// Gets a function from session state
+        /// Gets a function from session state.
         /// </summary>
         /// <param name="name">
         /// The name of the function to retrieve.
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sets the function of the specified name to the specified value
+        /// Sets the function of the specified name to the specified value.
         /// </summary>
         /// <param name="name">
         /// The name of the function to set.
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Since items are often more than their value, this method should
-        /// be overridden to provide the value for an item
+        /// be overridden to provide the value for an item.
         /// </summary>
         /// <param name="item">
         /// The item to extract the value from.
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a flattened view of the functions in session state
+        /// Gets a flattened view of the functions in session state.
         /// </summary>
         /// <returns>
         /// An IDictionary representing the flattened view of the functions in
@@ -351,12 +351,12 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// The dynamic parameter object for the FunctionProvider SetItem and NewItem commands
+    /// The dynamic parameter object for the FunctionProvider SetItem and NewItem commands.
     /// </summary>
     public class FunctionProviderDynamicParameters
     {
         /// <summary>
-        /// Gets or sets the option parameter for the function
+        /// Gets or sets the option parameter for the function.
         /// </summary>
         [Parameter]
         public ScopedItemOptions Options

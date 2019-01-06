@@ -11,7 +11,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Handles all data structure handler communication with the client
-    /// runspace pool
+    /// runspace pool.
     /// </summary>
     internal class ServerRunspacePoolDataStructureHandler
     {
@@ -19,7 +19,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructor which takes a server runspace pool driver and
-        /// creates an associated ServerRunspacePoolDataStructureHandler
+        /// creates an associated ServerRunspacePoolDataStructureHandler.
         /// </summary>
         /// <param name="driver"></param>
         /// <param name="transportManager"></param>
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         #region Data Structure Handler Methods
 
         /// <summary>
-        /// Send a message with application private data to the client
+        /// Send a message with application private data to the client.
         /// </summary>
         /// <param name="applicationPrivateData">ApplicationPrivateData to send.</param>
         /// <param name="serverCapability">Server capability negotiated during initial exchange of remoting messages / session capabilities of client and server.</param>
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send a message with the RunspacePoolStateInfo to the client
+        /// Send a message with the RunspacePoolStateInfo to the client.
         /// </summary>
         /// <param name="stateInfo">State info to send.</param>
         internal void SendStateInfoToClient(RunspacePoolStateInfo stateInfo)
@@ -72,7 +72,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send a message with the PSEventArgs to the client
+        /// Send a message with the PSEventArgs to the client.
         /// </summary>
         /// <param name="e">Event to send.</param>
         internal void SendPSEventArgsToClient(PSEventArgs e)
@@ -84,7 +84,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// called when session is connected from a new client
-        /// call into the sessionconnect handlers for each associated powershell dshandler
+        /// call into the sessionconnect handlers for each associated powershell dshandler.
         /// </summary>
         internal void ProcessConnect()
         {
@@ -102,7 +102,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Process the data received from the runspace pool on
-        /// the server
+        /// the server.
         /// </summary>
         /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
@@ -144,7 +144,7 @@ namespace System.Management.Automation
 
                         RemoteHostResponse remoteHostResponse = RemoteHostResponse.Decode(receivedData.Data);
 
-                        //part of host message robustness algo. Now the host response is back, report to transport that
+                        // part of host message robustness algo. Now the host response is back, report to transport that
                         // execution status is back to running
                         _transportManager.ReportExecutionStatusAsRunning();
 
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a powershell data structure handler from this runspace pool
+        /// Creates a powershell data structure handler from this runspace pool.
         /// </summary>
         /// <param name="instanceId">Powershell instance id.</param>
         /// <param name="runspacePoolId">Runspace pool id.</param>
@@ -255,7 +255,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// dispatch the message to the associated powershell data structure handler
+        /// dispatch the message to the associated powershell data structure handler.
         /// </summary>
         /// <param name="rcvdData">Message to dispatch.</param>
         internal void DispatchMessageToPowerShell(RemoteDataObject<PSObject> rcvdData)
@@ -273,7 +273,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Send the specified response to the client. The client call will
-        /// be blocked on the same
+        /// be blocked on the same.
         /// </summary>
         /// <param name="callId">Call id on the client.</param>
         /// <param name="response">Response to send.</param>
@@ -301,36 +301,36 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This event is raised whenever there is a request from the
-        /// client to create a powershell on the server and invoke it
+        /// client to create a powershell on the server and invoke it.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>> CreateAndInvokePowerShell;
 
         /// <summary>
         /// This event is raised whenever there is a request from the
-        /// client to run command discovery pipeline
+        /// client to run command discovery pipeline.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>> GetCommandMetadata;
 
         /// <summary>
-        /// This event is raised when a host call response is received
+        /// This event is raised when a host call response is received.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteHostResponse>> HostResponseReceived;
 
         /// <summary>
         /// This event is raised when there is a request to modify the
-        /// maximum runspaces in the runspace pool
+        /// maximum runspaces in the runspace pool.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<PSObject>> SetMaxRunspacesReceived;
 
         /// <summary>
         /// This event is raised when there is a request to modify the
-        /// minimum runspaces in the runspace pool
+        /// minimum runspaces in the runspace pool.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<PSObject>> SetMinRunspacesReceived;
 
         /// <summary>
         /// This event is raised when there is a request to get the
-        /// available runspaces in the runspace pool
+        /// available runspaces in the runspace pool.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<PSObject>> GetAvailableRunspacesReceived;
 
@@ -346,7 +346,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Send the data specified as a RemoteDataObject asynchronously
-        /// to the runspace pool on the remote session
+        /// to the runspace pool on the remote session.
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
@@ -360,7 +360,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the associated powershell data structure handler for the specified
-        /// powershell id
+        /// powershell id.
         /// </summary>
         /// <param name="clientPowerShellId">powershell id for the
         /// powershell data structure handler</param>
@@ -384,7 +384,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Remove the association of the powershell from the runspace pool
+        /// Remove the association of the powershell from the runspace pool.
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="e">Unused.</param>
@@ -425,7 +425,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Handles all PowerShell data structure handler communication
-    /// with the client side PowerShell
+    /// with the client side PowerShell.
     /// </summary>
     internal class ServerPowerShellDataStructureHandler
     {
@@ -445,7 +445,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Default constructor for creating ServerPowerShellDataStructureHandler
-        /// instance
+        /// instance.
         /// </summary>
         /// <param name="instanceId">Powershell instance id.</param>
         /// <param name="runspacePoolId">Runspace pool id.</param>
@@ -491,7 +491,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the state information to the client
+        /// Send the state information to the client.
         /// </summary>
         /// <param name="stateInfo">state information to be
         /// sent to the client</param>
@@ -519,7 +519,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the output data to the client
+        /// Send the output data to the client.
         /// </summary>
         /// <param name="data">Data to send.</param>
         internal void SendOutputDataToClient(PSObject data)
@@ -529,7 +529,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the error record to client
+        /// Send the error record to client.
         /// </summary>
         /// <param name="errorRecord">Error record to send.</param>
         internal void SendErrorRecordToClient(ErrorRecord errorRecord)
@@ -541,7 +541,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the specified warning record to client
+        /// Send the specified warning record to client.
         /// </summary>
         /// <param name="record">Warning record.</param>
         internal void SendWarningRecordToClient(WarningRecord record)
@@ -553,7 +553,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the specified debug record to client
+        /// Send the specified debug record to client.
         /// </summary>
         /// <param name="record">Debug record.</param>
         internal void SendDebugRecordToClient(DebugRecord record)
@@ -565,7 +565,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the specified verbose record to client
+        /// Send the specified verbose record to client.
         /// </summary>
         /// <param name="record">Warning record.</param>
         internal void SendVerboseRecordToClient(VerboseRecord record)
@@ -577,7 +577,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the specified progress record to client
+        /// Send the specified progress record to client.
         /// </summary>
         /// <param name="record">Progress record.</param>
         internal void SendProgressRecordToClient(ProgressRecord record)
@@ -587,7 +587,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Send the specified information record to client
+        /// Send the specified information record to client.
         /// </summary>
         /// <param name="record">Information record.</param>
         internal void SendInformationRecordToClient(InformationRecord record)
@@ -600,7 +600,7 @@ namespace System.Management.Automation
         /// called when session is connected from a new client
         /// calls into observers of this event.
         /// observers include corresponding driver that shutdown
-        /// input stream is present
+        /// input stream is present.
         /// </summary>
         internal void ProcessConnect()
         {
@@ -609,7 +609,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Process the data received from the powershell on
-        /// the client
+        /// the client.
         /// </summary>
         /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
@@ -658,7 +658,7 @@ namespace System.Management.Automation
 
                         RemoteHostResponse remoteHostResponse = RemoteHostResponse.Decode(receivedData.Data);
 
-                        //part of host message robustness algo. Now the host response is back, report to transport that
+                        // part of host message robustness algo. Now the host response is back, report to transport that
                         // execution status is back to running
                         _transportManager.ReportExecutionStatusAsRunning();
 
@@ -673,7 +673,7 @@ namespace System.Management.Automation
         /// Raise a remove association event. This is raised
         /// when the powershell has gone into a terminal state
         /// and the runspace pool need not maintain any further
-        /// associations
+        /// associations.
         /// </summary>
         internal void RaiseRemoveAssociationEvent()
         {
@@ -720,35 +720,35 @@ namespace System.Management.Automation
         /// <summary>
         /// this event is raised when the state of associated
         /// powershell is terminal and the runspace pool has
-        /// to detach the association
+        /// to detach the association.
         /// </summary>
         internal event EventHandler RemoveAssociation;
 
         /// <summary>
         /// this event is raised when the a message to stop the
-        /// powershell is received from the client
+        /// powershell is received from the client.
         /// </summary>
         internal event EventHandler StopPowerShellReceived;
 
         /// <summary>
         /// This event is raised when an input object is received
-        /// from the client
+        /// from the client.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<object>> InputReceived;
 
         /// <summary>
         /// This event is raised when end of input is received from
-        /// the client
+        /// the client.
         /// </summary>
         internal event EventHandler InputEndReceived;
 
         /// <summary>
-        /// raised when server session is connected from a new client
+        /// raised when server session is connected from a new client.
         /// </summary>
         internal event EventHandler OnSessionConnected;
 
         /// <summary>
-        /// This event is raised when a host response is received
+        /// This event is raised when a host response is received.
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteHostResponse>> HostResponseReceived;
 
@@ -757,7 +757,7 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// client powershell id
+        /// client powershell id.
         /// </summary>
         internal Guid PowerShellId
         {
@@ -782,7 +782,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Send the data specified as a RemoteDataObject asynchronously
-        /// to the runspace pool on the remote session
+        /// to the runspace pool on the remote session.
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should

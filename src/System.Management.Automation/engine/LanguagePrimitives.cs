@@ -89,7 +89,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
         /// <param name="sourceValue">Value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
         /// <param name="destinationType">One of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to.</param>
@@ -100,7 +100,7 @@ namespace System.Management.Automation
         public abstract object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase);
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
         /// <param name="sourceValue">Value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter.</param>
         /// <param name="destinationType">One of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to.</param>
@@ -114,7 +114,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter
+        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
         /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
         /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
@@ -122,7 +122,7 @@ namespace System.Management.Automation
         public abstract bool CanConvertTo(object sourceValue, Type destinationType);
 
         /// <summary>
-        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter
+        /// Returns true if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter.
         /// </summary>
         /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
         /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
@@ -133,7 +133,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
         /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
         /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         public abstract object ConvertTo(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase);
 
         /// <summary>
-        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase
+        /// Converts the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase.
         /// </summary>
         /// <param name="sourceValue">Value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter.</param>
         /// <param name="destinationType">Type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter.</param>
@@ -160,7 +160,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Enables a type that only has conversion from string to be converted from all other
-    /// types through string
+    /// types through string.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="ConvertThroughString"/>
@@ -169,7 +169,7 @@ namespace System.Management.Automation
     public class ConvertThroughString : PSTypeConverter
     {
         /// <summary>
-        /// This will return false only if sourceValue is string
+        /// This will return false only if sourceValue is string.
         /// </summary>
         /// <param name="sourceValue">Value to convert from.</param>
         /// <param name="destinationType">Ignored.</param>
@@ -291,7 +291,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines language support methods
+    /// Defines language support methods.
     /// </summary>
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Refactoring LanguagePrimitives takes lot of dev/test effort. Since V1 code is already shipped, we tend to exclude this message.")]
     public static class LanguagePrimitives
@@ -448,7 +448,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns True if the language considers obj to be IEnumerable
+        /// Returns True if the language considers obj to be IEnumerable.
         /// </summary>
         /// <param name="obj">
         /// IEnumerable or IEnumerable-like object
@@ -460,7 +460,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable
+        /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable.
         /// </summary>
         /// <param name="obj">
         /// IEnumerable or IEnumerable-like object
@@ -539,7 +539,7 @@ namespace System.Management.Automation
             CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get());
 
         /// <summary>
-        /// Retrieves the IEnumerator of obj or null if the language does not consider obj as capable of returning an IEnumerator
+        /// Retrieves the IEnumerator of obj or null if the language does not consider obj as capable of returning an IEnumerator.
         /// </summary>
         /// <param name="obj">
         /// IEnumerable or IEnumerable-like object
@@ -977,7 +977,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the language considers obj to be true
+        /// Returns true if the language considers obj to be true.
         /// </summary>
         /// <param name="obj">Obj to verify if it is true.</param>
         /// <returns>True if obj is true.</returns>
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Auxiliary for the cases where we want a new PSObject or null
+        /// Auxiliary for the cases where we want a new PSObject or null.
         /// </summary>
         internal static PSObject AsPSObjectOrNull(object obj)
         {
@@ -1174,7 +1174,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Necessary not to return an integer type code for enums
+        /// Necessary not to return an integer type code for enums.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -1261,7 +1261,7 @@ namespace System.Management.Automation
         };
 
         /// <summary>
-        /// Verifies if type is a signed integer
+        /// Verifies if type is a signed integer.
         /// </summary>
         /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is a signed integer, false otherwise.</returns>
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is an unsigned integer
+        /// Verifies if type is an unsigned integer.
         /// </summary>
         /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is an unsigned integer, false otherwise.</returns>
@@ -1281,7 +1281,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is integer
+        /// Verifies if type is integer.
         /// </summary>
         /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is integer, false otherwise.</returns>
@@ -1291,7 +1291,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is a floating point number
+        /// Verifies if type is a floating point number.
         /// </summary>
         /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is floating point, false otherwise.</returns>
@@ -1301,7 +1301,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is an integer or floating point number
+        /// Verifies if type is an integer or floating point number.
         /// </summary>
         /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is integer or floating point, false otherwise.</returns>
@@ -1311,7 +1311,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is a CIM intrinsic type
+        /// Verifies if type is a CIM intrinsic type.
         /// </summary>
         /// <param name="typeCode">Type code to check.</param>
         /// <returns>True if type is CIM intrinsic type, false otherwise.</returns>
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is one of the boolean types
+        /// Verifies if type is one of the boolean types.
         /// </summary>
         /// <param name="type">Type to check.</param>
         /// <returns>True if type is one of boolean types, false otherwise.</returns>
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is one of switch parameter types
+        /// Verifies if type is one of switch parameter types.
         /// </summary>
         /// <param name="type">Type to check.</param>
         /// <returns>True if type is one of switch parameter types, false otherwise.</returns>
@@ -1370,7 +1370,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verifies if type is one of boolean or switch parameter types
+        /// Verifies if type is one of boolean or switch parameter types.
         /// </summary>
         /// <param name="type">Type to check.</param>
         /// <returns>True if type if one of boolean or switch parameter types,
@@ -1623,7 +1623,7 @@ namespace System.Management.Automation
         #region public type conversion
 
         /// <summary>
-        /// Converts valueToConvert to resultType
+        /// Converts valueToConvert to resultType.
         /// </summary>
         /// <remarks>
         /// A null valueToConvert can be converted to :
@@ -1689,7 +1689,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts valueToConvert to resultType possibly considering formatProvider
+        /// Converts valueToConvert to resultType possibly considering formatProvider.
         /// </summary>
         /// <remarks>
         /// A null valueToConvert can be converted to :
@@ -2249,7 +2249,7 @@ namespace System.Management.Automation
         /// <summary>
         /// There might be many cast operators in a Type A that take Type A. Each operator will have a
         /// different return type. Because of that we cannot call GetMethod since it would cause a
-        /// AmbiguousMatchException. This auxiliary method calls GetMember to find the right method
+        /// AmbiguousMatchException. This auxiliary method calls GetMember to find the right method.
         /// </summary>
         /// <param name="methodName">Either op_Explicit or op_Implicit, at the moment.</param>
         /// <param name="targetType">The type to look for an operator.</param>
@@ -4749,7 +4749,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the errorId and errorMessage for an InvalidCastException
+        /// Get the errorId and errorMessage for an InvalidCastException.
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <param name="resultType"></param>
@@ -5191,7 +5191,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Figure conversion when following conditions are satisfied:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
-        /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
+        /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType.
         /// </summary>
         /// <param name="fromType"></param>
         /// <param name="toType"></param>

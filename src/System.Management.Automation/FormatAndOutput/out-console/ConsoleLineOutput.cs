@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #endif
 
     /// <summary>
-    /// Tear off class
+    /// Tear off class.
     /// </summary>
     internal class DisplayCellsPSHost : DisplayCells
     {
@@ -95,8 +95,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (HostException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
 
             return string.IsNullOrEmpty(str) ? 0 : str.Length - offset;
@@ -110,8 +110,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (HostException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
 
             return string.IsNullOrEmpty(str) ? 0 : str.Length;
@@ -125,8 +125,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (HostException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
 
             return 1;
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// Implementation of the LineOutput interface on top of Console and RawConsole
+    /// Implementation of the LineOutput interface on top of Console and RawConsole.
     /// </summary>
     internal sealed class ConsoleLineOutput : LineOutput
     {
@@ -180,8 +180,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (HostException)
                 {
-                    //thrown when external host rawui is not implemented, in which case
-                    //we will fallback to the default value.
+                    // thrown when external host rawui is not implemented, in which case
+                    // we will fallback to the default value.
                 }
 
                 return _forceNewLine ? _fallbackRawConsoleColumnNumber - 1 : _fallbackRawConsoleColumnNumber;
@@ -206,8 +206,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (HostException)
                 {
-                    //thrown when external host rawui is not implemented, in which case
-                    //we will fallback to the default value.
+                    // thrown when external host rawui is not implemented, in which case
+                    // we will fallback to the default value.
                 }
 
                 return _fallbackRawConsoleRowNumber;
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write a line to the output device
+        /// write a line to the output device.
         /// </summary>
         /// <param name="s">Line to write.</param>
         internal override void WriteLine(string s)
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// constructor for the ConsoleLineOutput
+        /// constructor for the ConsoleLineOutput.
         /// </summary>
         /// <param name="hostConsole">PSHostUserInterface to wrap.</param>
         /// <param name="paging">True if we require prompting for page breaks.</param>
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper
+        /// callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper.
         /// </summary>
         /// <param name="s">String to write.</param>
         private void OnWriteLine(string s)
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// callback to be called when ILineOutput.Write() is called by WriteLineHelper
         /// This is called when the WriteLineHelper needs to write a line whose length
-        /// is the same as the width of the screen buffer
+        /// is the same as the width of the screen buffer.
         /// </summary>
         /// <param name="s">String to write.</param>
         private void OnWrite(string s)
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// called when a line was written to console
+        /// called when a line was written to console.
         /// </summary>
         private void LineWrittenEvent()
         {
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// check if we need to put out a prompt
+        /// check if we need to put out a prompt.
         /// </summary>
         /// <value>true if we need to prompt</value>
         private bool NeedToPrompt
@@ -461,12 +461,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region Private Members
         /// <summary>
-        /// object to manage prompting
+        /// object to manage prompting.
         /// </summary>
         private class PromptHandler
         {
             /// <summary>
-            /// prompt handler with the given prompt
+            /// prompt handler with the given prompt.
             /// </summary>
             /// <param name="s">Prompt string to be used.</param>
             /// <param name="cmdlet">The Cmdlet using this prompt handler.</param>
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// options returned by the PromptUser() call
+            /// options returned by the PromptUser() call.
             /// </summary>
             internal enum PromptResponse
             {
@@ -503,7 +503,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// do the actual prompting
+            /// do the actual prompting.
             /// </summary>
             /// <param name="console">PSHostUserInterface instance to prompt to.</param>
             internal PromptResponse PromptUser(PSHostUserInterface console)
@@ -552,12 +552,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             private StringCollection _actualPrompt;
 
             /// <summary>
-            /// prompt string as passed at initialization
+            /// prompt string as passed at initialization.
             /// </summary>
             private string _promptString;
 
             /// <summary>
-            /// The cmdlet that uses this prompt helper
+            /// The cmdlet that uses this prompt helper.
             /// </summary>
             private ConsoleLineOutput _callingCmdlet = null;
         }
@@ -583,32 +583,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// handler to prompt the user for page breaks
-        /// if this handler is not null, we have prompting
+        /// if this handler is not null, we have prompting.
         /// </summary>
         private PromptHandler _prompt = null;
 
         /// <summary>
-        /// conter for the # of lines written when prompting is on
+        /// conter for the # of lines written when prompting is on.
         /// </summary>
         private long _linesWritten = 0;
 
         /// <summary>
-        /// flag to avoid reentrancy on prompting
+        /// flag to avoid reentrancy on prompting.
         /// </summary>
         private bool _disableLineWrittenEvent = false;
 
         /// <summary>
-        /// refecence to the PSHostUserInterface interface we use
+        /// refecence to the PSHostUserInterface interface we use.
         /// </summary>
         private PSHostUserInterface _console = null;
 
         /// <summary>
-        /// Msh host specific string manipulation helper
+        /// Msh host specific string manipulation helper.
         /// </summary>
         private DisplayCells _displayCellsPSHost;
 
         /// <summary>
-        /// reference to error context to throw Msh exceptions
+        /// reference to error context to throw Msh exceptions.
         /// </summary>
         private TerminatingErrorContext _errorContext = null;
 

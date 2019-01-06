@@ -136,7 +136,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates the PSCommand when the runspace is not overridden
+        /// Creates the PSCommand when the runspace is not overridden.
         /// </summary>
         private PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
         {
@@ -273,7 +273,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Override inside a safe lock
+        /// Override inside a safe lock.
         /// </summary>
         /// <param name="remoteRunspace">Runspace to override.</param>
         /// <param name="syncObject">Object to use in synchronization.</param>

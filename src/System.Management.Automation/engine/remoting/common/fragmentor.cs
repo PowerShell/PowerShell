@@ -73,7 +73,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Default Constructor
+        /// Default Constructor.
         /// </summary>
         internal FragmentedRemoteObject()
         {
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Remoting
         #region Data Fields being sent
 
         /// <summary>
-        /// All fragments of the same PSObject have the same ObjectId
+        /// All fragments of the same PSObject have the same ObjectId.
         /// </summary>
         internal long ObjectId { get; set; }
 
@@ -638,7 +638,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Read the currently accumulated data in queued memory streams
+        /// Read the currently accumulated data in queued memory streams.
         /// </summary>
         /// <returns></returns>
         internal byte[] Read()

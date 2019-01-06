@@ -12,7 +12,7 @@ using System.Threading;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to get WMI Objects
+    /// A command to get WMI Objects.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "WmiObject", DefaultParameterSetName = "query",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113337", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// The WMI class to query
+        /// The WMI class to query.
         /// </summary>
         [Alias("ClassName")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
@@ -30,13 +30,13 @@ namespace Microsoft.PowerShell.Commands
         public string Class { get; set; }
 
         /// <summary>
-        /// To specify whether to get the results recursively
+        /// To specify whether to get the results recursively.
         /// </summary>
         [Parameter(ParameterSetName = "list")]
         public SwitchParameter Recurse { get; set; } = false;
 
         /// <summary>
-        /// The WMI properties to retrieve
+        /// The WMI properties to retrieve.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "query")]
         [ValidateNotNullOrEmpty()]
@@ -48,13 +48,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The filter to be used in the search
+        /// The filter to be used in the search.
         /// </summary>
         [Parameter(ParameterSetName = "query")]
         public string Filter { get; set; }
 
         /// <summary>
-        /// If Amended qualifier to use
+        /// If Amended qualifier to use.
         /// </summary>
         [Parameter]
         public SwitchParameter Amended { get; set; }
@@ -67,13 +67,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter DirectRead { get; set; }
 
         /// <summary>
-        /// The list of classes
+        /// The list of classes.
         /// </summary>
         [Parameter(ParameterSetName = "list")]
         public SwitchParameter List { get; set; } = false;
 
         /// <summary>
-        /// The query string to search for objects
+        /// The query string to search for objects.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "WQLQuery")]
         public string Query { get; set; }
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter
+        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter.
         /// </summary>
         internal string GetQueryString()
         {
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the ManagementObjectSearcher object
+        /// Gets the ManagementObjectSearcher object.
         /// </summary>
         internal ManagementObjectSearcher GetObjectList(ManagementScope scope)
         {
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
             return searcher;
         }
         /// <summary>
-        /// Gets the properties of an item at the specified path
+        /// Gets the properties of an item at the specified path.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get the class name from a query string
+        /// Get the class name from a query string.
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>

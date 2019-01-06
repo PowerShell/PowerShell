@@ -12,14 +12,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// class to deserialize property bags into formatting objects
-    /// by using ERS functionality
+    /// by using ERS functionality.
     /// </summary>
     internal sealed class FormatObjectDeserializer
     {
         internal TerminatingErrorContext TerminatingErrorContext { get; private set; }
 
         /// <summary>
-        /// expansion of TAB character to the following string
+        /// expansion of TAB character to the following string.
         /// </summary>
         private const string TabExpansionString = "    ";
 
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// given a raw object out of the pipeline, it deserializes it accordingly to
         /// its type.
         /// If the object is not one of the well known ones (i.e. derived from FormatInfoData)
-        /// it just returns the object unchanged
+        /// it just returns the object unchanged.
         /// </summary>
         /// <param name="so">Object to deserialize.</param>
         /// <returns>Deserialized object or null.</returns>
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         it. We retail it because future schema extensions might require it
 
         /// <summary>
-        /// ERS helper to reconstitute a string[] out of IEnumerable property
+        /// ERS helper to reconstitute a string[] out of IEnumerable property.
         /// </summary>
         /// <param name="rawObject">Object to process.</param>
         /// <param name="propertyName">Property to look up.</param>
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Deserialization of string performing TAB expansion
+        /// Deserialization of string performing TAB expansion.
         /// </summary>
         /// <param name="so">Object whose the property belongs to.</param>
         /// <param name="property">Name of the string property.</param>
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
             base.Deserialize(so, deserializer);
-            //optional
+            // optional
             this.groupingEntry = (GroupingEntry)deserializer.DeserializeMemberObject(so, "groupingEntry");
         }
     }

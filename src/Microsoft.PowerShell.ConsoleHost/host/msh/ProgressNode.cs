@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
 
             /// <summary>
             /// Allocate only one line for displaying the StatusDescription or the CurrentOperation,
-            /// truncate the rest if the StatusDescription or CurrentOperation doesn't fit in one line
+            /// truncate the rest if the StatusDescription or CurrentOperation doesn't fit in one line.
             /// </summary>
             Full = 3,
 

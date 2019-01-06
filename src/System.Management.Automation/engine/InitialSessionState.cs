@@ -167,7 +167,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Is internal so it can be set by the engine code...
         /// This is used to specify whether this command was imported or not
-        /// If noClobber is specified during Import-Module, it is set to false
+        /// If noClobber is specified during Import-Module, it is set to false.
         /// </summary>
         internal bool _isImported = true;
     }
@@ -273,10 +273,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public bool IsRemove { get; }
 
-        //So that we can specify the type information on the fly,
-        //without using Types.ps1xml file
-        //public SessionStateTypeEntry(string name, xmlreader definition);
-        //public string Definition { get; }
+        // So that we can specify the type information on the fly,
+        // without using Types.ps1xml file
+        // public SessionStateTypeEntry(string name, xmlreader definition);
+        // public string Definition { get; }
     }
 
     /// <summary>
@@ -372,10 +372,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public ExtendedTypeDefinition FormatData { get; }
 
-        //So that we can specify the format information on the fly,
-        //without using Format.ps1xml file
-        //public SessionStateFormatEntry(string name, xmlreader definition);
-        //public string Definition { get; }
+        // So that we can specify the format information on the fly,
+        // without using Format.ps1xml file
+        // public SessionStateFormatEntry(string name, xmlreader definition);
+        // public string Definition { get; }
     }
 
     /// <summary>
@@ -1262,7 +1262,7 @@ namespace System.Management.Automation.Runspaces
 
         private Collection<T> _internalCollection;
 
-        //object to use for locking
+        // object to use for locking
         private object _syncObject = new object();
     }
 
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState iss = new InitialSessionState();
 
-            //TODO: the following code is probably needed for the hosted constrained runspace
+            // TODO: the following code is probably needed for the hosted constrained runspace
             // There are too many things that depend on the built-in variables. At the same time,
             // these variables can't be public or they become a security issue.
             // This change still needs to be spec-reviewed before turning it on. It also seems to
@@ -1537,7 +1537,7 @@ namespace System.Management.Automation.Runspaces
                     throw pse;
                 }
 #if DEBUG
-                //NOTE:
+                // NOTE:
                 // This code is for testing a module-based shell. It is only available when the shell is complied
                 // in debug mode and is not intended to be a feature.
                 // July 31 2008 - brucepay
@@ -1790,7 +1790,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Specifies the execution policy to be used for this session state instance
+        /// Specifies the execution policy to be used for this session state instance.
         /// </summary>
         public Microsoft.PowerShell.ExecutionPolicy ExecutionPolicy
         {
@@ -3794,7 +3794,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", psSnapInInfo.Name);
                     warning = null;
-                    return null; //BUGBUG - should add something to the warnings list here instead of quitting...
+                    return null; // BUGBUG - should add something to the warnings list here instead of quitting...
                 }
 
                 s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0} succeeded", psSnapInInfo.Name);
@@ -4389,7 +4389,7 @@ end {
                 RunspaceInit.FormatEnumerationLimitDescription
                 ),
 
-             //variable for PSEmailServer
+             // variable for PSEmailServer
             new SessionStateVariableEntry(
                 SpecialVariables.PSEmailServer,
                 string.Empty,

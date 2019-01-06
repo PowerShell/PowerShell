@@ -141,7 +141,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Gets the full name of the assembly containing the type identified by ParameterTypeFullName or ParameterTypeName
+        /// Gets the full name of the assembly containing the type identified by ParameterTypeFullName or ParameterTypeName.
         /// </summary>
         /// <remarks>
         /// If the assembly is not currently loaded in the hosting application's AppDomain, the hosting application needs
@@ -245,7 +245,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Gets and sets whether a value must be supplied for this field
+        /// Gets and sets whether a value must be supplied for this field.
         /// </summary>
 
         public
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Indicates if this field description was
-        /// modified by the remoting protocol layer
+        /// modified by the remoting protocol layer.
         /// </summary>
         /// <remarks>Used by the console host to
         /// determine if this field description was
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Indicates if this field description
-        /// is coming from a remote host
+        /// is coming from a remote host.
         /// </summary>
         /// <remarks>Used by the console host to
         /// not cast strings to an arbitrary type,

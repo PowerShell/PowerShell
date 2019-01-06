@@ -36,7 +36,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Efficiently multiplies collection by integer
+        /// Efficiently multiplies collection by integer.
         /// </summary>
         /// <param name="array">Collection to multiply.</param>
         /// <param name="times">Number of times the collection is to be multiplied/copied.</param>

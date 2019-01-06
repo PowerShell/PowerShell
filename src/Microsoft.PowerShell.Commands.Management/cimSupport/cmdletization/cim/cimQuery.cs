@@ -16,7 +16,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// CimQuery supports building of queries against CIM object model
+    /// CimQuery supports building of queries against CIM object model.
     /// </summary>
     internal class CimQuery : QueryBuilder, ISessionBoundQueryBuilder<CimSession>
     {
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Public inputs from cmdletization
 
         /// <summary>
-        /// Modifies the query, so that it only returns objects with a given property value
+        /// Modifies the query, so that it only returns objects with a given property value.
         /// </summary>
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="allowedPropertyValues">Property values to accept in the query.</param>
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Modifies the query, so that it does not return objects with a given property value
+        /// Modifies the query, so that it does not return objects with a given property value.
         /// </summary>
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="excludedPropertyValues">Property values to reject in the query.</param>
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Modifies the query, so that it returns only objects that have a property value greater than or equal to a <paramref name="minPropertyValue"/> threshold
+        /// Modifies the query, so that it returns only objects that have a property value greater than or equal to a <paramref name="minPropertyValue"/> threshold.
         /// </summary>
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="minPropertyValue">Minimum property value.</param>
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Modifies the query, so that it returns only objects that have a property value less than or equal to a <paramref name="maxPropertyValue"/> threshold
+        /// Modifies the query, so that it returns only objects that have a property value less than or equal to a <paramref name="maxPropertyValue"/> threshold.
         /// </summary>
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="maxPropertyValue">Maximum property value.</param>
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Sets a query option
+        /// Sets a query option.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="optionValue"></param>
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Returns a string that represents the current CIM query
+        /// Returns a string that represents the current CIM query.
         /// </summary>
         /// <returns>A string that represents the current CIM query.</returns>
         public override string ToString()

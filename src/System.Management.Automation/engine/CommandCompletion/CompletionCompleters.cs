@@ -564,7 +564,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the parameter completion results when the pseudo binding was successful
+        /// Get the parameter completion results when the pseudo binding was successful.
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="bindingInfo"></param>
@@ -699,7 +699,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the parameter completion results by using the given valid parameter sets and available parameters
+        /// Get the parameter completion results by using the given valid parameter sets and available parameters.
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="validParameterSetFlags"></param>
@@ -829,7 +829,7 @@ namespace System.Management.Automation
                     if (expressionAst is ErrorExpressionAst && expressionAst.Extent.Text.EndsWith(",", StringComparison.Ordinal))
                     {
                         context.WordToComplete = string.Empty;
-                        //BUGBUG context.CursorPosition = expressionAst.Extent.StartScriptPosition;
+                        // BUGBUG context.CursorPosition = expressionAst.Extent.StartScriptPosition;
                     }
                     else if (commandAst.CommandElements.Count == 1 || context.WordToComplete == string.Empty)
                     {
@@ -875,7 +875,7 @@ namespace System.Management.Automation
                                 context.ReplacementIndex = ((InternalScriptPosition)secondToLastAst.Extent.StartScriptPosition).Offset;
                                 context.ReplacementLength += ((InternalScriptPosition)secondToLastAst.Extent.EndScriptPosition).Offset - context.ReplacementIndex;
                                 context.WordToComplete = fullPath;
-                                //context.CursorPosition = secondToLastAst.Extent.StartScriptPosition;
+                                // context.CursorPosition = secondToLastAst.Extent.StartScriptPosition;
                             }
                             else if (secondToLastArrayAst != null)
                             {
@@ -962,7 +962,7 @@ namespace System.Management.Automation
                     {
                         // dir -Path: a.txt,<tab>
                         context.WordToComplete = string.Empty;
-                        //context.CursorPosition = expressionAst.Extent.StartScriptPosition;
+                        // context.CursorPosition = expressionAst.Extent.StartScriptPosition;
                     }
                     else if (context.WordToComplete == string.Empty)
                     {
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the argument completion results when the pseudo binding was not successful
+        /// Get the argument completion results when the pseudo binding was not successful.
         /// </summary>
         private static List<CompletionResult> GetArgumentCompletionResultsWithFailedPseudoBinding(
             CompletionContext context,
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the argument completion results when the pseudo binding was successful
+        /// Get the argument completion results when the pseudo binding was successful.
         /// </summary>
         private static List<CompletionResult> GetArgumentCompletionResultsWithSuccessfulPseudoBinding(
             CompletionContext context,
@@ -1535,7 +1535,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the positional argument completion results based on the position it's in the command line
+        /// Get the positional argument completion results based on the position it's in the command line.
         /// </summary>
         private static void CompletePositionalArgument(
             string commandName,
@@ -1632,7 +1632,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process a parameter to get the argument completion results
+        /// Process a parameter to get the argument completion results.
         /// </summary>
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
@@ -3620,7 +3620,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Provides completion results for NewItemCommand
+        /// Provides completion results for NewItemCommand.
         /// </summary>
         /// <param name="context">Completion context.</param>
         /// <param name="paramName">Name of the parameter whose value needs completion.</param>
@@ -3643,7 +3643,7 @@ namespace System.Management.Automation
             var isFileSystem = provider != null &&
                                provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase);
 
-            //AutoComplete only if filesystem provider.
+            // AutoComplete only if filesystem provider.
             if (isFileSystem)
             {
                 if (paramName.Equals("ItemType", StringComparison.OrdinalIgnoreCase))
@@ -3871,7 +3871,7 @@ namespace System.Management.Automation
         #endregion Native Command Argument Completion
 
         /// <summary>
-        /// Find the positional argument at the specific position from the parsed argument list
+        /// Find the positional argument at the specific position from the parsed argument list.
         /// </summary>
         /// <param name="parsedArguments"></param>
         /// <param name="position"></param>
@@ -5165,7 +5165,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Complete members against extension methods 'Where' and 'ForEach' based on the given pattern
+        /// Complete members against extension methods 'Where' and 'ForEach' based on the given pattern.
         /// </summary>
         private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results)
         {
@@ -5177,7 +5177,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verify if an expression Ast is representing the $ConfigurationData variable
+        /// Verify if an expression Ast is representing the $ConfigurationData variable.
         /// </summary>
         private static bool IsConfigurationDataVariable(ExpressionAst targetExpr)
         {
@@ -5196,7 +5196,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Verify if an expression Ast is within a configuration definition
+        /// Verify if an expression Ast is within a configuration definition.
         /// </summary>
         private static bool IsInDscContext(ExpressionAst expression)
         {
@@ -5467,7 +5467,7 @@ namespace System.Management.Automation
             private string _namespace;
 
             /// <summary>
-            /// Construct the CompletionResult based on the information of this instance
+            /// Construct the CompletionResult based on the information of this instance.
             /// </summary>
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
@@ -5475,7 +5475,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Construct the CompletionResult based on the information of this instance
+            /// Construct the CompletionResult based on the information of this instance.
             /// </summary>
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
@@ -5520,7 +5520,7 @@ namespace System.Management.Automation
             private int _genericArgumentCount = 0;
 
             /// <summary>
-            /// Construct the CompletionResult based on the information of this instance
+            /// Construct the CompletionResult based on the information of this instance.
             /// </summary>
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
@@ -5528,7 +5528,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Construct the CompletionResult based on the information of this instance
+            /// Construct the CompletionResult based on the information of this instance.
             /// </summary>
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
@@ -5793,7 +5793,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle namespace when initializing the type cache
+        /// Handle namespace when initializing the type cache.
         /// </summary>
         /// <param name="entryCache">The TypeCompletionMapping dictionary.</param>
         /// <param name="namespace">The namespace.</param>
@@ -5830,7 +5830,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handle a type when initializing the type cache
+        /// Handle a type when initializing the type cache.
         /// </summary>
         /// <param name="entryCache">The TypeCompletionMapping dictionary.</param>
         /// <param name="fullTypeName">The full type name.</param>
@@ -5919,7 +5919,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Complete a typename
+        /// Complete a typename.
         /// </summary>
         /// <param name="typeName"></param>
         /// <returns></returns>
@@ -5969,7 +5969,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
+            // this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
             var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
             var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
             foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
@@ -6386,7 +6386,7 @@ namespace System.Management.Automation
         private static List<CompletionResult> GetSpecialHashTableKeyMembers(params string[] keys)
         {
             // Resources were removed because they missed the deadline for loc.
-            //return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
+            // return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
             //    ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
             //                                           "TabCompletionStrings", key + "HashKeyDescription"))).ToList();
             return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property, key)).ToList();
@@ -6631,7 +6631,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check if a value is treated as Enumerable in powershell
+        /// Check if a value is treated as Enumerable in powershell.
         /// </summary>
         private static bool IsValueEnumerable(object value)
         {
@@ -6652,7 +6652,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check if a strong type is treated as Enumerable in powershell
+        /// Check if a strong type is treated as Enumerable in powershell.
         /// </summary>
         private static bool IsStaticTypeEnumerable(Type type)
         {
@@ -6734,7 +6734,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return whether we need to add ampersand when it's necessary
+        /// Return whether we need to add ampersand when it's necessary.
         /// </summary>
         /// <param name="context"></param>
         /// <param name="defaultChoice"></param>

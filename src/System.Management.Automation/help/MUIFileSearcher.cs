@@ -269,8 +269,8 @@ namespace System.Management.Automation
                     result.Add(Path.GetFullPath(directory));
                 }
 
-                //user specifically wanted to search in a particular directory
-                //so return..
+                // user specifically wanted to search in a particular directory
+                // so return..
                 return result;
             }
 
@@ -326,7 +326,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Locate a file in default search paths
+        /// Locate a file in default search paths.
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -358,7 +358,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// This enum defines different search mode for the MUIFileSearcher
+    /// This enum defines different search mode for the MUIFileSearcher.
     /// </summary>
     internal enum SearchMode
     {

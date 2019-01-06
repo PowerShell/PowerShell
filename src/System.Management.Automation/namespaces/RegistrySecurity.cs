@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return new RegistrySecurity(); //sections);
+                return new RegistrySecurity(); // sections);
             }
         }
 
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return new RegistrySecurity(); //sections);
+                return new RegistrySecurity(); // sections);
             }
         }
 

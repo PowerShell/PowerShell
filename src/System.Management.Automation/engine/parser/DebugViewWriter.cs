@@ -128,7 +128,7 @@ namespace System.Management.Automation.Language {
         }
 
         /// <summary>
-        /// Write out the given AST
+        /// Write out the given AST.
         /// </summary>
         internal static void WriteTo(Expression node, TextWriter writer) {
             Debug.Assert(node != null);

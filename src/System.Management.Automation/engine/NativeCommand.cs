@@ -6,7 +6,7 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Derives InternalCommand for Native Commands
+    /// Derives InternalCommand for Native Commands.
     /// </summary>
     internal sealed class NativeCommand : InternalCommand
     {
