@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell
         // execution policy that dictates what can run in msh
         private ExecutionPolicy _executionPolicy;
 
-        //shellId supplied by runspace configuration
+        // shellId supplied by runspace configuration
         private string _shellId;
 
         /// <summary>

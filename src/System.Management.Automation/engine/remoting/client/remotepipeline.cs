@@ -77,7 +77,7 @@ namespace System.Management.Automation
             _computerName = ((RemoteRunspace)_runspace).ConnectionInfo.ComputerName;
             _runspaceId = _runspace.InstanceId;
 
-            //Initialize streams
+            // Initialize streams
             _inputCollection = new PSDataCollection<object>();
             _inputCollection.ReleaseOnEnumeration = true;
 
@@ -93,13 +93,13 @@ namespace System.Management.Automation
 
             SetCommandCollection(_commands);
 
-            //Create event which will be signalled when pipeline execution
-            //is completed/failed/stoped.
-            //Note:Runspace.Close waits for all the running pipeline
-            //to finish.  This Event must be created before pipeline is
-            //added to list of running pipelines. This avoids the race condition
-            //where Close is called after pipeline is added to list of
-            //running pipeline but before event is created.
+            // Create event which will be signalled when pipeline execution
+            // is completed/failed/stoped.
+            // Note:Runspace.Close waits for all the running pipeline
+            // to finish.  This Event must be created before pipeline is
+            // added to list of running pipelines. This avoids the race condition
+            // where Close is called after pipeline is added to list of
+            // running pipeline but before event is created.
             PipelineFinishedEvent = new ManualResetEvent(false);
         }
 
@@ -281,7 +281,7 @@ namespace System.Management.Automation
             {
                 lock (_syncRoot)
                 {
-                    //Note:We do not return internal state.
+                    // Note:We do not return internal state.
                     return _pipelineStateInfo.Clone();
                 }
             }
@@ -595,15 +595,15 @@ namespace System.Management.Automation
                         returnResult = false;
                         break;
 
-                    //If pipeline execution has failed or completed or
-                    //stoped, return silently.
+                    // If pipeline execution has failed or completed or
+                    // stoped, return silently.
                     case PipelineState.Stopped:
                     case PipelineState.Completed:
                     case PipelineState.Failed:
                         return false;
 
-                    //If pipeline is in Stopping state, ignore the second
-                    //stop.
+                    // If pipeline is in Stopping state, ignore the second
+                    // stop.
                     case PipelineState.Stopping:
                         isAlreadyStopping = true;
                         return false;
@@ -662,7 +662,7 @@ namespace System.Management.Automation
                     // wait for the pipeline to stop..this will block
                     // if the pipeline is already stopping.
                     Stop();
-                    //_pipelineFinishedEvent.Close();
+                    // _pipelineFinishedEvent.Close();
 
                     if (_powershell != null)
                     {
@@ -770,12 +770,12 @@ namespace System.Management.Automation
                 _pipelineStateInfo = new PipelineStateInfo(copyState, reason);
                 copyStateInfo = _pipelineStateInfo;
 
-                //Add _pipelineStateInfo to _executionEventQueue.
-                //RaisePipelineStateEvents will raise event for each item
-                //in this queue.
-                //Note:We are doing clone here instead of passing the member
-                //_pipelineStateInfo because we donot want outside
-                //to change pipeline state.
+                // Add _pipelineStateInfo to _executionEventQueue.
+                // RaisePipelineStateEvents will raise event for each item
+                // in this queue.
+                // Note:We are doing clone here instead of passing the member
+                // _pipelineStateInfo because we donot want outside
+                // to change pipeline state.
                 RunspaceAvailability previousAvailability = _runspace.RunspaceAvailability;
 
                 Guid? cmdInstanceId = (_powershell != null) ? _powershell.InstanceId : (Guid?)null;
@@ -822,9 +822,9 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    //Clear the events if there are no EventHandlers. This
-                    //ensures that events do not get called for state
-                    //changes prior to their registration.
+                    // Clear the events if there are no EventHandlers. This
+                    // ensures that events do not get called for state
+                    // changes prior to their registration.
                     _executionEventQueue.Clear();
                 }
             }
@@ -840,8 +840,8 @@ namespace System.Management.Automation
                         _runspace.RaiseAvailabilityChangedEvent(queueItem.NewRunspaceAvailability);
                     }
 
-                    //Exception raised in the eventhandler are not error in pipeline.
-                    //silently ignore them.
+                    // Exception raised in the eventhandler are not error in pipeline.
+                    // silently ignore them.
                     if (stateChanged != null)
                     {
                         try
@@ -958,7 +958,7 @@ namespace System.Management.Automation
         /// </summary>
         private void Cleanup()
         {
-            //Close the output stream if it is not closed.
+            // Close the output stream if it is not closed.
             if (_outputStream.IsOpen)
             {
                 try
@@ -971,7 +971,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //Close the error stream if it is not closed.
+            // Close the error stream if it is not closed.
             if (_errorStream.IsOpen)
             {
                 try
@@ -984,7 +984,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //Close the input stream if it is not closed.
+            // Close the input stream if it is not closed.
             if (_inputStream.IsOpen)
             {
                 try
@@ -999,9 +999,9 @@ namespace System.Management.Automation
 
             try
             {
-                //Runspace object maintains a list of pipelines in execution.
-                //Remove this pipeline from the list. This method also calls the
-                //pipeline finished event.
+                // Runspace object maintains a list of pipelines in execution.
+                // Remove this pipeline from the list. This method also calls the
+                // pipeline finished event.
                 ((RemoteRunspace)_runspace).RemoveFromRunningPipelineList(this);
 
                 PipelineFinishedEvent.Set();

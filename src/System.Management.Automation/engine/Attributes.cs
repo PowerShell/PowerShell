@@ -429,7 +429,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public CmdletAttribute(string verbName, string nounName)
         {
-            //NounName,VerbName have to be Non-Null strings
+            // NounName,VerbName have to be Non-Null strings
             if (string.IsNullOrEmpty(nounName))
             {
                 throw PSTraceSource.NewArgumentException("nounName");

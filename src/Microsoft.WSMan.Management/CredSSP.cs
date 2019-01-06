@@ -340,7 +340,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            //If not running elevated, then throw an "elevation required" error message.
+            // If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
 
             if (Role.Equals(Client, StringComparison.OrdinalIgnoreCase))
@@ -352,7 +352,7 @@ namespace Microsoft.WSMan.Management
             {
                 DisableServerSideSettings();
             }
-        }//End BeginProcessing()
+        }
 
         #region IDisposable Members
 
@@ -363,7 +363,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -378,7 +378,7 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-    }//End Class
+    }
     #endregion DisableWsManCredSSP
 
     #region EnableCredSSP
@@ -428,7 +428,7 @@ namespace Microsoft.WSMan.Management
 
         private bool force = false;
 
-        //helper variable
+        // helper variable
         private WSManHelper helper;
 
         // The application name MUST be "wsman" as wsman got approval from security
@@ -442,7 +442,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            //If not running elevated, then throw an "elevation required" error message.
+            // If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
 
@@ -478,7 +478,7 @@ namespace Microsoft.WSMan.Management
             {
                 EnableServerSideSettings();
             }
-        }//End BeginProcessing()
+        }
 
 
         #endregion
@@ -504,7 +504,7 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                //get the credssp node to check if wsman is configured on this machine
+                // get the credssp node to check if wsman is configured on this machine
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
                 XmlNode node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
 
@@ -520,7 +520,7 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     XmlDocument xmldoc = new XmlDocument();
-                    //push the xml string with credssp enabled
+                    // push the xml string with credssp enabled
                     xmldoc.LoadXml(m_SessionObj.Put(helper.CredSSP_RUri, newxmlcontent, 0));
 
                     // set the Registry using GroupPolicyObject
@@ -582,7 +582,7 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                //get the credssp node to check if wsman is configured on this machine
+                // get the credssp node to check if wsman is configured on this machine
                 string result = m_SessionObj.Get(helper.Service_CredSSP_Uri, 0);
                 XmlNode node = helper.GetXmlNode(result,
                     helper.CredSSP_SNode,
@@ -602,7 +602,7 @@ namespace Microsoft.WSMan.Management
                     string newxmlcontent = string.Format(CultureInfo.InvariantCulture,
                         @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>",
                         helper.Service_CredSSP_XMLNmsp);
-                    //push the xml string with credssp enabled
+                    // push the xml string with credssp enabled
                     xmldoc.LoadXml(m_SessionObj.Put(helper.Service_CredSSP_Uri, newxmlcontent, 0));
                     WriteObject(xmldoc.FirstChild);
                 }
@@ -645,7 +645,7 @@ namespace Microsoft.WSMan.Management
 
                 }
             }
-            //saving gpo settings
+            // saving gpo settings
             GPO.Save(true, true, new Guid("35378EAC-683F-11D2-A89A-00C04FBBCFA2"), new Guid("7A9206BD-33AF-47af-B832-D4128730E990"));
         }
 
@@ -658,14 +658,14 @@ namespace Microsoft.WSMan.Management
         /// <param name="Registry_Path"></param>
         private void UpdateGPORegistrySettings(string applicationname, string[] delegatestring, RegistryKey rootKey, string Registry_Path)
         {
-            //RegistryKey rootKey = Registry.LocalMachine;
+            // RegistryKey rootKey = Registry.LocalMachine;
             RegistryKey Credential_Delegation_Key;
             RegistryKey Allow_Fresh_Credential_Key;
             int i = 0;
             try
             {
                 string Registry_Path_Credentials_Delegation = Registry_Path + @"\CredentialsDelegation";
-                //open the registry key.If key is not present,create a new one
+                // open the registry key.If key is not present,create a new one
                 Credential_Delegation_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation, true);
                 if (Credential_Delegation_Key == null)
                     Credential_Delegation_Key = rootKey.CreateSubKey(Registry_Path_Credentials_Delegation, RegistryKeyPermissionCheck.ReadWriteSubTree);
@@ -729,7 +729,7 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-    }//End Class
+    }
     #endregion EnableCredSSP
 
     #region Get-CredSSP
@@ -822,7 +822,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            //If not running elevated, then throw an "elevation required" error message.
+            // If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
             IWSManSession m_SessionObj = null;

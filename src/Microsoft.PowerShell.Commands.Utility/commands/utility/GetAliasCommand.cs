@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
             // First get the alias table (from the proper scope if necessary)
             IDictionary<string, AliasInfo> aliasTable = null;
 
-            //get the command origin
+            // get the command origin
             CommandOrigin origin = MyInvocation.CommandOrigin;
             string displayString = "name";
             if (!string.IsNullOrEmpty(Scope))
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
-                    //excludes pattern
+                    // excludes pattern
                     if (SessionStateUtilities.MatchesAnyWildcardPattern(tableEntry.Key, excludePatterns, false))
                     {
                         continue;

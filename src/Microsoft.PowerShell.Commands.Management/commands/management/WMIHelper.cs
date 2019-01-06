@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             thread.IsBackground = true;
-            //thread.SetApartmentState( ApartmentState.STA);
+            // thread.SetApartmentState( ApartmentState.STA);
             thread.Start();
         }
 
@@ -204,10 +204,10 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     PutOptions pOptions = new PutOptions();
-                    //Extra check
+                    // Extra check
                     if (setObject.InputObject.GetType() == typeof(ManagementClass))
                     {
-                        //Check if Flag specified is CreateOnly or not
+                        // Check if Flag specified is CreateOnly or not
                         if (setObject.flagSpecified && setObject.PutType != PutType.CreateOnly)
                         {
                             InvalidOperationException e = new InvalidOperationException("CreateOnlyFlagNotSpecifiedWithClassPath");
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
+                        // Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
                         if (setObject.flagSpecified)
                         {
                             if (!(setObject.PutType == PutType.UpdateOnly || setObject.PutType == PutType.UpdateOrCreate))
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 ManagementPath mPath = null;
-                //If Class is specified only CreateOnly flag is supported
+                // If Class is specified only CreateOnly flag is supported
                 if (setObject.Class != null)
                 {
                     if (setObject.flagSpecified && setObject.PutType != PutType.CreateOnly)
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                //If server name is specified loop through it.
+                // If server name is specified loop through it.
                 if (mPath != null)
                 {
                     if (!(mPath.Server == "." && setObject.serverNameSpecified))
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            //This can throw if path does not exist caller should catch it.
+                            // This can throw if path does not exist caller should catch it.
                             ManagementObject mInstance = new ManagementObject(mPath);
                             mInstance.Scope = mScope;
                             try
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
                                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                                     return;
                                 }
-                                //Get class object and create instance.
+                                // Get class object and create instance.
                                 string newPath = setObject.Path.Substring(0, classIndex + namespaceIndex);
                                 ManagementPath classPath = new ManagementPath(newPath);
                                 ManagementClass mClass = new ManagementClass(classPath);
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
-                    //If server name is specified loop through it.
+                    // If server name is specified loop through it.
                     if (!(mPath.Server == "." && invokeObject.serverNameSpecified))
                     {
                         _computerName = mPath.Server;
@@ -1229,7 +1229,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //This can throw if path does not exist caller should catch it.
+                        // This can throw if path does not exist caller should catch it.
                         ManagementObject mInstance = new ManagementObject(mPath);
                         mInstance.Scope = mScope;
                         try
@@ -1254,7 +1254,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 throw;
                             }
-                            //Get class object and create instance.
+                            // Get class object and create instance.
                             string newPath = setObject.Path.Substring(0, classIndex + namespaceIndex);
                             ManagementPath classPath = new ManagementPath(newPath);
                             ManagementClass mClass = new ManagementClass(classPath);
@@ -1294,12 +1294,12 @@ namespace Microsoft.PowerShell.Commands
             var wmiInstance = this as SetWmiInstance;
             if (wmiInstance != null)
             {
-                //If Class is specified only CreateOnly flag is supported
+                // If Class is specified only CreateOnly flag is supported
                 if (wmiInstance.Class != null)
                 {
                     if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                     {
-                        //Throw Terminating error
+                        // Throw Terminating error
                         ThrowTerminatingError(new ErrorRecord(
                          new InvalidOperationException(),
                          "CreateOnlyFlagNotSpecifiedWithClassPath",
@@ -1318,7 +1318,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (wmiInstance.namespaceSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "NamespaceSpecifiedWithPath",
@@ -1328,7 +1328,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (mPath.Server != "." && wmiInstance.serverNameSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "ComputerNameSpecifiedWithPath",
@@ -1340,7 +1340,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                         {
-                            //Throw Terminating error
+                            // Throw Terminating error
                             ThrowTerminatingError(new ErrorRecord(
                              new InvalidOperationException(),
                              "CreateOnlyFlagNotSpecifiedWithClassPath",
@@ -1356,7 +1356,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!(wmiInstance.PutType == PutType.UpdateOnly || wmiInstance.PutType == PutType.UpdateOrCreate))
                             {
-                                //Throw terminating error
+                                // Throw terminating error
                                 ThrowTerminatingError(new ErrorRecord(
                                 new InvalidOperationException(),
                                 "NonUpdateFlagSpecifiedWithInstancePath",
@@ -1380,20 +1380,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal ManagementObject SetWmiInstanceGetPipelineObject()
         {
-            //Should only be called from Set-WMIInstance cmdlet
+            // Should only be called from Set-WMIInstance cmdlet
             ManagementObject mObj = null;
             var wmiInstance = this as SetWmiInstance;
             if (wmiInstance != null)
             {
-                //Extra check
+                // Extra check
                 if (wmiInstance.InputObject != null)
                 {
                     if (wmiInstance.InputObject.GetType() == typeof(ManagementClass))
                     {
-                        //Check if Flag specified is CreateOnly or not
+                        // Check if Flag specified is CreateOnly or not
                         if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                         {
-                            //Throw terminating error
+                            // Throw terminating error
                             ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "CreateOnlyFlagNotSpecifiedWithClassPath",
@@ -1406,12 +1406,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
+                        // Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
                         if (wmiInstance.flagSpecified)
                         {
                             if (!(wmiInstance.PutType == PutType.UpdateOnly || wmiInstance.PutType == PutType.UpdateOrCreate))
                             {
-                                //Throw terminating error
+                                // Throw terminating error
                                 ThrowTerminatingError(new ErrorRecord(
                                 new InvalidOperationException(),
                                 "NonUpdateFlagSpecifiedWithInstancePath",
@@ -1539,7 +1539,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            //Ignore state changes which are not resulting in state change to finished.
+            // Ignore state changes which are not resulting in state change to finished.
             if ((!IsFinishedState(e.JobStateInfo.State)) || (e.JobStateInfo.State == JobState.NotStarted))
             {
                 return;
@@ -1547,7 +1547,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (e.JobStateInfo.State == JobState.Failed)
             {
-                //If any of the child job failed, we set status to failed
+                // If any of the child job failed, we set status to failed
                 _atleastOneChildJobFailed = true;
             }
 
@@ -1556,7 +1556,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _finishedChildJobsCount++;
 
-                //We are done
+                // We are done
                 if (_finishedChildJobsCount == ChildJobs.Count)
                 {
                     allChildJobsFinished = true;
@@ -1565,9 +1565,9 @@ namespace Microsoft.PowerShell.Commands
 
             if (allChildJobsFinished)
             {
-                //if any child job failed, set status to failed
-                //If stop was called set, status to stopped
-                //else completed
+                // if any child job failed, set status to failed
+                // If stop was called set, status to stopped
+                // else completed
                 if (_atleastOneChildJobFailed)
                 {
                     SetJobState(JobState.Failed);
@@ -1595,7 +1595,7 @@ namespace Microsoft.PowerShell.Commands
                 return _statusMessage;
             }
         }
-        //ISSUE: Implement StatusMessage
+        // ISSUE: Implement StatusMessage
         /// <summary>
         /// Checks the status of remote command execution.
         /// </summary>
@@ -1617,10 +1617,10 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 // moreData is set to false and will be set to true
-                //if at least one child is has more data.
+                // if at least one child is has more data.
 
-                //if ( (!moreData))
-                //{
+                // if ( (!moreData))
+                // {
                 bool atleastOneChildHasMoreData = false;
 
                 for (int i = 0; i < ChildJobs.Count; i++)
@@ -1633,7 +1633,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 _moreData = atleastOneChildHasMoreData;
-                //}
+                // }
 
                 return _moreData;
             }
@@ -1669,7 +1669,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public override void StopJob()
         {
-            //AssertNotDisposed();
+            // AssertNotDisposed();
 
             if (!IsFinishedState(JobStateInfo.State))
             {
@@ -1720,8 +1720,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void CommonInit(int throttleLimit)
         {
-            //Since no results are produced by any streams. We should
-            //close all the streams
+            // Since no results are produced by any streams. We should
+            // close all the streams
             base.CloseAllStreams();
 
             // set status to "in progress"
@@ -1824,7 +1824,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion internal constructor
 
         private WmiAsyncCmdletHelper _helper;
-        //bool _bFinished;
+        // bool _bFinished;
         private ThrottleManager _throttleManager;
         private object _syncObject = new object();           // sync object
         private int _sinkCompleted;
@@ -1894,8 +1894,8 @@ namespace Microsoft.PowerShell.Commands
 
             if (_sinkCompleted == 0)
             {
-                //Notify throttle manager and change the state to complete
-                //Two cases where _bFinished should be set to false.
+                // Notify throttle manager and change the state to complete
+                // Two cases where _bFinished should be set to false.
                 // 1) Invalid class or some other condition so that after making a connection WMI is throwing an error
                 // 2) We could not get any instance for the class.
                 /*if(bAtLeastOneObject )
@@ -2000,7 +2000,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (helper.State == WmiState.NotStarted)
             {
-                //This is a case WMI operation was not started.
+                // This is a case WMI operation was not started.
                 SetJobState(JobState.Stopped, helper.InternalException);
             }
             else if (helper.State == WmiState.Running)
@@ -2056,7 +2056,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_helper.State == WmiState.NotStarted)
             {
-                //This is a case WMI operation was not started.
+                // This is a case WMI operation was not started.
                 SetJobState(JobState.Stopped, _helper.InternalException);
             }
             else if (_helper.State == WmiState.Running)
@@ -2075,7 +2075,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 SetJobState(JobState.Stopped, _helper.InternalException);
             }
-            //Do Nothing
+            // Do Nothing
         }
     }
 }

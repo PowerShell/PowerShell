@@ -59,7 +59,7 @@ namespace System.Management.Automation.Interpreter
         public override int Run(InterpretedFrame frame)
         {
             frame.Data[frame.StackIndex++] = frame.Data[_index];
-            //frame.Push(frame.Data[_index]);
+            // frame.Push(frame.Data[_index]);
             return +1;
         }
 
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Interpreter
         public override int Run(InterpretedFrame frame)
         {
             frame.Data[_index] = frame.Data[--frame.StackIndex];
-            //frame.Data[_index] = frame.Pop();
+            // frame.Data[_index] = frame.Pop();
             return +1;
         }
 

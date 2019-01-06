@@ -97,7 +97,7 @@ namespace System.Management.Automation.Remoting
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    //Close(false);
+                    // Close(false);
                 }
 
                 // Call the appropriate methods to clean up
@@ -254,7 +254,7 @@ namespace System.Management.Automation.Remoting
                         PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                         creationRequestDetails.ToString(), creationRequestDetails.ToString());
 
-                    //RACE TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
+                    // RACE TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
                     // If Signal comes and executes before registering the notification handle, cleanup will be messed
                     result = WSManNativeApi.WSManPluginReportContext(creationRequestDetails.unmanagedHandle, 0, creationRequestDetails.unmanagedHandle);
                     if (Platform.IsWindows && (WSManPluginConstants.ExitCodeSuccess == result))
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Remoting
             creationRequestDetails = null;
             // if already disposing..no need to let finalizer thread
             // put resources to clean this object.
-            //System.GC.SuppressFinalize(this); // TODO: This is already called in Dispose().
+            // System.GC.SuppressFinalize(this); // TODO: This is already called in Dispose().
         }
 
         // close current session and transport manager because of an exception
@@ -454,7 +454,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            //not registering shutdown event as this is a synchronous operation.
+            // not registering shutdown event as this is a synchronous operation.
 
             IntPtr responseXml = IntPtr.Zero;
             try
@@ -467,20 +467,20 @@ namespace System.Management.Automation.Remoting
                     inboundConnectInformation.Text,
                     WSManNativeApi.PS_CONNECT_XML_TAG);
 
-                //this will raise exceptions on failure
+                // this will raise exceptions on failure
                 try
                 {
                     _remoteSession.ExecuteConnect(inputData, out outputData);
 
-                    //construct Xml to send back
+                    // construct Xml to send back
                     string responseData = string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                     "<{0} xmlns=\"{1}\">{2}</{0}>",
                                     WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
                                     WSManNativeApi.PS_XML_NAMESPACE,
                                     Convert.ToBase64String(outputData));
 
-                    //TODO: currently using OperationComplete to report back the responseXml. This will need to change to use WSManReportObject
-                    //that is currently internal.
+                    // TODO: currently using OperationComplete to report back the responseXml. This will need to change to use WSManReportObject
+                    // that is currently internal.
                     WSManPluginInstance.ReportOperationComplete(requestDetails, WSManPluginErrorCodes.NoError, responseData);
                 }
                 catch (PSRemotingDataStructureException ex)

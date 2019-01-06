@@ -114,5 +114,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     new CimCmdletAliasEntry("gcls", "Get-CimClass"),
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

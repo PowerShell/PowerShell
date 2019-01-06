@@ -262,7 +262,7 @@ namespace System.Management.Automation.Remoting
 
                             if (_pendingDisconnect)
                             {
-                                //session key exchange is complete, if there is a disconnect pending, process it now
+                                // session key exchange is complete, if there is a disconnect pending, process it now
                                 _pendingDisconnect = false;
                                 DoDisconnect(sender, eventArgs);
                             }
@@ -308,7 +308,7 @@ namespace System.Management.Automation.Remoting
 
                         if (_state == RemoteSessionState.Disconnecting)
                         {
-                            SetState(RemoteSessionState.Disconnected, eventArgs.Reason); //set state to disconnected even TODO. Put some ETW event describing the disconnect process failure
+                            SetState(RemoteSessionState.Disconnected, eventArgs.Reason); // set state to disconnected even TODO. Put some ETW event describing the disconnect process failure
                         }
                     }
 
@@ -392,7 +392,7 @@ namespace System.Management.Automation.Remoting
         {
             _clientRemoteSessionStateChangeQueue = new Queue<RemoteSessionStateEventArgs>();
 
-            //Initialize the state machine event handling matrix
+            // Initialize the state machine event handling matrix
             _stateMachineHandle = new EventHandler<RemoteSessionStateMachineEventArgs>[(int)RemoteSessionState.MaxState, (int)RemoteSessionEvent.MaxEvent];
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
@@ -431,7 +431,7 @@ namespace System.Management.Automation.Remoting
 
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnect;
             _stateMachineHandle[(int)RemoteSessionState.Disconnecting, (int)RemoteSessionEvent.DisconnectCompleted] += SetStateHandler;
-            _stateMachineHandle[(int)RemoteSessionState.Disconnecting, (int)RemoteSessionEvent.DisconnectFailed] += SetStateHandler; //dont close
+            _stateMachineHandle[(int)RemoteSessionState.Disconnecting, (int)RemoteSessionEvent.DisconnectFailed] += SetStateHandler; // dont close
             _stateMachineHandle[(int)RemoteSessionState.Disconnected, (int)RemoteSessionEvent.ReconnectStart] += DoReconnect;
             _stateMachineHandle[(int)RemoteSessionState.Reconnecting, (int)RemoteSessionEvent.ReconnectCompleted] += SetStateHandler;
             _stateMachineHandle[(int)RemoteSessionState.Reconnecting, (int)RemoteSessionEvent.ReconnectFailed] += SetStateToClosedHandler;
@@ -441,7 +441,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.RCDisconnectStarted] += DoRCDisconnectStarted;
             _stateMachineHandle[(int)RemoteSessionState.RCDisconnecting, (int)RemoteSessionEvent.DisconnectCompleted] += SetStateHandler;
 
-            //Disconnect during key exchange process
+            // Disconnect during key exchange process
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeySent, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnectDuringKeyExchange;
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnectDuringKeyExchange;
 
@@ -453,7 +453,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeySent, (int)RemoteSessionEvent.KeyReceiveFailed] += SetStateToClosedHandler; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.KeySendFailed] += SetStateToClosedHandler;
 
-            //TODO: All these are potential unexpected state transitions.. should have a way to track these calls..
+            // TODO: All these are potential unexpected state transitions.. should have a way to track these calls..
             // should atleast put a dbg assert in this handler
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
@@ -640,8 +640,8 @@ namespace System.Management.Automation.Remoting
 
                 if (State == RemoteSessionState.Idle)
                 {
-                    //We need to send negotiation and connect algorithm related info
-                    //Change state to let other DSHandlers add appropriate messages to be piggybacked on transport's Create payload
+                    // We need to send negotiation and connect algorithm related info
+                    // Change state to let other DSHandlers add appropriate messages to be piggybacked on transport's Create payload
                     RemoteSessionStateMachineEventArgs sendingArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendingOnConnect);
                     RaiseEvent(sendingArg);
                 }
@@ -678,7 +678,7 @@ namespace System.Management.Automation.Remoting
 
         private void DoDisconnectDuringKeyExchange(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            //set flag to indicate Disconnect request queue up
+            // set flag to indicate Disconnect request queue up
             _pendingDisconnect = true;
         }
 
@@ -730,7 +730,7 @@ namespace System.Management.Automation.Remoting
                     case RemoteSessionState.Connecting:
                     case RemoteSessionState.Connected:
                     case RemoteSessionState.Established:
-                    case RemoteSessionState.EstablishedAndKeyReceived:  //TODO - Client session would never get into this state... to be removed
+                    case RemoteSessionState.EstablishedAndKeyReceived:  // TODO - Client session would never get into this state... to be removed
                     case RemoteSessionState.EstablishedAndKeySent:
                     case RemoteSessionState.NegotiationReceived:
                     case RemoteSessionState.NegotiationSent:

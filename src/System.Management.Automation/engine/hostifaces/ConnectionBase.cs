@@ -162,7 +162,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (SyncRoot)
                 {
-                    //Do not return internal state.
+                    // Do not return internal state.
                     return _runspaceStateInfo.Clone();
                 }
             }
@@ -246,7 +246,7 @@ namespace System.Management.Automation.Runspaces
             if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStart();
             lock (SyncRoot)
             {
-                //Call fails if RunspaceState is not BeforeOpen.
+                // Call fails if RunspaceState is not BeforeOpen.
                 if (RunspaceState != RunspaceState.BeforeOpen)
                 {
                     InvalidRunspaceStateException e =
@@ -262,7 +262,7 @@ namespace System.Management.Automation.Runspaces
                 SetRunspaceState(RunspaceState.Opening);
             }
 
-            //Raise event outside the lock
+            // Raise event outside the lock
             RaiseRunspaceStateEvents();
 
             OpenHelper(syncCall);
@@ -395,13 +395,13 @@ namespace System.Management.Automation.Runspaces
 
             if (alreadyClosing)
             {
-                //Already closing is set to true if Runspace is already
-                //in closing. In this case wait for runspace to close.
-                //This can happen in two scenarios:
-                //1) User calls Runspace.Close from two threads.
-                //2) In remoting, some error from data structure handler layer can start
-                //runspace closure. At the same time, user can call
-                //remove runspace.
+                // Already closing is set to true if Runspace is already
+                // in closing. In this case wait for runspace to close.
+                // This can happen in two scenarios:
+                // 1) User calls Runspace.Close from two threads.
+                // 2) In remoting, some error from data structure handler layer can start
+                // runspace closure. At the same time, user can call
+                // remove runspace.
                 //
 
                 if (syncCall)
@@ -412,10 +412,10 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            //Raise Event outside the lock
+            // Raise Event outside the lock
             RaiseRunspaceStateEvents();
 
-            //Call the derived class implementation to do the actual work
+            // Call the derived class implementation to do the actual work
             CloseHelper(syncCall);
         }
 
@@ -713,12 +713,12 @@ namespace System.Management.Automation.Runspaces
                 {
                     _runspaceStateInfo = new RunspaceStateInfo(state, reason);
 
-                    //Add _runspaceStateInfo to _runspaceEventQueue.
-                    //RaiseRunspaceStateEvents will raise event for each item
-                    //in this queue.
-                    //Note:We are doing clone here instead of passing the member
-                    //_runspaceStateInfo because we donot want outside
-                    //to change our runspace state.
+                    // Add _runspaceStateInfo to _runspaceEventQueue.
+                    // RaiseRunspaceStateEvents will raise event for each item
+                    // in this queue.
+                    // Note:We are doing clone here instead of passing the member
+                    // _runspaceStateInfo because we donot want outside
+                    // to change our runspace state.
                     RunspaceAvailability previousAvailability = _runspaceAvailability;
 
                     this.UpdateRunspaceAvailability(_runspaceStateInfo.State, false);
@@ -762,9 +762,9 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    //Clear the events if there are no EventHandlers. This
-                    //ensures that events do not get called for state
-                    //changes prior to their registration.
+                    // Clear the events if there are no EventHandlers. This
+                    // ensures that events do not get called for state
+                    // changes prior to their registration.
                     _runspaceEventQueue.Clear();
                 }
             }
@@ -781,8 +781,8 @@ namespace System.Management.Automation.Runspaces
                     }
 
 #pragma warning disable 56500
-                    //Exception raised by events are not error condition for runspace
-                    //object.
+                    // Exception raised by events are not error condition for runspace
+                    // object.
                     if (stateChanged != null)
                     {
                         try
@@ -847,9 +847,9 @@ namespace System.Management.Automation.Runspaces
                     throw e;
                 }
 
-                //Add the pipeline to list of Executing pipeline.
-                //Note:_runningPipelines is always accessed with the lock so
-                //there is no need to create a synchronized version of list
+                // Add the pipeline to list of Executing pipeline.
+                // Note:_runningPipelines is always accessed with the lock so
+                // there is no need to create a synchronized version of list
                 RunningPipelines.Add(pipeline);
                 _currentlyRunningPipeline = pipeline;
             }
@@ -872,9 +872,9 @@ namespace System.Management.Automation.Runspaces
                 Dbg.Assert(RunspaceState != RunspaceState.BeforeOpen,
                              "Runspace should not be before open when pipeline is running");
 
-                //Remove the pipeline to list of Executing pipeline.
-                //Note:_runningPipelines is always accessed with the lock so
-                //there is no need to create a synchronized version of list
+                // Remove the pipeline to list of Executing pipeline.
+                // Note:_runningPipelines is always accessed with the lock so
+                // there is no need to create a synchronized version of list
                 RunningPipelines.Remove(pipeline);
 
                 // Update the running pipeline
@@ -897,13 +897,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal bool WaitForFinishofPipelines()
         {
-            //Take a snapshot of list of active pipelines.
-            //Note:Before we enter to this CloseHelper routine
-            //CoreClose has already set the state of Runspace
-            //to closing. So no new pipelines can be executed on this
-            //runspace and so no new pipelines will be added to
-            //_runningPipelines. However we still need to lock because
-            //running pipelines can be removed from this.
+            // Take a snapshot of list of active pipelines.
+            // Note:Before we enter to this CloseHelper routine
+            // CoreClose has already set the state of Runspace
+            // to closing. So no new pipelines can be executed on this
+            // runspace and so no new pipelines will be added to
+            // _runningPipelines. However we still need to lock because
+            // running pipelines can be removed from this.
             PipelineBase[] runningPipelines;
 
             lock (_pipelineListLock)
@@ -963,7 +963,7 @@ namespace System.Management.Automation.Runspaces
 
             if (runningPipelines.Length > 0)
             {
-                //Start from the most recent pipeline.
+                // Start from the most recent pipeline.
                 for (int i = runningPipelines.Length - 1; i >= 0; i--)
                 {
                     runningPipelines[i].Stop();
@@ -1020,22 +1020,22 @@ namespace System.Management.Automation.Runspaces
 
             lock (_pipelineListLock)
             {
-                //first check if this pipeline is in the list of running
-                //pipelines. It is possible that pipeline has already
-                //completed.
+                // first check if this pipeline is in the list of running
+                // pipelines. It is possible that pipeline has already
+                // completed.
                 if (RunningPipelines.Contains(pipeline) == false)
                 {
                     return;
                 }
 
-                //If this pipeline is currently running pipeline,
-                //then it does not have nested pipelines
+                // If this pipeline is currently running pipeline,
+                // then it does not have nested pipelines
                 if (GetCurrentlyRunningPipeline() == pipeline)
                 {
                     return;
                 }
 
-                //Build list of nested pipelines
+                // Build list of nested pipelines
                 nestedPipelines = new List<Pipeline>();
                 for (int i = RunningPipelines.Count - 1; i >= 0; i--)
                 {
@@ -1061,7 +1061,7 @@ namespace System.Management.Automation.Runspaces
         void
         DoConcurrentCheckAndAddToRunningPipelines(PipelineBase pipeline, bool syncCall)
         {
-            //Concurrency check should be done under runspace lock
+            // Concurrency check should be done under runspace lock
             lock (SyncRoot)
             {
                 if (_bSessionStateProxyCallInProgress == true)
@@ -1069,10 +1069,10 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoPipelineWhenSessionStateProxyInProgress);
                 }
 
-                //Delegate to pipeline to do check if it is fine to invoke if another
-                //pipeline is running.
+                // Delegate to pipeline to do check if it is fine to invoke if another
+                // pipeline is running.
                 pipeline.DoConcurrentCheck(syncCall, SyncRoot, true);
-                //Finally add to the list of running pipelines.
+                // Finally add to the list of running pipelines.
                 AddToRunningPipelineList(pipeline);
             }
         }
@@ -1146,9 +1146,9 @@ namespace System.Management.Automation.Runspaces
 
         #region session state proxy
 
-        //Note: When SessionStateProxy calls are in progress,
-        //pipeline cannot be invoked. Also when pipeline is in
-        //progress, SessionStateProxy calls cannot be made.
+        // Note: When SessionStateProxy calls are in progress,
+        // pipeline cannot be invoked. Also when pipeline is in
+        // progress, SessionStateProxy calls cannot be made.
         private bool _bSessionStateProxyCallInProgress;
 
         /// <summary>
@@ -1208,7 +1208,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                //Now we can invoke session state proxy
+                // Now we can invoke session state proxy
                 _bSessionStateProxyCallInProgress = true;
             }
         }

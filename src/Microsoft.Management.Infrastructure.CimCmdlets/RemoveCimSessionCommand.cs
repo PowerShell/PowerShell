@@ -170,7 +170,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.cimRemoveSession = new CimRemoveSession();
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -179,7 +179,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             base.CheckParameterSet();
             this.cimRemoveSession.RemoveCimSession(this);
-        }//End ProcessRecord()
+        }
 
         #region private members
         /// <summary>
@@ -240,5 +240,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.NameSet, new ParameterSetEntry(1)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

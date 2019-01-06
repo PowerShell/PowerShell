@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 linesPrinted++;
             }
 
-            //If we have more lines then print another page
+            // If we have more lines then print another page
             ev.HasMorePages = _lines.Count > 0;
         }
 

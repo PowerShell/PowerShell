@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class X509NativeStore
     {
-        //#region tracer
+        // #region tracer
 
         /// <summary>
         /// Initializes a new instance of the X509NativeStore class.
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     default:
-                        //ThrowItemNotFound(storeLocation.ToString(), CertificateProviderItem.StoreLocation);
+                        // ThrowItemNotFound(storeLocation.ToString(), CertificateProviderItem.StoreLocation);
                         break;
                 }
 
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
                 _storeHandle = new CertificateStoreHandle();
                 _storeHandle.Handle = hCertStore;
 
-                //we only do CertControlStore for stores other than UserDS
+                // we only do CertControlStore for stores other than UserDS
                 if (!string.Equals(
                                 _storeName,
                                 "UserDS",
@@ -679,9 +679,9 @@ namespace Microsoft.PowerShell.Commands
 
             if (isContainer)
             {
-                if (pathElements.Length == 2) //is a store
+                if (pathElements.Length == 2) // is a store
                 {
-                    //not support user context
+                    // not support user context
                     if (fUserContext)
                     {
                         string message = CertificateProviderStrings.CannotDeleteUserStore;
@@ -692,16 +692,16 @@ namespace Microsoft.PowerShell.Commands
                     RemoveCertStore(pathElements[1], fDeleteKey, path);
                     return;
                 }
-                else //other container than a store
+                else // other container than a store
                 {
                     string message = CertificateProviderStrings.CannotRemoveContainer;
                     string errorId = "CannotRemoveContainer";
                     ThrowInvalidOperation(errorId, message);
                 }
             }
-            else //certificate
+            else // certificate
             {
-                //do remove
+                // do remove
                 X509Certificate2 certificate = outObj as X509Certificate2;
                 RemoveCertItem(certificate, fDeleteKey, !fUserContext, path);
                 return;
@@ -750,11 +750,11 @@ namespace Microsoft.PowerShell.Commands
                                 string path,
                                 string destination)
         {
-            //normalize path
+            // normalize path
             path = NormalizePath(path);
             destination = NormalizePath(destination);
 
-            //get elements from the path
+            // get elements from the path
             string[] pathElements = GetPathElements(path);
             string[] destElements = GetPathElements(destination);
 
@@ -771,14 +771,14 @@ namespace Microsoft.PowerShell.Commands
                 ThrowInvalidOperation(errorId, message);
             }
 
-            if (destElements.Length != 2) //not a store
+            if (destElements.Length != 2) // not a store
             {
-                //if the destination leads to the same thumbprint
+                // if the destination leads to the same thumbprint
                 if (destElements.Length == 3 &&
                    (string.Equals(pathElements[2], destElements[2], StringComparison.OrdinalIgnoreCase)))
                 {
-                    //in this case we think of destination path as valid
-                    //and strip the thumbprint part
+                    // in this case we think of destination path as valid
+                    // and strip the thumbprint part
                     destination = Path.GetDirectoryName(destination);
                 }
                 else
@@ -789,9 +789,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //the second element is store location
-            //we do not allow cross context move
-            //we do not allow the destination store is the same as source
+            // the second element is store location
+            // we do not allow cross context move
+            // we do not allow the destination store is the same as source
 
             if (!string.Equals(pathElements[0], destElements[0], StringComparison.OrdinalIgnoreCase))
             {
@@ -822,9 +822,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (cert != null) //we get cert
+            if (cert != null) // we get cert
             {
-                //get destination store
+                // get destination store
                 bool isDestContainer = false;
                 object store = GetItemAtPath(destination, false, out isDestContainer);
 
@@ -894,10 +894,10 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            //get the elements from the path
+            // get the elements from the path
             string[] pathElements = GetPathElements(path);
 
-            //only support creating store
+            // only support creating store
             if (pathElements.Length != 2)
             {
                 string message = CertificateProviderStrings.CannotCreateItem;
@@ -907,7 +907,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool fUserContext = string.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase);
 
-            //not support user context
+            // not support user context
             if (fUserContext)
             {
                 string message = CertificateProviderStrings.CannotCreateUserStore;
@@ -920,7 +920,7 @@ namespace Microsoft.PowerShell.Commands
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
                     Security.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
 
-            //Create new store
+            // Create new store
             IntPtr hCertStore = Security.NativeMethods.CertOpenStore(
                                 Security.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
                                 Security.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
@@ -931,7 +931,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
             }
-            else //free native store handle
+            else // free native store handle
             {
                 bool fResult = false;
                 fResult = Security.NativeMethods.CertCloseStore(hCertStore, 0);
@@ -1174,7 +1174,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (item != null)
             {
-                if (!isContainer) //certificate
+                if (!isContainer) // certificate
                 {
                     // If the filter is null, output the certificate we got.
                     if (filter == null)
@@ -1198,7 +1198,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                else  //container
+                else  // container
                 {
                     // The item is a container. If the filter is non null, we don't output it.
                     if (filter != null)
@@ -1207,16 +1207,16 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     X509StoreLocation storeLocation = item as X509StoreLocation;
-                    if (storeLocation != null)  //store location
+                    if (storeLocation != null)  // store location
                     {
                         WriteItemObject(item, path, isContainer);
                     }
-                    else //store
+                    else // store
                     {
                         X509NativeStore store = item as X509NativeStore;
                         if (store != null)
                         {
-                            //create X509Store
+                            // create X509Store
                             X509Store outStore = new X509Store(
                                                     store.StoreName,
                                                     store.Location.Location);
@@ -1257,7 +1257,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override string GetChildName(string path)
         {
-            //Path for root is empty string
+            // Path for root is empty string
             if (path != null && path.Length == 0)
             {
                 return path;
@@ -1571,7 +1571,7 @@ namespace Microsoft.PowerShell.Commands
 
             IntPtr hWnd = DetectUIHelper.GetOwnerWindow(Host);
 
-            if (keyProvInfo.dwProvType != 0) //legacy
+            if (keyProvInfo.dwProvType != 0) // legacy
             {
                 if (hWnd != IntPtr.Zero)
                 {
@@ -1606,7 +1606,7 @@ namespace Microsoft.PowerShell.Commands
                     ThrowErrorRemoting(Marshal.GetLastWin32Error());
                 }
             }
-            else  //cng key
+            else  // cng key
             {
                 uint cngKeyFlag = 0;
                 int result = 0;
@@ -1692,7 +1692,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveCertStore(string storeName, bool fDeleteKey, string sourcePath)
         {
-            //if recurse is true, remove every cert in the store
+            // if recurse is true, remove every cert in the store
             IntPtr localName = Security.NativeMethods.CryptFindLocalizedName(storeName);
             string[] pathElements = GetPathElements(sourcePath);
             if (IntPtr.Zero == localName)//not find, we can remove
@@ -1717,7 +1717,7 @@ namespace Microsoft.PowerShell.Commands
 
                     certContext = store.GetNextCert(certContext);
                 }
-                //remove the cert store
+                // remove the cert store
                 Security.NativeMethods.CertOpenStoreFlags StoreFlags =
                         Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_READONLY_FLAG |
                         Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
@@ -1725,7 +1725,7 @@ namespace Microsoft.PowerShell.Commands
                         Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_DELETE_FLAG |
                         Security.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
 
-                //delete store
+                // delete store
                 IntPtr hCertStore = Security.NativeMethods.CertOpenStore(
                                 Security.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
                                 Security.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
@@ -1791,7 +1791,7 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoRemove(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
         {
-            //get CERT_KEY_PROV_INFO_PROP_ID
+            // get CERT_KEY_PROV_INFO_PROP_ID
             int provSize = 0;
             IntPtr pProvInfo = IntPtr.Zero;
             bool fHasPrivateKey = false;
@@ -1800,7 +1800,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (fDeleteKey)
                 {
-                    //it is fine if below call fails
+                    // it is fine if below call fails
                     if (Security.NativeMethods.CertGetCertificateContextProperty(
                                 cert.Handle,
                                 Security.NativeMethods.CertPropertyId.CERT_KEY_PROV_INFO_PROP_ID,
@@ -1821,15 +1821,15 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!fHasPrivateKey)
                     {
-                        //raise a verbose message
-                        //we should not use WriteWarning here
+                        // raise a verbose message
+                        // we should not use WriteWarning here
                         string verboseNoPrivatekey = CertificateProviderStrings.VerboseNoPrivateKey;
                         WriteVerbose(verboseNoPrivatekey);
                     }
                 }
 
-                //do remove certificate
-                //should not use the original handle
+                // do remove certificate
+                // should not use the original handle
 
                 if (!Security.NativeMethods.CertDeleteCertificateFromStore(
                             Security.NativeMethods.CertDuplicateCertificateContext(cert.Handle)))
@@ -1837,7 +1837,7 @@ namespace Microsoft.PowerShell.Commands
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
 
-                //commit the change to physical store
+                // commit the change to physical store
                 if (sourcePath.Contains("UserDS"))
                 {
                     Security.NativeMethods.CERT_CONTEXT context =
@@ -1846,9 +1846,9 @@ namespace Microsoft.PowerShell.Commands
                     CommitUserDS(context.hCertStore);
                 }
 
-                //TODO: Log Cert Delete
+                // TODO: Log Cert Delete
 
-                //delete private key
+                // delete private key
                 if (fDeleteKey && fHasPrivateKey)
                 {
                     DoDeleteKey(pProvInfo);
@@ -1889,10 +1889,10 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoMove(string destination, X509Certificate2 cert, X509NativeStore store, string sourcePath)
         {
-            IntPtr dupCert = IntPtr.Zero;  //should not free this
+            IntPtr dupCert = IntPtr.Zero;  // should not free this
             IntPtr outCert = IntPtr.Zero;
 
-            //duplicate cert first
+            // duplicate cert first
             dupCert = Security.NativeMethods.CertDuplicateCertificateContext(cert.Handle);
 
             if (dupCert == IntPtr.Zero)
@@ -1915,10 +1915,10 @@ namespace Microsoft.PowerShell.Commands
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
 
-                //TODO: log cert move
+                // TODO: log cert move
             }
 
-            //commit the change to physical store
+            // commit the change to physical store
             if (destination.Contains("UserDS"))
             {
                 CommitUserDS(store.StoreHandle);
@@ -1931,7 +1931,7 @@ namespace Microsoft.PowerShell.Commands
                 CommitUserDS(context.hCertStore);
             }
 
-            //get the output object
+            // get the output object
             X509Certificate2 outObj = new X509Certificate2(outCert);
             string certName = GetCertName(outObj);
             string certPath = MakePath(destination, certName);
@@ -2858,7 +2858,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 Hashtable storeNames;
-                //always try to get new names
+                // always try to get new names
                 storeNames = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
                 // since there is no managed support to obtain store names,
@@ -2986,20 +2986,20 @@ namespace Microsoft.PowerShell.Commands
             if (DownLevelHelper.TrustedIssuerSupported())
             {
                 int propSize = 0;
-                //try to get the property
-                //it is fine if fail for not there
+                // try to get the property
+                // it is fine if fail for not there
                 if (Security.NativeMethods.CertGetCertificateContextProperty(
                                 cert.Handle,
                                 Security.NativeMethods.CertPropertyId.CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID,
                                 IntPtr.Zero,
                                 ref propSize))
                 {
-                    //we have the property
+                    // we have the property
                     fHasProperty = true;
                 }
                 else
                 {
-                    //if fail
+                    // if fail
                     int error = Marshal.GetLastWin32Error();
                     if (error != Security.NativeMethods.CRYPT_E_NOT_FOUND)
                     {
@@ -3030,27 +3030,27 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (certPath != null)
                     {
-                        //try to open the store and get the cert out
-                        //in case the store handle is already released
+                        // try to open the store and get the cert out
+                        // in case the store handle is already released
                         string[] pathElements = GetPathElements(certPath);
 
-                        //certpath is in the format: Microsoft.Powershell.Security\
-                        //Certificate::CurrentUser(LocalMachine)\my\HashID
-                        //obtained pathElements[0] is Microsoft.Powershell.Security
-                        //obtained pathElements[1] is Certificate::CurrentUser
-                        //obtained pathElements[2] is MY
-                        //obtained pathElements[3] is HashID
+                        // certpath is in the format: Microsoft.Powershell.Security\
+                        // Certificate::CurrentUser(LocalMachine)\my\HashID
+                        // obtained pathElements[0] is Microsoft.Powershell.Security
+                        // obtained pathElements[1] is Certificate::CurrentUser
+                        // obtained pathElements[2] is MY
+                        // obtained pathElements[3] is HashID
 
                         bool fUserContext = string.Equals(pathElements[1], "Certificate::CurrentUser", StringComparison.OrdinalIgnoreCase);
 
                         X509StoreLocation storeLocation =
                             new X509StoreLocation(fUserContext ? StoreLocation.CurrentUser : StoreLocation.LocalMachine);
 
-                        //get certificate from the store pathElements[2]
+                        // get certificate from the store pathElements[2]
                         X509NativeStore store = null;
 
                         store = new X509NativeStore(storeLocation, pathElements[2]);
-                        store.Open(true); //including archival flag
+                        store.Open(true); // including archival flag
 
                         IntPtr certContext = store.GetCertByName(pathElements[3]);
 
@@ -3061,13 +3061,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (addProperty) //should add the property
+                    if (addProperty) // should add the property
                     {
                         propertyPtr = Marshal.AllocHGlobal(Marshal.SizeOf(dataBlob));
                         Marshal.StructureToPtr(dataBlob, propertyPtr, false);
                     }
 
-                    //set property
+                    // set property
                     if (!Security.NativeMethods.CertSetCertificateContextProperty(
                                 certFromStore != null ? certFromStore.Handle : cert.Handle,
                                 Security.NativeMethods.CertPropertyId.CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID,

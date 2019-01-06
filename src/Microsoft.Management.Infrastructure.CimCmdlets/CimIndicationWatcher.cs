@@ -398,4 +398,4 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
         #endregion
     }
-}//End namespace
+}

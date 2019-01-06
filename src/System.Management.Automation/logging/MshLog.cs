@@ -134,7 +134,7 @@ namespace System.Management.Automation
 
             try
             {
-#if !CORECLR    //TODO:CORECLR EventLogLogProvider not handled yet
+#if !CORECLR    // TODO:CORECLR EventLogLogProvider not handled yet
                 LogProvider eventLogLogProvider = new EventLogLogProvider(shellId);
                 providers.Add(eventLogLogProvider);
 #endif
@@ -1025,20 +1025,20 @@ namespace System.Management.Automation
 
         #region EventId Constants
 
-        //General health issues.
+        // General health issues.
         internal const int EVENT_ID_GENERAL_HEALTH_ISSUE = 100;
 
         // Dependency. resource not available
         internal const int EVENT_ID_RESOURCE_NOT_AVAILABLE = 101;
-        //Connectivity. network connection failure
+        // Connectivity. network connection failure
         internal const int EVENT_ID_NETWORK_CONNECTIVITY_ISSUE = 102;
-        //Settings. fail to set some configuration settings
+        // Settings. fail to set some configuration settings
         internal const int EVENT_ID_CONFIGURATION_FAILURE = 103;
-        //Performance. system is experiencing some performance issues
+        // Performance. system is experiencing some performance issues
         internal const int EVENT_ID_PERFORMANCE_ISSUE = 104;
-        //Security: system is experiencing some security issues
+        // Security: system is experiencing some security issues
         internal const int EVENT_ID_SECURITY_ISSUE = 105;
-        //Workload. system is overloaded.
+        // Workload. system is overloaded.
         internal const int EVENT_ID_SYSTEM_OVERLOADED = 106;
 
         // Beta 1 only -- Unexpected Exception

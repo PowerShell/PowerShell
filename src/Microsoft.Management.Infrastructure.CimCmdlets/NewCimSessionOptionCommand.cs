@@ -447,7 +447,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.CmdletOperation = new CmdletOperationBase(this);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -501,14 +501,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 this.WriteObject(options);
             }
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
         /// </summary>
         protected override void EndProcessing()
         {
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -817,5 +817,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.WSManParameterSet, new ParameterSetEntry(0)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

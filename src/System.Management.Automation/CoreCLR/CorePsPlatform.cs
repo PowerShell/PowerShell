@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// </summary>
         public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {
-            //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
+            // TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
@@ -254,10 +254,10 @@ namespace System.Management.Automation
             switch (dirpath)
             {
                 case Platform.XDG_Type.CONFIG:
-                    //the user has set XDG_CONFIG_HOME corresponding to profile path
+                    // the user has set XDG_CONFIG_HOME corresponding to profile path
                     if (string.IsNullOrEmpty(xdgconfighome))
                     {
-                        //xdg values have not been set
+                        // xdg values have not been set
                         return xdgConfigHomeDefault;
                     }
 
@@ -267,7 +267,7 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.DATA:
-                    //the user has set XDG_DATA_HOME corresponding to module path
+                    // the user has set XDG_DATA_HOME corresponding to module path
                     if (string.IsNullOrEmpty(xdgdatahome))
                     {
                         // create the xdg folder if needed
@@ -279,7 +279,7 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
@@ -292,11 +292,11 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.USER_MODULES:
-                    //the user has set XDG_DATA_HOME corresponding to module path
+                    // the user has set XDG_DATA_HOME corresponding to module path
                     if (string.IsNullOrEmpty(xdgdatahome))
                     {
-                        //xdg values have not been set
-                        if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
+                        // xdg values have not been set
+                        if (!Directory.Exists(xdgModuleDefault)) // module folder not always guaranteed to exist
                         {
                             try
                             {
@@ -304,7 +304,7 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
@@ -320,11 +320,11 @@ namespace System.Management.Automation
                     return "/usr/local/share/powershell/Modules";
 
                 case Platform.XDG_Type.CACHE:
-                    //the user has set XDG_CACHE_HOME
+                    // the user has set XDG_CACHE_HOME
                     if (string.IsNullOrEmpty(xdgcachehome))
                     {
-                        //xdg values have not been set
-                        if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
+                        // xdg values have not been set
+                        if (!Directory.Exists(xdgCacheDefault)) // module folder not always guaranteed to exist
                         {
                             try
                             {
@@ -332,7 +332,7 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
@@ -350,7 +350,7 @@ namespace System.Management.Automation
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //service accounts won't have permission to create user folder
+                                // service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
                             }
                         }
@@ -359,12 +359,12 @@ namespace System.Management.Automation
                     }
 
                 case Platform.XDG_Type.DEFAULT:
-                    //default for profile location
+                    // default for profile location
                     return xdgConfigHomeDefault;
 
                 default:
-                    //xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
-                    //This folder is the default in the event of all other failures for data storage
+                    // xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
+                    // This folder is the default in the event of all other failures for data storage
                     if (!Directory.Exists(xdgConfigHomeDefault))
                     {
                         try

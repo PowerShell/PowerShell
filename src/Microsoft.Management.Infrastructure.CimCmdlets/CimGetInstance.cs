@@ -536,5 +536,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private const string queryWithoutWhere = @"SELECT {0} FROM {1}";
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

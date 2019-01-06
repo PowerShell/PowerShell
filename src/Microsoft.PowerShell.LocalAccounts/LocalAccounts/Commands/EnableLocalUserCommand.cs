@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionEnableUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

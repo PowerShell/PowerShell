@@ -582,12 +582,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (syncCall)
             {
-                //Open runspace synchronously
+                // Open runspace synchronously
                 DoOpenHelper();
             }
             else
             {
-                //Open runspace in another thread
+                // Open runspace in another thread
                 Thread asyncThread = new Thread(new ThreadStart(this.OpenThreadProc));
 
                 asyncThread.Start();
@@ -606,8 +606,8 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception)
             {
-                //This exception is reported by raising RunspaceState
-                //change event.
+                // This exception is reported by raising RunspaceState
+                // change event.
             }
 #pragma warning restore 56500
         }
@@ -636,7 +636,7 @@ namespace System.Management.Automation.Runspaces
                 _engine = new AutomationEngine(Host, InitialSessionState);
                 _engine.Context.CurrentRunspace = this;
 
-                //Log engine for start of engine life
+                // Log engine for start of engine life
                 MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Available);
                 startLifeCycleEventWritten = true;
 
@@ -652,32 +652,32 @@ namespace System.Management.Automation.Runspaces
             {
                 s_runspaceInitTracer.WriteLine("Runspace open failed");
 
-                //Log engine health event
+                // Log engine health event
                 LogEngineHealthEvent(exception);
 
-                //Log engine for end of engine life
+                // Log engine for end of engine life
                 if (startLifeCycleEventWritten)
                 {
                     Dbg.Assert(_engine.Context != null, "if startLifeCycleEventWritten is true, ExecutionContext must be present");
                     MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
                 }
 
-                //Open failed. Set the RunspaceState to Broken.
+                // Open failed. Set the RunspaceState to Broken.
                 SetRunspaceState(RunspaceState.Broken, exception);
 
-                //Raise the event
+                // Raise the event
                 RaiseRunspaceStateEvents();
 
-                //Rethrow the exception. For asynchronous execution,
-                //OpenThreadProc will catch it. For synchronous execution
-                //caller of open will catch it.
+                // Rethrow the exception. For asynchronous execution,
+                // OpenThreadProc will catch it. For synchronous execution
+                // caller of open will catch it.
                 throw;
             }
 
             SetRunspaceState(RunspaceState.Opened);
             RunspaceOpening.Set();
 
-            //Raise the event
+            // Raise the event
             RaiseRunspaceStateEvents();
             s_runspaceInitTracer.WriteLine("runspace opened successfully");
 
@@ -773,12 +773,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (syncCall)
             {
-                //Do close synchronously
+                // Do close synchronously
                 DoCloseHelper();
             }
             else
             {
-                //Do close asynchronously
+                // Do close asynchronously
                 Thread asyncThread = new Thread(new ThreadStart(this.CloseThreadProc));
 
                 asyncThread.Start();
@@ -844,19 +844,19 @@ namespace System.Management.Automation.Runspaces
             if (Events != null)
                 Events.GenerateEvent(PSEngineEvent.Exiting, null, new object[] { }, null, true, false);
 
-            //Stop all running pipelines
-            //Note:Do not perform the Cancel in lock. Reason is
-            //Pipeline executes in separate thread, say threadP.
-            //When pipeline is canceled/failed/completed in
-            //Pipeline.ExecuteThreadProc it removes the pipeline
-            //from the list of running pipelines. threadP will need
-            //lock to remove the pipelines from the list of running pipelines
-            //And we will deadlock.
-            //Note:It is possible that one or more pipelines in the list
-            //of active pipelines have completed before we call cancel.
-            //That is fine since Pipeline.Cancel handles that( It ignores
-            //the cancel request if pipeline execution has already
-            //completed/failed/canceled.
+            // Stop all running pipelines
+            // Note:Do not perform the Cancel in lock. Reason is
+            // Pipeline executes in separate thread, say threadP.
+            // When pipeline is canceled/failed/completed in
+            // Pipeline.ExecuteThreadProc it removes the pipeline
+            // from the list of running pipelines. threadP will need
+            // lock to remove the pipelines from the list of running pipelines
+            // And we will deadlock.
+            // Note:It is possible that one or more pipelines in the list
+            // of active pipelines have completed before we call cancel.
+            // That is fine since Pipeline.Cancel handles that( It ignores
+            // the cancel request if pipeline execution has already
+            // completed/failed/canceled.
             StopPipelines();
 
             // Disconnect all disconnectable jobs in the job repository.
@@ -875,18 +875,18 @@ namespace System.Management.Automation.Runspaces
                     return runspaces;
                 });
 
-            //Notify Engine components that that runspace is closing.
+            // Notify Engine components that that runspace is closing.
             _engine.Context.RunspaceClosingNotification();
 
-            //Log engine lifecycle event.
+            // Log engine lifecycle event.
             MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
 
-            //All pipelines have been canceled. Close the runspace.
+            // All pipelines have been canceled. Close the runspace.
             _engine = null;
 
             SetRunspaceState(RunspaceState.Closed);
 
-            //Raise Event
+            // Raise Event
             RaiseRunspaceStateEvents();
 
             if (closeAllOpenRunspaces)
@@ -1428,8 +1428,8 @@ namespace System.Management.Automation.Runspaces
                     return;
             }
 
-            //remoteRunspace.Dispose();
-            //remoteRunspace = null;
+            // remoteRunspace.Dispose();
+            // remoteRunspace = null;
             RaiseOperationCompleteEvent();
         }
 

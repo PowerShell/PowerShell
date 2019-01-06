@@ -1990,7 +1990,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #endregion
 
-    }//End Class
+    }
 
     #region class CimSessionProxyTestConnection
     /// <summary>
@@ -2354,4 +2354,4 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     #endregion
-}//End namespace
+}

@@ -119,7 +119,7 @@ namespace System.Management.Automation
         {
             XmlElement command_parameter = _doc.CreateElement("command:parameter", commandURI);
             command_parameter.SetAttribute("required", isMandatory ? "true" : "false");
-            //command_parameter.SetAttribute("variableLength", "unknown");
+            // command_parameter.SetAttribute("variableLength", "unknown");
             command_parameter.SetAttribute("globbing", supportsWildcards ? "true" : "false");
             string fromPipeline;
             if (valueFromPipeline && valueFromPipelineByPropertyName)
@@ -178,7 +178,7 @@ namespace System.Management.Automation
                 {
                     XmlElement parameterValue = _doc.CreateElement("command:parameterValue", commandURI);
                     parameterValue.SetAttribute("required", isSwitchParameter ? "false" : "true");
-                    //parameterValue.SetAttribute("variableLength", "unknown");
+                    // parameterValue.SetAttribute("variableLength", "unknown");
                     XmlText parameterValue_text = _doc.CreateTextNode(type.Name);
                     command_parameter.AppendChild(parameterValue).AppendChild(parameterValue_text);
                 }

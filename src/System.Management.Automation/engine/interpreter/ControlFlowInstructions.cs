@@ -783,7 +783,7 @@ namespace System.Management.Automation.Interpreter
                     return;
                 }
 
-                //PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Interpreted loop compiled");
+                // PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Interpreted loop compiled");
 
                 InterpretedFrame frame = (InterpretedFrame)frameObj;
                 var compiler = new LoopCompiler(_loop, frame.Interpreter.LabelMapping, _variables, _closureVariables, _instructionIndex, _loopEnd);

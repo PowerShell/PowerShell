@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 followingLinesWidth += firstLineIndentation;
             }
 
-            //error checking on invalid values
+            // error checking on invalid values
 
             // generate the lines using the computed widths
             StringCollection sc = StringManipulationHelper.GenerateLines(_lo.DisplayCells, _stringBuffer.ToString(),

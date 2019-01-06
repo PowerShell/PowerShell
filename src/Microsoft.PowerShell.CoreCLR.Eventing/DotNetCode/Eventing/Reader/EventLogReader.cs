@@ -81,10 +81,10 @@ namespace System.Diagnostics.Eventing.Reader
 
             _cachedMetadataInformation = new ProviderMetadataCachedInformation(eventQuery.Session, logfile, 50);
 
-            //explicit data
+            // explicit data
             _eventQuery = eventQuery;
 
-            //implicit
+            // implicit
             _batchSize = 64;
             _eventsBuffer = new IntPtr[_batchSize];
 
@@ -153,7 +153,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 _eventCount = 0;
                 _currentIndex = 0;
-                return false; //no more events in the result set
+                return false; // no more events in the result set
             }
 
             _currentIndex = 0;
@@ -214,7 +214,7 @@ namespace System.Diagnostics.Eventing.Reader
         internal void SeekReset()
         {
             //
-            //close all unread event handles in the buffer
+            // close all unread event handles in the buffer
             //
             while (_currentIndex < _eventCount)
             {
@@ -222,7 +222,7 @@ namespace System.Diagnostics.Eventing.Reader
                 _currentIndex++;
             }
 
-            //reset the indexes used by Next
+            // reset the indexes used by Next
             _currentIndex = 0;
             _eventCount = 0;
             _isEof = false;
@@ -282,7 +282,7 @@ namespace System.Diagnostics.Eventing.Reader
                 case SeekOrigin.Current:
                     if (offset >= 0)
                     {
-                        //we can reuse elements in the batch.
+                        // we can reuse elements in the batch.
                         if (_currentIndex + offset < _eventCount)
                         {
                             //
@@ -298,8 +298,8 @@ namespace System.Diagnostics.Eventing.Reader
                             }
 
                             _currentIndex = (int)(_currentIndex + offset);
-                            //leave the eventCount unchanged
-                            //leave the same Eof
+                            // leave the eventCount unchanged
+                            // leave the same Eof
                         }
                         else
                         {

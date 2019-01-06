@@ -174,12 +174,12 @@ namespace System.Management.Automation
 
             this.CommandScope = context.EngineSessionState.CurrentScope;
 
-            //provide native command a backpointer to this object.
-            //When kill is called on the command object,
-            //it calls this NCP back to kill the process...
+            // provide native command a backpointer to this object.
+            // When kill is called on the command object,
+            // it calls this NCP back to kill the process...
             ((NativeCommand)Command).MyCommandProcessor = this;
 
-            //Create input writer for providing input to the process.
+            // Create input writer for providing input to the process.
             _inputWriter = new ProcessInputWriter(Command);
 
             _isTranscribing = this.Command.Context.EngineHostInterface.UI.IsTranscribing;
@@ -290,11 +290,11 @@ namespace System.Management.Automation
         {
             _isPreparedCalled = true;
 
-            //Check if the application is minishell
+            // Check if the application is minishell
             _isMiniShell = IsMiniShell();
 
-            //For minishell parameter binding is done in Complete method because we need
-            //to know if output is redirected before we can bind parameters.
+            // For minishell parameter binding is done in Complete method because we need
+            // to know if output is redirected before we can bind parameters.
             if (!_isMiniShell)
             {
                 this.NativeParameterBinderController.BindParameters(arguments);
@@ -434,12 +434,12 @@ namespace System.Management.Automation
                     }
                 }
 
-                //Start the process. If stop has been called, throw exception.
-                //Note: if StopProcessing is called which this method has the lock,
-                //Stop thread will wait for nativeProcess to start.
-                //If StopProcessing gets the lock first, then it will set the stopped
-                //flag and this method will throw PipelineStoppedException when it gets
-                //the lock.
+                // Start the process. If stop has been called, throw exception.
+                // Note: if StopProcessing is called which this method has the lock,
+                // Stop thread will wait for nativeProcess to start.
+                // If StopProcessing gets the lock first, then it will set the stopped
+                // flag and this method will throw PipelineStoppedException when it gets
+                // the lock.
                 lock (_sync)
                 {
                     if (_stopped)
@@ -525,7 +525,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    //If input is redirected, start input to process.
+                    // If input is redirected, start input to process.
                     if (startInfo.RedirectStandardInput)
                     {
                         NativeCommandIOFormat inputFormat = NativeCommandIOFormat.Text;
@@ -588,7 +588,7 @@ namespace System.Management.Automation
 
         private void InitOutputQueue()
         {
-            //if output is redirected, start reading output of process in queue.
+            // if output is redirected, start reading output of process in queue.
             if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
             {
                 lock (_sync)
@@ -667,7 +667,7 @@ namespace System.Management.Automation
             {
                 if (_isRunningInBackground == false)
                 {
-                    //Wait for input writer to finish.
+                    // Wait for input writer to finish.
                     _inputWriter.Done();
 
                     // read all the available output in the blocking way
@@ -978,7 +978,7 @@ namespace System.Management.Automation
             {
                 if (!_runStandAlone)
                 {
-                    //Stop input writer
+                    // Stop input writer
                     _inputWriter.Stop();
 
                     KillProcess(_nativeProcess);
@@ -1129,8 +1129,8 @@ namespace System.Management.Automation
                 startInfo.UseShellExecute = true;
             }
 
-            //For minishell value of -outoutFormat parameter depends on value of redirectOutput.
-            //So we delay the parameter binding. Do parameter binding for minishell now.
+            // For minishell value of -outoutFormat parameter depends on value of redirectOutput.
+            // So we delay the parameter binding. Do parameter binding for minishell now.
             if (_isMiniShell)
             {
                 MinishellParameterBinderController mpc = (MinishellParameterBinderController)NativeParameterBinderController;
@@ -1229,8 +1229,8 @@ namespace System.Management.Automation
                 }
             }
 
-            //In minishell scenario, if output is redirected
-            //then error should also be redirected.
+            // In minishell scenario, if output is redirected
+            // then error should also be redirected.
             if (redirectError == false && redirectOutput == true && _isMiniShell)
             {
                 redirectError = true;
@@ -1579,7 +1579,7 @@ namespace System.Management.Automation
                         string streamName;
                         object obj = des.Deserialize(out streamName);
 
-                        //Decide the stream to which data belongs
+                        // Decide the stream to which data belongs
                         MinishellStream stream = MinishellStream.Unknown;
                         if (streamName != null)
                         {
@@ -1591,7 +1591,7 @@ namespace System.Management.Automation
                             stream = isOutput ? MinishellStream.Output : MinishellStream.Error;
                         }
 
-                        //Null is allowed only in output stream
+                        // Null is allowed only in output stream
                         if (stream != MinishellStream.Output && obj == null)
                         {
                             continue;
@@ -1644,7 +1644,7 @@ namespace System.Management.Automation
                                  stream == MinishellStream.Verbose ||
                                  stream == MinishellStream.Warning)
                         {
-                            //Convert to string
+                            // Convert to string
                             try
                             {
                                 obj = LanguagePrimitives.ConvertTo(obj, typeof(string), CultureInfo.InvariantCulture);
@@ -1792,9 +1792,9 @@ namespace System.Management.Automation
         {
             Dbg.Assert(process != null, "caller should validate the paramter");
 
-            //Get the encoding for writing to native command. Note we get the Encoding
-            //from the current scope so a script or function can use a different encoding
-            //than global value.
+            // Get the encoding for writing to native command. Note we get the Encoding
+            // from the current scope so a script or function can use a different encoding
+            // than global value.
             Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
                                     Utils.utf8NoBom;
 

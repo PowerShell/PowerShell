@@ -25,9 +25,9 @@ namespace System.Management.Automation.Remoting.Client
         internal const string CodePage = "WINRS_CODEPAGE";
         internal static readonly Version WSMAN_STACK_VERSION = new Version(3, 0);
         internal const int WSMAN_FLAG_REQUESTED_API_VERSION_1_1 = 1;
-        //WSMan's default max env size in V2
+        // WSMan's default max env size in V2
         internal const int WSMAN_DEFAULT_MAX_ENVELOPE_SIZE_KB_V2 = 150;
-        //WSMan's default max env size in V3
+        // WSMan's default max env size in V3
         internal const int WSMAN_DEFAULT_MAX_ENVELOPE_SIZE_KB_V3 = 500;
 
         #region WSMan errors
@@ -1931,7 +1931,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManReceiveDataResultInternal result1 =
                     Marshal.PtrToStructure<WSManReceiveDataResultInternal>(unmanagedData);
 
-                //copy data from unmanaged heap to managed heap.
+                // copy data from unmanaged heap to managed heap.
                 byte[] dataRecvd = null;
                 if (result1.data.binaryData.bufferLength > 0)
                 {
@@ -2037,7 +2037,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             internal static WSManPluginRequest UnMarshal(IntPtr unmanagedData)
             {
-                //Dbg.Assert(IntPtr.Zero != unmanagedData, "unmanagedData must be non-null. This means WinRM sent a bad pointer.");
+                // Dbg.Assert(IntPtr.Zero != unmanagedData, "unmanagedData must be non-null. This means WinRM sent a bad pointer.");
                 WSManPluginRequest result = null;
 
                 if (IntPtr.Zero != unmanagedData)
@@ -2888,7 +2888,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr requestDetails,
             int flags,
             [In, Out, MarshalAs(UnmanagedType.LPStruct)] WSManDataStruct data);
-        //[In, Out] ref IntPtr data);
+        // [In, Out] ref IntPtr data);
 
         /// <summary>
         /// Reports the completion of an operation by all operation entry points except for the

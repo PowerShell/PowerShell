@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
     /// The third parameter states the capabilities of the provider.
     ///
     /// -->
-#if CORECLR //System.Transaction namespace is not in CoreClr.
+#if CORECLR // System.Transaction namespace is not in CoreClr.
     [CmdletProvider(RegistryProvider.ProviderName, ProviderCapabilities.ShouldProcess)]
 #else
     [CmdletProvider(RegistryProvider.ProviderName, ProviderCapabilities.ShouldProcess | ProviderCapabilities.Transactions)]
@@ -3934,7 +3934,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (System.ArgumentException)
             {
-                //RegistryKey that contains the specified value does not exist
+                // RegistryKey that contains the specified value does not exist
             }
             catch (System.IO.IOException)
             {

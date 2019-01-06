@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

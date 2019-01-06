@@ -32,16 +32,16 @@ namespace System.Diagnostics.Eventing.Reader
         private string _containerChannel;
         private int[] _matchedQueryIds;
 
-        //a dummy object which is used only for the locking.
+        // a dummy object which is used only for the locking.
         private object _syncObject;
 
-        //cached DisplayNames for each instance
+        // cached DisplayNames for each instance
         private string _levelName = null;
         private string _taskName = null;
         private string _opcodeName = null;
         private IEnumerable<string> _keywordsNames = null;
 
-        //cached DisplayNames for each instance
+        // cached DisplayNames for each instance
         private bool _levelNameReady;
         private bool _taskNameReady;
         private bool _opcodeNameReady;
@@ -75,7 +75,7 @@ namespace System.Diagnostics.Eventing.Reader
             if (_systemProperties.filled)
                 return;
 
-            //prepare the System Context, if it is not already initialized.
+            // prepare the System Context, if it is not already initialized.
             _session.SetupSystemContext();
 
             lock (_syncObject)
@@ -310,7 +310,7 @@ namespace System.Diagnostics.Eventing.Reader
         {
             if (values == null) return this.FormatDescription();
 
-            //copy the value IEnumerable to an array.
+            // copy the value IEnumerable to an array.
             string[] theValues = new string[0];
             int i = 0;
             foreach (object o in values)

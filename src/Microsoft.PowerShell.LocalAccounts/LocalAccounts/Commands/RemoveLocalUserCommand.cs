@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionRemoveUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

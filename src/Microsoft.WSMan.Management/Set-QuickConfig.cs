@@ -48,7 +48,7 @@ namespace Microsoft.WSMan.Management
 
         private SwitchParameter usessl;
 
-        //helper variable
+        // helper variable
         private WSManHelper helper;
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            //If not running elevated, then throw an "elevation required" error message.
+            // If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
             String query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
@@ -95,7 +95,7 @@ namespace Microsoft.WSMan.Management
 
             QuickConfigRemoting(true);
             QuickConfigRemoting(false);
-        }//End BeginProcessing()
+        }
 
         #region private
 
@@ -274,7 +274,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -290,6 +290,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-    }//End Class
+    }
     #endregion Set-WsManQuickConfig
 }

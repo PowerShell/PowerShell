@@ -149,13 +149,13 @@ namespace System.Diagnostics.Eventing.Reader
             DateTime timeNow = DateTime.Now;
             ProviderMetadataId keyToDelete = null;
 
-            //get the entry in the cache which was not accessed for the longest time.
+            // get the entry in the cache which was not accessed for the longest time.
             foreach (KeyValuePair<ProviderMetadataId, CacheItem> kvp in _cache)
             {
-                //the time difference (in ms) between the timeNow and the last used time of each entry
+                // the time difference (in ms) between the timeNow and the last used time of each entry
                 TimeSpan timeDifference = timeNow.Subtract(kvp.Value.TheTime);
 
-                //for the "unused" items (with ReferenceCount == 0)   -> can possible be deleted.
+                // for the "unused" items (with ReferenceCount == 0)   -> can possible be deleted.
                 if (timeDifference.TotalMilliseconds >= maxPassedTime)
                 {
                     maxPassedTime = timeDifference.TotalMilliseconds;

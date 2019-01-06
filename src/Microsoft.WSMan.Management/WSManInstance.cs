@@ -404,7 +404,7 @@ namespace Microsoft.WSMan.Management
             string[] Split = filter.Trim().Split(new Char[] { '=', ';' });
             if ((Split.Length)%2 != 0)
             {
-                //mismatched property name/value pair
+                // mismatched property name/value pair
                 return null;
             }
 
@@ -527,7 +527,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    //in the format http(s)://server[:port/applicationname]
+                    // in the format http(s)://server[:port/applicationname]
                     string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
                     string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
@@ -604,7 +604,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -912,7 +912,7 @@ namespace Microsoft.WSMan.Management
                 {
                     try
                     {
-                        //in the format http(s)://server[:port/applicationname]
+                        // in the format http(s)://server[:port/applicationname]
                         string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
                         string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
@@ -969,7 +969,7 @@ namespace Microsoft.WSMan.Management
                 if (m_session != null)
                     Dispose(m_session);
             }
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
@@ -980,7 +980,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -1210,7 +1210,7 @@ namespace Microsoft.WSMan.Management
                 {
                     try
                     {
-                        //in the format http(s)://server[:port/applicationname]
+                        // in the format http(s)://server[:port/applicationname]
                         string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
                         string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
@@ -1252,7 +1252,7 @@ namespace Microsoft.WSMan.Management
 
             }
 
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
@@ -1263,7 +1263,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -1504,7 +1504,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    //in the format http(s)://server[:port/applicationname]
+                    // in the format http(s)://server[:port/applicationname]
                     string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
                     string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
@@ -1516,7 +1516,7 @@ namespace Microsoft.WSMan.Management
 
             }
 
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -1526,7 +1526,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 IWSManResourceLocator m_resource = helper.InitializeResourceLocator(optionset, selectorset, null, null, m_wsmanObject, resourceuri);
-                //create the session object
+                // create the session object
                 m_session = helper.CreateSessionObject(m_wsmanObject, Authentication, sessionoption, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
                 string rootNode = helper.GetRootNodeName(helper.WSManOp, m_resource.ResourceUri, null);
                 string input = helper.ProcessInput(m_wsmanObject, filepath, helper.WSManOp, rootNode, valueset, m_resource, m_session);
@@ -1561,7 +1561,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-        }//End ProcessRecord()
+        }
 
         #region IDisposable Members
 
@@ -1572,7 +1572,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -1595,8 +1595,8 @@ namespace Microsoft.WSMan.Management
         {
             helper.CleanUp();
 
-        }//End EndProcessing()
-    }//End Class
+        }
+    }
 
     #endregion
 }

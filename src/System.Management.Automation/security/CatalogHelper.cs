@@ -217,7 +217,7 @@ namespace System.Management.Automation
 
             if (dirInfo != null)
             {
-                //Relative path of the file is the path inside the containing folder excluding folder Name
+                // Relative path of the file is the path inside the containing folder excluding folder Name
                 relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
             }
             else
@@ -612,7 +612,7 @@ namespace System.Management.Automation
 
             if (dirInfo != null)
             {
-                //Relative path of the file is the path inside the containing folder excluding folder Name
+                // Relative path of the file is the path inside the containing folder excluding folder Name
                 relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
                 exclude = fileToHash.Name;
             }
@@ -703,7 +703,7 @@ namespace System.Management.Automation
             List<string> relativePathsNotInFolder = relativePathsFromFolder.Except(relativePathsFromCatalog, StringComparer.CurrentCultureIgnoreCase).ToList();
             List<string> relativePathsNotInCatalog = relativePathsFromCatalog.Except(relativePathsFromFolder, StringComparer.CurrentCultureIgnoreCase).ToList();
 
-            //Found extra hashes in Folder
+            // Found extra hashes in Folder
             if ((relativePathsNotInFolder.Count != 0) || (relativePathsNotInCatalog.Count != 0))
             {
                 Status = false;

@@ -140,7 +140,7 @@ namespace System.Management.Automation.Interpreter
 
         public static bool IsInterpretedFrame(MethodBase method)
         {
-            //ContractUtils.RequiresNotNull(method, "method");
+            // ContractUtils.RequiresNotNull(method, "method");
             return method.DeclaringType == typeof(Interpreter) && method.Name == "Run";
         }
 

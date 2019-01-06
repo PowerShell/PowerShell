@@ -892,7 +892,7 @@ namespace System.Management.Automation
                                                ParserStrings.RedirectionStreamCanOnlyMergeToOutputStream);
             }
 
-            //this.ToStream = to;
+            // this.ToStream = to;
         }
 
         public override string ToString()
@@ -902,7 +902,7 @@ namespace System.Management.Automation
                        : string.Format(CultureInfo.InvariantCulture, "{0}>&1", (int)FromStream);
         }
 
-        //private RedirectionStream ToStream { get; set; }
+        // private RedirectionStream ToStream { get; set; }
 
         // Handle merging redirections for commands, like:
         //   dir 2>&1

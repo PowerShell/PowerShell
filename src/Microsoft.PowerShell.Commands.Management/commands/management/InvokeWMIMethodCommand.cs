@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (namespaceSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "NamespaceSpecifiedWithPath",
@@ -173,14 +173,14 @@ namespace Microsoft.PowerShell.Commands
 
                     if (mPath.Server != "." && serverNameSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "ComputerNameSpecifiedWithPath",
                             ErrorCategory.InvalidOperation,
                             ComputerName));
                     }
-                    //If server name is specified loop through it.
+                    // If server name is specified loop through it.
                     if (!(mPath.Server == "." && serverNameSpecified))
                     {
                         string[] serverName = new string[] { mPath.Server };
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        }//ProcessRecord
+        }
 
         /// <summary>
         /// Ensure that the argument is a collection containing no PSObjects.
@@ -314,5 +314,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    }//InvokeWMIObject
+    }
 }

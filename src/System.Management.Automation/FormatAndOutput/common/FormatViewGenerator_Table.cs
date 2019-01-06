@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we did not get any properties:
-            //try to get properties from the default property set of the object
+            // try to get properties from the default property set of the object
             this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
             if (this.activeAssociationList.Count > 0)
             {

@@ -391,7 +391,7 @@ namespace System.Management.Automation
                 {
                     // Since more than one path was resolved, this is an error.
 
-                    //Before throwing exception. Close the readers to avoid sharing violation.
+                    // Before throwing exception. Close the readers to avoid sharing violation.
                     foreach (IContentReader r in readers)
                     {
                         r.Close();

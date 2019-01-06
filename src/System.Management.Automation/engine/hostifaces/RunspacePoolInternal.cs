@@ -997,7 +997,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (isAsync)
             {
                 AsyncResult asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, true);
-                //Open pool in another thread
+                // Open pool in another thread
                 ThreadPool.QueueUserWorkItem(new WaitCallback(OpenThreadProc), asyncResult);
                 return asyncResult;
             }
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (isAsync)
             {
                 RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
-                //Open pool in another thread
+                // Open pool in another thread
                 ThreadPool.QueueUserWorkItem(new WaitCallback(CloseThreadProc), asyncResult);
                 return asyncResult;
             }
@@ -1402,7 +1402,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 runspaceList.Clear();
             }
 
-            //Start from the most recent runspace.
+            // Start from the most recent runspace.
             for (int index = runspaceListCopy.Count - 1; index >= 0; index--)
             {
                 // close runspaces suppress exceptions
@@ -1627,7 +1627,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (stateInfo.State != RunspacePoolState.BeforeOpen)
             {
-                //Call fails if RunspacePoolState is not BeforeOpen.
+                // Call fails if RunspacePoolState is not BeforeOpen.
                 InvalidRunspacePoolStateException e =
                     new InvalidRunspacePoolStateException
                     (

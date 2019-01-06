@@ -151,9 +151,9 @@ namespace System.Management.Automation
         internal CommandInfo(CommandInfo other)
         {
             // Computed fields not copied:
-            //this._externalCommandMetadata = other._externalCommandMetadata;
-            //this._moduleName = other._moduleName;
-            //this.parameterSets = other.parameterSets;
+            // this._externalCommandMetadata = other._externalCommandMetadata;
+            // this._moduleName = other._moduleName;
+            // this.parameterSets = other.parameterSets;
             this.Module = other.Module;
             _visibility = other._visibility;
             Arguments = other.Arguments;

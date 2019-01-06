@@ -1161,7 +1161,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 
@@ -1171,7 +1171,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 

@@ -393,7 +393,7 @@ namespace System.Management.Automation
         protected override string PropertyToString(PSProperty property)
         {
             StringBuilder returnValue = new StringBuilder();
-            //if (PropertyIsStatic(property))
+            // if (PropertyIsStatic(property))
             // {
             //    returnValue.Append("static ");
             // }

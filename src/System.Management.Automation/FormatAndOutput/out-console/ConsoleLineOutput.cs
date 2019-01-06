@@ -95,8 +95,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (HostException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
 
             return string.IsNullOrEmpty(str) ? 0 : str.Length - offset;
@@ -110,8 +110,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (HostException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
 
             return string.IsNullOrEmpty(str) ? 0 : str.Length;
@@ -125,8 +125,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (HostException)
             {
-                //thrown when external host rawui is not implemented, in which case
-                //we will fallback to the default value.
+                // thrown when external host rawui is not implemented, in which case
+                // we will fallback to the default value.
             }
 
             return 1;
@@ -180,8 +180,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (HostException)
                 {
-                    //thrown when external host rawui is not implemented, in which case
-                    //we will fallback to the default value.
+                    // thrown when external host rawui is not implemented, in which case
+                    // we will fallback to the default value.
                 }
 
                 return _forceNewLine ? _fallbackRawConsoleColumnNumber - 1 : _fallbackRawConsoleColumnNumber;
@@ -206,8 +206,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (HostException)
                 {
-                    //thrown when external host rawui is not implemented, in which case
-                    //we will fallback to the default value.
+                    // thrown when external host rawui is not implemented, in which case
+                    // we will fallback to the default value.
                 }
 
                 return _fallbackRawConsoleRowNumber;

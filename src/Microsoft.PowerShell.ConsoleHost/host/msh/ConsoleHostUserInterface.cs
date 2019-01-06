@@ -106,10 +106,10 @@ namespace Microsoft.PowerShell
         ///// <value></value>
         ///// <exception/>
 
-        //internal
-        //PSHost
-        //Parent
-        //{
+        // internal
+        // PSHost
+        // Parent
+        // {
         //    get
         //    {
         //        using (tracer.TraceProperty())
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell
         //            return parent;
         //        }
         //    }
-        //}
+        // }
 
         /// <summary>
         /// true if command completion is currently running.
@@ -1077,7 +1077,7 @@ namespace Microsoft.PowerShell
             bool unused;
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
-            //We should write debug to error stream only if debug is redirected.)
+            // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
                 _parent.ErrorSerializer.Serialize(message, "debug");
@@ -1098,7 +1098,7 @@ namespace Microsoft.PowerShell
         /// <param name="record"></param>
         public override void WriteInformation(InformationRecord record)
         {
-            //We should write information to error stream only if redirected.)
+            // We should write information to error stream only if redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
                 _parent.ErrorSerializer.Serialize(record, "information");
@@ -2058,8 +2058,8 @@ namespace Microsoft.PowerShell
 
         private object _instanceLock = new object();
 
-        //If this is true, class throws on read or prompt method which require
-        //access to console.
+        // If this is true, class throws on read or prompt method which require
+        // access to console.
         internal bool ThrowOnReadAndPrompt
         {
             set

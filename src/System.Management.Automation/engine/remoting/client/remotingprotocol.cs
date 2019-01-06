@@ -42,7 +42,7 @@ namespace System.Management.Automation.Remoting
             bool noInput);
 
         // TODO: If this is not used, remove this.
-        //internal abstract event EventHandler<RemoteDataEventArgs> DataReceived;
+        // internal abstract event EventHandler<RemoteDataEventArgs> DataReceived;
 
         internal abstract event EventHandler<RemoteDataEventArgs<string>> EncryptedSessionKeyReceived;
 

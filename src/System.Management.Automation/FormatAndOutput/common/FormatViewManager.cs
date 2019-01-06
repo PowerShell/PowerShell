@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 StringBuilder unKnowViewFormatStringBuilder = new StringBuilder();
                 if (validViewFormats.Length > 0)
                 {
-                    //unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
+                    // unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
                     unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameErrorSuffix, viewName, formatTypeName));
                     unKnowViewFormatStringBuilder.Append(validViewFormats.ToString());
                 }

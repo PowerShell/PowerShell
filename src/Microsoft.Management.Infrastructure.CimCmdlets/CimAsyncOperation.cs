@@ -595,5 +595,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal const string CimSessionArgument = @"CimSession";
         #endregion
 
-    }//End Class
-}//End namespace
+    }
+}

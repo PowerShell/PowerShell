@@ -878,7 +878,7 @@ $result
                     {
                         _waitOnComputers.Add(computer);
                     }
-                }//end foreach
+                }
 
                 if (_waitOnComputers.Count > 0)
                 {
@@ -1059,7 +1059,7 @@ $result
                             _status = StringUtil.Format(ComputerResources.WaitForMultipleComputers, machineCompleteRestart, _waitOnComputers.Count);
                             _percent = machineCompleteRestart * 100 / _waitOnComputers.Count;
                         }
-                    }// end while(true)
+                    }
 
                     if (_timeUp)
                     {
@@ -1081,9 +1081,9 @@ $result
                             // Wait for PowerShell. All computers that finished restarting are put in "allDoneList"
                         } while (false);
                     }
-                }// end if(waitOnComputer.Count > 0)
-            }//end DefaultParameter
-        }//End Processrecord
+                }
+            }
+        }
 
         /// <summary>
         /// to implement ^C.
@@ -1203,7 +1203,7 @@ $result
                 flags[0] = forcedShutdown;
 
             ProcessWSManProtocol(flags);
-        }//End Processrecord
+        }
 
         /// <summary>
         /// to implement ^C.
@@ -1302,7 +1302,7 @@ $result
         /// <summary>
         /// Emit the output.
         /// </summary>
-        //[Alias("Restart")]
+        // [Alias("Restart")]
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
@@ -1446,7 +1446,7 @@ $result
                     {
                         Timeout = TimeSpan.FromMilliseconds(10000),
                         CancellationToken = cancelTokenSource.Token,
-                        //This prefix works against all versions of the WinRM server stack, both win8 and win7
+                        // This prefix works against all versions of the WinRM server stack, both win8 and win7
                         ResourceUriPrefix = new Uri(ComputerWMIHelper.CimUriPrefix)
                     };
 
@@ -2098,7 +2098,7 @@ $result
             {
                 Timeout = TimeSpan.FromMilliseconds(10000),
                 CancellationToken = cancelToken,
-                //This prefix works against all versions of the WinRM server stack, both win8 and win7
+                // This prefix works against all versions of the WinRM server stack, both win8 and win7
                 ResourceUriPrefix = new Uri(ComputerWMIHelper.CimUriPrefix)
             };
 
@@ -2256,6 +2256,6 @@ $result
         }
     }
     #endregion Helper
-}//End namespace
+}
 
 #endif

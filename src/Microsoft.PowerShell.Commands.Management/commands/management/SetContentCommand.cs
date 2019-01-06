@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ItemNotFoundException)
                 {
-                    //If the item is not found then there is nothing to clear so ignore this exception.
+                    // If the item is not found then there is nothing to clear so ignore this exception.
                     continue;
                 }
             }

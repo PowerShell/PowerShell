@@ -600,31 +600,31 @@ namespace System.Management.Automation
 
             string decoded = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
 
-            //Deserialize string
+            // Deserialize string
             XmlReader reader = XmlReader.Create(new StringReader(decoded), InternalDeserializer.XmlReaderSettingsForCliXml);
             object dso;
             Deserializer deserializer = new Deserializer(reader);
             dso = deserializer.Deserialize();
             if (deserializer.Done() == false)
             {
-                //This helper function should move to host and it should provide appropriate
-                //error message there.
+                // This helper function should move to host and it should provide appropriate
+                // error message there.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
             PSObject mo = dso as PSObject;
             if (mo == null)
             {
-                //This helper function should move the host. Provide appropriate error message.
-                //Format of args parameter is not correct.
+                // This helper function should move the host. Provide appropriate error message.
+                // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
             var argsList = mo.BaseObject as ArrayList;
             if (argsList == null)
             {
-                //This helper function should move the host. Provide appropriate error message.
-                //Format of args parameter is not correct.
+                // This helper function should move the host. Provide appropriate error message.
+                // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 

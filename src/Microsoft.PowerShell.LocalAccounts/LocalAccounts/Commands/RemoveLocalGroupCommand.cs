@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionRemoveGroup);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

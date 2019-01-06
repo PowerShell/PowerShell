@@ -1323,14 +1323,14 @@ namespace System.Management.Automation
 
                 foreach (ProviderInfo existingProvider in existingProviders)
                 {
-                    //making sure that we are not trying to add the same provider by checking the provider name & type of the new and existing providers.
+                    // making sure that we are not trying to add the same provider by checking the provider name & type of the new and existing providers.
                     if (string.IsNullOrEmpty(provider.PSSnapInName) && (string.Equals(existingProvider.Name, provider.Name, StringComparison.OrdinalIgnoreCase) &&
                         (existingProvider.GetType().Equals(provider.GetType()))))
                     {
                         isDuplicateProvider = true;
                     }
 
-                    //making sure that we are not trying to add the same provider by checking the PSSnapinName of the new and existing providers.
+                    // making sure that we are not trying to add the same provider by checking the PSSnapinName of the new and existing providers.
                     else if (string.Equals(existingProvider.PSSnapInName, provider.PSSnapInName, StringComparison.OrdinalIgnoreCase))
                     {
                         isDuplicateProvider = true;

@@ -475,7 +475,7 @@ namespace System.Management.Automation.Internal
                         tempModuleInfo.SetModuleBase(Utils.DefaultPowerShellAppBase);
                     }
 
-                    //moduleVersionRequired is bypassed by FullyQualifiedModule from calling method. This is the only place where guid will be involved.
+                    // moduleVersionRequired is bypassed by FullyQualifiedModule from calling method. This is the only place where guid will be involved.
                     if (moduleVersionRequired && modulePath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         tempModuleInfo.SetVersion(ModuleIntrinsics.GetManifestModuleVersion(modulePath));

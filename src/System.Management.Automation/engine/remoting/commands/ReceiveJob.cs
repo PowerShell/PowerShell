@@ -363,13 +363,13 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            //Runspace parameter is supported only on PSRemotingJob objects
+                            // Runspace parameter is supported only on PSRemotingJob objects
                             foreach (PSSession remoteRunspaceInfo in _remoteRunspaceInfos)
                             {
                                 // get the required child jobs
                                 List<Job> childJobs = remoteJob.GetJobsForRunspace(remoteRunspaceInfo);
                                 jobsToWrite.AddRange(childJobs);
-                                //WriteResultsForJobsInCollection(childJobs, false);
+                                // WriteResultsForJobsInCollection(childJobs, false);
 
                             }
                         }
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
                                 // get the required child Job objects
                                 List<Job> childJobs = remoteJob.GetJobsForComputer(resolvedComputerName);
                                 jobsToWrite.AddRange(childJobs);
-                                //WriteResultsForJobsInCollection(childJobs, false);
+                                // WriteResultsForJobsInCollection(childJobs, false);
 
                             }
                         }
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_locations == null)
                         {
-                            //WriteAll();
+                            // WriteAll();
                             jobsToWrite.AddRange(_jobs);
                             checkForRecurse = true;
                         }
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
                                     // get the required child Job objects
                                     List<Job> childJobs = job.GetJobsForLocation(location);
                                     jobsToWrite.AddRange(childJobs);
-                                    //WriteResultsForJobsInCollection(childJobs, false);
+                                    // WriteResultsForJobsInCollection(childJobs, false);
                                 }
                             }
                         }
@@ -444,7 +444,7 @@ namespace Microsoft.PowerShell.Commands
 
                         jobsToWrite.AddRange(jobs);
                         checkForRecurse = true;
-                        //WriteResultsForJobsInCollection(jobs, true);
+                        // WriteResultsForJobsInCollection(jobs, true);
                     }
 
                     break;
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
                         List<Job> jobs = FindJobsMatchingBySessionId(true, false, true, false);
                         jobsToWrite.AddRange(jobs);
                         checkForRecurse = true;
-                        //WriteResultsForJobsInCollection(jobs, true);
+                        // WriteResultsForJobsInCollection(jobs, true);
                     }
 
                     break;
@@ -464,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
                         List<Job> jobs = FindJobsMatchingByName(true, false, true, false);
                         jobsToWrite.AddRange(jobs);
                         checkForRecurse = true;
-                        //WriteResultsForJobsInCollection(jobs, true);
+                        // WriteResultsForJobsInCollection(jobs, true);
                     }
 
                     break;
@@ -878,7 +878,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteReasonError(Job job)
         {
-            //Write better error for the remoting case and generic error for the other case
+            // Write better error for the remoting case and generic error for the other case
             PSRemotingChildJob child = job as PSRemotingChildJob;
             if (child != null && child.FailureErrorRecord != null)
             {
@@ -947,7 +947,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="registerInsteadOfWrite"></param>
         private void WriteJobResultsRecursivelyHelper(Hashtable duplicate, Job job, bool registerInsteadOfWrite)
         {
-            //Check if this object is already visited. If not, add it to the cache
+            // Check if this object is already visited. If not, add it to the cache
             if (duplicate.ContainsKey(job))
             {
                 return;
@@ -955,7 +955,7 @@ namespace Microsoft.PowerShell.Commands
 
             duplicate.Add(job, job);
 
-            //Write the results of child jobs
+            // Write the results of child jobs
             IList<Job> childJobs = job.ChildJobs;
 
             foreach (Job childjob in childJobs)
@@ -976,7 +976,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //Write the results of this job
+                // Write the results of this job
                 WriteJobResults(job);
                 WriteJobStateInformationIfRequired(job);
             }

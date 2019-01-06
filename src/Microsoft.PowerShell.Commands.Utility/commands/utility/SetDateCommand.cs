@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
             }
 
-            //output DateTime object wrapped in an PSObject with DisplayHint attached
+            // output DateTime object wrapped in an PSObject with DisplayHint attached
             PSObject outputObj = new PSObject(dateToUse);
             PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
             outputObj.Properties.Add(note);

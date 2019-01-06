@@ -137,5 +137,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimPromptType prompt;
 
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

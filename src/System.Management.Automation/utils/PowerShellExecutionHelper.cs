@@ -113,7 +113,7 @@ namespace System.Management.Automation
             try
             {
                 // blocks until all results are retrieved.
-                //results = this.ExecuteCommand(cmd);
+                // results = this.ExecuteCommand(cmd);
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
                 // untill the next completion

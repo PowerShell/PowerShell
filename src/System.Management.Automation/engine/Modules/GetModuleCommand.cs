@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
                     ImportModuleOptions throwAwayOptions = new ImportModuleOptions();
                     moduleInfo = LoadModuleManifest(
                         temporaryModuleManifestPath,
-                        null, //scriptInfo
+                        null, // scriptInfo
                         mainData,
                         localizedData,
                         0 /* - don't write errors, don't load elements, don't return null on first error */,

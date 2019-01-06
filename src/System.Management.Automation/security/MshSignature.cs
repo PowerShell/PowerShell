@@ -106,7 +106,7 @@ namespace System.Management.Automation
         private X509Certificate2 _signerCert;
         private string _statusMessage = string.Empty;
         private X509Certificate2 _timeStamperCert;
-        //private DateTime signedOn = new DateTime(0);
+        // private DateTime signedOn = new DateTime(0);
 
         // Three states:
         //   - True: we can rely on the catalog API to check catalog signature.

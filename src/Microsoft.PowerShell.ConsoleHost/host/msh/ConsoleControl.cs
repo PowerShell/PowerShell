@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell
         [StructLayout(LayoutKind.Sequential)]
         internal struct FONTSIGNATURE
         {
-            //From public\sdk\inc\wingdi.h
+            // From public\sdk\inc\wingdi.h
 
             // fsUsb*: A 128-bit Unicode subset bitfield (USB) identifying up to 126 Unicode subranges
             internal DWORD fsUsb0;
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell
         [StructLayout(LayoutKind.Sequential)]
         internal struct CHARSETINFO
         {
-            //From public\sdk\inc\wingdi.h
+            // From public\sdk\inc\wingdi.h
             internal uint ciCharset;   // Character set value.
             internal uint ciACP;       // ANSI code-page identifier.
             internal FONTSIGNATURE fs;
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct TEXTMETRIC
         {
-            //From public\sdk\inc\wingdi.h
+            // From public\sdk\inc\wingdi.h
             public int tmHeight;
             public int tmAscent;
             public int tmDescent;
@@ -1091,11 +1091,11 @@ namespace Microsoft.PowerShell
                     screenRegion.Bottom - screenRegion.Top;
 
 #if DEBUG
-                //Check contents in contentsRegion
+                // Check contents in contentsRegion
                 CheckWriteConsoleOutputContents(contents, contentsRegion);
 #endif
 
-                //Identify edges and areas of identical contiguous edges in contentsRegion
+                // Identify edges and areas of identical contiguous edges in contentsRegion
                 List<BufferCellArrayRowTypeRange> sameEdgeAreas = new List<BufferCellArrayRowTypeRange>();
                 int firstLeftTrailingRow = -1, firstRightLeadingRow = -1;
                 BuildEdgeTypeInfo(contentsRegion, contents,
@@ -1262,7 +1262,7 @@ namespace Microsoft.PowerShell
                     }
                 }
             }
-            //Check right edge
+            // Check right edge
             if (origin.X + (contentsRegion.Right - contentsRegion.Left) + 1 >= bufferInfo.BufferSize.X)
             {
                 if (firstRightLeadingRow >= 0)

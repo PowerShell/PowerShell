@@ -596,7 +596,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void StopProcessing()
         {
             Dispose();
-        }//End StopProcessing()
+        }
 
         #endregion
 
@@ -1012,5 +1012,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return credentials;
         }
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

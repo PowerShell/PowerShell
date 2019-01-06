@@ -269,8 +269,8 @@ namespace System.Management.Automation
                     result.Add(Path.GetFullPath(directory));
                 }
 
-                //user specifically wanted to search in a particular directory
-                //so return..
+                // user specifically wanted to search in a particular directory
+                // so return..
                 return result;
             }
 

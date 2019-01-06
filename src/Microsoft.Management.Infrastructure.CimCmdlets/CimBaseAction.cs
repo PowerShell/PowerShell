@@ -58,7 +58,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private XOperationContextBase context;
-    }//End Class
+    }
 
     /// <summary>
     /// <para>
@@ -197,5 +197,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

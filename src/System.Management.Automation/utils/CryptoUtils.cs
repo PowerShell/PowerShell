@@ -45,8 +45,8 @@ namespace System.Management.Automation.Internal
     /// Class the encapsulates native crypto key handles and provides a
     /// mechanism to release resources used by it.
     /// </summary>
-    //[SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
-    //[SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode=true)]
+    // [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
+    // [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode=true)]
     internal class PSSafeCryptKey : SafeHandleZeroOrMinusOneIsInvalid
     {
         /// <summary>
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Internal
         /// and encoded as a base 64 string.</returns>
         internal string SafeExportSessionKey()
         {
-            //generate one if not already done.
+            // generate one if not already done.
             GenerateSessionKey();
 
             uint length = 0;
@@ -855,7 +855,7 @@ namespace System.Management.Automation.Internal
             System.GC.SuppressFinalize(this);
         }
 
-        //[SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
+        // [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -1199,14 +1199,14 @@ namespace System.Management.Automation.Internal
         {
             ServerRemoteSession session = Session as ServerRemoteSession;
 
-            //session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
-            //for newer clients, server will never initiate key exchange.
-            //for server, just the session key is required to encrypt/decrypt anything
+            // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
+            // for newer clients, server will never initiate key exchange.
+            // for server, just the session key is required to encrypt/decrypt anything
             if ((session != null) && (session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM))
             {
                 _rsaCryptoProvider.GenerateSessionKey();
             }
-            else //older clients
+            else // older clients
             {
                 RunKeyExchangeIfRequired();
             }
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(!string.IsNullOrEmpty(publicKeyAsString), "public key passed in cannot be null");
 
             // generate the crypto provider to use for encryption
-            //_rsaCryptoProvider = GenerateCryptoServiceProvider(false);
+            // _rsaCryptoProvider = GenerateCryptoServiceProvider(false);
 
             try
             {
@@ -1316,7 +1316,7 @@ namespace System.Management.Automation.Internal
         {
             _rsaCryptoProvider = PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForClient();
 
-            //_session = new RemoteSession();
+            // _session = new RemoteSession();
         }
 
         #endregion Constructors

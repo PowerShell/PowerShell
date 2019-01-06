@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to suspend
+            // List of jobs to suspend
             List<Job> jobsToSuspend = null;
 
             switch (ParameterSetName)

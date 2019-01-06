@@ -506,7 +506,7 @@ namespace System.Management.Automation
         private int _isDisposed = 0;
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
-        //This variable is set to true if atleast one child job failed.
+        // This variable is set to true if atleast one child job failed.
 
         // count of number of child jobs which have finished
         private int _finishedChildJobsCount = 0;
@@ -1940,7 +1940,7 @@ namespace System.Management.Automation
 
                 int finishedChildJobsCountNew = Interlocked.Increment(ref finishedChildJobsCount);
 
-                //We are done
+                // We are done
                 if (finishedChildJobsCountNew == childJobsCount)
                 {
                     allChildJobsFinished = true;
@@ -1948,9 +1948,9 @@ namespace System.Management.Automation
 
                 if (allChildJobsFinished)
                 {
-                    //if any child job failed, set status to failed
-                    //If stop was called set, status to stopped
-                    //else completed);
+                    // if any child job failed, set status to failed
+                    // If stop was called set, status to stopped
+                    // else completed);
                     if (failedChildJobsCount > 0)
                     {
                         tracer.WriteMessage(traceClassName, ": JobState is failed, at least one child job failed.");

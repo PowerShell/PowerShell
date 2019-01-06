@@ -435,9 +435,9 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!AsBaseObject)
                     {
-                        //wrapping in PSobject to insert into PStypesnames
+                        // wrapping in PSobject to insert into PStypesnames
                         PSObject logentry = new PSObject(entry);
-                        //inserting at zero position in reverse order
+                        // inserting at zero position in reverse order
                         logentry.TypeNames.Insert(0, logentry.ImmediateBaseObject + "#" + log.Log + "/" + entry.Source);
                         logentry.TypeNames.Insert(0, logentry.ImmediateBaseObject + "#" + log.Log + "/" + entry.Source + "/" + entry.InstanceId);
                         WriteObject(logentry);
@@ -618,11 +618,11 @@ namespace Microsoft.PowerShell.Commands
 
             return matchingLogs;
         }
-        //private string ErrorBase = "EventlogResources";
+        // private string ErrorBase = "EventlogResources";
         private DateTime _initial = new DateTime();
 
         #endregion Private
-    }//GetEventLogCommand
+    }
     #endregion GetEventLogCommand
 
     #region ClearEventLogCommand
@@ -715,10 +715,10 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        //beginprocessing
+        // beginprocessing
 
         #endregion Overrides
-    }//ClearEventLogCommand
+    }
     #endregion ClearEventLogCommand
 
     #region WriteEventLogCommand
@@ -862,10 +862,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteNonTerminatingError(ex, "PathDoesNotExist", StringUtil.Format(EventlogResources.PathDoesNotExist, null, ComputerName, null), ErrorCategory.InvalidOperation);
             }
-        }//beginprocessing
+        }
 
         #endregion Overrides
-    }//WriteEventLogCommand
+    }
     #endregion WriteEventLogCommand
 
     #region LimitEventLogCommand
@@ -1302,9 +1302,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        //End BeginProcessing()
+        // End BeginProcessing()
         #endregion override
-    }//End Class
+    }
     #endregion NewEventLogCommand
 
     #region RemoveEventLogCommand
@@ -1444,9 +1444,9 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(ex, "NewEventlogException", ErrorCategory.SecurityError, null);
                 WriteError(er);
             }
-        }//End BeginProcessing()
-    }//End Class
+        }
+    }
 
     #endregion RemoveEventLogCommand
-}//Microsoft.PowerShell.Commands
+}
 

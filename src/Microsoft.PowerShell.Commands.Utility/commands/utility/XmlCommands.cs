@@ -449,13 +449,13 @@ namespace Microsoft.PowerShell.Commands
                     _serializer.DoneAsStream();
                     _serializer = null;
                 }
-                //Loading to the XML Document
+                // Loading to the XML Document
                 _ms.Position = 0;
                 StreamReader read = new StreamReader(_ms);
                 string data = read.ReadToEnd();
                 WriteObject(data);
 
-                //Cleanup
+                // Cleanup
                 CleanUp();
             }
             else
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //Loading to the XML Document
+                // Loading to the XML Document
                 _ms.Position = 0;
                 if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
                 {
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //Cleaning up
+            // Cleaning up
             CleanUp();
         }
 
@@ -915,9 +915,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessXmlFile(string filePath)
         {
-            //Cannot use ImportXMLHelper because it will throw terminating error which will
-            //not be inline with Select-String
-            //So doing self processing of the file.
+            // Cannot use ImportXMLHelper because it will throw terminating error which will
+            // not be inline with Select-String
+            // So doing self processing of the file.
             try
             {
                 XmlDocument xmlDocument = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
                 (ParameterSetName.Equals("Path", StringComparison.OrdinalIgnoreCase) ||
                 (ParameterSetName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))))
             {
-                //If any file not resolved, execution stops. this is to make consistent with select-string.
+                // If any file not resolved, execution stops. this is to make consistent with select-string.
                 List<string> fullresolvedPaths = new List<string>();
                 foreach (string fpath in Path)
                 {
@@ -1041,7 +1041,7 @@ namespace Microsoft.PowerShell.Commands
                         Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(fpath, out provider);
                         if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
                         {
-                            //Cannot open File error
+                            // Cannot open File error
                             string message = StringUtil.Format(UtilityCommonStrings.FileOpenError, provider.FullName);
                             InvalidOperationException e = new InvalidOperationException(message);
                             ErrorRecord er = new ErrorRecord(e, "ProcessingFile", ErrorCategory.InvalidOperation, fpath);

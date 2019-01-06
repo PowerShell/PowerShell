@@ -671,7 +671,7 @@ else
             try
             {
                 File.Delete(tmpFileName);
-                //WriteWarning(tmpFileName);
+                // WriteWarning(tmpFileName);
             }
             catch (UnauthorizedAccessException uae)
             {
@@ -729,7 +729,7 @@ else
                 {
                     try
                     {
-                        //Make sure the file is not read only
+                        // Make sure the file is not read only
                         destfile.Attributes = destfile.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
                         destfile.Delete();
                     }
@@ -1232,7 +1232,7 @@ else
 
             if (sessionTypeOption != null)
             {
-                //TODO: This should probably be a terminating exception for Win8
+                // TODO: This should probably be a terminating exception for Win8
                 string privateData = this.sessionTypeOption.ConstructPrivateData();
                 if (!string.IsNullOrEmpty(privateData))
                 {
@@ -4742,7 +4742,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
                 _shellsToDisable.Add(PSSessionConfigurationCommandUtilities.GetWinrmPluginShellName());
             }
 
-            //WriteWarning(StringUtil.Format(RemotingErrorIdStrings.DcsWarningMessage));
+            // WriteWarning(StringUtil.Format(RemotingErrorIdStrings.DcsWarningMessage));
             WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.EcsScriptMessageV, disablePluginSbFormat));
 
             // gather -WhatIf, -Confirm parameter data and pass it to the script block
@@ -4807,7 +4807,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         // To Escape } -- }}
         // To Escape " -- ""
 
-        //TODO: CLR4: Remove the logic for setting the MaxMemoryPerShellMB to 200 MB once IPMO->Get-Command->Get-Help memory usage issue is fixed.
+        // TODO: CLR4: Remove the logic for setting the MaxMemoryPerShellMB to 200 MB once IPMO->Get-Command->Get-Help memory usage issue is fixed.
         private const string enableRemotingSbFormat = @"
 Set-StrictMode -Version Latest
 

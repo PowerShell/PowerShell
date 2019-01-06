@@ -40,7 +40,7 @@ namespace System.Management.Automation.Internal
             _host = clientRunspacePool.Host;
             _applicationArguments = clientRunspacePool.ApplicationArguments;
             RemoteSession = CreateClientRemoteSession(clientRunspacePool);
-            //TODO: Assign remote session name.. should be passed from clientRunspacePool
+            // TODO: Assign remote session name.. should be passed from clientRunspacePool
             _transportManager = RemoteSession.SessionDataStructureHandler.TransportManager;
             _transportManager.TypeTable = typeTable;
             RemoteSession.StateChanged +=
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal void ReconnectPoolAsync()
         {
-            //TODO: Integrate this into state machine
+            // TODO: Integrate this into state machine
             _reconnecting = true;
             PrepareForConnect();
             RemoteSession.ReconnectAsync();
@@ -493,8 +493,8 @@ namespace System.Management.Automation.Internal
 
                 lock (_syncObject)
                 {
-                    //We are doing this check because Established event
-                    //is raised more than once
+                    // We are doing this check because Established event
+                    // is raised more than once
                     if (_createRunspaceCalled)
                     {
                         // TODO: Put an assert here. NegotiationSending cannot
@@ -1083,7 +1083,7 @@ namespace System.Management.Automation.Internal
 
         private void HandleDelayStreamRequestProcessed(object sender, EventArgs e)
         {
-            //client's request to start pipeline in disconnected mode has been successfully processed
+            // client's request to start pipeline in disconnected mode has been successfully processed
             ProcessDisconnect(null);
         }
 
@@ -1414,7 +1414,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal void ProcessDisconnect(RunspacePoolStateInfo rsStateInfo)
         {
-            //disconnect may be called on a pipeline that is already disconnected.
+            // disconnect may be called on a pipeline that is already disconnected.
             PSInvocationStateInfo stateInfo =
                             new PSInvocationStateInfo(PSInvocationState.Disconnected,
                                 (rsStateInfo != null) ? rsStateInfo.Reason : null);
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation.Internal
             TransportManager.ReconnectAsync();
         }
 
-        //Called from session DSHandler. Connects to a remote powershell instance.
+        // Called from session DSHandler. Connects to a remote powershell instance.
         internal void ConnectAsync()
         {
             int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Connecting, (int)connectionStates.Disconnected);
@@ -1570,7 +1570,7 @@ namespace System.Management.Automation.Internal
 
             if (!inputstream.IsOpen)
             {
-                //Write any data written after the NonBlockingRead call above.
+                // Write any data written after the NonBlockingRead call above.
                 inputObjects = inputstream.ObjectReader.NonBlockingRead(Int32.MaxValue);
 
                 foreach (object inputObject in inputObjects)

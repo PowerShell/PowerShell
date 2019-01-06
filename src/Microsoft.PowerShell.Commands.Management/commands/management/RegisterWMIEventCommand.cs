@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             string wmiQuery = this.Query;
             if (this.Class != null)
             {
-                //Validate class format
+                // Validate class format
                 for (int i = 0; i < this.Class.Length; i++)
                 {
                     if (Char.IsLetterOrDigit(this.Class[i]) || this.Class[i].Equals('_'))

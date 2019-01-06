@@ -574,7 +574,7 @@ namespace System.Management.Automation.Remoting
 
                     if (sFlag)
                     {
-                        _canIgnoreOffSyncFragments = false; //reset this upon receiving a start fragment of a fresh object
+                        _canIgnoreOffSyncFragments = false; // reset this upon receiving a start fragment of a fresh object
                         _currentObjectId = objectId;
                         // Memory streams created with an unsigned byte array provide a non-resizable stream view
                         // of the data, and can only be written to. When using a byte array, you can neither append
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Remoting
                         if (objectId != _currentObjectId)
                         {
                             s_baseTracer.WriteLine("ObjectId != CurrentObjectId");
-                            //TODO - drop an ETW event
+                            // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
@@ -606,7 +606,7 @@ namespace System.Management.Automation.Remoting
                         if (fragmentId != (_currentFrgId + 1))
                         {
                             s_baseTracer.WriteLine("Fragment Id is not in sequence.");
-                            //TODO - drop an ETW event
+                            // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {

@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            //ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
+            // ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
             if ((_cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
             {
                 ArgumentException ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
@@ -578,12 +578,12 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder Listtag = new StringBuilder();
                 Listtag.Append("<tr><td>");
 
-                //for writing the property name
+                // for writing the property name
                 WritePropertyName(Listtag, p);
                 Listtag.Append(":");
                 Listtag.Append("</td>");
 
-                //for writing the property value
+                // for writing the property value
                 Listtag.Append("<td>");
                 WritePropertyValue(Listtag, p);
                 Listtag.Append("</td></tr>");
@@ -597,7 +597,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
-            //for writing the property name
+            // for writing the property name
             string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
             if (label != null)
             {
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteTableHeader(StringBuilder THtag, List<MshParameter> resolvedNameMshParameters)
         {
-            //write the property names
+            // write the property names
             foreach (MshParameter p in resolvedNameMshParameters)
             {
                 THtag.Append("<th>");
@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteTableRow(StringBuilder TRtag, List<MshParameter> resolvedNameMshParameters)
         {
-            //write the property values
+            // write the property values
             foreach (MshParameter p in resolvedNameMshParameters)
             {
                 TRtag.Append("<td>");
@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        //count of the objects
+        // count of the objects
         private int _numberObjects = 0;
 
         /// <summary>
@@ -689,21 +689,21 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                //if the As parameter is given as List
+                // if the As parameter is given as List
                 if (_as.Equals("List", StringComparison.OrdinalIgnoreCase))
                 {
-                    //if more than one object,write the horizontal rule to put visual separator
+                    // if more than one object,write the horizontal rule to put visual separator
                     if (_numberObjects > 1)
                         WriteObject("<tr><td><hr></td></tr>");
                     WriteListEntry();
                 }
-                else //if the As parameter is Table, first we have to write the property names
+                else // if the As parameter is Table, first we have to write the property names
                 {
                     WriteColumns(_resolvedNameMshParameters);
 
                     StringBuilder THtag = new StringBuilder("<tr>");
 
-                    //write the table header
+                    // write the table header
                     WriteTableHeader(THtag, _resolvedNameMshParameters);
 
                     THtag.Append("</tr>");
@@ -711,12 +711,12 @@ namespace Microsoft.PowerShell.Commands
                     _isTHWritten = true;
                 }
             }
-            //if the As parameter is Table, write the property values
+            // if the As parameter is Table, write the property values
             if (_as.Equals("Table", StringComparison.OrdinalIgnoreCase))
             {
                 StringBuilder TRtag = new StringBuilder("<tr>");
 
-                //write the table row
+                // write the table row
                 WriteTableRow(TRtag, _resolvedNameMshParameters);
 
                 TRtag.Append("</tr>");
@@ -728,12 +728,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            //if fragment,end with table
+            // if fragment,end with table
             WriteObject("</table>");
             if (_postContent != null)
                 WriteObject(_postContent, true);
 
-            //if not fragment end with body and html also
+            // if not fragment end with body and html also
             if (!_fragment)
             {
                 WriteObject("</body></html>");
@@ -749,7 +749,7 @@ namespace Microsoft.PowerShell.Commands
         private StringCollection _propertyCollector;
         private List<MshParameter> _propertyMshParameterList;
         private List<MshParameter> _resolvedNameMshParameters;
-        //private string ResourcesBaseName = "ConvertHTMLStrings";
+        // private string ResourcesBaseName = "ConvertHTMLStrings";
 
         #endregion private
     }

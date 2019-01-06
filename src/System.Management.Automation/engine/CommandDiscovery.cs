@@ -648,7 +648,7 @@ namespace System.Management.Automation
 
         internal static void ShouldRun(ExecutionContext context, PSHost host, CommandInfo commandInfo, CommandOrigin commandOrigin)
         {
-            //ShouldRunInternal throws PSSecurityException if run is not allowed
+            // ShouldRunInternal throws PSSecurityException if run is not allowed
             try
             {
                 if (commandOrigin == CommandOrigin.Runspace && commandInfo.Visibility != SessionStateEntryVisibility.Public)
@@ -962,7 +962,7 @@ namespace System.Management.Automation
             {
                 exception = e;
                 discoveryTracer.WriteLine("Encountered error importing module: {0}", e.Message);
-                //Call-out to user code, catch-all OK
+                // Call-out to user code, catch-all OK
             }
 
             return matchingModules;
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
                             if (exportedCommands == null) { continue; }
 
                             CommandTypes exportedCommandTypes;
-                            //Skip if module only has class or other types and no commands.
+                            // Skip if module only has class or other types and no commands.
                             if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
                             {
                                 Exception exception;

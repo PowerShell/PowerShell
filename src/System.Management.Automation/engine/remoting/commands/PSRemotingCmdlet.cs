@@ -95,9 +95,9 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
-                //tracer.WriteEvent(ref PSEventDescriptors.PS_EVENT_HOSTNAMERESOLVE);
-                //tracer.Dispose();
-                //tracer.OperationalChannel.WriteVerbose(PSEventId.HostNameResolve, PSOpcode.Method, PSTask.CreateRunspace);
+                // tracer.WriteEvent(ref PSEventDescriptors.PS_EVENT_HOSTNAMERESOLVE);
+                // tracer.Dispose();
+                // tracer.OperationalChannel.WriteVerbose(PSEventId.HostNameResolve, PSOpcode.Method, PSTask.CreateRunspace);
                 return s_LOCALHOST;
             }
             else
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string s_LOCALHOST = "localhost";
 
-        //private PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Cmdlets);
+        // private PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Cmdlets);
 
         #endregion Private Members
 
@@ -440,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Tracer
 
-        //PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Runspace);
+        // PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Runspace);
 
         #endregion Tracer
 
@@ -984,7 +984,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.InvalidArgument, Session));
             }
 
-            //BUGBUG: The following is a bogus check
+            // BUGBUG: The following is a bogus check
             // Check if the number of PSSession objects specified is greater
             // than the maximum allowable range
             if (RemotingCommandUtil.ExceedMaximumAllowableRunspaces(Session))
@@ -1987,7 +1987,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         protected ScriptBlock GetScriptBlockFromFile(string filePath, bool isLiteralPath)
         {
-            //Make sure filepath doesn't contain wildcards
+            // Make sure filepath doesn't contain wildcards
             if ((!isLiteralPath) && WildcardPattern.ContainsWildcardCharacters(filePath))
             {
                 throw new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.WildCardErrorFilePathParameter), "filePath");
@@ -1998,10 +1998,10 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.FilePathShouldPS1Extension), "filePath");
             }
 
-            //Resolve file path
+            // Resolve file path
             string resolvedPath = PathResolver.ResolveProviderAndPath(filePath, isLiteralPath, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
 
-            //read content of file
+            // read content of file
             ExternalScriptInfo scriptInfo = new ExternalScriptInfo(filePath, resolvedPath, this.Context);
 
             // Skip ShouldRun check for .psd1 files.
@@ -3802,7 +3802,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return results[0];
             }
-            else //if (results.Count > 1)
+            else // if (results.Count > 1)
             {
                 Exception e = PSTraceSource.NewNotSupportedException();
                 cmdlet.ThrowTerminatingError(

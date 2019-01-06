@@ -1198,17 +1198,17 @@ namespace System.Management.Automation
             // BUGBUG: This object creation needs to be relooked
             PSObject dataAsPSObject = CreateEmptyPSObject();
 
-            //Add State Property
+            // Add State Property
             PSNoteProperty stateProperty =
                         new PSNoteProperty(RemoteDataNameStrings.RunspaceState,
                             (int)(stateInfo.State));
             dataAsPSObject.Properties.Add(stateProperty);
 
-            //Add Reason property
+            // Add Reason property
             if (stateInfo.Reason != null)
             {
-                //If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
-                //created using this errorId
+                // If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
+                // created using this errorId
                 string errorId = "RemoteRunspaceStateInfoReason";
                 PSNoteProperty exceptionProperty = GetExceptionProperty(stateInfo.Reason, errorId, ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
@@ -1515,15 +1515,15 @@ namespace System.Management.Automation
         internal static RemoteDataObject GeneratePowerShellStateInfo(PSInvocationStateInfo stateInfo,
             Guid clientPowerShellId, Guid clientRunspacePoolId)
         {
-            //Encode Pipeline StateInfo as PSObject
+            // Encode Pipeline StateInfo as PSObject
             PSObject dataAsPSObject = CreateEmptyPSObject();
 
-            //Convert the state to int and add as property
+            // Convert the state to int and add as property
             PSNoteProperty stateProperty = new PSNoteProperty(
                 RemoteDataNameStrings.PipelineState, (int)(stateInfo.State));
             dataAsPSObject.Properties.Add(stateProperty);
 
-            //Add exception property
+            // Add exception property
             if (stateInfo.Reason != null)
             {
                 // If Reason is of not type IContainsErrorRecord,
@@ -1563,8 +1563,8 @@ namespace System.Management.Automation
             if (cer != null)
             {
                 er = cer.ErrorRecord;
-                //Exception inside the error record is ParentContainsErrorRecordException which
-                //doesn't have stack trace. Replace it with top level exception.
+                // Exception inside the error record is ParentContainsErrorRecordException which
+                // doesn't have stack trace. Replace it with top level exception.
                 er = new ErrorRecord(er, exception);
             }
 
@@ -2050,13 +2050,13 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static Exception GetExceptionFromStateInfoObject(PSObject stateInfo)
         {
-            //Check if exception is encoded as errorrecord
+            // Check if exception is encoded as errorrecord
             PSPropertyInfo property = stateInfo.Properties[RemoteDataNameStrings.ExceptionAsErrorRecord];
             if (property != null && property.Value != null)
             {
                 return GetExceptionFromSerializedErrorRecord(property.Value);
             }
-            //Exception is not present and return null.
+            // Exception is not present and return null.
             return null;
         }
 

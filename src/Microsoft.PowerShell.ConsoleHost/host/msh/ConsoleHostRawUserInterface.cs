@@ -1621,15 +1621,15 @@ namespace Microsoft.PowerShell
         public override void SetBufferContents(Coordinates origin,
                                                BufferCell[,] contents)
         {
-            //if there are no contents, there is nothing to set the buffer to
+            // if there are no contents, there is nothing to set the buffer to
             if (contents == null)
             {
                 PSTraceSource.NewArgumentNullException("contents");
             }
-            //if the cursor is on the last line, we need to make more space to print the specified buffer
+            // if the cursor is on the last line, we need to make more space to print the specified buffer
             if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)
             {
-                //for each row in the buffer, create a new line
+                // for each row in the buffer, create a new line
                 int rows = contents.GetLength(0);
                 ScrollBuffer(rows);
                 // for each row in the buffer, move the cursor y up to the beginning of the created blank space
@@ -1648,25 +1648,25 @@ namespace Microsoft.PowerShell
             CursorPosition = origin;
 #endif
 
-            //iterate through the buffer to set
+            // iterate through the buffer to set
             foreach (var charitem in contents)
             {
-                //set the cursor to false to prevent cursor flicker
+                // set the cursor to false to prevent cursor flicker
                 Console.CursorVisible = false;
 
-                //if x is exceeding buffer width, reset to the next line
+                // if x is exceeding buffer width, reset to the next line
                 if (origin.X >= BufferSize.Width)
                 {
                     origin.X = 0;
                 }
 
-                //write the character from contents
+                // write the character from contents
                 Console.Out.Write(charitem.Character);
             }
 
-            //reset the cursor to the original position
+            // reset the cursor to the original position
             CursorPosition = origin;
-            //reset the cursor to visible
+            // reset the cursor to visible
             Console.CursorVisible = true;
         }
 

@@ -1147,7 +1147,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("fullyQualifiedErrorId");
             }
 
-            //Mark this error record as serialized
+            // Mark this error record as serialized
             _isSerialized = true;
             _error = exception;
             _target = targetObject;
@@ -1275,10 +1275,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("serializedErrorRecord");
             }
 
-            //Get Exception
+            // Get Exception
             PSObject serializedException = RemotingDecoder.GetPropertyValue<PSObject>(serializedErrorRecord, "Exception");
 
-            //Get Target object
+            // Get Target object
             object targetObject = RemotingDecoder.GetPropertyValue<object>(serializedErrorRecord, "TargetObject");
 
             string exceptionMessage = null;
@@ -1291,27 +1291,27 @@ namespace System.Management.Automation
                 }
             }
 
-            //Get FullyQualifiedErrorId
+            // Get FullyQualifiedErrorId
             string fullyQualifiedErrorId = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "FullyQualifiedErrorId") ??
                                            "fullyQualifiedErrorId";
 
-            //Get ErrorCategory...
+            // Get ErrorCategory...
             ErrorCategory errorCategory = RemotingDecoder.GetPropertyValue<ErrorCategory>(serializedErrorRecord, "errorCategory_Category");
 
-            //Get Various ErrorCategory fileds
+            // Get Various ErrorCategory fileds
             string errorCategory_Activity = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_Activity");
             string errorCategory_Reason = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_Reason");
             string errorCategory_TargetName = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_TargetName");
             string errorCategory_TargetType = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_TargetType");
             string errorCategory_Message = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_Message");
 
-            //Get InvocationInfo (optional property)
+            // Get InvocationInfo (optional property)
             PSObject invocationInfo = Microsoft.PowerShell.DeserializingTypeConverter.GetPropertyValue<PSObject>(
                 serializedErrorRecord,
                 "InvocationInfo",
                 Microsoft.PowerShell.DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk);
 
-            //Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
+            // Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
             string errorDetails_Message =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_Message") as string;
 
@@ -1323,7 +1323,7 @@ namespace System.Management.Automation
 
             RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
-            //Create ErrorRecord
+            // Create ErrorRecord
             PopulateProperties(
                 re,
                 targetObject,

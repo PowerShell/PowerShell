@@ -66,7 +66,7 @@ namespace System.Management.Automation
         // associated with this powershell
         // data structure handler object to handle all
         // communications with the client
-        //private bool datasent = false;          // if the remaining data has been sent
+        // private bool datasent = false;          // if the remaining data has been sent
         // to the client before sending state
         // information
         // data to client
@@ -305,7 +305,7 @@ namespace System.Management.Automation
 
         private void HandleSessionConnected(object sender, EventArgs eventArgs)
         {
-            //Close input if its active. no need to synchronize as input stream would have already been processed
+            // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
             if (Input != null)
             {

@@ -48,10 +48,10 @@ namespace System.Management.Automation
             internal FILETIME ftCreationTime;
             internal FILETIME ftLastAccessTime;
             internal FILETIME ftLastWriteTime;
-            internal uint nFileSizeHigh; //changed all to uint, otherwise you run into unexpected overflow
-            internal uint nFileSizeLow;  //|
-            internal uint dwReserved0;   //|
-            internal uint dwReserved1;   //v
+            internal uint nFileSizeHigh; // changed all to uint, otherwise you run into unexpected overflow
+            internal uint nFileSizeLow;  // |
+            internal uint dwReserved0;   // |
+            internal uint dwReserved1;   // v
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
             internal string cFileName;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_ALTERNATE)]
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         internal static extern bool FindClose(IntPtr hFindFile);
 
         [Flags]
-        //dwDesiredAccess of CreateFile
+        // dwDesiredAccess of CreateFile
         internal enum FileDesiredAccess : uint
         {
             GenericRead = 0x80000000,
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        //dwShareMode of CreateFile
+        // dwShareMode of CreateFile
         internal enum FileShareMode : uint
         {
             None = 0x00000000,
@@ -87,7 +87,7 @@ namespace System.Management.Automation
             Delete = 0x00000004,
         }
 
-        //dwCreationDisposition of CreateFile
+        // dwCreationDisposition of CreateFile
         internal enum FileCreationDisposition : uint
         {
             New = 1,
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        //dwFlagsAndAttributes
+        // dwFlagsAndAttributes
         internal enum FileAttributes : uint
         {
             ReadOnly = 0x00000001,
@@ -267,7 +267,7 @@ namespace System.Management.Automation
         /// </returns>
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]//, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        //[SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
+        // [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern bool CloseHandle(IntPtr handle);
 
         [DllImport(PinvokeDllNames.DosDateTimeToFileTimeDllName, SetLastError = false)]

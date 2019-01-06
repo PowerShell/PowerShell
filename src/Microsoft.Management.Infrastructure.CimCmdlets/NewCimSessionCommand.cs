@@ -216,7 +216,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             cimNewSession = new CimNewSession();
             this.CmdletOperation = new CmdletOperationTestCimSession(this, this.cimNewSession);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -228,7 +228,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             BuildSessionOptions(out outputOptions, out outputCredential);
             cimNewSession.NewCimSession(this, outputOptions, outputCredential);
             cimNewSession.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -236,7 +236,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             cimNewSession.ProcessRemainActions(this.CmdletOperation);
-        }//End EndProcessing()
+        }
         #endregion
 
         #region helper methods
@@ -373,5 +373,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

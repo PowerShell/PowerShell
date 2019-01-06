@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Strings
 
-        //Parametersets used by job cmdlets
+        // Parametersets used by job cmdlets
         internal const string JobParameterSet = "JobParameterSet";
         internal const string InstanceIdParameterSet = "InstanceIdParameterSet";
         internal const string SessionIdParameterSet = "SessionIdParameterSet";
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         internal const string CommandParameterSet = "CommandParameterSet";
         internal const string FilterParameterSet = "FilterParameterSet";
 
-        //common parameter names
+        // common parameter names
         internal const string JobParameter = "Job";
         internal const string InstanceIdParameter = "InstanceId";
         internal const string SessionIdParameter = "SessionId";
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 // check if the job is available in any of the
                 // top level jobs
 
-                //if (string.Equals(job.Name, name, StringComparison.OrdinalIgnoreCase))
+                // if (string.Equals(job.Name, name, StringComparison.OrdinalIgnoreCase))
                 if (pattern.IsMatch(job.Name))
                 {
                     jobFound = true;
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
                             matches.Add(job);
                         }
                     }
-                    //break;
+                    // break;
                 }
 
                 // check if the job is available in any of the childjobs
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
                 bool jobFound = FindJobsMatchingByInstanceIdHelper(matches, JobRepository.Jobs, id,
                                     duplicateDetector, recurse, writeobject, checkIfJobCanBeRemoved);
 
-                //TODO: optimize this to not search JobManager since matching by InstanceId is unique
+                // TODO: optimize this to not search JobManager since matching by InstanceId is unique
                 // search all jobs in JobManager
                 Job2 job2 = JobManager.GetJobByInstanceId(id, this, false, writeobject, recurse);
 
@@ -886,7 +886,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            //Now actually remove the jobs
+            // Now actually remove the jobs
             foreach (Job job in listOfJobsToRemove)
             {
                 string message = GetMessage(RemotingErrorIdStrings.StopPSJobWhatIfTarget,

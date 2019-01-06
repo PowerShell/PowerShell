@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_namedProperties != null)
             {
-                //var output = CreateCustomOutputObject(namedProperties, systemInfo, osInfo, miscInfo);
+                // var output = CreateCustomOutputObject(namedProperties, systemInfo, osInfo, miscInfo);
                 var output = CreateCustomOutputObject(infoOutput, _namedProperties);
 
                 WriteObject(output);
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
             // get platform role
             try
             {
-                //TODO: Local machine only. Check for that?
+                // TODO: Local machine only. Check for that?
                 uint powerRole = Native.PowerDeterminePlatformRoleEx(Native.POWER_PLATFORM_ROLE_V2);
                 if (powerRole >= (uint)PowerPlatformRole.MaximumEnumValue)
                     rv.powerPlatformRole = PowerPlatformRole.Unspecified;
@@ -566,11 +566,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // get secure-boot info
-            //TODO: Local machine only? Check for that?
+            // TODO: Local machine only? Check for that?
             rv.firmwareType = GetFirmwareType();
 
             // get amount of memory physically installed
-            //TODO: Local machine only. Check for that?
+            // TODO: Local machine only. Check for that?
             rv.physicallyInstalledMemory = GetPhysicallyInstalledSystemMemory();
 
             // get time zone
@@ -890,7 +890,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (otherInfo.keyboards.Length > 0)
                 {
-                    //TODO: handle multiple keyboards?
+                    // TODO: handle multiple keyboards?
                     // there might be several keyboards found. For the moment
                     // we display info for only one
 
@@ -1617,7 +1617,7 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WMiLogicalMemory
     {
-        //TODO: fill this in!!!
+        // TODO: fill this in!!!
         public uint? TotalPhysicalMemory;
     }
 
@@ -2379,7 +2379,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Date and time the object was installed.
         /// </summary>
-        //TODO: do we want this? On my system this is null
+        // TODO: do we want this? On my system this is null
         public DateTime? BiosInstallDate { get; internal set; }
 
         /// <summary>
@@ -2486,7 +2486,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// System hardware security settings for administrator password status.
         /// </summary>
-        //public AdminPasswordStatus? CsAdminPasswordStatus { get; internal set; }
+        // public AdminPasswordStatus? CsAdminPasswordStatus { get; internal set; }
 
         public HardwareSecurity? CsAdminPasswordStatus { get; internal set; }
 
@@ -2535,12 +2535,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The name of this computer.
         /// </summary>
-        public string CsCaption { get; internal set; }  //TODO: remove this? Same as CsName???
+        public string CsCaption { get; internal set; }  // TODO: remove this? Same as CsName???
 
         /// <summary>
         /// Boot up state of the chassis.
         /// </summary>
-        //public ChassisBootupState? CsChassisBootupState { get; internal set; }
+        // public ChassisBootupState? CsChassisBootupState { get; internal set; }
 
         public SystemElementState? CsChassisBootupState { get; internal set; }
 
@@ -2597,7 +2597,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Hardware security setting for the reset button on a computer.
         /// </summary>
-        //public FrontPanelResetStatus? CsFrontPanelResetStatus { get; internal set; }
+        // public FrontPanelResetStatus? CsFrontPanelResetStatus { get; internal set; }
 
         public HardwareSecurity? CsFrontPanelResetStatus { get; internal set; }
 
@@ -2624,7 +2624,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// System hardware security setting for Keyboard Password Status.
         /// </summary>
-        //public KeyboardPasswordStatus? CsKeyboardPasswordStatus { get; internal set; }
+        // public KeyboardPasswordStatus? CsKeyboardPasswordStatus { get; internal set; }
 
         public HardwareSecurity? CsKeyboardPasswordStatus { get; internal set; }
 
@@ -2647,7 +2647,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Key of a CIM_System instance in an enterprise environment.
         /// </summary>
-        public string CsName { get; internal set; } //TODO: get rid of this? Is this about CIM rather than about the computer?
+        public string CsName { get; internal set; }
 
         /// <summary>
         /// An array of <see cref="NetworkAdapter"/> objects describing any
@@ -2736,7 +2736,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// System hardware security setting for Power-On Password Status.
         /// </summary>
-        //public PowerOnPasswordStatus? CsPowerOnPasswordStatus { get; internal set; }
+        // public PowerOnPasswordStatus? CsPowerOnPasswordStatus { get; internal set; }
 
         public HardwareSecurity? CsPowerOnPasswordStatus { get; internal set; }
 
@@ -2748,7 +2748,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// State of the power supply or supplies when last booted.
         /// </summary>
-        //public PowerSupplyState? CsPowerSupplyState { get; internal set; }
+        // public PowerSupplyState? CsPowerSupplyState { get; internal set; }
 
         public SystemElementState? CsPowerSupplyState { get; internal set; }
 
@@ -2819,7 +2819,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Thermal state of the system when last booted.
         /// </summary>
-        //public ThermalState? CsThermalState { get; internal set; }
+        // public ThermalState? CsThermalState { get; internal set; }
 
         public SystemElementState? CsThermalState { get; internal set; }
 
@@ -3360,7 +3360,7 @@ namespace Microsoft.PowerShell.Commands
         //  <summary>
         //  This value is reserved
         //  </summary>
-        //Reserved = 0,
+        // Reserved = 0,
 
         /// <summary>
         /// Boot into operating system.
@@ -3603,12 +3603,12 @@ namespace Microsoft.PowerShell.Commands
         // <summary>
         // This value is reserved
         // </summary>
-        //Reserved_5 = 5,
+        // Reserved_5 = 5,
 
         // <summary>
         // This value is reserved
         // </summary>
-        //Reserved_6 = 6,
+        // Reserved_6 = 6,
 
         /// <summary>
         /// CPU is in another state.
@@ -3621,7 +3621,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public enum DataExecutionPreventionSupportPolicy
     {
-        //Unknown     = -1,
+        // Unknown     = -1,
 
         /// <summary>
         /// DEP is turned off for all 32-bit applications on the computer with no exceptions.
@@ -4695,7 +4695,7 @@ namespace Microsoft.PowerShell.Commands
     /// Specifies the type of the computer in use, such as laptop, desktop, or Tablet.
     /// This is an extended version of PCSystemType.
     /// </summary>
-    //TODO: conflate these two enums???
+    // TODO: conflate these two enums???
     public enum PCSystemTypeEx
     {
         /// <summary>
@@ -4930,7 +4930,7 @@ namespace Microsoft.PowerShell.Commands
         // <summary>
         // This value is reserved
         // </summary>
-        //Reserved = 0,
+        // Reserved = 0,
 
         /// <summary>
         /// An event other than specified in this enumeration.

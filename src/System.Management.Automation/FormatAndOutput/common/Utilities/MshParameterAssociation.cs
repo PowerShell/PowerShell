@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we did not get any properties:
-            //try to get properties from the default property set of the object
+            // try to get properties from the default property set of the object
             List<MshResolvedExpressionParameterAssociation> activeAssociationList = AssociationManager.ExpandDefaultPropertySet(target, expressionFactory);
 
             if (activeAssociationList.Count > 0)

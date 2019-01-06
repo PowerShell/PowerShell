@@ -79,5 +79,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
             }
         }
-    }//End Class
-}//End namespace
+    }
+}

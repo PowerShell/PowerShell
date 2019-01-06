@@ -980,7 +980,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
                 else
                 {
-                    //CimSession will be returned as part of TestConnection
+                    // CimSession will be returned as part of TestConnection
                     this.cimTestSession.TestCimSession(computerName, proxy);
                 }
             }
@@ -1049,7 +1049,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         private CimTestSession cimTestSession;
-        #endregion //private members
+        #endregion // private members
 
         #region IDisposable
 
@@ -1112,7 +1112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -1189,7 +1189,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region helper methods
 
         #endregion
-    }//End Class
+    }
 
     #endregion
 
@@ -1265,7 +1265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
         }
-    }//End Class
+    }
 
     #endregion
 
@@ -1303,4 +1303,4 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #endregion
 
-}//End namespace
+}

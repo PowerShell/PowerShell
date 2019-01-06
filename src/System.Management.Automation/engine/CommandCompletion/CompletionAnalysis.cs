@@ -1764,7 +1764,7 @@ namespace System.Management.Automation
 
         private List<CompletionResult> GetResultForAttributeArgument(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength)
         {
-            //Attribute member arguments
+            // Attribute member arguments
             Type attributeType = null;
             string argName = string.Empty;
             Ast argAst = completionContext.RelatedAsts.Find(ast => ast is NamedAttributeArgumentAst);

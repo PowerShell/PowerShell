@@ -982,7 +982,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (!skipClosing)
             {
-                //SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Closing, null), true);
+                // SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Closing, null), true);
 
                 // send a message using the data structure handler to close the RunspacePool
                 // on the remote server

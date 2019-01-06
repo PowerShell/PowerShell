@@ -4467,12 +4467,12 @@ namespace System.Management.Automation.Runspaces
             typesInfo.Add(new SessionStateTypeEntry(filePath));
 
             // TODO - use parallel foreach without causing any contention
-            //Parallel.ForEach(types, typeData =>
+            // Parallel.ForEach(types, typeData =>
             foreach (var typeData in types)
             {
                 ProcessTypeDataToAdd(errors, typeData);
             }
-            //});
+            // });
         }
 
         private bool ProcessIsBuiltIn(string filePath, ConcurrentBag<string> errors, out bool failToLoadFile)

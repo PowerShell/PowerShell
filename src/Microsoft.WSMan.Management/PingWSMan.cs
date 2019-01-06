@@ -147,7 +147,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 m_SessionObj = helper.CreateSessionObject(wsmanObject, Authentication, null, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
-                m_SessionObj.Timeout = 1000; //1 sec. we are putting this low so that Test-WSMan can return promptly if the server goes unresponsive.
+                m_SessionObj.Timeout = 1000; // 1 sec. we are putting this low so that Test-WSMan can return promptly if the server goes unresponsive.
                 XmlDocument xmldoc = new XmlDocument();
                 xmldoc.LoadXml(m_SessionObj.Identify(0));
                 WriteObject(xmldoc.DocumentElement);
@@ -173,7 +173,7 @@ namespace Microsoft.WSMan.Management
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
             }
-        }//End BeginProcessing()
+        }
 
         #region IDisposable Members
 
@@ -184,7 +184,7 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -200,6 +200,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-    }//End Class
+    }
     #endregion
 }

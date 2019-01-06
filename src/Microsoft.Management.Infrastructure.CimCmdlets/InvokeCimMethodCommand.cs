@@ -381,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             this.CmdletOperation = new CmdletOperationInvokeCimMethod(this, cimInvokeMethod);
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -393,7 +393,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimInvokeCimMethod cimInvokeMethod = this.GetOperationAgent();
             cimInvokeMethod.InvokeCimMethod(this);
             cimInvokeMethod.ProcessActions(this.CmdletOperation);
-        }//End ProcessRecord()
+        }
 
         /// <summary>
         /// EndProcessing method.
@@ -405,7 +405,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 cimInvokeMethod.ProcessRemainActions(this.CmdletOperation);
             }
-        }//End EndProcessing()
+        }
 
         #endregion
 
@@ -574,5 +574,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.CimClassSessionSet, new ParameterSetEntry(3)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

@@ -899,7 +899,7 @@ namespace System.Management.Automation
             }
 
             // The methods with fewer parameter wins
-            //Need to revisit this if we support named arguments
+            // Need to revisit this if we support named arguments
             if (betterCount == 0)
             {
                 if (candidate1.parameters.Length < candidate2.parameters.Length)

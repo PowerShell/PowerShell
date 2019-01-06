@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
                         // Save some disk write time by checking whether file is readonly..
                         if (Force)
                         {
-                            //Make sure the file is not read only
+                            // Make sure the file is not read only
                             // Note that we will not clear the ReadOnly flag later
                             fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                         }

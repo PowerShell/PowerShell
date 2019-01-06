@@ -661,7 +661,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnCloseSessionCompleted()
         {
-            //stop timer
+            // stop timer
             _closeTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
             RaiseCloseCompleted();
             CleanupConnection();
@@ -1034,7 +1034,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     stdInWriter = _processInstance.StdInWriter;
-                    //if (stdInWriter == null)
+                    // if (stdInWriter == null)
                     {
                         _serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
                         _serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
@@ -1042,7 +1042,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     _serverProcess.Exited += new EventHandler(OnExited);
 
-                    //serverProcess.Start();
+                    // serverProcess.Start();
                     _processInstance.Start();
 
                     if (stdInWriter != null)
@@ -2174,7 +2174,7 @@ namespace System.Management.Automation.Remoting.Client
 
         internal void OnSignalTimeOutTimerElapsed(object source)
         {
-            //Signal timer is triggered only once
+            // Signal timer is triggered only once
 
             if (isClosed)
             {
@@ -2331,7 +2331,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void ReportExecutionStatusAsRunning()
         {
-            //No-OP for outofProc TMs
+            // No-OP for outofProc TMs
         }
 
         internal void CreateCommandTransportManager(Guid powerShellCmdId)
@@ -2437,7 +2437,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void ReportExecutionStatusAsRunning()
         {
-            //No-OP for outofProc TMs
+            // No-OP for outofProc TMs
         }
 
         protected override void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary)

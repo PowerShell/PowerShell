@@ -3132,7 +3132,7 @@ namespace System.Management.Automation
 
         internal bool UseTransactionFlagSet { get; private set; } = false;
 
-        //This is used so that people can tell whether the debug switch was specified.  This
+        // This is used so that people can tell whether the debug switch was specified.  This
         // Is useful in the Cmdlet-calling-Cmdlet case where you'd like the underlying Cmdlet to
         // have the same switches.
         private bool _debugFlag = false;
@@ -3687,7 +3687,7 @@ namespace System.Management.Automation
 
         internal void RemoveVariableListsInPipe()
         {
-            //Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
+            // Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
             if (_outVarList != null)
             {

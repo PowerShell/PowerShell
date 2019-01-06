@@ -335,9 +335,9 @@ namespace System.Management.Automation
                 (domain == null) ||
                 (user.Length == 0))
             {
-                //UserName is the public property of Credential object. Use this as
-                //parameter name in error
-                //See bug NTRAID#Windows OS Bugs-1106386-2005/03/25-hiteshr
+                // UserName is the public property of Credential object. Use this as
+                // parameter name in error
+                // See bug NTRAID#Windows OS Bugs-1106386-2005/03/25-hiteshr
                 throw PSTraceSource.NewArgumentException("UserName", Credential.InvalidUserNameFormat);
             }
 

@@ -36,9 +36,9 @@ namespace System.Management.Automation.ComInterop
 
         internal Expression InitializeArgumentVariant(MemberExpression variant, Expression parameter)
         {
-            //NOTE: we must remember our variant
-            //the reason is that argument order does not map exactly to the order of variants for invoke
-            //and when we are doing clean-up we must be sure we are cleaning the variant we have initialized.
+            // NOTE: we must remember our variant
+            // the reason is that argument order does not map exactly to the order of variants for invoke
+            // and when we are doing clean-up we must be sure we are cleaning the variant we have initialized.
 
             _variant = variant;
 

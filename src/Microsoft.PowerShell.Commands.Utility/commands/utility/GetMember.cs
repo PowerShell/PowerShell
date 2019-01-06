@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //This is never used for display.  It is used only as a key to typesAlreadyDisplayed
+                    // This is never used for display.  It is used only as a key to typesAlreadyDisplayed
                     typeName = "<null>";
                 }
             }
