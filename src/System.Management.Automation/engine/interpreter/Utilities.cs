@@ -248,7 +248,7 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.Boolean: return ScriptingRuntimeHelpers.False;
                 case TypeCode.SByte: return default(SByte);
                 case TypeCode.Byte: return default(Byte);
-                case TypeCode.Char: return default(char);
+                case TypeCode.Char: return default(Char);
                 case TypeCode.Int16: return default(Int16);
                 case TypeCode.Int32: return ScriptingRuntimeHelpers.Int32ToObject(0);
                 case TypeCode.Int64: return default(Int64);

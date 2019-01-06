@@ -121,7 +121,7 @@ namespace System.Management.Automation.Interpreter {
                 case TypeCode.Int32: return FastCreate<Int32>(target, pi);
                 case TypeCode.Int64: return FastCreate<Int64>(target, pi);
                 case TypeCode.Boolean: return FastCreate<Boolean>(target, pi);
-                case TypeCode.Char: return FastCreate<char>(target, pi);
+                case TypeCode.Char: return FastCreate<Char>(target, pi);
                 case TypeCode.Byte: return FastCreate<Byte>(target, pi);
                 case TypeCode.Decimal: return FastCreate<Decimal>(target, pi);
                 case TypeCode.DateTime: return FastCreate<DateTime>(target, pi);
