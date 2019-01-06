@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
             // Set the home folder for the user
             if (providerInfo != null)
             {
-                providerInfo.PathSeparator = new[] { "\\", "/" };
+                providerInfo.PathSeparator = ProviderInfoPathSeparators.FileSystem;
 
                 if (string.IsNullOrEmpty(providerInfo.Home)) 
                 {

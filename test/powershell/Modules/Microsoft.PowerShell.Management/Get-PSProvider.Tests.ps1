@@ -29,6 +29,19 @@ Describe "Get-PSProvider" -Tags "CI" {
         It 'has PathSeparator property' {
             (Get-PSProvider FileSystem).PathSeparator | Should -Be @("\", "/")
         }
+
+        It 'changes on copy do not affect original PathSeparator' {
+            $separator = (Get-PSProvider FileSystem).PathSeparator
+            { $separator[0] = "w" } | Should -Throw
+
+            # copying to a new object
+            $copy = @("", "")
+            $separator.CopyTo($copy, 0)
+
+            $copy[0] = "w"
+
+            (Get-PSProvider FileSystem).PathSeparator | Should -Be @("\", "/")
+        }
     }
 
     Context 'Registry provider' {

@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (providerInfo != null) 
             {
-                providerInfo.PathSeparator = new[] { "\\" };
+                providerInfo.PathSeparator = ProviderInfoPathSeparators.Registry;
             }
 
             return providerInfo;
