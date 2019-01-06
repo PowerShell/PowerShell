@@ -37,7 +37,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region members
         /// <summary>
-        /// result object.
+        /// Result object.
         /// </summary>
         internal object Result
         {

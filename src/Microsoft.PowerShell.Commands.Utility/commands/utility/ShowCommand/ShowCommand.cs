@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.Commands
                 internal const int KEY_EVENT = 0x0001;
 
                 /// <summary>
-                /// input buffer event type.
+                /// Input buffer event type.
                 /// </summary>
                 internal ushort EventType;
 

@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region Context base class
 
     /// <summary>
-    /// context base class for cross operations
+    /// Context base class for cross operations
     /// for example, some cmdlets need to query instance first and then
     /// remove instance, those scenarios need context object transferred
     /// from one operation to another.
@@ -59,7 +59,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
 
     /// <summary>
-    /// class provides all information regarding the
+    /// Class provides all information regarding the
     /// current invocation to .net api.
     /// </summary>
     internal class InvocationContext
@@ -160,7 +160,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class OperationEventArgs : EventArgs
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="operationCancellation">Object used to cancel the operation.</param>
         /// <param name="operation">Async observable operation.</param>
@@ -198,7 +198,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private static long gOperationCounter = 0;
 
         /// <summary>
-        /// temporary CimSession cache lock.
+        /// Temporary CimSession cache lock.
         /// </summary>
         private static readonly object temporarySessionCacheLock = new object();
 
@@ -1113,7 +1113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// delete a cim instance asynchronously.
+        /// Delete a cim instance asynchronously.
         /// </summary>
         /// <param name="namespaceName"></param>
         /// <param name="instance"></param>
@@ -1549,33 +1549,33 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// lock object used to lock
+        /// Lock object used to lock
         /// operation & cancelOperation members.
         /// </summary>
         private readonly object stateLock = new object();
 
         /// <summary>
-        /// the operation issued by cimSession.
+        /// The operation issued by cimSession.
         /// </summary>
         private IObservable<object> operation;
 
         /// <summary>
-        /// the current operation name.
+        /// The current operation name.
         /// </summary>
         private string operationName;
 
         /// <summary>
-        /// the current operation parameters.
+        /// The current operation parameters.
         /// </summary>
         private Hashtable operationParameters = new Hashtable();
 
         /// <summary>
-        /// handler used to cancel operation.
+        /// Handler used to cancel operation.
         /// </summary>
         private IDisposable _cancelOperation;
 
         /// <summary>
-        /// cancelOperation disposed flag.
+        /// CancelOperation disposed flag.
         /// </summary>
         private int _cancelOperationDisposed = 0;
 
@@ -1615,7 +1615,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// current protocol name
+        /// Current protocol name
         /// DCOM or WSMAN.
         /// </summary>
         internal ProtocolType Protocol
@@ -1629,7 +1629,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private ProtocolType protocol;
 
         /// <summary>
-        /// cross operation context object.
+        /// Cross operation context object.
         /// </summary>
         internal XOperationContextBase ContextObject
         {
@@ -1647,12 +1647,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private XOperationContextBase contextObject;
 
         /// <summary>
-        /// invocation context object.
+        /// Invocation context object.
         /// </summary>
         private InvocationContext invocationContextObject;
 
         /// <summary>
-        /// a preprocess object to pre-processing the result object,
+        /// A preprocess object to pre-processing the result object,
         /// for example, adding PSTypeName, etc.
         /// </summary>
         internal IObjectPreProcess ObjectPreProcess

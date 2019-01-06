@@ -15,7 +15,7 @@ using System.Text;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// a class used to add pstypename to partial ciminstance
+    /// A class used to add pstypename to partial ciminstance
     /// for <see cref="GetCimInstanceCommand"/>, if -KeyOnly
     /// or -SelectProperties is been specified, then add a pstypename:
     /// "Microsoft.Management.Infrastructure.CimInstance#__PartialCIMInstance"
@@ -527,12 +527,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         /// <summary>
-        /// wql query format with where clause.
+        /// Wql query format with where clause.
         /// </summary>
         private const string queryWithWhere = @"SELECT {0} FROM {1} WHERE {2}";
 
         /// <summary>
-        /// wql query format without where clause.
+        /// Wql query format without where clause.
         /// </summary>
         private const string queryWithoutWhere = @"SELECT {0} FROM {1}";
         #endregion

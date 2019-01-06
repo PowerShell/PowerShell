@@ -1086,7 +1086,7 @@ $result
         }
 
         /// <summary>
-        /// to implement ^C.
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -1114,7 +1114,7 @@ $result
     #region Stop-Computer
 
     /// <summary>
-    /// cmdlet to stop computer.
+    /// Cmdlet to stop computer.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
@@ -1206,7 +1206,7 @@ $result
         }
 
         /// <summary>
-        /// to implement ^C.
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {

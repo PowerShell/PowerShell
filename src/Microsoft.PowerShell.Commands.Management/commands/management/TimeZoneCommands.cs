@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands
 
 #endif
     /// <summary>
-    /// static Helper class for working with system time zones.
+    /// Static Helper class for working with system time zones.
     /// </summary>
     internal static class TimeZoneHelper
     {

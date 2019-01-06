@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// internal helper to verify that the font is fixed pitch. If the test fails,
+        /// Internal helper to verify that the font is fixed pitch. If the test fails,
         /// it reverts to the default font.
         /// </summary>
         /// <param name="g">GDI+ graphics object needed for verification.</param>

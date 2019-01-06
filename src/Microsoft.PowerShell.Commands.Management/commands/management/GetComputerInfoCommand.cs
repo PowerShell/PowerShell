@@ -3820,7 +3820,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// hardware security settings for the reset button on a computer.
+    /// Hardware security settings for the reset button on a computer.
     /// </summary>
     public enum FrontPanelResetStatus
     {
@@ -3963,7 +3963,7 @@ namespace Microsoft.PowerShell.Commands
         Encrypt128Bits = 1,
 
         /// <summary>
-        /// n-bit encryption.
+        /// N-bit encryption.
         /// </summary>
         EncryptNBits = 2
     }

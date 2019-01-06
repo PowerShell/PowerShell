@@ -137,7 +137,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public class CimIndicationWatcher
     {
         /// <summary>
-        /// status of <see cref="CimIndicationWatcher"/> object.
+        /// Status of <see cref="CimIndicationWatcher"/> object.
         /// </summary>
         internal enum Status
         {
@@ -364,12 +364,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimRegisterCimIndication cimRegisterCimIndication;
 
         /// <summary>
-        /// the status of <see cref="CimIndicationWatcher"/> object.
+        /// The status of <see cref="CimIndicationWatcher"/> object.
         /// </summary>
         private Status status;
 
         /// <summary>
-        /// lock started field.
+        /// Lock started field.
         /// </summary>
         private object myLock;
 

@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         internal string[] serviceNames = null;
 
         /// <summary>
-        /// gets/sets an array of display names for services.
+        /// Gets/sets an array of display names for services.
         /// </summary>
         [Parameter(ParameterSetName = "DisplayName", Mandatory = true)]
         public string[] DisplayName
@@ -541,7 +541,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        /// gets/sets an array of service names.
+        /// Gets/sets an array of service names.
         /// </summary>
         /// <remarks>
         /// The ServiceName parameter is declared in subclasses,
@@ -737,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        /// gets/sets an array of service names.
+        /// Gets/sets an array of service names.
         /// </summary>
         /// <remarks>
         /// The ServiceName parameter is declared in subclasses,
@@ -1467,7 +1467,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// service name.
+        /// Service name.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = "Name", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -2465,7 +2465,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region ctors
         /// <summary>
-        /// unimplemented standard constructor.
+        /// Unimplemented standard constructor.
         /// </summary>
         /// <returns>Doesn't return.</returns>
         public ServiceCommandException()
@@ -2475,7 +2475,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// standard constructor.
+        /// Standard constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -2485,7 +2485,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// standard constructor.
+        /// Standard constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -2497,7 +2497,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Serialization
         /// <summary>
-        /// serialization constructor.
+        /// Serialization constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>

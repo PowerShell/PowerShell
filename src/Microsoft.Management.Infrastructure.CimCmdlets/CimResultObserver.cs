@@ -32,7 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimResultContext
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="ErrorSource"></param>
         internal CimResultContext(object ErrorSource)
@@ -355,7 +355,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession session;
 
         /// <summary>
-        /// async operation that can be observed.
+        /// Async operation that can be observed.
         /// </summary>
         private IObservable<object> observable;
 
@@ -372,7 +372,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSubscriptionResultObserver : CimResultObserver<CimSubscriptionResult>
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
@@ -382,7 +382,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
@@ -411,7 +411,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimMethodResultObserver : CimResultObserver<CimMethodResultBase>
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
@@ -421,7 +421,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
@@ -480,7 +480,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// methodname.
+        /// Methodname.
         /// </summary>
         internal String MethodName
         {
@@ -489,7 +489,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// classname.
+        /// Classname.
         /// </summary>
         internal String ClassName
         {
@@ -504,7 +504,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class IgnoreResultObserver : CimResultObserver<CimInstance>
     {
         /// <summary>
-        /// constructor.
+        /// Constructor.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>

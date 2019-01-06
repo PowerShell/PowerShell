@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         private StreamWriter _sw = null;
 
         /// <summary>
-        /// indicate whether the ProcessRecord method was executed.
+        /// Indicate whether the ProcessRecord method was executed.
         /// When the Out-File is used in a redirection pipelineProcessor,
         /// its ProcessRecord method may not be called when nothing is written to the
         /// output pipe, for example:
