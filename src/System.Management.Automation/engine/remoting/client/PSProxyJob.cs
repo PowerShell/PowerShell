@@ -99,7 +99,7 @@ namespace System.Management.Automation
         #region Overrides of Job2
 
         /// <summary>
-        /// start a job. The job will be started with the parameters
+        /// Start a job. The job will be started with the parameters
         /// specified in StartParameters.
         /// </summary>
         /// <exception cref="InvalidJobStateException">Thrown if the job

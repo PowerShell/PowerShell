@@ -291,7 +291,7 @@ namespace System.Management.Automation.Runspaces
         #endregion public_properties
 
         /// <summary>
-        /// override for ToString()
+        /// Override for ToString()
         /// </summary>
         /// <returns></returns>
         public override string ToString()

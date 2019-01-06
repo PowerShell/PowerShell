@@ -192,7 +192,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// override for creating a copy of pipeline.
+        /// Override for creating a copy of pipeline.
         /// </summary>
         /// <returns>
         /// Pipeline object which is copy of this pipeline
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// internal method to set the value of IsNested. This is called
+        /// Internal method to set the value of IsNested. This is called
         /// by serializer.
         /// </summary>
         internal void SetIsNested(bool isNested)
@@ -261,7 +261,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// internal method to set the value of IsSteppable. This is called
+        /// Internal method to set the value of IsSteppable. This is called
         /// during DoConcurrentCheck.
         /// </summary>
         internal void SetIsSteppable(bool isSteppable)

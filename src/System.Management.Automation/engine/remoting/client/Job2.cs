@@ -202,7 +202,7 @@ namespace System.Management.Automation
         #region State Management
 
         /// <summary>
-        /// start a job. The job will be started with the parameters
+        /// Start a job. The job will be started with the parameters
         /// specified in StartParameters.
         /// </summary>
         /// <remarks>It is redundant to have a method named StartJob
@@ -722,7 +722,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// indicates if more data is available.
+        /// Indicates if more data is available.
         /// </summary>
         /// <remarks>
         /// This has more data if any of the child jobs have more data.

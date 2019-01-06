@@ -221,7 +221,7 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// initialsessionstate information for this runspace.
+        /// Initialsessionstate information for this runspace.
         /// </summary>
         public override InitialSessionState InitialSessionState
         {

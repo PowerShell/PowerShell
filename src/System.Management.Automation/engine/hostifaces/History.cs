@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// buffer.
+        /// Buffer.
         /// </summary>
         private HistoryInfo[] _buffer;
 
@@ -798,7 +798,7 @@ namespace Microsoft.PowerShell.Commands
         private int _countEntriesInBuffer;
 
         /// <summary>
-        /// total number of entries added till now including those which have
+        /// Total number of entries added till now including those which have
         /// been overwritten after buffer got full. This is also number of
         /// last entry added.
         /// </summary>
@@ -812,7 +812,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion private
 
         /// <summary>
-        /// return the ID of the next history item to be added.
+        /// Return the ID of the next history item to be added.
         /// </summary>
         internal long GetNextHistoryId()
         {
@@ -1343,7 +1343,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         /// <summary>
-        /// override for BeginProcessing.
+        /// Override for BeginProcessing.
         /// </summary>
         protected
         override
@@ -1361,7 +1361,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// override for ProcessRecord.
+        /// Override for ProcessRecord.
         /// </summary>
         protected
         override
@@ -1598,13 +1598,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// id of a history entry.
+        /// Id of a history entry.
         /// </summary>
 
         private int[] _id;
 
         /// <summary>
-        /// command line name of an entry in the session history.
+        /// Command line name of an entry in the session history.
         /// </summary>
 
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
@@ -1649,12 +1649,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// count of the history entries.
+        /// Count of the history entries.
         /// </summary>
         private int _count = 32;
 
         /// <summary>
-        /// a boolean variable to indicate if the count parameter specified.
+        /// A boolean variable to indicate if the count parameter specified.
         /// </summary>
         private bool _countParameterSpecified = false;
 
@@ -1677,7 +1677,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// switch parameter on the history entries.
+        /// Switch parameter on the history entries.
         /// </summary>
 
         private SwitchParameter _newest;
@@ -1960,12 +1960,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// history obj.
+        /// History obj.
         /// </summary>
         private History _history;
 
         /// <summary>
-        /// array of historyinfo objects.
+        /// Array of historyinfo objects.
         /// </summary>
         private HistoryInfo[] _entries;
 

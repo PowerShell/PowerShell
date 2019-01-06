@@ -427,7 +427,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// private method used to call the op_* operations for the math operators.
+        /// Private method used to call the op_* operations for the math operators.
         /// </summary>
         /// <param name="lval">Left operand.</param>
         /// <param name="rval">Right operand.</param>

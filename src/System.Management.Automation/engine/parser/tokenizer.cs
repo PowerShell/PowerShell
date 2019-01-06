@@ -86,7 +86,7 @@ namespace System.Management.Automation.Language
         private static Dictionary<string, DynamicKeyword> t_dynamicKeywords;
 
         /// <summary>
-        /// stack of DynamicKeywords Cache.
+        /// Stack of DynamicKeywords Cache.
         /// </summary>
         private static Stack<Dictionary<string, DynamicKeyword>> DynamicKeywordsStack
         {

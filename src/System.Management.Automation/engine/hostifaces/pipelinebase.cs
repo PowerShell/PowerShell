@@ -963,7 +963,7 @@ namespace System.Management.Automation.Runspaces
         // can access it.
 
         /// <summary>
-        /// if true, this pipeline is added in history.
+        /// If true, this pipeline is added in history.
         /// </summary>
         internal bool AddToHistory { get; set; }
 

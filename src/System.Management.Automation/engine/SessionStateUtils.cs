@@ -95,7 +95,7 @@ namespace System.Management.Automation
         internal const int DefaultDictionaryCapacity = 100;
 
         /// <summary>
-        /// default load factor on a hash table.
+        /// Default load factor on a hash table.
         /// </summary>
         internal const float DefaultHashTableLoadFactor = 0.25F;
     }

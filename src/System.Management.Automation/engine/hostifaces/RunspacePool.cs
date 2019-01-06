@@ -399,7 +399,7 @@ namespace System.Management.Automation.Runspaces
         #region Internal Properties
 
         /// <summary>
-        /// true if AsyncResult monitors Async Open.
+        /// True if AsyncResult monitors Async Open.
         /// false otherwise.
         /// </summary>
         internal bool IsAssociatedWithAsyncOpen { get; }
