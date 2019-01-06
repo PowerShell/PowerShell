@@ -1968,7 +1968,7 @@ namespace Microsoft.WSMan.Management
         #region Private
 
         /// <summary>
-        /// this method creates the connection to new machine in wsman provider.
+        /// This method creates the connection to new machine in wsman provider.
         /// This is called from New-Item.
         /// </summary>
         /// <param name="Name"></param>
@@ -2004,7 +2004,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// this method creates the Listener or ClientCertificate in wsman provider.
+        /// This method creates the Listener or ClientCertificate in wsman provider.
         /// This is called from New-Item.
         /// </summary>
         /// <param name="sessionobj"></param>
@@ -2050,7 +2050,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// this method creates the Plugin and its child items in wsman provider.
+        /// This method creates the Plugin and its child items in wsman provider.
         /// This is called from New-Item.
         /// </summary>
         /// <param name="sessionobj"></param>
@@ -4147,7 +4147,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// for the recurse operation of Get-ChildItems.
+        /// For the recurse operation of Get-ChildItems.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="childname"></param>
@@ -6378,7 +6378,7 @@ namespace Microsoft.WSMan.Management
         internal const string containerWinrs = "Winrs";
 
         /// <summary>
-        /// certmapping Container - Exposed as ClientCertificate in the provider.
+        /// Certmapping Container - Exposed as ClientCertificate in the provider.
         /// </summary>
         internal const string containerCertMapping = "Service/certmapping";
 

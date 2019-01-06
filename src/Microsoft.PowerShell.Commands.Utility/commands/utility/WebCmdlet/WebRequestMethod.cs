@@ -4,7 +4,7 @@
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// enums for web request method.
+    /// Enums for web request method.
     /// </summary>
     public enum WebRequestMethod
     {

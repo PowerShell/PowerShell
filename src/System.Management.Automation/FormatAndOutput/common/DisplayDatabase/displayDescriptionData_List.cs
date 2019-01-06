@@ -13,18 +13,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region List View Definitions
 
     /// <summary>
-    /// in line definition of a list control.
+    /// In line definition of a list control.
     /// </summary>
     internal sealed class ListControlBody : ControlBody
     {
         /// <summary>
-        /// default list entry definition
+        /// Default list entry definition
         /// It's mandatory.
         /// </summary>
         internal ListControlEntryDefinition defaultEntryDefinition = null;
 
         /// <summary>
-        /// optional list of list entry definition overrides. It can be empty if there are no overrides.
+        /// Optional list of list entry definition overrides. It can be empty if there are no overrides.
         /// </summary>
         internal List<ListControlEntryDefinition> optionalEntryList = new List<ListControlEntryDefinition>();
 
@@ -47,18 +47,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// definition of the data to be displayed in a list entry.
+    /// Definition of the data to be displayed in a list entry.
     /// </summary>
     internal sealed class ListControlEntryDefinition
     {
         /// <summary>
-        /// applicability clause
+        /// Applicability clause
         /// Only valid if not the default definition.
         /// </summary>
         internal AppliesTo appliesTo = null;
 
         /// <summary>
-        /// mandatory list of list view items.
+        /// Mandatory list of list view items.
         /// It cannot be empty.
         /// </summary>
         internal List<ListControlItemDefinition> itemDefinitionList = new List<ListControlItemDefinition>();
@@ -81,24 +81,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// cell definition inside a row.
+    /// Cell definition inside a row.
     /// </summary>
     internal sealed class ListControlItemDefinition
     {
         /// <summary>
-        /// optional expression for conditional binding.
+        /// Optional expression for conditional binding.
         /// </summary>
         internal ExpressionToken conditionToken;
 
         /// <summary>
-        /// optional label
+        /// Optional label
         /// If not present, use the name of the property from the matching
         /// mandatory item description.
         /// </summary>
         internal TextToken label = null;
 
         /// <summary>
-        /// format directive body telling how to format the cell
+        /// Format directive body telling how to format the cell
         /// RULE: the body can only contain
         ///     * TextToken
         ///     * PropertyToken

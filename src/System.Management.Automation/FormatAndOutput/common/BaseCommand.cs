@@ -10,7 +10,7 @@ using System.Management.Automation.Language;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// facade class to provide context information to process
+    /// Facade class to provide context information to process
     /// exceptions.
     /// </summary>
     internal sealed class TerminatingErrorContext
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// helper class to invoke a command in a secondary pipeline.
+    /// Helper class to invoke a command in a secondary pipeline.
     /// NOTE: this implementation does not return any error messages
     /// that invoked pipelines might generate.
     /// </summary>
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// add a parameter to the command invocation.
+        /// Add a parameter to the command invocation.
         /// It needs to be called before any execution takes place.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// send an object to the pipeline.
+        /// Send an object to the pipeline.
         /// </summary>
         /// <param name="o">Object to process.</param>
         /// <returns>Array of objects out of the success pipeline.</returns>
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// shut down the pipeline.
+        /// Shut down the pipeline.
         /// </summary>
         /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array ShutDown()
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// just dispose the pipeline processor.
+        /// Just dispose the pipeline processor.
         /// </summary>
         public void Dispose()
         {
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// base class for the command-let's we expose
+    /// Base class for the command-let's we expose
     /// it contains a reference to the implementation
     /// class it wraps.
     /// </summary>
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// hook up the calls from the implementation object
+        /// Hook up the calls from the implementation object
         /// and then call the implementation's Begin()
         /// </summary>
         protected override void BeginProcessing()
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// call the implementation.
+        /// Call the implementation.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// call the implementation.
+        /// Call the implementation.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// call the implementation.
+        /// Call the implementation.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback for the implementation to obtain a reference to the Cmdlet object.
+        /// Callback for the implementation to obtain a reference to the Cmdlet object.
         /// </summary>
         /// <returns>Cmdlet reference.</returns>
         protected virtual PSCmdlet OuterCmdletCall()
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback for the implementation to get the current pipeline object.
+        /// Callback for the implementation to get the current pipeline object.
         /// </summary>
         /// <returns>Current object from the pipeline.</returns>
         protected virtual PSObject InputObjectCall()
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback for the implementation to write objects.
+        /// Callback for the implementation to write objects.
         /// </summary>
         /// <param name="value">Object to be written.</param>
         protected virtual void WriteObjectCall(object value)
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// reference to the implementation command that this class
+        /// Reference to the implementation command that this class
         /// is wrapping.
         /// </summary>
         internal ImplementationCommandBase implementation = null;
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region IDisposable Implementation
 
         /// <summary>
-        /// default implementation just delegates to internal helper.
+        /// Default implementation just delegates to internal helper.
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
         public void Dispose()
@@ -269,41 +269,41 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// implementation class to be called by the outer command
+    /// Implementation class to be called by the outer command
     /// In order to properly work, the callbacks have to be properly set by the outer command.
     /// </summary>
     internal class ImplementationCommandBase : IDisposable
     {
         /// <summary>
-        /// inner version of CommandBase.BeginProcessing()
+        /// Inner version of CommandBase.BeginProcessing()
         /// </summary>
         internal virtual void BeginProcessing()
         {
         }
 
         /// <summary>
-        /// inner version of CommandBase.ProcessRecord()
+        /// Inner version of CommandBase.ProcessRecord()
         /// </summary>
         internal virtual void ProcessRecord()
         {
         }
 
         /// <summary>
-        /// inner version of CommandBase.EndProcessing()
+        /// Inner version of CommandBase.EndProcessing()
         /// </summary>
         internal virtual void EndProcessing()
         {
         }
 
         /// <summary>
-        /// inner version of CommandBase.StopProcessing()
+        /// Inner version of CommandBase.StopProcessing()
         /// </summary>
         internal virtual void StopProcessing()
         {
         }
 
         /// <summary>
-        /// retrieve the current input pipeline object.
+        /// Retrieve the current input pipeline object.
         /// </summary>
         internal virtual PSObject ReadObject()
         {
@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write an object to the pipeline.
+        /// Write an object to the pipeline.
         /// </summary>
         /// <param name="o">Object to write to the pipeline.</param>
         internal virtual void WriteObject(object o)
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         // callback methods to get to the outer Monad Cmdlet
         /// <summary>
-        /// get a hold of the Monad outer Cmdlet.
+        /// Get a hold of the Monad outer Cmdlet.
         /// </summary>
         /// <returns></returns>
         internal virtual PSCmdlet OuterCmdlet()
@@ -343,40 +343,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// delegate definition to get to the outer command-let.
+        /// Delegate definition to get to the outer command-let.
         /// </summary>
         internal delegate PSCmdlet OuterCmdletCallback();
 
         /// <summary>
-        /// callback to get to the outer command-let.
+        /// Callback to get to the outer command-let.
         /// </summary>
         internal OuterCmdletCallback OuterCmdletCall;
 
         // callback to the methods to get an object and write an object
         /// <summary>
-        /// delegate definition to get to the current pipeline input object.
+        /// Delegate definition to get to the current pipeline input object.
         /// </summary>
         internal delegate PSObject InputObjectCallback();
 
         /// <summary>
-        /// delegate definition to write object.
+        /// Delegate definition to write object.
         /// </summary>
         internal delegate void WriteObjectCallback(object o);
 
         /// <summary>
-        /// callback to read object.
+        /// Callback to read object.
         /// </summary>
         internal InputObjectCallback InputObjectCall;
 
         /// <summary>
-        /// callback to write object.
+        /// Callback to write object.
         /// </summary>
         internal WriteObjectCallback WriteObjectCall;
 
         #region IDisposable Implementation
 
         /// <summary>
-        /// default implementation just delegates to internal helper.
+        /// Default implementation just delegates to internal helper.
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
         public void Dispose()

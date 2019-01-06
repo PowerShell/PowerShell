@@ -20,7 +20,7 @@ using DWORD = System.UInt32;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// implementation of RawConsole for powershell.
+    /// Implementation of RawConsole for powershell.
     /// </summary>
 
     internal sealed

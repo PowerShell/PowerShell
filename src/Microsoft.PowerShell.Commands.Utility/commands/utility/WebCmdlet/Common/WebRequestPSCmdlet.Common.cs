@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// the main execution method for cmdlets derived from WebRequestPSCmdlet.
+        /// The main execution method for cmdlets derived from WebRequestPSCmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {

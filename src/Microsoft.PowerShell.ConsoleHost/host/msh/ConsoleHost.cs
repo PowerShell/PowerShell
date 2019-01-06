@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
         /// <summary>
-        /// internal Entry point in msh console host implementation.
+        /// Internal Entry point in msh console host implementation.
         /// </summary>
         /// <param name="bannerText">
         /// Banner text to be displayed by ConsoleHost
@@ -2046,12 +2046,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// raised when the host pops a runspace.
+        /// Raised when the host pops a runspace.
         /// </summary>
         internal event EventHandler RunspacePopped;
 
         /// <summary>
-        /// raised when the host pushes a runspace.
+        /// Raised when the host pushes a runspace.
         /// </summary>
         internal event EventHandler RunspacePushed;
 

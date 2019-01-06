@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     public sealed class ArgumentToConfigurationDataTransformationAttribute : ArgumentTransformationAttribute
     {
         /// <summary>
-        /// convert a file of ConfigurationData into a hashtable.
+        /// Convert a file of ConfigurationData into a hashtable.
         /// </summary>
         /// <param name="engineIntrinsics"></param>
         /// <param name="inputData"></param>
@@ -985,7 +985,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// get text from SecureString.
+        /// Get text from SecureString.
         /// </summary>
         /// <param name="value">Value of SecureString.</param>
         /// <returns>Decoded string.</returns>
@@ -1477,7 +1477,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// update range restriction for meta configuration keywords
+        /// Update range restriction for meta configuration keywords
         /// the restrictions are for
         /// ConfigurationModeFrequency: 15-44640
         /// RefreshFrequency: 30-44640.
@@ -3306,7 +3306,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// if a partial configuration is in 'Pull' Mode, it needs a configuration source.
+        /// If a partial configuration is in 'Pull' Mode, it needs a configuration source.
         /// </summary>
         /// <param name="resourceId"></param>
         /// <returns></returns>

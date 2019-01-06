@@ -336,7 +336,7 @@ namespace Microsoft.WSMan.Management
         }
         #endregion private
         /// <summary>
-        /// begin processing method.
+        /// Begin processing method.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -357,7 +357,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -367,7 +367,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -401,7 +401,7 @@ namespace Microsoft.WSMan.Management
     public class EnableWSManCredSSPCommand : WSManCredSSPCommandBase, IDisposable/*, IDynamicParameters*/
     {
         /// <summary>
-        /// delegate parameter.
+        /// Delegate parameter.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
@@ -709,7 +709,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -718,7 +718,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -755,7 +755,7 @@ namespace Microsoft.WSMan.Management
         #region private
         WSManHelper helper = null;
         /// <summary>
-        /// method to get the values.
+        /// Method to get the values.
         /// </summary>
         private string GetDelegateSettings(string applicationname)
         {
@@ -909,7 +909,7 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -918,7 +918,7 @@ namespace Microsoft.WSMan.Management
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method.
+        /// Public dispose method.
         /// </summary>
         public
         void

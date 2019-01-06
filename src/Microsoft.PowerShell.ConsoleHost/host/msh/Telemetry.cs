@@ -15,7 +15,7 @@ using System.IO;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// send up telemetry for startup.
+    /// Send up telemetry for startup.
     /// </summary>
     internal static class ApplicationInsightsTelemetry
     {
