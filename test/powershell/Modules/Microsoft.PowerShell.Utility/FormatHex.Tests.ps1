@@ -113,16 +113,16 @@ public enum TestSByteEnum : sbyte {
                 ExpectedResult = "00000000000000000000   68 65 6C 6C 6F 20 77 6F 72 6C 64                 hello world"
             }
             @{
-                Name                 = "Can process PS-native enum array '[TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour') | fhx'"
-                InputObject          = [TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour')
-                Count                = 1
-                ExpectedResult       = "00000000000000000000   01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00  ................"
+                Name           = "Can process PS-native enum array '[TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour') | fhx'"
+                InputObject    = [TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour')
+                Count          = 1
+                ExpectedResult = "00000000000000000000   01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00  ................"
             }
             @{
-                Name                 = "Can process C#-native sbyte enum array '[TestSByteEnum[]]('One', 'Two', 'Three', 'Four') | fhx'"
-                InputObject          = [TestSByteEnum[]]('One', 'Two', 'Three', 'Four')
-                Count                = 1
-                ExpectedResult       = "00000000000000000000   FF FE FD FC                                      .þýü"
+                Name           = "Can process C#-native sbyte enum array '[TestSByteEnum[]]('One', 'Two', 'Three', 'Four') | fhx'"
+                InputObject    = [TestSByteEnum[]]('One', 'Two', 'Three', 'Four')
+                Count          = 1
+                ExpectedResult = "00000000000000000000   FF FE FD FC                                      .þýü"
             }
         )
 
@@ -216,16 +216,16 @@ public enum TestSByteEnum : sbyte {
                 ExpectedSecondResult = "00000000000000000000   01 02 03 04 05 06                                ......"
             }
             @{
-                Name                 = "Can process PS-native enum array '[TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour') | fhx'"
-                InputObject          = [TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour')
-                Count                = 1
-                ExpectedResult       = "00000000000000000000   01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00  ................"
+                Name           = "Can process PS-native enum array '[TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour') | fhx'"
+                InputObject    = [TestEnum[]]('TestOne', 'TestTwo', 'TestThree', 'TestFour')
+                Count          = 1
+                ExpectedResult = "00000000000000000000   01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00  ................"
             }
             @{
-                Name                 = "Can process C#-native sbyte enum array '[TestSByteEnum[]]('One', 'Two', 'Three', 'Four') | fhx'"
-                InputObject          = [TestSByteEnum[]]('One', 'Two', 'Three', 'Four')
-                Count                = 1
-                ExpectedResult       = "00000000000000000000   FF FE FD FC                                      .þýü"
+                Name           = "Can process C#-native sbyte enum array '[TestSByteEnum[]]('One', 'Two', 'Three', 'Four') | fhx'"
+                InputObject    = [TestSByteEnum[]]('One', 'Two', 'Three', 'Four')
+                Count          = 1
+                ExpectedResult = "00000000000000000000   FF FE FD FC                                      .þýü"
             }
         )
 
@@ -294,7 +294,8 @@ public enum TestSByteEnum : sbyte {
 
             if ($PathCase) {
                 $result = Format-Hex -Path $Path
-            } else {
+            }
+            else {
                 # LiteralPath
                 $result = Format-Hex -LiteralPath $Path
             }
@@ -313,7 +314,12 @@ public enum TestSByteEnum : sbyte {
             $FileObject = Get-Item -Path $FilePath
 
             $result = $FileObject | Format-Hex
-            $ExpectedResult = "00000000000000000000   48 65 6C 6C 6F 20 57 6F 72 6C 64 21 0D 0A        Hello World!.."
+            if ($IsWindows) {
+                $ExpectedResult = "00000000000000000000   48 65 6C 6C 6F 20 57 6F 72 6C 64 21 0D 0A        Hello World!.."
+            }
+            else {
+                $ExpectedResult = "00000000000000000000   48 65 6C 6C 6F 20 57 6F 72 6C 64 21 0A           Hello World!."
+            }
 
             $result[0].ToString() | Should -MatchExactly $ExpectedResult
         }
@@ -437,7 +443,8 @@ public enum TestSByteEnum : sbyte {
 
             if ($PathCase) {
                 $output = Format-Hex -Path $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
-            } else {
+            }
+            else {
                 # LiteralPath
                 $output = Format-Hex -LiteralPath $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
             }
