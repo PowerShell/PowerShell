@@ -3264,7 +3264,7 @@ namespace System.Management.Automation.Language
         public ScriptBlockAst Body { get { return _functionDefinitionAst.Body; } }
 
         /// <summary>
-        ///  Method attribute flags.
+        /// Method attribute flags.
         /// </summary>
         public MethodAttributes MethodAttributes { get; private set; }
 
@@ -3674,8 +3674,8 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///  Return the help content, if any, for the function.
-        ///  Use this overload when parsing multiple functions within a single scope.
+        /// Return the help content, if any, for the function.
+        /// Use this overload when parsing multiple functions within a single scope.
         /// </summary>
         /// <param name="scriptBlockTokenCache">A dictionary that the parser will use to
         /// map AST nodes to their respective tokens. The parser uses this to improve performance

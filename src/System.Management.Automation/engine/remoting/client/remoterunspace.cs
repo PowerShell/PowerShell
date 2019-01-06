@@ -2227,11 +2227,11 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        ///  Internal method that checks the debug state of
-        ///  the remote session and raises the DebuggerStop event
-        ///  if debugger is in stopped state.
-        ///  This is used internally to help clients get back to
-        ///  debug state when reconnecting to remote session in debug state.
+        /// Internal method that checks the debug state of
+        /// the remote session and raises the DebuggerStop event
+        /// if debugger is in stopped state.
+        /// This is used internally to help clients get back to
+        /// debug state when reconnecting to remote session in debug state.
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
         {

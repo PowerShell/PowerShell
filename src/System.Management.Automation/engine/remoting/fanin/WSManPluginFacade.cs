@@ -148,7 +148,7 @@ namespace System.Management.Automation.Remoting
         [MarshalAs(UnmanagedType.LPWStr)] string code);
 
     /// <summary>
-    ///  Callback that handles shell shutdown notification events.
+    /// Callback that handles shell shutdown notification events.
     /// </summary>
     /// <param name="state"></param>
     /// <param name="timedOut"></param>

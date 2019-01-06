@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
     public enum WebSslProtocol
     {
         /// <summary>
-        ///  No SSL protocol will be set and the system defaults will be used.
+        /// No SSL protocol will be set and the system defaults will be used.
         /// </summary>
         Default = 0,
 
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         Tls = SslProtocols.Tls,
 
         /// <summary>
-        ///  Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
         /// </summary>
         Tls11 = SslProtocols.Tls11,
 

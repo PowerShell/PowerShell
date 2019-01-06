@@ -119,8 +119,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     #region Preprocessing of result object interface
     /// <summary>
-    ///  Defines a method to preprocessing an result object before sending to
-    ///  output pipeline.
+    /// Defines a method to preprocessing an result object before sending to
+    /// output pipeline.
     /// </summary>
     [ComVisible(false)]
     internal interface IObjectPreProcess

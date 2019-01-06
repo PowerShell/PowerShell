@@ -568,7 +568,7 @@ namespace System.Management.Automation.Runspaces
     public sealed class SessionStateAliasEntry : SessionStateCommandEntry
     {
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -580,7 +580,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state.
+        /// Define an alias entry to add to the initial session state.
         /// </summary>
         /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>

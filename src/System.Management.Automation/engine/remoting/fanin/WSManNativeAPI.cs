@@ -563,8 +563,8 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_OPTION_ALLOW_NEGOTIATE_IMPLICIT_CREDENTIALS = 32,
             /// <summary>
-            ///  DWORD - When using just a machine name in the connection string use an SSL connection.
-            ///  0 means HTTP, 1 means HTTPS.  Default is 0.
+            /// DWORD - When using just a machine name in the connection string use an SSL connection.
+            /// 0 means HTTP, 1 means HTTPS.  Default is 0.
             /// </summary>
             WSMAN_OPTION_USE_SSL = 33
             #endregion

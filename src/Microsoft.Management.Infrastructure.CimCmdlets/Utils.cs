@@ -305,7 +305,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        ///  Format the message.
+        /// Format the message.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="args"></param>

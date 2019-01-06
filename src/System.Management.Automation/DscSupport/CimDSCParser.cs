@@ -3334,7 +3334,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
+        /// Returns an error record to use in the case of a malformed resource reference in the DependsOn list.
         /// </summary>
         /// <param name="duplicateResourceId">The duplicate resource identifier.</param>
         /// <param name="nodeName">The node being defined.</param>
@@ -3441,7 +3441,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///  Return an error to indicate a value is out of range for a dynamic keyword property.
+        /// Return an error to indicate a value is out of range for a dynamic keyword property.
         /// </summary>
         /// <param name="property"></param>
         /// <param name="name"></param>

@@ -175,7 +175,7 @@ namespace System.Management.Automation
     public sealed class PSJobStartEventArgs : EventArgs
     {
         /// <summary>
-        ///  Job to be started.
+        /// Job to be started.
         /// </summary>
         public Job Job
         {

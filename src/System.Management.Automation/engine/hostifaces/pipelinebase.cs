@@ -187,7 +187,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Is this a pulse pipeline (created by the EventManager)
+        /// Is this a pulse pipeline (created by the EventManager)
         /// </summary>
         internal bool IsPulsePipeline { get; set; }
 

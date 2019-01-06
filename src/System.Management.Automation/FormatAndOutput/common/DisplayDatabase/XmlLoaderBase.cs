@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            ///  back pointer to the loader, used to pop a stack frame.
+            /// Back pointer to the loader, used to pop a stack frame.
             /// </summary>
             private XmlLoaderBase _loader;
 

@@ -1624,7 +1624,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///  commandline parameter.
+        /// Commandline parameter.
         /// </summary>
 
         private string[] _commandline = null;

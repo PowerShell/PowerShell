@@ -218,7 +218,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  The line number in the executing script that contained this cmdlet.
+        /// The line number in the executing script that contained this cmdlet.
         /// </summary>
         /// <value>The script line number or -1 if not executing in a script.</value>
         public int ScriptLineNumber

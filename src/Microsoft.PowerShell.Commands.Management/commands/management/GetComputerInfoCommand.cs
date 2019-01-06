@@ -2239,7 +2239,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    ///  The ComputerInfo class is output to the PowerShell pipeline.
+    /// The ComputerInfo class is output to the PowerShell pipeline.
     /// </summary>
     public class ComputerInfo
     {

@@ -2086,7 +2086,7 @@ namespace System.Management.Automation.Internal
         private Timer _updateTimer;
 
         /// <summary>
-        ///  Constructor.
+        /// Constructor.
         /// </summary>
         public RobustConnectionProgress()
         {

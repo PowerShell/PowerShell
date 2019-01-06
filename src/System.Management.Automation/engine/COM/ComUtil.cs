@@ -113,7 +113,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Gets the name of the custom type defined in the type library.
+        /// Gets the name of the custom type defined in the type library.
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the type.</param>
         /// <param name="refptr">Reference to the custom type.</param>
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Determine .net type for the given type descriptor.
+        /// Determine .net type for the given type descriptor.
         /// </summary>
         /// <param name="typedesc">COM type descriptor to convert.</param>
         /// <returns>Type represented by the typedesc.</returns>
