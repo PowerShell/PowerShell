@@ -578,7 +578,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// throw if file does not exist.
+        /// Throw if file does not exist.
         /// </summary>
         /// <param name="filePath">Path to file.</param>
         /// <returns>Does not return a value.</returns>
@@ -591,7 +591,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// check to see if the specified cert is suitable to be
+        /// Check to see if the specified cert is suitable to be
         /// used as a code signing cert.
         /// </summary>
         /// <param name="c">Certificate object.</param>
@@ -607,7 +607,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// check to see if the specified cert is suitable to be
+        /// Check to see if the specified cert is suitable to be
         /// used as an encryption cert for PKI encryption. Note
         /// that this cert doesn't require the private key.
         /// </summary>
@@ -656,7 +656,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// check if the specified cert has a private key in it.
+        /// Check if the specified cert has a private key in it.
         /// </summary>
         /// <param name="cert">Certificate object.</param>
         /// <returns>True on success, false otherwise.</returns>
@@ -724,7 +724,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// convert an int to a DWORD.
+        /// Convert an int to a DWORD.
         /// </summary>
         /// <param name="n">Signed int number.</param>
         /// <returns>DWORD.</returns>
@@ -735,7 +735,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// convert a DWORD to int.
+        /// Convert a DWORD to int.
         /// </summary>
         /// <param name="n">Number.</param>
         /// <returns>Int.</returns>
@@ -747,7 +747,7 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// information used for filtering a set of certs.
+    /// Information used for filtering a set of certs.
     /// </summary>
     internal sealed class CertificateFilterInfo
     {
@@ -756,7 +756,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// purpose of a certificate.
+        /// Purpose of a certificate.
         /// </summary>
         internal CertificatePurpose Purpose
         {
@@ -792,7 +792,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// remaining validity period in days for a certificate.
+        /// Remaining validity period in days for a certificate.
         /// </summary>
         internal int ExpiringInDays
         {
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// combine properties into a filter string.
+        /// Combine properties into a filter string.
         /// </summary>
         internal string FilterString
         {

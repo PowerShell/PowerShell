@@ -300,7 +300,7 @@ namespace System.Management.Automation.Remoting.Client
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string userName;
                 /// <summary>
-                /// making password secure.
+                /// Making password secure.
                 /// </summary>
                 [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr password;
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// gets a structure representation (used for marshalling)
+            /// Gets a structure representation (used for marshalling)
             /// </summary>
             internal WSManUserNameCredentialStruct CredentialStruct
             {
@@ -456,31 +456,31 @@ namespace System.Management.Automation.Remoting.Client
             #region TimeOuts
 
             /// <summary>
-            /// int - default timeout in ms that applies to all operations on the client side.
+            /// Int - default timeout in ms that applies to all operations on the client side.
             /// </summary>
             WSMAN_OPTION_DEFAULT_OPERATION_TIMEOUTMS = 1,
             /// <summary>
-            /// int - Robust connection maximum retry time in minutes.
+            /// Int - Robust connection maximum retry time in minutes.
             /// </summary>
             WSMAN_OPTION_MAX_RETRY_TIME = 11,
             /// <summary>
-            /// int - timeout in ms for WSManCreateShellEx operations.
+            /// Int - timeout in ms for WSManCreateShellEx operations.
             /// </summary>
             WSMAN_OPTION_TIMEOUTMS_CREATE_SHELL = 12,
             /// <summary>
-            /// int - timeout in ms for WSManReceiveShellOutputEx operations.
+            /// Int - timeout in ms for WSManReceiveShellOutputEx operations.
             /// </summary>
             WSMAN_OPTION_TIMEOUTMS_RECEIVE_SHELL_OUTPUT = 14,
             /// <summary>
-            /// int - timeout in ms for WSManSendShellInputEx operations.
+            /// Int - timeout in ms for WSManSendShellInputEx operations.
             /// </summary>
             WSMAN_OPTION_TIMEOUTMS_SEND_SHELL_INPUT = 15,
             /// <summary>
-            /// int - timeout in ms for WSManSignalShellEx operations.
+            /// Int - timeout in ms for WSManSignalShellEx operations.
             /// </summary>
             WSMAN_OPTION_TIMEOUTMS_SIGNAL_SHELL = 16,
             /// <summary>
-            /// int - timeout in ms for WSManCloseShellOperationEx operations.
+            /// Int - timeout in ms for WSManCloseShellOperationEx operations.
             /// </summary>
             WSMAN_OPTION_TIMEOUTMS_CLOSE_SHELL_OPERATION = 17,
 
@@ -489,32 +489,32 @@ namespace System.Management.Automation.Remoting.Client
             #region Connection Options
 
             /// <summary>
-            /// int - 1 to not validate the CA on the server certificate; 0 - default.
+            /// Int - 1 to not validate the CA on the server certificate; 0 - default.
             /// </summary>
             WSMAN_OPTION_SKIP_CA_CHECK = 18,
             /// <summary>
-            /// int - 1 to not validate the CN on the server certificate; 0 - default.
+            /// Int - 1 to not validate the CN on the server certificate; 0 - default.
             /// </summary>
             WSMAN_OPTION_SKIP_CN_CHECK = 19,
             /// <summary>
-            /// int - 1 to not encrypt the messages; 0 - default.
+            /// Int - 1 to not encrypt the messages; 0 - default.
             /// </summary>
             WSMAN_OPTION_UNENCRYPTED_MESSAGES = 20,
             /// <summary>
-            /// int - 1 Send all network packets for remote operations in UTF16; 0 - default is UTF8.
+            /// Int - 1 Send all network packets for remote operations in UTF16; 0 - default is UTF8.
             /// </summary>
             WSMAN_OPTION_UTF16 = 21,
             /// <summary>
-            /// int - 1 When using negotiate, include port number in the connection SPN; 0 - default.
+            /// Int - 1 When using negotiate, include port number in the connection SPN; 0 - default.
             /// </summary>
             WSMAN_OPTION_ENABLE_SPN_SERVER_PORT = 22,
             /// <summary>
-            /// int - Used when not talking to the main OS on a machine but, for instance, a BMC
+            /// Int - Used when not talking to the main OS on a machine but, for instance, a BMC
             /// 1 Identify this machine to the server by including the MachineID header; 0 - default.
             /// </summary>
             WSMAN_OPTION_MACHINE_ID = 23,
             /// <summary>
-            /// int -1 Enables host process to be created with interactive token.
+            /// Int -1 Enables host process to be created with interactive token.
             /// </summary>
             WSMAN_OPTION_USE_INTERACTIVE_TOKEN = 34,
 
@@ -522,11 +522,11 @@ namespace System.Management.Automation.Remoting.Client
 
             #region Locale
             /// <summary>
-            /// string - RFC 3066 language code.
+            /// String - RFC 3066 language code.
             /// </summary>
             WSMAN_OPTION_LOCALE = 25,
             /// <summary>
-            /// string - RFC 3066 language code.
+            /// String - RFC 3066 language code.
             /// </summary>
             WSMAN_OPTION_UI_LANGUAGE = 26,
 
@@ -534,7 +534,7 @@ namespace System.Management.Automation.Remoting.Client
 
             #region Other
             /// <summary>
-            /// int - max SOAP envelope size (kb) - default 150kb from winrm config
+            /// Int - max SOAP envelope size (kb) - default 150kb from winrm config
             /// (see 'winrm help config' for more details); the client SOAP packet size cannot surpass
             /// this value; this value will be also sent to the server in the SOAP request as a
             /// MaxEnvelopeSize header; the server will use min(MaxEnvelopeSizeKb from server configuration,
@@ -542,7 +542,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB = 28,
             /// <summary>
-            /// int (read only) - max data size (kb) provided by the client, guaranteed by
+            /// Int (read only) - max data size (kb) provided by the client, guaranteed by
             /// the winrm client implementation to fit into one SOAP packet; this is an
             /// approximate value calculated based on the WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB (default 150kb),
             /// the maximum possible size of the SOAP headers and the overhead of the base64
@@ -551,7 +551,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_OPTION_SHELL_MAX_DATA_SIZE_PER_MESSAGE_KB = 29,
             /// <summary>
-            /// string -
+            /// String -
             /// </summary>
             WSMAN_OPTION_REDIRECT_LOCATION = 30,
             /// <summary>
@@ -600,7 +600,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region WSManData
         /// <summary>
-        /// types of supported WSMan data.
+        /// Types of supported WSMan data.
         /// PowerShell uses only Text and DWORD (in some places).
         /// </summary>
         internal enum WSManDataType : uint
@@ -743,7 +743,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// implicit IntPtr conversion.
+            /// Implicit IntPtr conversion.
             /// </summary>
             /// <param name="data"></param>
             /// <returns></returns>
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManShellDisconnectInfoInternal
             {
                 /// <summary>
-                /// new idletimeout for the server shell that overrides the original idletimeout specified in WSManCreateShell.
+                /// New idletimeout for the server shell that overrides the original idletimeout specified in WSManCreateShell.
                 /// </summary>
                 internal uint idleTimeoutMs;
             }
@@ -1346,7 +1346,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// implicit IntPtr.
+            /// Implicit IntPtr.
             /// </summary>
             /// <param name="disconnectInfo"></param>
             /// <returns></returns>
@@ -1376,7 +1376,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             internal uint idleTimeoutMs;
             /// <summary>
-            /// working directory of the shell.
+            /// Working directory of the shell.
             /// </summary>
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string workingDirectory;
@@ -1439,7 +1439,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// implicit IntPtr.
+            /// Implicit IntPtr.
             /// </summary>
             /// <param name="startupInfo"></param>
             /// <returns></returns>
@@ -1594,7 +1594,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// implicit IntPtr.
+            /// Implicit IntPtr.
             /// </summary>
             /// <param name="proxyInfo"></param>
             /// <returns></returns>
@@ -1609,7 +1609,7 @@ namespace System.Management.Automation.Remoting.Client
         #region WSMan Shell Async
 
         /// <summary>
-        /// flags used by all callback functions: WSMAN_COMPLETION_FUNCTION,
+        /// Flags used by all callback functions: WSMAN_COMPLETION_FUNCTION,
         /// WSMAN_SUBSCRIPTION_COMPLETION_FUNCTION and WSMAN_SHELL_COMPLETION_FUNCTION.
         /// </summary>
         internal enum WSManCallbackFlags
@@ -1785,15 +1785,15 @@ namespace System.Management.Automation.Remoting.Client
         {
             internal int errorCode;
             /// <summary>
-            /// extended error description from the fault;
+            /// Extended error description from the fault;
             /// </summary>
             internal string errorDetail;
             /// <summary>
-            /// language for error description (RFC 3066 language code); it can be NULL.
+            /// Language for error description (RFC 3066 language code); it can be NULL.
             /// </summary>
             internal string language;
             /// <summary>
-            /// machine id; it can be NULL.
+            /// Machine id; it can be NULL.
             /// </summary>
             internal string machineName;
 

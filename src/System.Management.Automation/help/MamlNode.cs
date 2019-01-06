@@ -91,7 +91,7 @@ namespace System.Management.Automation
         private PSObject _mshObject;
 
         /// <summary>
-        /// mshObject which is converted from XmlNode.
+        /// MshObject which is converted from XmlNode.
         /// </summary>
         /// <value></value>
         internal PSObject PSObject

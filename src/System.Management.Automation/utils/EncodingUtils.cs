@@ -46,7 +46,7 @@ namespace System.Management.Automation
         };
 
         /// <summary>
-        /// retrieve the encoding parameter from the command line
+        /// Retrieve the encoding parameter from the command line
         /// it throws if the encoding does not match the known ones.
         /// </summary>
         /// <returns>A System.Text.Encoding object (null if no encoding specified).</returns>

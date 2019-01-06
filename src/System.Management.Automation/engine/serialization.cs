@@ -2275,7 +2275,7 @@ namespace System.Management.Automation
         #endregion serialize as string
 
         /// <summary>
-        /// compute the serialization depth for an PSObject instance subtree.
+        /// Compute the serialization depth for an PSObject instance subtree.
         /// </summary>
         /// <param name="source">PSObject whose serialization depth has to be computed.</param>
         /// <param name="depth">Current depth.</param>
@@ -3891,7 +3891,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// read note.
+        /// Read note.
         /// </summary>
         /// <returns></returns>
         private PSNoteProperty ReadNoteProperty()

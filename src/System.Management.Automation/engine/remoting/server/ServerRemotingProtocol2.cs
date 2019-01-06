@@ -83,7 +83,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// called when session is connected from a new client
+        /// Called when session is connected from a new client
         /// call into the sessionconnect handlers for each associated powershell dshandler.
         /// </summary>
         internal void ProcessConnect()
@@ -255,7 +255,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// dispatch the message to the associated powershell data structure handler.
+        /// Dispatch the message to the associated powershell data structure handler.
         /// </summary>
         /// <param name="rcvdData">Message to dispatch.</param>
         internal void DispatchMessageToPowerShell(RemoteDataObject<PSObject> rcvdData)
@@ -597,7 +597,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// called when session is connected from a new client
+        /// Called when session is connected from a new client
         /// calls into observers of this event.
         /// observers include corresponding driver that shutdown
         /// input stream is present.
@@ -718,14 +718,14 @@ namespace System.Management.Automation
         #region Data Structure Handler events
 
         /// <summary>
-        /// this event is raised when the state of associated
+        /// This event is raised when the state of associated
         /// powershell is terminal and the runspace pool has
         /// to detach the association.
         /// </summary>
         internal event EventHandler RemoveAssociation;
 
         /// <summary>
-        /// this event is raised when the a message to stop the
+        /// This event is raised when the a message to stop the
         /// powershell is received from the client.
         /// </summary>
         internal event EventHandler StopPowerShellReceived;
@@ -743,7 +743,7 @@ namespace System.Management.Automation
         internal event EventHandler InputEndReceived;
 
         /// <summary>
-        /// raised when server session is connected from a new client.
+        /// Raised when server session is connected from a new client.
         /// </summary>
         internal event EventHandler OnSessionConnected;
 
@@ -757,7 +757,7 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// client powershell id.
+        /// Client powershell id.
         /// </summary>
         internal Guid PowerShellId
         {

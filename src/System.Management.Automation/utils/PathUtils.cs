@@ -228,7 +228,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
+        /// Resolve a user provided file name or path (including globbing characters)
         /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
@@ -240,7 +240,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
+        /// Resolve a user provided file name or path (including globbing characters)
         /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>

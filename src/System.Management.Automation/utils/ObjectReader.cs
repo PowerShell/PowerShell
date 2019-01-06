@@ -210,7 +210,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// public method for dispose.
+        /// Public method for dispose.
         /// </summary>
         public void Dispose()
         {
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources.
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected abstract void Dispose(bool disposing);
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources.
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources.
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources.
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
@@ -813,7 +813,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// release all resources.
+        /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)

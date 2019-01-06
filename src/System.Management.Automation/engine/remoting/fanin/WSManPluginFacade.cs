@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting
         internal class WSManPluginEntryDelegatesInternal
         {
             /// <summary>
-            /// wsManPluginShutdownPluginCallbackNative.
+            /// WsManPluginShutdownPluginCallbackNative.
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginShutdownPluginCallbackNative;

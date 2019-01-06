@@ -285,7 +285,7 @@ namespace System.Management.Automation
         private bool _thrownByThrowStatement;
 
         /// <summary>
-        /// fix for BUG: Windows Out Of Band Releases: 906263 and 906264
+        /// Fix for BUG: Windows Out Of Band Releases: 906263 and 906264
         /// The interpreter prompt CommandBaseStrings:InquireHalt
         /// should be suppressed when this flag is set.  This will be set
         /// when this prompt has already occurred and Break was chosen,

@@ -63,7 +63,7 @@ namespace System.Management.Automation.Remoting.Internal
     }
 
     /// <summary>
-    /// struct which describes whether an object written
+    /// Struct which describes whether an object written
     /// to an ObjectStream is of type - output, error,
     /// verbose, debug.
     /// PSStreamObject is for internal (PowerShell) consumption

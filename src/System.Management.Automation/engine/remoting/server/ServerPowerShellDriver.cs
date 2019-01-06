@@ -335,7 +335,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// invokes the powershell asynchronously.
+        /// Invokes the powershell asynchronously.
         /// </summary>
         internal IAsyncResult Start()
         {
