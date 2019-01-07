@@ -9,7 +9,7 @@ trigger:
     - '*'
     exclude:
     - /tools/releaseBuild/**/*
-    - /.vsts-ci/spelling.yml
+    - /.vsts-ci/misc-analysis.yml
 pr:
   branches:
     include:
@@ -20,11 +20,11 @@ pr:
     - '*'
     exclude:
     - /tools/releaseBuild/**/*
-    - /.vsts-ci/spelling.yml
+    - /.vsts-ci/misc-analysis.yml
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
-  # Avoid expensive initialization of dotnet cli, see: http://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   # Enable VSTS debug mode until stabilitized
   system.debug: 'true'
