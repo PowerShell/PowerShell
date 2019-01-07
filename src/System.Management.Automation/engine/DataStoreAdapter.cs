@@ -42,20 +42,21 @@ namespace System.Management.Automation
             {
                 return _currentWorkingDirectory;
             }
+
             set
             {
                 _currentWorkingDirectory = value;
             }
-        } // CurrentLocation
+        }
 
         /// <summary>
         /// The current working directory for the virtual drive
-        /// as a relative path from Root
+        /// as a relative path from Root.
         /// </summary>
         private string _currentWorkingDirectory;
 
         /// <summary>
-        /// Gets the name of the drive
+        /// Gets the name of the drive.
         /// </summary>
         public string Name
         {
@@ -66,7 +67,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The name of the virtual drive
+        /// The name of the virtual drive.
         /// </summary>
         private string _name;
 
@@ -97,6 +98,7 @@ namespace System.Management.Automation
             {
                 return _root;
             }
+
             internal set
             {
                 _root = value;
@@ -136,10 +138,10 @@ namespace System.Management.Automation
             }
 
             _root = path;
-        } // SetRoot
+        }
 
         /// <summary>
-        /// The root of the virtual drive
+        /// The root of the virtual drive.
         /// </summary>
         private string _root;
 
@@ -352,7 +354,7 @@ namespace System.Management.Automation
             // Set the current working directory to the empty
             // string since it is relative to the root.
 
-            _currentWorkingDirectory = String.Empty;
+            _currentWorkingDirectory = string.Empty;
 
             Dbg.Diagnostics.Assert(
                 _currentWorkingDirectory != null,
@@ -474,13 +476,13 @@ namespace System.Management.Automation
             get
             {
                 return _hidden;
-            } //get
+            }
 
             set
             {
                 _hidden = value;
-            } // set
-        }  // Hidden
+            }
+        }
 
         /// <summary>
         /// Determines if the drive should be hidden from the user.
@@ -504,13 +506,13 @@ namespace System.Management.Automation
         /// </exception>
         internal void SetName(string newName)
         {
-            if (String.IsNullOrEmpty(newName))
+            if (string.IsNullOrEmpty(newName))
             {
                 throw PSTraceSource.NewArgumentException("newName");
             }
 
             _name = newName;
-        } // SetName
+        }
 
         /// <summary>
         /// Sets the provider of the drive to a new provider.
@@ -536,10 +538,10 @@ namespace System.Management.Automation
             }
 
             _provider = newProvider;
-        } // SetProvider
+        }
 
         /// <summary>
-        /// Traces the virtual drive
+        /// Traces the virtual drive.
         /// </summary>
         internal void Trace()
         {
@@ -580,7 +582,7 @@ namespace System.Management.Automation
                     "\tDescription: {0}",
                     Description);
             }
-        }//Trace
+        }
 
         /// <summary>
         /// Compares this instance to the specified drive.
@@ -603,7 +605,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
 
-            return String.Compare(Name, drive.Name, StringComparison.CurrentCultureIgnoreCase);
+            return string.Compare(Name, drive.Name, StringComparison.OrdinalIgnoreCase);
 
 #pragma warning restore 56506
         }
@@ -688,8 +690,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator ==(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if ((drive1Object == null) == (drive2Object == null))
             {
@@ -697,6 +699,7 @@ namespace System.Management.Automation
                 {
                     return drive1.Equals(drive2);
                 }
+
                 return true;
             }
             else
@@ -739,8 +742,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator <(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if (drive1Object == null)
             {
@@ -760,7 +763,7 @@ namespace System.Management.Automation
                     return drive1.CompareTo(drive2) < 0;
                 }
             }
-        } // operator <
+        }
 
         /// <summary>
         /// Compares the specified drives to determine if drive1 is greater than
@@ -777,8 +780,8 @@ namespace System.Management.Automation
         /// </returns>
         public static bool operator >(PSDriveInfo drive1, PSDriveInfo drive2)
         {
-            Object drive1Object = drive1;
-            Object drive2Object = drive2;
+            object drive1Object = drive1;
+            object drive2Object = drive2;
 
             if ((drive1Object == null))
             {
@@ -800,12 +803,12 @@ namespace System.Management.Automation
                     return drive1.CompareTo(drive2) > 0;
                 }
             }
-        } // operator >
+        }
 
         /// <summary>
         /// Gets the hash code for this instance.
         /// </summary>
-        /// <returns>The result of base.GetHashCode()</returns>
+        /// <returns>The result of base.GetHashCode().</returns>
         /// <!-- Override the base GetHashCode because the compiler complains
         /// if you don't when you implement operator== and operator!= -->
         public override int GetHashCode()
@@ -821,8 +824,9 @@ namespace System.Management.Automation
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);
             }
+
             return _noteProperty;
         }
-    }//Class PSDriveInfo
+    }
 }
 

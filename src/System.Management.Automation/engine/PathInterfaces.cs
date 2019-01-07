@@ -14,14 +14,14 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private PathIntrinsics()
         {
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // PathInterfaces private
+        }
 
         /// <summary>
         /// Internal constructor for the PathIntrinsics facade.
@@ -43,7 +43,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // PathInterfaces internal
+        }
 
         #endregion Constructors
 
@@ -64,11 +64,11 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the sessionState field");
 
                 return _sessionState.CurrentLocation;
-            } // get
-        } // CurrentLocation
+            }
+        }
 
         /// <summary>
-        /// Gets the current location for a specific provider
+        /// Gets the current location for a specific provider.
         /// </summary>
         /// <param name="providerName">
         /// The name of the provider to get the current location for.
@@ -91,10 +91,10 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetNamespaceCurrentLocation(providerName);
-        } // CurrentProviderLocation
+        }
 
         /// <summary>
-        /// Gets the current location for the file system provider
+        /// Gets the current location for the file system provider.
         /// </summary>
         /// <exception cref="DriveNotFoundException">
         /// If a current drive cannot be found for the FileSystem provider
@@ -108,8 +108,8 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the sessionState field");
 
                 return CurrentProviderLocation(_sessionState.ExecutionContext.ProviderNames.FileSystem);
-            } // get
-        } // CurrentFileSystemLocation
+            }
+        }
 
         /// <summary>
         /// Changes the current location to the specified path.
@@ -147,7 +147,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetLocation(path);
-        } // SetLocation
+        }
 
         /// <summary>
         /// Changes the current location to the specified path.
@@ -188,7 +188,51 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetLocation(path, context);
-        } // SetLocation
+        }
+
+        /// <summary>
+        /// Changes the current location to the specified path.
+        /// </summary>
+        /// <param name="path">
+        /// The path to change the location to. This can be either a drive-relative or provider-relative
+        /// path. It cannot be a provider-internal path.
+        /// </param>
+        /// <param name="context">
+        /// The context under which the command is running.
+        /// </param>
+        /// <param name="literalPath">
+        /// Indicates if the path is a literal path.
+        /// </param>
+        /// <returns>
+        /// The path of the new current location.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="path"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="path"/> does not exist, is not a container, or
+        /// resolved to multiple containers.
+        /// </exception>
+        /// <exception cref="ProviderNotFoundException">
+        /// If <paramref name="path"/> refers to a provider that does not exist.
+        /// </exception>
+        /// <exception cref="DriveNotFoundException">
+        /// If <paramref name="path"/> refers to a drive that does not exist.
+        /// </exception>
+        /// <exception cref="ProviderInvocationException">
+        /// If the provider associated with <paramref name="path"/> threw an
+        /// exception.
+        /// </exception>
+        internal PathInfo SetLocation(string path, CmdletProviderContext context, bool literalPath)
+        {
+            Dbg.Diagnostics.Assert(
+                _sessionState != null,
+                "The only constructor for this class should always set the sessionState field");
+
+            // Parameter validation is done in the session state object
+
+            return _sessionState.SetLocation(path, context, literalPath);
+        }
 
         /// <summary>
         /// Determines if the specified path is the current location or a parent of the current location.
@@ -237,7 +281,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsCurrentLocationOrAncestor(path, context);
-        } // IsCurrentLocationOrAncestor
+        }
 
         /// <summary>
         /// Pushes the current location onto the location stack so that it can be retrieved later.
@@ -252,7 +296,7 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             _sessionState.PushCurrentLocation(stackName);
-        } // PushCurrentLocation
+        }
 
         /// <summary>
         /// Gets the location off the top of the location stack.
@@ -290,7 +334,7 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.PopLocation(stackName);
-        } // PopLocation
+        }
 
         /// <summary>
         /// Gets the location stack and all the locations on it.
@@ -305,7 +349,7 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.LocationStack(stackName);
-        } // LocationStack
+        }
 
         /// <summary>
         /// Sets the default location stack to that specified by the stack ID.
@@ -367,7 +411,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, out providerInstance);
-        } // GetResolvedPSPathFromPSPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
@@ -412,7 +456,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, context, out providerInstance);
-        } // GetResolvedPSPathFromPSPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
@@ -464,7 +508,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, out provider, out providerInstance);
-        } // GetResolvedProviderPathFromPSPath
+        }
 
         internal Collection<string> GetResolvedProviderPathFromPSPath(
             string path,
@@ -474,7 +518,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, out provider, out providerInstance);
-        } // GetResolvedProviderPathFromPSPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
@@ -532,7 +576,7 @@ namespace System.Management.Automation
 
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, context, out provider, out providerInstance);
-        } // GetResolvedProviderPathFromPSPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
@@ -576,7 +620,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, out providerInstance);
-        } // GetResolvedProviderPathFromProviderPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
@@ -626,7 +670,7 @@ namespace System.Management.Automation
 
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, context, out providerInstance);
-        } // GetResolvedProviderPathFromProviderPath
+        }
 
         /// <summary>
         /// Converts a drive or provider qualified absolute or relative path that may contain
@@ -669,7 +713,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return PathResolver.GetProviderPath(path);
-        } // GetUnresolvedProviderPathFromPSPath
+        }
 
         /// <summary>
         /// Converts a drive or provider qualified absolute or relative path that may contain
@@ -729,7 +773,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } // GetUnresolvedProviderPathFromPSPath
+        }
 
         /// <summary>
         /// Converts a drive or provider qualified absolute or relative path that may contain
@@ -786,7 +830,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return PathResolver.GetProviderPath(path, context, out provider, out drive);
-        } // GetUnresolvedProviderPathFromPSPath #endregion Public methods
+        }
 
         /// <summary>
         /// Determines if the give path is an Msh provider-qualified path.
@@ -809,7 +853,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return LocationGlobber.IsProviderQualifiedPath(path);
-        } // IsProviderQualifiedPath
+        }
 
         /// <summary>
         /// Determines if the given path is a drive-qualified absolute path.
@@ -838,7 +882,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return PathResolver.IsAbsolutePath(path, out driveName);
-        } // IsPSAbsolutePath
+        }
 
         #region Combine
 
@@ -879,7 +923,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MakePath(parent, child);
-        } // Combine
+        }
 
         /// <summary>
         /// Combines two strings with a provider specific path separator.
@@ -921,7 +965,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MakePath(parent, child, context);
-        } // Combine
+        }
 
         #endregion Combine
 
@@ -960,7 +1004,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetParentPath(path, root);
-        } // GetParentPath
+        }
 
         /// <summary>
         /// Gets the parent path of the specified path.
@@ -1001,7 +1045,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetParentPath(path, root, context, false);
-        } // GetParentPath
+        }
 
         /// <summary>
         /// Gets the parent path of the specified path.
@@ -1088,7 +1132,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildName(path);
-        } // ParseChildName
+        }
 
         /// <summary>
         /// Gets the child name of the specified path.
@@ -1129,7 +1173,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildName(path, context, false);
-        } // ParseChildName
+        }
 
         /// <summary>
         /// Gets the child name of the specified path.
@@ -1176,7 +1220,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildName(path, context, useDefaultProvider);
-        } // ParseChildName
+        }
 
         #endregion ParseChildName
 
@@ -1217,7 +1261,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NormalizeRelativePath(path, basePath);
-        } // NormalizeRelativePath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
@@ -1260,7 +1304,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NormalizeRelativePath(path, basePath, context);
-        } // NormalizeRelativePath
+        }
 
         #endregion NormalizeRelativePath
 
@@ -1300,7 +1344,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsValidPath(path);
-        } // IsValid
+        }
 
         /// <summary>
         /// Determines if the MSH path is a syntactically and semantically valid path for the provider.
@@ -1341,7 +1385,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsValidPath(path, context);
-        } // IsValid
+        }
 
         #endregion IsValid
 
@@ -1358,13 +1402,13 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the sessionState field");
 
                 return _pathResolver ?? (_pathResolver = _sessionState.ExecutionContext.LocationGlobber);
-            } // get
-        } // PathResolver
+            }
+        }
 
         private LocationGlobber _pathResolver;
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // PathIntrinsics
+    }
 }
 

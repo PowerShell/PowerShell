@@ -32,7 +32,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="binder">The binder provided by the call site.</param>
         /// <param name="handler">The handler for the operation.</param>
         /// <param name="result">The result of the operation.</param>
-        /// <returns>true if the operation is complete, false if the call site should determine behavior.</returns>
+        /// <returns>True if the operation is complete, false if the call site should determine behavior.</returns>
         public override bool TryBinaryOperation(BinaryOperationBinder binder, object handler, out object result)
         {
             if (binder.Operation == ExpressionType.AddAssign)

@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// An JSON to be validated.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
-        public String Json { get; set; }
+        public string Json { get; set; }
 
         /// <summary>
         /// A schema to validate the JSON against.
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty()]
-        public String Schema { get; set; }
+        public string Schema { get; set; }
 
         private JsonSchema4 _jschema;
 

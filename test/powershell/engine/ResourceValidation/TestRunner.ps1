@@ -36,6 +36,16 @@ function Test-ResourceStrings
     # This is the reason why this is not a general module for use. There is
     # no other way to run these tests
     Describe "Resources strings in $AssemblyName (was -ResGen used with Start-PSBuild)" -tag Feature {
+
+        function NormalizeLineEnd
+        {
+            param (
+                [string] $string
+            )
+
+            $string -replace "`r`n", "`n"
+        }
+
         foreach ( $resourceFile in $resourceFiles )
         {
             # in the event that the id has a space in it, it is replaced with a '_'
@@ -50,7 +60,8 @@ function Test-ResourceStrings
                 # check all the resource strings
                 $xmlData = [xml](Get-Content $resourceFile.Fullname)
                 foreach ( $inResource in $xmlData.root.data ) {
-                    $resourceType.GetProperty($inResource.name,$bindingFlags).GetValue(0) | Should -Be $inresource.value
+                    $resourceStringToCheck = $resourceType.GetProperty($inResource.name,$bindingFlags).GetValue(0)
+                    NormalizeLineEnd($resourceStringToCheck) | Should -Be (NormalizeLineEnd($inresource.value))
                 }
             }
         }

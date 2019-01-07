@@ -49,7 +49,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for AppDomain.GetAssemblies
+        /// Facade for AppDomain.GetAssemblies.
         /// </summary>
         /// <param name="namespaceQualifiedTypeName">
         /// In CoreCLR context, if it's for string-to-type conversion and the namespace qualified type name is known, pass it in so that
@@ -81,7 +81,7 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for getting default encoding
+        /// Facade for getting default encoding.
         /// </summary>
         internal static Encoding GetDefaultEncoding()
         {
@@ -91,6 +91,7 @@ namespace System.Management.Automation
                 EncodingRegisterProvider();
                 s_defaultEncoding = new UTF8Encoding(false);
             }
+
             return s_defaultEncoding;
         }
 
@@ -98,7 +99,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Facade for getting OEM encoding
-        /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows
+        /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows.
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {
@@ -113,6 +114,7 @@ namespace System.Management.Automation
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
+
             return s_oemEncoding;
         }
 
@@ -224,56 +226,49 @@ namespace System.Management.Automation
         /// </summary>
         private static SecurityZone ReadFromZoneIdentifierDataStream(string filePath)
         {
-            try
+            if (!AlternateDataStreamUtilities.TryCreateFileStream(filePath, "Zone.Identifier", FileMode.Open, FileAccess.Read, FileShare.Read, out var zoneDataStream))
             {
-                FileStream zoneDataSteam = AlternateDataStreamUtilities.CreateFileStream(
-                                            filePath, "Zone.Identifier", FileMode.Open,
-                                            FileAccess.Read, FileShare.Read);
+                return SecurityZone.NoZone;
+            }
 
-                // If we successfully get the zone data stream, try to read the ZoneId information
-                using (StreamReader zoneDataReader = new StreamReader(zoneDataSteam, GetDefaultEncoding()))
+            // If we successfully get the zone data stream, try to read the ZoneId information
+            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, GetDefaultEncoding()))
+            {
+                string line = null;
+                bool zoneTransferMatched = false;
+
+                // After a lot experiments with Zone.CreateFromUrl/Zone.SecurityZone, the way it handles the alternate
+                // data stream 'Zone.Identifier' is observed as follows:
+                //    1. Read content of the data stream line by line. Each line is trimmed.
+                //    2. Try to match the current line with '^\[ZoneTransfer\]'.
+                //           - if matching, then do step #3 starting from the next line
+                //           - if not matching, then continue to do step #2 with the next line.
+                //    3. Try to match the current line with '^ZoneId\s*=\s*(.*)'
+                //           - if matching, check if the ZoneId is valid. Then return the corresponding SecurityZone if valid, or 'NoZone' if invalid.
+                //           - if not matching, then continue to do step #3 with the next line.
+                //    4. Reach EOF, then return 'NoZone'.
+                while ((line = zoneDataReader.ReadLine()) != null)
                 {
-                    string line = null;
-                    bool zoneTransferMatched = false;
-
-                    // After a lot experiments with Zone.CreateFromUrl/Zone.SecurityZone, the way it handles the alternate
-                    // data stream 'Zone.Identifier' is observed as follows:
-                    //    1. Read content of the data stream line by line. Each line is trimmed.
-                    //    2. Try to match the current line with '^\[ZoneTransfer\]'.
-                    //           - if matching, then do step #3 starting from the next line
-                    //           - if not matching, then continue to do step #2 with the next line.
-                    //    3. Try to match the current line with '^ZoneId\s*=\s*(.*)'
-                    //           - if matching, check if the ZoneId is valid. Then return the corresponding SecurityZone if valid, or 'NoZone' if invalid.
-                    //           - if not matching, then continue to do step #3 with the next line.
-                    //    4. Reach EOF, then return 'NoZone'.
-                    while ((line = zoneDataReader.ReadLine()) != null)
+                    line = line.Trim();
+                    if (!zoneTransferMatched)
                     {
-                        line = line.Trim();
-                        if (!zoneTransferMatched)
-                        {
-                            zoneTransferMatched = Regex.IsMatch(line, @"^\[ZoneTransfer\]", RegexOptions.IgnoreCase);
-                        }
-                        else
-                        {
-                            Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
-                            if (!match.Success) { continue; }
+                        zoneTransferMatched = Regex.IsMatch(line, @"^\[ZoneTransfer\]", RegexOptions.IgnoreCase);
+                    }
+                    else
+                    {
+                        Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
+                        if (!match.Success) { continue; }
 
-                            // Match found. Validate ZoneId value.
-                            string zoneIdRawValue = match.Groups[1].Value;
-                            match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
-                            if (!match.Success) { return SecurityZone.NoZone; }
+                        // Match found. Validate ZoneId value.
+                        string zoneIdRawValue = match.Groups[1].Value;
+                        match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
+                        if (!match.Success) { return SecurityZone.NoZone; }
 
-                            string zoneId = match.Groups[0].Value;
-                            SecurityZone result;
-                            return LanguagePrimitives.TryConvertTo(zoneId, out result) ? result : SecurityZone.NoZone;
-                        }
+                        string zoneId = match.Groups[0].Value;
+                        SecurityZone result;
+                        return LanguagePrimitives.TryConvertTo(zoneId, out result) ? result : SecurityZone.NoZone;
                     }
                 }
-            }
-            catch (FileNotFoundException)
-            {
-                // FileNotFoundException may be thrown by AlternateDataStreamUtilities.CreateFileStream when the data stream 'Zone.Identifier'
-                // does not exist, or when the underlying file system doesn't support alternate data stream.
             }
 
             return SecurityZone.NoZone;
@@ -309,12 +304,12 @@ namespace System.Management.Automation
             // it's recommended to use TimeZoneInfo.Local whenever possible.
 
             const int maxsizeUtcDmtf = 999;
-            string UtcString = String.Empty;
+            string UtcString = string.Empty;
             // Fill up the UTC field in the DMTF date with the current zones UTC value
             TimeZoneInfo curZone = TimeZoneInfo.Local;
             TimeSpan tickOffset = curZone.GetUtcOffset(date);
             long OffsetMins = (tickOffset.Ticks / TimeSpan.TicksPerMinute);
-            IFormatProvider frmInt32 = (IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int32));
+            IFormatProvider frmInt32 = (IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(int));
 
             // If the offset is more than that what can be specified in DMTF format, then
             // convert the date to UniversalTime
@@ -349,11 +344,12 @@ namespace System.Management.Automation
             Int64 microsec = ((date.Ticks - dtTemp.Ticks) * 1000) / TimeSpan.TicksPerMillisecond;
 
             // fill the microseconds field
-            String strMicrosec = microsec.ToString((IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int64)));
+            string strMicrosec = microsec.ToString((IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(Int64)));
             if (strMicrosec.Length > 6)
             {
                 strMicrosec = strMicrosec.Substring(0, 6);
             }
+
             dmtfDateTime = dmtfDateTime + strMicrosec.PadLeft(6, '0');
             // adding the UTC offset
             dmtfDateTime = dmtfDateTime + UtcString;
@@ -365,7 +361,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for ProfileOptimization.SetProfileRoot
+        /// Facade for ProfileOptimization.SetProfileRoot.
         /// </summary>
         /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
         internal static void SetProfileOptimizationRoot(string directoryPath)
@@ -374,7 +370,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for ProfileOptimization.StartProfile
+        /// Facade for ProfileOptimization.StartProfile.
         /// </summary>
         /// <param name="profile">The file name of the profile to use.</param>
         internal static void StartProfileOptimization(string profile)
@@ -385,7 +381,7 @@ namespace System.Management.Automation
         #endregion Misc
 
         /// <summary>
-        /// Native methods that are used by facade methods
+        /// Native methods that are used by facade methods.
         /// </summary>
         private static class NativeMethods
         {

@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
 {
     #region Export-ModuleMember
     /// <summary>
-    /// Implements a cmdlet that loads a module
+    /// Implements a cmdlet that loads a module.
     /// </summary>
     [Cmdlet(VerbsData.Export, "ModuleMember", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141551")]
     public sealed class ExportModuleMemberCommand : PSCmdlet
@@ -42,8 +42,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             get { return _functionList; }
         }
+
         private string[] _functionList;
         private List<WildcardPattern> _functionPatterns;
 
@@ -69,8 +71,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             get { return _cmdletList; }
         }
+
         private string[] _cmdletList;
         private List<WildcardPattern> _cmdletPatterns;
 
@@ -96,8 +100,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             get { return _variableExportList; }
         }
+
         private string[] _variableExportList;
         private List<WildcardPattern> _variablePatterns;
 
@@ -123,8 +129,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             get { return _aliasExportList; }
         }
+
         private string[] _aliasExportList;
         private List<WildcardPattern> _aliasPatterns;
 
@@ -142,10 +150,20 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(er);
             }
 
+            // Prevent script injection attack by disallowing ExportModuleMemberCommand to export module members across
+            // language boundaries. This will prevent injected untrusted script from exporting private trusted module functions.
+            if (Context.EngineSessionState.Module?.LanguageMode != null &&
+                Context.LanguageMode != Context.EngineSessionState.Module.LanguageMode)
+            {
+                var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);
+                var er = new ErrorRecord(se, "Modules_CannotExportMembersAccrossLanguageBoundaries", ErrorCategory.SecurityError, this);
+                ThrowTerminatingError(er);
+            }
+
             ModuleIntrinsics.ExportModuleMembers(this,
                 this.Context.EngineSessionState,
                 _functionPatterns, _cmdletPatterns, _aliasPatterns, _variablePatterns, null);
         }
     }
     #endregion Export-ModuleMember
-} // Microsoft.PowerShell.Commands
+}

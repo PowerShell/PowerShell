@@ -9,7 +9,7 @@ using System;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Cmdlet to get available list of results
+    /// Cmdlet to get available list of results.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113328")]
     [OutputType(typeof(Job))]
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// SessionId for which job
-        /// need to be obtained
+        /// need to be obtained.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0,
                   ParameterSetName = JobCmdletBase.SessionIdParameterSet)]
@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.Id;
             }
+
             set
             {
                 base.Id = value;
@@ -103,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Extract result objects corresponding to the specified
-        /// names or expressions
+        /// names or expressions.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -111,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
 
             jobList.Sort((x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
             WriteObject(jobList, true);
-        } // ProcessRecord
+        }
 
         #endregion Overrides
 
@@ -120,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Helper method to find jobs based on parameter set.
         /// </summary>
-        /// <returns>Matching jobs</returns>
+        /// <returns>Matching jobs.</returns>
         protected List<Job> FindJobs()
         {
             List<Job> jobList = new List<Job>();
@@ -131,12 +132,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobList.AddRange(FindJobsMatchingByName(true, false, true, false));
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByInstanceId(true, false, true, false));
                     }
+
                     break;
 
                 case SessionIdParameterSet:
@@ -152,24 +155,28 @@ namespace Microsoft.PowerShell.Commands
                             jobList.AddRange(JobManager.GetJobs(this, true, false, null));
                         }
                     }
+
                     break;
 
                 case CommandParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByCommand(false));
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByState(false));
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobList.AddRange(FindJobsMatchingByFilter(false));
                     }
+
                     break;
 
                 default:
@@ -188,10 +195,10 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         /// <summary>
-        /// Filter jobs based on HasMoreData
+        /// Filter jobs based on HasMoreData.
         /// </summary>
         /// <param name="jobList"></param>
-        /// <returns>return the list of jobs after applying HasMoreData filter</returns>
+        /// <returns>Return the list of jobs after applying HasMoreData filter.</returns>
         private List<Job> ApplyHasMoreDataFiltering(List<Job> jobList)
         {
             bool hasMoreDataParameter = MyInvocation.BoundParameters.ContainsKey(nameof(HasMoreData));
@@ -215,10 +222,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the all child jobs with specified ChildJobState in the job list
+        /// Find the all child jobs with specified ChildJobState in the job list.
         /// </summary>
         /// <param name="jobList"></param>
-        /// <returns>returns job list including all child jobs with ChildJobState or all if IncludeChildJob is specified</returns>
+        /// <returns>Returns job list including all child jobs with ChildJobState or all if IncludeChildJob is specified.</returns>
         private List<Job> FindChildJobs(List<Job> jobList)
         {
             bool childJobStateParameter = MyInvocation.BoundParameters.ContainsKey(nameof(ChildJobState));

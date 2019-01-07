@@ -91,20 +91,46 @@ function Add-UserToGroup
 Function Test-DailyBuild
 {
     $trueString = 'True'
-    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME))
+    # PS_DAILY_BUILD says that we have previously determined that this is a daily build
+    # APPVEYOR_SCHEDULED_BUILD is True means that we are in an AppVeyor Scheduled build
+    # APPVEYOR_REPO_TAG_NAME means we are building a tag in AppVeyor
+    # BUILD_REASON is Schedule means we are in a VSTS Scheduled build
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME) -or $env:BUILD_REASON -eq 'Schedule')
     {
         return $true
     }
 
     # if [Feature] is in the commit message,
     # Run Daily tests
-    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
+    $commitMessage = Get-CommitMessage
+    Write-Verbose "commitMessage: $commitMessage" -verbose
+
+    if($commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True')
     {
-        Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
+        Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
 
     return $false
+}
+
+# Returns the commit message for the current build
+function Get-CommitMessage
+{
+    if ($env:APPVEYOR_REPO_COMMIT_MESSAGE)
+    {
+        return $env:APPVEYOR_REPO_COMMIT_MESSAGE
+    }
+    elseif ($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
+    {
+        # We are in VSTS and have a commit ID in the Source Version Message
+        $commitId = $Matches[1]
+        return &git log --format=%B -n 1 $commitId
+    }
+    else
+    {
+        Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
+    }
 }
 
 # Sets a build variable
@@ -205,28 +231,34 @@ function Invoke-AppVeyorInstall
     }
 
     if(Test-DailyBuild){
-        $buildName = "[Daily]"
+        if($env:APPVEYOR)
+        {
+            $buildName = "[Daily]"
 
-        # Add daily to title if it's not already there
-        # It can be there already for rerun requests
-        if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
-        {
-            $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
-        }
-        elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
-        {
-            $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
-        }
-        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
-        {
-            $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
-        }
-        else
-        {
-            $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
-        }
+            # Add daily to title if it's not already there
+            # It can be there already for rerun requests
+            if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
+            {
+                $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
+            }
+            elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
+            {
+                $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
+            }
+            elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
+            {
+                $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            }
+            else
+            {
+                $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            }
 
-        Update-AppveyorBuild -message $buildName
+            Update-AppveyorBuild -message $buildName
+        }
+        elseif ($env:BUILD_REASON -eq 'Schedule') {
+            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+        }
     }
 
     if ($env:APPVEYOR -or $env:TF_BUILD)
@@ -337,7 +369,6 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $SequentialXUnitTestResultsFile = "$pwd\SequentialXUnitTestResults.xml"
     $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
@@ -411,19 +442,13 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
-        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-        Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
         Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
-        @(
-            $SequentialXUnitTestResultsFile,
-            $ParallelXUnitTestResultsFile
-        ) | ForEach-Object {
-            Test-XUnitTestResults -TestResultsFile $_
-        }
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
 
         # Run tests with specified experimental features enabled
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
@@ -467,7 +492,41 @@ function Invoke-AppVeyorAfterTest
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | ForEach-Object { Push-AppveyorArtifact $_ }
+        $codeCoverageArtifacts | ForEach-Object {
+            Push-Artifact -Path $_
+        }
+
+        New-TestPackage -Destination (Get-Location).Path
+        $testPackageFullName = Join-Path $pwd 'TestPackage.zip'
+        Write-Verbose "Created TestPackage.zip" -Verbose
+        Write-Host -ForegroundColor Green 'Upload test package'
+        Push-Artifact $testPackageFullName
+    }
+}
+
+# Wrapper to push artifact
+function Push-Artifact
+{
+    param(
+        [Parameter(Mandatory)]
+        [ValidateScript({Test-Path -Path $_})]
+        $Path,
+        [string]
+        $Name
+    )
+
+    if(!$Name)
+    {
+        $artifactName = [system.io.path]::GetFileName($Path)
+    }
+    else
+    {
+        $artifactName = $Name
+    }
+
+    if ($env:TF_BUILD) {
+        # In VSTS
+        Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     }
 }
 
@@ -505,7 +564,13 @@ function Get-ReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag+'.'+$env:APPVEYOR_BUILD_NUMBER
+        $releaseTag = $releaseTag + '.' + $env:APPVEYOR_BUILD_NUMBER
+    }
+    elseif($env:BUILD_BUILID)
+    {
+        #In VSTS
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
     }
 
     return $releaseTag
@@ -514,14 +579,29 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
+    param(
+        [string] $NuGetKey
+    )
+
     try {
         $releaseTag = Get-ReleaseTag
 
+        $previewVersion = $releaseTag.Split('-')
+        $previewPrefix = $previewVersion[0]
+        $previewLabel = $previewVersion[1].replace('.','')
+
+        if(Test-DailyBuild)
+        {
+            $previewLabel= "daily{0}" -f $previewLabel
+        }
+
+        $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+
         # Build clean before backing to remove files from testing
-        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean
 
         # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
+        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $preReleaseVersion -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -534,24 +614,6 @@ function Invoke-AppveyorFinish
                 $null = $artifacts.Add($package.msi)
                 $null = $artifacts.Add($package.wixpdb)
             }
-        }
-
-        if ($env:APPVEYOR_REPO_TAG_NAME)
-        {
-            $preReleaseVersion = $env:APPVEYOR_REPO_TAG_NAME
-        }
-        else
-        {
-            $previewVersion = $releaseTag.Split('-')
-            $previewPrefix = $previewVersion[0]
-            $previewLabel = $previewVersion[1].replace('.','')
-
-            if(Test-DailyBuild)
-            {
-                $previewLabel= "daily{0}" -f $previewLabel
-            }
-
-            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
         # the packaging tests find the MSI package using env:PSMsiX64Path
@@ -598,14 +660,7 @@ function Invoke-AppveyorFinish
             Write-Host "Pushing $_ as Appveyor artifact"
             if(Test-Path $_)
             {
-                if($env:Appveyor)
-                {
-                    Push-AppveyorArtifact $_
-                }
-                elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
-                    # In VSTS
-                    Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$_"
-                }
+                Push-Artifact -Path $_
             }
             else
             {
@@ -613,10 +668,10 @@ function Invoke-AppveyorFinish
                 Write-Warning "Artifact $_ does not exist."
             }
 
-            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
+            if($NuGetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
                 Write-Log "pushing $_ to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $NuGetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if(!$pushedAllArtifacts)

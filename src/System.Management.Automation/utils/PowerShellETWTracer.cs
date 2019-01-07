@@ -10,11 +10,11 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Tracing
 {
-    //pragma warning disable 16001,16003
+    // pragma warning disable 16001,16003
 #region Constants
 
     /// <summary>
-    /// Defines enumerations for event ids
+    /// Defines enumerations for event ids.
     /// </summary>
     /// <remarks>add an entry for a new event that you
     /// add to the manifest. Set it to the same value
@@ -27,244 +27,244 @@ namespace System.Management.Automation.Tracing
         None = 0,
 
         /// <summary>
-        /// HostNameResolve
+        /// HostNameResolve.
         /// </summary>
         HostNameResolve = 0x1001,
 
         /// <summary>
-        /// SchemeResolve
+        /// SchemeResolve.
         /// </summary>
         SchemeResolve = 0x1002,
 
         /// <summary>
-        /// ShellResolve
+        /// ShellResolve.
         /// </summary>
         ShellResolve = 0x1003,
 
         /// <summary>
-        /// RunspaceConstructor
+        /// RunspaceConstructor.
         /// </summary>
         RunspaceConstructor = 0x2001,
 
         /// <summary>
-        /// RunspacePoolConstructor
+        /// RunspacePoolConstructor.
         /// </summary>
         RunspacePoolConstructor = 0x2002,
 
         /// <summary>
-        /// RunspacePoolOpen
+        /// RunspacePoolOpen.
         /// </summary>
         RunspacePoolOpen = 0x2003,
 
         /// <summary>
-        /// OperationalTransferEventRunspacePool
+        /// OperationalTransferEventRunspacePool.
         /// </summary>
         OperationalTransferEventRunspacePool = 0x2004,
 
         /// <summary>
-        /// RunspacePort
+        /// RunspacePort.
         /// </summary>
         RunspacePort = 0x2F01,
 
         /// <summary>
-        /// AppName
+        /// AppName.
         /// </summary>
         AppName = 0x2F02,
 
         /// <summary>
-        /// ComputerName
+        /// ComputerName.
         /// </summary>
         ComputerName = 0x2F03,
 
         /// <summary>
-        /// Scheme
+        /// Scheme.
         /// </summary>
         Scheme = 0x2F04,
 
         /// <summary>
-        /// TestAnalytic
+        /// TestAnalytic.
         /// </summary>
         TestAnalytic = 0x2F05,
 
         /// <summary>
-        /// WSManConnectionInfoDump
+        /// WSManConnectionInfoDump.
         /// </summary>
         WSManConnectionInfoDump = 0x2F06,
 
         /// <summary>
-        /// AnalyticTransferEventRunspacePool
+        /// AnalyticTransferEventRunspacePool.
         /// </summary>
         AnalyticTransferEventRunspacePool = 0x2F07,
 
         // Start: Transport related events
 
         /// <summary>
-        /// TransportReceivedObject
+        /// TransportReceivedObject.
         /// </summary>
         TransportReceivedObject = 0x8001,
 
         /// <summary>
-        /// AppDomainUnhandledExceptionAnalytic
+        /// AppDomainUnhandledExceptionAnalytic.
         /// </summary>
         AppDomainUnhandledExceptionAnalytic = 0x8007,
 
         /// <summary>
-        /// TransportErrorAnalytic
+        /// TransportErrorAnalytic.
         /// </summary>
         TransportErrorAnalytic = 0x8008,
 
         /// <summary>
-        /// AppDomainUnhandledException
+        /// AppDomainUnhandledException.
         /// </summary>
         AppDomainUnhandledException = 0x8009,
 
         /// <summary>
-        /// TransportError
+        /// TransportError.
         /// </summary>
         TransportError = 0x8010,
 
         /// <summary>
-        /// WSManCreateShell
+        /// WSManCreateShell.
         /// </summary>
         WSManCreateShell = 0x8011,
 
         /// <summary>
-        /// WSManCreateShellCallbackReceived
+        /// WSManCreateShellCallbackReceived.
         /// </summary>
         WSManCreateShellCallbackReceived = 0x8012,
 
         /// <summary>
-        /// WSManCloseShell
+        /// WSManCloseShell.
         /// </summary>
         WSManCloseShell = 0x8013,
 
         /// <summary>
-        /// WSManCloseShellCallbackReceived
+        /// WSManCloseShellCallbackReceived.
         /// </summary>
         WSManCloseShellCallbackReceived = 0x8014,
 
         /// <summary>
-        /// WSManSendShellInputExtended
+        /// WSManSendShellInputExtended.
         /// </summary>
         WSManSendShellInputExtended = 0x8015,
 
         /// <summary>
-        /// WSManSendShellInputExCallbackReceived
+        /// WSManSendShellInputExCallbackReceived.
         /// </summary>
         WSManSendShellInputExtendedCallbackReceived = 0x8016,
 
         /// <summary>
-        /// WSManReceiveShellOutputExtended
+        /// WSManReceiveShellOutputExtended.
         /// </summary>
         WSManReceiveShellOutputExtended = 0x8017,
 
         /// <summary>
-        /// WSManReceiveShellOutputExCallbackReceived
+        /// WSManReceiveShellOutputExCallbackReceived.
         /// </summary>
         WSManReceiveShellOutputExtendedCallbackReceived = 0x8018,
 
         /// <summary>
-        /// WSManCreateCommand
+        /// WSManCreateCommand.
         /// </summary>
         WSManCreateCommand = 0x8019,
 
         /// <summary>
-        /// WSManCreateCommandCallbackReceived
+        /// WSManCreateCommandCallbackReceived.
         /// </summary>
         WSManCreateCommandCallbackReceived = 0x8020,
 
         /// <summary>
-        /// WSManCloseCommand
+        /// WSManCloseCommand.
         /// </summary>
         WSManCloseCommand = 0x8021,
 
         /// <summary>
-        /// WSManCloseCommandCallbackReceived
+        /// WSManCloseCommandCallbackReceived.
         /// </summary>
         WSManCloseCommandCallbackReceived = 0x8022,
 
         /// <summary>
-        /// WSManSignal
+        /// WSManSignal.
         /// </summary>
         WSManSignal = 0x8023,
 
         /// <summary>
-        /// WSManSignalCallbackReceived
+        /// WSManSignalCallbackReceived.
         /// </summary>
         WSManSignalCallbackReceived = 0x8024,
 
         /// <summary>
-        /// UriRedirection
+        /// UriRedirection.
         /// </summary>
         UriRedirection = 0x8025,
 
         /// <summary>
-        /// ServerSendData
+        /// ServerSendData.
         /// </summary>
         ServerSendData = 0x8051,
 
         /// <summary>
-        /// ServerCreateRemoteSession
+        /// ServerCreateRemoteSession.
         /// </summary>
         ServerCreateRemoteSession = 0x8052,
 
         /// <summary>
-        /// ReportContext
+        /// ReportContext.
         /// </summary>
         ReportContext = 0x8053,
 
         /// <summary>
-        /// ReportOperationComplete
+        /// ReportOperationComplete.
         /// </summary>
         ReportOperationComplete = 0x8054,
 
         /// <summary>
-        /// ServerCreateCommandSession
+        /// ServerCreateCommandSession.
         /// </summary>
         ServerCreateCommandSession = 0x8055,
 
         /// <summary>
-        /// ServerStopCommand
+        /// ServerStopCommand.
         /// </summary>
         ServerStopCommand = 0x8056,
 
         /// <summary>
-        /// ServerReceivedData
+        /// ServerReceivedData.
         /// </summary>
         ServerReceivedData = 0x8057,
 
         /// <summary>
-        /// ServerClientReceiveRequest
+        /// ServerClientReceiveRequest.
         /// </summary>
         ServerClientReceiveRequest = 0x8058,
 
         /// <summary>
-        /// ServerCloseOperation
+        /// ServerCloseOperation.
         /// </summary>
         ServerCloseOperation = 0x8059,
 
         /// <summary>
-        /// LoadingPSCustomShellAssembly
+        /// LoadingPSCustomShellAssembly.
         /// </summary>
         LoadingPSCustomShellAssembly = 0x8061,
 
         /// <summary>
-        /// LoadingPSCustomShellType
+        /// LoadingPSCustomShellType.
         /// </summary>
         LoadingPSCustomShellType = 0x8062,
 
         /// <summary>
-        /// ReceivedRemotingFragment
+        /// ReceivedRemotingFragment.
         /// </summary>
         ReceivedRemotingFragment = 0x8063,
 
         /// <summary>
-        /// SentRemotingFragment
+        /// SentRemotingFragment.
         /// </summary>
         SentRemotingFragment = 0x8064,
 
         /// <summary>
-        /// WSManPluginShutdown
+        /// WSManPluginShutdown.
         /// </summary>
         WSManPluginShutdown = 0x8065,
         // End: Transport related events
@@ -272,120 +272,120 @@ namespace System.Management.Automation.Tracing
         // Start: Serialization related events
 
         /// <summary>
-        /// SerializerWorkflowLoadSuccess
+        /// SerializerWorkflowLoadSuccess.
         /// </summary>
         SerializerWorkflowLoadSuccess = 0x7001,
 
         /// <summary>
-        /// SerializerWorkflowLoadFailure
+        /// SerializerWorkflowLoadFailure.
         /// </summary>
         SerializerWorkflowLoadFailure = 0x7002,
 
         /// <summary>
-        /// SerializerDepthOverride
+        /// SerializerDepthOverride.
         /// </summary>
         SerializerDepthOverride = 0x7003,
 
         /// <summary>
-        /// SerializerModeOverride
+        /// SerializerModeOverride.
         /// </summary>
         SerializerModeOverride = 0x7004,
 
         /// <summary>
-        /// SerializerScriptPropertyWithoutRunspace
+        /// SerializerScriptPropertyWithoutRunspace.
         /// </summary>
         SerializerScriptPropertyWithoutRunspace = 0x7005,
 
         /// <summary>
-        /// SerializerPropertyGetterFailed
+        /// SerializerPropertyGetterFailed.
         /// </summary>
         SerializerPropertyGetterFailed = 0x7006,
 
         /// <summary>
-        /// SerializerEnumerationFailed
+        /// SerializerEnumerationFailed.
         /// </summary>
         SerializerEnumerationFailed = 0x7007,
 
         /// <summary>
-        /// SerializerToStringFailed
+        /// SerializerToStringFailed.
         /// </summary>
         SerializerToStringFailed = 0x7008,
 
         /// <summary>
-        /// SerializerMaxDepthWhenSerializing
+        /// SerializerMaxDepthWhenSerializing.
         /// </summary>
         SerializerMaxDepthWhenSerializing = 0x700A,
 
         /// <summary>
-        /// SerializerXmlExceptionWhenDeserializing
+        /// SerializerXmlExceptionWhenDeserializing.
         /// </summary>
         SerializerXmlExceptionWhenDeserializing = 0x700B,
 
         /// <summary>
-        /// SerializerSpecificPropertyMissing
+        /// SerializerSpecificPropertyMissing.
         /// </summary>
         SerializerSpecificPropertyMissing = 0x700C,
         // End: Serialization related events
 
         // Start: PerformanceTrack related events
         /// <summary>
-        /// PerformanceTrackConsoleStartupStart
+        /// PerformanceTrackConsoleStartupStart.
         /// </summary>
         PerformanceTrackConsoleStartupStart = 0xA001,
 
         /// <summary>
-        /// PerformanceTrackConsoleStartupStop
+        /// PerformanceTrackConsoleStartupStop.
         /// </summary>
         PerformanceTrackConsoleStartupStop = 0xA002,
         // End: Preftrack related events
 
         /// <summary>
-        /// ErrorRecord
+        /// ErrorRecord.
         /// </summary>
         ErrorRecord = 0xB001,
 
         /// <summary>
-        /// Exception
+        /// Exception.
         /// </summary>
         Exception = 0xB002,
 
         /// <summary>
-        /// PowerShellObject
+        /// PowerShellObject.
         /// </summary>
         PowerShellObject = 0xB003,
 
         /// <summary>
-        /// Job
+        /// Job.
         /// </summary>
         Job = 0xB004,
 
         /// <summary>
-        /// Writing a simple trace message from code
+        /// Writing a simple trace message from code.
         /// </summary>
         TraceMessage = 0xB005,
 
         /// <summary>
-        /// Trace the WSManConnectionInfo used for this connection
+        /// Trace the WSManConnectionInfo used for this connection.
         /// </summary>
         TraceWSManConnectionInfo = 0xB006,
 
         /// <summary>
         /// Writing a simple trace message from code with 2
-        /// strings
+        /// strings.
         /// </summary>
         TraceMessage2 = 0xC001,
 
         /// <summary>
         /// Writing a simple trace message from code with 2
-        /// strings
+        /// strings.
         /// </summary>
         TraceMessageGuid = 0xC002,
     }
 
     /// <summary>
-    /// Defines enumerations for channels
+    /// Defines enumerations for channels.
     /// </summary>
-    //pragma warning disable 16001
+    // pragma warning disable 16001
     public enum PowerShellTraceChannel
     {
         /// <summary>
@@ -393,65 +393,65 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         None = 0,
         /// <summary>
-        /// Operational Channel
+        /// Operational Channel.
         /// </summary>
         Operational = 0x10,
 
         /// <summary>
-        /// Analytic Channel
+        /// Analytic Channel.
         /// </summary>
         Analytic = 0x11,
 
         /// <summary>
-        /// Debug Channel
+        /// Debug Channel.
         /// </summary>
         Debug = 0x12,
     }
-    //pragma warning restore 16001
+    // pragma warning restore 16001
 
     /// <summary>
-    /// Define enumerations for levels
+    /// Define enumerations for levels.
     /// </summary>
     public enum PowerShellTraceLevel
     {
         /// <summary>
-        /// LogAlways
+        /// LogAlways.
         /// </summary>
         LogAlways = 0,
 
         /// <summary>
-        /// Critical
+        /// Critical.
         /// </summary>
         Critical = 1,
 
         /// <summary>
-        /// Error
+        /// Error.
         /// </summary>
         Error = 2,
 
         /// <summary>
-        /// Warning
+        /// Warning.
         /// </summary>
         Warning = 3,
 
         /// <summary>
-        /// Informational
+        /// Informational.
         /// </summary>
         Informational = 4,
 
         /// <summary>
-        /// Verbose
+        /// Verbose.
         /// </summary>
         Verbose = 5,
 
         /// <summary>
-        /// Debug
+        /// Debug.
         /// </summary>
         Debug = 20,
     }
 
     /// <summary>
-    /// Defines enumerations for op codes
+    /// Defines enumerations for op codes.
     /// </summary>
     public enum PowerShellTraceOperationCode
     {
@@ -461,153 +461,153 @@ namespace System.Management.Automation.Tracing
         None = 0,
 
         /// <summary>
-        /// Open
+        /// Open.
         /// </summary>
         Open = 10,
 
         /// <summary>
-        /// Close
+        /// Close.
         /// </summary>
         Close = 11,
 
         /// <summary>
-        /// Connect
+        /// Connect.
         /// </summary>
         Connect = 12,
 
         /// <summary>
-        /// Disconnect
+        /// Disconnect.
         /// </summary>
         Disconnect = 13,
 
         /// <summary>
-        /// Negotiate
+        /// Negotiate.
         /// </summary>
         Negotiate = 14,
 
         /// <summary>
-        /// Create
+        /// Create.
         /// </summary>
         Create = 15,
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         Constructor = 16,
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         Dispose = 17,
 
         /// <summary>
-        /// EventHandler
+        /// EventHandler.
         /// </summary>
         EventHandler = 18,
 
         /// <summary>
-        /// Exception
+        /// Exception.
         /// </summary>
         Exception = 19,
 
         /// <summary>
-        /// Method
+        /// Method.
         /// </summary>
         Method = 20,
 
         /// <summary>
-        /// Send
+        /// Send.
         /// </summary>
         Send = 21,
 
         /// <summary>
-        /// Receive
+        /// Receive.
         /// </summary>
         Receive = 22,
 
         /// <summary>
-        /// WorkflowLoad
+        /// WorkflowLoad.
         /// </summary>
         WorkflowLoad = 23,
 
         /// <summary>
-        /// SerializationSettings
+        /// SerializationSettings.
         /// </summary>
         SerializationSettings = 24,
 
         /// <summary>
-        /// WinInfo
+        /// WinInfo.
         /// </summary>
         WinInfo,
 
         /// <summary>
-        /// WinStart
+        /// WinStart.
         /// </summary>
         WinStart,
 
         /// <summary>
-        /// WinStop
+        /// WinStop.
         /// </summary>
         WinStop,
 
         /// <summary>
-        /// WinDCStart
+        /// WinDCStart.
         /// </summary>
         WinDCStart,
 
         /// <summary>
-        /// WinDCStop
+        /// WinDCStop.
         /// </summary>
         WinDCStop,
 
         /// <summary>
-        /// WinExtension
+        /// WinExtension.
         /// </summary>
         WinExtension,
 
         /// <summary>
-        /// WinReply
+        /// WinReply.
         /// </summary>
         WinReply,
 
         /// <summary>
-        /// WinResume
+        /// WinResume.
         /// </summary>
         WinResume,
 
         /// <summary>
-        /// WinSuspend
+        /// WinSuspend.
         /// </summary>
         WinSuspend,
     }
 
     /// <summary>
-    /// Defines Tasks
+    /// Defines Tasks.
     /// </summary>
     public enum PowerShellTraceTask
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// CreateRunspace
+        /// CreateRunspace.
         /// </summary>
         CreateRunspace = 1,
 
         /// <summary>
-        /// ExecuteCommand
+        /// ExecuteCommand.
         /// </summary>
         ExecuteCommand = 2,
 
         /// <summary>
-        /// Serialization
+        /// Serialization.
         /// </summary>
         Serialization = 3,
 
         /// <summary>
-        /// PowerShellConsoleStartup
+        /// PowerShellConsoleStartup.
         /// </summary>
         PowerShellConsoleStartup = 4,
     }
@@ -620,52 +620,52 @@ namespace System.Management.Automation.Tracing
     public enum PowerShellTraceKeywords : ulong
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Runspace
+        /// Runspace.
         /// </summary>
         Runspace = 0x1,
 
         /// <summary>
-        /// Pipeline
+        /// Pipeline.
         /// </summary>
         Pipeline = 0x2,
 
         /// <summary>
-        /// Protocol
+        /// Protocol.
         /// </summary>
         Protocol = 0x4,
 
         /// <summary>
-        /// Transport
+        /// Transport.
         /// </summary>
         Transport = 0x8,
 
         /// <summary>
-        /// Host
+        /// Host.
         /// </summary>
         Host = 0x10,
 
         /// <summary>
-        /// Cmdlets
+        /// Cmdlets.
         /// </summary>
         Cmdlets = 0x20,
 
         /// <summary>
-        /// Serializer
+        /// Serializer.
         /// </summary>
         Serializer = 0x40,
 
         /// <summary>
-        /// Session
+        /// Session.
         /// </summary>
         Session = 0x80,
 
         /// <summary>
-        /// ManagedPlugIn
+        /// ManagedPlugIn.
         /// </summary>
         ManagedPlugIn = 0x100,
 
@@ -686,14 +686,14 @@ namespace System.Management.Automation.Tracing
 
     /// <summary>
     /// BaseChannelWriter is the abstract base class defines event specific methods that are used to write a trace.
-    /// The default implementation does not write any message to any trace channel
+    /// The default implementation does not write any message to any trace channel.
     /// </summary>
     public abstract class BaseChannelWriter : IDisposable
     {
         private bool disposed;
 
         /// <summary>
-        /// Dispose method
+        /// Dispose method.
         /// </summary>
         public virtual void Dispose()
         {
@@ -705,7 +705,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceError
+        /// TraceError.
         /// </summary>
         public virtual bool TraceError(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -713,7 +713,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceWarning
+        /// TraceWarning.
         /// </summary>
         public virtual bool TraceWarning(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -721,7 +721,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceInformational
+        /// TraceInformational.
         /// </summary>
         public virtual bool TraceInformational(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -729,7 +729,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceVerbose
+        /// TraceVerbose.
         /// </summary>
         public virtual bool TraceVerbose(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceDebug
+        /// TraceDebug.
         /// </summary>
         public virtual bool TraceDebug(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -745,7 +745,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceLogAlways
+        /// TraceLogAlways.
         /// </summary>
         public virtual bool TraceLogAlways(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -753,7 +753,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceCritical
+        /// TraceCritical.
         /// </summary>
         public virtual bool TraceCritical(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -768,6 +768,7 @@ namespace System.Management.Automation.Tracing
             {
                 return PowerShellTraceKeywords.None;
             }
+
             set
             {
                 PowerShellTraceKeywords powerShellTraceKeywords = value;
@@ -784,7 +785,7 @@ namespace System.Management.Automation.Tracing
     public sealed class NullWriter : BaseChannelWriter
     {
         /// <summary>
-        /// Static Instance property
+        /// Static Instance property.
         /// </summary>
         public static BaseChannelWriter Instance { get; } = new NullWriter();
 
@@ -818,6 +819,7 @@ namespace System.Management.Automation.Tracing
             {
                 return _keywords;
             }
+
             set
             {
                 _keywords = value;
@@ -831,7 +833,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Dispose method
+        /// Dispose method.
         /// </summary>
         public override void Dispose()
         {
@@ -867,7 +869,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceError
+        /// TraceError.
         /// </summary>
         public override bool TraceError(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -875,7 +877,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceWarning
+        /// TraceWarning.
         /// </summary>
         public override bool TraceWarning(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -883,7 +885,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceInformational
+        /// TraceInformational.
         /// </summary>
         public override bool TraceInformational(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -891,7 +893,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceVerbose
+        /// TraceVerbose.
         /// </summary>
         public override bool TraceVerbose(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -899,7 +901,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceDebug
+        /// TraceDebug.
         /// </summary>
         public override bool TraceDebug(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -909,7 +911,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceLogAlways
+        /// TraceLogAlways.
         /// </summary>
         public override bool TraceLogAlways(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -917,7 +919,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceCritical
+        /// TraceCritical.
         /// </summary>
         public override bool TraceCritical(PowerShellTraceEvent traceEvent, PowerShellTraceOperationCode operationCode, PowerShellTraceTask task, params object[] args)
         {
@@ -935,7 +937,7 @@ namespace System.Management.Automation.Tracing
         private bool disposed;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         internal PowerShellTraceSource(PowerShellTraceTask task, PowerShellTraceKeywords keywords)
         {
@@ -976,12 +978,12 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Keywords that were set through constructor when object was instantiated
+        /// Keywords that were set through constructor when object was instantiated.
         /// </summary>
         public PowerShellTraceKeywords Keywords { get; } = PowerShellTraceKeywords.None;
 
         /// <summary>
-        /// Task that was set through constructor
+        /// Task that was set through constructor.
         /// </summary>
         public PowerShellTraceTask Task { get; set; } = PowerShellTraceTask.None;
 
@@ -994,7 +996,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceErrorRecord
+        /// TraceErrorRecord.
         /// </summary>
         public bool TraceErrorRecord(ErrorRecord errorRecord)
         {
@@ -1014,6 +1016,7 @@ namespace System.Management.Automation.Tracing
                 {
                     message = errorRecord.ErrorDetails.Message;
                 }
+
                 return DebugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                                message,
@@ -1030,7 +1033,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceException
+        /// TraceException.
         /// </summary>
         public bool TraceException(Exception exception)
         {
@@ -1055,7 +1058,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TracePowerShellObject
+        /// TracePowerShellObject.
         /// </summary>
         public bool TracePowerShellObject(PSObject powerShellObject)
         {
@@ -1064,7 +1067,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// TraceJob
+        /// TraceJob.
         /// </summary>
         public bool TraceJob(Job job)
         {
@@ -1088,7 +1091,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public bool WriteMessage(String message)
+        public bool WriteMessage(string message)
         {
             return DebugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage,
                                             PowerShellTraceOperationCode.None,
@@ -1134,10 +1137,10 @@ namespace System.Management.Automation.Tracing
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
                                         parameters == null ? message : StringUtil.Format(message, parameters),
-                                        String.Empty, // Job
-                                        String.Empty, // Activity name
-                                        String.Empty, // Activity GUID
-                                        String.Empty);
+                                        string.Empty, // Job
+                                        string.Empty, // Activity name
+                                        string.Empty, // Activity GUID
+                                        string.Empty);
         }
 
         /// <summary>
@@ -1186,9 +1189,9 @@ namespace System.Management.Automation.Tracing
                                         className, methodName, workflowId.ToString(),
                                         parameters == null ? message : StringUtil.Format(message, parameters),
                                         sb.ToString(),// Job
-                                        String.Empty, // Activity name
-                                        String.Empty, // Activity GUID
-                                        String.Empty);
+                                        string.Empty, // Activity name
+                                        string.Empty, // Activity GUID
+                                        string.Empty);
         }
 
         /// <summary>
@@ -1455,10 +1458,10 @@ namespace System.Management.Automation.Tracing
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
                                         parameters == null ? message : StringUtil.Format(message, parameters),
-                                        String.Empty, // Job
+                                        string.Empty, // Job
                                         activityName,
                                         activityId.ToString(),
-                                        String.Empty);
+                                        string.Empty);
         }
 
         /// <summary>
@@ -1471,17 +1474,17 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Gives access to Debug channel writer
+        /// Gives access to Debug channel writer.
         /// </summary>
         public BaseChannelWriter DebugChannel { get; }
 
         /// <summary>
-        /// Gives access to analytical channel writer
+        /// Gives access to analytical channel writer.
         /// </summary>
         public BaseChannelWriter AnalyticChannel { get; }
 
         /// <summary>
-        /// Gives access to operational channel writer
+        /// Gives access to operational channel writer.
         /// </summary>
         public BaseChannelWriter OperationalChannel { get; }
     }
@@ -1530,7 +1533,7 @@ namespace System.Management.Automation.Tracing
             return new PowerShellTraceSource(task, keywords);
         }
     }
-    //pragma warning restore 16001,16003
+    // pragma warning restore 16001,16003
 }
 
 #endif

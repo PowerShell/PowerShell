@@ -1,7 +1,8 @@
 {
-  // See http://go.microsoft.com/fwlink/?LinkId=827846
+  // See https://go.microsoft.com/fwlink/?LinkId=827846
   // for the documentation about the extensions.json format
   "recommendations": [
+    "ms-azure-devops.azure-pipelines",
     "ms-vscode.cpptools",
     "ms-vscode.csharp",
     "ms-vscode.PowerShell",

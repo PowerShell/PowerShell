@@ -116,39 +116,36 @@ if ($IsWindows)
 '@
 }
 
-Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
+Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
 
         if (!$IsWindows)
         {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:Pending"] = $true
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
         }
-        else
-        {
-            $sb = [scriptblock]::Create(@'
-            "Hello!"
-'@)
 
-            Add-Type -TypeDefinition $typeDef
+        $sb = [scriptblock]::Create('"Hello!"')
 
-            $dummyHost = [TestRunner.DummyHost]::new()
-            [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
-            $rs.Open()
-            $dummyHost._runspace = $rs
+        Add-Type -TypeDefinition $typeDef
 
-            $testDebugger = [TestRunner.TestDebugger]::new($rs)
+        $dummyHost = [TestRunner.DummyHost]::new()
+        [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
+        $rs.Open()
+        $dummyHost._runspace = $rs
 
-            [runspace] $rs2 = [runspacefactory]::CreateRunspace()
-            $rs2.Open()
+        $testDebugger = [TestRunner.TestDebugger]::new($rs)
 
-            [powershell] $ps = [powershell]::Create()
-            $ps.Runspace = $rs
+        [runspace] $rs2 = [runspacefactory]::CreateRunspace()
+        $rs2.Open()
 
-            [powershell] $ps2 = [powershell]::Create()
-            $ps2.Runspace = $rs2
-        }
+        [powershell] $ps = [powershell]::Create()
+        $ps.Runspace = $rs
+
+        [powershell] $ps2 = [powershell]::Create()
+        $ps2.Runspace = $rs2
     }
 
     AfterAll {
@@ -156,16 +153,15 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         if (!$IsWindows)
         {
             $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return
         }
-        else
-        {
-            if ($null -ne $testDebugger) { $testDebugger.Release() }
-            if ($null -ne $ps) { $ps.Dispose() }
-            if ($null -ne $ps2) { $ps2.Dispose() }
-            if ($null -ne $rs) { $rs.Dispose() }
-            if ($null -ne $rs2) { $rs2.Dispose() }
-            if ($null -ne $remoteSession) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
-        }
+
+        if ($null -ne $testDebugger) { $testDebugger.Release() }
+        if ($null -ne $ps) { $ps.Dispose() }
+        if ($null -ne $ps2) { $ps2.Dispose() }
+        if ($null -ne $rs) { $rs.Dispose() }
+        if ($null -ne $rs2) { $rs2.Dispose() }
+        if ($null -ne $remoteSession) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
     }
 
     BeforeEach {

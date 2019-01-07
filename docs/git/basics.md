@@ -78,7 +78,6 @@ git config --global credential.helper store
 
 Alternatively, you can use [SSH key][].
 In this case, you may want to use git-ssh even for HTTPS Git URLs.
-It will help you to use submodules transparently.
 
 ```
 git config --global url.git@github.com:.insteadOf https://github.com/

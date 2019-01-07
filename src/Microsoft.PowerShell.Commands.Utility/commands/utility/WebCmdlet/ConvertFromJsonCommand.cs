@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ConvertFromJsonHelper is a helper method to convert to Json input to .Net Type.
         /// </summary>
-        /// <param name="input">Input String.</param>
+        /// <param name="input">Input string.</param>
         /// <returns>True if successfully converted, else returns false.</returns>
         private bool ConvertFromJsonHelper(string input)
         {

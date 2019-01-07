@@ -33,7 +33,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate an instance of PSConsoleLoadException.
         /// </summary>
-        /// <param name="message">Error message</param>
+        /// <param name="message">Error message.</param>
         public PSConsoleLoadException(string message)
             : base(message)
         {
@@ -42,8 +42,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate an instance of PSConsoleLoadException.
         /// </summary>
-        /// <param name="message">Error message</param>
-        /// <param name="innerException">Inner exception</param>
+        /// <param name="message">Error message.</param>
+        /// <param name="innerException">Inner exception.</param>
         public PSConsoleLoadException(string message, Exception innerException)
             : base(message, innerException)
         {

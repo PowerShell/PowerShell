@@ -13,18 +13,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region Complex View Definitions
 
     /// <summary>
-    /// in line definition of a complex control
+    /// in line definition of a complex control.
     /// </summary>
     internal sealed class ComplexControlBody : ControlBody
     {
         /// <summary>
         /// default list entry definition
-        /// It's mandatory
+        /// It's mandatory.
         /// </summary>
         internal ComplexControlEntryDefinition defaultEntry;
 
         /// <summary>
-        /// optional list of list entry definition overrides. It can be empty if there are no overrides
+        /// optional list of list entry definition overrides. It can be empty if there are no overrides.
         /// </summary>
         internal List<ComplexControlEntryDefinition> optionalEntryList = new List<ComplexControlEntryDefinition>();
     }
@@ -33,12 +33,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         /// <summary>
         /// applicability clause
-        /// Only valid if not the default definition
+        /// Only valid if not the default definition.
         /// </summary>
         internal AppliesTo appliesTo = null;
 
         /// <summary>
-        /// item associated with this entry definition
+        /// item associated with this entry definition.
         /// </summary>
         internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition();
     }
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class ComplexControlItemDefinition
     {
         /// <summary>
-        /// list of tokens the item can contain
+        /// list of tokens the item can contain.
         /// </summary>
         internal List<FormatToken> formatTokenList = new List<FormatToken>();
     }
@@ -202,10 +202,12 @@ namespace System.Management.Automation
                 {
                     frame.FirstLineHanging = (uint)-firstLine;
                 }
+
                 foreach (var frameItemToken in frameToken.itemDefinition.formatTokenList)
                 {
                     frame.CustomItems.Add(CustomItemBase.Create(frameItemToken));
                 }
+
                 return frame;
             }
 
@@ -446,6 +448,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             _entryStack.Pop();
             return this;
         }
@@ -457,6 +460,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
+
             _entryStack.Pop();
             return _controlBuilder;
         }

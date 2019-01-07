@@ -106,6 +106,7 @@ namespace System.Management.Automation.Remoting
                 {
                     cmdTransportKvp.Value.Close(reasonForClose);
                 }
+
                 _activeCmdTransportManagers.Clear();
 
                 if (_registeredShutDownWaitHandle != null)
@@ -152,7 +153,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// used by powershell DS handler. notifies transport that powershell is back to running state
-        /// no payload
+        /// no payload.
         /// </summary>
         internal override void ReportExecutionStatusAsRunning()
         {
@@ -163,7 +164,7 @@ namespace System.Management.Automation.Remoting
 
             int result = (int)WSManPluginErrorCodes.NoError;
 
-            //there should have been a receive request in place already
+            // there should have been a receive request in place already
 
             lock (_syncObject)
             {
@@ -230,7 +231,7 @@ namespace System.Management.Automation.Remoting
                         if (flush)
                             flags |= (int)WSManNativeApi.WSManFlagReceive.WSMAN_FLAG_RECEIVE_FLUSH;
                         if (reportAsDataBoundary)
-                            //currently assigning hardcoded value for this flag, this is a new change in wsman.h and needs to be replaced with the actual definition once
+                            // currently assigning hardcoded value for this flag, this is a new change in wsman.h and needs to be replaced with the actual definition once
                             // modified wsman.h is in public headers
                             flags |= (int)WSManNativeApi.WSManFlagReceive.WSMAN_FLAG_RECEIVE_RESULT_DATA_BOUNDARY;
 
@@ -244,6 +245,7 @@ namespace System.Management.Automation.Remoting
                     }
                 }
             }
+
             if ((int)WSManPluginErrorCodes.NoError != result)
             {
                 ReportError(result, "WSManPluginReceiveResult");
@@ -408,4 +410,4 @@ namespace System.Management.Automation.Remoting
             this.PowerShellGuidObserver -= new System.EventHandler(this.OnPowershellGuidReported);
         }
     }
-} // namespace System.Management.Automation.Remoting
+}

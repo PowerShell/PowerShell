@@ -62,6 +62,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Utility class to contain resources for the Microsoft.PowerShell.Utility module.
     /// </summary>
+    [Obsolete("This class is obsolete", true)]
     public static class UtilityResources
     {
         /// <summary>
@@ -100,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
         [Obsolete("The constructor is deprecated.", true)]
-        public ByteCollection(UInt32 offset, Byte[] value, string path)
+        public ByteCollection(UInt32 offset, byte[] value, string path)
         {
             Offset64 = offset;
             Bytes = value;
@@ -108,12 +109,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of ByteCollection.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
-        public ByteCollection(UInt64 offset, Byte[] value, string path)
+        public ByteCollection(UInt64 offset, byte[] value, string path)
         {
             if (value == null)
             {
@@ -131,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         [Obsolete("The constructor is deprecated.", true)]
-        public ByteCollection(UInt32 offset, Byte[] value)
+        public ByteCollection(UInt32 offset, byte[] value)
         {
             if (value == null)
             {
@@ -147,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
-        public ByteCollection(UInt64 offset, Byte[] value)
+        public ByteCollection(UInt64 offset, byte[] value)
         {
             if (value == null)
             {
@@ -162,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
         /// ByteCollection constructor.
         /// </summary>
         /// <param name="value">Underlying bytes stored in the collection.</param>
-        public ByteCollection(Byte[] value)
+        public ByteCollection(byte[] value)
         {
             if (value == null)
             {
@@ -198,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets underlying bytes stored in the collection.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Byte[] Bytes { get; private set; }
+        public byte[] Bytes { get; private set; }
 
         /// <summary>
         /// Gets the path of the file whose contents are wrapped in the ByteCollection.
@@ -216,11 +217,11 @@ namespace Microsoft.PowerShell.Commands
 
             // '20 + 3' comes from format "{0:X20}   ".
             // '20' comes from '[Uint64]::MaxValue.ToString().Length'.
-            StringBuilder nextLine = new StringBuilder(20 + 3 + BytesPerLine*3);
+            StringBuilder nextLine = new StringBuilder(20 + 3 + (BytesPerLine * 3));
             StringBuilder asciiEnd = new StringBuilder(BytesPerLine);
 
             // '+1' comes from 'result.Append(nextLine.ToString() + " " + asciiEnd.ToString());' below.
-            StringBuilder result = new StringBuilder(nextLine.Capacity+asciiEnd.Capacity + 1);
+            StringBuilder result = new StringBuilder(nextLine.Capacity + asciiEnd.Capacity + 1);
 
             if (Bytes.Length > 0)
             {
@@ -232,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
 
                 nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
 
-                foreach (Byte currentByte in Bytes)
+                foreach (byte currentByte in Bytes)
                 {
                     // Display each byte, in 2-digit hexadecimal, and add that to the left-hand side.
                     nextLine.AppendFormat("{0:X2} ", currentByte);

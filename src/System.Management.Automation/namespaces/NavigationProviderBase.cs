@@ -66,7 +66,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return MakePath(parent, child);
-        } // MakePath
+        }
 
         /// <summary>
         /// Internal wrapper for the GetParentPath protected method. It is called instead
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return GetParentPath(path, root);
-        } // GetParentPath
+        }
 
         /// <summary>
         /// Internal wrapper for the NormalizeRelativePath method. It is called instead
@@ -141,7 +141,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return NormalizeRelativePath(path, basePath);
-        } // NormalizeRelativePath
+        }
 
         /// <summary>
         /// Internal wrapper for the GetChildName protected method. It is called instead
@@ -172,7 +172,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return GetChildName(path);
-        } // GetChildName
+        }
 
         /// <summary>
         /// Internal wrapper for the IsItemContainer protected method. It is called instead
@@ -197,7 +197,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             return IsItemContainer(path);
-        } // IsItemContainer
+        }
 
         /// <summary>
         /// Internal wrapper for the MoveItem protected method. It is called instead
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Provider
             // Call virtual method
 
             MoveItem(path, destination);
-        } // MoveItem
+        }
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
             return MoveItemDynamicParameters(path, destination);
-        } // MoveItemDynamicParameters
+        }
 
         #endregion Internal methods
 
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Provider
         protected virtual string MakePath(string parent, string child)
         {
             return MakePath(parent, child, childIsLeaf: false);
-        } // MakePath
+        }
 
         /// <summary>
         /// Joins two strings with a path a provider specific path separator.
@@ -322,30 +322,30 @@ namespace System.Management.Automation.Provider
 
                     throw PSTraceSource.NewArgumentException("parent");
                 }
-                else if (String.IsNullOrEmpty(parent) &&
-                         String.IsNullOrEmpty(child))
+                else if (string.IsNullOrEmpty(parent) &&
+                         string.IsNullOrEmpty(child))
                 {
                     // If both are empty, just return the empty string.
 
-                    result = String.Empty;
+                    result = string.Empty;
                 }
-                else if (String.IsNullOrEmpty(parent) &&
-                         !String.IsNullOrEmpty(child))
+                else if (string.IsNullOrEmpty(parent) &&
+                         !string.IsNullOrEmpty(child))
                 {
                     // If the parent is empty but the child is not, return the
                     // child
 
                     result = child.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                 }
-                else if (!String.IsNullOrEmpty(parent) &&
-                         String.IsNullOrEmpty(child))
+                else if (!string.IsNullOrEmpty(parent) &&
+                         string.IsNullOrEmpty(child))
                 {
                     // If the child is empty but the parent is not, return the
                     // parent with the path separator appended.
 
                     // Append the default path separator
 
-                    if (parent.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                    if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         result = parent;
                     }
@@ -377,9 +377,9 @@ namespace System.Management.Automation.Provider
 
                     StringBuilder builder = new StringBuilder(parent, parent.Length + child.Length + 1);
 
-                    if (parent.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                    if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
                         {
                             builder.Append(child, 1, child.Length - 1);
                         }
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Provider
                     }
                     else
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.CurrentCulture))
+                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
                         {
                             if (parent.Length == 0)
                             {
@@ -407,6 +407,7 @@ namespace System.Management.Automation.Provider
                             {
                                 builder.Append(StringLiterals.DefaultPathSeparator);
                             }
+
                             builder.Append(child);
                         }
                     }
@@ -448,7 +449,7 @@ namespace System.Management.Automation.Provider
 
                 // Verify the parameters
 
-                if (String.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path))
                 {
                     throw PSTraceSource.NewArgumentException("path");
                 }
@@ -465,7 +466,7 @@ namespace System.Management.Automation.Provider
 
                 path = NormalizePath(path);
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
-                string rootPath = String.Empty;
+                string rootPath = string.Empty;
 
                 if (root != null)
                 {
@@ -475,12 +476,12 @@ namespace System.Management.Automation.Provider
                 // Check to see if the path is equal to the root
                 // of the virtual drive
 
-                if (String.Compare(
+                if (string.Compare(
                     path,
                     rootPath,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    parentPath = String.Empty;
+                    parentPath = string.Empty;
                 }
                 else
                 {
@@ -498,12 +499,13 @@ namespace System.Management.Automation.Provider
                     }
                     else
                     {
-                        parentPath = String.Empty;
+                        parentPath = string.Empty;
                     }
                 }
+
                 return parentPath;
             }
-        } // GetParentPath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
@@ -538,7 +540,7 @@ namespace System.Management.Automation.Provider
             {
                 return ContractRelativePath(path, basePath, false, Context);
             }
-        } // NormalizeRelativePath
+        }
 
         internal string ContractRelativePath(
             string path,
@@ -555,12 +557,12 @@ namespace System.Management.Automation.Provider
 
             if (path.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             if (basePath == null)
             {
-                basePath = String.Empty;
+                basePath = string.Empty;
             }
 
             providerBaseTracer.WriteLine("basePath = {0}", basePath);
@@ -585,7 +587,7 @@ namespace System.Management.Automation.Provider
             // Active Directory team.
             //
             // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND
-            if (!String.Equals(context.ProviderInstance.ProviderInfo.FullName,
+            if (!string.Equals(context.ProviderInstance.ProviderInfo.FullName,
                 @"Microsoft.ActiveDirectory.Management\ActiveDirectory", StringComparison.OrdinalIgnoreCase))
             {
                 normalizedPath = NormalizePath(path);
@@ -598,17 +600,18 @@ namespace System.Management.Automation.Provider
                 string originalPath = path;
                 Stack<string> tokenizedPathStack = null;
 
-                if (path.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
+                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
                 {
                     path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
                     originalPathHadTrailingSlash = true;
                 }
+
                 basePath = basePath.TrimEnd(StringLiterals.DefaultPathSeparator);
 
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
-                if (String.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
-                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                if (string.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
+                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
                     result = MakePath("..", childName);
@@ -620,13 +623,13 @@ namespace System.Management.Automation.Provider
                 if (!normalizedPath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
                     (basePath.Length > 0))
                 {
-                    result = String.Empty;
+                    result = string.Empty;
                     string commonBase = GetCommonBase(normalizedPath, normalizedBasePath);
 
                     Stack<string> parentNavigationStack = TokenizePathToStack(normalizedBasePath, commonBase);
                     int parentPopCount = parentNavigationStack.Count;
 
-                    if (String.IsNullOrEmpty(commonBase))
+                    if (string.IsNullOrEmpty(commonBase))
                     {
                         parentPopCount--;
                     }
@@ -645,10 +648,10 @@ namespace System.Management.Automation.Provider
                     // ..\..\dir*
                     // In that case (as above,) we keep the ..\..\directory1
                     // instead of ".." as would usually be returned
-                    if (!String.IsNullOrEmpty(commonBase))
+                    if (!string.IsNullOrEmpty(commonBase))
                     {
-                        if (String.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
-                            (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                        if (string.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
+                            (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
                             result = MakePath("..", result);
@@ -696,20 +699,20 @@ namespace System.Management.Automation.Provider
             }
 
             return result;
-        } // ContractRelativePath
+        }
 
         /// <summary>
-        /// Get the common base path of two paths
+        /// Get the common base path of two paths.
         /// </summary>
-        /// <param name="path1">One path</param>
-        /// <param name="path2">Another path</param>
+        /// <param name="path1">One path.</param>
+        /// <param name="path2">Another path.</param>
         private string GetCommonBase(string path1, string path2)
         {
             // Always see if the shorter path is a substring of the
             // longer path. If it is not, take the child off of the longer
             // path and compare again.
 
-            while (!String.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
+            while (!string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
             {
                 if (path2.Length > path1.Length)
                 {
@@ -745,7 +748,7 @@ namespace System.Management.Automation.Provider
             {
                 // Verify the parameters
 
-                if (String.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path))
                 {
                     throw PSTraceSource.NewArgumentException("path");
                 }
@@ -769,7 +772,7 @@ namespace System.Management.Automation.Provider
                     string parentPath = GetParentPath(path, null);
 
                     // No parent, return the entire path
-                    if (String.IsNullOrEmpty(parentPath))
+                    if (string.IsNullOrEmpty(parentPath))
                         result = path;
                     // If the parent path ends with the path separator, we can't split
                     // the path based on that
@@ -792,7 +795,7 @@ namespace System.Management.Automation.Provider
 
                 return result;
             }
-        } // GetChildName
+        }
 
         /// <summary>
         /// Determines if the item specified by the path is a container.
@@ -890,7 +893,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
-        } // MoveItemDynamicParameters
+        }
 
         #endregion Protected methods
 
@@ -937,7 +940,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Test if the path is an absolute path
+        /// Test if the path is an absolute path.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -949,7 +952,7 @@ namespace System.Management.Automation.Provider
             {
                 result = true;
             }
-            else if (this.PSDriveInfo != null && !String.IsNullOrEmpty(this.PSDriveInfo.Root) &&
+            else if (this.PSDriveInfo != null && !string.IsNullOrEmpty(this.PSDriveInfo.Root) &&
                      path.StartsWith(this.PSDriveInfo.Root, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
@@ -959,7 +962,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Tokenizes the specified path onto a stack
+        /// Tokenizes the specified path onto a stack.
         /// </summary>
         /// <param name="path">
         /// The path to tokenize.
@@ -983,7 +986,7 @@ namespace System.Management.Automation.Provider
                 // if its valid
 
                 string childName = GetChildName(tempPath);
-                if (String.IsNullOrEmpty(childName))
+                if (string.IsNullOrEmpty(childName))
                 {
                     // Push the parent on and then stop
                     tokenizedPathStack.Push(tempPath);
@@ -1001,11 +1004,12 @@ namespace System.Management.Automation.Provider
                 {
                     break;
                 }
+
                 previousParent = tempPath;
             }
 
             return tokenizedPathStack;
-        } // TokenizePathToStack
+        }
 
         /// <summary>
         /// Given the tokenized path, the relative path elements are removed.
@@ -1072,15 +1076,16 @@ namespace System.Management.Automation.Provider
                         }
                     }
                 }
+
                 providerBaseTracer.WriteLine("normalizedPathStack.Push({0})", childName);
                 normalizedPathStack.Push(childName);
             }
 
             return normalizedPathStack;
-        } // NormalizeThePath
+        }
 
         /// <summary>
-        /// Pops each leaf element of the stack and uses MakePath to generate the relative path
+        /// Pops each leaf element of the stack and uses MakePath to generate the relative path.
         /// </summary>
         /// <param name="normalizedPathStack">
         /// The stack containing the leaf elements of the path.
@@ -1095,11 +1100,11 @@ namespace System.Management.Automation.Provider
         /// </remarks>
         private string CreateNormalizedRelativePathFromStack(Stack<string> normalizedPathStack)
         {
-            string leafElement = String.Empty;
+            string leafElement = string.Empty;
 
             while (normalizedPathStack.Count > 0)
             {
-                if (String.IsNullOrEmpty(leafElement))
+                if (string.IsNullOrEmpty(leafElement))
                 {
                     leafElement = normalizedPathStack.Pop();
                 }
@@ -1109,12 +1114,13 @@ namespace System.Management.Automation.Provider
                     leafElement = MakePath(parentElement, leafElement);
                 }
             }
+
             return leafElement;
-        } // CreateNormalizedRelativePathFromStack
+        }
 
         #endregion private members
-    } // NavigationCmdletProvider
+    }
 
     #endregion NavigationCmdletProvider
-} // namespace System.Management.Automation
+}
 

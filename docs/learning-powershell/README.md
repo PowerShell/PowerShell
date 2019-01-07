@@ -51,7 +51,7 @@ You can use your favorite editor to write scripts.
 We use Visual Studio Code (VS Code) which works on Windows, Linux, and macOS.
 Click on the following link to create your first PowerShell script.
 
-- [Using Visual Studio Code (VS Code)][use-vscode-editor]
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/en-us/powershell/scripting/components/vscode/using-vscode?view=powershell-6)
 
 PowerShell Debugger
 ----
@@ -59,11 +59,10 @@ PowerShell Debugger
 Debugging can help you find bugs and fix problems in your PowerShell scripts.
 Click on the link below to learn more about debugging:
 
-- [Using Visual Studio Code (VS Code)][use-vscode-debugger]
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/en-us/powershell/scripting/components/vscode/using-vscode?view=powershell-6#debugging-with-visual-studio-code)
 - [PowerShell Command-line Debugging][cli-debugging]
 
 [use-vscode-editor]:./using-vscode.md#editing-with-vs-code
-[use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
 [cli-debugging]:./debugging-from-commandline.md
 [get-powershell]:../../README.md#get-powershell
 [build-powershell]:../../README.md#building-the-repository
@@ -120,11 +119,13 @@ Commercial Resources
 - [Windows PowerShell in Action][in-action] by Bruce Payette
 - [Introduction to PowerShell][powershell-intro] from Pluralsight
 - [PowerShell Training and Tutorials][lynda-training] from Lynda.com
+- [Learn Windows PowerShell in a Month of Lunches][learn-powershell] by Don Jones and Jeffrey Hicks
 
 
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
 [powershell-intro]: https://www.pluralsight.com/courses/powershell-intro
 [lynda-training]: https://www.lynda.com/PowerShell-training-tutorials/5779-0.html
+[learn-powershell]: https://www.amazon.com/Learn-Windows-PowerShell-Month-Lunches/dp/1617294160
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/

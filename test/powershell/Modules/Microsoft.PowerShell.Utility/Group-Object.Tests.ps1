@@ -115,7 +115,7 @@ Describe "Group-Object" -Tags "CI" {
 
     It "User's scenario should work (see issue #6933 for link to stackoverflow question)" {
         # Sort numbers into two groups even succeeded, odd failed.
-        $result = 1..9 | foreach {[PSCustomObject]@{ErrorMessage = if ($_ % 2) {'SomeError'} else {''}}} |
+        $result = 1..9 | ForEach-Object {[PSCustomObject]@{ErrorMessage = if ($_ % 2) {'SomeError'} else {''}}} |
             Group-Object -Property {if ($_.ErrorMessage) {'Failed'} else {'Successful'}} -AsHashTable
 
         $result['Failed'].ErrorMessage.Count | Should -Be 5

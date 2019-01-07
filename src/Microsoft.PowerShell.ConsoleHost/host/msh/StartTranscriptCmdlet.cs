@@ -10,17 +10,17 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implements the start-transcript cmdlet
+    /// Implements the start-transcript cmdlet.
     /// </summary>
 
     [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113408")]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class StartTranscriptCommand : PSCmdlet
     {
         /// <summary>
         /// The name of the file in which to write the transcript. If not provided, the file indicated by the variable
         /// $TRANSCRIPT is used.  If neither the filename is supplied or $TRANSCRIPT is not set, the filename shall be $HOME/My
-        /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt
+        /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt.
         /// </summary>
         /// <value></value>
 
@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _outFilename;
             }
+
             set
             {
                 _isFilenameSet = true;
@@ -51,6 +52,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _outFilename;
             }
+
             set
             {
                 _isFilenameSet = true;
@@ -58,6 +60,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -82,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _shouldAppend;
             }
+
             set
             {
                 _shouldAppend = value;
@@ -103,11 +107,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -121,11 +127,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -138,7 +146,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Starts the transcription
+        /// Gets or sets whether to use minimal transcript header.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter UseMinimalHeader
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Starts the transcription.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -197,13 +214,13 @@ namespace Microsoft.PowerShell.Commands
                         // Save some disk write time by checking whether file is readonly..
                         if (Force)
                         {
-                            //Make sure the file is not read only
+                            // Make sure the file is not read only
                             // Note that we will not clear the ReadOnly flag later
                             fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                         }
                         else
                         {
-                            string errorMessage = String.Format(
+                            string errorMessage = string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
                                 TranscriptStrings.TranscriptFileReadOnly,
                                 effectiveFilePath);
@@ -212,16 +229,16 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // If they didn't specify -Append, delete the file
+                    // If they didn't specify -Append, empty the file
                     if (!_shouldAppend)
                     {
-                        System.IO.File.Delete(effectiveFilePath);
+                        System.IO.File.WriteAllText(effectiveFilePath, string.Empty);
                     }
                 }
 
                 System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool());
+                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), UseMinimalHeader.IsPresent);
 
                 // ch.StartTranscribing(effectiveFilePath, Append);
 
@@ -243,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                 }
 
-                string errorMessage = String.Format(
+                string errorMessage = string.Format(
                     System.Globalization.CultureInfo.CurrentCulture,
                     TranscriptStrings.CannotStartTranscription,
                     e.Message);
@@ -289,6 +306,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 path = null;
             }
+
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(this);
@@ -303,6 +321,7 @@ namespace Microsoft.PowerShell.Commands
                     ReportWrongProviderType(provider.FullName);
                 }
             }
+
             return path;
         }
 

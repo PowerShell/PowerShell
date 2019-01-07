@@ -14,7 +14,7 @@ namespace System.Management.Automation
     internal class PSClassHelpProvider : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for PSClassHelpProvider
+        /// Constructor for PSClassHelpProvider.
         /// </summary>
         internal PSClassHelpProvider(HelpSystem helpSystem)
             : base(helpSystem)
@@ -23,7 +23,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Execution context of the HelpSystem
+        /// Execution context of the HelpSystem.
         /// </summary>
         private readonly ExecutionContext _context;
 
@@ -48,7 +48,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Supported Help Categories
+        /// Supported Help Categories.
         /// </summary>
         internal override HelpCategory HelpCategory
         {
@@ -135,7 +135,7 @@ namespace System.Management.Automation
                 string moduleName = current.Module.Name;
                 string moduleDir = current.Module.ModuleBase;
 
-                if (!String.IsNullOrEmpty(moduleName) && !String.IsNullOrEmpty(moduleDir))
+                if (!string.IsNullOrEmpty(moduleName) && !string.IsNullOrEmpty(moduleDir))
                 {
                     string helpFileToFind = moduleName + "-Help.xml";
 
@@ -146,7 +146,7 @@ namespace System.Management.Automation
 
                     string externalHelpFile = current.HelpFile;
 
-                    if (!String.IsNullOrEmpty(externalHelpFile))
+                    if (!string.IsNullOrEmpty(externalHelpFile))
                     {
                         FileInfo helpFileInfo = new FileInfo(externalHelpFile);
                         DirectoryInfo dirToSearch = helpFileInfo.Directory;
@@ -154,7 +154,7 @@ namespace System.Management.Automation
                         if (dirToSearch.Exists)
                         {
                             searchPaths.Add(dirToSearch.FullName);
-                            helpFileToFind = helpFileInfo.Name; //If external help file is specified. Then use it.
+                            helpFileToFind = helpFileInfo.Name; // If external help file is specified. Then use it.
                         }
                     }
 
@@ -176,16 +176,16 @@ namespace System.Management.Automation
         ///     a. If the help file has an extension .maml.
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
-        ///        schema
+        ///        schema.
         /// </summary>
         /// <param name="helpFile">File name.</param>
         /// <param name="helpItemsNode">Nodes to check.</param>
         /// <returns></returns>
         internal static bool IsMamlHelp(string helpFile, XmlNode helpItemsNode)
         {
-            Debug.Assert(!String.IsNullOrEmpty(helpFile), "helpFile cannot be null.");
+            Debug.Assert(!string.IsNullOrEmpty(helpFile), "helpFile cannot be null.");
 
-            if (helpFile.EndsWith(".maml", StringComparison.CurrentCultureIgnoreCase))
+            if (helpFile.EndsWith(".maml", StringComparison.OrdinalIgnoreCase))
                 return true;
 
             if (helpItemsNode.Attributes == null)
@@ -215,9 +215,9 @@ namespace System.Management.Automation
             if (!File.Exists(helpFile))
                 return null;
 
-            if (!String.IsNullOrEmpty(helpFile))
+            if (!string.IsNullOrEmpty(helpFile))
             {
-                //Load the help file only once. Then use it from the cache.
+                // Load the help file only once. Then use it from the cache.
                 if (!_helpFiles.Contains(helpFile))
                 {
                     LoadHelpFile(helpFile, helpFile, classInfo.Name, reportErrors);
@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the command.
         /// </summary>
-        /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file)</param>
+        /// <param name="helpFileIdentifier">Help file identifier (either name of PSSnapIn or simply full path to help file).</param>
         /// <param name="helpCategory">Help Category for search.</param>
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromPSClassHelpCache(string helpFileIdentifier, HelpCategory helpCategory)
@@ -303,8 +303,8 @@ namespace System.Management.Automation
         /// </remarks>
         private void LoadHelpFile(string helpFile, string helpFileIdentifier)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(helpFile), "HelpFile cannot be null or empty.");
-            Dbg.Assert(!String.IsNullOrEmpty(helpFileIdentifier), "helpFileIdentifier cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(helpFile), "HelpFile cannot be null or empty.");
+            Dbg.Assert(!string.IsNullOrEmpty(helpFileIdentifier), "helpFileIdentifier cannot be null or empty.");
 
             XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
                 new FileInfo(helpFile),
@@ -321,7 +321,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && String.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         helpItemsNode = node;
                         break;
@@ -347,7 +347,7 @@ namespace System.Management.Automation
 
                         string nodeLocalName = node.LocalName;
 
-                        bool isClass = (String.Compare(nodeLocalName, "class", StringComparison.OrdinalIgnoreCase) == 0);
+                        bool isClass = (string.Compare(nodeLocalName, "class", StringComparison.OrdinalIgnoreCase) == 0);
 
                         if (node.NodeType == XmlNodeType.Element && isClass)
                         {

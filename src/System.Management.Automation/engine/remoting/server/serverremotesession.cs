@@ -79,8 +79,8 @@ namespace System.Management.Automation.Remoting
         private PSSessionConfiguration _sessionConfigProvider;
 
         // used to apply quotas on command and session transportmanagers.
-        private Nullable<int> _maxRecvdObjectSize;
-        private Nullable<int> _maxRecvdDataSizeCommand;
+        private int? _maxRecvdObjectSize;
+        private int? _maxRecvdDataSizeCommand;
 
         private ServerRunspacePoolDriver _runspacePoolDriver;
         private PSRemotingCryptoHelperServer _cryptoHelper;
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Remoting
         /// xml.
         /// </param>
         /// <param name="transportManager"></param>
-        /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions</param>
+        /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// InitialSessionState provider with <paramref name="configurationProviderId"/> does
@@ -203,6 +203,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw PSTraceSource.NewInvalidOperationException("RemotingErrorIdStrings.NonExistentInitialSessionStateProvider", configurationProviderId);
             }
+
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
@@ -328,6 +329,7 @@ namespace System.Management.Automation.Remoting
                                 {
                                     SessionDataStructureHandler.StateMachine.RaiseEvent(messageReceivedArg);
                                 }
+
                                 break;
 
                             case RemotingDataType.CloseSession:
@@ -347,6 +349,7 @@ namespace System.Management.Automation.Remoting
                                 break;
                         }
                     }
+
                     break;
 
                 // TODO: Directly calling an event handler in StateMachine bypassing the StateMachine's
@@ -366,21 +369,22 @@ namespace System.Management.Automation.Remoting
                     {
                         SessionDataStructureHandler.StateMachine.RaiseEvent(messageReceivedArg);
                     }
+
                     break;
             }
         }
 
         /// <summary>
         /// Have received a public key from the other side
-        /// Import or take other action based on the state
+        /// Import or take other action based on the state.
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
+        /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments which contains the
         /// remote public key</param>
         private void HandlePublicKeyReceived(object sender, RemoteDataEventArgs<string> eventArgs)
         {
             if (SessionDataStructureHandler.StateMachine.State == RemoteSessionState.Established ||
-                SessionDataStructureHandler.StateMachine.State == RemoteSessionState.EstablishedAndKeyRequested || //this is only for legacy clients
+                SessionDataStructureHandler.StateMachine.State == RemoteSessionState.EstablishedAndKeyRequested || // this is only for legacy clients
                 SessionDataStructureHandler.StateMachine.State == RemoteSessionState.EstablishedAndKeyExchanged)
             {
                 string remotePublicKey = eventArgs.Data;
@@ -403,7 +407,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Start the key exchange process
+        /// Start the key exchange process.
         /// </summary>
         internal override void StartKeyExchange()
         {
@@ -419,7 +423,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Complete the Key exchange process
+        /// Complete the Key exchange process.
         /// </summary>
         internal override void CompleteKeyExchange()
         {
@@ -427,7 +431,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Send an encrypted session key to the client
+        /// Send an encrypted session key to the client.
         /// </summary>
         internal void SendEncryptedSessionKey()
         {
@@ -511,11 +515,11 @@ namespace System.Management.Automation.Remoting
 
             if (totalDataLen < FragmentedRemoteObject.HeaderLength)
             {
-                //raise exception
+                // raise exception
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            //TODO: Follow up on comment from Krishna regarding having the serialization/deserialization separate for this
+            // TODO: Follow up on comment from Krishna regarding having the serialization/deserialization separate for this
             // operation. This could be integrated as helper functions in fragmentor/serializer components
             long fragmentId = FragmentedRemoteObject.GetFragmentId(connectData, 0);
             bool sFlag = FragmentedRemoteObject.GetIsStartFragment(connectData, 0);
@@ -524,7 +528,7 @@ namespace System.Management.Automation.Remoting
 
             if (blobLength > totalDataLen - FragmentedRemoteObject.HeaderLength)
             {
-                //raise exception
+                // raise exception
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
@@ -533,7 +537,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            //if session is not in expected state
+            // if session is not in expected state
             RemoteSessionState currentState = SessionDataStructureHandler.StateMachine.State;
             if (currentState != RemoteSessionState.Established &&
                 currentState != RemoteSessionState.EstablishedAndKeyExchanged)
@@ -541,7 +545,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnServerStateValidation);
             }
 
-            //process first message
+            // process first message
             MemoryStream serializedStream = new MemoryStream();
             serializedStream.Write(connectData, FragmentedRemoteObject.HeaderLength, blobLength);
 
@@ -558,7 +562,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            //process second message
+            // process second message
             int secondFragmentLength = totalDataLen - FragmentedRemoteObject.HeaderLength - blobLength;
             if (secondFragmentLength < FragmentedRemoteObject.HeaderLength)
             {
@@ -583,7 +587,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            //process second message
+            // process second message
             serializedStream = new MemoryStream();
             serializedStream.Write(secondFragment, FragmentedRemoteObject.HeaderLength, blobLength);
 
@@ -600,7 +604,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            //We have the two objects required for validating the connect operation
+            // We have the two objects required for validating the connect operation
             RemoteSessionCapability clientCapability;
             try
             {
@@ -622,7 +626,7 @@ namespace System.Management.Automation.Remoting
                 throw ex;
             }
 
-            //validate client connect_runspacepool request
+            // validate client connect_runspacepool request
             int clientRequestedMinRunspaces = -1;
             int clientRequestedMaxRunspaces = -1;
             bool clientRequestedRunspaceCount = false;
@@ -640,7 +644,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            //these should be positive and max should be greater than min
+            // these should be positive and max should be greater than min
             if (clientRequestedRunspaceCount &&
                 (clientRequestedMinRunspaces == -1 || clientRequestedMaxRunspaces == -1 || clientRequestedMinRunspaces > clientRequestedMaxRunspaces))
             {
@@ -652,16 +656,16 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnServerStateValidation);
             }
 
-            //currently only one runspace pool per session is allowed. make sure this ID in connect message is the same
+            // currently only one runspace pool per session is allowed. make sure this ID in connect message is the same
             if (connectRunspacePoolObject.RunspacePoolId != _runspacePoolDriver.InstanceId)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            //we currently dont support adjusting runspace count on a connect operation.
-            //there is a potential race here where in the runspace pool driver is still yet to process a queued
-            //setMax or setMinrunspaces request.
-            //TODO: resolve this race.. probably by letting the runspace pool consume all messages before we execute this.
+            // we currently dont support adjusting runspace count on a connect operation.
+            // there is a potential race here where in the runspace pool driver is still yet to process a queued
+            // setMax or setMinrunspaces request.
+            // TODO: resolve this race.. probably by letting the runspace pool consume all messages before we execute this.
             if (clientRequestedRunspaceCount
                 && (_runspacePoolDriver.RunspacePool.GetMaxRunspaces() != clientRequestedMaxRunspaces)
                 && (_runspacePoolDriver.RunspacePool.GetMinRunspaces() != clientRequestedMinRunspaces))
@@ -676,9 +680,9 @@ namespace System.Management.Automation.Remoting
                                                                                                _runspacePoolDriver.RunspacePool.GetMaxRunspaces(),
                                                                                                _runspacePoolDriver.RunspacePool.GetMinRunspaces());
 
-            //having this stream operating separately will result in out of sync fragment Ids. but this is still OK
-            //as this is executed only when connecting from a new client that does not have any previous fragments context.
-            //no problem even if fragment Ids in this response and the sessiontransport stream clash (interfere) and its guaranteed
+            // having this stream operating separately will result in out of sync fragment Ids. but this is still OK
+            // as this is executed only when connecting from a new client that does not have any previous fragments context.
+            // no problem even if fragment Ids in this response and the sessiontransport stream clash (interfere) and its guaranteed
             // that the fragments in connect response are always complete (enclose a complete object).
             SerializedDataStream stream = new SerializedDataStream(4 * 1024);//Each message with fragment headers cannot cross 4k
             stream.Enter();
@@ -690,10 +694,10 @@ namespace System.Management.Automation.Remoting
             byte[] outbuffer = stream.Read();
             Dbg.Assert(outbuffer != null, "connect response data should be serialized");
             stream.Dispose();
-            //we are done
+            // we are done
             connectResponseData = outbuffer;
 
-            //enqueue a connect event in state machine to let session do any other post-connect operation
+            // enqueue a connect event in state machine to let session do any other post-connect operation
             // Do this outside of the synchronous connect operation, as otherwise connect can easily get deadlocked
             ThreadPool.QueueUserWorkItem(new WaitCallback(
                 delegate (object state)
@@ -706,7 +710,7 @@ namespace System.Management.Automation.Remoting
             return;
         }
 
-        //pass on application private data when session is connected from new client
+        // pass on application private data when session is connected from new client
         internal void HandlePostConnect()
         {
             if (_runspacePoolDriver != null)
@@ -729,6 +733,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw PSTraceSource.NewArgumentNullException("createRunspaceEventArg");
             }
+
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
             Dbg.Assert(rcvdData != null, "rcvdData must be non-null");
 
@@ -755,7 +760,7 @@ namespace System.Management.Automation.Remoting
 
             DISCPowerShellConfiguration discProvider = null;
 
-            if (String.IsNullOrEmpty(configurationData.ConfigFilePath))
+            if (string.IsNullOrEmpty(configurationData.ConfigFilePath))
             {
                 _sessionConfigProvider = configurationData.CreateEndPointConfigurationInstance();
             }
@@ -828,6 +833,7 @@ namespace System.Management.Automation.Remoting
                                     RemoteDataNameStrings.PSv2TabExpansionFunctionText));
                         }
                     }
+
                     if (value.ContainsKey("PSVersion"))
                     {
                         psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
@@ -841,6 +847,7 @@ namespace System.Management.Automation.Remoting
                 _maxRecvdObjectSize = _sessionConfigProvider.GetMaximumReceivedObjectSize(_senderInfo);
                 _maxRecvdDataSizeCommand = _sessionConfigProvider.GetMaximumReceivedDataSizePerCommand(_senderInfo);
             }
+
             SessionDataStructureHandler.TransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
             // MaximumReceivedDataSize is not set for session transport manager...see the constructor
             // for more info.
@@ -1005,8 +1012,9 @@ namespace System.Management.Automation.Remoting
                 // Win10 server can support reconstruct/reconnect for all 2.x protocol versions
                 // that support reconstruct/reconnect, Protocol 2.2+
                 // Major protocol version differences (2.x -> 3.x) are not supported.
-                if ((serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM) &&
-                    (clientProtocolVersion.Major == serverProtocolVersion.Major))
+                // A reconstruct can only be initiated by a client that understands disconnect (2.2+),
+                // so we only need to check major versions from client and this server for compatibility.
+                if (clientProtocolVersion.Major == RemotingConstants.ProtocolVersion.Major)
                 {
                     if (clientProtocolVersion.Minor == RemotingConstants.ProtocolVersionWin8RTM.Minor)
                     {

@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// </summary>
         public RuntimeDefinedParameter()
         {
-        } // RuntimeDefinedParameter
+        }
 
         /// <summary>
         /// Constructs a new instance of a runtime-defined parameter using the specified parameters.
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// </exception>
         public RuntimeDefinedParameter(string name, Type parameterType, Collection<Attribute> attributes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -68,10 +68,10 @@ namespace System.Management.Automation
             {
                 Attributes = attributes;
             }
-        } // RuntimeDefinedParameter
+        }
 
         /// <summary>
-        /// Gets or sets the name of the parameter
+        /// Gets or sets the name of the parameter.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// If <paramref name="value"/> is null or empty on set.
@@ -82,16 +82,19 @@ namespace System.Management.Automation
             {
                 return _name;
             }
+
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
+
                 _name = value;
             }
-        } // Name
-        private string _name = String.Empty;
+        }
+
+        private string _name = string.Empty;
 
         /// <summary>
         /// Gets or sets the type of the parameter.
@@ -115,9 +118,11 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
+
                 _parameterType = value;
             }
         }
+
         private Type _parameterType;
 
         /// <summary>
@@ -140,6 +145,7 @@ namespace System.Management.Automation
                 _value = value;
             }
         }
+
         private object _value;
 
         /// <summary>
@@ -169,12 +175,14 @@ namespace System.Management.Automation
                 if (!hasSeenExpAttribute && attr is ExperimentalAttribute expAttribute)
                 {
                     if (expAttribute.ToHide) { return true; }
+
                     hasSeenExpAttribute = true;
                 }
                 else if (attr is ParameterAttribute paramAttribute)
                 {
                     hasParameterAttribute = true;
                     if (paramAttribute.ToHide) { continue; }
+
                     hasEnabledParamAttribute = true;
                 }
             }
@@ -217,9 +225,11 @@ namespace System.Management.Automation
         public string HelpFile
         {
             get { return _helpFile; }
-            set { _helpFile = String.IsNullOrEmpty(value) ? String.Empty : value; }
+
+            set { _helpFile = string.IsNullOrEmpty(value) ? string.Empty : value; }
         }
-        private string _helpFile = String.Empty;
+
+        private string _helpFile = string.Empty;
 
         /// <summary>
         /// Gets or sets private data associated with the runtime-defined parameters.

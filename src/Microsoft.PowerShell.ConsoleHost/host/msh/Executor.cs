@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -35,7 +37,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Constructs a new instance
+        /// Constructs a new instance.
         /// </summary>
         /// <param name="parent">
         /// A reference to the parent ConsoleHost that created this instance.
@@ -102,7 +104,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This method handles the failure in executing pipeline asynchronously
+        /// This method handles the failure in executing pipeline asynchronously.
         /// </summary>
         /// <param name="ex"></param>
         private void AsyncPipelineFailureHandler(Exception ex)
@@ -112,8 +114,8 @@ namespace Microsoft.PowerShell
             if (cer != null)
             {
                 er = cer.ErrorRecord;
-                //Exception inside the error record is ParentContainsErrorRecordException which
-                //doesn't have stack trace. Replace it with top level exception.
+                // Exception inside the error record is ParentContainsErrorRecordException which
+                // doesn't have stack trace. Replace it with top level exception.
                 er = new ErrorRecord(er, ex);
             }
 
@@ -121,6 +123,7 @@ namespace Microsoft.PowerShell
             {
                 er = new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
             }
+
             _parent.ErrorSerializer.Serialize(er);
         }
 
@@ -153,7 +156,7 @@ namespace Microsoft.PowerShell
         internal void ExecuteCommandAsync(string command, out Exception exceptionThrown, ExecutionOptions options)
         {
             Dbg.Assert(!useNestedPipelines, "can't async invoke a nested pipeline");
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
 
             bool addToHistory = (options & ExecutionOptions.AddToHistory) > 0;
             Pipeline tempPipeline = _parent.RunspaceRef.CreatePipeline(command, addToHistory, false);
@@ -232,30 +235,31 @@ namespace Microsoft.PowerShell
                         }
                         catch (PipelineClosedException)
                         {
-                            //This exception can occurs when input is closed. This can happen
-                            //for various reasons. For ex:Command in the pipeline is invalid and
-                            //command discovery throws exception which closes the pipeline and
-                            //hence the Input pipe.
+                            // This exception can occurs when input is closed. This can happen
+                            // for various reasons. For ex:Command in the pipeline is invalid and
+                            // command discovery throws exception which closes the pipeline and
+                            // hence the Input pipe.
                             break;
                         }
                     };
                     des.End();
                 }
+
                 tempPipeline.Input.Close();
 
                 pipelineWaiter.Wait();
 
-                //report error if pipeline failed
+                // report error if pipeline failed
                 if (tempPipeline.PipelineStateInfo.State == PipelineState.Failed && tempPipeline.PipelineStateInfo.Reason != null)
                 {
                     if (_parent.OutputFormat == Serialization.DataFormat.Text)
                     {
-                        //Report the exception using normal error reporting
+                        // Report the exception using normal error reporting
                         exceptionThrown = tempPipeline.PipelineStateInfo.Reason;
                     }
                     else
                     {
-                        //serialize the error record
+                        // serialize the error record
                         AsyncPipelineFailureHandler(tempPipeline.PipelineStateInfo.Reason);
                     }
                 }
@@ -290,7 +294,7 @@ namespace Microsoft.PowerShell
 
         internal Pipeline CreatePipeline(string command, bool addToHistory)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
             return _parent.RunspaceRef.CreatePipeline(command, addToHistory, useNestedPipelines);
         }
 
@@ -318,7 +322,23 @@ namespace Microsoft.PowerShell
         /// </returns>
         internal Collection<PSObject> ExecuteCommand(string command, out Exception exceptionThrown, ExecutionOptions options)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
+
+            // Experimental:
+            // Check for implicit remoting commands that can be batched, and execute as batched if able.
+            if (ExperimentalFeature.IsEnabled("PSImplicitRemotingBatching"))
+            {
+                var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
+                if (addOutputter &&
+                    !_parent.RunspaceRef.IsRunspaceOverridden &&
+                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules != null &&
+                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded &&
+                    Utils.TryRunAsImplicitBatch(command, _parent.RunspaceRef.Runspace))
+                {
+                    exceptionThrown = null;
+                    return null;
+                }
+            }
 
             Pipeline tempPipeline = CreatePipeline(command, (options & ExecutionOptions.AddToHistory) > 0);
 
@@ -433,6 +453,7 @@ namespace Microsoft.PowerShell
                 {
                     break;
                 }
+
                 if (result == null)
                 {
                     break;
@@ -479,7 +500,7 @@ namespace Microsoft.PowerShell
 
                 // we got back one or more objects. Pick off the first result.
                 if (streamResults[0] == null)
-                    return String.Empty;
+                    return string.Empty;
 
                 // And convert the base object into a string. We can't use the proxied
                 // ToString() on the PSObject because there is no default runspace
@@ -507,11 +528,11 @@ namespace Microsoft.PowerShell
         /// objects were returned by the command.
         /// </returns>
 
-        internal Nullable<bool> ExecuteCommandAndGetResultAsBool(string command)
+        internal bool? ExecuteCommandAndGetResultAsBool(string command)
         {
             Exception unused = null;
 
-            Nullable<bool> result = ExecuteCommandAndGetResultAsBool(command, out unused);
+            bool? result = ExecuteCommandAndGetResultAsBool(command, out unused);
 
             return result;
         }
@@ -531,13 +552,13 @@ namespace Microsoft.PowerShell
         /// The Nullable`bool representation of the first result object returned, or null if an exception was thrown or no
         /// objects were returned by the command.
         /// </returns>
-        internal Nullable<bool> ExecuteCommandAndGetResultAsBool(string command, out Exception exceptionThrown)
+        internal bool? ExecuteCommandAndGetResultAsBool(string command, out Exception exceptionThrown)
         {
             exceptionThrown = null;
 
-            Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+            Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
 
-            Nullable<bool> result = null;
+            bool? result = null;
 
             do
             {
@@ -675,6 +696,7 @@ namespace Microsoft.PowerShell
 
                 return result;
             }
+
             set
             {
                 lock (s_staticStateLock)

@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// Disables the given breakpoint
+        /// Disables the given breakpoint.
         /// </summary>
         protected override void ProcessBreakpoint(Breakpoint breakpoint)
         {

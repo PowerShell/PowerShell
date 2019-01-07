@@ -25,6 +25,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return _elementCount; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -34,6 +35,7 @@ namespace System.Management.Automation.Interpreter
             {
                 array[i] = (TElement)frame.Pop();
             }
+
             frame.Push(array);
             return +1;
         }
@@ -44,6 +46,7 @@ namespace System.Management.Automation.Interpreter
         internal NewArrayInstruction() { }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -66,6 +69,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return _rank; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -75,6 +79,7 @@ namespace System.Management.Automation.Interpreter
             {
                 lengths[i] = (int)frame.Pop();
             }
+
             var array = Array.CreateInstance(_elementType, lengths);
             frame.Push(array);
             return +1;
@@ -86,6 +91,7 @@ namespace System.Management.Automation.Interpreter
         internal GetArrayItemInstruction() { }
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -107,6 +113,7 @@ namespace System.Management.Automation.Interpreter
         internal SetArrayItemInstruction() { }
 
         public override int ConsumedStack { get { return 3; } }
+
         public override int ProducedStack { get { return 0; } }
 
         public override int Run(InterpretedFrame frame)

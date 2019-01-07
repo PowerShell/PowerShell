@@ -97,6 +97,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     local = _closureVariables[variable.Key];
                 }
+
                 Expression elemRef = local.LoadFromArray(_frameDataVar, _frameClosureVar);
 
                 if (local.InClosureOrBoxed)
@@ -256,6 +257,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return Visit(node.Reduce());
             }
+
             Debug.Assert(!node.NodeType.IsReadWriteAssignment());
 
             var param = node.Left as ParameterExpression;
@@ -273,12 +275,14 @@ namespace System.Management.Automation.Interpreter
                     if (right.NodeType != ExpressionType.Parameter)
                     {
                         // { left.Value = (object)(rightVar = right), rightVar }
+
                         rightVar = AddTemp(Expression.Parameter(right.Type));
                         right = Expression.Assign(rightVar, right);
                     }
                     else
                     {
                         // { left.Value = (object)right, right }
+
                         rightVar = right;
                     }
 
@@ -305,6 +309,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return Visit(node.Reduce());
             }
+
             Debug.Assert(!node.NodeType.IsReadWriteAssignment());
             return base.VisitUnary(node);
         }

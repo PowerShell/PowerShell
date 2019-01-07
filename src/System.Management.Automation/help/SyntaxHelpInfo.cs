@@ -10,7 +10,7 @@ namespace System.Management.Automation
     internal class SyntaxHelpInfo : BaseCommandHelpInfo
     {
         /// <summary>
-        /// Constructor for SyntaxHelpInfo
+        /// Constructor for SyntaxHelpInfo.
         /// </summary>
         private SyntaxHelpInfo(string name, string text, HelpCategory category)
             : base(category)
@@ -21,38 +21,38 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Name for the help info
+        /// Name for the help info.
         /// </summary>
         /// <value>Name for the help info</value>
         internal override string Name { get; } = string.Empty;
 
         /// <summary>
-        /// Synopsis for the help info
+        /// Synopsis for the help info.
         /// </summary>
         /// <value>Synopsis for the help info</value>
         internal override string Synopsis { get; } = string.Empty;
 
         /// <summary>
-        /// Full help object for this help info
+        /// Full help object for this help info.
         /// </summary>
         /// <value>Full help object for this help info</value>
         internal override PSObject FullHelp { get; }
 
         /// <summary>
-        /// Get help info based on name, text and filename
+        /// Get help info based on name, text and filename.
         /// </summary>
-        /// <param name="name">help topic name</param>
-        /// <param name="text">help text</param>
-        /// <param name="category">help category</param>
-        /// <returns>SyntaxHelpInfo object created based on information provided</returns>
+        /// <param name="name">Help topic name.</param>
+        /// <param name="text">Help text.</param>
+        /// <param name="category">Help category.</param>
+        /// <returns>SyntaxHelpInfo object created based on information provided.</returns>
         internal static SyntaxHelpInfo GetHelpInfo(string name, string text, HelpCategory category)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             SyntaxHelpInfo syntaxHelpInfo = new SyntaxHelpInfo(name, text, category);
 
-            if (String.IsNullOrEmpty(syntaxHelpInfo.Name))
+            if (string.IsNullOrEmpty(syntaxHelpInfo.Name))
                 return null;
 
             syntaxHelpInfo.AddCommonHelpProperties();

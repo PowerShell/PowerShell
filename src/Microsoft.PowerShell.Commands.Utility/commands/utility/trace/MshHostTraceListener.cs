@@ -89,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
                 // We don't want tracing to bring down the process.
             }
         }
+
         private StringBuilder _cachedWrite = new StringBuilder();
 
         /// <summary>
