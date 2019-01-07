@@ -35,14 +35,14 @@ namespace Microsoft.WSMan.Management
         [Parameter(Mandatory = true,
                   Position = 1)]
         [ValidateNotNullOrEmpty]
-        public String Action
+        public string Action
         {
             get { return action; }
 
             set { action = value; }
         }
 
-        private String action;
+        private string action;
 
         /// <summary>
         /// The following is the definition of the input parameter "ApplicationName".
@@ -50,14 +50,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -67,7 +67,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -82,7 +82,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -111,14 +111,14 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         [Alias("Path")]
         [ValidateNotNullOrEmpty]
-        public String FilePath
+        public string FilePath
         {
             get { return filepath; }
 
             set { filepath = value; }
         }
 
-        private String filepath;
+        private string filepath;
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".

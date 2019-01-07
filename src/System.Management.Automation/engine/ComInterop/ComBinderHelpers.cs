@@ -24,7 +24,7 @@ namespace System.Management.Automation.ComInterop
 
             if (type.IsValueType || type.IsArray) return true;
 
-            if (type == typeof(String) ||
+            if (type == typeof(string) ||
                 type == typeof(DBNull) ||
                 holdsNull ||
                 type == typeof(System.Reflection.Missing) ||

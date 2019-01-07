@@ -196,7 +196,7 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenChannelConfig(EventLogHandle session, String channelPath, int flags)
+        public static EventLogHandle EvtOpenChannelConfig(EventLogHandle session, string channelPath, int flags)
         {
             EventLogHandle handle = UnsafeNativeMethods.EvtOpenChannelConfig(session, channelPath, flags);
             int win32Error = Marshal.GetLastWin32Error();
@@ -270,7 +270,7 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecurityCritical]
         public static EventLogHandle EvtCreateRenderContext(
                             Int32 valuePathsCount,
-                            String[] valuePaths,
+                            string[] valuePaths,
                             UnsafeNativeMethods.EvtRenderContextFlags flags)
         {
             EventLogHandle renderContextHandleValues = UnsafeNativeMethods.EvtCreateRenderContext(valuePathsCount, valuePaths, flags);

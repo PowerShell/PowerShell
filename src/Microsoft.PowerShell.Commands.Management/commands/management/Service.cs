@@ -1472,7 +1472,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = "Name", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("ServiceName", "SN")]
-        public new String Name
+        public new string Name
         {
             get { return serviceName; }
 
@@ -1482,7 +1482,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal String serviceName = null;
+        internal string serviceName = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".

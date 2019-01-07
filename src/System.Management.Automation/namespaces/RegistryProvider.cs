@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
 #else
     [CmdletProvider(RegistryProvider.ProviderName, ProviderCapabilities.ShouldProcess | ProviderCapabilities.Transactions)]
 #endif
-    [OutputType(typeof(String), ProviderCmdlet = ProviderCmdlet.MoveItemProperty)]
+    [OutputType(typeof(string), ProviderCmdlet = ProviderCmdlet.MoveItemProperty)]
     [OutputType(typeof(RegistryKey), typeof(string), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
     [OutputType(typeof(RegistryKey), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(System.Security.AccessControl.RegistrySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]

@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "EventLog", DefaultParameterSetName = "LogName",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113314", RemotingCapability = RemotingCapability.SupportedByCommand)]
-    [OutputType(typeof(EventLog), typeof(EventLogEntry), typeof(String))]
+    [OutputType(typeof(EventLog), typeof(EventLogEntry), typeof(string))]
     public sealed class GetEventLogCommand : PSCmdlet
     {
         #region Parameters
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "LogName")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] UserName
+        public string[] UserName
         {
             get { return _username; }
 
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private String[] _username;
+        private string[] _username;
 
         /// <summary>
         /// match eventlog entries by the InstanceIds
@@ -1175,7 +1175,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("CRF")]
-        public String CategoryResourceFile { get; set; }
+        public string CategoryResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1185,7 +1185,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("CN")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName { get; set; } = { "." };
+        public string[] ComputerName { get; set; } = { "." };
 
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
@@ -1195,7 +1195,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0)]
         [ValidateNotNullOrEmpty]
         [Alias("LN")]
-        public String LogName { get; set; }
+        public string LogName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "MessageResourceFile".
@@ -1206,7 +1206,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("MRF")]
-        public String MessageResourceFile { get; set; }
+        public string MessageResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "ParameterResourceFile".
@@ -1217,7 +1217,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("PRF")]
-        public String ParameterResourceFile { get; set; }
+        public string ParameterResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Source".
@@ -1228,7 +1228,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("SRC")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Source { get; set; }
+        public string[] Source { get; set; }
 
         #endregion Parameter
 
@@ -1328,7 +1328,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("CN")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName { get; set; } = { "." };
+        public string[] ComputerName { get; set; } = { "." };
 
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
@@ -1340,7 +1340,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("LN")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] LogName { get; set; }
+        public string[] LogName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "RemoveSource".
@@ -1356,7 +1356,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("SRC")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Source { get; set; }
+        public string[] Source { get; set; }
 
         /// <summary>
         /// BeginProcessing method.

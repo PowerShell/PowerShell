@@ -125,14 +125,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -142,7 +142,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName", Position = 0)]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -156,7 +156,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -305,7 +305,7 @@ namespace Microsoft.WSMan.Management
         /// IP address to indicate the remote host(s)
         /// </summary>
         [Parameter(Position = 0)]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -320,7 +320,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         #region IDisposable Members
 

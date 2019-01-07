@@ -1878,7 +1878,7 @@ namespace Microsoft.PowerShell.Commands
             // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
-            if (enumerate == false || fieldValue is String || !(fieldValue is IEnumerable))
+            if (enumerate == false || fieldValue is string || !(fieldValue is IEnumerable))
             {
                 formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
                 return;
@@ -1904,9 +1904,9 @@ namespace Microsoft.PowerShell.Commands
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
-            var result = new StringContent(LanguagePrimitives.ConvertTo<String>(fieldValue));
+            var result = new StringContent(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
 
             return result;
@@ -1921,7 +1921,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
             var result = new StreamContent(stream);
             result.Headers.ContentDisposition = contentDisposition;

@@ -255,7 +255,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="message"></param>
         internal static void WriteLog(string message, int indent, params object[] args)
         {
-            String outMessage = string.Empty;
+            string outMessage = string.Empty;
             FormatLogMessage(ref outMessage, message, args);
             WriteLog(outMessage, indent);
         }
@@ -276,7 +276,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="message"></param>
         internal static void WriteLogEx(string message, int indent, params object[] args)
         {
-            String outMessage = string.Empty;
+            string outMessage = string.Empty;
             WriteLogInternal(string.Empty, 0, -1);
             FormatLogMessage(ref outMessage, message, args);
             WriteLogInternal(outMessage, indent, 3);
@@ -311,7 +311,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="args"></param>
         /// <returns></returns>
         [Conditional("LOGENABLE")]
-        private static void FormatLogMessage(ref String outMessage, string message, params object[] args)
+        private static void FormatLogMessage(ref string outMessage, string message, params object[] args)
         {
             outMessage = string.Format(CultureInfo.CurrentCulture, message, args);
         }
@@ -444,7 +444,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="value"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name).</exception>
-        public static String[] ValidateArgumentIsValidName(string parameterName, String[] value)
+        public static string[] ValidateArgumentIsValidName(string parameterName, string[] value)
         {
             if (value != null)
             {

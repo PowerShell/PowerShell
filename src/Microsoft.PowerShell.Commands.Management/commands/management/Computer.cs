@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("CN", "__SERVER", "Server", "IPAddress")]
-        public String[] ComputerName { get; set; } = new string[] { "." };
+        public string[] ComputerName { get; set; } = new string[] { "." };
 
         private List<string> _validatedComputerNames = new List<string>();
         private readonly List<string> _waitOnComputers = new List<string>();
@@ -1153,7 +1153,7 @@ $result
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("CN", "__SERVER", "Server", "IPAddress")]
-        public String[] ComputerName { get; set; } = new string[] { "." };
+        public string[] ComputerName { get; set; } = new string[] { "." };
 
         /// <summary>
         /// The following is the definition of the input parameter "Credential".

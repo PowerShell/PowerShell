@@ -858,16 +858,16 @@ try
                     }
                 )
 
-                $result = $data.foreach('value1')
+                $result = $data.ForEach('value1')
                 Write-Output $result
 
-                # Execute method in scriptblock of foreach operator, should throw in ConstrainedLanguage mode.
-                $data.foreach{[system.io.path]::GetRandomFileName().Length}
+                # Execute method in scriptblock of ForEach operator, should throw in ConstrainedLanguage mode.
+                $data.ForEach{[system.io.path]::GetRandomFileName().Length}
 '@
 
             $script3 = @'
             # Method call should throw error.
-            (Get-Process powershell*).Foreach('GetHashCode')
+            (Get-Process powershell*).ForEach('GetHashCode')
 '@
 
             $script4 = @'

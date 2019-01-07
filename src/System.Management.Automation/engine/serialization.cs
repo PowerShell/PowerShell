@@ -6336,7 +6336,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, String value)
+        public void Add(string key, string value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6346,7 +6346,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, String[] value)
+        public void Add(string key, string[] value)
         {
             this.Add((object)key, (object)value);
         }

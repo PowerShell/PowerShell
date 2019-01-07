@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Definition")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Definition { get; set; }
+        public string[] Definition { get; set; }
 
         #endregion Parameters
 

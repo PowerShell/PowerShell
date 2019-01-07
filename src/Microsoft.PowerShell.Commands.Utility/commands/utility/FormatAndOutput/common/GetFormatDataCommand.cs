@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public String[] TypeName
+        public string[] TypeName
         {
             get
             {

@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (string[])paths.ToArray(typeof(String));
+            return (string[])paths.ToArray(typeof(string));
         }
 
         #endregion protected members

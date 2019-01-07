@@ -143,7 +143,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return (String[])result.ToArray(typeof(string));
+            return (string[])result.ToArray(typeof(string));
 #else
             return Directory.GetFiles(path, pattern);
 #endif

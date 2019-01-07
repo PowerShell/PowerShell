@@ -406,14 +406,14 @@ namespace Microsoft.WSMan.Management
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] DelegateComputer
+        public string[] DelegateComputer
         {
             get { return delegatecomputer; }
 
             set { delegatecomputer = value; }
         }
 
-        private String[] delegatecomputer;
+        private string[] delegatecomputer;
 
         /// <summary>
         /// Property that sets force parameter.
@@ -489,8 +489,8 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         private void EnableClientSideSettings()
         {
-            String query = helper.GetResourceMsgFromResourcetext("CredSSPContinueQuery");
-            String caption = helper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
+            string query = helper.GetResourceMsgFromResourcetext("CredSSPContinueQuery");
+            string caption = helper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;
@@ -567,8 +567,8 @@ namespace Microsoft.WSMan.Management
 
         private void EnableServerSideSettings()
         {
-            String query = helper.GetResourceMsgFromResourcetext("CredSSPServerContinueQuery");
-            String caption = helper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
+            string query = helper.GetResourceMsgFromResourcetext("CredSSPServerContinueQuery");
+            string caption = helper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;
