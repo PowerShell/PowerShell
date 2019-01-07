@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = ParameterSetPingCount, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
     [OutputType(typeof(PingReport), ParameterSetName = new string[] { ParameterSetPingCount })]
     [OutputType(typeof(PingReply), ParameterSetName = new string[] { ParameterSetPingContinues, ParameterSetDetectionOfMTUSize })]
-    [OutputType(typeof(Boolean), ParameterSetName = new string[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
+    [OutputType(typeof(bool), ParameterSetName = new string[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
     [OutputType(typeof(Int32), ParameterSetName = new string[] { ParameterSetDetectionOfMTUSize })]
     [OutputType(typeof(TraceRouteReply), ParameterSetName = new string[] { ParameterSetTraceRoute })]
     public class TestConnectionCommand : PSCmdlet

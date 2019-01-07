@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell
                         }
                     }
 #if UNIX
-                    else if (Char.IsControl(keyInfo.KeyChar))
+                    else if (char.IsControl(keyInfo.KeyChar))
                     {
                         // blacklist control characters
                         continue;
@@ -1668,7 +1668,7 @@ namespace Microsoft.PowerShell
                         continue;
                     }
 
-                    if (Char.IsControl(keyInfo.KeyChar))
+                    if (char.IsControl(keyInfo.KeyChar))
                     {
                         // blacklist control characters
                         continue;

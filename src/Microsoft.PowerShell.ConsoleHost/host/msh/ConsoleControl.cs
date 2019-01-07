@@ -2978,7 +2978,7 @@ namespace Microsoft.PowerShell
             internal static extern bool FillConsoleOutputCharacter
             (
                 NakedWin32Handle consoleOutput,
-                Char character,
+                char character,
                 DWORD length,
                 COORD writeCoord,
                 out DWORD numberOfCharsWritten

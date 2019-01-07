@@ -161,6 +161,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Cmdlet Overrides
 
         private object _prompt = null;
-        private Boolean _safe = false;
+        private bool _safe = false;
     }
 }

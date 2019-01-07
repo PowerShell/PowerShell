@@ -33,7 +33,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
                                                   bool allowSidConstants = false)
         {
             if (!allowSidConstants)
-                if (!(s.Length > 2 && s.StartsWith("S-", StringComparison.Ordinal) && Char.IsDigit(s[2])))
+                if (!(s.Length > 2 && s.StartsWith("S-", StringComparison.Ordinal) && char.IsDigit(s[2])))
                     return null;
 
             SecurityIdentifier sid = null;

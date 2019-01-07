@@ -916,7 +916,7 @@ namespace System.Management.Automation
                 {
                     char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
 
-                    if (Char.ToUpperInvariant(driveChar) >= 'A' && Char.ToUpperInvariant(driveChar) <= 'Z')
+                    if (char.ToUpperInvariant(driveChar) >= 'A' && char.ToUpperInvariant(driveChar) <= 'Z')
                     {
                         DriveInfo systemDriveInfo = new DriveInfo(drive.Name);
 

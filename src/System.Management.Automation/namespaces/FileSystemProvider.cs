@@ -39,8 +39,8 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
-    [OutputType(typeof(Boolean), typeof(string), typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
-    [OutputType(typeof(Boolean), typeof(string), typeof(DateTime), typeof(System.IO.FileInfo), typeof(System.IO.DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItemProperty)]
+    [OutputType(typeof(bool), typeof(string), typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
+    [OutputType(typeof(bool), typeof(string), typeof(DateTime), typeof(System.IO.FileInfo), typeof(System.IO.DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItemProperty)]
     [OutputType(typeof(string), typeof(System.IO.FileInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This coupling is required")]
     public sealed partial class FileSystemProvider : NavigationCmdletProvider,
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
 
-                if (Char.ToUpperInvariant(driveChar) >= 'A' && Char.ToUpperInvariant(driveChar) <= 'Z')
+                if (char.ToUpperInvariant(driveChar) >= 'A' && char.ToUpperInvariant(driveChar) <= 'Z')
                 {
                     isSupportedDriveForPersistence = true;
                 }
@@ -7629,7 +7629,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort Data2;
             public ushort Data3;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public Char[] Data4;
+            public char[] Data4;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -7640,7 +7640,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort Reserved;
             public GUID ReparseGuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
-            public Char[] DataBuffer;
+            public char[] DataBuffer;
         }
 
         [DllImport(PinvokeDllNames.DeviceIoControlDllName, CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]

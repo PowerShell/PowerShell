@@ -888,7 +888,7 @@ namespace System.Management.Automation
         private static object AsChar(object obj)
         {
             if (obj is char) return obj;
-            if (obj is string str && str.Length == 1 && !Char.IsDigit(str, 0)) return str[0];
+            if (obj is string str && str.Length == 1 && !char.IsDigit(str, 0)) return str[0];
             return null;
         }
 

@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell
             {
                 Dictionary<string, PSObject> results = new Dictionary<string, PSObject>();
 
-                Boolean cancelInput = false;
+                bool cancelInput = false;
 
                 if (!string.IsNullOrEmpty(caption))
                 {
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell
                         {
                             fieldPromptList.Append(
                                 string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
-                            Boolean inputListEnd = false;
+                            bool inputListEnd = false;
                             object convertedObj = null;
                             string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
                                 desc, fieldEchoOnPrompt, true, out inputListEnd, out cancelInput, out convertedObj);
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell
                             fieldPrompt);
                         // field is not a list
                         object convertedObj = null;
-                        Boolean dummy = false;
+                        bool dummy = false;
 
                         PromptForSingleItem(fieldType, printFieldPrompt, fieldPrompt, caption, message, desc,
                                             fieldEchoOnPrompt, false, out dummy, out cancelInput, out convertedObj);

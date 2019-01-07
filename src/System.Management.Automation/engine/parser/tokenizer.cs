@@ -1421,7 +1421,7 @@ namespace System.Management.Automation.Language
             string hexStr = GetStringAndRelease(sb);
 
             uint unicodeValue = uint.Parse(hexStr, NumberStyles.AllowHexSpecifier, NumberFormatInfo.InvariantInfo);
-            if (unicodeValue <= Char.MaxValue)
+            if (unicodeValue <= char.MaxValue)
             {
                 return ((char)unicodeValue);
             }
@@ -2976,7 +2976,7 @@ namespace System.Management.Automation.Language
                             break;
 
                         default:
-                            if (Char.IsLetterOrDigit(c))
+                            if (char.IsLetterOrDigit(c))
                             {
                                 sb.Append(c);
                             }

@@ -401,7 +401,7 @@ namespace Microsoft.WSMan.Management
         {
             string name;
             string value;
-            string[] Split = filter.Trim().Split(new Char[] { '=', ';' });
+            string[] Split = filter.Trim().Split(new char[] { '=', ';' });
             if ((Split.Length)%2 != 0)
             {
                 // mismatched property name/value pair

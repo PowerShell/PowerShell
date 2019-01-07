@@ -1196,7 +1196,7 @@ namespace System.Management.Automation.Language {
         /// </summary>
         private static bool ContainsWhiteSpace(string name) {
             foreach (char c in name) {
-                if (Char.IsWhiteSpace(c)) {
+                if (char.IsWhiteSpace(c)) {
                     return true;
                 }
             }
