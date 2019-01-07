@@ -4169,7 +4169,7 @@ param(
 
     $help = Get-Help @PSBoundParameters
 
-    # If a list of help is returned, don't pipe to more
+    # If a list of help is returned or AliasHelpInfo (because it is small), don't pipe to more
     $psTypeNames = ($help | Select-Object -First 1).PSTypeNames
     if ($psTypeNames -Contains 'HelpInfoShort' -Or $psTypeNames -Contains 'AliasHelpInfo')
     {
