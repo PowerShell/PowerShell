@@ -21,7 +21,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "CFS",                              "ConvertFrom-String",               $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "chdir",                            "Set-Location",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "clc",                              "Clear-Content",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
-"Alias",        "clear",                            "Clear-Host",                       $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
+"Alias",        "clear",                            "Clear-Host",                       $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "clhy",                             "Clear-History",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "cli",                              "Clear-Item",                       $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "clp",                              "Clear-ItemProperty",               $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""

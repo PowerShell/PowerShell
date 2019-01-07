@@ -4065,34 +4065,16 @@ End
         ";
 
         /// <summary>
-        /// This is the default function to use for clear-host. On Windows it rewrites the
-        /// host, and on Linux, it delegates to the native binary, 'clear'.
+        /// This is the default function to use for clear-host.
         /// </summary>
         internal static string GetClearHostFunctionText()
         {
-            if (Platform.IsWindows)
-            {
-                return @"
-$RawUI = $Host.UI.RawUI
-$RawUI.CursorPosition = @{X=0;Y=0}
-$RawUI.SetBufferContents(
-    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
-    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
+            return @"
+[Console]::Clear()
 # .Link
 # https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
-            }
-            else
-            {
-                // Porting note: non-Windows platforms use `clear`
-                return @"
-& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
-# .Link
-# https://go.microsoft.com/fwlink/?LinkID=225747
-# .ExternalHelp System.Management.Automation.dll-help.xml
-";
-            }
         }
 
         /// <summary>
@@ -4536,6 +4518,7 @@ end {
 #if !UNIX
                     // ac is a native command on macOS
                     new SessionStateAliasEntry("ac", "Add-Content", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("clear", "Clear-Host"),
                     new SessionStateAliasEntry("compare", "Compare-Object", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("cpp", "Copy-ItemProperty", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("diff", "Compare-Object", string.Empty, ReadOnly),
@@ -4568,8 +4551,6 @@ end {
                     new SessionStateAliasEntry("kill", "Stop-Process"),
                     new SessionStateAliasEntry("pwd", "Get-Location"),
                     new SessionStateAliasEntry("type", "Get-Content"),
-                    // Native commands we keep because the functions act correctly on Linux
-                    new SessionStateAliasEntry("clear", "Clear-Host"),
 // #if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts
 #if !CORECLR
                     new SessionStateAliasEntry("gwmi", "Get-WmiObject", string.Empty, ReadOnly),
