@@ -38,7 +38,7 @@ namespace System.Management.Automation.SecurityAccountsManager
     internal class SamRidEnumeration
     {
 #region Original struct members
-        public String Name;
+        public string Name;
         public UInt32 RelativeId;
 #endregion Original struct members
 

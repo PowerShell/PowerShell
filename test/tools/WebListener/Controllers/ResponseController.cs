@@ -20,7 +20,7 @@ namespace mvc.Controllers
 {
     public class ResponseController : Controller
     {
-        public String Index()
+        public string Index()
         {
             string output = string.Empty;
             string contentType = Constants.ApplicationJson;
@@ -66,7 +66,7 @@ namespace mvc.Controllers
                             continue;
                         }
 
-                        foreach (string entry in GetSingleOrArray<String>(property.Value))
+                        foreach (string entry in GetSingleOrArray<string>(property.Value))
                         {
                             Response.Headers.Append(property.Name,entry);
                         }

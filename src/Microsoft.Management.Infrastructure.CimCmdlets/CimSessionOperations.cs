@@ -393,8 +393,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimSession session,
             UInt32 sessionId,
             Guid instanceId,
-            String name,
-            String computerName,
+            string name,
+            string computerName,
             ProtocolType protocol)
         {
             CimSessionWrapper wrapper = new CimSessionWrapper(
@@ -431,13 +431,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="psObject"></param>
         internal string GetRemoveSessionObjectTarget(PSObject psObject)
         {
-            String message = string.Empty;
+            string message = string.Empty;
             if (psObject.BaseObject is CimSession)
             {
                 UInt32 id = 0x0;
                 Guid instanceId = Guid.Empty;
-                String name = string.Empty;
-                String computerName = string.Empty;
+                string name = string.Empty;
+                string computerName = string.Empty;
                 if (psObject.Properties[idPropName].Value is UInt32)
                 {
                     id = Convert.ToUInt32(psObject.Properties[idPropName].Value, null);
@@ -450,12 +450,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (psObject.Properties[namePropName].Value is String)
                 {
-                    name = (String)psObject.Properties[namePropName].Value;
+                    name = (string)psObject.Properties[namePropName].Value;
                 }
 
                 if (psObject.Properties[computernamePropName].Value is String)
                 {
-                    computerName = (String)psObject.Properties[computernamePropName].Value;
+                    computerName = (string)psObject.Properties[computernamePropName].Value;
                 }
 
                 message = string.Format(CultureInfo.CurrentUICulture, SessionObjectPath, id, instanceId, name, computerName);
@@ -496,8 +496,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimSessionWrapper wrapper = this.curCimSessionWrapper[session];
-            String name = wrapper.Name;
-            String computerName = wrapper.ComputerName;
+            string name = wrapper.Name;
+            string computerName = wrapper.ComputerName;
 
             DebugHelper.WriteLog("name {0}, computername {1}, id {2}, instanceId {3}", 1, name, computerName, wrapper.SessionId, wrapper.InstanceId);
 

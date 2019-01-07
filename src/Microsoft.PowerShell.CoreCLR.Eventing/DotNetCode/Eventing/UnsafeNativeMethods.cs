@@ -87,7 +87,7 @@ namespace System.Diagnostics.Eventing
 
         // Gets an error message for a Win32 error code.
         [SecurityCritical]
-        internal static String GetMessage(int errorCode)
+        internal static string GetMessage(int errorCode)
         {
             StringBuilder sb = new StringBuilder(512);
             int result = UnsafeNativeMethods.FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS |
@@ -98,7 +98,7 @@ namespace System.Diagnostics.Eventing
                 // result is the # of characters copied to the StringBuilder on NT,
                 // but on Win9x, it appears to be the number of MBCS buffer.
                 // Just give up and return the String as-is...
-                String s = sb.ToString();
+                string s = sb.ToString();
                 return s;
             }
             else
@@ -815,7 +815,7 @@ namespace System.Diagnostics.Eventing
         internal static extern EventLogHandle EvtCreateRenderContext(
                             Int32 valuePathsCount,
                             [MarshalAs(UnmanagedType.LPArray,ArraySubType = UnmanagedType.LPWStr)]
-                                String[] valuePaths,
+                                string[] valuePaths,
                             [MarshalAs(UnmanagedType.I4)]EvtRenderContextFlags flags
                                     );
 

@@ -35,7 +35,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Determines if Set-Item user input type validation is required or not.
         /// It is True by default, Clear-Item will set it to false so that it can
-        /// pass Empty String as value for Set-Item.
+        /// pass Empty string as value for Set-Item.
         /// </summary>
         private bool clearItemIsCalled = false;
 
@@ -70,7 +70,7 @@ namespace Microsoft.WSMan.Management
                 return string.Empty;
             }
 
-            String child = path.Substring(ChildIndex + 1);
+            string child = path.Substring(ChildIndex + 1);
 
             // We only return help for the below set of 5 commands, not for any other case.
             switch (helpItemName)
@@ -88,8 +88,8 @@ namespace Microsoft.WSMan.Management
             // Load the help file from the current UI culture subfolder of the module's root folder
             XmlDocument document = new XmlDocument();
             CultureInfo culture = Host.CurrentUICulture;
-            String providerBase = this.ProviderInfo.PSSnapIn != null ? this.ProviderInfo.PSSnapIn.ApplicationBase : this.ProviderInfo.Module.ModuleBase;  // "\windows\system32\WindowsPowerShell\v1.0"
-            String helpFile = null;
+            string providerBase = this.ProviderInfo.PSSnapIn != null ? this.ProviderInfo.PSSnapIn.ApplicationBase : this.ProviderInfo.Module.ModuleBase;  // "\windows\system32\WindowsPowerShell\v1.0"
+            string helpFile = null;
 
             do
             {
@@ -313,7 +313,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            String basepath = base.MakePath(parent, child);
+            string basepath = base.MakePath(parent, child);
             return GetCorrectCaseOfPath(basepath);
         }
 
@@ -806,7 +806,7 @@ namespace Microsoft.WSMan.Management
                                                         null,
                                                         WsManElementObjectTypes.WSManConfigLeafElement);
 
-                                                String pathToAdd =
+                                                string pathToAdd =
                                                     string.Format(
                                                         CultureInfo.InvariantCulture,
                                                         "{0}{1}{2}",
@@ -965,7 +965,7 @@ namespace Microsoft.WSMan.Management
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
                 SessionObjCache.TryGetValue(host, out sessionobj);
 
-                List<String> warningMessage = new List<string>();
+                List<string> warningMessage = new List<string>();
 
                 // if endswith '\', removes it.
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -1639,7 +1639,7 @@ namespace Microsoft.WSMan.Management
                 return;
             }
 
-            String ChildName = string.Empty;
+            string ChildName = string.Empty;
 
             if (path.Contains(WSManStringLiterals.DefaultPathSeparator.ToString()))
             {
@@ -3284,7 +3284,7 @@ namespace Microsoft.WSMan.Management
 
                     if (attrSource != null)
                     {
-                        String propName = node.LocalName + WSManStringLiterals.HiddenSuffixForSourceOfValue;
+                        string propName = node.LocalName + WSManStringLiterals.HiddenSuffixForSourceOfValue;
                         mshObject.Properties.Remove(propName);
                         mshObject.Properties.Add(new PSNoteProperty(propName, attrSource.Value));
                     }
@@ -4103,10 +4103,10 @@ namespace Microsoft.WSMan.Management
                 ProcessListenerObjects(outxml, out objcache, out KeysCache);
             }
 
-            String PathChecked = host + WSManStringLiterals.DefaultPathSeparator + parentListenerOrCert;
+            string PathChecked = host + WSManStringLiterals.DefaultPathSeparator + parentListenerOrCert;
             int pos = PathChecked.Length + 1;
-            String RemainingPath = path.Substring(pos);
-            String CurrentNode = null;
+            string RemainingPath = path.Substring(pos);
+            string CurrentNode = null;
             pos = RemainingPath.IndexOf(WSManStringLiterals.DefaultPathSeparator);
             if (pos == -1)
             {
@@ -4342,7 +4342,7 @@ namespace Microsoft.WSMan.Management
                                 XmlNode pluginQuotas = nodeListForQuotas[0];
                                 foreach (XmlAttribute attrOfQuotas in pluginQuotas.Attributes)
                                 {
-                                    String pathToAdd =
+                                    string pathToAdd =
                                         string.Format(
                                                   CultureInfo.InvariantCulture,
                                                   "{0}{1}{2}",
@@ -5009,8 +5009,8 @@ namespace Microsoft.WSMan.Management
                     {
                         PSObject objInitParam = new PSObject();
                         XmlAttributeCollection attributecol = xe.Attributes;
-                        String Name = string.Empty;
-                        String Value = string.Empty;
+                        string Name = string.Empty;
+                        string Value = string.Empty;
                         for (int i = 0; i <= attributecol.Count - 1; i++)
                         {
                             if (attributecol[i].LocalName.Equals("Name", StringComparison.OrdinalIgnoreCase))
@@ -5020,7 +5020,7 @@ namespace Microsoft.WSMan.Management
 
                             if (attributecol[i].LocalName.Equals("Value", StringComparison.OrdinalIgnoreCase))
                             {
-                                String ValueAsXML = attributecol[i].Value;
+                                string ValueAsXML = attributecol[i].Value;
                                 Value = SecurityElement.Escape(ValueAsXML);
                             }
                         }
@@ -5628,14 +5628,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "nameSet")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = "wsman";
+        private string applicationname = "wsman";
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".

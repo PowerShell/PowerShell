@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// recipient and content supplied.
     /// </summary>
     [Cmdlet(VerbsSecurity.Protect, "CmsMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=394373", DefaultParameterSetName = "ByContent")]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class ProtectCmsMessageCommand : PSCmdlet
     {
         /// <summary>
@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
     /// message.
     /// </summary>
     [Cmdlet(VerbsSecurity.Unprotect, "CmsMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=394374", DefaultParameterSetName = "ByWinEvent")]
-    [OutputType(typeof(String))]
+    [OutputType(typeof(string))]
     public sealed class UnprotectCmsMessageCommand : PSCmdlet
     {
         /// <summary>

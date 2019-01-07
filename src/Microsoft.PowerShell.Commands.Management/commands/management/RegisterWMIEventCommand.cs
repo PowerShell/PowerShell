@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the event name to be monitored on the input object.
         /// </summary>
-        protected override String GetSourceObjectEventName()
+        protected override string GetSourceObjectEventName()
         {
             return "EventArrived";
         }

@@ -264,12 +264,12 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The cached PSPath of the item.
             /// </summary>
-            public String PSPath { get; set; }
+            public string PSPath { get; set; }
 
             /// <summary>
             /// The cached parent path of the item.
             /// </summary>
-            public String ParentPath { get; set; }
+            public string ParentPath { get; set; }
 
             /// <summary>
             /// The cached drive for the item.
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The cached child name of the item.
             /// </summary>
-            public String ChildName { get; set; }
+            public string ChildName { get; set; }
 
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
@@ -667,7 +667,7 @@ namespace Microsoft.PowerShell.Commands
                         if (pathNotFoundErrorRecord == null)
                         {
                             // Detect if the path resolution failed to resolve to a file.
-                            String error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
+                            string error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
                             Exception e = new Exception(error);
 
                             pathNotFoundErrorRecord = new ErrorRecord(

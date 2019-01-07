@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // Names of keys.  This array must be in the same order as the HKEY values listed above.
         //
-        private static readonly String[] s_hkeyNames = new String[] {
+        private static readonly string[] s_hkeyNames = new string[] {
                 "HKEY_CLASSES_ROOT",
                 "HKEY_CURRENT_USER",
                 "HKEY_LOCAL_MACHINE",
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private SafeRegistryHandle _hkey = null;
         private int _state = 0;
-        private String _keyName;
+        private string _keyName;
         private RegistryKeyPermissionCheck _checkMode;
         private System.Transactions.Transaction _myTransaction;
         private SafeTransactionHandle _myTransactionHandle;
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        private int RegOpenKeyTransactedWrapper(SafeRegistryHandle hKey, String lpSubKey,
+        private int RegOpenKeyTransactedWrapper(SafeRegistryHandle hKey, string lpSubKey,
                     int ulOptions, int samDesired, out SafeRegistryHandle hkResult,
                     SafeTransactionHandle hTransaction, IntPtr pExtendedParameter)
         {
@@ -599,7 +599,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 {
                     if (key.InternalSubKeyCount() > 0)
                     {
-                        String[] keys = key.InternalGetSubKeyNames();
+                        string[] keys = key.InternalGetSubKeyNames();
 
                         for (int i = 0; i < keys.Length; i++)
                         {
@@ -639,7 +639,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 {
                     if (key.InternalSubKeyCount() > 0)
                     {
-                        String[] keys = key.InternalGetSubKeyNames();
+                        string[] keys = key.InternalGetSubKeyNames();
 
                         for (int i = 0; i < keys.Length; i++)
                         {
@@ -959,7 +959,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// </summary>
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        public String[] GetSubKeyNames()
+        public string[] GetSubKeyNames()
         {
             CheckKeyReadPermission();
             return InternalGetSubKeyNames();
@@ -967,12 +967,12 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        internal String[] InternalGetSubKeyNames()
+        internal string[] InternalGetSubKeyNames()
         {
             EnsureNotDisposed();
             // Don't require a transaction. We don't want to throw for "Base" keys.
             int subkeys = InternalSubKeyCount();
-            String[] names = new String[subkeys];  // Returns 0-length array if empty.
+            string[] names = new String[subkeys];  // Returns 0-length array if empty.
 
             if (subkeys > 0)
             {
@@ -1041,14 +1041,14 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// Utilizes Transaction.Current for its transaction.</para>
         /// <returns>All the value names.</returns>
         /// </summary>
-        public String[] GetValueNames()
+        public string[] GetValueNames()
         {
             CheckKeyReadPermission();
             EnsureNotDisposed();
             // Don't require a transaction. We don't want to throw for "Base" keys.
 
             int values = InternalValueCount();
-            String[] names = new String[values];
+            string[] names = new String[values];
 
             if (values > 0)
             {
@@ -1250,7 +1250,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     break;
                 case Win32Native.REG_MULTI_SZ:
                     {
-                        IList<String> strings = new List<String>();
+                        IList<string> strings = new List<string>();
 
                         char[] blob = new char[datasize / 2];
                         ret = Win32Native.RegQueryValueEx(_hkey, name, null, ref type, blob, ref datasize);
@@ -1290,7 +1290,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                         }
 
                         data = new String[strings.Count];
-                        strings.CopyTo((String[])data, 0);
+                        strings.CopyTo((string[])data, 0);
                         // data = strings.GetAllItems(String.class);
                     }
 
@@ -1355,7 +1355,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <para>Retrieves the name of the key.</para>
         /// <returns>The name of the key.</returns>
         /// </summary>
-        public String Name
+        public string Name
         {
             get
             {
@@ -1428,7 +1428,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     case RegistryValueKind.ExpandString:
                     case RegistryValueKind.String:
                         {
-                            String data = value.ToString();
+                            string data = value.ToString();
                             // divide by 2 to account for unicode.
                             if (MaxValueDataLength / 2 < data.Length)
                             {
@@ -1579,7 +1579,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             {
                 if (value is byte[])
                     return RegistryValueKind.Binary;
-                else if (value is String[])
+                else if (value is string[])
                     return RegistryValueKind.MultiString;
                 else
                 {
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <para>Retrieves a string representation of this key.</para>
         /// <returns>A string representing the key.</returns>
         /// </summary>
-        public override String ToString()
+        public override string ToString()
         {
             EnsureNotDisposed();
             return _keyName;
@@ -1655,7 +1655,7 @@ namespace Microsoft.PowerShell.Commands.Internal
          * error, and depending on the error, insert a string into the message
          * gotten from the ResourceManager.
          */
-        internal void Win32Error(int errorCode, String str)
+        internal void Win32Error(int errorCode, string str)
         {
             switch (errorCode)
             {
@@ -1701,7 +1701,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        internal static void Win32ErrorStatic(int errorCode, String str)
+        internal static void Win32ErrorStatic(int errorCode, string str)
         {
             switch (errorCode)
             {
@@ -1720,7 +1720,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        internal static String FixupName(String name)
+        internal static string FixupName(String name)
         {
             BCLDebug.Assert(name != null, "[FixupName]name!=null");
             if (name.IndexOf('\\') == -1)

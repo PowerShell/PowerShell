@@ -35,7 +35,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("cn")]
-        public String ComputerName
+        public string ComputerName
         {
             get { return computername; }
 
@@ -49,7 +49,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private String computername = null;
+        private string computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "Authentication".
@@ -124,14 +124,14 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        public String ApplicationName
+        public string ApplicationName
         {
             get { return applicationname; }
 
             set { applicationname = value; }
         }
 
-        private String applicationname = null;
+        private string applicationname = null;
 
         /// <summary>
         /// ProcessRecord method.

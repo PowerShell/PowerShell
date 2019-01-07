@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             while ((linesPrinted < linesPerPage) && (_lines.Count > 0))
             {
                 // get the string to be printed
-                String line = _lines.Dequeue();
+                string line = _lines.Dequeue();
 
                 // compute the Y position where to draw
                 yPos = topMargin + (linesPrinted * lineHeight);

@@ -52,7 +52,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.ClassNameSessionSet)]
         [Alias("Class")]
-        public String ClassName
+        public string ClassName
         {
             get { return className; }
 
@@ -63,7 +63,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String className;
+        private string className;
 
         /// <summary>
         /// <para>
@@ -153,7 +153,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.QuerySessionSet)]
-        public String QueryDialect
+        public string QueryDialect
         {
             get { return queryDialect; }
 
@@ -164,7 +164,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String queryDialect;
+        private string queryDialect;
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -227,7 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
             get { return computerName; }
 
@@ -239,7 +239,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String[] computerName;
+        private string[] computerName;
 
         /// <summary>
         /// <para>
@@ -304,7 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    Position = 2,
                    ValueFromPipelineByPropertyName = true)]
         [Alias("Name")]
-        public String MethodName
+        public string MethodName
         {
             get { return methodName; }
 
@@ -315,7 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String methodName;
+        private string methodName;
 
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
@@ -335,7 +335,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]
-        public String Namespace
+        public string Namespace
         {
             get { return nameSpace; }
 
@@ -346,7 +346,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private String nameSpace;
+        private string nameSpace;
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".

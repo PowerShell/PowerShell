@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526219")]
     [Alias("gcb")]
-    [OutputType(typeof(String), typeof(FileInfo), typeof(Image), typeof(Stream))]
+    [OutputType(typeof(string), typeof(FileInfo), typeof(Image), typeof(Stream))]
     public class GetClipboardCommand : PSCmdlet
     {
         /// <summary>
