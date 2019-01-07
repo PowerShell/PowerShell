@@ -4,16 +4,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
-using System.Threading;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis; // for fxcop.
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
-using System.Diagnostics.CodeAnalysis; // for fxcop.
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Diagnostics;
+using System.Runtime.Serialization;
+using System.Threading;
 using Microsoft.Management.Infrastructure;
+using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -860,6 +861,32 @@ namespace System.Management.Automation
 
             result.Runspace = RunspaceFactory.CreateRunspace(initialSessionState);
             result.Runspace.Open();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Constructs an empty PowerShell instance and associates it with the provided
+        /// Runspace; a script or command must be added before invoking this instance.
+        /// </summary>
+        /// <param name="runspace">Runspace in which to invoke commands.</param>
+        /// <returns>An instance of PowerShell.</returns>
+        /// <remarks>
+        /// The required Runspace argument is accepted no matter what state it is in.
+        /// Leaving Runspace state management to the caller allows them to open their
+        /// runspace in whatever manner is most appropriate for their application
+        /// (in another thread while this instance of the PowerShell class is being
+        /// instantiated, for example).
+        /// </remarks>
+        public static PowerShell Create(Runspace runspace)
+        {
+            if (runspace == null)
+            {
+                throw new PSArgumentNullException(nameof(runspace));
+            }
+
+            PowerShell result = Create();
+            result.Runspace = runspace;
 
             return result;
         }
