@@ -26,11 +26,13 @@ namespace Microsoft.PowerShell
 
                 return _isTranscribing;
             }
+
             set
             {
                 _isTranscribing = value;
             }
         }
+
         private bool _isTranscribing;
 
         /*
@@ -65,7 +67,7 @@ namespace Microsoft.PowerShell
             }
         }
         */
-        private string _transcriptFileName = String.Empty;
+        private string _transcriptFileName = string.Empty;
 
         internal
         string

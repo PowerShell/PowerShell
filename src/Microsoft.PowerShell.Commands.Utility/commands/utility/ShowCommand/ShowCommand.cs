@@ -99,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoCommonParameter
         {
             get { return _noCommonParameter; }
+
             set { _noCommonParameter = value; }
         }
 
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             get { return _passThrough; }
+
             set { _passThrough = value; }
         }
         #endregion
@@ -123,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Executes a PowerShell script, writing the output objects to the pipeline.
         /// </summary>
-        /// <param name="script">Script to execute</param>
+        /// <param name="script">Script to execute.</param>
         public void RunScript(string script)
         {
             if (_showCommandProxy == null || string.IsNullOrEmpty(script))
@@ -179,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
             if (_showCommandProxy.ScreenHeight < this.Height)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
+                                    new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
@@ -189,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
             if (_showCommandProxy.ScreenWidth < this.Width)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
+                                    new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
@@ -268,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
         /// Runs the script in a new PowerShell instance and hooks up error stream to potentially display error popup.
         /// This method has the inconvenience of not showing to the console user the script being executed.
         /// </summary>
-        /// <param name="script">script to be run</param>
+        /// <param name="script">Script to be run.</param>
         private void RunScriptSilentlyAndWithErrorHookup(string script)
         {
             // errors are not created here, because there is a field for it used in the final pop up
@@ -291,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         private void IssueErrorForNoCommand()
         {
             InvalidOperationException errorException = new InvalidOperationException(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
                     Name));
@@ -304,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         private void IssueErrorForMoreThanOneCommand()
         {
             InvalidOperationException errorException = new InvalidOperationException(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,
                     Name,
@@ -315,8 +317,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Called from CommandProcessRecord to run the command that will get the CommandInfo and list of modules.
         /// </summary>
-        /// <param name="command">command to be retrieved</param>
-        /// <param name="modules">list of loaded modules</param>
+        /// <param name="command">Command to be retrieved.</param>
+        /// <param name="modules">List of loaded modules.</param>
         private void GetCommandInfoAndModules(out CommandInfo command, out Dictionary<string, ShowCommandModuleInfo> modules)
         {
             command = null;
@@ -364,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ProcessRecord when a command name is specified.
         /// </summary>
-        /// <returns>true if there was no exception processing this record</returns>
+        /// <returns>True if there was no exception processing this record.</returns>
         private bool CanProcessRecordForOneCommand()
         {
             CommandInfo commandInfo;
@@ -388,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ProcessRecord when a command name is not specified.
         /// </summary>
-        /// <returns>true if there was no exception processing this record</returns>
+        /// <returns>True if there was no exception processing this record.</returns>
         private bool CanProcessRecordForAllCommands()
         {
             Collection<PSObject> rawCommands = this.InvokeCommand.InvokeScript(_showCommandProxy.GetShowAllModulesCommand());
@@ -454,8 +456,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the output of a script being run into the pipeline.
         /// </summary>
-        /// <param name="sender">output collection</param>
-        /// <param name="e">output event</param>
+        /// <param name="sender">Output collection.</param>
+        /// <param name="e">Output event.</param>
         private void Output_DataAdded(object sender, DataAddedEventArgs e)
         {
             this.WriteObject(((PSDataCollection<object>)sender)[e.Index]);
@@ -464,8 +466,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the errors of a script being run into the pipeline.
         /// </summary>
-        /// <param name="sender">error collection</param>
-        /// <param name="e">error event</param>
+        /// <param name="sender">Error collection.</param>
+        /// <param name="e">Error event.</param>
         private void Error_DataAdded(object sender, DataAddedEventArgs e)
         {
             this.WriteError(((PSDataCollection<ErrorRecord>)sender)[e.Index]);
@@ -474,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)
@@ -501,9 +503,9 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Adds a string to the console input buffer.
             /// </summary>
-            /// <param name="str">string to add to console input buffer</param>
-            /// <param name="newLine">true to add Enter after the string</param>
-            /// <returns>true if it was successful in adding all characters to console input buffer</returns>
+            /// <param name="str">String to add to console input buffer.</param>
+            /// <param name="newLine">True to add Enter after the string.</param>
+            /// <returns>True if it was successful in adding all characters to console input buffer.</returns>
             internal static bool AddToConsoleInputBuffer(string str, bool newLine)
             {
                 IntPtr handle = ConsoleInputWithNativeMethods.GetStdHandle(ConsoleInputWithNativeMethods.STD_INPUT_HANDLE);
@@ -553,19 +555,19 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Gets the console handle.
             /// </summary>
-            /// <param name="nStdHandle">which console handle to get</param>
-            /// <returns>the console handle</returns>
+            /// <param name="nStdHandle">Which console handle to get.</param>
+            /// <returns>The console handle.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             internal static extern IntPtr GetStdHandle(int nStdHandle);
 
             /// <summary>
             /// Writes to the console input buffer.
             /// </summary>
-            /// <param name="hConsoleInput">console handle</param>
-            /// <param name="lpBuffer">inputs to be written</param>
-            /// <param name="nLength">number of inputs to be written</param>
-            /// <param name="lpNumberOfEventsWritten">returned number of inputs actually written</param>
-            /// <returns>0 if the function fails</returns>
+            /// <param name="hConsoleInput">Console handle.</param>
+            /// <param name="lpBuffer">Inputs to be written.</param>
+            /// <param name="nLength">Number of inputs to be written.</param>
+            /// <param name="lpNumberOfEventsWritten">Returned number of inputs actually written.</param>
+            /// <returns>0 if the function fails.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool WriteConsoleInput(
@@ -598,8 +600,8 @@ namespace Microsoft.PowerShell.Commands
                 /// <summary>
                 /// Sets the necessary fields of <paramref name="inputRecord"/> for a KeyDown event for the <paramref name="character"/>
                 /// </summary>
-                /// <param name="inputRecord">input record to be set</param>
-                /// <param name="character">character to set the record with</param>
+                /// <param name="inputRecord">Input record to be set.</param>
+                /// <param name="character">Character to set the record with.</param>
                 internal static void SetInputRecord(ref INPUT_RECORD inputRecord, char character)
                 {
                     inputRecord.EventType = INPUT_RECORD.KEY_EVENT;

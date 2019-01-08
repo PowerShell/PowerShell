@@ -26,8 +26,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of ComProperty.
         /// </summary>
-        /// <param name="typeinfo">reference to the ITypeInfo of the COM object</param>
-        /// <param name="name">name of the property being created.</param>
+        /// <param name="typeinfo">Reference to the ITypeInfo of the COM object.</param>
+        /// <param name="name">Name of the property being created.</param>
         internal ComProperty(COM.ITypeInfo typeinfo, string name)
         {
             _typeInfo = typeinfo;
@@ -139,10 +139,10 @@ namespace System.Management.Automation
         internal bool IsGettable { get; private set; } = false;
 
         /// <summary>
-        /// Get value of this property
+        /// Get value of this property.
         /// </summary>
-        /// <param name="target">instance of the object from which to get the property value</param>
-        /// <returns>value of the property</returns>
+        /// <param name="target">Instance of the object from which to get the property value.</param>
+        /// <returns>Value of the property.</returns>
         internal object GetValue(Object target)
         {
             try
@@ -169,12 +169,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get value of this property
+        /// Get value of this property.
         /// </summary>
-        /// <param name="target">instance of the object from which to get the property value</param>
-        /// <param name="arguments">parameters to get the property value</param>
-        /// <returns>value of the property</returns>
-        internal object GetValue(Object target, Object[] arguments)
+        /// <param name="target">Instance of the object from which to get the property value.</param>
+        /// <param name="arguments">Parameters to get the property value.</param>
+        /// <returns>Value of the property</returns>
+        internal object GetValue(Object target, object[] arguments)
         {
             try
             {
@@ -215,9 +215,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets value of this property.
         /// </summary>
-        /// <param name="target">instance of the object to which to set the property value</param>
-        /// <param name="setValue">value to set this property</param>
-        internal void SetValue(Object target, Object setValue)
+        /// <param name="target">Instance of the object to which to set the property value.</param>
+        /// <param name="setValue">Value to set this property.</param>
+        internal void SetValue(Object target, object setValue)
         {
             object[] propValue = new object[1];
             setValue = Adapter.PropertySetAndMethodArgumentConvertTo(setValue, this.Type, CultureInfo.InvariantCulture);
@@ -247,10 +247,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the value of the property.
         /// </summary>
-        /// <param name="target">instance of the object to which to set the property value</param>
-        /// <param name="setValue">value to set this property</param>
-        /// <param name="arguments">parameters to set this property.</param>
-        internal void SetValue(Object target, Object setValue, Object[] arguments)
+        /// <param name="target">Instance of the object to which to set the property value.</param>
+        /// <param name="setValue">Value to set this property.</param>
+        /// <param name="arguments">Parameters to set this property.</param>
+        internal void SetValue(Object target, Object setValue, object[] arguments)
         {
             object[] newarguments;
             var setterCollection = new Collection<int> { _hasSetterByRef ? _setterByRefIndex : _setterIndex };
@@ -262,6 +262,7 @@ namespace System.Management.Automation
             {
                 finalArguments[i] = newarguments[i];
             }
+
             finalArguments[newarguments.Length] = Adapter.PropertySetAndMethodArgumentConvertTo(setValue, Type, CultureInfo.InvariantCulture);
 
             try
@@ -295,8 +296,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates the COM property with setter and getter information.
         /// </summary>
-        /// <param name="desc">functional descriptor for property getter or setter</param>
-        /// <param name="index">index of function descriptor in type information</param>
+        /// <param name="desc">Functional descriptor for property getter or setter.</param>
+        /// <param name="index">Index of function descriptor in type information.</param>
         internal void UpdateFuncDesc(COM.FUNCDESC desc, int index)
         {
             _dispId = desc.memid;
@@ -310,6 +311,7 @@ namespace System.Management.Automation
                     {
                         IsParameterized = true;
                     }
+
                     break;
 
                 case COM.INVOKEKIND.INVOKE_PROPERTYPUT:
@@ -320,6 +322,7 @@ namespace System.Management.Automation
                     {
                         IsParameterized = true;
                     }
+
                     break;
 
                 case COM.INVOKEKIND.INVOKE_PROPERTYPUTREF:
@@ -329,6 +332,7 @@ namespace System.Management.Automation
                     {
                         IsParameterized = true;
                     }
+
                     break;
             }
         }
@@ -354,9 +358,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the property signature string
+        /// Returns the property signature string.
         /// </summary>
-        /// <returns>property signature</returns>
+        /// <returns>Property signature.</returns>
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
@@ -366,6 +370,7 @@ namespace System.Management.Automation
             {
                 builder.Append("{get} ");
             }
+
             if (_hasSetter)
             {
                 builder.Append("{set} ");

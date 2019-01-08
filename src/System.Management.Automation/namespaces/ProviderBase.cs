@@ -112,7 +112,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         internal virtual bool IsFilterSet()
         {
-            bool filterSet = !String.IsNullOrEmpty(Filter);
+            bool filterSet = !string.IsNullOrEmpty(Filter);
             return filterSet;
         }
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Provider
                 }
 
                 // Check that the provider supports the use of filters
-                if ((!String.IsNullOrEmpty(value.Filter)) &&
+                if ((!string.IsNullOrEmpty(value.Filter)) &&
                     (!CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Filter, _providerInformation)))
                 {
                     throw PSTraceSource.NewNotSupportedException(
@@ -304,6 +304,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.GetPropertyDynamicParameters(path, providerSpecificPickList);
         }
 
@@ -374,6 +375,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.SetPropertyDynamicParameters(path, propertyValue);
         }
 
@@ -447,6 +449,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.ClearPropertyDynamicParameters(path, providerSpecificPickList);
         }
 
@@ -539,6 +542,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.NewPropertyDynamicParameters(path, propertyName, propertyTypeName, value);
         }
 
@@ -611,6 +615,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.RemovePropertyDynamicParameters(path, propertyName);
         }
 
@@ -691,6 +696,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.RenamePropertyDynamicParameters(path, sourceProperty, destinationProperty);
         }
 
@@ -779,6 +785,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.CopyPropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
         }
 
@@ -867,6 +874,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return propertyProvider.MovePropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
         }
 
@@ -934,6 +942,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return contentProvider.GetContentReaderDynamicParameters(path);
         }
 
@@ -997,6 +1006,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return contentProvider.GetContentWriterDynamicParameters(path);
         }
 
@@ -1057,6 +1067,7 @@ namespace System.Management.Automation.Provider
             {
                 return null;
             }
+
             return contentProvider.ClearContentDynamicParameters(path);
         }
 
@@ -1396,12 +1407,12 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (String.IsNullOrEmpty(baseName))
+                if (string.IsNullOrEmpty(baseName))
                 {
                     throw PSTraceSource.NewArgumentException("baseName");
                 }
 
-                if (String.IsNullOrEmpty(resourceId))
+                if (string.IsNullOrEmpty(resourceId))
                 {
                     throw PSTraceSource.NewArgumentException("resourceId");
                 }
@@ -1422,6 +1433,7 @@ namespace System.Management.Automation.Provider
                 {
                     throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
                 }
+
                 if (retValue == null)
                 {
                     throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
@@ -1598,7 +1610,7 @@ namespace System.Management.Automation.Provider
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         public PSTransactionContext CurrentPSTransaction
         {
@@ -1775,6 +1787,7 @@ namespace System.Management.Automation.Provider
             {
                 throw PSTraceSource.NewArgumentNullException("item");
             }
+
             PSObject result = new PSObject(item);
 
             Diagnostics.Assert(
@@ -1792,7 +1805,7 @@ namespace System.Management.Automation.Provider
 
             // Construct a provider qualified path as the Path note
 
-            String providerQualifiedPath =
+            string providerQualifiedPath =
                 LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
 
             result.AddOrSetProperty("PSPath", providerQualifiedPath);
@@ -1813,16 +1826,17 @@ namespace System.Management.Automation.Provider
                 }
                 else
                 {
-                    parentPath = navProvider.GetParentPath(path, String.Empty, Context);
+                    parentPath = navProvider.GetParentPath(path, string.Empty, Context);
                 }
 
-                string providerQualifiedParentPath = String.Empty;
+                string providerQualifiedParentPath = string.Empty;
 
-                if (!String.IsNullOrEmpty(parentPath))
+                if (!string.IsNullOrEmpty(parentPath))
                 {
                     providerQualifiedParentPath =
                         LocationGlobber.GetProviderQualifiedPath(parentPath, ProviderInfo);
                 }
+
                 result.AddOrSetProperty("PSParentPath", providerQualifiedParentPath);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSParentPath", providerQualifiedParentPath);
 

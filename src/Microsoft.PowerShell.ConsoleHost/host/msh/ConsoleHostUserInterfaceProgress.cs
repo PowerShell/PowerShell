@@ -45,6 +45,7 @@ namespace Microsoft.PowerShell
                     _progPane.Hide();
                     _progPane = null;
                 }
+
                 _pendingProgress = null;
             }
         }

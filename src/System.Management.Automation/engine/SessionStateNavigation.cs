@@ -11,7 +11,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -20,7 +20,7 @@ namespace System.Management.Automation
         #region GetParentPath
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="path">
         /// The path to the object to get the parent path from
@@ -57,10 +57,10 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } //GetParentPath
+        }
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="path">
         /// The path to the object to get the parent path from
@@ -176,7 +176,7 @@ namespace System.Management.Automation
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
-                if (!String.IsNullOrEmpty(qualifier) && !String.IsNullOrEmpty(result))
+                if (!string.IsNullOrEmpty(qualifier) && !string.IsNullOrEmpty(result))
                 {
                     result = AddQualifier(result, provider, qualifier, isProviderQualified, isDriveQualified);
                 }
@@ -289,7 +289,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="provider">
         /// The provider that should handle the GetParentPath call.
@@ -347,7 +347,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the path to the parent object for the given object
+        /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="providerInstance">
         /// The instance of the provider that should handle the GetParentPath call.
@@ -430,6 +430,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -477,7 +478,7 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } //NormalizeRelativePath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
@@ -588,7 +589,7 @@ namespace System.Management.Automation
                     // \\HKEY_LOCAL_MACHINE
                     if (
                         (GetProviderInstance(provider) is NavigationCmdletProvider) &&
-                        (!String.IsNullOrEmpty(drive.Root)) &&
+                        (!string.IsNullOrEmpty(drive.Root)) &&
                         (path.StartsWith(drive.Root, StringComparison.OrdinalIgnoreCase)))
                     {
                         //
@@ -636,7 +637,7 @@ namespace System.Management.Automation
         /// Tests the specified character for equality with one of the powershell path separators and
         /// returns true if it matches.
         /// </summary>
-        /// <param name="c">The character to test</param>
+        /// <param name="c">The character to test.</param>
         /// <returns>True if the character is a path separator.</returns>
         private bool IsPathSeparator(char c)
         {
@@ -830,6 +831,7 @@ namespace System.Management.Automation
             {
                 provider = CurrentDrive.Provider;
             }
+
             if (context.Drive == null)
             {
                 bool isProviderQualified = LocationGlobber.IsProviderQualifiedPath(parent);
@@ -845,12 +847,14 @@ namespace System.Management.Automation
                     {
                         drive = provider.HiddenDrive;
                     }
+
                     context.Drive = drive;
                 }
                 else
                 {
                     context.Drive = CurrentDrive;
                 }
+
                 result = MakePath(provider, parent, child, context);
 
                 if (isAbsolute)
@@ -867,11 +871,12 @@ namespace System.Management.Automation
                 provider = context.Drive.Provider;
                 result = MakePath(provider, parent, child, context);
             }
+
             return result;
         }
 
         /// <summary>
-        /// Uses the specified provider to put the two parts of a path together
+        /// Uses the specified provider to put the two parts of a path together.
         /// </summary>
         /// <param name="provider">
         /// The provider to use.
@@ -920,7 +925,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Uses the specified provider to put the two parts of a path together
+        /// Uses the specified provider to put the two parts of a path together.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -1279,6 +1284,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
@@ -1482,7 +1488,7 @@ namespace System.Management.Automation
 
                         // Now verify the providers are the same.
 
-                        if (!String.Equals(
+                        if (!string.Equals(
                                 provider.FullName,
                                 destinationProvider.FullName,
                                 StringComparison.OrdinalIgnoreCase))
@@ -1507,7 +1513,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Moves the item at the specified path to the destination path
+        /// Moves the item at the specified path to the destination path.
         /// </summary>
         /// <param name="providerInstance">
         /// The provider instance to use.
@@ -1646,6 +1652,7 @@ namespace System.Management.Automation
 
                 return MoveItemDynamicParameters(providerInstance, providerPaths[0], destination, newContext);
             }
+
             return null;
         }
 
@@ -1730,13 +1737,14 @@ namespace System.Management.Automation
                     path,
                     e);
             }
+
             return result;
         }
 
         #endregion MoveItem
 
         #endregion NavigationCmdletProvider accessors
-    }           // SessionStateInternal class
+    }
 }
 
 #pragma warning restore 56500

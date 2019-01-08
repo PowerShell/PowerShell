@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// removed
+        /// removed.
         /// </summary>
         [Parameter(Mandatory = true,
             Position = 0,
@@ -52,11 +52,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _timeoutInSeconds;
             }
+
             set
             {
                 _timeoutInSeconds = value;
             }
         }
+
         private int _timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
 
         /// <summary>
@@ -155,6 +157,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _warnNotTerminal = true;
                     }
+
                     _finishedJobs.Add(job);
                 }
                 else
@@ -235,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 jobsToOutput = _jobsToWaitFor.Where(j => ((!Force && j.IsPersistentState(j.JobStateInfo.State)) || (Force && j.IsFinishedState(j.JobStateInfo.State)))).ToList();
             }
+
             return jobsToOutput;
         }
 
@@ -305,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to wait
+            // List of jobs to wait
             List<Job> matches;
 
             switch (ParameterSetName)

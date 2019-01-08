@@ -7,7 +7,7 @@
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// in line definition of a format string control
+    /// in line definition of a format string control.
     /// </summary>
     internal sealed class FieldControlBody : ControlBody
     {

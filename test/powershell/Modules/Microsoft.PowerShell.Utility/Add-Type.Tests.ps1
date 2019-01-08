@@ -213,7 +213,7 @@ public class AttributeTest$guid : PSCmdlet
     }
 
     It "By default Add-Type treats 'warnings as errors'." {
-        { Add-Type -TypeDefinition $codeWarning -WarningAction SilentlyContinue 2>$null } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -TypeDefinition $codeWarning -WarningAction SilentlyContinue 2> $null } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
     It "IgnoreWarnings suppress 'warnings as errors'." {

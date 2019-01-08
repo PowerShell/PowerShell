@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// End Processing
+        /// End Processing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -143,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
                     Process = GetProcessByHostProcessInfo(HostProcessInfo);
                     break;
             }
+
             VerifyProcess(Process);
 
             // Create named pipe runspace for selected process and open.
@@ -171,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Stop Processing
+        /// Stop Processing.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -357,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -408,7 +409,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Name of Process
+        /// Name of Process.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = GetPSHostProcessInfoCommand.ProcessNameParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -420,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process
+        /// Process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -432,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Id of process
+        /// Id of process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessIdParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -448,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// End bock processing
+        /// End bock processing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -523,10 +524,10 @@ namespace Microsoft.PowerShell.Commands
         /// Returns all named pipe AppDomain names for given process Ids or all PowerShell
         /// processes if procIds parameter is null.
         /// PowerShell pipe name example:
-        ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell
+        ///     PSHost.130566795082911445.8224.DefaultAppDomain.powershell.
         /// </summary>
-        /// <param name="procIds">Process Ids or null</param>
-        /// <returns>Collection of process AppDomain info</returns>
+        /// <param name="procIds">Process Ids or null.</param>
+        /// <returns>Collection of process AppDomain info.</returns>
         internal static IReadOnlyCollection<PSHostProcessInfo> GetAppDomainNamesFromProcessId(int[] procIds)
         {
             var procAppDomainInfo = new List<PSHostProcessInfo>();
@@ -645,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
-        /// Name of process
+        /// Name of process.
         /// </summary>
         public string ProcessName
         {
@@ -654,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Id of process
+        /// Id of process.
         /// </summary>
         public int ProcessId
         {
@@ -663,7 +664,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of PowerShell AppDomain in process
+        /// Name of PowerShell AppDomain in process.
         /// </summary>
         public string AppDomainName
         {
@@ -673,7 +674,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if !CORECLR
         /// <summary>
-        /// Main window title of the process
+        /// Main window title of the process.
         /// </summary>
         public string MainWindowTitle
         {
@@ -689,18 +690,19 @@ namespace Microsoft.PowerShell.Commands
         private PSHostProcessInfo() { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="processName">Name of process</param>
-        /// <param name="processId">Id of process</param>
-        /// <param name="appDomainName">Name of process AppDomain</param>
+        /// <param name="processName">Name of process.</param>
+        /// <param name="processId">Id of process.</param>
+        /// <param name="appDomainName">Name of process AppDomain.</param>
         internal PSHostProcessInfo(string processName, int processId, string appDomainName)
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
+
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
 
 #if !CORECLR
-            MainWindowTitle = String.Empty;
+            MainWindowTitle = string.Empty;
             try
             {
                 var proc = Process.GetProcessById(processId);

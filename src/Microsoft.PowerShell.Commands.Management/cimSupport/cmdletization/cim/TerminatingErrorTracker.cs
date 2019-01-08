@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Tracks (per-session) terminating errors in a given cmdlet invocation
+    /// Tracks (per-session) terminating errors in a given cmdlet invocation.
     /// </summary>
     internal class TerminatingErrorTracker
     {
@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 // - this translates into potentially unlimited number of CimSession we will work with
                 return int.MaxValue;
             }
+
             int maxNumberOfSessionsIndicatedByCimInstanceArguments = 1;
             foreach (object cmdletArgument in invocationInfo.BoundParameters.Values)
             {
@@ -62,6 +63,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         numberOfSessionsAssociatedWithArgument);
                 }
             }
+
             return maxNumberOfSessionsIndicatedByCimInstanceArguments;
         }
 
@@ -110,6 +112,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return alreadyPassedConnectivityTest;
             }
+
             return false;
         }
 

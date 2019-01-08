@@ -7,22 +7,22 @@ using System.Diagnostics;
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// This class represents a help system URI
+    /// This class represents a help system URI.
     /// </summary>
     internal class UpdatableHelpUri
     {
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
-        /// <param name="moduleName">module name</param>
-        /// <param name="moduleGuid">module guid</param>
-        /// <param name="culture">UI culture</param>
-        /// <param name="resolvedUri">resolved URI</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="moduleGuid">Module guid.</param>
+        /// <param name="culture">UI culture.</param>
+        /// <param name="resolvedUri">Resolved URI.</param>
         internal UpdatableHelpUri(string moduleName, Guid moduleGuid, CultureInfo culture, string resolvedUri)
         {
-            Debug.Assert(!String.IsNullOrEmpty(moduleName));
+            Debug.Assert(!string.IsNullOrEmpty(moduleName));
             Debug.Assert(moduleGuid != null);
-            Debug.Assert(!String.IsNullOrEmpty(resolvedUri));
+            Debug.Assert(!string.IsNullOrEmpty(resolvedUri));
 
             ModuleName = moduleName;
             ModuleGuid = moduleGuid;
@@ -31,22 +31,22 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Module name
+        /// Module name.
         /// </summary>
         internal string ModuleName { get; }
 
         /// <summary>
-        /// Module GUID
+        /// Module GUID.
         /// </summary>
         internal Guid ModuleGuid { get; }
 
         /// <summary>
-        /// UI Culture
+        /// UI Culture.
         /// </summary>
         internal CultureInfo Culture { get; }
 
         /// <summary>
-        /// Resolved URI
+        /// Resolved URI.
         /// </summary>
         internal string ResolvedUri { get; }
     }

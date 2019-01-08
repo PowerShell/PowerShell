@@ -58,14 +58,14 @@ namespace Microsoft.PowerShell
 
         public override
         void
-        Write(Char c)
+        Write(char c)
         {
             this.Write(new String(c, 1));
         }
 
         public override
         void
-        Write(Char[] a)
+        Write(char[] a)
         {
             this.Write(new String(a));
         }

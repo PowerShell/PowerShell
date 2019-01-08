@@ -26,6 +26,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override string ToString()
@@ -180,7 +181,7 @@ namespace System.Management.Automation.Interpreter
                     case TypeCode.Byte: return ConvertInt32((Byte)obj);
                     case TypeCode.SByte: return ConvertInt32((SByte)obj);
                     case TypeCode.Int16: return ConvertInt32((Int16)obj);
-                    case TypeCode.Char: return ConvertInt32((Char)obj);
+                    case TypeCode.Char: return ConvertInt32((char)obj);
                     case TypeCode.Int32: return ConvertInt32((Int32)obj);
                     case TypeCode.Int64: return ConvertInt64((Int64)obj);
                     case TypeCode.UInt16: return ConvertInt32((UInt16)obj);

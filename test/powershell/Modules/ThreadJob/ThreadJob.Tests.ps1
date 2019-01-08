@@ -83,7 +83,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     }
 
     It 'ThreadJob with ScriptBlock' {
-    
+
         $job = Start-ThreadJob -ScriptBlock { "Hello" }
         $results = $job | Receive-Job -Wait
         $results | Should -Be "Hello"
@@ -107,7 +107,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
     It 'ThreadJob with ScriptBlock and piped input' {
 
-        $job = "Hello","Goodbye" | Start-ThreadJob -ScriptBlock { $input | foreach { $_ } }
+        $job = "Hello","Goodbye" | Start-ThreadJob -ScriptBlock { $input | ForEach-Object { $_ } }
         $results = $job | Receive-Job -Wait
         $results[0] | Should -Be "Hello"
         $results[1] | Should -Be "Goodbye"
@@ -225,13 +225,13 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     }
 
     It 'ThreadJob and Verbose stream output' {
-      
+
         $job = Start-ThreadJob -ScriptBlock { $VerbosePreference = 'Continue'; Write-Verbose "VerboseOut" } | Wait-Job
         $job.Verbose | Should Match "VerboseOut"
     }
 
     It 'ThreadJob and Verbose stream output' {
-      
+
         $job = Start-ThreadJob -ScriptBlock { $DebugPreference = 'Continue'; Write-Debug "DebugOut" } | Wait-Job
         $job.Debug | Should -Be "DebugOut"
     }
@@ -334,10 +334,10 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
 
-        $job1 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } } -ThrottleLimit 5
-        $job2 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } }
-        $job3 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } }
-        $job4 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } }
+        $job1 = Start-ThreadJob -ScriptBlock { 1..2 | ForEach-Object { Start-Sleep -Milliseconds 100; "Output $_" } } -ThrottleLimit 5
+        $job2 = Start-ThreadJob -ScriptBlock { 1..2 | ForEach-Object { Start-Sleep -Milliseconds 100; "Output $_" } }
+        $job3 = Start-ThreadJob -ScriptBlock { 1..2 | ForEach-Object { Start-Sleep -Milliseconds 100; "Output $_" } }
+        $job4 = Start-ThreadJob -ScriptBlock { 1..2 | ForEach-Object { Start-Sleep -Milliseconds 100; "Output $_" } }
 
         $null = $job1,$job2,$job3,$job4 | Receive-Job -Wait -AutoRemoveJob
 
@@ -391,23 +391,23 @@ Describe 'Job2 class API tests' -Tags 'CI' {
 
         $job = Start-ThreadJob -ScriptBlock { "Hello" } | Wait-Job
 
-        $getJob = Get-Job -InstanceId $job.InstanceId 2>$null
+        $getJob = Get-Job -InstanceId $job.InstanceId 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -Name $job.Name 2>$null
+        $getJob = Get-Job -Name $job.Name 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -Command ' "hello" ' 2>$null
+        $getJob = Get-Job -Command ' "hello" ' 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -State $job.JobStateInfo.State 2>$null
+        $getJob = Get-Job -State $job.JobStateInfo.State 2> $null
         $getJob | Should -Be $job
 
-        $getJob = Get-Job -Id $job.Id 2>$null
+        $getJob = Get-Job -Id $job.Id 2> $null
         $getJob | Should -Be $job
 
         # Get-Job -Filter is not supported
-        $result = Get-Job -Filter @{Id = ($job.Id)} 3>$null
+        $result = Get-Job -Filter @{Id = ($job.Id)} 3> $null
         $result | Should -BeNullOrEmpty
     }
 

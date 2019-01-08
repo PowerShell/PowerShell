@@ -14,7 +14,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the AliasInfo class with the specified name and referenced command
+        /// Creates an instance of the AliasInfo class with the specified name and referenced command.
         /// </summary>
         /// <param name="name">
         /// The name of the command.
@@ -43,7 +43,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates an instance of the AliasInfo class with the specified name and referenced command
+        /// Creates an instance of the AliasInfo class with the specified name and referenced command.
         /// </summary>
         /// <param name="name">
         /// The name of the command.
@@ -161,6 +161,7 @@ namespace System.Management.Automation
                                 result = null;
                                 break;
                             }
+
                             cyclePrevention.Add(result.Name);
 
                             commandNameToResolve = result.Definition;
@@ -191,7 +192,8 @@ namespace System.Management.Automation
                 return _definition;
             }
         }
-        private string _definition = String.Empty;
+
+        private string _definition = string.Empty;
 
         /// <summary>
         /// Sets the new definition for the alias.
@@ -226,7 +228,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the scope options for the alias
+        /// Gets or sets the scope options for the alias.
         /// </summary>
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
         /// If the trying to set an alias that is constant or
@@ -323,12 +325,13 @@ namespace System.Management.Automation
 
             _options = newOptions;
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
-        /// Gets or sets the description for the alias
+        /// Gets or sets the description for the alias.
         /// </summary>
-        public string Description { get; set; } = String.Empty;
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// If ResolvedCommand returns null, this property will
@@ -351,6 +354,7 @@ namespace System.Management.Automation
                 {
                     return resolvedCommand.OutputType;
                 }
+
                 return null;
             }
         }

@@ -339,7 +339,10 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
 }
 
 Describe "Get-Help should find pattern alias" -Tags "CI" {
-    # Remove test alias
+    BeforeAll {
+        Set-Alias -Name testAlias1 -Value Where-Object
+    }
+
     AfterAll {
         Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
     }
@@ -355,10 +358,15 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
     }
 
     It "Get-Help should find alias with * pattern" {
-        Set-Alias -Name testAlias1 -Value Where-Object
         $help = Get-Help testAlias1*
         $help.Category | Should -BeExactly "Alias"
         $help.Synopsis | Should -BeExactly "Where-Object"
+    }
+
+    It "Help alias should be same as Get-Help alias" {
+        $help1 = Get-Help testAlias*
+        $help2 = help testAlias*
+        Compare-Object $help1 $help2 | Should -BeNullOrEmpty
     }
 }
 
@@ -467,5 +475,16 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
 
         $helpObj = Get-Help -Name $CmdletName -Full
         $helpObj.description | Out-String | Should -Match $CmdletName
+    }
+}
+
+Describe "Help failure cases" -Tags Feature {
+    It "An error is returned for a topic that doesn't exist: <command>" -TestCases @(
+        @{ command = "help" },
+        @{ command = "get-help" }
+    ){
+        param($command)
+
+        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }

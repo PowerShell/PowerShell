@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell
         IntPtr _ptr;
 
         /// <summary>
-        /// Set a string value
+        /// Set a string value.
         /// </summary>
         internal PropVariant(string value)
         {
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~PropVariant()
         {
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell
         private class PropVariantNativeMethods
         {
             [DllImport("Ole32.dll", PreserveSig = false)]
-            internal extern static void PropVariantClear([In, Out] PropVariant pvar);
+            internal static extern void PropVariantClear([In, Out] PropVariant pvar);
         }
     }
 }

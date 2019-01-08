@@ -45,11 +45,11 @@ namespace System.Management.Automation.Interpreter
             _lambda = lambda;
         }
 
-        //internal LightDelegateCreator(Interpreter interpreter, LightLambdaExpression lambda) {
+        // internal LightDelegateCreator(Interpreter interpreter, LightLambdaExpression lambda) {
         //    Assert.NotNull(lambda);
         //    _interpreter = interpreter;
         //    _lambda = lambda;
-        //}
+        // }
 
         internal Interpreter Interpreter
         {
@@ -120,8 +120,9 @@ namespace System.Management.Automation.Interpreter
                 {
                     return le.Type;
                 }
+
                 return null;
-                //return ((LightLambdaExpression)_lambda).Type;
+                // return ((LightLambdaExpression)_lambda).Type;
             }
         }
 
@@ -138,6 +139,7 @@ namespace System.Management.Automation.Interpreter
                 var applyClosure = (Func<StrongBox<object>[], Delegate>)_compiled;
                 return applyClosure(closure);
             }
+
             return _compiled;
         }
 
@@ -161,7 +163,7 @@ namespace System.Management.Automation.Interpreter
                     return;
                 }
 
-                //PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Interpreted lambda compiled");
+                // PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Interpreted lambda compiled");
 
                 // Interpreter needs a standard delegate type.
                 // So change the lambda's delegate type to Func<...> or
@@ -190,10 +192,10 @@ namespace System.Management.Automation.Interpreter
             Type delegateType;
             bool isVoid = lambda.ReturnType == typeof(void);
 
-            //if (isVoid && lambda.Parameters.Count == 2 &&
+            // if (isVoid && lambda.Parameters.Count == 2 &&
             //    lambda.Parameters[0].IsByRef && lambda.Parameters[1].IsByRef) {
             //    return typeof(ActionRef<,>).MakeGenericType(lambda.Parameters.Map(p => p.Type));
-            //} else {
+            // } else {
             Type[] types = lambda.Parameters.Map(p => p.IsByRef ? p.Type.MakeByRefType() : p.Type);
             if (isVoid)
             {
@@ -210,8 +212,9 @@ namespace System.Management.Automation.Interpreter
                     return delegateType;
                 }
             }
+
             return lambda.Type;
-            //}
+            // }
         }
     }
 }

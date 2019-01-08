@@ -32,7 +32,7 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
         #
         # Verify that the breakpoint is hit when using the provider
         #
-        pushd tmpTestA1:\
+        Push-Location tmpTestA1:\
         $breakpoint = set-psbreakpoint .\$scriptName 1 -action { continue }
         & .\$scriptName
 
@@ -42,11 +42,11 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
     }
     finally
     {
-        popd
+        Pop-Location
 
         if ($null -ne $breakpoint) { $breakpoint | remove-psbreakpoint }
         if (Test-Path $scriptFullName) { Remove-Item $scriptFullName -Force }
-        if ($null -ne (Get-PSDrive -Name tmpTestA1 2>$null)) { Remove-PSDrive -Name tmpTestA1 -Force }
+        if ($null -ne (Get-PSDrive -Name tmpTestA1 2> $null)) { Remove-PSDrive -Name tmpTestA1 -Force }
     }
 }
 
@@ -89,7 +89,7 @@ Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
         #
         # Set the breakpoint and verify it is hit
         #
-        $breakpoint = sbp $scriptFile 17 -action { continue; }
+        $breakpoint = Set-PsBreakpoint $scriptFile 17 -action { continue; }
 
         & $scriptFile
 
@@ -137,8 +137,8 @@ Describe "Function calls clear debugger cache too early" -Tags "CI" {
         #
         # Set the breakpoints and verify they are hit
         #
-        $breakpoint1 = sbp $scriptFile 7 -action { continue; }
-        $breakpoint2 = sbp $scriptFile 9 -action { continue; }
+        $breakpoint1 = Set-PsBreakpoint $scriptFile 7 -action { continue; }
+        $breakpoint2 = Set-PsBreakpoint $scriptFile 9 -action { continue; }
 
         & $scriptFile
 
@@ -180,7 +180,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
         get-unique
 '@
 
-        $breakpoints = sbp $script 1,2,3 -action { continue }
+        $breakpoints = Set-PsBreakpoint $script 1,2,3 -action { continue }
 
         $null = & $script
 
@@ -201,7 +201,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
         if ($null -ne $breakpoints) { $breakpoints | remove-psbreakpoint }
         if (Test-Path $script)
         {
-            del $script -Force
+            Remove-Item $script -Force
         }
     }
 
@@ -218,7 +218,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
             $f = $a.GetFile($scriptPath1)
             $scriptPath2 = $f.ShortPath
 
-            $breakpoints = sbp $scriptPath2 1,2,3 -action { continue }
+            $breakpoints = Set-PsBreakpoint $scriptPath2 1,2,3 -action { continue }
             $null = & $scriptPath2
         }
 
@@ -290,7 +290,7 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         #
         # Ensure there are no breakpoints at start of test
         #
-        gbp | rbp
+        Get-PsBreakpoint | Remove-PsBreakpoint
 
         #
         # Create a couple of scripts
@@ -304,16 +304,16 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         #
         # Set several breakpoints of different types
         #
-        $line1 = sbp $scriptFile1 1
-        $line2 = sbp $scriptFile2 2
+        $line1 = Set-PsBreakpoint $scriptFile1 1
+        $line2 = Set-PsBreakpoint $scriptFile2 2
 
-        $cmd1 = sbp -c command1 -s $scriptFile1
-        $cmd2 = sbp -c command2 -s $scriptFile2
-        $cmd3 = sbp -c command3
+        $cmd1 = Set-PsBreakpoint -c command1 -s $scriptFile1
+        $cmd2 = Set-PsBreakpoint -c command2 -s $scriptFile2
+        $cmd3 = Set-PsBreakpoint -c command3
 
-        $var1 = sbp -v variable1 -s $scriptFile1
-        $var2 = sbp -v variable2 -s $scriptFile2
-        $var3 = sbp -v variable3
+        $var1 = Set-PsBreakpoint -v variable1 -s $scriptFile1
+        $var2 = Set-PsBreakpoint -v variable2 -s $scriptFile2
+        $var3 = Set-PsBreakpoint -v variable3
 
         #
         # The default parameter set must return all breakpoints
@@ -344,9 +344,9 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         $directoryName = [System.IO.Path]::GetDirectoryName($scriptFile1)
         $fileName = [System.IO.Path]::GetFileName($scriptFile1)
 
-        pushd $directoryName
+        Push-Location $directoryName
         Verify { get-psbreakpoint -script $fileName } $line1,$cmd1,$var1
-        popd
+        Pop-Location
 
         #
         # Query by Type
@@ -450,9 +450,9 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
         #
         # Set a couple of line breakpoints on the file, dot-source it and verify that the breakpoints are hit
         #
-        $breakpoint1 = sbp $scriptFile 4 -action { continue; }
-        $breakpoint2 = sbp $scriptFile 9 -action { continue; }
-        $breakpoint3 = sbp $scriptFile 24 -action { continue; }
+        $breakpoint1 = Set-PsBreakpoint $scriptFile 4 -action { continue; }
+        $breakpoint2 = Set-PsBreakpoint $scriptFile 9 -action { continue; }
+        $breakpoint3 = Set-PsBreakpoint $scriptFile 24 -action { continue; }
 
         . $scriptFile
 
@@ -498,7 +498,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         $moduleDirectory = [io.path]::Combine($moduleRoot, $moduleName)
         $moduleFile = [io.path]::Combine($moduleDirectory, $moduleName + ".psm1")
 
-        mkdir $moduleDirectory 2> $null
+        New-Item -ItemType Directory $moduleDirectory 2> $null
 
         write-output '
         function ModuleFunction1
@@ -547,10 +547,10 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         #
         # Set a couple of line breakpoints on the module and verify that they are hit
         #
-        $breakpoint1 = sbp $moduleFile 4 -action { continue }
-        $breakpoint2 = sbp $moduleFile 9 -action { continue }
-        $breakpoint3 = sbp $moduleFile 24 -Action { continue }
-        $breakpoint4 = sbp $moduleFile 25 -Action { continue }
+        $breakpoint1 = Set-PsBreakpoint $moduleFile 4 -action { continue }
+        $breakpoint2 = Set-PsBreakpoint $moduleFile 9 -action { continue }
+        $breakpoint3 = Set-PsBreakpoint $moduleFile 24 -Action { continue }
+        $breakpoint4 = Set-PsBreakpoint $moduleFile 25 -Action { continue }
 
         ModuleFunction1
 

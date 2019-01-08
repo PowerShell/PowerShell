@@ -134,9 +134,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <summary>
         /// Retrieves the current process token.
         /// </summary>
-        /// <param name="processHandle">process handle</param>
-        /// <param name="desiredAccess">token access</param>
-        /// <param name="tokenHandle">process token</param>
+        /// <param name="processHandle">Process handle.</param>
+        /// <param name="desiredAccess">Token access.</param>
+        /// <param name="tokenHandle">Process token.</param>
         /// <returns>The current process token.</returns>
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             internal int BuildNumber = 0;
             internal int PlatformId = 0;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            internal String CSDVersion = null;
+            internal string CSDVersion = null;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -406,6 +406,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 this.MaxLength = (ushort)maximumLength;
                 this.Buffer = buffer;
             }
+
             internal ushort Length;
             internal ushort MaxLength;
             internal IntPtr Buffer;
@@ -520,23 +521,23 @@ namespace Microsoft.PowerShell.Commands.Internal
             internal uint Type;
         }
 
-        internal const String KERNEL32 = "kernel32.dll";
-        internal const String USER32 = "user32.dll";
-        internal const String ADVAPI32 = "advapi32.dll";
-        internal const String OLE32 = "ole32.dll";
-        internal const String OLEAUT32 = "oleaut32.dll";
-        internal const String SHFOLDER = "shfolder.dll";
-        internal const String SHIM = "mscoree.dll";
-        internal const String CRYPT32 = "crypt32.dll";
-        internal const String SECUR32 = "secur32.dll";
-        internal const String MSCORWKS = "mscorwks.dll";
+        internal const string KERNEL32 = "kernel32.dll";
+        internal const string USER32 = "user32.dll";
+        internal const string ADVAPI32 = "advapi32.dll";
+        internal const string OLE32 = "ole32.dll";
+        internal const string OLEAUT32 = "oleaut32.dll";
+        internal const string SHFOLDER = "shfolder.dll";
+        internal const string SHIM = "mscoree.dll";
+        internal const string CRYPT32 = "crypt32.dll";
+        internal const string SECUR32 = "secur32.dll";
+        internal const string MSCORWKS = "mscorwks.dll";
 
-        internal const String LSTRCPY = "lstrcpy";
-        internal const String LSTRCPYN = "lstrcpyn";
-        internal const String LSTRLEN = "lstrlen";
-        internal const String LSTRLENA = "lstrlenA";
-        internal const String LSTRLENW = "lstrlenW";
-        internal const String MOVEMEMORY = "RtlMoveMemory";
+        internal const string LSTRCPY = "lstrcpy";
+        internal const string LSTRCPYN = "lstrcpyn";
+        internal const string LSTRLEN = "lstrlen";
+        internal const string LSTRLENA = "lstrlenA";
+        internal const string LSTRLENW = "lstrlenW";
+        internal const string MOVEMEMORY = "RtlMoveMemory";
 
         // From WinBase.h
         internal const int SEM_FAILCRITICALERRORS = 1;
@@ -655,15 +656,15 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         [DllImport(ADVAPI32, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
-        internal static extern int RegConnectRegistry(String machineName,
+        internal static extern int RegConnectRegistry(string machineName,
                     SafeRegistryHandle key, out SafeRegistryHandle result);
 
         // Note: RegCreateKeyEx won't set the last error on failure - it returns
         // an error code if it fails.
         [DllImport(ADVAPI32, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
-        internal static extern int RegCreateKeyEx(SafeRegistryHandle hKey, String lpSubKey,
-                    int Reserved, String lpClass, int dwOptions,
+        internal static extern int RegCreateKeyEx(SafeRegistryHandle hKey, string lpSubKey,
+                    int Reserved, string lpClass, int dwOptions,
                     int samDesigner, SECURITY_ATTRIBUTES lpSecurityAttributes,
                     out SafeRegistryHandle hkResult, out int lpdwDisposition);
 
@@ -671,20 +672,20 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.Machine)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegDeleteKey(SafeRegistryHandle hKey, String lpSubKey);
+        internal static extern int RegDeleteKey(SafeRegistryHandle hKey, string lpSubKey);
 
         [DllImport(ADVAPI32, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegDeleteKeyTransacted(SafeRegistryHandle hKey, String lpSubKey, int samDesired,
+        internal static extern int RegDeleteKeyTransacted(SafeRegistryHandle hKey, string lpSubKey, int samDesired,
                                 DWORD reserved, SafeTransactionHandle hTransaction, IntPtr pExtendedParameter);
 
         [DllImport(ADVAPI32, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegDeleteValue(SafeRegistryHandle hKey, String lpValueName);
+        internal static extern int RegDeleteValue(SafeRegistryHandle hKey, string lpValueName);
 
         [DllImport(ADVAPI32, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.None)]
@@ -714,14 +715,14 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.Machine)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegOpenKeyEx(SafeRegistryHandle hKey, String lpSubKey,
+        internal static extern int RegOpenKeyEx(SafeRegistryHandle hKey, string lpSubKey,
                     int ulOptions, int samDesired, out SafeRegistryHandle hkResult);
 
         [DllImport(PinvokeDllNames.RegOpenKeyTransactedDllName, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegOpenKeyTransacted(SafeRegistryHandle hKey, String lpSubKey,
+        internal static extern int RegOpenKeyTransacted(SafeRegistryHandle hKey, string lpSubKey,
                     int ulOptions, int samDesired, out SafeRegistryHandle hkResult,
                     SafeTransactionHandle hTransaction, IntPtr pExtendedParameter);
 
@@ -740,7 +741,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, string lpValueName,
                     int[] lpReserved, ref int lpType, [Out] byte[] lpData,
                     ref int lpcbData);
 
@@ -748,7 +749,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, string lpValueName,
                     int[] lpReserved, ref int lpType, ref int lpData,
                     ref int lpcbData);
 
@@ -756,7 +757,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, string lpValueName,
                     int[] lpReserved, ref int lpType, ref long lpData,
                     ref int lpcbData);
 
@@ -764,7 +765,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, string lpValueName,
                      int[] lpReserved, ref int lpType, [Out] char[] lpData,
                      ref int lpcbData);
 
@@ -772,7 +773,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegQueryValueEx(SafeRegistryHandle hKey, string lpValueName,
                     int[] lpReserved, ref int lpType, StringBuilder lpData,
                     ref int lpcbData);
 
@@ -780,36 +781,36 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, string lpValueName,
                     int Reserved, RegistryValueKind dwType, byte[] lpData, int cbData);
 
         [DllImport(PinvokeDllNames.RegSetValueExDllName, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, string lpValueName,
                     int Reserved, RegistryValueKind dwType, ref int lpData, int cbData);
 
         [DllImport(PinvokeDllNames.RegSetValueExDllName, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, String lpValueName,
+        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, string lpValueName,
                     int Reserved, RegistryValueKind dwType, ref long lpData, int cbData);
 
         [DllImport(PinvokeDllNames.RegSetValueExDllName, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.None)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, String lpValueName,
-                    int Reserved, RegistryValueKind dwType, String lpData, int cbData);
+        internal static extern int RegSetValueEx(SafeRegistryHandle hKey, string lpValueName,
+                    int Reserved, RegistryValueKind dwType, string lpData, int cbData);
 
         [DllImport(PinvokeDllNames.RegCreateKeyTransactedDllName, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
         // Suppressed because there is no way for arbitrary data to be passed.
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
-        internal static extern int RegCreateKeyTransacted(SafeRegistryHandle hKey, String lpSubKey,
-                    int Reserved, String lpClass, int dwOptions,
+        internal static extern int RegCreateKeyTransacted(SafeRegistryHandle hKey, string lpSubKey,
+                    int Reserved, string lpClass, int dwOptions,
                     int samDesigner, SECURITY_ATTRIBUTES lpSecurityAttributes,
                     out SafeRegistryHandle hkResult, out int lpdwDisposition,
                     SafeTransactionHandle hTransaction, IntPtr pExtendedParameter);
@@ -827,7 +828,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                     int nSize, IntPtr va_list_arguments);
 
         // Gets an error message for a Win32 error code.
-        internal static String GetMessage(int errorCode)
+        internal static string GetMessage(int errorCode)
         {
             StringBuilder sb = new StringBuilder(512);
             int result = Win32Native.FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS |
@@ -838,13 +839,13 @@ namespace Microsoft.PowerShell.Commands.Internal
                 // result is the # of characters copied to the StringBuilder on NT,
                 // but on Win9x, it appears to be the number of MBCS bytes.
                 // Just give up and return the String as-is...
-                String s = sb.ToString();
+                string s = sb.ToString();
                 return s;
             }
             else
             {
                 string resourceTemplate = RegistryProviderStrings.UnknownError_Num;
-                return String.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                return string.Format(CultureInfo.CurrentCulture, resourceTemplate, errorCode.ToString(System.Globalization.CultureInfo.InvariantCulture));
             }
         }
 

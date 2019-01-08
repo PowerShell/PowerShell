@@ -15,7 +15,7 @@ namespace System.Management.Automation
     internal class ScriptCommandHelpProvider : CommandHelpProvider
     {
         /// <summary>
-        /// Constructor for CommandHelpProvider
+        /// Constructor for CommandHelpProvider.
         /// </summary>
         internal ScriptCommandHelpProvider(HelpSystem helpSystem)
             : base(helpSystem)

@@ -15,7 +15,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes the cmdlet parameter binder controller for
-        /// the specified native command and engine context
+        /// the specified native command and engine context.
         /// </summary>
         /// <param name="command">
         /// The command that the parameters will be bound to.
@@ -28,9 +28,9 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Gets the command arguments in string form
+        /// Gets the command arguments in string form.
         /// </summary>
-        internal String Arguments
+        internal string Arguments
         {
             get
             {
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the specified parameters to the native command
+        /// Binds the specified parameters to the native command.
         /// </summary>
         /// <param name="parameters">
         /// The parameters to bind.

@@ -205,6 +205,12 @@ Process ID: {7}
 {8}
 **********************</value>
   </data>
+  <data name="MinimalTranscriptPrologue" xml:space="preserve">
+    <value>**********************
+PowerShell transcript start
+Start time: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
 PowerShell transcript end

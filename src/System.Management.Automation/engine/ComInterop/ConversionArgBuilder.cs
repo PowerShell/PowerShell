@@ -30,7 +30,7 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression MarshalToRef(Expression parameter)
         {
-            //we are not supporting conversion InOut
+            // we are not supporting conversion InOut
             throw Assert.Unreachable;
         }
     }

@@ -34,12 +34,14 @@ namespace Microsoft.PowerShell.Commands
         internal PSTraceSourceOptions OptionsInternal
         {
             get { return _options; }
+
             set
             {
                 _options = value;
                 optionsSpecified = true;
             }
         }
+
         private PSTraceSourceOptions _options = PSTraceSourceOptions.All;
 
         /// <summary>
@@ -53,12 +55,14 @@ namespace Microsoft.PowerShell.Commands
         internal TraceOptions ListenerOptionsInternal
         {
             get { return _traceOptions; }
+
             set
             {
                 traceOptionsSpecified = true;
                 _traceOptions = value;
             }
         }
+
         private TraceOptions _traceOptions = TraceOptions.None;
 
         /// <summary>
@@ -94,8 +98,10 @@ namespace Microsoft.PowerShell.Commands
         internal SwitchParameter PSHostListener
         {
             get { return _host; }
+
             set { _host = value; }
         }
+
         private bool _host = false;
 
         #endregion Parameters
@@ -129,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string notMatchedName in notMatched)
             {
-                if (String.IsNullOrEmpty(notMatchedName))
+                if (string.IsNullOrEmpty(notMatchedName))
                 {
                     continue;
                 }
@@ -142,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                 PSTraceSource newTraceSource =
                     PSTraceSource.GetNewTraceSource(
                         notMatchedName,
-                        String.Empty,
+                        string.Empty,
                         true);
 
                 preconfiguredSources.Add(newTraceSource);
@@ -195,6 +201,7 @@ namespace Microsoft.PowerShell.Commands
                     // Note, this is not meant to be localized.
                     _defaultListener.Name = "Debug";
                 }
+
                 AddListenerToSources(matchingSources, _defaultListener);
             }
 
@@ -208,6 +215,7 @@ namespace Microsoft.PowerShell.Commands
                     // Note, this is not meant to be localized.
                     _hostListener.Name = "Host";
                 }
+
                 AddListenerToSources(matchingSources, _hostListener);
             }
 
@@ -262,6 +270,7 @@ namespace Microsoft.PowerShell.Commands
                                             FileListener,
                                             provider.FullName));
                             }
+
                             resolvedPaths.Add(path);
                         }
 
@@ -285,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
                                     // Save some disk write time by checking whether file is readonly..
                                     if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                                     {
-                                        //Make sure the file is not read only
+                                        // Make sure the file is not read only
                                         fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                                     }
                                 }
@@ -361,6 +370,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private DefaultTraceListener _defaultListener;
         private PSHostTraceListener _hostListener;
         private Collection<TextWriterTraceListener> _fileListeners;
@@ -582,6 +592,7 @@ namespace Microsoft.PowerShell.Commands
                     listener.Dispose();
                 }
             }
+
             _storedTraceSourceState.Clear();
         }
 

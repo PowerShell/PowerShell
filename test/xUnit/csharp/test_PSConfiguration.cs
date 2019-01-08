@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-using Xunit;
+
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -9,13 +9,14 @@ using System.Management.Automation.Internal;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Xunit;
 
 namespace PSTests.Sequential
 {
     [TestCaseOrderer("TestOrder.TestCaseOrdering.PriorityOrderer", "powershell-tests")]
     public class PowerShellPolicyFixture : IDisposable
     {
-        private const string configFileName = "powershell.config.json";
+        private const string ConfigFileName = "powershell.config.json";
         private readonly string systemWideConfigFile;
         private readonly string currentUserConfigFile;
 
@@ -43,14 +44,15 @@ namespace PSTests.Sequential
                 Directory.CreateDirectory(currentUserConfigDirectory);
             }
 
-            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, configFileName);
-            currentUserConfigFile = Path.Combine(currentUserConfigDirectory, configFileName);
+            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
+            currentUserConfigFile = Path.Combine(currentUserConfigDirectory, ConfigFileName);
 
             if (File.Exists(systemWideConfigFile))
             {
                 systemWideConfigBackupFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
                 File.Move(systemWideConfigFile, systemWideConfigBackupFile);
             }
+
             if (File.Exists(currentUserConfigFile))
             {
                 currentUserConfigBackupFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -102,6 +104,7 @@ namespace PSTests.Sequential
             {
                 File.Move(currentUserConfigBackupFile, currentUserConfigFile);
             }
+
             InternalTestHooks.BypassGroupPolicyCaching = originalTestHookValue;
         }
 
@@ -264,6 +267,7 @@ namespace PSTests.Sequential
             {
                 File.Delete(systemWideConfigFile);
             }
+
             if (File.Exists(currentUserConfigFile))
             {
                 File.Delete(currentUserConfigFile);
@@ -322,8 +326,10 @@ namespace PSTests.Sequential
         public void SetupConfigFile4()
         {
             CleanupConfigFiles();
+
             // System wide config file is empty
             CreateEmptyFile(systemWideConfigFile);
+
             // Current user config file is empty
             CreateEmptyFile(currentUserConfigFile);
         }
@@ -338,7 +344,7 @@ namespace PSTests.Sequential
 
     public class PowerShellPolicyTests : IClassFixture<PowerShellPolicyFixture>
     {
-        PowerShellPolicyFixture fixture;
+        private PowerShellPolicyFixture fixture;
 
         public PowerShellPolicyTests(PowerShellPolicyFixture fixture)
         {
