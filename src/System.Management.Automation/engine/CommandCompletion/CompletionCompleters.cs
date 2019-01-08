@@ -164,6 +164,7 @@ namespace System.Management.Automation
                 powershell.AddParameter("CommandType", types);
             }
 
+            // Exception is ignored, the user simply does not get any completion results if the pipeline fails
             Exception exceptionThrown;
             var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
 
